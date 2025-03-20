@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dds xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <profiles>
+        <participant profile_name="example_participant" is_default_profile="true">
+            <domainId>0</domainId>
+            <rtps>
+                <name>example_participant_name</name>
+                <builtin>
+                    <discovery_config>
+                        <leaseDuration>
+                            <sec>100</sec>
+                            <nanosec>0</nanosec>
+                        </leaseDuration>
+                    </discovery_config>
+                </builtin>
+            </rtps>
+        </participant>
+
+        <publisher profile_name="example_publisher">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+                <publishMode>
+                    <kind>SYNCHRONOUS</kind>
+                </publishMode>
+            </qos>
+        </publisher>
+
+        <subscriber profile_name="example_subscriber">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+        </subscriber>
+
+        <topic profile_name="example_topic">
+            <kind>NO_KEY</kind>
+            <name>ExampleTopic</name>
+            <dataType>ExampleType</dataType>
+            <historyQos>
+                <kind>KEEP_LAST</kind>
+                <depth>5</depth>
+            </historyQos>
+            <resourceLimitsQos>
+                <max_samples>200</max_samples>
+                <max_instances>1</max_instances>
+                <max_samples_per_instance>200</max_samples_per_instance>
+            </resourceLimitsQos>
+        </topic>
+
+        <data_writer profile_name="example_datawriter">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+        </data_writer>
+
+        <data_reader profile_name="example_datareader">
+            <qos>
+                <reliability>
+                    <kind>RELIABLE</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL</kind>
+                </durability>
+            </qos>
+        </data_reader>
+    </profiles>
+</dds>
