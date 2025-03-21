@@ -59,11 +59,7 @@ public:
     JAVACPP_SKIP bool deserialize(eprosima::fastdds::rtps::SerializedPayload_t& payload, void* data_) override {
         fastddsjava_TopicDataWrapper* data = static_cast<fastddsjava_TopicDataWrapper*>(data_);
 
-        std::cout << "data initial_size (deserialize) " << data->initial_size << std::endl;
-        std::cout << "payload.length (deserialize) " << payload.length << std::endl;
-
         data->initial_size = payload.length;
-
         memcpy(data->data_ptr(), payload.data, payload.length);
 
         return true;
@@ -123,15 +119,11 @@ public:
     }
 
     JAVACPP_SKIP void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
-        std::cout << "received new data message" << std::endl;
-
         eprosima::fastdds::dds::TypeSupport type = reader->type();
         fastddsjava_TopicDataWrapper* data = reinterpret_cast<fastddsjava_TopicDataWrapper*>(type.create_data());
 
         eprosima::fastdds::dds::SampleInfo info;
         reader->take_next_sample(data, &info);
-
-        std::cout << "received data size " << data->data_vector.size() << std::endl;
 
         if (callback)
             callback(data, &info);
@@ -210,7 +202,6 @@ void fastddsjava_datawriter_write(void* dataWriter_, fastddsjava_TopicDataWrappe
  *  Returns eprosima::fastdds::dds::DataReader*
  */
 void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava_DataReaderListener* listener, std::string profile_name) {
-    std::cout << "fastddsjava_create_datareader" << std::endl;
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 

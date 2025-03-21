@@ -1,6 +1,7 @@
 package us.ihmc.fastdds;
 
 import org.bytedeco.javacpp.Pointer;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastdds.library.fastddsNativeLibrary;
 
@@ -13,6 +14,13 @@ import static us.ihmc.fastdds.global.fastdds.*;
 
 public class fastddsjavaTest
 {
+   private static byte[] generateRandomBytes(int length)
+   {
+      byte[] randomBytes = new byte[length];
+      new Random().nextBytes(randomBytes);
+      return randomBytes;
+   }
+
    @Test
 //   @RepeatedTest(50)
    public void createPublisherTest() throws IOException
@@ -23,17 +31,15 @@ public class fastddsjavaTest
       String xmlContent = Files.readString(xmlPath);
 
       int megabytes = 1;
-      int size = 1000000 * megabytes;
-      byte[] randomBytes = new byte[size];
-      new Random().nextBytes(randomBytes);
+      int dataLength = 1000000 * megabytes;
+
+      byte[] sampleData = generateRandomBytes(dataLength);
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, size);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, dataLength);
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
 
-      System.out.println("topicDataWrapper size " + topicDataWrapper.data_vector().size());
-
-      topicDataWrapper.data_vector().put(randomBytes);
+      topicDataWrapper.data_vector().put(sampleData);
 
       Pointer participant = fastddsjava_create_participant(xmlContent, "example_participant");
       fastddsjava_register_type(participant, topicDataWrapperType);
@@ -49,9 +55,9 @@ public class fastddsjavaTest
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       listener.set_callback(new fastddsjava_DataReaderListenerCallback() {
          @Override
-         public void call(fastddsjava_TopicDataWrapper data, SampleInfo sampleInfo)
+         public void call(fastddsjava_TopicDataWrapper readData, SampleInfo sampleInfo)
          {
-            System.out.println("TEST");
+            Assertions.assertArrayEquals(sampleData, readData.data_vector().get());
          }
       });
       Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
