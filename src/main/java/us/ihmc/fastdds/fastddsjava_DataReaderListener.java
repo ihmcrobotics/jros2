@@ -9,7 +9,8 @@ import org.bytedeco.javacpp.annotation.*;
 import static us.ihmc.fastdds.global.fastdds.*;
 
 
-@Properties(inherit = us.ihmc.fastdds.fastddsConfig.class)
+
+@NoOffset @Properties(inherit = us.ihmc.fastdds.fastddsConfig.class)
 public class fastddsjava_DataReaderListener extends Pointer {
     static { Loader.load(); }
     /** Default native constructor. */
@@ -27,4 +28,6 @@ public class fastddsjava_DataReaderListener extends Pointer {
         return new fastddsjava_DataReaderListener((Pointer)this).offsetAddress(i);
     }
 
+
+    public native void set_callback(@ByVal fastddsjava_DataReaderListenerCallback callback);
 }

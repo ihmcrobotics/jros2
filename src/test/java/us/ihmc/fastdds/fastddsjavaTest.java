@@ -46,7 +46,15 @@ public class fastddsjavaTest
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, "example_datareader");
+      fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
+      listener.set_callback(new fastddsjava_DataReaderListenerCallback() {
+         @Override
+         public void call(fastddsjava_TopicDataWrapper data, SampleInfo sampleInfo)
+         {
+            System.out.println("TEST");
+         }
+      });
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
 
       fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
    }

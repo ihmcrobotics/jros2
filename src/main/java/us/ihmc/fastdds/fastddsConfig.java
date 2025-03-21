@@ -1,5 +1,8 @@
 package us.ihmc.fastdds;
 
+import org.bytedeco.javacpp.FunctionPointer;
+import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.annotation.Const;
 import org.bytedeco.javacpp.annotation.Platform;
 import org.bytedeco.javacpp.annotation.Properties;
 import org.bytedeco.javacpp.tools.Info;
@@ -39,14 +42,24 @@ public class fastddsConfig implements InfoMapper
 
       infoMap.put(new Info("eprosima::fastdds::rtps::Time_t::nanosec").annotations("@Function"));
 
-      infoMap.put(new Info("eprosima::fastdds::dds::Duration_t").pointerTypes("Time_t").cast());
+      infoMap.put(new Info("eprosima::fastdds::dds::Duration_t").skip());
 
       infoMap.put(new Info("eprosima::fastdds::dds::TopicDataType").pointerTypes("Pointer"));
       infoMap.put(new Info("eprosima::fastdds::dds::DataReaderListener").pointerTypes("Pointer"));
-      
+
       infoMap.put(new Info("std::vector<uint8_t>").pointerTypes("ByteVector").define());
 
       infoMap.put(new Info("eprosima::fastdds::rtps::InstanceHandle_t", "InstanceHandle_t").skip());
       infoMap.put(new Info("eprosima::fastdds::rtps::SampleIdentity").skip());
+
+      infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_DataReaderListenerCallback").pointerTypes("fastddsjava_DataReaderListenerCallback"));
+   }
+
+   public static class fastddsjava_DataReaderListenerCallback extends FunctionPointer
+   {
+      public    fastddsjava_DataReaderListenerCallback(Pointer p) { super(p); }
+      protected fastddsjava_DataReaderListenerCallback() { allocate(); }
+      private native void allocate();
+      public native void call(@Const fastddsjava_TopicDataWrapper data, @Const SampleInfo sampleInfo);
    }
 }

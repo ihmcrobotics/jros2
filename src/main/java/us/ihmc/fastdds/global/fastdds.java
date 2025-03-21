@@ -82,8 +82,8 @@ public static native void fastddsjava_datawriter_write(Pointer dataWriter_, fast
 /*
  *  Returns eprosima::fastdds::dds::DataReader*
  */
-public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, @StdString BytePointer profile_name);
-public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, @StdString String profile_name);
+public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString BytePointer profile_name);
+public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString String profile_name);
 
 // #endif // FASTDDSJAVA_H
 

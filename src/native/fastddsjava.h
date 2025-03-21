@@ -113,12 +113,16 @@ private:
 
 };
 
-class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReaderListener {
-//    void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader, const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override {
-//        std::cout << "on_subscription_matched" << std::endl;
-//    }
 
-    void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
+class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReaderListener {
+public:
+    typedef std::function<void(const fastddsjava_TopicDataWrapper*, const eprosima::fastdds::dds::SampleInfo*)> fastddsjava_DataReaderListenerCallback;
+
+    void set_callback(fastddsjava_DataReaderListenerCallback callback) {
+        this->callback = callback;
+    }
+
+    JAVACPP_SKIP void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
         std::cout << "received new data message" << std::endl;
 
         eprosima::fastdds::dds::TypeSupport type = reader->type();
@@ -129,8 +133,12 @@ class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReader
 
         std::cout << "received data size " << data->data_vector.size() << std::endl;
 
-        // Run callback which sends the data to java
+        if (callback)
+            callback(data, &info);
     }
+
+private:
+    fastddsjava_DataReaderListenerCallback callback;
 };
 
 /*
@@ -201,13 +209,10 @@ void fastddsjava_datawriter_write(void* dataWriter_, fastddsjava_TopicDataWrappe
 /*
  *  Returns eprosima::fastdds::dds::DataReader*
  */
-void* fastddsjava_create_datareader(void* subscriber_, void* topic_, std::string profile_name) {
+void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava_DataReaderListener* listener, std::string profile_name) {
     std::cout << "fastddsjava_create_datareader" << std::endl;
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
-
-    // TODO: pass in, function pointer
-    fastddsjava_DataReaderListener* listener = new fastddsjava_DataReaderListener();
 
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
 }

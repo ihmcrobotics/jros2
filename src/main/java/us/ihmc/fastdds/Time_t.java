@@ -103,11 +103,6 @@ public class Time_t extends Pointer {
     public native void fraction(
                 @Cast("uint32_t") int frac);
 
-    public native @ByVal @Cast("eprosima::fastdds::dds::Duration_t*") Time_t to_duration_t();
-
-    public native void from_duration_t(
-                @Cast("const eprosima::fastdds::dds::Duration_t*") @ByRef Time_t duration);
-
     /**
      * Fills a Time_t struct with a representation of the current time.
      *
