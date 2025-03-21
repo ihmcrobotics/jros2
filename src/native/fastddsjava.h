@@ -121,12 +121,15 @@ class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReader
     void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
         std::cout << "received new data message" << std::endl;
 
-        fastddsjava_TopicDataWrapper data;
-        eprosima::fastdds::dds::SampleInfo info;
-        reader->take_next_sample(&data, &info);
+        eprosima::fastdds::dds::TypeSupport type = reader->type();
+        fastddsjava_TopicDataWrapper* data = reinterpret_cast<fastddsjava_TopicDataWrapper*>(type.create_data());
 
-        std::cout << "received data size " << data.data_vector.size() << std::endl;
-        std::cout << "received data: " << data.data_vector[0] << std::endl;
+        eprosima::fastdds::dds::SampleInfo info;
+        reader->take_next_sample(data, &info);
+
+        std::cout << "received data size " << data->data_vector.size() << std::endl;
+
+        // Run callback which sends the data to java
     }
 };
 
@@ -191,8 +194,6 @@ void* fastddsjava_create_datawriter(void* publisher_, void* topic_, std::string 
 
 void fastddsjava_datawriter_write(void* dataWriter_, fastddsjava_TopicDataWrapper* data) {
     eprosima::fastdds::dds::DataWriter* dataWriter = static_cast<eprosima::fastdds::dds::DataWriter*>(dataWriter_);
-
-    std::cout << "writing data " << data->data_vector[0] << std::endl;
 
     dataWriter->write(data);
 }

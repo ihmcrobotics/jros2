@@ -11,7 +11,7 @@ import org.bytedeco.javacpp.annotation.*;
 public class fastdds extends us.ihmc.fastdds.fastddsConfig {
     static { Loader.load(); }
 
-// Targeting ../fastddsjava_ByteVector.java
+// Targeting ../ByteVector.java
 
 
 // Parsed from fastddsjava.h
@@ -86,5 +86,400 @@ public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, 
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, @StdString String profile_name);
 
 // #endif // FASTDDSJAVA_H
+
+// Parsed from fastdds/rtps/common/Time_t.hpp
+
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file Time_t.hpp
+ */
+
+// #ifndef FASTDDS_RTPS_COMMON__TIME_T_HPP
+// #define FASTDDS_RTPS_COMMON__TIME_T_HPP
+
+// #include <fastdds/dds/core/Time_t.hpp>
+// #include <fastdds/fastdds_dll.hpp>
+
+// #include <cmath>
+// #include <cstdint>
+// #include <iostream>
+// Targeting ../Time_t.java
+
+
+
+// #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator ==") boolean equals(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator !=") boolean notEquals(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator <") boolean lessThan(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+/**
+ * Checks if a Time_t is greater than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater than the second
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator >") boolean greaterThan(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator <=") boolean lessThanEquals(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+/**
+ * Checks if a Time_t is greater or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater or equal than the second
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator >=") boolean greaterThanEquals(
+        @Const @ByRef Time_t t1,
+        @Const @ByRef Time_t t2);
+
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("std::ostream*") @ByRef @Name("operator <<") Pointer shiftLeft(
+        @Cast("std::ostream*") @ByRef Pointer output,
+        @Const @ByRef Time_t t);
+
+@Namespace("eprosima::fastdds::rtps") public static native @Cast("std::istream*") @ByRef @Name("operator >>") Pointer shiftRight(
+        @Cast("std::istream*") @ByRef Pointer input,
+        @ByRef Time_t t);
+
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator +") Time_t add(
+        @Const @ByRef Time_t ta,
+        @Const @ByRef Time_t tb);
+
+/**
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
+ * @return A new Time_t with the result.
+ */
+@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator -") Time_t subtract(
+        @Const @ByRef Time_t ta,
+        @Const @ByRef Time_t tb);
+
+// #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeInfinite();
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeZero();
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeInvalid();
+
+ // namespace rtps
+ // namespace fastdds
+ // namespace eprosima
+
+// defines to avoid the "static initialization order fiasco"
+public static final int TIME_T_INFINITE_SECONDS = 0x7fffffff;
+public static final int TIME_T_INFINITE_NANOSECONDS = 0xffffffff;
+
+// #endif // FASTDDS_RTPS_COMMON__TIME_T_HPP
+
+
+// Parsed from fastdds/dds/subscriber/SampleState.hpp
+
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file SampleState.hpp
+ */
+
+// #ifndef FASTDDS_DDS_SUBSCRIBER__SAMPLESTATE_HPP
+// #define FASTDDS_DDS_SUBSCRIBER__SAMPLESTATE_HPP
+
+// #include <cstdint>
+
+/**
+ * Indicates whether or not a sample has ever been read.
+ *
+ * For each sample received, the middleware internally maintains a sample state relative to each \ref DataReader. This
+ * sample state can have the following values:
+ *
+ * \li \ref READ_SAMPLE_STATE indicates that the \ref DataReader has already accessed that sample by means of a read
+ *          or take operation
+ *
+ * \li \ref NOT_READ_SAMPLE_STATE indicates that the \ref DataReader has not accessed that sample before.
+ *
+ * The sample state will, in general, be different for each sample in the collection returned by read or take.
+ */
+/** enum eprosima::fastdds::dds::SampleStateKind */
+public static final short
+    /** Sample has been read. */
+    READ_SAMPLE_STATE = (short)(0x0001 << 0),
+
+    /** Sample has not been read. */
+    NOT_READ_SAMPLE_STATE = (short)(0x0001 << 1);
+
+/** A bit-mask (list) of sample states, i.e. \ref SampleStateKind */
+
+/** Any sample state */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Cast("const eprosima::fastdds::dds::SampleStateMask") short ANY_SAMPLE_STATE();
+
+  // namespace dds
+  // namespace fastdds
+  // namespace eprosima
+
+// #endif  // FASTDDS_DDS_SUBSCRIBER__SAMPLESTATE_HPP
+
+
+// Parsed from fastdds/dds/subscriber/ViewState.hpp
+
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file ViewState.hpp
+ */
+
+// #ifndef FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP
+// #define FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP
+
+// #include <cstdint>
+
+/**
+ * Indicates whether or not an instance is new.
+ *
+ * For each instance (identified by the key), the middleware internally maintains a view state
+ * relative to each \ref DataReader. This view state can have the following values:
+ *
+ * \li \ref NEW_VIEW_STATE indicates that either this is the first time that the \ref DataReader has
+ *     ever accessed samples of that instance, or else that the \ref DataReader has accessed previous
+ *     samples of the instance, but the instance has since been reborn (i.e. become not-alive and
+ *     then alive again). These two cases are distinguished by examining the
+ *     \ref SampleInfo::disposed_generation_count and the \ref SampleInfo::no_writers_generation_count.
+ *
+ * \li \ref NOT_NEW_VIEW_STATE indicates that the \ref DataReader has already accessed samples of the
+ *     same instance and that the instance has not been reborn since.
+ *
+ * The view_state available in the \ref SampleInfo is a snapshot of the view state of the instance
+ * relative to the \ref DataReader used to access the samples at the time the collection was obtained
+ * (i.e. at the time read or take was called). The view_state is therefore the same for all samples in
+ * the returned collection that refer to the same instance.
+ *
+ * Once an instance has been detected as not having any "live" writers and all the samples associated
+ * with the instance are "taken" from the DDSDataReader, the middleware can reclaim all local resources
+ * regarding the instance. Future samples will be treated as "never seen."
+ */
+/** enum eprosima::fastdds::dds::ViewStateKind */
+public static final short
+    /** New instance.This latest generation of the instance has not previously been accessed. */
+    NEW_VIEW_STATE = (short)(0x0001 << 0),
+
+    /** Not a new instance. This latest generation of the instance has previously been accessed. */
+    NOT_NEW_VIEW_STATE = (short)(0x0001 << 1);
+
+/** A bit-mask (list) of view states, i.e. \ref ViewStateKind */
+
+/** Any view state */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Cast("const eprosima::fastdds::dds::ViewStateMask") short ANY_VIEW_STATE();
+
+  // namespace dds
+  // namespace fastdds
+  // namespace eprosima
+
+// #endif  // FASTDDS_DDS_SUBSCRIBER__VIEWSTATE_HPP
+
+
+// Parsed from fastdds/dds/subscriber/InstanceState.hpp
+
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file InstanceState.hpp
+ */
+
+// #ifndef FASTDDS_DDS_SUBSCRIBER__INSTANCESTATE_HPP
+// #define FASTDDS_DDS_SUBSCRIBER__INSTANCESTATE_HPP
+
+// #include <cstdint>
+
+/**
+ * Indicates if the samples are from an alive \ref eprosima::fastdds::dds::DataWriter or not.
+ *
+ * For each instance, the middleware internally maintains an instance state. The instance state
+ * can be:
+ *
+ * \li \ref ALIVE_INSTANCE_STATE indicates that (a) samples have been received for the instance,
+ *     (b) there are alive \ref DataWriter entities writing the instance, and (c) the instance has
+ *     not been explicitly disposed (or else more samples have been received after it was disposed).
+ *
+ * \li \ref NOT_ALIVE_DISPOSED_INSTANCE_STATE indicates the instance was explicitly disposed by a
+ *     \ref DataWriter by means of the dispose operation.
+ *
+ * \li \ref NOT_ALIVE_NO_WRITERS_INSTANCE_STATE indicates the instance has been declared as
+ *     not-alive by the \ref DataReader because it detected that there are no alive \ref DataWriter
+ *     entities writing that instance.
+ *
+ * The precise behavior events that cause the instance state to change depends on the setting of the
+ * OWNERSHIP QoS:
+ *
+ * \li If OWNERSHIP is set to EXCLUSIVE_OWNERSHIP_QOS, then the instance state becomes
+ *     \ref NOT_ALIVE_DISPOSED_INSTANCE_STATE only if the \ref DataWriter that "owns" the instance
+ *     explicitly disposes it. The instance state becomes \ref ALIVE_INSTANCE_STATE again only
+ *     if the \ref DataWriter that owns the instance writes it.
+ *
+ * \li If OWNERSHIP is set to SHARED_OWNERSHIP_QOS, then the instance state becomes
+ *     \ref NOT_ALIVE_DISPOSED_INSTANCE_STATE if any \ref DataWriter explicitly disposes the
+ *     instance. The instance state becomes \ref ALIVE_INSTANCE_STATE as soon as any
+ *     \ref DataWriter writes the instance again.
+ *
+ * The instance state available in the \ref SampleInfo is a snapshot of the instance state of the
+ * instance at the time the collection was obtained (i.e. at the time read or take was called). The
+ * instance state is therefore the same for all samples in the returned collection that refer to the
+ * same instance.
+ */
+/** enum eprosima::fastdds::dds::InstanceStateKind */
+public static final short
+    /** Instance is currently in existence. */
+    ALIVE_INSTANCE_STATE = (short)(0x0001 << 0),
+    /** Not alive disposed instance. The instance has been disposed by a DataWriter. */
+    NOT_ALIVE_DISPOSED_INSTANCE_STATE = (short)(0x0001 << 1),
+    /** Not alive no writers for instance. None of the \ref DataWriter objects that are
+     *  currently alive (according to the LIVELINESS QoS) are writing the instance. */
+    NOT_ALIVE_NO_WRITERS_INSTANCE_STATE = (short)(0x0001 << 2);
+
+/** A bit-mask (list) of instance states, i.e. \ref InstanceStateKind */
+
+/** Not alive instance state */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Cast("const eprosima::fastdds::dds::InstanceStateMask") short NOT_ALIVE_INSTANCE_STATE();
+/** Any instance state */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Cast("const eprosima::fastdds::dds::InstanceStateMask") short ANY_INSTANCE_STATE();
+
+  // namespace dds
+  // namespace fastdds
+  // namespace eprosima
+
+// #endif  // FASTDDS_DDS_SUBSCRIBER__INSTANCESTATE_HPP
+
+
+// Parsed from fastdds/dds/subscriber/SampleInfo.hpp
+
+// Copyright 2020 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file SampleInfo.hpp
+ *
+ */
+
+// #ifndef FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
+// #define FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
+
+// #include <fastdds/dds/subscriber/InstanceState.hpp>
+// #include <fastdds/dds/subscriber/SampleState.hpp>
+// #include <fastdds/dds/subscriber/ViewState.hpp>
+// #include <fastdds/dds/topic/TypeSupport.hpp>
+
+// #include <fastdds/rtps/common/SampleIdentity.hpp>
+// #include <fastdds/rtps/common/Time_t.hpp>
+// #include <fastdds/rtps/common/Types.hpp>
+// #include <fastdds/dds/common/InstanceHandle.hpp>
+// Targeting ../SampleInfo.java
+
+
+
+  // namespace dds
+  // namespace fastdds
+  // namespace eprosima
+
+// #endif // FASTDDS_DDS_SUBSCRIBER__SAMPLEINFO_HPP
+
 
 }

@@ -9,17 +9,17 @@ import org.bytedeco.javacpp.annotation.*;
 import static us.ihmc.fastdds.global.fastdds.*;
 
 @Name("std::vector<uint8_t>") @Properties(inherit = us.ihmc.fastdds.fastddsConfig.class)
-public class fastddsjava_ByteVector extends Pointer {
+public class ByteVector extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
-    public fastddsjava_ByteVector(Pointer p) { super(p); }
-    public fastddsjava_ByteVector(byte value) { this(1); put(0, value); }
-    public fastddsjava_ByteVector(byte ... array) { this(array.length); put(array); }
-    public fastddsjava_ByteVector()       { allocate();  }
-    public fastddsjava_ByteVector(long n) { allocate(n); }
+    public ByteVector(Pointer p) { super(p); }
+    public ByteVector(byte value) { this(1); put(0, value); }
+    public ByteVector(byte ... array) { this(array.length); put(array); }
+    public ByteVector()       { allocate();  }
+    public ByteVector(long n) { allocate(n); }
     private native void allocate();
     private native void allocate(@Cast("size_t") long n);
-    public native @Name("operator =") @ByRef fastddsjava_ByteVector put(@ByRef fastddsjava_ByteVector x);
+    public native @Name("operator =") @ByRef ByteVector put(@ByRef ByteVector x);
 
     public boolean empty() { return size() == 0; }
     public native long size();
@@ -29,7 +29,7 @@ public class fastddsjava_ByteVector extends Pointer {
     public byte front() { return get(0); }
     public byte back() { return get(size() - 1); }
     @Index(function = "at") public native @Cast("uint8_t") byte get(@Cast("size_t") long i);
-    public native fastddsjava_ByteVector put(@Cast("size_t") long i, byte value);
+    public native ByteVector put(@Cast("size_t") long i, byte value);
 
     public native @ByVal Iterator insert(@ByVal Iterator pos, @Cast("uint8_t") byte value);
     public native @ByVal Iterator erase(@ByVal Iterator pos);
@@ -61,16 +61,16 @@ public class fastddsjava_ByteVector extends Pointer {
         resize(size - 1);
         return value;
     }
-    public fastddsjava_ByteVector push_back(byte value) {
+    public ByteVector push_back(byte value) {
         long size = size();
         resize(size + 1);
         return put(size, value);
     }
-    public fastddsjava_ByteVector put(byte value) {
+    public ByteVector put(byte value) {
         if (size() != 1) { resize(1); }
         return put(0, value);
     }
-    public fastddsjava_ByteVector put(byte ... array) {
+    public ByteVector put(byte ... array) {
         if (size() != array.length) { resize(array.length); }
         for (int i = 0; i < array.length; i++) {
             put(i, array[i]);

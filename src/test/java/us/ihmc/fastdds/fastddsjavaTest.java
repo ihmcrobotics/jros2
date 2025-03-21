@@ -7,24 +7,33 @@ import us.ihmc.fastdds.library.fastddsNativeLibrary;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Random;
 
 import static us.ihmc.fastdds.global.fastdds.*;
 
 public class fastddsjavaTest
 {
    @Test
-   public void createPublisherTest() throws IOException, InterruptedException
+//   @RepeatedTest(50)
+   public void createPublisherTest() throws IOException
    {
       fastddsNativeLibrary.load();
 
       Path xmlPath = Path.of("test_profile.xml");
       String xmlContent = Files.readString(xmlPath);
 
+      int megabytes = 1;
+      int size = 1000000 * megabytes;
+      byte[] randomBytes = new byte[size];
+      new Random().nextBytes(randomBytes);
+
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, 64);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, size);
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      topicDataWrapper.data_ptr().asByteBuffer().put((byte) 46);
+
       System.out.println("topicDataWrapper size " + topicDataWrapper.data_vector().size());
+
+      topicDataWrapper.data_vector().put(randomBytes);
 
       Pointer participant = fastddsjava_create_participant(xmlContent, "example_participant");
       fastddsjava_register_type(participant, topicDataWrapperType);
@@ -40,7 +49,5 @@ public class fastddsjavaTest
       Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, "example_datareader");
 
       fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
-
-      Thread.sleep(1000);
    }
 }
