@@ -123,14 +123,6 @@ public:
     }
 
     JAVACPP_SKIP void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
-//        eprosima::fastdds::dds::TypeSupport type = reader->type();
-//        fastddsjava_TopicDataWrapper* data = reinterpret_cast<fastddsjava_TopicDataWrapper*>(type.create_data());
-//
-//        eprosima::fastdds::dds::SampleInfo info;
-//        reader->read_next_sample(data, &info);
-//
-//        if (on_data_callback)
-//            on_data_callback(data, &info);
         if (on_data_callback)
             on_data_callback(reader);
     }
