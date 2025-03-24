@@ -10,10 +10,12 @@ import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
+import us.ihmc.fastddsjava.profiles.ProfilesXML;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
+import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
+import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
+import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -26,17 +28,33 @@ public class fastddsjavaTest
    {
       fastddsjavaNativeLibrary.load();
 
-      Path xmlPath = Path.of("test_profile.xml");
-      try
-      {
-         String xmlContent = Files.readString(xmlPath);
+      ProfilesXML profilesXML = new ProfilesXML();
 
-         fastddsjava_load_xml_profiles_string(xmlContent);
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
+      // Add participant profile
+      ParticipantProfileType participantProfileType = new ParticipantProfileType();
+      participantProfileType.setProfileName("example_participant");
+      profilesXML.addParticipantProfile(participantProfileType);
+
+      // Add topic profile
+      TopicProfileType topicProfileType = new TopicProfileType();
+      topicProfileType.setProfileName("example_topic");
+      profilesXML.addTopicProfile(topicProfileType);
+
+      // Add publisher profile / AKA data writer profile
+      PublisherProfileType publisherProfileType = new PublisherProfileType();
+      publisherProfileType.setProfileName("example_publisher");
+      profilesXML.addPublisherProfile(publisherProfileType);
+
+      // Add subscriber profile / AKA data reader profile
+      SubscriberProfileType subscriberProfileType = new SubscriberProfileType();
+      subscriberProfileType.setProfileName("example_subscriber");
+      profilesXML.addSubscriberProfile(subscriberProfileType);
+
+      String xmlContent = profilesXML.marshall();
+
+      System.out.println(xmlContent);
+
+      fastddsjava_load_xml_profiles_string(xmlContent);
    }
 
    private static byte[] generateRandomBytes(int length)
@@ -85,7 +103,7 @@ public class fastddsjavaTest
 
       // Publisher
       Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
-      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_datawriter");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_publisher");
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
@@ -115,7 +133,7 @@ public class fastddsjavaTest
             Assertions.assertEquals(1, info.total_count());
          }
       });
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
       fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
 
       if (!received.get())
