@@ -86,7 +86,7 @@ public class fastddsjavaTest
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       final AtomicBoolean received = new AtomicBoolean(false);
-      listener.set_on_data_available(new fastddsjava_OnDataCallback() {
+      listener.set_on_data_available_callback(new fastddsjava_OnDataCallback() {
          @Override
          public void call(Pointer dataReader)
          {
@@ -158,7 +158,7 @@ public class fastddsjavaTest
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       final AtomicBoolean finished = new AtomicBoolean(false);
-      listener.set_on_data_available(new fastddsjava_OnDataCallback() {
+      listener.set_on_data_available_callback(new fastddsjava_OnDataCallback() {
          @Override
          public void call(Pointer dataReader)
          {

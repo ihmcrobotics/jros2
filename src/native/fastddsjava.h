@@ -101,7 +101,7 @@ public:
     typedef std::function<void(void*)> fastddsjava_OnDataCallback;
     typedef std::function<void(void*, const eprosima::fastdds::dds::SubscriptionMatchedStatus* info)> fastddsjava_OnSubscriptionCallback;
 
-    void set_on_data_available(fastddsjava_OnDataCallback callback) {
+    void set_on_data_available_callback(fastddsjava_OnDataCallback callback) {
         this->on_data_callback = callback;
     }
 

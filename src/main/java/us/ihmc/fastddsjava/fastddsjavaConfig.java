@@ -16,7 +16,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastddsjava.h",
 
                   "fastdds/rtps/common/Time_t.hpp",
-                  "fastdds/dds/core/Time_t.hpp", // Why?
+                  "fastdds/dds/core/Time_t.hpp",
 
                   "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",

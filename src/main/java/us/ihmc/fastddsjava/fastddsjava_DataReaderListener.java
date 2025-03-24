@@ -28,7 +28,7 @@ public class fastddsjava_DataReaderListener extends Pointer {
     }
 
 
-    public native void set_on_data_available(@ByVal fastddsjava_OnDataCallback callback);
+    public native void set_on_data_available_callback(@ByVal fastddsjava_OnDataCallback callback);
 
     public native void set_on_subscription_callback(@ByVal fastddsjava_OnSubscriptionCallback callback);
 }
