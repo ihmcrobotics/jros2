@@ -58,7 +58,7 @@ public class fastddsjavaTest
    }
 
    @RepeatedTest(1000)
-   public void publishAndSubscriberTest() throws InterruptedException
+   public void publishAndSubscribeTest() throws InterruptedException
    {
       int megabytes = 1;
       int dataLength = 1000000 * megabytes;
@@ -67,6 +67,7 @@ public class fastddsjavaTest
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, dataLength);
+      topicDataWrapperType.deallocate(false); // TODO: FIX
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
 
       topicDataWrapper.data_vector().put(sampleData);
@@ -84,7 +85,7 @@ public class fastddsjavaTest
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       final AtomicBoolean received = new AtomicBoolean(false);
-      listener.set_callback(new fastddsjava_DataReaderListenerCallback() {
+      listener.set_on_data_available(new fastddsjava_OnDataCallback() {
          @Override
          public void call(fastddsjava_TopicDataWrapper readData, SampleInfo sampleInfo)
          {
@@ -95,6 +96,14 @@ public class fastddsjavaTest
                received.set(true);
                received.notify();
             }
+         }
+      });
+      listener.set_on_subscription_callback(new fastddsjava_OnSubscriptionCallback() {
+         @Override
+         public void call(SubscriptionMatchedStatus info)
+         {
+            // Assert there is 1 match
+            Assertions.assertEquals(1, info.total_count());
          }
       });
       Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
@@ -114,6 +123,7 @@ public class fastddsjavaTest
       fastddsjava_delete_publisher(participant, publisher);
       fastddsjava_delete_subscriber(participant, subscriber);
       fastddsjava_delete_topic(participant, topic);
+      fastddsjava_unregister_type(participant, topicDataWrapperType.get_name());
       fastddsjava_delete_participant(participant);
    }
 }

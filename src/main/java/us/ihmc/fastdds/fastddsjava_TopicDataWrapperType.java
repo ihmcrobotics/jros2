@@ -24,4 +24,6 @@ public class fastddsjava_TopicDataWrapperType extends Pointer {
 
     public native void delete_data(Pointer data);
 
+    public native @StdString BytePointer get_name();
+
 }

@@ -77,6 +77,9 @@ public static native void fastddsjava_delete_subscriber(Pointer participant_, Po
 
 public static native void fastddsjava_register_type(Pointer participant_, fastddsjava_TopicDataWrapperType type);
 
+public static native void fastddsjava_unregister_type(Pointer participant_, @StdString BytePointer type_name);
+public static native void fastddsjava_unregister_type(Pointer participant_, @StdString String type_name);
+
 /*
  *  Returns eprosima::fastdds::dds::Topic*
  */
@@ -243,6 +246,79 @@ public static final int TIME_T_INFINITE_SECONDS = 0x7fffffff;
 public static final int TIME_T_INFINITE_NANOSECONDS = 0xffffffff;
 
 // #endif // FASTDDS_RTPS_COMMON__TIME_T_HPP
+
+
+// Parsed from fastdds/dds/core/status/MatchedStatus.hpp
+
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file MatchedStatus.hpp
+ */
+
+// #ifndef FASTDDS_DDS_CORE_STATUS__MATCHEDSTATUS_HPP
+// #define FASTDDS_DDS_CORE_STATUS__MATCHEDSTATUS_HPP
+
+// #include <cstdint>
+// Targeting ../MatchedStatus.java
+
+
+
+ // namespace dds
+ // namespace fastdds
+ // namespace eprosima
+
+// #endif //FASTDDS_DDS_CORE_STATUS__MATCHEDSTATUS_HPP
+
+
+// Parsed from fastdds/dds/core/status/SubscriptionMatchedStatus.hpp
+
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file SubscriptionMatchedStatus.hpp
+ */
+
+// #ifndef FASTDDS_DDS_CORE_STATUS__SUBSCRIPTIONMATCHEDSTATUS_HPP
+// #define FASTDDS_DDS_CORE_STATUS__SUBSCRIPTIONMATCHEDSTATUS_HPP
+
+// #include <cstdint>
+
+// #include <fastdds/dds/core/status/MatchedStatus.hpp>
+// #include <fastdds/dds/common/InstanceHandle.hpp>
+// Targeting ../SubscriptionMatchedStatus.java
+
+
+
+ // namespace dds
+ // namespace fastdds
+ // namespace eprosima
+
+// #endif //_SUBCRIPTION_MATCHED_STATUS_HPP_
 
 
 // Parsed from fastdds/dds/subscriber/SampleState.hpp

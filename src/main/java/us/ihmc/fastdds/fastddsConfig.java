@@ -17,6 +17,9 @@ import org.bytedeco.javacpp.tools.InfoMapper;
 
                   "fastdds/rtps/common/Time_t.hpp",
 
+                  "fastdds/dds/core/status/MatchedStatus.hpp",
+                  "fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
+
                   "fastdds/dds/subscriber/SampleState.hpp",
                   "fastdds/dds/subscriber/ViewState.hpp",
                   "fastdds/dds/subscriber/InstanceState.hpp",
@@ -52,14 +55,23 @@ public class fastddsConfig implements InfoMapper
       infoMap.put(new Info("eprosima::fastdds::rtps::InstanceHandle_t", "InstanceHandle_t").skip());
       infoMap.put(new Info("eprosima::fastdds::rtps::SampleIdentity").skip());
 
-      infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_DataReaderListenerCallback").pointerTypes("fastddsjava_DataReaderListenerCallback"));
+      infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnDataCallback").pointerTypes("fastddsjava_OnDataCallback"));
+      infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnSubscriptionCallback").pointerTypes("fastddsjava_OnSubscriptionCallback"));
    }
 
-   public static class fastddsjava_DataReaderListenerCallback extends FunctionPointer
+   public static class fastddsjava_OnDataCallback extends FunctionPointer
    {
-      public    fastddsjava_DataReaderListenerCallback(Pointer p) { super(p); }
-      protected fastddsjava_DataReaderListenerCallback() { allocate(); }
+      public    fastddsjava_OnDataCallback(Pointer p) { super(p); }
+      protected fastddsjava_OnDataCallback() { allocate(); }
       private native void allocate();
       public native void call(@Const fastddsjava_TopicDataWrapper data, @Const SampleInfo sampleInfo);
+   }
+
+   public static class fastddsjava_OnSubscriptionCallback extends FunctionPointer
+   {
+      public    fastddsjava_OnSubscriptionCallback(Pointer p) { super(p); }
+      protected fastddsjava_OnSubscriptionCallback() { allocate(); }
+      private native void allocate();
+      public native void call(@Const SubscriptionMatchedStatus info);
    }
 }
