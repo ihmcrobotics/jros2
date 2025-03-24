@@ -16,7 +16,7 @@ publishing {
             from(components["java"])
 
             groupId = project.group.toString()
-            artifactId = "fastdds-java"
+            artifactId = "fastddsjava"
             version = project.version.toString()
         }
     }

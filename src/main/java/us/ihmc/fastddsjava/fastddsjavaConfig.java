@@ -1,4 +1,4 @@
-package us.ihmc.fastdds;
+package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.FunctionPointer;
 import org.bytedeco.javacpp.Pointer;
@@ -17,6 +17,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
 
                   "fastdds/rtps/common/Time_t.hpp",
 
+                  "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",
                   "fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
 
@@ -27,18 +28,20 @@ import org.bytedeco.javacpp.tools.InfoMapper;
             },
             linkpath = "install/lib",
             link = {"fastcdr", "fastdds"},
-            preload = "jnifastdds"
+            preload = "jnifastddsjava"
       )
 },
-      target = "us.ihmc.fastdds",
-      global = "us.ihmc.fastdds.global.fastdds"
+      target = "us.ihmc.fastddsjava",
+      global = "us.ihmc.fastddsjava.global.fastddsjava"
 )
-public class fastddsConfig implements InfoMapper
+public class fastddsjavaConfig implements InfoMapper
 {
    @Override
    public void map(InfoMap infoMap)
    {
       infoMap.put(new Info("JAVACPP_SKIP").skip());
+      infoMap.put(new Info("eProsima_user_DllExport").skip());
+      infoMap.put(new Info("DDSRETURNCODE_DllAPI").skip());
 
       infoMap.put(new Info("TIME_T_INFINITE_SECONDS").javaText("public static final int TIME_T_INFINITE_SECONDS = 0x7fffffff;"));
       infoMap.put(new Info("TIME_T_INFINITE_NANOSECONDS").javaText("public static final int TIME_T_INFINITE_NANOSECONDS = 0xffffffff;"));
@@ -64,7 +67,7 @@ public class fastddsConfig implements InfoMapper
       public    fastddsjava_OnDataCallback(Pointer p) { super(p); }
       protected fastddsjava_OnDataCallback() { allocate(); }
       private native void allocate();
-      public native void call(@Const fastddsjava_TopicDataWrapper data, @Const SampleInfo sampleInfo);
+      public native void call(Pointer dataReader);
    }
 
    public static class fastddsjava_OnSubscriptionCallback extends FunctionPointer
@@ -72,6 +75,6 @@ public class fastddsConfig implements InfoMapper
       public    fastddsjava_OnSubscriptionCallback(Pointer p) { super(p); }
       protected fastddsjava_OnSubscriptionCallback() { allocate(); }
       private native void allocate();
-      public native void call(@Const SubscriptionMatchedStatus info);
+      public native void call(Pointer dataReader, @Const SubscriptionMatchedStatus info);
    }
 }

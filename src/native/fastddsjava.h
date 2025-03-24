@@ -109,11 +109,10 @@ private:
 
 };
 
-
 class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReaderListener {
 public:
-    typedef std::function<void(const fastddsjava_TopicDataWrapper*, const eprosima::fastdds::dds::SampleInfo*)> fastddsjava_OnDataCallback;
-    typedef std::function<void(const eprosima::fastdds::dds::SubscriptionMatchedStatus* info)> fastddsjava_OnSubscriptionCallback;
+    typedef std::function<void(void*)> fastddsjava_OnDataCallback;
+    typedef std::function<void(void*, const eprosima::fastdds::dds::SubscriptionMatchedStatus* info)> fastddsjava_OnSubscriptionCallback;
 
     void set_on_data_available(fastddsjava_OnDataCallback callback) {
         this->on_data_callback = callback;
@@ -124,20 +123,22 @@ public:
     }
 
     JAVACPP_SKIP void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
-        eprosima::fastdds::dds::TypeSupport type = reader->type();
-        fastddsjava_TopicDataWrapper* data = reinterpret_cast<fastddsjava_TopicDataWrapper*>(type.create_data());
-
-        eprosima::fastdds::dds::SampleInfo info;
-        reader->read_next_sample(data, &info);
-
+//        eprosima::fastdds::dds::TypeSupport type = reader->type();
+//        fastddsjava_TopicDataWrapper* data = reinterpret_cast<fastddsjava_TopicDataWrapper*>(type.create_data());
+//
+//        eprosima::fastdds::dds::SampleInfo info;
+//        reader->read_next_sample(data, &info);
+//
+//        if (on_data_callback)
+//            on_data_callback(data, &info);
         if (on_data_callback)
-            on_data_callback(data, &info);
+            on_data_callback(reader);
     }
 
     JAVACPP_SKIP void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
                                                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override {
         if (on_subscription_callback)
-            on_subscription_callback(&info);
+            on_subscription_callback(reader, &info);
     }
 
 private:
@@ -264,6 +265,18 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
+}
+
+uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    return reader->read_next_sample(data, info);
+}
+
+uint32_t fastddsjava_datareader_take_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    return reader->take_next_sample(data, info);
 }
 
 void fastddsjava_delete_datareader(void* subscriber_, void* reader_) {

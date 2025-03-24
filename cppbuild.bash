@@ -72,26 +72,23 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastdds/fastddsConfig.java
+java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/fastddsjavaConfig.java
 
-cp us/ihmc/fastdds/*.java ../src/main/java/us/ihmc/fastdds
-cp us/ihmc/fastdds/global/*.java ../src/main/java/us/ihmc/fastdds/global/
+cp us/ihmc/fastddsjava/*.java ../src/main/java/us/ihmc/fastddsjava
+cp us/ihmc/fastddsjava/global/*.java ../src/main/java/us/ihmc/fastddsjava/global/
 
 #### JNI compilation ####
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastdds/*.java us/ihmc/fastdds/global/*.java -d javainstall
+java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/*.java us/ihmc/fastddsjava/global/*.java -d javainstall
 
 ##### Copy shared libs to resources ####
 # Linux
-mkdir -p ../src/main/resources/fastdds/native/linux-x86_64
+mkdir -p ../src/main/resources/fastddsjava/native/linux-x86_64
 if [ -f "install/lib/libfastcdr.so.2.2.6" ]; then
-  cp install/lib/libfastcdr.so.2.2.6 ../src/main/resources/fastdds/native/linux-x86_64
+  cp install/lib/libfastcdr.so.2.2.6 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
 if [ -f "install/lib/libfastdds.so.3.1.2" ]; then
-  cp install/lib/libfastdds.so.3.1.2 ../src/main/resources/fastdds/native/linux-x86_64
+  cp install/lib/libfastdds.so.3.1.2 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
-if [ -f "install/lib/libfoonathan_memory-0.7.3.a" ]; then
-  cp install/lib/libfoonathan_memory-0.7.3.a ../src/main/resources/fastdds/native/linux-x86_64
-fi
-if [ -f "javainstall/libjnifastdds.so" ]; then
-  cp javainstall/libjnifastdds.so ../src/main/resources/fastdds/native/linux-x86_64
+if [ -f "javainstall/libjnifastddsjava.so" ]; then
+  cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64
 fi

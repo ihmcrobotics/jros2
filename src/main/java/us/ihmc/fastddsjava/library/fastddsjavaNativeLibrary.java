@@ -1,10 +1,10 @@
-package us.ihmc.fastdds.library;
+package us.ihmc.fastddsjava.library;
 
 import us.ihmc.tools.nativelibraries.NativeLibraryDescription;
 import us.ihmc.tools.nativelibraries.NativeLibraryLoader;
 import us.ihmc.tools.nativelibraries.NativeLibraryWithDependencies;
 
-public class fastddsNativeLibrary implements NativeLibraryDescription {
+public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
    @Override
    public String getPackage(OperatingSystem os, Architecture arch) {
       String archPackage = "";
@@ -17,14 +17,14 @@ public class fastddsNativeLibrary implements NativeLibraryDescription {
          throw new RuntimeException("Unsupported platform");
       }
 
-      return "fastdds.native." + archPackage;
+      return "fastddsjava.native." + archPackage;
    }
 
    @Override
    public NativeLibraryWithDependencies getLibraryWithDependencies(OperatingSystem os, Architecture arch) {
       switch (os) {
          case LINUX64 -> {
-            return NativeLibraryWithDependencies.fromFilename("libjnifastdds.so", "libfastcdr.so.2.2.6", "libfastdds.so.3.1.2");
+            return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.2.6", "libfastdds.so.3.1.2");
          }
          case WIN64, MACOSX64 -> throw new RuntimeException("Unsupported platform");
       }
@@ -35,7 +35,7 @@ public class fastddsNativeLibrary implements NativeLibraryDescription {
 
    public static boolean load() {
       if (!loaded) {
-         fastddsNativeLibrary lib = new fastddsNativeLibrary();
+         fastddsjavaNativeLibrary lib = new fastddsjavaNativeLibrary();
          loaded = NativeLibraryLoader.loadLibrary(lib);
       }
       return loaded;

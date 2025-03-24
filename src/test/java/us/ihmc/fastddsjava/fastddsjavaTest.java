@@ -1,10 +1,10 @@
-package us.ihmc.fastdds;
+package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastdds.library.fastddsNativeLibrary;
+import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,13 +12,13 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static us.ihmc.fastdds.global.fastdds.*;
+import static us.ihmc.fastddsjava.global.fastddsjava.*;
 
 public class fastddsjavaTest
 {
    static
    {
-      fastddsNativeLibrary.load();
+      fastddsjavaNativeLibrary.load();
 
       Path xmlPath = Path.of("test_profile.xml");
       try
@@ -87,9 +87,12 @@ public class fastddsjavaTest
       final AtomicBoolean received = new AtomicBoolean(false);
       listener.set_on_data_available(new fastddsjava_OnDataCallback() {
          @Override
-         public void call(fastddsjava_TopicDataWrapper readData, SampleInfo sampleInfo)
+         public void call(Pointer dataReader)
          {
-            Assertions.assertArrayEquals(sampleData, readData.data_vector().get());
+            SampleInfo sampleInfo = new SampleInfo();
+            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, sampleInfo);
+
+            Assertions.assertArrayEquals(sampleData, topicDataWrapper.data_vector().get());
 
             synchronized (received)
             {
@@ -100,7 +103,7 @@ public class fastddsjavaTest
       });
       listener.set_on_subscription_callback(new fastddsjava_OnSubscriptionCallback() {
          @Override
-         public void call(SubscriptionMatchedStatus info)
+         public void call(Pointer dataReader, SubscriptionMatchedStatus info)
          {
             // Assert there is 1 match
             Assertions.assertEquals(1, info.total_count());
@@ -116,6 +119,9 @@ public class fastddsjavaTest
             received.wait();
          }
       }
+
+      // Assert that internally the data reader does not have any more history to be read
+      Assertions.assertEquals(RETCODE_NO_DATA(), fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, new SampleInfo()));
 
       topicDataWrapperType.delete_data(topicDataWrapper);
       fastddsjava_delete_datawriter(publisher, dataWriter);
