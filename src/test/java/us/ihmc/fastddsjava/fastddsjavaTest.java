@@ -5,6 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
+import us.ihmc.fastddsjava.pointers.SampleInfo;
+import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
+import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
+import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,7 +18,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static us.ihmc.fastddsjava.global.fastddsjava.*;
+import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class fastddsjavaTest
 {

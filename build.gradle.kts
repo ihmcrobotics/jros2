@@ -43,6 +43,10 @@ dependencies {
     api("us.ihmc:ihmc-native-library-loader:2.0.4") {
         isTransitive = true
     }
+    // Match this version with YoVariables
+    api("com.sun.xml.bind:jaxb-impl:4.0.5") {
+        isTransitive = true
+    }
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")

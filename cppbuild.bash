@@ -62,9 +62,10 @@ cp ../src/native/fastddsjava.h install/include/fastddsjava.h
 popd
 
 ### Java generation ####
-cd cppbuild
+pushd cppbuild
 
-cp -r ../src/main/java/* .
+mkdir -p us/ihmc/fastddsjava/pointers
+cp ../src/main/java/us/ihmc/fastddsjava/pointers/*.java us/ihmc/fastddsjava/pointers/
 
 JAVACPP_VERSION=1.5.11
 if [ ! -f javacpp.jar ]; then
@@ -72,13 +73,12 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/fastddsjavaConfig.java
+java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
 
-cp us/ihmc/fastddsjava/*.java ../src/main/java/us/ihmc/fastddsjava
-cp us/ihmc/fastddsjava/global/*.java ../src/main/java/us/ihmc/fastddsjava/global/
+cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
 #### JNI compilation ####
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/*.java us/ihmc/fastddsjava/global/*.java -d javainstall
+java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/*.java -d javainstall
 
 ##### Copy shared libs to resources ####
 # Linux
@@ -92,3 +92,30 @@ fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
+
+popd
+
+# xjc generation ###
+pushd cppbuild
+
+if command -v xjc &> /dev/null; then
+  xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java Fast-DDS-$FASTDDS_VERSION/resources/xsd/fastdds_profiles.xsd
+
+  find "../src/main/java/us/ihmc/fastddsjava/profiles/gen" -type f -name "*.java" -print0 | while IFS= read -r -d '' file; do
+    # Replace javax.xml.* with jakarta.xml.*, but ignore javax.xml.namespace.QName
+    # Replace @javax.xml.bind.annotation.* with @jakarta.xml.bind.annotation.*
+    sed -i '
+        /import javax\.xml\.namespace\.QName/!s/import javax\.xml\./import jakarta.xml./g
+        s/@javax\.xml\.bind\.annotation\./@jakarta.xml.bind.annotation./g
+        s/javax\.xml\.bind\.annotation\.XmlNsForm/jakarta.xml.bind.annotation.XmlNsForm/g
+    ' "$file"
+
+    if command -v dos2unix &> /dev/null; then
+      dos2unix "$file"
+    fi
+  done
+else
+    echo "xjc not found"
+fi
+
+popd
