@@ -17,17 +17,14 @@ public class fastddsjava extends us.ihmc.fastddsjava.pointers.fastddsjavaInfoMap
 // #ifndef FASTDDSJAVA_H
 // #define FASTDDSJAVA_H
 
-// #include <fastdds/dds/topic/TopicDataType.hpp>
 // #include <fastdds/rtps/common/SerializedPayload.hpp>
-
-// #include <fastdds/dds/domain/DomainParticipant.hpp>
-// #include <fastdds/dds/publisher/DataWriterListener.hpp>
+// #include <fastdds/dds/topic/TopicDataType.hpp>
 // #include <fastdds/dds/topic/TypeSupport.hpp>
+// #include <fastdds/dds/domain/DomainParticipant.hpp>
 // #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
+// #include <fastdds/dds/publisher/DataWriterListener.hpp>
 // #include <fastdds/dds/publisher/DataWriter.hpp>
 // #include <fastdds/dds/publisher/Publisher.hpp>
-// #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
-// #include <fastdds/dds/publisher/qos/PublisherQos.hpp>
 // #include <fastdds/dds/subscriber/Subscriber.hpp>
 // #include <fastdds/dds/subscriber/SampleInfo.hpp>
 // #include <fastdds/dds/subscriber/DataReader.hpp>

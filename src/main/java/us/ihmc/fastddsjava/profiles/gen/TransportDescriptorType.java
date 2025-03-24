@@ -1017,8 +1017,8 @@ public class TransportDescriptorType {
     public static class InterfaceWhiteList {
 
         @XmlElementRefs({
-            @XmlElementRef(name = "address", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-            @XmlElementRef(name = "interface", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
+            @XmlElementRef(name = "interface", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+            @XmlElementRef(name = "address", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
         })
         protected List<JAXBElement<?>> addressOrInterface;
 
