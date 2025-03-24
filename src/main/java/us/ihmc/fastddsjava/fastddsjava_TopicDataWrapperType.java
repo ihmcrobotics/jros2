@@ -15,10 +15,10 @@ public class fastddsjava_TopicDataWrapperType extends Pointer {
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
     public fastddsjava_TopicDataWrapperType(Pointer p) { super(p); }
 
-    public fastddsjava_TopicDataWrapperType(@StdString BytePointer name, @Cast("uint16_t") short encapsulation, @Cast("uint32_t") int initial_size) { super((Pointer)null); allocate(name, encapsulation, initial_size); }
-    private native void allocate(@StdString BytePointer name, @Cast("uint16_t") short encapsulation, @Cast("uint32_t") int initial_size);
-    public fastddsjava_TopicDataWrapperType(@StdString String name, @Cast("uint16_t") short encapsulation, @Cast("uint32_t") int initial_size) { super((Pointer)null); allocate(name, encapsulation, initial_size); }
-    private native void allocate(@StdString String name, @Cast("uint16_t") short encapsulation, @Cast("uint32_t") int initial_size);
+    public fastddsjava_TopicDataWrapperType(@StdString BytePointer name, @Cast("uint16_t") short encapsulation) { super((Pointer)null); allocate(name, encapsulation); }
+    private native void allocate(@StdString BytePointer name, @Cast("uint16_t") short encapsulation);
+    public fastddsjava_TopicDataWrapperType(@StdString String name, @Cast("uint16_t") short encapsulation) { super((Pointer)null); allocate(name, encapsulation); }
+    private native void allocate(@StdString String name, @Cast("uint16_t") short encapsulation);
 
     public native Pointer create_data();
 

@@ -19,23 +19,21 @@
 #define JAVACPP_SKIP
 
 struct fastddsjava_TopicDataWrapper {
-    uint32_t initial_size;
     std::vector<uint8_t> data_vector;
 
-    void* data_ptr() {
+    uint8_t* data_ptr() {
         return data_vector.data();
     }
 };
 
 class fastddsjava_TopicDataWrapperType : public eprosima::fastdds::dds::TopicDataType {
 public:
-    fastddsjava_TopicDataWrapperType(std::string name, uint16_t encapsulation, uint32_t initial_size) {
+    fastddsjava_TopicDataWrapperType(std::string name, uint16_t encapsulation) {
         set_name(name.c_str());
         this->encapsulation = encapsulation;
-        this->initial_size = initial_size;
 
         // TODO:
-        max_serialized_type_size = initial_size + 4; // padding for encapsulation (needed?)
+        max_serialized_type_size = 1 + 4; // padding for encapsulation (needed?)
         is_compute_key_provided = false;
     }
 
@@ -46,8 +44,8 @@ public:
         payload.encapsulation = this->encapsulation;
         uint32_t data_length = calculate_serialized_size(data, data_representation);
         payload.length = data_length;
-        memcpy(payload.data, data->data_ptr(), data_length); // TODO: can remove?
-        payload.max_size = payload.length; // TODO:
+        memcpy(payload.data, data->data_ptr(), data_length);
+        payload.max_size = payload.length;
 
         return true;
     };
@@ -55,8 +53,9 @@ public:
     JAVACPP_SKIP bool deserialize(eprosima::fastdds::rtps::SerializedPayload_t& payload, void* data_) override {
         fastddsjava_TopicDataWrapper* data = static_cast<fastddsjava_TopicDataWrapper*>(data_);
 
-        data->initial_size = payload.length;
-        memcpy(data->data_ptr(), payload.data, payload.length);
+        data->data_vector.assign(payload.data, payload.data + payload.length);
+
+//        memcpy(data->data_ptr(), payload.data, payload.length);
 
         return true;
     };
@@ -70,21 +69,17 @@ public:
 
     JAVACPP_SKIP bool compute_key(eprosima::fastdds::rtps::SerializedPayload_t& payload, eprosima::fastdds::rtps::InstanceHandle_t& ihandle,
                         bool force_md5 = false) override {
-        // TODO:
-        std::cout << "compute_key 1" << std::endl;
         return true;
     };
 
     JAVACPP_SKIP bool compute_key(const void* const data, eprosima::fastdds::rtps::InstanceHandle_t& ihandle, bool force_md5 = false) override {
-        // TODO:
-        std::cout << "compute_key 2" << std::endl;
         return true;
     };
 
     void* create_data() override {
         fastddsjava_TopicDataWrapper* data = new fastddsjava_TopicDataWrapper();
-        data->initial_size = initial_size;
-        data->data_vector = std::vector<uint8_t>(initial_size, 0);
+        // Create vector of size 1 and fill it with a 0
+        data->data_vector = std::vector<uint8_t>(1, 0);
         return reinterpret_cast<void*>(data);
     };
 
@@ -97,14 +92,6 @@ public:
     }
 
 private:
-    /*
-     *
-     */
-    uint32_t initial_size;
-
-    /*
-     *
-     */
     uint16_t encapsulation;
 
 };

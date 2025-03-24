@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static us.ihmc.fastddsjava.global.fastddsjava.*;
 
@@ -49,7 +50,7 @@ public class fastddsjavaTest
       byte[] sampleData = generateRandomBytes(dataLength);
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, dataLength);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
 
       topicDataWrapper.data_vector().put(sampleData);
@@ -66,7 +67,7 @@ public class fastddsjavaTest
       byte[] sampleData = generateRandomBytes(dataLength);
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001, dataLength);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
       topicDataWrapperType.deallocate(false); // TODO: FIX
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
 
@@ -124,6 +125,88 @@ public class fastddsjavaTest
       Assertions.assertEquals(RETCODE_NO_DATA(), fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, new SampleInfo()));
 
       topicDataWrapperType.delete_data(topicDataWrapper);
+      fastddsjava_delete_datawriter(publisher, dataWriter);
+      fastddsjava_delete_datareader(subscriber, dataReader);
+      fastddsjava_delete_publisher(participant, publisher);
+      fastddsjava_delete_subscriber(participant, subscriber);
+      fastddsjava_delete_topic(participant, topic);
+      fastddsjava_unregister_type(participant, topicDataWrapperType.get_name());
+      fastddsjava_delete_participant(participant);
+   }
+
+   @Test
+   public void growingDataTest() throws InterruptedException
+   {
+      final int initialSize = 1;
+      final int finalSize = 1000;
+      final AtomicInteger currentSize = new AtomicInteger(initialSize);
+
+      // Topic type
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
+      topicDataWrapperType.deallocate(false); // TODO: FIX
+
+      Pointer participant = fastddsjava_create_participant("example_participant");
+      fastddsjava_register_type(participant, topicDataWrapperType);
+
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
+
+      // Publisher
+      Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_datawriter");
+
+      // Subscriber
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
+      fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
+      final AtomicBoolean finished = new AtomicBoolean(false);
+      listener.set_on_data_available(new fastddsjava_OnDataCallback() {
+         @Override
+         public void call(Pointer dataReader)
+         {
+            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
+            SampleInfo sampleInfo = new SampleInfo();
+            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, sampleInfo);
+
+            // Wait to notify until the size is finalSize
+            if (topicDataWrapper.data_vector().size() > finalSize)
+            {
+               synchronized (finished)
+               {
+                  finished.set(true);
+                  finished.notify();
+               }
+            }
+
+            topicDataWrapperType.delete_data(topicDataWrapper);
+         }
+      });
+
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
+
+      while (!finished.get())
+      {
+         if (currentSize.get() >= finalSize)
+         {
+            synchronized (finished)
+            {
+               finished.wait();
+            }
+         }
+         else
+         {
+            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
+
+            // Grow the currentSize
+            currentSize.set(currentSize.get() * 2);
+
+            byte[] sampleData = generateRandomBytes(currentSize.get());
+            topicDataWrapper.data_vector().put(sampleData);
+
+            fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+
+            topicDataWrapperType.delete_data(topicDataWrapper);
+         }
+      }
+
       fastddsjava_delete_datawriter(publisher, dataWriter);
       fastddsjava_delete_datareader(subscriber, dataReader);
       fastddsjava_delete_publisher(participant, publisher);
