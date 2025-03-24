@@ -193,13 +193,11 @@ public class fastddsjavaTest
          }
          else
          {
-            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-
             // Grow the currentSize
             currentSize.set(currentSize.get() * 2);
 
-            byte[] sampleData = generateRandomBytes(currentSize.get());
-            topicDataWrapper.data_vector().put(sampleData);
+            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
+            topicDataWrapper.data_vector().put(generateRandomBytes(currentSize.get()));
 
             fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
 
