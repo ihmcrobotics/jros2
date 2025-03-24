@@ -46,10 +46,18 @@ public class fastdds extends us.ihmc.fastdds.fastddsConfig {
 
 
 /*
+ *  Should only be done once during program run
+ */
+public static native void fastddsjava_load_xml_profiles_string(@StdString BytePointer xml);
+public static native void fastddsjava_load_xml_profiles_string(@StdString String xml);
+
+/*
  *  Returns eprosima::fastdds::dds::DomainParticipant*
  */
-public static native Pointer fastddsjava_create_participant(@StdString BytePointer xml, @StdString BytePointer profile_name);
-public static native Pointer fastddsjava_create_participant(@StdString String xml, @StdString String profile_name);
+public static native Pointer fastddsjava_create_participant(@StdString BytePointer profile_name);
+public static native Pointer fastddsjava_create_participant(@StdString String profile_name);
+
+public static native void fastddsjava_delete_participant(Pointer participant_);
 
 /*
  *  Returns eprosima::fastdds::dds::Publisher*
@@ -57,11 +65,15 @@ public static native Pointer fastddsjava_create_participant(@StdString String xm
 public static native Pointer fastddsjava_create_publisher(Pointer participant_, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_publisher(Pointer participant_, @StdString String profile_name);
 
+public static native void fastddsjava_delete_publisher(Pointer participant_, Pointer publisher_);
+
 /*
  *  Returns eprosima::fastdds::dds::Subscriber*
  */
 public static native Pointer fastddsjava_create_subscriber(Pointer participant_, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_subscriber(Pointer participant_, @StdString String profile_name);
+
+public static native void fastddsjava_delete_subscriber(Pointer participant_, Pointer subscriber_);
 
 public static native void fastddsjava_register_type(Pointer participant_, fastddsjava_TopicDataWrapperType type);
 
@@ -71,19 +83,25 @@ public static native void fastddsjava_register_type(Pointer participant_, fastdd
 public static native Pointer fastddsjava_create_topic(Pointer participant_, fastddsjava_TopicDataWrapperType type, @StdString BytePointer topic_name, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_topic(Pointer participant_, fastddsjava_TopicDataWrapperType type, @StdString String topic_name, @StdString String profile_name);
 
+public static native void fastddsjava_delete_topic(Pointer participant_, Pointer topic_);
+
 /*
  *  Returns eprosima::fastdds::dds::DataWriter*
  */
 public static native Pointer fastddsjava_create_datawriter(Pointer publisher_, Pointer topic_, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datawriter(Pointer publisher_, Pointer topic_, @StdString String profile_name);
 
-public static native void fastddsjava_datawriter_write(Pointer dataWriter_, fastddsjava_TopicDataWrapper data);
+public static native void fastddsjava_delete_datawriter(Pointer publisher_, Pointer writer_);
+
+public static native void fastddsjava_datawriter_write(Pointer writer_, fastddsjava_TopicDataWrapper data);
 
 /*
  *  Returns eprosima::fastdds::dds::DataReader*
  */
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString String profile_name);
+
+public static native void fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
 
 // #endif // FASTDDSJAVA_H
 

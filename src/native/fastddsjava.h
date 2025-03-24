@@ -134,17 +134,28 @@ private:
 };
 
 /*
- *  Returns eprosima::fastdds::dds::DomainParticipant*
+ *  Should only be done once during program run
  */
-void* fastddsjava_create_participant(std::string xml, std::string profile_name) {
+void fastddsjava_load_xml_profiles_string(std::string xml) {
     auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 
     factory->load_XML_profiles_string(xml.c_str(), xml.length());
+}
 
-    // TODO debug
-//    std::cout << xml << std::endl;
+/*
+ *  Returns eprosima::fastdds::dds::DomainParticipant*
+ */
+void* fastddsjava_create_participant(std::string profile_name) {
+    auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 
     return factory->create_participant_with_profile(profile_name);
+}
+
+void fastddsjava_delete_participant(void* participant_) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
+
+    factory->delete_participant(participant);
 }
 
 /*
@@ -156,6 +167,13 @@ void* fastddsjava_create_publisher(void* participant_, std::string profile_name)
     return participant->create_publisher_with_profile(profile_name);
 }
 
+void fastddsjava_delete_publisher(void* participant_, void* publisher_) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::dds::Publisher* publisher = static_cast<eprosima::fastdds::dds::Publisher*>(publisher_);
+
+    participant->delete_publisher(publisher);
+}
+
 /*
  *  Returns eprosima::fastdds::dds::Subscriber*
  */
@@ -163,6 +181,13 @@ void* fastddsjava_create_subscriber(void* participant_, std::string profile_name
     eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
 
     return participant->create_subscriber_with_profile(profile_name);
+}
+
+void fastddsjava_delete_subscriber(void* participant_, void* subscriber_) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
+
+    participant->delete_subscriber(subscriber);
 }
 
 void fastddsjava_register_type(void* participant_, fastddsjava_TopicDataWrapperType* type) {
@@ -182,6 +207,13 @@ void* fastddsjava_create_topic(void* participant_, fastddsjava_TopicDataWrapperT
     return participant->create_topic_with_profile(topic_name, type->get_name(), profile_name);
 }
 
+void fastddsjava_delete_topic(void* participant_, void* topic_) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
+
+    participant->delete_topic(topic);
+}
+
 /*
  *  Returns eprosima::fastdds::dds::DataWriter*
  */
@@ -192,10 +224,17 @@ void* fastddsjava_create_datawriter(void* publisher_, void* topic_, std::string 
     return publisher->create_datawriter_with_profile(topic, profile_name);
 }
 
-void fastddsjava_datawriter_write(void* dataWriter_, fastddsjava_TopicDataWrapper* data) {
-    eprosima::fastdds::dds::DataWriter* dataWriter = static_cast<eprosima::fastdds::dds::DataWriter*>(dataWriter_);
+void fastddsjava_delete_datawriter(void* publisher_, void* writer_) {
+    eprosima::fastdds::dds::Publisher* publisher = static_cast<eprosima::fastdds::dds::Publisher*>(publisher_);
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
 
-    dataWriter->write(data);
+    publisher->delete_datawriter(writer);
+}
+
+void fastddsjava_datawriter_write(void* writer_, fastddsjava_TopicDataWrapper* data) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+    writer->write(data);
 }
 
 /*
@@ -206,6 +245,13 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
+}
+
+void fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
+    eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    subscriber->delete_datareader(reader);
 }
 
 #endif // FASTDDSJAVA_H
