@@ -175,7 +175,7 @@ public class fastddsjavaTest
 
       // Publisher
       Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
-      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_datawriter");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_publisher");
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
@@ -203,7 +203,7 @@ public class fastddsjavaTest
          }
       });
 
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_datareader");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
 
       while (!finished.get())
       {
