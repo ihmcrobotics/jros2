@@ -3,7 +3,7 @@
 
 # Clean
 rm -rf cppbuild/us
-#find src/main/java/us/ihmc/fastdds -maxdepth 1 -type f -not \( -name "fastddsConfig.java" \) -delete
+#find src/main/java/us/ihmc/fastddsjava -maxdepth 1 -type f -not \( -name "fastddsjavaConfig.java" \) -delete
 
 pushd .
 mkdir -p cppbuild

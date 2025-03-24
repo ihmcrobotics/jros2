@@ -16,6 +16,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastddsjava.h",
 
                   "fastdds/rtps/common/Time_t.hpp",
+                  "fastdds/dds/core/Time_t.hpp", // Why?
 
                   "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",
@@ -43,12 +44,14 @@ public class fastddsjavaConfig implements InfoMapper
       infoMap.put(new Info("eProsima_user_DllExport").skip());
       infoMap.put(new Info("DDSRETURNCODE_DllAPI").skip());
 
+      // Time
+      infoMap.put(new Info("eprosima::fastdds::rtps::Time_t").pointerTypes("rtps_Time_t"));
+      infoMap.put(new Info("eprosima::fastdds::dds::Time_t").pointerTypes("dds_Time_t"));
+      infoMap.put(new Info("eprosima::fastdds::dds::Duration_t").pointerTypes("dds_Time_t")); // TODO: Make alias Pointer?
       infoMap.put(new Info("TIME_T_INFINITE_SECONDS").javaText("public static final int TIME_T_INFINITE_SECONDS = 0x7fffffff;"));
       infoMap.put(new Info("TIME_T_INFINITE_NANOSECONDS").javaText("public static final int TIME_T_INFINITE_NANOSECONDS = 0xffffffff;"));
-
       infoMap.put(new Info("eprosima::fastdds::rtps::Time_t::nanosec").annotations("@Function"));
-
-      infoMap.put(new Info("eprosima::fastdds::dds::Duration_t").skip());
+      infoMap.put(new Info("eprosima::fastdds::dds::Time_t::fraction").annotations("@Function"));
 
       infoMap.put(new Info("eprosima::fastdds::dds::TopicDataType").pointerTypes("Pointer"));
       infoMap.put(new Info("eprosima::fastdds::dds::DataReaderListener").pointerTypes("Pointer"));

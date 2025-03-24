@@ -259,6 +259,12 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
 }
 
+bool fastddsjava_datareader_wait_for_unread_message(void* reader_, const eprosima::fastdds::dds::Duration_t& timeout) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    return reader->wait_for_unread_message(timeout);
+}
+
 uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 

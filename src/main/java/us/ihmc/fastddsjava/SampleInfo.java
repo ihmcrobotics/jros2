@@ -56,10 +56,10 @@ public class SampleInfo extends Pointer {
     public native int absolute_generation_rank(); public native SampleInfo absolute_generation_rank(int setter);
 
     /** time provided by the DataWriter when the sample was written */
-    public native @ByRef Time_t source_timestamp(); public native SampleInfo source_timestamp(Time_t setter);
+    public native @ByRef rtps_Time_t source_timestamp(); public native SampleInfo source_timestamp(rtps_Time_t setter);
 
     /** time provided by the DataReader when the sample was added to its history */
-    public native @ByRef Time_t reception_timestamp(); public native SampleInfo reception_timestamp(Time_t setter);
+    public native @ByRef rtps_Time_t reception_timestamp(); public native SampleInfo reception_timestamp(rtps_Time_t setter);
 
     /** identifies locally the corresponding instance */
 

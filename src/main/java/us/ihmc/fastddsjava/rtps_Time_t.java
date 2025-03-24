@@ -13,22 +13,22 @@ import static us.ihmc.fastddsjava.global.fastddsjava.*;
  * Structure Time_t, used to describe times at RTPS protocol.
  * \ingroup COMMON_MODULE
  */
-@Namespace("eprosima::fastdds::rtps") @NoOffset @Properties(inherit = us.ihmc.fastddsjava.fastddsjavaConfig.class)
-public class Time_t extends Pointer {
+@Name("eprosima::fastdds::rtps::Time_t") @NoOffset @Properties(inherit = us.ihmc.fastddsjava.fastddsjavaConfig.class)
+public class rtps_Time_t extends Pointer {
     static { Loader.load(); }
     /** Pointer cast constructor. Invokes {@link Pointer#Pointer(Pointer)}. */
-    public Time_t(Pointer p) { super(p); }
+    public rtps_Time_t(Pointer p) { super(p); }
 
 
     /** Default constructor. Sets values to zero. */
-    public Time_t() { super((Pointer)null); allocate(); }
+    public rtps_Time_t() { super((Pointer)null); allocate(); }
     private native void allocate();
 
     /**
      * @param sec Seconds
      * @param frac Fraction of second
      */
-    public Time_t(
+    public rtps_Time_t(
                 int sec,
                 @Cast("uint32_t") int frac) { super((Pointer)null); allocate(sec, frac); }
     private native void allocate(
@@ -38,7 +38,7 @@ public class Time_t extends Pointer {
     /**
      * @param sec Seconds. The fractional part is converted to nanoseconds.
      */
-    public Time_t(
+    public rtps_Time_t(
                 @Cast("long double") double sec) { super((Pointer)null); allocate(sec); }
     private native void allocate(
                 @Cast("long double") double sec);
@@ -46,10 +46,10 @@ public class Time_t extends Pointer {
     /**
      * @param time fastdds::dds::Time_t, aka. dds::Duration_t.
      */
-    public Time_t(
-                @Const @ByRef Time_t time) { super((Pointer)null); allocate(time); }
+    public rtps_Time_t(
+                @Const @ByRef dds_Time_t time) { super((Pointer)null); allocate(time); }
     private native void allocate(
-                @Const @ByRef Time_t time);
+                @Const @ByRef dds_Time_t time);
 
     /**
      *  Returns stored time as nanoseconds (including seconds)
@@ -103,11 +103,16 @@ public class Time_t extends Pointer {
     public native void fraction(
                 @Cast("uint32_t") int frac);
 
+    public native @ByVal dds_Time_t to_duration_t();
+
+    public native void from_duration_t(
+                @Const @ByRef dds_Time_t duration);
+
     /**
      * Fills a Time_t struct with a representation of the current time.
      *
      * @param ret Reference to the structure to be filled in.
      */
     public static native void now(
-                @ByRef Time_t ret);
+                @ByRef rtps_Time_t ret);
 }

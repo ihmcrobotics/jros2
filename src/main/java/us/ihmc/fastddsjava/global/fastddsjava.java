@@ -104,6 +104,8 @@ public static native void fastddsjava_datawriter_write(Pointer writer_, fastddsj
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString String profile_name);
 
+public static native @Cast("bool") boolean fastddsjava_datareader_wait_for_unread_message(Pointer reader_, @Const @ByRef dds_Time_t timeout);
+
 public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, SampleInfo info);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_sample(Pointer reader_, Pointer data, SampleInfo info);
@@ -141,7 +143,7 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
 // #include <cmath>
 // #include <cstdint>
 // #include <iostream>
-// Targeting ../Time_t.java
+// Targeting ../rtps_Time_t.java
 
 
 
@@ -154,8 +156,8 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if equal
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator ==") boolean equals(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 /**
  * Comparison assignment
@@ -164,8 +166,8 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if not equal
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator !=") boolean notEquals(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 /**
  * Checks if a Time_t is less than other.
@@ -174,8 +176,8 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if the first Time_t is less than the second
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator <") boolean lessThan(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 /**
  * Checks if a Time_t is greater than other.
@@ -184,8 +186,8 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if the first Time_t is greater than the second
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator >") boolean greaterThan(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 /**
  * Checks if a Time_t is less or equal than other.
@@ -194,8 +196,8 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if the first Time_t is less or equal than the second
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator <=") boolean lessThanEquals(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 /**
  * Checks if a Time_t is greater or equal than other.
@@ -204,16 +206,16 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @return True if the first Time_t is greater or equal than the second
  */
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("bool") @Name("operator >=") boolean greaterThanEquals(
-        @Const @ByRef Time_t t1,
-        @Const @ByRef Time_t t2);
+        @Const @ByRef rtps_Time_t t1,
+        @Const @ByRef rtps_Time_t t2);
 
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("std::ostream*") @ByRef @Name("operator <<") Pointer shiftLeft(
         @Cast("std::ostream*") @ByRef Pointer output,
-        @Const @ByRef Time_t t);
+        @Const @ByRef rtps_Time_t t);
 
 @Namespace("eprosima::fastdds::rtps") public static native @Cast("std::istream*") @ByRef @Name("operator >>") Pointer shiftRight(
         @Cast("std::istream*") @ByRef Pointer input,
-        @ByRef Time_t t);
+        @ByRef rtps_Time_t t);
 
 /**
  * Adds two Time_t.
@@ -221,9 +223,9 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @param tb Second Time_t to add
  * @return A new Time_t with the result.
  */
-@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator +") Time_t add(
-        @Const @ByRef Time_t ta,
-        @Const @ByRef Time_t tb);
+@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator +") rtps_Time_t add(
+        @Const @ByRef rtps_Time_t ta,
+        @Const @ByRef rtps_Time_t tb);
 
 /**
  * Subtracts two Time_t.
@@ -231,15 +233,15 @@ public static native void fastddsjava_delete_datareader(Pointer subscriber_, Poi
  * @param tb Second Time_t to subtract
  * @return A new Time_t with the result.
  */
-@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator -") Time_t subtract(
-        @Const @ByRef Time_t ta,
-        @Const @ByRef Time_t tb);
+@Namespace("eprosima::fastdds::rtps") public static native @ByVal @Name("operator -") rtps_Time_t subtract(
+        @Const @ByRef rtps_Time_t ta,
+        @Const @ByRef rtps_Time_t tb);
 
 // #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
 
-@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeInfinite();
-@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeZero();
-@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef Time_t c_RTPSTimeInvalid();
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef rtps_Time_t c_RTPSTimeInfinite();
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef rtps_Time_t c_RTPSTimeZero();
+@Namespace("eprosima::fastdds::rtps") @MemberGetter public static native @Const @ByRef rtps_Time_t c_RTPSTimeInvalid();
 
  // namespace rtps
  // namespace fastdds
@@ -250,6 +252,140 @@ public static final int TIME_T_INFINITE_SECONDS = 0x7fffffff;
 public static final int TIME_T_INFINITE_NANOSECONDS = 0xffffffff;
 
 // #endif // FASTDDS_RTPS_COMMON__TIME_T_HPP
+
+
+// Parsed from fastdds/dds/core/Time_t.hpp
+
+// Copyright 2024 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file Time_t.hpp
+ */
+
+// #ifndef FASTDDS_DDS_CORE__TIME_T_HPP
+// #define FASTDDS_DDS_CORE__TIME_T_HPP
+
+// #include <fastdds/fastdds_dll.hpp>
+
+// #include <cmath>
+// #include <cstdint>
+// #include <iostream>
+// Targeting ../dds_Time_t.java
+
+
+
+// #ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if equal
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator ==") boolean equals(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+/**
+ * Comparison assignment
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if not equal
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator !=") boolean notEquals(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+/**
+ * Checks if a Time_t is less than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less than the second
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator <") boolean lessThan(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+/**
+ * Checks if a Time_t is greater than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater than the second
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator >") boolean greaterThan(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+/**
+ * Checks if a Time_t is less or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is less or equal than the second
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator <=") boolean lessThanEquals(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+/**
+ * Checks if a Time_t is greater or equal than other.
+ * @param t1 First Time_t to compare
+ * @param t2 Second Time_t to compare
+ * @return True if the first Time_t is greater or equal than the second
+ */
+@Namespace("eprosima::fastdds::dds") public static native @Cast("bool") @Name("operator >=") boolean greaterThanEquals(
+        @Const @ByRef dds_Time_t t1,
+        @Const @ByRef dds_Time_t t2);
+
+@Namespace("eprosima::fastdds::dds") public static native @Cast("std::ostream*") @ByRef @Name("operator <<") Pointer shiftLeft(
+        @Cast("std::ostream*") @ByRef Pointer output,
+        @Const @ByRef dds_Time_t t);
+
+/**
+ * Adds two Time_t.
+ * @param ta First Time_t to add
+ * @param tb Second Time_t to add
+ * @return A new Time_t with the result.
+ */
+@Namespace("eprosima::fastdds::dds") public static native @ByVal @Name("operator +") dds_Time_t add(
+        @Const @ByRef dds_Time_t ta,
+        @Const @ByRef dds_Time_t tb);
+
+/**
+ * Subtracts two Time_t.
+ * @param ta First Time_t to subtract
+ * @param tb Second Time_t to subtract
+ * @return A new Time_t with the result.
+ */
+@Namespace("eprosima::fastdds::dds") public static native @ByVal @Name("operator -") dds_Time_t subtract(
+        @Const @ByRef dds_Time_t ta,
+        @Const @ByRef dds_Time_t tb);
+
+// #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS_PUBLIC
+
+/** Time_t (dds::Duration_t) representing an infinite time. DONT USE IT IN CONSTRUCTORS */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Const @ByRef dds_Time_t c_TimeInfinite();
+/** Time_t (dds::Duration_t) representing a zero time. DONT USE IT IN CONSTRUCTORS */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Const @ByRef dds_Time_t c_TimeZero();
+/** Time_t (dds::Duration_t) representing an invalid time. DONT USE IT IN CONSTRUCTORS */
+@Namespace("eprosima::fastdds::dds") @MemberGetter public static native @Const @ByRef dds_Time_t c_TimeInvalid();
+
+ // namespace dds
+ // namespace fastdds
+ // namespace eprosima
+
+// #endif // FASTDDS_DDS_CORE__TIME_T_HPP
 
 
 // Parsed from fastdds/dds/core/detail/DDSReturnCode.hpp
