@@ -40,6 +40,7 @@ public class fastddsjavaConfig implements InfoMapper
    @Override
    public void map(InfoMap infoMap)
    {
+      // Defines
       infoMap.put(new Info("JAVACPP_SKIP").skip());
       infoMap.put(new Info("eProsima_user_DllExport").skip());
       infoMap.put(new Info("DDSRETURNCODE_DllAPI").skip());
@@ -61,6 +62,7 @@ public class fastddsjavaConfig implements InfoMapper
       infoMap.put(new Info("eprosima::fastdds::rtps::InstanceHandle_t", "InstanceHandle_t").skip());
       infoMap.put(new Info("eprosima::fastdds::rtps::SampleIdentity").skip());
 
+      // Callbacks
       infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnDataCallback").pointerTypes("fastddsjava_OnDataCallback"));
       infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnSubscriptionCallback").pointerTypes("fastddsjava_OnSubscriptionCallback"));
    }

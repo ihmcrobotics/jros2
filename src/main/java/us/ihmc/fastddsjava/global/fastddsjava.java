@@ -45,9 +45,6 @@ public class fastddsjava extends us.ihmc.fastddsjava.fastddsjavaConfig {
 
 
 
-/*
- *  Should only be done once during program run
- */
 public static native void fastddsjava_load_xml_profiles_string(@StdString BytePointer xml);
 public static native void fastddsjava_load_xml_profiles_string(@StdString String xml);
 

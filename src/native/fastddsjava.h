@@ -30,10 +30,10 @@ class fastddsjava_TopicDataWrapperType : public eprosima::fastdds::dds::TopicDat
 public:
     fastddsjava_TopicDataWrapperType(std::string name, uint16_t encapsulation) {
         set_name(name.c_str());
+
         this->encapsulation = encapsulation;
 
-        // TODO:
-        max_serialized_type_size = 1 + 4; // padding for encapsulation (needed?)
+        max_serialized_type_size = 1 + 4; // TODO: padding for encapsulation (needed?)
         is_compute_key_provided = false;
     }
 
@@ -54,8 +54,6 @@ public:
         fastddsjava_TopicDataWrapper* data = static_cast<fastddsjava_TopicDataWrapper*>(data_);
 
         data->data_vector.assign(payload.data, payload.data + payload.length);
-
-//        memcpy(data->data_ptr(), payload.data, payload.length);
 
         return true;
     };
@@ -125,9 +123,6 @@ private:
     fastddsjava_OnSubscriptionCallback on_subscription_callback;
 };
 
-/*
- *  Should only be done once during program run
- */
 void fastddsjava_load_xml_profiles_string(const std::string xml) {
     auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 
@@ -185,7 +180,6 @@ void fastddsjava_delete_subscriber(void* participant_, void* subscriber_) {
 void fastddsjava_register_type(void* participant_, fastddsjava_TopicDataWrapperType* type) {
     eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
 
-    // TODO: expose TypeSupport?
     eprosima::fastdds::dds::TypeSupport type_support(type);
 
     participant->register_type(type_support);
