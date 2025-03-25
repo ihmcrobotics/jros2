@@ -15,19 +15,19 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="flowControllerDescriptorType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="name" type="{http://www.eprosima.com}string"/>
- *         &lt;element name="scheduler" type="{http://www.eprosima.com}flowControllerSchedulerPolicy" minOccurs="0"/>
- *         &lt;element name="max_bytes_per_period" type="{http://www.eprosima.com}int32" minOccurs="0"/>
- *         &lt;element name="period_ms" type="{http://www.eprosima.com}uint64" minOccurs="0"/>
- *         &lt;element name="sender_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="flowControllerDescriptorType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="name" type="{http://www.eprosima.com}string"/&gt;
+ *         &lt;element name="scheduler" type="{http://www.eprosima.com}flowControllerSchedulerPolicy" minOccurs="0"/&gt;
+ *         &lt;element name="max_bytes_per_period" type="{http://www.eprosima.com}int32" minOccurs="0"/&gt;
+ *         &lt;element name="period_ms" type="{http://www.eprosima.com}uint64" minOccurs="0"/&gt;
+ *         &lt;element name="sender_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

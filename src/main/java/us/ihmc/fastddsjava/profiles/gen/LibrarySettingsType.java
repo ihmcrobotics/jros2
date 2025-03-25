@@ -13,26 +13,26 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="LibrarySettingsType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all minOccurs="0">
- *         &lt;element name="intraprocess_delivery" minOccurs="0">
- *           &lt;simpleType>
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *               &lt;enumeration value="OFF"/>
- *               &lt;enumeration value="USER_DATA_ONLY"/>
- *               &lt;enumeration value="FULL"/>
- *               &lt;enumeration value="off"/>
- *               &lt;enumeration value="user_data_only"/>
- *               &lt;enumeration value="full"/>
- *             &lt;/restriction>
- *           &lt;/simpleType>
- *         &lt;/element>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="LibrarySettingsType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all minOccurs="0"&gt;
+ *         &lt;element name="intraprocess_delivery" minOccurs="0"&gt;
+ *           &lt;simpleType&gt;
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *               &lt;enumeration value="OFF"/&gt;
+ *               &lt;enumeration value="USER_DATA_ONLY"/&gt;
+ *               &lt;enumeration value="FULL"/&gt;
+ *               &lt;enumeration value="off"/&gt;
+ *               &lt;enumeration value="user_data_only"/&gt;
+ *               &lt;enumeration value="full"/&gt;
+ *             &lt;/restriction&gt;
+ *           &lt;/simpleType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

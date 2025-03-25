@@ -16,26 +16,26 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="logConsumerType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence maxOccurs="unbounded">
- *         &lt;choice>
- *           &lt;element name="class" minOccurs="0">
- *             &lt;simpleType>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *                 &lt;enumeration value="StdoutConsumer"/>
- *                 &lt;enumeration value="StdoutErrConsumer"/>
- *                 &lt;enumeration value="FileConsumer"/>
- *               &lt;/restriction>
- *             &lt;/simpleType>
- *           &lt;/element>
- *           &lt;element name="property" type="{http://www.eprosima.com}logConsumerPropertyType" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="logConsumerType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence maxOccurs="unbounded"&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="class" minOccurs="0"&gt;
+ *             &lt;simpleType&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *                 &lt;enumeration value="StdoutConsumer"/&gt;
+ *                 &lt;enumeration value="StdoutErrConsumer"/&gt;
+ *                 &lt;enumeration value="FileConsumer"/&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/simpleType&gt;
+ *           &lt;/element&gt;
+ *           &lt;element name="property" type="{http://www.eprosima.com}logConsumerPropertyType" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

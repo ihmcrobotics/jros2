@@ -27,7 +27,7 @@ public class fastddsjava_TopicDataWrapper extends Pointer {
         return new fastddsjava_TopicDataWrapper((Pointer)this).offsetAddress(i);
     }
 
-    public native @ByRef ByteVector data_vector(); public native fastddsjava_TopicDataWrapper data_vector(ByteVector setter);
+    public native ByteVector data_vector(); public native fastddsjava_TopicDataWrapper data_vector(ByteVector setter);
 
     public native @Cast("uint8_t*") BytePointer data_ptr();
 }

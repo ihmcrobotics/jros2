@@ -2,6 +2,7 @@ package us.ihmc.fastddsjava;
 
 import jakarta.xml.bind.JAXBElement;
 import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.PointerScope;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,12 @@ import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteLi
 import javax.xml.namespace.QName;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class fastddsjavaTest
@@ -117,11 +120,10 @@ public class fastddsjavaTest
       topicDataWrapperType.delete_data(topicDataWrapper);
    }
 
-   @RepeatedTest(1000)
+   @RepeatedTest(5000)
    public void publishAndSubscribeTest() throws InterruptedException
    {
-//      int megabytes = 1;
-//      int dataLength = 1000000 * megabytes;
+      int retCode;
       final byte[] sampleData = generateRandomBytes(100000);
 
       // Topic type
@@ -130,7 +132,9 @@ public class fastddsjavaTest
 
       Pointer participant = fastddsjava_create_participant("example_participant");
 
-      fastddsjava_register_type(participant, typeSupport);
+      retCode = fastddsjava_register_type(participant, typeSupport);
+      checkReturnCode(retCode);
+
       Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
 
       // Publisher
@@ -140,62 +144,87 @@ public class fastddsjavaTest
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
+
       final AtomicBoolean received = new AtomicBoolean(false);
       final AtomicBoolean dataCorrect = new AtomicBoolean(false);
-      listener.set_on_data_available_callback(new fastddsjava_OnDataCallback() {
+
+      // Add callback to listener
+      Pointer dataReceive = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+      SampleInfo sampleInfo = new SampleInfo();
+      fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
+      {
          @Override
          public void call(Pointer dataReader)
          {
-            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-            SampleInfo sampleInfo = new SampleInfo();
-            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, sampleInfo);
-
-            dataCorrect.set(Arrays.equals(sampleData, topicDataWrapper.data_vector().get()));
-
             synchronized (received)
             {
+               fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+               dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
+
                received.set(true);
                received.notify();
             }
          }
-      });
-      listener.set_on_subscription_callback(new fastddsjava_OnSubscriptionCallback() {
+      };
+      listener.set_on_data_available_callback(onDataCallback);
+
+      // Add subscription callback
+      final AtomicInteger numberOfMatches = new AtomicInteger();
+      fastddsjava_OnSubscriptionCallback onSubscriptionCallback = new fastddsjava_OnSubscriptionCallback() {
          @Override
          public void call(Pointer dataReader, SubscriptionMatchedStatus info)
          {
-            // Assert there is 1 match
-            Assertions.assertEquals(1, info.total_count());
+            // Record number of matches
+            numberOfMatches.set(info.total_count());
          }
-      });
+      };
+      listener.set_on_subscription_callback(onSubscriptionCallback);
+
+      Pointer data = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
+
+      // pack wrapper with data
+      topicDataWrapper.data_vector().put(sampleData);
+
+      // Create reader with listener
       Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
 
-      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      topicDataWrapper.data_vector().put(sampleData);
-      fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+      // Send the data
+      retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+      checkReturnCode(retCode);
 
-      if (!received.get())
+      // Wait to receive data
+      synchronized (received)
       {
-         synchronized (received)
+         if (!received.get())
          {
             received.wait();
          }
       }
 
-      // Assert that the data received by the data reader is the same as was written by the data writer
-      Assertions.assertTrue(dataCorrect.get());
+      // assert there's only 1 match
+      assertEquals(1, numberOfMatches.get());
 
-      // Assert that internally the data reader does not have any more history to be read
-      Assertions.assertEquals(RETCODE_NO_DATA(), fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, new SampleInfo()));
+      // assert the data was received correctly
+      assertTrue(dataCorrect.get());
 
-      topicDataWrapperType.delete_data(topicDataWrapper);
-
-      fastddsjava_delete_datawriter(publisher, dataWriter);
-      fastddsjava_delete_datareader(subscriber, dataReader);
-      fastddsjava_delete_publisher(participant, publisher);
-      fastddsjava_delete_subscriber(participant, subscriber);
-      fastddsjava_delete_topic(participant, topic);
-      fastddsjava_unregister_type(participant, topicDataWrapperType.get_name());
-      fastddsjava_delete_participant(participant);
+      // delete/release all references
+      assertTrue(sampleInfo.releaseReference());
+      topicDataWrapperType.delete_data(dataReceive);
+      topicDataWrapperType.delete_data(data);
+      checkReturnCode(fastddsjava_delete_datareader(subscriber, dataReader));
+      assertTrue(onSubscriptionCallback.releaseReference());
+      assertTrue(onDataCallback.releaseReference());
+      assertTrue(listener.releaseReference());
+      checkReturnCode(fastddsjava_delete_subscriber(participant, subscriber));
+      checkReturnCode(fastddsjava_delete_datawriter(publisher, dataWriter));
+      checkReturnCode(fastddsjava_delete_publisher(participant, publisher));
+      checkReturnCode(fastddsjava_delete_topic(participant, topic));
+      checkReturnCode(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
+      checkReturnCode(fastddsjava_delete_participant(participant));
+//      assertTrue(typeSupport.releaseReference()); // TODO: Look into whether we need to explicitly deallocate this
+      assertTrue(topicDataWrapperType.releaseReference());
    }
 
    @Test
@@ -222,7 +251,8 @@ public class fastddsjavaTest
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       final AtomicBoolean finished = new AtomicBoolean(false);
-      listener.set_on_data_available_callback(new fastddsjava_OnDataCallback() {
+      listener.set_on_data_available_callback(new fastddsjava_OnDataCallback()
+      {
          @Override
          public void call(Pointer dataReader)
          {
@@ -276,5 +306,11 @@ public class fastddsjavaTest
       fastddsjava_delete_topic(participant, topic);
       fastddsjava_unregister_type(participant, topicDataWrapperType.get_name());
       fastddsjava_delete_participant(participant);
+   }
+
+   private void checkReturnCode(int error)
+   {
+      if (error != RETCODE_OK())
+         throw new RuntimeException("ERROR " + error);
    }
 }
