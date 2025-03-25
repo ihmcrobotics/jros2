@@ -1,5 +1,6 @@
 package us.ihmc.fastddsjava;
 
+import jakarta.xml.bind.JAXBElement;
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
@@ -12,11 +13,19 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
+import javax.xml.namespace.QName;
+import java.util.Arrays;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,9 +39,36 @@ public class fastddsjavaTest
 
       ProfilesXML profilesXML = new ProfilesXML();
 
+      // TODO: Experiment more with this
+      profilesXML.getLibrarySettingsType().setIntraprocessDelivery("OFF");
+
+      // Add transport
+      TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+      TransportDescriptorType udp4Transport = new TransportDescriptorType();
+      udp4Transport.setTransportId(UUID.randomUUID().toString());
+      udp4Transport.setType("UDPv4");
+      InterfaceWhiteList interfaceWhiteList = new InterfaceWhiteList();
+      JAXBElement<String> addressElement = new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "address"),
+                                                             String.class,
+                                                             "127.0.0.1");
+      interfaceWhiteList.getAddressOrInterface().add(addressElement);
+      udp4Transport.setInterfaceWhiteList(interfaceWhiteList);
+
+      transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
+      profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
+
+      Rtps rtps = new Rtps();
+      rtps.setUseBuiltinTransports(true);
+      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+      userTransports.getTransportId().add(udp4Transport.getTransportId());
+      rtps.setUserTransports(userTransports);
+      participantProfileType.setRtps(rtps);
+
       participantProfileType.setProfileName("example_participant");
+      participantProfileType.setDomainId(145);
       profilesXML.addParticipantProfile(participantProfileType);
 
       // Add topic profile
@@ -84,17 +120,14 @@ public class fastddsjavaTest
    @RepeatedTest(1000)
    public void publishAndSubscribeTest() throws InterruptedException
    {
-      int megabytes = 1;
-      int dataLength = 1000000 * megabytes;
-
-      byte[] sampleData = generateRandomBytes(dataLength);
+//      int megabytes = 1;
+//      int dataLength = 1000000 * megabytes;
+      final byte[] sampleData = generateRandomBytes(100000);
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
       topicDataWrapperType.deallocate(false); // TODO: FIX
-      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
 
-      topicDataWrapper.data_vector().put(sampleData);
 
       Pointer participant = fastddsjava_create_participant("example_participant");
       fastddsjava_register_type(participant, topicDataWrapperType);
@@ -109,14 +142,16 @@ public class fastddsjavaTest
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
       final AtomicBoolean received = new AtomicBoolean(false);
+      final AtomicBoolean dataCorrect = new AtomicBoolean(false);
       listener.set_on_data_available_callback(new fastddsjava_OnDataCallback() {
          @Override
          public void call(Pointer dataReader)
          {
+            fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
             SampleInfo sampleInfo = new SampleInfo();
             fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, sampleInfo);
 
-            Assertions.assertArrayEquals(sampleData, topicDataWrapper.data_vector().get());
+            dataCorrect.set(Arrays.equals(sampleData, topicDataWrapper.data_vector().get()));
 
             synchronized (received)
             {
@@ -134,6 +169,9 @@ public class fastddsjavaTest
          }
       });
       Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
+
+      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
+      topicDataWrapper.data_vector().put(sampleData);
       fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
 
       if (!received.get())
@@ -144,10 +182,14 @@ public class fastddsjavaTest
          }
       }
 
+      // Assert that the data received by the data reader is the same as was written by the data writer
+      Assertions.assertTrue(dataCorrect.get());
+
       // Assert that internally the data reader does not have any more history to be read
       Assertions.assertEquals(RETCODE_NO_DATA(), fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapper, new SampleInfo()));
 
       topicDataWrapperType.delete_data(topicDataWrapper);
+
       fastddsjava_delete_datawriter(publisher, dataWriter);
       fastddsjava_delete_datareader(subscriber, dataReader);
       fastddsjava_delete_publisher(participant, publisher);

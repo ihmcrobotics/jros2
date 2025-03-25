@@ -255,6 +255,12 @@ uint32_t fastddsjava_datareader_take_next_sample(void* reader_, void* data, epro
     return reader->take_next_sample(data, info);
 }
 
+void fastddsjava_datareader_set_listener(void* reader_, fastddsjava_DataReaderListener* listener = nullptr) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    reader->set_listener(listener);
+}
+
 void fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);

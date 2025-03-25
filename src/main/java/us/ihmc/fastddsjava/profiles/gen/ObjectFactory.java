@@ -29,18 +29,6 @@ public class ObjectFactory {
     private final static QName _LibrarySettings_QNAME = new QName("http://www.eprosima.com", "library_settings");
     private final static QName _Types_QNAME = new QName("http://www.eprosima.com", "types");
     private final static QName _Log_QNAME = new QName("http://www.eprosima.com", "log");
-    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
-    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
-    private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
-    private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
-    private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
-    private final static QName _ProfilesTypeReplier_QNAME = new QName("http://www.eprosima.com", "replier");
-    private final static QName _ProfilesTypeDomainparticipantFactory_QNAME = new QName("http://www.eprosima.com", "domainparticipant_factory");
-    private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
-    private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
-    private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
     private final static QName _DiscoverySettingsTypeDiscoveryProtocol_QNAME = new QName("http://www.eprosima.com", "discoveryProtocol");
     private final static QName _DiscoverySettingsTypeClientAnnouncementPeriod_QNAME = new QName("http://www.eprosima.com", "clientAnnouncementPeriod");
     private final static QName _DiscoverySettingsTypeDiscoveryServersList_QNAME = new QName("http://www.eprosima.com", "discoveryServersList");
@@ -51,6 +39,18 @@ public class ObjectFactory {
     private final static QName _DiscoverySettingsTypeStaticEdpXmlConfig_QNAME = new QName("http://www.eprosima.com", "static_edp_xml_config");
     private final static QName _DiscoverySettingsTypeInitialAnnouncements_QNAME = new QName("http://www.eprosima.com", "initialAnnouncements");
     private final static QName _DiscoverySettingsTypeIgnoreParticipantFlags_QNAME = new QName("http://www.eprosima.com", "ignoreParticipantFlags");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
+    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
+    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
+    private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
+    private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
+    private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
+    private final static QName _ProfilesTypeReplier_QNAME = new QName("http://www.eprosima.com", "replier");
+    private final static QName _ProfilesTypeDomainparticipantFactory_QNAME = new QName("http://www.eprosima.com", "domainparticipant_factory");
+    private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
+    private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
+    private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: us.ihmc.fastddsjava.profiles.gen
@@ -923,114 +923,6 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeNanosec(String value) {
-        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeSec(String value) {
-        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "transport_descriptors", scope = ProfilesType.class)
-    public JAXBElement<TransportDescriptorListType> createProfilesTypeTransportDescriptors(TransportDescriptorListType value) {
-        return new JAXBElement<TransportDescriptorListType>(_ProfilesTypeTransportDescriptors_QNAME, TransportDescriptorListType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TopicProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "topic", scope = ProfilesType.class)
-    public JAXBElement<TopicProfileType> createProfilesTypeTopic(TopicProfileType value) {
-        return new JAXBElement<TopicProfileType>(_ProfilesTypeTopic_QNAME, TopicProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link SubscriberProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "data_reader", scope = ProfilesType.class)
-    public JAXBElement<SubscriberProfileType> createProfilesTypeDataReader(SubscriberProfileType value) {
-        return new JAXBElement<SubscriberProfileType>(_ProfilesTypeDataReader_QNAME, SubscriberProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "replier", scope = ProfilesType.class)
-    public JAXBElement<ReplierRequesterProfileType> createProfilesTypeReplier(ReplierRequesterProfileType value) {
-        return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeReplier_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DomainParticipantFactoryProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "domainparticipant_factory", scope = ProfilesType.class)
-    public JAXBElement<DomainParticipantFactoryProfileType> createProfilesTypeDomainparticipantFactory(DomainParticipantFactoryProfileType value) {
-        return new JAXBElement<DomainParticipantFactoryProfileType>(_ProfilesTypeDomainparticipantFactory_QNAME, DomainParticipantFactoryProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ParticipantProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "participant", scope = ProfilesType.class)
-    public JAXBElement<ParticipantProfileType> createProfilesTypeParticipant(ParticipantProfileType value) {
-        return new JAXBElement<ParticipantProfileType>(_ProfilesTypeParticipant_QNAME, ParticipantProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link PublisherProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "data_writer", scope = ProfilesType.class)
-    public JAXBElement<PublisherProfileType> createProfilesTypeDataWriter(PublisherProfileType value) {
-        return new JAXBElement<PublisherProfileType>(_ProfilesTypeDataWriter_QNAME, PublisherProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "requester", scope = ProfilesType.class)
-    public JAXBElement<ReplierRequesterProfileType> createProfilesTypeRequester(ReplierRequesterProfileType value) {
-        return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeRequester_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "interface", scope = TransportDescriptorType.InterfaceWhiteList.class)
-    public JAXBElement<String> createTransportDescriptorTypeInterfaceWhiteListInterface(String value) {
-        return new JAXBElement<String>(_TransportDescriptorTypeInterfaceWhiteListInterface_QNAME, String.class, TransportDescriptorType.InterfaceWhiteList.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "address", scope = TransportDescriptorType.InterfaceWhiteList.class)
-    public JAXBElement<List<String>> createTransportDescriptorTypeInterfaceWhiteListAddress(List<String> value) {
-        return new JAXBElement<List<String>>(_TransportDescriptorTypeInterfaceWhiteListAddress_QNAME, ((Class) List.class), TransportDescriptorType.InterfaceWhiteList.class, ((List<String> ) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
     @XmlElementDecl(namespace = "http://www.eprosima.com", name = "discoveryProtocol", scope = DiscoverySettingsType.class)
     public JAXBElement<String> createDiscoverySettingsTypeDiscoveryProtocol(String value) {
         return new JAXBElement<String>(_DiscoverySettingsTypeDiscoveryProtocol_QNAME, String.class, DiscoverySettingsType.class, value);
@@ -1115,6 +1007,114 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.eprosima.com", name = "ignoreParticipantFlags", scope = DiscoverySettingsType.class)
     public JAXBElement<String> createDiscoverySettingsTypeIgnoreParticipantFlags(String value) {
         return new JAXBElement<String>(_DiscoverySettingsTypeIgnoreParticipantFlags_QNAME, String.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "interface", scope = TransportDescriptorType.InterfaceWhiteList.class)
+    public JAXBElement<String> createTransportDescriptorTypeInterfaceWhiteListInterface(String value) {
+        return new JAXBElement<String>(_TransportDescriptorTypeInterfaceWhiteListInterface_QNAME, String.class, TransportDescriptorType.InterfaceWhiteList.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "address", scope = TransportDescriptorType.InterfaceWhiteList.class)
+    public JAXBElement<List<String>> createTransportDescriptorTypeInterfaceWhiteListAddress(List<String> value) {
+        return new JAXBElement<List<String>>(_TransportDescriptorTypeInterfaceWhiteListAddress_QNAME, ((Class) List.class), TransportDescriptorType.InterfaceWhiteList.class, ((List<String> ) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeNanosec(String value) {
+        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeSec(String value) {
+        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "transport_descriptors", scope = ProfilesType.class)
+    public JAXBElement<TransportDescriptorListType> createProfilesTypeTransportDescriptors(TransportDescriptorListType value) {
+        return new JAXBElement<TransportDescriptorListType>(_ProfilesTypeTransportDescriptors_QNAME, TransportDescriptorListType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link TopicProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "topic", scope = ProfilesType.class)
+    public JAXBElement<TopicProfileType> createProfilesTypeTopic(TopicProfileType value) {
+        return new JAXBElement<TopicProfileType>(_ProfilesTypeTopic_QNAME, TopicProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link SubscriberProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "data_reader", scope = ProfilesType.class)
+    public JAXBElement<SubscriberProfileType> createProfilesTypeDataReader(SubscriberProfileType value) {
+        return new JAXBElement<SubscriberProfileType>(_ProfilesTypeDataReader_QNAME, SubscriberProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "replier", scope = ProfilesType.class)
+    public JAXBElement<ReplierRequesterProfileType> createProfilesTypeReplier(ReplierRequesterProfileType value) {
+        return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeReplier_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DomainParticipantFactoryProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "domainparticipant_factory", scope = ProfilesType.class)
+    public JAXBElement<DomainParticipantFactoryProfileType> createProfilesTypeDomainparticipantFactory(DomainParticipantFactoryProfileType value) {
+        return new JAXBElement<DomainParticipantFactoryProfileType>(_ProfilesTypeDomainparticipantFactory_QNAME, DomainParticipantFactoryProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ParticipantProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "participant", scope = ProfilesType.class)
+    public JAXBElement<ParticipantProfileType> createProfilesTypeParticipant(ParticipantProfileType value) {
+        return new JAXBElement<ParticipantProfileType>(_ProfilesTypeParticipant_QNAME, ParticipantProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link PublisherProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "data_writer", scope = ProfilesType.class)
+    public JAXBElement<PublisherProfileType> createProfilesTypeDataWriter(PublisherProfileType value) {
+        return new JAXBElement<PublisherProfileType>(_ProfilesTypeDataWriter_QNAME, PublisherProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "requester", scope = ProfilesType.class)
+    public JAXBElement<ReplierRequesterProfileType> createProfilesTypeRequester(ReplierRequesterProfileType value) {
+        return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeRequester_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
     }
 
 }
