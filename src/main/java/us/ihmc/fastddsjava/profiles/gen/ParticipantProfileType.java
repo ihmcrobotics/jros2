@@ -46,6 +46,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *                   &lt;element name="builtin" type="{http://www.eprosima.com}builtinAttributesType" minOccurs="0"/>
  *                   &lt;element name="port" type="{http://www.eprosima.com}portType" minOccurs="0"/>
  *                   &lt;element name="participantID" type="{http://www.eprosima.com}int32" minOccurs="0"/>
+ *                   &lt;element name="easy_mode_ip" type="{http://www.eprosima.com}string" minOccurs="0"/>
  *                   &lt;element name="userTransports" minOccurs="0">
  *                     &lt;complexType>
  *                       &lt;complexContent>
@@ -225,6 +226,7 @@ public class ParticipantProfileType {
      *         &lt;element name="builtin" type="{http://www.eprosima.com}builtinAttributesType" minOccurs="0"/>
      *         &lt;element name="port" type="{http://www.eprosima.com}portType" minOccurs="0"/>
      *         &lt;element name="participantID" type="{http://www.eprosima.com}int32" minOccurs="0"/>
+     *         &lt;element name="easy_mode_ip" type="{http://www.eprosima.com}string" minOccurs="0"/>
      *         &lt;element name="userTransports" minOccurs="0">
      *           &lt;complexType>
      *             &lt;complexContent>
@@ -279,6 +281,8 @@ public class ParticipantProfileType {
         protected BuiltinAttributesType builtin;
         protected PortType port;
         protected Integer participantID;
+        @XmlElement(name = "easy_mode_ip")
+        protected String easyModeIp;
         protected ParticipantProfileType.Rtps.UserTransports userTransports;
         protected Boolean useBuiltinTransports;
         protected BuiltinTransportsType builtinTransports;
@@ -563,6 +567,30 @@ public class ParticipantProfileType {
          */
         public void setParticipantID(Integer value) {
             this.participantID = value;
+        }
+
+        /**
+         * Gets the value of the easyModeIp property.
+         * 
+         * @return
+         *     possible object is
+         *     {@link String }
+         *     
+         */
+        public String getEasyModeIp() {
+            return easyModeIp;
+        }
+
+        /**
+         * Sets the value of the easyModeIp property.
+         * 
+         * @param value
+         *     allowed object is
+         *     {@link String }
+         *     
+         */
+        public void setEasyModeIp(String value) {
+            this.easyModeIp = value;
         }
 
         /**

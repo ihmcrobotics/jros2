@@ -22,6 +22,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="UDPv6"/>
  *     &lt;enumeration value="LARGE_DATA"/>
  *     &lt;enumeration value="LARGE_DATAv6"/>
+ *     &lt;enumeration value="P2P"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -42,7 +43,9 @@ public enum BuiltinTransportKind {
     UD_PV_6("UDPv6"),
     LARGE_DATA("LARGE_DATA"),
     @XmlEnumValue("LARGE_DATAv6")
-    LARGE_DAT_AV_6("LARGE_DATAv6");
+    LARGE_DAT_AV_6("LARGE_DATAv6"),
+    @XmlEnumValue("P2P")
+    P_2_P("P2P");
     private final String value;
 
     BuiltinTransportKind(String v) {

@@ -24,6 +24,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *         &lt;element name="offsetd1" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
  *         &lt;element name="offsetd2" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
  *         &lt;element name="offsetd3" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
+ *         &lt;element name="offsetd4" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -52,6 +53,8 @@ public class PortType {
     protected Integer offsetd2;
     @XmlSchemaType(name = "unsignedShort")
     protected Integer offsetd3;
+    @XmlSchemaType(name = "unsignedShort")
+    protected Integer offsetd4;
 
     /**
      * Gets the value of the portBase property.
@@ -219,6 +222,30 @@ public class PortType {
      */
     public void setOffsetd3(Integer value) {
         this.offsetd3 = value;
+    }
+
+    /**
+     * Gets the value of the offsetd4 property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getOffsetd4() {
+        return offsetd4;
+    }
+
+    /**
+     * Sets the value of the offsetd4 property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setOffsetd4(Integer value) {
+        this.offsetd4 = value;
     }
 
 }

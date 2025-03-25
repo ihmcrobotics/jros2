@@ -174,18 +174,26 @@ void fastddsjava_delete_subscriber(void* participant_, void* subscriber_) {
     participant->delete_subscriber(subscriber);
 }
 
-void fastddsjava_register_type(void* participant_, fastddsjava_TopicDataWrapperType* type) {
-    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+/*
+ *  Returns eprosima::fastdds::dds::TypeSupport*
+ */
+void* fastddsjava_create_type_support(fastddsjava_TopicDataWrapperType* type) {
+    eprosima::fastdds::dds::TypeSupport* type_support = new eprosima::fastdds::dds::TypeSupport(type);
 
-    eprosima::fastdds::dds::TypeSupport type_support(type);
-
-    participant->register_type(type_support);
+    return type_support;
 }
 
-void fastddsjava_unregister_type(void* participant_, const std::string type_name) {
+uint32_t fastddsjava_register_type(void* participant_, void* type_support_) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::dds::TypeSupport* type_support = static_cast<eprosima::fastdds::dds::TypeSupport*>(type_support_);
+
+    return participant->register_type(*type_support);
+}
+
+uint32_t fastddsjava_unregister_type(void* participant_, const std::string type_name) {
     eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
 
-    participant->unregister_type(type_name);
+    return participant->unregister_type(type_name);
 }
 
 /*

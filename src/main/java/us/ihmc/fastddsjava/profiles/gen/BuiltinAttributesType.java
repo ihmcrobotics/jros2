@@ -30,6 +30,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *         &lt;element name="readerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
  *         &lt;element name="writerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
  *         &lt;element name="mutation_tries" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="flow_controller_name" type="{http://www.eprosima.com}string" minOccurs="0"/>
  *       &lt;/all>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -66,6 +67,8 @@ public class BuiltinAttributesType {
     @XmlElement(name = "mutation_tries")
     @XmlSchemaType(name = "unsignedInt")
     protected Long mutationTries;
+    @XmlElement(name = "flow_controller_name")
+    protected String flowControllerName;
 
     /**
      * Gets the value of the discoveryConfig property.
@@ -353,6 +356,30 @@ public class BuiltinAttributesType {
      */
     public void setMutationTries(Long value) {
         this.mutationTries = value;
+    }
+
+    /**
+     * Gets the value of the flowControllerName property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getFlowControllerName() {
+        return flowControllerName;
+    }
+
+    /**
+     * Sets the value of the flowControllerName property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFlowControllerName(String value) {
+        this.flowControllerName = value;
     }
 
 }

@@ -15,13 +15,13 @@ if [ ! -f "foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz" ]; t
 fi
 tar -xvf foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz
 
-FASTCDR_VERSION=2.2.6
+FASTCDR_VERSION=2.3.0
 if [ ! -f "Fast-CDR-$FASTCDR_VERSION.tar.gz" ]; then
   curl -o Fast-CDR-$FASTCDR_VERSION.tar.gz https://codeload.github.com/eProsima/Fast-CDR/tar.gz/refs/tags/v$FASTCDR_VERSION
 fi
 tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 
-FASTDDS_VERSION=3.1.2
+FASTDDS_VERSION=3.2.0
 if [ ! -f "Fast-DDS-$FASTDDS_VERSION.tar.gz" ]; then
   curl -o Fast-DDS-$FASTDDS_VERSION.tar.gz https://codeload.github.com/eProsima/Fast-DDS/tar.gz/refs/tags/v$FASTDDS_VERSION
 fi
@@ -83,11 +83,11 @@ java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/po
 ##### Copy shared libs to resources ####
 # Linux
 mkdir -p ../src/main/resources/fastddsjava/native/linux-x86_64
-if [ -f "install/lib/libfastcdr.so.2.2.6" ]; then
-  cp install/lib/libfastcdr.so.2.2.6 ../src/main/resources/fastddsjava/native/linux-x86_64
+if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
+  cp install/lib/libfastcdr.so.2.3.0 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
-if [ -f "install/lib/libfastdds.so.3.1.2" ]; then
-  cp install/lib/libfastdds.so.3.1.2 ../src/main/resources/fastddsjava/native/linux-x86_64
+if [ -f "install/lib/libfastdds.so.3.2.0" ]; then
+  cp install/lib/libfastdds.so.3.2.0 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64

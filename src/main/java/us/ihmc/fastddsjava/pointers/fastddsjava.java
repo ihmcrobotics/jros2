@@ -67,10 +67,15 @@ public static native Pointer fastddsjava_create_subscriber(Pointer participant_,
 
 public static native void fastddsjava_delete_subscriber(Pointer participant_, Pointer subscriber_);
 
-public static native void fastddsjava_register_type(Pointer participant_, fastddsjava_TopicDataWrapperType type);
+/*
+ *  Returns eprosima::fastdds::dds::TypeSupport*
+ */
+public static native Pointer fastddsjava_create_type_support(fastddsjava_TopicDataWrapperType type);
 
-public static native void fastddsjava_unregister_type(Pointer participant_, @StdString BytePointer type_name);
-public static native void fastddsjava_unregister_type(Pointer participant_, @StdString String type_name);
+public static native @Cast("uint32_t") int fastddsjava_register_type(Pointer participant_, Pointer type_support_);
+
+public static native @Cast("uint32_t") int fastddsjava_unregister_type(Pointer participant_, @StdString BytePointer type_name);
+public static native @Cast("uint32_t") int fastddsjava_unregister_type(Pointer participant_, @StdString String type_name);
 
 /*
  *  Returns eprosima::fastdds::dds::Topic*

@@ -126,12 +126,11 @@ public class fastddsjavaTest
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
-      topicDataWrapperType.deallocate(false); // TODO: FIX
-
+      Pointer typeSupport = fastddsjava_create_type_support(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("example_participant");
-      fastddsjava_register_type(participant, topicDataWrapperType);
 
+      fastddsjava_register_type(participant, typeSupport);
       Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
 
       // Publisher
@@ -208,11 +207,11 @@ public class fastddsjavaTest
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", (short) 0x0001);
-      topicDataWrapperType.deallocate(false); // TODO: FIX
+      Pointer typeSupport = fastddsjava_create_type_support(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("example_participant");
-      fastddsjava_register_type(participant, topicDataWrapperType);
 
+      fastddsjava_register_type(participant, typeSupport);
       Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
 
       // Publisher
