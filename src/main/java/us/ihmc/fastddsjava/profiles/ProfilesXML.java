@@ -4,6 +4,9 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
+import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.fastddsjavaTools;
+import us.ihmc.fastddsjava.pointers.fastddsjava;
 import us.ihmc.fastddsjava.profiles.gen.Dds;
 import us.ihmc.fastddsjava.profiles.gen.LibrarySettingsType;
 import us.ihmc.fastddsjava.profiles.gen.LogType;
@@ -31,6 +34,11 @@ public class ProfilesXML
    public ProfilesXML()
    {
       librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
+   }
+
+   public void load() throws fastddsjavaException
+   {
+      fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(marshall()));
    }
 
    public ProfilesType getProfilesType()

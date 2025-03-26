@@ -16,34 +16,34 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="bitsetDcl"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="bitfield" maxOccurs="unbounded"&gt;
- *           &lt;complexType&gt;
- *             &lt;complexContent&gt;
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;attribute name="name" type="{http://www.eprosima.com}string" /&gt;
- *                 &lt;attribute name="type" type="{http://www.eprosima.com}IntPrimitiveTypes" /&gt;
- *                 &lt;attribute name="bit_bound" use="required"&gt;
- *                   &lt;simpleType&gt;
- *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short"&gt;
- *                       &lt;minInclusive value="1"/&gt;
- *                       &lt;maxInclusive value="64"/&gt;
- *                     &lt;/restriction&gt;
- *                   &lt;/simpleType&gt;
- *                 &lt;/attribute&gt;
- *               &lt;/restriction&gt;
- *             &lt;/complexContent&gt;
- *           &lt;/complexType&gt;
- *         &lt;/element&gt;
- *       &lt;/sequence&gt;
- *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="baseType" type="{http://www.eprosima.com}string" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="bitsetDcl">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="bitfield" maxOccurs="unbounded">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;attribute name="name" type="{http://www.eprosima.com}string" />
+ *                 &lt;attribute name="type" type="{http://www.eprosima.com}IntPrimitiveTypes" />
+ *                 &lt;attribute name="bit_bound" use="required">
+ *                   &lt;simpleType>
+ *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short">
+ *                       &lt;minInclusive value="1"/>
+ *                       &lt;maxInclusive value="64"/>
+ *                     &lt;/restriction>
+ *                   &lt;/simpleType>
+ *                 &lt;/attribute>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="baseType" type="{http://www.eprosima.com}string" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -145,22 +145,22 @@ public class BitsetDcl {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;attribute name="name" type="{http://www.eprosima.com}string" /&gt;
-     *       &lt;attribute name="type" type="{http://www.eprosima.com}IntPrimitiveTypes" /&gt;
-     *       &lt;attribute name="bit_bound" use="required"&gt;
-     *         &lt;simpleType&gt;
-     *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short"&gt;
-     *             &lt;minInclusive value="1"/&gt;
-     *             &lt;maxInclusive value="64"/&gt;
-     *           &lt;/restriction&gt;
-     *         &lt;/simpleType&gt;
-     *       &lt;/attribute&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="name" type="{http://www.eprosima.com}string" />
+     *       &lt;attribute name="type" type="{http://www.eprosima.com}IntPrimitiveTypes" />
+     *       &lt;attribute name="bit_bound" use="required">
+     *         &lt;simpleType>
+     *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short">
+     *             &lt;minInclusive value="1"/>
+     *             &lt;maxInclusive value="64"/>
+     *           &lt;/restriction>
+     *         &lt;/simpleType>
+     *       &lt;/attribute>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 

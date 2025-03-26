@@ -14,18 +14,18 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="profiles" type="{http://www.eprosima.com}profilesType" minOccurs="0"/&gt;
- *         &lt;element name="types" type="{http://www.eprosima.com}typesType" minOccurs="0"/&gt;
- *         &lt;element name="log" type="{http://www.eprosima.com}logType" minOccurs="0"/&gt;
- *         &lt;element name="library_settings" type="{http://www.eprosima.com}LibrarySettingsType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType>
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="profiles" type="{http://www.eprosima.com}profilesType" minOccurs="0"/>
+ *         &lt;element name="types" type="{http://www.eprosima.com}typesType" minOccurs="0"/>
+ *         &lt;element name="log" type="{http://www.eprosima.com}logType" minOccurs="0"/>
+ *         &lt;element name="library_settings" type="{http://www.eprosima.com}LibrarySettingsType" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

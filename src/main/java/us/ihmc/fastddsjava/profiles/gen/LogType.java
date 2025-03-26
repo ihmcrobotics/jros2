@@ -16,19 +16,19 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="logType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;choice&gt;
- *           &lt;element name="use_default" type="{http://www.eprosima.com}booleanCaps" minOccurs="0"/&gt;
- *           &lt;element name="consumer" type="{http://www.eprosima.com}logConsumerType" maxOccurs="unbounded" minOccurs="0"/&gt;
- *           &lt;element name="thread_settings" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="logType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;choice>
+ *           &lt;element name="use_default" type="{http://www.eprosima.com}booleanCaps" minOccurs="0"/>
+ *           &lt;element name="consumer" type="{http://www.eprosima.com}logConsumerType" maxOccurs="unbounded" minOccurs="0"/>
+ *           &lt;element name="thread_settings" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

@@ -17,58 +17,58 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="unionDcl"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;choice&gt;
- *           &lt;element name="discriminator" minOccurs="0"&gt;
- *             &lt;complexType&gt;
- *               &lt;complexContent&gt;
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                   &lt;attribute name="type" use="required"&gt;
- *                     &lt;simpleType&gt;
- *                       &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType"&gt;
- *                       &lt;/union&gt;
- *                     &lt;/simpleType&gt;
- *                   &lt;/attribute&gt;
- *                 &lt;/restriction&gt;
- *               &lt;/complexContent&gt;
- *             &lt;/complexType&gt;
- *           &lt;/element&gt;
- *           &lt;element name="case" maxOccurs="unbounded" minOccurs="0"&gt;
- *             &lt;complexType&gt;
- *               &lt;complexContent&gt;
- *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                   &lt;sequence maxOccurs="unbounded"&gt;
- *                     &lt;choice&gt;
- *                       &lt;element name="caseDiscriminator" maxOccurs="unbounded" minOccurs="0"&gt;
- *                         &lt;complexType&gt;
- *                           &lt;complexContent&gt;
- *                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                               &lt;attribute name="value" use="required"&gt;
- *                                 &lt;simpleType&gt;
- *                                   &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType"&gt;
- *                                   &lt;/union&gt;
- *                                 &lt;/simpleType&gt;
- *                               &lt;/attribute&gt;
- *                             &lt;/restriction&gt;
- *                           &lt;/complexContent&gt;
- *                         &lt;/complexType&gt;
- *                       &lt;/element&gt;
- *                       &lt;element name="member" type="{http://www.eprosima.com}memberDcl" minOccurs="0"/&gt;
- *                     &lt;/choice&gt;
- *                   &lt;/sequence&gt;
- *                 &lt;/restriction&gt;
- *               &lt;/complexContent&gt;
- *             &lt;/complexType&gt;
- *           &lt;/element&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="unionDcl">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;choice>
+ *           &lt;element name="discriminator" minOccurs="0">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;attribute name="type" use="required">
+ *                     &lt;simpleType>
+ *                       &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType">
+ *                       &lt;/union>
+ *                     &lt;/simpleType>
+ *                   &lt;/attribute>
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *           &lt;element name="case" maxOccurs="unbounded" minOccurs="0">
+ *             &lt;complexType>
+ *               &lt;complexContent>
+ *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                   &lt;sequence maxOccurs="unbounded">
+ *                     &lt;choice>
+ *                       &lt;element name="caseDiscriminator" maxOccurs="unbounded" minOccurs="0">
+ *                         &lt;complexType>
+ *                           &lt;complexContent>
+ *                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                               &lt;attribute name="value" use="required">
+ *                                 &lt;simpleType>
+ *                                   &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType">
+ *                                   &lt;/union>
+ *                                 &lt;/simpleType>
+ *                               &lt;/attribute>
+ *                             &lt;/restriction>
+ *                           &lt;/complexContent>
+ *                         &lt;/complexType>
+ *                       &lt;/element>
+ *                       &lt;element name="member" type="{http://www.eprosima.com}memberDcl" minOccurs="0"/>
+ *                     &lt;/choice>
+ *                   &lt;/sequence>
+ *                 &lt;/restriction>
+ *               &lt;/complexContent>
+ *             &lt;/complexType>
+ *           &lt;/element>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -148,31 +148,31 @@ public class UnionDcl {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;sequence maxOccurs="unbounded"&gt;
-     *         &lt;choice&gt;
-     *           &lt;element name="caseDiscriminator" maxOccurs="unbounded" minOccurs="0"&gt;
-     *             &lt;complexType&gt;
-     *               &lt;complexContent&gt;
-     *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *                   &lt;attribute name="value" use="required"&gt;
-     *                     &lt;simpleType&gt;
-     *                       &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType"&gt;
-     *                       &lt;/union&gt;
-     *                     &lt;/simpleType&gt;
-     *                   &lt;/attribute&gt;
-     *                 &lt;/restriction&gt;
-     *               &lt;/complexContent&gt;
-     *             &lt;/complexType&gt;
-     *           &lt;/element&gt;
-     *           &lt;element name="member" type="{http://www.eprosima.com}memberDcl" minOccurs="0"/&gt;
-     *         &lt;/choice&gt;
-     *       &lt;/sequence&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded">
+     *         &lt;choice>
+     *           &lt;element name="caseDiscriminator" maxOccurs="unbounded" minOccurs="0">
+     *             &lt;complexType>
+     *               &lt;complexContent>
+     *                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *                   &lt;attribute name="value" use="required">
+     *                     &lt;simpleType>
+     *                       &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType">
+     *                       &lt;/union>
+     *                     &lt;/simpleType>
+     *                   &lt;/attribute>
+     *                 &lt;/restriction>
+     *               &lt;/complexContent>
+     *             &lt;/complexType>
+     *           &lt;/element>
+     *           &lt;element name="member" type="{http://www.eprosima.com}memberDcl" minOccurs="0"/>
+     *         &lt;/choice>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 
@@ -226,18 +226,18 @@ public class UnionDcl {
          * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
-         * &lt;complexType&gt;
-         *   &lt;complexContent&gt;
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-         *       &lt;attribute name="value" use="required"&gt;
-         *         &lt;simpleType&gt;
-         *           &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType"&gt;
-         *           &lt;/union&gt;
-         *         &lt;/simpleType&gt;
-         *       &lt;/attribute&gt;
-         *     &lt;/restriction&gt;
-         *   &lt;/complexContent&gt;
-         * &lt;/complexType&gt;
+         * &lt;complexType>
+         *   &lt;complexContent>
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+         *       &lt;attribute name="value" use="required">
+         *         &lt;simpleType>
+         *           &lt;union memberTypes=" {http://www.eprosima.com}string {http://www.eprosima.com}defaultType">
+         *           &lt;/union>
+         *         &lt;/simpleType>
+         *       &lt;/attribute>
+         *     &lt;/restriction>
+         *   &lt;/complexContent>
+         * &lt;/complexType>
          * </pre>
          * 
          * 
@@ -284,18 +284,18 @@ public class UnionDcl {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;attribute name="type" use="required"&gt;
-     *         &lt;simpleType&gt;
-     *           &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType"&gt;
-     *           &lt;/union&gt;
-     *         &lt;/simpleType&gt;
-     *       &lt;/attribute&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="type" use="required">
+     *         &lt;simpleType>
+     *           &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType">
+     *           &lt;/union>
+     *         &lt;/simpleType>
+     *       &lt;/attribute>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 

@@ -45,6 +45,12 @@ public class fastddsjavaInfoMapper implements InfoMapper
       infoMap.put(new Info("eProsima_user_DllExport").skip());
       infoMap.put(new Info("DDSRETURNCODE_DllAPI").skip());
 
+      // Serialization
+      infoMap.put(new Info().javaText("public static final short CDR_BE = (short) 0x0000; // SerializedPayload.hpp"));
+      infoMap.put(new Info().javaText("public static final short CDR_LE = (short) 0x0001; // SerializedPayload.hpp"));
+      infoMap.put(new Info().javaText("public static final short PL_CDR_BE = (short) 0x0002; // SerializedPayload.hpp"));
+      infoMap.put(new Info().javaText("public static final short PL_CDR_LE = (short) 0x0003; // SerializedPayload.hpp"));
+
       // Time
       infoMap.put(new Info("eprosima::fastdds::rtps::Time_t").pointerTypes("rtps_Time_t"));
       infoMap.put(new Info("eprosima::fastdds::dds::Time_t").pointerTypes("dds_Time_t"));

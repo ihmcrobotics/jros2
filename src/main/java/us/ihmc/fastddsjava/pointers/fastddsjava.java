@@ -8,6 +8,10 @@ import org.bytedeco.javacpp.annotation.*;
 
 public class fastddsjava extends us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper {
     static { Loader.load(); }
+public static final short CDR_BE = (short) 0x0000; // SerializedPayload.hpp
+public static final short CDR_LE = (short) 0x0001; // SerializedPayload.hpp
+public static final short PL_CDR_BE = (short) 0x0002; // SerializedPayload.hpp
+public static final short PL_CDR_LE = (short) 0x0003; // SerializedPayload.hpp
 
 // Targeting ByteVector.java
 

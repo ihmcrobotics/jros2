@@ -19,93 +19,93 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="transportDescriptorType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all minOccurs="0"&gt;
- *         &lt;element name="transport_id" type="{http://www.eprosima.com}string"/&gt;
- *         &lt;element name="type" minOccurs="0"&gt;
- *           &lt;simpleType&gt;
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *               &lt;enumeration value="UDPv4"/&gt;
- *               &lt;enumeration value="UDPv6"/&gt;
- *               &lt;enumeration value="TCPv4"/&gt;
- *               &lt;enumeration value="TCPv6"/&gt;
- *               &lt;enumeration value="SHM"/&gt;
- *             &lt;/restriction&gt;
- *           &lt;/simpleType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="sendBufferSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="receiveBufferSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="maxMessageSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="maxInitialPeersRange" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="interfaceWhiteList" minOccurs="0"&gt;
- *           &lt;complexType&gt;
- *             &lt;complexContent&gt;
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;sequence maxOccurs="unbounded" minOccurs="0"&gt;
- *                   &lt;choice&gt;
- *                     &lt;element name="address" maxOccurs="unbounded"&gt;
- *                       &lt;simpleType&gt;
- *                         &lt;union memberTypes=" {http://www.eprosima.com}ipv4Address {http://www.eprosima.com}ipv6Address"&gt;
- *                         &lt;/union&gt;
- *                       &lt;/simpleType&gt;
- *                     &lt;/element&gt;
- *                     &lt;element name="interface" type="{http://www.eprosima.com}string" maxOccurs="unbounded"/&gt;
- *                   &lt;/choice&gt;
- *                 &lt;/sequence&gt;
- *               &lt;/restriction&gt;
- *             &lt;/complexContent&gt;
- *           &lt;/complexType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="netmask_filter" minOccurs="0"&gt;
- *           &lt;simpleType&gt;
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *               &lt;enumeration value="OFF"/&gt;
- *               &lt;enumeration value="AUTO"/&gt;
- *               &lt;enumeration value="ON"/&gt;
- *             &lt;/restriction&gt;
- *           &lt;/simpleType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="interfaces" type="{http://www.eprosima.com}interfacesType" minOccurs="0"/&gt;
- *         &lt;element name="TTL" type="{http://www.eprosima.com}uint8" minOccurs="0"/&gt;
- *         &lt;element name="non_blocking_send" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="output_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
- *         &lt;element name="wan_addr" type="{http://www.eprosima.com}ipv4AddressFormat" minOccurs="0"/&gt;
- *         &lt;element name="keep_alive_frequency_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="keep_alive_timeout_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="max_logical_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
- *         &lt;element name="logical_port_range" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
- *         &lt;element name="logical_port_increment" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
- *         &lt;element name="listening_ports" minOccurs="0"&gt;
- *           &lt;complexType&gt;
- *             &lt;complexContent&gt;
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;sequence maxOccurs="unbounded" minOccurs="0"&gt;
- *                   &lt;element name="port" type="{http://www.eprosima.com}uint16" maxOccurs="unbounded" minOccurs="0"/&gt;
- *                 &lt;/sequence&gt;
- *               &lt;/restriction&gt;
- *             &lt;/complexContent&gt;
- *           &lt;/complexType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="calculate_crc" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="check_crc" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="enable_tcp_nodelay" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="tls" type="{http://www.eprosima.com}tlsConfigType" minOccurs="0"/&gt;
- *         &lt;element name="keep_alive_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
- *         &lt;element name="accept_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
- *         &lt;element name="tcp_negotiation_timeout" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="segment_size" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="port_queue_capacity" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="healthy_check_timeout_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
- *         &lt;element name="rtps_dump_file" type="{http://www.eprosima.com}string" minOccurs="0"/&gt;
- *         &lt;element name="default_reception_threads" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
- *         &lt;element name="reception_threads" type="{http://www.eprosima.com}receptionThreadsListType" minOccurs="0"/&gt;
- *         &lt;element name="dump_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="transportDescriptorType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all minOccurs="0">
+ *         &lt;element name="transport_id" type="{http://www.eprosima.com}string"/>
+ *         &lt;element name="type" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;enumeration value="UDPv4"/>
+ *               &lt;enumeration value="UDPv6"/>
+ *               &lt;enumeration value="TCPv4"/>
+ *               &lt;enumeration value="TCPv6"/>
+ *               &lt;enumeration value="SHM"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="sendBufferSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="receiveBufferSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="maxMessageSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="maxInitialPeersRange" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="interfaceWhiteList" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;choice>
+ *                     &lt;element name="address" maxOccurs="unbounded">
+ *                       &lt;simpleType>
+ *                         &lt;union memberTypes=" {http://www.eprosima.com}ipv4Address {http://www.eprosima.com}ipv6Address">
+ *                         &lt;/union>
+ *                       &lt;/simpleType>
+ *                     &lt;/element>
+ *                     &lt;element name="interface" type="{http://www.eprosima.com}string" maxOccurs="unbounded"/>
+ *                   &lt;/choice>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="netmask_filter" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;enumeration value="OFF"/>
+ *               &lt;enumeration value="AUTO"/>
+ *               &lt;enumeration value="ON"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="interfaces" type="{http://www.eprosima.com}interfacesType" minOccurs="0"/>
+ *         &lt;element name="TTL" type="{http://www.eprosima.com}uint8" minOccurs="0"/>
+ *         &lt;element name="non_blocking_send" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="output_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
+ *         &lt;element name="wan_addr" type="{http://www.eprosima.com}ipv4AddressFormat" minOccurs="0"/>
+ *         &lt;element name="keep_alive_frequency_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="keep_alive_timeout_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="max_logical_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
+ *         &lt;element name="logical_port_range" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
+ *         &lt;element name="logical_port_increment" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
+ *         &lt;element name="listening_ports" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;sequence maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="port" type="{http://www.eprosima.com}uint16" maxOccurs="unbounded" minOccurs="0"/>
+ *                 &lt;/sequence>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *         &lt;element name="calculate_crc" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="check_crc" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="enable_tcp_nodelay" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="tls" type="{http://www.eprosima.com}tlsConfigType" minOccurs="0"/>
+ *         &lt;element name="keep_alive_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
+ *         &lt;element name="accept_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
+ *         &lt;element name="tcp_negotiation_timeout" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="segment_size" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="port_queue_capacity" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="healthy_check_timeout_ms" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
+ *         &lt;element name="rtps_dump_file" type="{http://www.eprosima.com}string" minOccurs="0"/>
+ *         &lt;element name="default_reception_threads" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
+ *         &lt;element name="reception_threads" type="{http://www.eprosima.com}receptionThreadsListType" minOccurs="0"/>
+ *         &lt;element name="dump_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -989,23 +989,23 @@ public class TransportDescriptorType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;sequence maxOccurs="unbounded" minOccurs="0"&gt;
-     *         &lt;choice&gt;
-     *           &lt;element name="address" maxOccurs="unbounded"&gt;
-     *             &lt;simpleType&gt;
-     *               &lt;union memberTypes=" {http://www.eprosima.com}ipv4Address {http://www.eprosima.com}ipv6Address"&gt;
-     *               &lt;/union&gt;
-     *             &lt;/simpleType&gt;
-     *           &lt;/element&gt;
-     *           &lt;element name="interface" type="{http://www.eprosima.com}string" maxOccurs="unbounded"/&gt;
-     *         &lt;/choice&gt;
-     *       &lt;/sequence&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;choice>
+     *           &lt;element name="address" maxOccurs="unbounded">
+     *             &lt;simpleType>
+     *               &lt;union memberTypes=" {http://www.eprosima.com}ipv4Address {http://www.eprosima.com}ipv6Address">
+     *               &lt;/union>
+     *             &lt;/simpleType>
+     *           &lt;/element>
+     *           &lt;element name="interface" type="{http://www.eprosima.com}string" maxOccurs="unbounded"/>
+     *         &lt;/choice>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 
@@ -1061,15 +1061,15 @@ public class TransportDescriptorType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;sequence maxOccurs="unbounded" minOccurs="0"&gt;
-     *         &lt;element name="port" type="{http://www.eprosima.com}uint16" maxOccurs="unbounded" minOccurs="0"/&gt;
-     *       &lt;/sequence&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;sequence maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="port" type="{http://www.eprosima.com}uint16" maxOccurs="unbounded" minOccurs="0"/>
+     *       &lt;/sequence>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 
