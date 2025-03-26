@@ -47,12 +47,12 @@ public class ProfilesType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "domainparticipant_factory", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "data_writer", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "replier", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "requester", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "topic", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "transport_descriptors", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "data_reader", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "topic", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "replier", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "transport_descriptors", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "data_writer", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "requester", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "participant", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<?>> domainparticipantFactoryOrParticipantOrDataWriter;
@@ -76,12 +76,12 @@ public class ProfilesType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DomainParticipantFactoryProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SubscriberProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TopicProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}
      * {@link JAXBElement }{@code <}{@link PublisherProfileType }{@code >}
      * {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}
-     * {@link JAXBElement }{@code <}{@link TopicProfileType }{@code >}
-     * {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}
-     * {@link JAXBElement }{@code <}{@link SubscriberProfileType }{@code >}
      * {@link JAXBElement }{@code <}{@link ParticipantProfileType }{@code >}
      * 
      * 

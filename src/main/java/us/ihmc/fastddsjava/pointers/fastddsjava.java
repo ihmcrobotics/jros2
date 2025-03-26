@@ -74,7 +74,7 @@ public static native @Cast("uint32_t") int fastddsjava_delete_subscriber(Pointer
 /*
  *  Returns eprosima::fastdds::dds::TypeSupport*
  */
-public static native Pointer fastddsjava_create_type_support(fastddsjava_TopicDataWrapperType type);
+public static native Pointer fastddsjava_create_typesupport(fastddsjava_TopicDataWrapperType type);
 
 public static native @Cast("uint32_t") int fastddsjava_register_type(Pointer participant_, Pointer type_support_);
 

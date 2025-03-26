@@ -47,7 +47,7 @@ public class ReadWriteTest
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
-      Pointer typeSupport = fastddsjava_create_type_support(topicDataWrapperType);
+      Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("example_participant");
 
@@ -142,7 +142,6 @@ public class ReadWriteTest
       retcodeThrowOnError(fastddsjava_delete_topic(participant, topic));
       retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
       retcodeThrowOnError(fastddsjava_delete_participant(participant));
-//      assertTrue(typeSupport.releaseReference()); // TODO: Look into whether we need to explicitly deallocate this
       assertTrue(topicDataWrapperType.releaseReference());
    }
 
@@ -155,7 +154,7 @@ public class ReadWriteTest
 
       // Topic type
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
-      Pointer typeSupport = fastddsjava_create_type_support(topicDataWrapperType);
+      Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("example_participant");
 
@@ -276,7 +275,6 @@ public class ReadWriteTest
       retcodeThrowOnError(fastddsjava_delete_topic(participant, topic));
       retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
       retcodeThrowOnError(fastddsjava_delete_participant(participant));
-      //      assertTrue(typeSupport.releaseReference()); // TODO: Look into whether we need to explicitly deallocate this
       assertTrue(topicDataWrapperType.releaseReference());
    }
 }

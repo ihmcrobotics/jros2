@@ -31,8 +31,6 @@ public class ObjectFactory {
     private final static QName _Log_QNAME = new QName("http://www.eprosima.com", "log");
     private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
     private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
     private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
     private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
     private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
@@ -41,6 +39,8 @@ public class ObjectFactory {
     private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
     private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
     private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
     private final static QName _DiscoverySettingsTypeDiscoveryProtocol_QNAME = new QName("http://www.eprosima.com", "discoveryProtocol");
     private final static QName _DiscoverySettingsTypeClientAnnouncementPeriod_QNAME = new QName("http://www.eprosima.com", "clientAnnouncementPeriod");
     private final static QName _DiscoverySettingsTypeDiscoveryServersList_QNAME = new QName("http://www.eprosima.com", "discoveryServersList");
@@ -938,24 +938,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "interface", scope = TransportDescriptorType.InterfaceWhiteList.class)
-    public JAXBElement<String> createTransportDescriptorTypeInterfaceWhiteListInterface(String value) {
-        return new JAXBElement<String>(_TransportDescriptorTypeInterfaceWhiteListInterface_QNAME, String.class, TransportDescriptorType.InterfaceWhiteList.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "address", scope = TransportDescriptorType.InterfaceWhiteList.class)
-    public JAXBElement<List<String>> createTransportDescriptorTypeInterfaceWhiteListAddress(List<String> value) {
-        return new JAXBElement<List<String>>(_TransportDescriptorTypeInterfaceWhiteListAddress_QNAME, ((Class) List.class), TransportDescriptorType.InterfaceWhiteList.class, ((List<String> ) value));
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}}
      * 
      */
@@ -1025,6 +1007,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.eprosima.com", name = "requester", scope = ProfilesType.class)
     public JAXBElement<ReplierRequesterProfileType> createProfilesTypeRequester(ReplierRequesterProfileType value) {
         return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeRequester_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "interface", scope = TransportDescriptorType.InterfaceWhiteList.class)
+    public JAXBElement<String> createTransportDescriptorTypeInterfaceWhiteListInterface(String value) {
+        return new JAXBElement<String>(_TransportDescriptorTypeInterfaceWhiteListInterface_QNAME, String.class, TransportDescriptorType.InterfaceWhiteList.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link List }{@code <}{@link String }{@code >}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "address", scope = TransportDescriptorType.InterfaceWhiteList.class)
+    public JAXBElement<List<String>> createTransportDescriptorTypeInterfaceWhiteListAddress(List<String> value) {
+        return new JAXBElement<List<String>>(_TransportDescriptorTypeInterfaceWhiteListAddress_QNAME, ((Class) List.class), TransportDescriptorType.InterfaceWhiteList.class, ((List<String> ) value));
     }
 
     /**

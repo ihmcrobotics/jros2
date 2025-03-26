@@ -177,7 +177,7 @@ uint32_t fastddsjava_delete_subscriber(void* participant_, void* subscriber_) {
 /*
  *  Returns eprosima::fastdds::dds::TypeSupport*
  */
-void* fastddsjava_create_type_support(fastddsjava_TopicDataWrapperType* type) {
+void* fastddsjava_create_typesupport(fastddsjava_TopicDataWrapperType* type) {
     eprosima::fastdds::dds::TypeSupport* type_support = new eprosima::fastdds::dds::TypeSupport(type);
 
     return type_support;
