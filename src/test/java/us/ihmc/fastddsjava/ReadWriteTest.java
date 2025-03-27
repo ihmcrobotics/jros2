@@ -29,6 +29,8 @@ public class ReadWriteTest
 
       ProfilesXML profilesXML = ProfilesHelper.unitTestProfile();
 
+      System.out.println(profilesXML.marshall());
+
       try
       {
          profilesXML.load();

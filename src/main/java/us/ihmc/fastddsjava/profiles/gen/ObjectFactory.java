@@ -29,18 +29,6 @@ public class ObjectFactory {
     private final static QName _LibrarySettings_QNAME = new QName("http://www.eprosima.com", "library_settings");
     private final static QName _Types_QNAME = new QName("http://www.eprosima.com", "types");
     private final static QName _Log_QNAME = new QName("http://www.eprosima.com", "log");
-    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
-    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
-    private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
-    private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
-    private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
-    private final static QName _ProfilesTypeReplier_QNAME = new QName("http://www.eprosima.com", "replier");
-    private final static QName _ProfilesTypeDomainparticipantFactory_QNAME = new QName("http://www.eprosima.com", "domainparticipant_factory");
-    private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
-    private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
-    private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
-    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
     private final static QName _DiscoverySettingsTypeDiscoveryProtocol_QNAME = new QName("http://www.eprosima.com", "discoveryProtocol");
     private final static QName _DiscoverySettingsTypeClientAnnouncementPeriod_QNAME = new QName("http://www.eprosima.com", "clientAnnouncementPeriod");
     private final static QName _DiscoverySettingsTypeDiscoveryServersList_QNAME = new QName("http://www.eprosima.com", "discoveryServersList");
@@ -51,6 +39,18 @@ public class ObjectFactory {
     private final static QName _DiscoverySettingsTypeStaticEdpXmlConfig_QNAME = new QName("http://www.eprosima.com", "static_edp_xml_config");
     private final static QName _DiscoverySettingsTypeInitialAnnouncements_QNAME = new QName("http://www.eprosima.com", "initialAnnouncements");
     private final static QName _DiscoverySettingsTypeIgnoreParticipantFlags_QNAME = new QName("http://www.eprosima.com", "ignoreParticipantFlags");
+    private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
+    private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
+    private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
+    private final static QName _ProfilesTypeReplier_QNAME = new QName("http://www.eprosima.com", "replier");
+    private final static QName _ProfilesTypeDomainparticipantFactory_QNAME = new QName("http://www.eprosima.com", "domainparticipant_factory");
+    private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
+    private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
+    private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
+    private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
+    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
+    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: us.ihmc.fastddsjava.profiles.gen
@@ -923,18 +923,90 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeNanosec(String value) {
-        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "discoveryProtocol", scope = DiscoverySettingsType.class)
+    public JAXBElement<String> createDiscoverySettingsTypeDiscoveryProtocol(String value) {
+        return new JAXBElement<String>(_DiscoverySettingsTypeDiscoveryProtocol_QNAME, String.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "clientAnnouncementPeriod", scope = DiscoverySettingsType.class)
+    public JAXBElement<DurationType> createDiscoverySettingsTypeClientAnnouncementPeriod(DurationType value) {
+        return new JAXBElement<DurationType>(_DiscoverySettingsTypeClientAnnouncementPeriod_QNAME, DurationType.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LocatorListType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "discoveryServersList", scope = DiscoverySettingsType.class)
+    public JAXBElement<LocatorListType> createDiscoverySettingsTypeDiscoveryServersList(LocatorListType value) {
+        return new JAXBElement<LocatorListType>(_DiscoverySettingsTypeDiscoveryServersList_QNAME, LocatorListType.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DiscoverySettingsType.SimpleEDP }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "simpleEDP", scope = DiscoverySettingsType.class)
+    public JAXBElement<DiscoverySettingsType.SimpleEDP> createDiscoverySettingsTypeSimpleEDP(DiscoverySettingsType.SimpleEDP value) {
+        return new JAXBElement<DiscoverySettingsType.SimpleEDP>(_DiscoverySettingsTypeSimpleEDP_QNAME, DiscoverySettingsType.SimpleEDP.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "leaseDuration", scope = DiscoverySettingsType.class)
+    public JAXBElement<DurationType> createDiscoverySettingsTypeLeaseDuration(DurationType value) {
+        return new JAXBElement<DurationType>(_DiscoverySettingsTypeLeaseDuration_QNAME, DurationType.class, DiscoverySettingsType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeSec(String value) {
-        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "EDP", scope = DiscoverySettingsType.class)
+    public JAXBElement<String> createDiscoverySettingsTypeEDP(String value) {
+        return new JAXBElement<String>(_DiscoverySettingsTypeEDP_QNAME, String.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "leaseAnnouncement", scope = DiscoverySettingsType.class)
+    public JAXBElement<DurationType> createDiscoverySettingsTypeLeaseAnnouncement(DurationType value) {
+        return new JAXBElement<DurationType>(_DiscoverySettingsTypeLeaseAnnouncement_QNAME, DurationType.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "static_edp_xml_config", scope = DiscoverySettingsType.class)
+    public JAXBElement<String> createDiscoverySettingsTypeStaticEdpXmlConfig(String value) {
+        return new JAXBElement<String>(_DiscoverySettingsTypeStaticEdpXmlConfig_QNAME, String.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DiscoverySettingsType.InitialAnnouncements }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "initialAnnouncements", scope = DiscoverySettingsType.class)
+    public JAXBElement<DiscoverySettingsType.InitialAnnouncements> createDiscoverySettingsTypeInitialAnnouncements(DiscoverySettingsType.InitialAnnouncements value) {
+        return new JAXBElement<DiscoverySettingsType.InitialAnnouncements>(_DiscoverySettingsTypeInitialAnnouncements_QNAME, DiscoverySettingsType.InitialAnnouncements.class, DiscoverySettingsType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "ignoreParticipantFlags", scope = DiscoverySettingsType.class)
+    public JAXBElement<String> createDiscoverySettingsTypeIgnoreParticipantFlags(String value) {
+        return new JAXBElement<String>(_DiscoverySettingsTypeIgnoreParticipantFlags_QNAME, String.class, DiscoverySettingsType.class, value);
     }
 
     /**
@@ -1031,90 +1103,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "discoveryProtocol", scope = DiscoverySettingsType.class)
-    public JAXBElement<String> createDiscoverySettingsTypeDiscoveryProtocol(String value) {
-        return new JAXBElement<String>(_DiscoverySettingsTypeDiscoveryProtocol_QNAME, String.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "clientAnnouncementPeriod", scope = DiscoverySettingsType.class)
-    public JAXBElement<DurationType> createDiscoverySettingsTypeClientAnnouncementPeriod(DurationType value) {
-        return new JAXBElement<DurationType>(_DiscoverySettingsTypeClientAnnouncementPeriod_QNAME, DurationType.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link LocatorListType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "discoveryServersList", scope = DiscoverySettingsType.class)
-    public JAXBElement<LocatorListType> createDiscoverySettingsTypeDiscoveryServersList(LocatorListType value) {
-        return new JAXBElement<LocatorListType>(_DiscoverySettingsTypeDiscoveryServersList_QNAME, LocatorListType.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DiscoverySettingsType.SimpleEDP }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "simpleEDP", scope = DiscoverySettingsType.class)
-    public JAXBElement<DiscoverySettingsType.SimpleEDP> createDiscoverySettingsTypeSimpleEDP(DiscoverySettingsType.SimpleEDP value) {
-        return new JAXBElement<DiscoverySettingsType.SimpleEDP>(_DiscoverySettingsTypeSimpleEDP_QNAME, DiscoverySettingsType.SimpleEDP.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "leaseDuration", scope = DiscoverySettingsType.class)
-    public JAXBElement<DurationType> createDiscoverySettingsTypeLeaseDuration(DurationType value) {
-        return new JAXBElement<DurationType>(_DiscoverySettingsTypeLeaseDuration_QNAME, DurationType.class, DiscoverySettingsType.class, value);
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeNanosec(String value) {
+        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "EDP", scope = DiscoverySettingsType.class)
-    public JAXBElement<String> createDiscoverySettingsTypeEDP(String value) {
-        return new JAXBElement<String>(_DiscoverySettingsTypeEDP_QNAME, String.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DurationType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "leaseAnnouncement", scope = DiscoverySettingsType.class)
-    public JAXBElement<DurationType> createDiscoverySettingsTypeLeaseAnnouncement(DurationType value) {
-        return new JAXBElement<DurationType>(_DiscoverySettingsTypeLeaseAnnouncement_QNAME, DurationType.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "static_edp_xml_config", scope = DiscoverySettingsType.class)
-    public JAXBElement<String> createDiscoverySettingsTypeStaticEdpXmlConfig(String value) {
-        return new JAXBElement<String>(_DiscoverySettingsTypeStaticEdpXmlConfig_QNAME, String.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link DiscoverySettingsType.InitialAnnouncements }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "initialAnnouncements", scope = DiscoverySettingsType.class)
-    public JAXBElement<DiscoverySettingsType.InitialAnnouncements> createDiscoverySettingsTypeInitialAnnouncements(DiscoverySettingsType.InitialAnnouncements value) {
-        return new JAXBElement<DiscoverySettingsType.InitialAnnouncements>(_DiscoverySettingsTypeInitialAnnouncements_QNAME, DiscoverySettingsType.InitialAnnouncements.class, DiscoverySettingsType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "ignoreParticipantFlags", scope = DiscoverySettingsType.class)
-    public JAXBElement<String> createDiscoverySettingsTypeIgnoreParticipantFlags(String value) {
-        return new JAXBElement<String>(_DiscoverySettingsTypeIgnoreParticipantFlags_QNAME, String.class, DiscoverySettingsType.class, value);
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeSec(String value) {
+        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
     }
 
 }

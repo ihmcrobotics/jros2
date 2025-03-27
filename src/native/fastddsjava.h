@@ -34,6 +34,16 @@ public:
         is_compute_key_provided = false;
     }
 
+    void printBytePointerAsDecimal(const unsigned char* ptr, size_t size) {
+        for (size_t i = 0; i < size; ++i) {
+            std::cout << std::setw(3) << static_cast<int>(ptr[i]);
+            if (i < size - 1) {
+                std::cout << " ";
+            }
+        }
+        std::cout << std::endl;
+    }
+
     JAVACPP_SKIP bool serialize(const void* const data_, eprosima::fastdds::rtps::SerializedPayload_t& payload,
                                     eprosima::fastdds::dds::DataRepresentationId_t data_representation) override {
         fastddsjava_TopicDataWrapper* data = const_cast<fastddsjava_TopicDataWrapper*>(static_cast<const fastddsjava_TopicDataWrapper*>(data_));
@@ -42,6 +52,9 @@ public:
         uint32_t data_length = calculate_serialized_size(data, data_representation);
         payload.length = data_length;
         memcpy(payload.data, data->data_ptr(), data_length);
+
+        printBytePointerAsDecimal(payload.data, data_length);
+
         payload.max_size = payload.length;
 
         return true;

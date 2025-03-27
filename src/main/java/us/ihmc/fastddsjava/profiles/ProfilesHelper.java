@@ -33,7 +33,7 @@ public final class ProfilesHelper
       InterfaceWhiteList interfaceWhiteList = new InterfaceWhiteList();
       JAXBElement<String> addressElement = new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "address"),
                                                              String.class,
-                                                             "127.0.0.1");
+                                                             "10.100.3.250");
       interfaceWhiteList.getAddressOrInterface().add(addressElement);
       udp4Transport.setInterfaceWhiteList(interfaceWhiteList);
 
