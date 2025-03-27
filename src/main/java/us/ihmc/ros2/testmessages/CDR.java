@@ -1,4 +1,4 @@
-package us.ihmc.fastddsjava;
+package us.ihmc.ros2.testmessages;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;

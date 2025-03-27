@@ -1,7 +1,5 @@
 package us.ihmc.ros2.testmessages;
 
-import us.ihmc.fastddsjava.CDR;
-
 import java.nio.ByteBuffer;
 
 public class Bool extends ROS2Message
