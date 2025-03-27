@@ -20,10 +20,6 @@ public class fastddsjava_TopicDataWrapperType extends Pointer {
     public fastddsjava_TopicDataWrapperType(@StdString String name, @Cast("uint16_t") short encapsulation) { super((Pointer)null); allocate(name, encapsulation); }
     private native void allocate(@StdString String name, @Cast("uint16_t") short encapsulation);
 
-    public native void printBytePointerAsDecimal(@Cast("const unsigned char*") BytePointer ptr, @Cast("size_t") long size);
-    public native void printBytePointerAsDecimal(@Cast("const unsigned char*") ByteBuffer ptr, @Cast("size_t") long size);
-    public native void printBytePointerAsDecimal(@Cast("const unsigned char*") byte[] ptr, @Cast("size_t") long size);
-
     public native Pointer create_data();
 
     public native void delete_data(Pointer data);

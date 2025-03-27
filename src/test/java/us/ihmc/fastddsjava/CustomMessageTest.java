@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
+import us.ihmc.ros2.testmessages.Bool;
+
+import java.nio.ByteBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodeThrowOnError;
@@ -28,9 +31,6 @@ public class CustomMessageTest
                                                              <transport_descriptor>
                                                                  <transport_id>71934648-74cb-46d0-a48d-738aecd823fd</transport_id>
                                                                  <type>UDPv4</type>
-                                                                 <interfaceWhiteList>
-                                                                     <address>10.100.3.250</address>
-                                                                 </interfaceWhiteList>
                                                              </transport_descriptor>
                                                          </transport_descriptors>
                                                          <participant profile_name="15549ef9-35af-40e3-a4f6-aa257fe31316">
@@ -86,12 +86,12 @@ public class CustomMessageTest
       Pointer data = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
 
-      byte[] bytes = new byte[] {0, 1, 0, 0, 1};
+      Bool bool = new Bool();
+      bool.setData_(true);
 
-      topicDataWrapper.data_vector().put(bytes);
+      bool.packTopicDataWrapper(topicDataWrapper, ByteBuffer.allocate(bool.calculateSize()));
 
-      topicDataWrapper.data_ptr().limit(bytes.length);
-      topicDataWrapper.data_ptr().capacity(bytes.length);
+      System.out.println(topicDataWrapper.data_vector().size());
 
       int iter = 0;
 
@@ -100,6 +100,8 @@ public class CustomMessageTest
       {
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
          retcodeThrowOnError(retCode);
+
+         System.out.println("wrote");
 
          iter++;
 
