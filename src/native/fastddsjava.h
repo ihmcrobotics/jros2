@@ -18,9 +18,9 @@
 struct fastddsjava_TopicDataWrapper {
     std::vector<uint8_t> data_vector;
 
-//    uint8_t* data_ptr() {
-//        return data_vector.data();
-//    }
+    uint8_t* data_ptr() {
+        return data_vector.data();
+    }
 };
 
 class fastddsjava_TopicDataWrapperType : public eprosima::fastdds::dds::TopicDataType {

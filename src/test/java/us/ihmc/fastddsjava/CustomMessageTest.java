@@ -2,10 +2,11 @@ package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
-import us.ihmc.ros2.testmessages.Bool;
+import us.ihmc.ros2.testmessages.CustomMessage;
 
 import java.nio.ByteBuffer;
 
@@ -53,11 +54,13 @@ public class CustomMessageTest
                                                              </rtps>
                                                          </participant>
                                                         <topic profile_name="example_topic"/>
-                                                        <data_writer profile_name="example_publisher"/>
-                                                        <data_reader profile_name="example_subscriber"/>
+                                                        <data_writer profile_name="example_publisher">
+                                                        </data_writer>
+                                                        <data_reader profile_name="example_subscriber">
+                                                        </data_reader>
                                                      </profiles>
                                                      <library_settings>
-                                                         <intraprocess_delivery>OFF</intraprocess_delivery>
+                                                         <intraprocess_delivery>FULL</intraprocess_delivery>
                                                      </library_settings>
                                                  </dds>
                                                  """.trim());
@@ -69,7 +72,7 @@ public class CustomMessageTest
       int retCode;
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("std_msgs::msg::dds_::Bool_", CDR_LE);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("ihmc_common_msgs::msg::dds_::CustomMessage_", CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("15549ef9-35af-40e3-a4f6-aa257fe31316");
@@ -77,7 +80,7 @@ public class CustomMessageTest
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "rt/ihmc/test_bool", "example_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "rt/ihmc/test_custom", "example_topic");
 
       // Publisher
       Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
@@ -86,12 +89,20 @@ public class CustomMessageTest
       Pointer data = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
 
-      Bool bool = new Bool();
-      bool.setData_(true);
+      CustomMessage customMessage = new CustomMessage();
+      customMessage.setData(true);
+      for (int i = 0; i < 10_000_000; i++)
+      {
+         customMessage.getIntList().add(i);
+      }
 
-      bool.packTopicDataWrapper(topicDataWrapper, ByteBuffer.allocate(bool.calculateSize()));
+      ByteBuffer buffer = ByteBuffer.allocate(customMessage.calculateSizeBytes());
+      CDRBuffer cdrBuffer = new CDRBuffer(buffer);
 
-      System.out.println(topicDataWrapper.data_vector().size());
+      customMessage.serialize(cdrBuffer);
+
+      topicDataWrapper.data_vector().resize(customMessage.calculateSizeBytes());
+      topicDataWrapper.data_ptr().put(buffer.array());
 
       int iter = 0;
 
@@ -105,7 +116,7 @@ public class CustomMessageTest
 
          iter++;
 
-         Thread.sleep(1000);
+         Thread.sleep(100);
       }
 
       // Delete / release all references
