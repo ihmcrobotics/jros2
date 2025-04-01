@@ -1,13 +1,20 @@
-package us.ihmc.ros2.testmessages;
+package us.ihmc.jros2.testmessages;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
+import us.ihmc.fastddsjava.cdr.idl.IDLIntSequence;
 
-public class Bool implements CDRSerializable
+public class CustomMessage implements CDRSerializable
 {
-   public static final String name = "std_msgs::msg::dds_::Bool_";
+   public static final String name = "ihmc_common_msgs::msg::dds_::CustomMessage_";
 
-   private boolean data_; // _ in case the field is named a Java keyword
+   private boolean data_;
+   private IDLIntSequence intList_;
+
+   public CustomMessage()
+   {
+      intList_ = new IDLIntSequence();
+   }
 
    public boolean getData()
    {
@@ -19,12 +26,19 @@ public class Bool implements CDRSerializable
       this.data_ = data_;
    }
 
+   public IDLIntSequence getIntList()
+   {
+      return intList_;
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // 1 byte for data
+
+      currentAlignment += intList_.calculateSizeBytes(currentAlignment); // n bytes for intList
 
       return currentAlignment - initialAlignment;
    }
@@ -34,6 +48,9 @@ public class Bool implements CDRSerializable
    {
       // Write data
       buffer.writeBoolean(data_);
+
+      // Write intList
+      intList_.serialize(buffer);
    }
 
    @Override
@@ -41,5 +58,8 @@ public class Bool implements CDRSerializable
    {
       // Read data
       data_ = buffer.readBoolean();
+
+      // Read intList
+      intList_.deserialize(buffer);
    }
 }

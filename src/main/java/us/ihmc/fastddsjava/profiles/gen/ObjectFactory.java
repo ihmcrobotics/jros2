@@ -29,8 +29,6 @@ public class ObjectFactory {
     private final static QName _LibrarySettings_QNAME = new QName("http://www.eprosima.com", "library_settings");
     private final static QName _Types_QNAME = new QName("http://www.eprosima.com", "types");
     private final static QName _Log_QNAME = new QName("http://www.eprosima.com", "log");
-    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
-    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
     private final static QName _ProfilesTypeTransportDescriptors_QNAME = new QName("http://www.eprosima.com", "transport_descriptors");
     private final static QName _ProfilesTypeTopic_QNAME = new QName("http://www.eprosima.com", "topic");
     private final static QName _ProfilesTypeDataReader_QNAME = new QName("http://www.eprosima.com", "data_reader");
@@ -39,6 +37,8 @@ public class ObjectFactory {
     private final static QName _ProfilesTypeParticipant_QNAME = new QName("http://www.eprosima.com", "participant");
     private final static QName _ProfilesTypeDataWriter_QNAME = new QName("http://www.eprosima.com", "data_writer");
     private final static QName _ProfilesTypeRequester_QNAME = new QName("http://www.eprosima.com", "requester");
+    private final static QName _DurationTypeNanosec_QNAME = new QName("http://www.eprosima.com", "nanosec");
+    private final static QName _DurationTypeSec_QNAME = new QName("http://www.eprosima.com", "sec");
     private final static QName _TransportDescriptorTypeInterfaceWhiteListInterface_QNAME = new QName("http://www.eprosima.com", "interface");
     private final static QName _TransportDescriptorTypeInterfaceWhiteListAddress_QNAME = new QName("http://www.eprosima.com", "address");
     private final static QName _DiscoverySettingsTypeDiscoveryProtocol_QNAME = new QName("http://www.eprosima.com", "discoveryProtocol");
@@ -920,24 +920,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeNanosec(String value) {
-        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
-    public JAXBElement<String> createDurationTypeSec(String value) {
-        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}}
      * 
      */
@@ -1007,6 +989,24 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.eprosima.com", name = "requester", scope = ProfilesType.class)
     public JAXBElement<ReplierRequesterProfileType> createProfilesTypeRequester(ReplierRequesterProfileType value) {
         return new JAXBElement<ReplierRequesterProfileType>(_ProfilesTypeRequester_QNAME, ReplierRequesterProfileType.class, ProfilesType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "nanosec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeNanosec(String value) {
+        return new JAXBElement<String>(_DurationTypeNanosec_QNAME, String.class, DurationType.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://www.eprosima.com", name = "sec", scope = DurationType.class)
+    public JAXBElement<String> createDurationTypeSec(String value) {
+        return new JAXBElement<String>(_DurationTypeSec_QNAME, String.class, DurationType.class, value);
     }
 
     /**

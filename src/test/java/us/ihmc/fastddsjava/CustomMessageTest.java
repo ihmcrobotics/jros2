@@ -6,8 +6,8 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
-import us.ihmc.ros2.testmessages.CustomMessage;
-import us.ihmc.ros2.testmessages.CustomMessage2;
+import us.ihmc.jros2.testmessages.CustomMessage;
+import us.ihmc.jros2.testmessages.CustomMessage2;
 
 import java.nio.ByteBuffer;
 
