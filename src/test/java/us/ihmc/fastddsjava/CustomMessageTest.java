@@ -7,6 +7,7 @@ import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.ros2.testmessages.CustomMessage;
+import us.ihmc.ros2.testmessages.CustomMessage2;
 
 import java.nio.ByteBuffer;
 
@@ -72,7 +73,7 @@ public class CustomMessageTest
       int retCode;
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("ihmc_common_msgs::msg::dds_::CustomMessage_", CDR_LE);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(CustomMessage2.name, CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("15549ef9-35af-40e3-a4f6-aa257fe31316");
@@ -80,7 +81,7 @@ public class CustomMessageTest
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "rt/ihmc/test_custom", "example_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "rt/ihmc/test_custom2", "example_topic");
 
       // Publisher
       Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
@@ -89,19 +90,23 @@ public class CustomMessageTest
       Pointer data = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
 
-      CustomMessage customMessage = new CustomMessage();
-      customMessage.setData(true);
-      for (int i = 0; i < 10_000_000; i++)
-      {
-         customMessage.getIntList().add(i);
-      }
+      CustomMessage2 customMessage2 = new CustomMessage2();
 
-      ByteBuffer buffer = ByteBuffer.allocate(customMessage.calculateSizeBytes());
+      CustomMessage customMessage1 = new CustomMessage();
+      customMessage1.setData(true);
+      customMessage1.getIntList().add(44);
+
+      customMessage2.getCustomMessageList().add(customMessage1);
+      customMessage2.getCustomMessageList().add(customMessage1);
+
+      ByteBuffer buffer = ByteBuffer.allocate(customMessage2.calculateSizeBytes() + 4);
       CDRBuffer cdrBuffer = new CDRBuffer(buffer);
 
-      customMessage.serialize(cdrBuffer);
+      cdrBuffer.writeSerializationPayloadHeader();
+      customMessage2.serialize(cdrBuffer);
 
-      topicDataWrapper.data_vector().resize(customMessage.calculateSizeBytes());
+      topicDataWrapper.data_vector().resize(customMessage2.calculateSizeBytes() + 4);
+
       topicDataWrapper.data_ptr().put(buffer.array());
 
       int iter = 0;
@@ -116,7 +121,7 @@ public class CustomMessageTest
 
          iter++;
 
-         Thread.sleep(100);
+         Thread.sleep(1000);
       }
 
       // Delete / release all references

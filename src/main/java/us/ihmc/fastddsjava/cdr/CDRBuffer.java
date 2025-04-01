@@ -11,7 +11,8 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
  */
 public final class CDRBuffer
 {
-   private static final byte[] PAYLOAD_HEADER = {0, 1, 0, 0};
+   // RepresentationIdentifier, RepresentationOptions
+   public static final byte[] PAYLOAD_HEADER = {0, 1, 0, 0};
 
    private final ByteBuffer buffer;
 
@@ -22,20 +23,24 @@ public final class CDRBuffer
 
    public void writeSerializationPayloadHeader()
    {
-      // RepresentationIdentifier, RepresentationOptions
-      buffer.put(PAYLOAD_HEADER);
+      if (buffer.position() == 0)
+      {
+         buffer.put(PAYLOAD_HEADER);
 
-      // TODO:
-      buffer.order(ByteOrder.LITTLE_ENDIAN);
+         // TODO:
+         buffer.order(ByteOrder.LITTLE_ENDIAN);
+      }
    }
 
-   public short readSerializationPayloadHeader()
+   public void readSerializationPayloadHeader()
    {
-      // RepresentationIdentifier
-      short encapsulation = buffer.getShort();
-      // RepresentationOptions
-      buffer.getShort();
-      return encapsulation;
+      if (buffer.position() == 0)
+      {
+         // RepresentationIdentifier
+         short encapsulation = buffer.getShort();
+         // RepresentationOptions
+         short options = buffer.getShort();
+      }
    }
 
    public void writeByte(byte value)
@@ -119,7 +124,7 @@ public final class CDRBuffer
       {
          case 0 -> false;
          case 1 -> true;
-         default -> throw new RuntimeException("Unknown value");
+         default -> throw new RuntimeException("Unknown boolean value");
       };
    }
 
@@ -147,5 +152,10 @@ public final class CDRBuffer
          case CDR_BE, PL_CDR_BE -> ByteOrder.BIG_ENDIAN;
          default -> throw new RuntimeException("Unsupported encapsulation");
       };
+   }
+
+   public ByteBuffer getBufferUnsafe()
+   {
+      return buffer;
    }
 }

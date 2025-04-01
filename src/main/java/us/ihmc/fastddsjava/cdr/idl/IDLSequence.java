@@ -28,7 +28,7 @@ public interface IDLSequence extends CDRSerializable
 
       for (int i = 0; i < elements(); i++)
       {
-         currentAlignment += elementSizeBytes(i) + CDRBuffer.alignment(currentAlignment, elementSizeBytes(i));
+         currentAlignment += elementSizeBytes(i);
       }
 
       return currentAlignment - initialAlignment;

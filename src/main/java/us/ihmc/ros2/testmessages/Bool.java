@@ -24,8 +24,6 @@ public class Bool implements CDRSerializable
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // 4 bytes for payload header
-
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // 1 byte for data
 
       return currentAlignment - initialAlignment;
@@ -34,8 +32,6 @@ public class Bool implements CDRSerializable
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeSerializationPayloadHeader();
-
       // Write data
       buffer.writeBoolean(data_);
    }
@@ -43,8 +39,6 @@ public class Bool implements CDRSerializable
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      buffer.readSerializationPayloadHeader();
-
       // Read data
       data_ = buffer.readBoolean();
    }

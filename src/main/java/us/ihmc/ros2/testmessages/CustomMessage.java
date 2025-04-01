@@ -36,8 +36,6 @@ public class CustomMessage implements CDRSerializable
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // 4 bytes for payload header
-
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // 1 byte for data
 
       currentAlignment += intList_.calculateSizeBytes(currentAlignment); // n bytes for intList
@@ -48,8 +46,6 @@ public class CustomMessage implements CDRSerializable
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeSerializationPayloadHeader();
-
       // Write data
       buffer.writeBoolean(data_);
 
@@ -60,8 +56,6 @@ public class CustomMessage implements CDRSerializable
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      buffer.readSerializationPayloadHeader();
-
       // Read data
       data_ = buffer.readBoolean();
 
