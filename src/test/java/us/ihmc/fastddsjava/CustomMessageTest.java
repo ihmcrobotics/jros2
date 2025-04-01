@@ -102,7 +102,7 @@ public class CustomMessageTest
       ByteBuffer buffer = ByteBuffer.allocate(customMessage2.calculateSizeBytes() + 4);
       CDRBuffer cdrBuffer = new CDRBuffer(buffer);
 
-      cdrBuffer.writeSerializationPayloadHeader();
+      cdrBuffer.writePayloadHeader();
       customMessage2.serialize(cdrBuffer);
 
       topicDataWrapper.data_vector().resize(customMessage2.calculateSizeBytes() + 4);

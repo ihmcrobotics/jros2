@@ -21,7 +21,7 @@ public final class CDRBuffer
       this.buffer = buffer;
    }
 
-   public void writeSerializationPayloadHeader()
+   public void writePayloadHeader()
    {
       if (buffer.position() == 0)
       {
@@ -32,7 +32,7 @@ public final class CDRBuffer
       }
    }
 
-   public void readSerializationPayloadHeader()
+   public void readPayloadHeader()
    {
       if (buffer.position() == 0)
       {
