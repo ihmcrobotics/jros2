@@ -41,6 +41,8 @@ public class ROS2Publisher implements Closeable
          cdrBuffer = new CDRBuffer(writeBuffer);
       }
 
+      // TODO: check if we can shrink the writeBuffer to save memory
+
       writeBuffer.rewind();
       cdrBuffer.writePayloadHeader();
       message.serialize(cdrBuffer);
