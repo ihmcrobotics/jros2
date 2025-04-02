@@ -1,6 +1,5 @@
 package us.ihmc.fastddsjava.profiles;
 
-import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
@@ -9,9 +8,7 @@ import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
-import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
-import javax.xml.namespace.QName;
 import java.util.UUID;
 
 public final class ProfilesHelper
@@ -30,13 +27,6 @@ public final class ProfilesHelper
       TransportDescriptorType udp4Transport = new TransportDescriptorType();
       udp4Transport.setTransportId(UUID.randomUUID().toString());
       udp4Transport.setType("UDPv4");
-      InterfaceWhiteList interfaceWhiteList = new InterfaceWhiteList();
-      JAXBElement<String> addressElement = new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "address"),
-                                                             String.class,
-                                                             "10.100.3.250");
-      interfaceWhiteList.getAddressOrInterface().add(addressElement);
-      udp4Transport.setInterfaceWhiteList(interfaceWhiteList);
-
       transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
       profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 

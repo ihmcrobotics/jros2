@@ -38,7 +38,11 @@ public class ProfilesXML
 
    public void load() throws fastddsjavaException
    {
-      fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(marshall()));
+      String xml = marshall();
+
+      System.out.println(xml);
+
+      fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
    }
 
    public ProfilesType getProfilesType()

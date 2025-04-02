@@ -6,9 +6,12 @@ import us.ihmc.fastddsjava.pointers.fastddsjava;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
-import us.ihmc.jros2.testmessages.CustomMessage2;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -30,10 +33,26 @@ public class ROS2Node implements Closeable
    public ROS2Node()
    {
       ProfilesXML profilesXML = new ProfilesXML();
+
+      // Add transport
+      TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+      TransportDescriptorType udp4Transport = new TransportDescriptorType();
+      udp4Transport.setTransportId(UUID.randomUUID().toString());
+      udp4Transport.setType("UDPv4");
+      transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
+      profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+
+      // Add profile
       ParticipantProfileType participantProfile = new ParticipantProfileType();
       String participantProfileName = UUID.randomUUID().toString();
       participantProfile.setDomainId(113); // TODO:
       participantProfile.setProfileName(participantProfileName);
+      Rtps rtps = new Rtps();
+      rtps.setUseBuiltinTransports(true);
+      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+      userTransports.getTransportId().add(udp4Transport.getTransportId());
+      rtps.setUserTransports(userTransports);
+      participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
       // TODO: keep try-catch?
@@ -73,12 +92,13 @@ public class ROS2Node implements Closeable
          throw new RuntimeException(e);
       }
 
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(CustomMessage2.name, CDR_LE);
+      String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
       Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
       fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
       Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
                                                       topicDataWrapperType,
-                                                      ROS2Message.getNameFromMessageClass(topic.topicType()),
+                                                      topicTypeName,
                                                       topicProfileName);
       ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
       synchronized (this.topicData)
@@ -159,6 +179,13 @@ public class ROS2Node implements Closeable
    @Override
    public void close()
    {
+      for (ROS2Topic<?> topic : topicData.keySet())
+      {
+         ROS2TopicData topicData = this.topicData.get(topic);
+
+         // TODO: Release topicData
+      }
+
       fastddsjava.fastddsjava_delete_participant(fastddsParticipant);
    }
 }

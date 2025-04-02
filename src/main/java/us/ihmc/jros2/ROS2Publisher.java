@@ -34,15 +34,20 @@ public class ROS2Publisher implements Closeable
    public <T extends ROS2Message<T>> void publish(T message)
    {
       // TODO: remove +4 payload header
-      if (writeBuffer.capacity() < (message.calculateSizeBytes() + 4))
+      int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+
+      if (writeBuffer.capacity() < messageSizeBytes)
       {
-         writeBuffer = ByteBuffer.allocate(message.calculateSizeBytes() + 4);
+         writeBuffer = ByteBuffer.allocate(messageSizeBytes);
          cdrBuffer = new CDRBuffer(writeBuffer);
       }
 
       writeBuffer.rewind();
       cdrBuffer.writePayloadHeader();
       message.serialize(cdrBuffer);
+
+      topicDataWrapper.data_vector().resize(messageSizeBytes);
+      topicDataWrapper.data_ptr().put(writeBuffer.array(), 0, messageSizeBytes);
 
       fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
    }
