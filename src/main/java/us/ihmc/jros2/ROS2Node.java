@@ -34,12 +34,16 @@ public class ROS2Node implements Closeable
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      // Add transport
+      // Add transports
       TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
       TransportDescriptorType udp4Transport = new TransportDescriptorType();
       udp4Transport.setTransportId(UUID.randomUUID().toString());
       udp4Transport.setType("UDPv4");
       transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
+      TransportDescriptorType shmTransport = new TransportDescriptorType();
+      shmTransport.setTransportId(UUID.randomUUID().toString());
+      shmTransport.setType("SHM");
+      transportDescriptorListType.getTransportDescriptor().add(shmTransport);
       profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
       // Add profile
@@ -48,9 +52,11 @@ public class ROS2Node implements Closeable
       participantProfile.setDomainId(113); // TODO:
       participantProfile.setProfileName(participantProfileName);
       Rtps rtps = new Rtps();
-      rtps.setUseBuiltinTransports(true);
+      rtps.setName("test_node");
+      rtps.setUseBuiltinTransports(false);
       ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
       userTransports.getTransportId().add(udp4Transport.getTransportId());
+      userTransports.getTransportId().add(shmTransport.getTransportId());
       rtps.setUserTransports(userTransports);
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
@@ -96,10 +102,7 @@ public class ROS2Node implements Closeable
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
       Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
       fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-      Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
-                                                      topicDataWrapperType,
-                                                      topicTypeName,
-                                                      topicProfileName);
+      Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
       ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
       synchronized (this.topicData)
       {
@@ -131,9 +134,8 @@ public class ROS2Node implements Closeable
 
       ROS2TopicData topicData = registerTopic(topic);
       Pointer fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
-      Pointer fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
 
-      ROS2Publisher publisher = new ROS2Publisher(fastddsPublisher, fastddsDataWriter, topicData);
+      ROS2Publisher publisher = new ROS2Publisher(fastddsPublisher, publisherProfileName, topicData);
       synchronized (publishers)
       {
          publishers.add(publisher);

@@ -22,34 +22,27 @@ public class CustomMessageTest
       fastddsjavaNativeLibrary.load();
 
       fastddsjava_load_xml_profiles_string("""
+                                                 
                                                  <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
                                                  <dds xmlns="http://www.eprosima.com">
                                                      <profiles>
                                                          <transport_descriptors>
                                                              <transport_descriptor>
-                                                                 <transport_id>0f4f3308-672c-4780-8dad-bf3f90f89490</transport_id>
-                                                                 <type>SHM</type>
-                                                             </transport_descriptor>
-                                                             <transport_descriptor>
-                                                                 <transport_id>71934648-74cb-46d0-a48d-738aecd823fd</transport_id>
+                                                                 <transport_id>34d06f9b-3c96-4ebc-83bb-d7755af00d76</transport_id>
                                                                  <type>UDPv4</type>
                                                              </transport_descriptor>
+                                                             <transport_descriptor>
+                                                                 <transport_id>a1b9534d-b8a4-4fc2-b4a0-bab4c663b300</transport_id>
+                                                                 <type>SHM</type>
+                                                             </transport_descriptor>
                                                          </transport_descriptors>
-                                                         <participant profile_name="15549ef9-35af-40e3-a4f6-aa257fe31316">
-                                                             <domainId>113</domainId>
+                                                         <participant profile_name="34894fa6-90d6-4bec-b392-271c8e08e837">
+                                                             <domainId>112</domainId>
                                                              <rtps>
                                                                  <name>test_node</name>
-                                                                 <builtin>
-                                                                     <discovery_config>
-                                                                         <leaseDuration>
-                                                                             <nanosec>-1</nanosec>
-                                                                             <sec>2147483647</sec>
-                                                                         </leaseDuration>
-                                                                     </discovery_config>
-                                                                 </builtin>
                                                                  <userTransports>
-                                                                     <transport_id>0f4f3308-672c-4780-8dad-bf3f90f89490</transport_id>
-                                                                     <transport_id>71934648-74cb-46d0-a48d-738aecd823fd</transport_id>
+                                                                     <transport_id>34d06f9b-3c96-4ebc-83bb-d7755af00d76</transport_id>
+                                                                     <transport_id>a1b9534d-b8a4-4fc2-b4a0-bab4c663b300</transport_id>
                                                                  </userTransports>
                                                                  <useBuiltinTransports>false</useBuiltinTransports>
                                                              </rtps>
@@ -60,6 +53,8 @@ public class CustomMessageTest
                                                         <data_reader profile_name="example_subscriber">
                                                         </data_reader>
                                                      </profiles>
+                                                     <types/>
+                                                     <log/>
                                                      <library_settings>
                                                          <intraprocess_delivery>FULL</intraprocess_delivery>
                                                      </library_settings>
@@ -76,7 +71,7 @@ public class CustomMessageTest
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(CustomMessage2.name, CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
-      Pointer participant = fastddsjava_create_participant("15549ef9-35af-40e3-a4f6-aa257fe31316");
+      Pointer participant = fastddsjava_create_participant("34894fa6-90d6-4bec-b392-271c8e08e837");
 
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);

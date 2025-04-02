@@ -40,6 +40,8 @@ public class ProfilesXML
    {
       String xml = marshall();
 
+      System.out.println(xml);
+
       fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
    }
 

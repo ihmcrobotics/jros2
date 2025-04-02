@@ -8,6 +8,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 
+import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_create_datawriter;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datawriter_write;
 
 public class ROS2Publisher implements Closeable
@@ -20,10 +21,10 @@ public class ROS2Publisher implements Closeable
    private ByteBuffer writeBuffer;
    private CDRBuffer cdrBuffer;
 
-   protected ROS2Publisher(Pointer fastddsPublisher, Pointer fastddsDataWriter, ROS2TopicData topicData)
+   protected ROS2Publisher(Pointer fastddsPublisher, String publisherProfileName, ROS2TopicData topicData)
    {
       this.fastddsPublisher = fastddsPublisher;
-      this.fastddsDataWriter = fastddsDataWriter;
+      this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
 
