@@ -2,7 +2,6 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
-import us.ihmc.fastddsjava.pointers.fastddsjava;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
@@ -71,10 +70,10 @@ public class ROS2Node implements Closeable
          throw new RuntimeException(e);
       }
 
-      fastddsParticipant = fastddsjava.fastddsjava_create_participant(participantProfileName);
+      fastddsParticipant = fastddsjava_create_participant(participantProfileName);
    }
 
-   protected <T extends ROS2Message<T>> ROS2TopicData registerTopic(ROS2Topic<T> topic)
+   protected <T extends ROS2Message<T>> ROS2TopicData createOrGetTopicData(ROS2Topic<T> topic)
    {
       synchronized (this.topicData)
       {
@@ -132,7 +131,7 @@ public class ROS2Node implements Closeable
          throw new RuntimeException(e);
       }
 
-      ROS2TopicData topicData = registerTopic(topic);
+      ROS2TopicData topicData = createOrGetTopicData(topic);
       Pointer fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
 
       ROS2Publisher publisher = new ROS2Publisher(fastddsPublisher, publisherProfileName, topicData);
@@ -188,6 +187,6 @@ public class ROS2Node implements Closeable
          // TODO: Release topicData
       }
 
-      fastddsjava.fastddsjava_delete_participant(fastddsParticipant);
+      fastddsjava_delete_participant(fastddsParticipant);
    }
 }
