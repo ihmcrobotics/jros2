@@ -2,8 +2,13 @@ package us.ihmc.jros2;
 
 import java.time.Duration;
 
+/**
+ * https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+ */
 public class ROS2QoSProfile
 {
+   public static final ROS2QoSProfile DEFAULT = new ROS2QoSProfile();
+
    public enum History
    {
       KEEP_LAST, KEEP_ALL

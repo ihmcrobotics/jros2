@@ -1,10 +1,10 @@
 package us.ihmc.jros2.testmessages;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.CDRSerializable;
 import us.ihmc.fastddsjava.cdr.idl.IDLIntSequence;
+import us.ihmc.jros2.ROS2Message;
 
-public class CustomMessage implements CDRSerializable
+public class CustomMessage implements ROS2Message<CustomMessage>
 {
    public static final String name = "ihmc_common_msgs::msg::dds_::CustomMessage_";
 
@@ -61,5 +61,18 @@ public class CustomMessage implements CDRSerializable
 
       // Read intList
       intList_.deserialize(buffer);
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(CustomMessage from)
+   {
+      data_ = from.data_;
+
    }
 }

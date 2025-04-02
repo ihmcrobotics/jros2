@@ -1,9 +1,9 @@
 package us.ihmc.jros2.testmessages;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.CDRSerializable;
+import us.ihmc.jros2.ROS2Message;
 
-public class Bool implements CDRSerializable
+public class Bool implements ROS2Message<Bool>
 {
    public static final String name = "std_msgs::msg::dds_::Bool_";
 
@@ -41,5 +41,17 @@ public class Bool implements CDRSerializable
    {
       // Read data
       data_ = buffer.readBoolean();
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(Bool from)
+   {
+      data_ = from.data_;
    }
 }

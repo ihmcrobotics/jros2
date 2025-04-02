@@ -6,7 +6,7 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
-public class IDLObjectSequence<T extends CDRSerializable> extends ArrayList<T> implements IDLSequence
+public class IDLObjectSequence<T extends CDRSerializable> extends ArrayList<T> implements IDLSequence<IDLObjectSequence<T>>
 {
    private final Constructor<T> clazzConstructor;
 
@@ -58,6 +58,15 @@ public class IDLObjectSequence<T extends CDRSerializable> extends ArrayList<T> i
       T element = get(i);
 
       element.serialize(buffer);
+   }
+
+   @Override
+   public void set(IDLObjectSequence<T> other)
+   {
+      // TODO: speed this up?
+      clear();
+
+      this.addAll(other);
    }
 
    private T createInstance()

@@ -3,7 +3,7 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
-public interface IDLSequence extends CDRSerializable
+public interface IDLSequence<T extends IDLSequence<T>> extends CDRSerializable
 {
    int elements();
 
@@ -18,6 +18,8 @@ public interface IDLSequence extends CDRSerializable
     * Write element i to the buffer using CDR
     */
    void writeElement(int i, CDRBuffer buffer);
+
+   void set(T other);
 
    @Override
    default int calculateSizeBytes(int currentAlignment)
