@@ -73,7 +73,7 @@ public class ROS2Node implements Closeable
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
    }
 
-   protected <T extends ROS2Message<T>> ROS2TopicData createOrGetTopicData(ROS2Topic<T> topic)
+   protected <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       synchronized (this.topicData)
       {
@@ -131,7 +131,7 @@ public class ROS2Node implements Closeable
          throw new RuntimeException(e);
       }
 
-      ROS2TopicData topicData = createOrGetTopicData(topic);
+      ROS2TopicData topicData = getOrCreateTopicData(topic);
       Pointer fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
 
       ROS2Publisher publisher = new ROS2Publisher(fastddsPublisher, publisherProfileName, topicData);
