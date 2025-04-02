@@ -2,14 +2,12 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.pointers.fastddsjava;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 
-import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_create_datawriter;
-import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datawriter_write;
+import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Publisher implements Closeable
 {
@@ -58,6 +56,6 @@ public class ROS2Publisher implements Closeable
    {
       topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
-      fastddsjava.fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
+      fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
    }
 }

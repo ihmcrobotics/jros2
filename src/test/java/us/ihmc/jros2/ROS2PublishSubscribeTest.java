@@ -15,7 +15,7 @@ public class ROS2PublishSubscribeTest
    public void publishSubscribeTest() throws InterruptedException
    {
       ROS2Node ros2Node = new ROS2Node();
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_bool2");
+      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_bool");
       ROS2Publisher publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
 
       Bool bool = new Bool();
@@ -24,8 +24,6 @@ public class ROS2PublishSubscribeTest
       int iter = 0;
       while (iter < 10000)
       {
-         System.out.println("writing...");
-
          publisher.publish(bool);
 
          iter++;
