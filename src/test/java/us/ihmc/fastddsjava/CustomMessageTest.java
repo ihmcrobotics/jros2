@@ -36,7 +36,7 @@ public class CustomMessageTest
                                                              </transport_descriptor>
                                                          </transport_descriptors>
                                                          <participant profile_name="15549ef9-35af-40e3-a4f6-aa257fe31316">
-                                                             <domainId>145</domainId>
+                                                             <domainId>113</domainId>
                                                              <rtps>
                                                                  <name>test_node</name>
                                                                  <builtin>

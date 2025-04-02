@@ -15,6 +15,8 @@ public class CustomMessage2 implements ROS2Message<CustomMessage2>
    {
       customMessageList_ = new IDLObjectSequence<>(CustomMessage.class);
       customMessageList2_ = new CustomMessage[4];
+      for (int i = 0; i < customMessageList2_.length; i++)
+         customMessageList2_[i] = new CustomMessage();
    }
 
    public IDLObjectSequence<CustomMessage> getCustomMessageList()
