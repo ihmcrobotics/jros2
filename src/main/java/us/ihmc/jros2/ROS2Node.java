@@ -253,7 +253,10 @@ public class ROS2Node implements Closeable
       {
          ROS2TopicData topicData = this.topicData.get(topic);
 
-         // TODO: Release topicData
+         fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
+         fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
+
+         topicData.topicDataWrapperType.close();
       }
 
       fastddsjava_delete_participant(fastddsParticipant);

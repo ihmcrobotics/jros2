@@ -24,6 +24,8 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+
+      cdrBuffer = new CDRBuffer();
    }
 
    public void publish(T message)
@@ -34,7 +36,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       if (writeBuffer == null || writeBuffer.capacity() < messageSizeBytes)
       {
          writeBuffer = ByteBuffer.allocate(messageSizeBytes);
-         cdrBuffer = new CDRBuffer(writeBuffer);
+         cdrBuffer.setBuffer(writeBuffer);
       }
 
       // TODO: check if we can shrink the writeBuffer to save memory

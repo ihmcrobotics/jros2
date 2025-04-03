@@ -11,15 +11,21 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
  */
 public final class CDRBuffer
 {
+   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
+
    // RepresentationIdentifier, RepresentationOptions
    public static final byte[] PAYLOAD_HEADER = {0, 1, 0, 0};
 
-   private final ByteBuffer buffer;
+   private ByteBuffer buffer;
 
-   // TODO: add set buffer method
    public CDRBuffer(ByteBuffer buffer)
    {
       this.buffer = buffer;
+   }
+
+   public CDRBuffer()
+   {
+      this(EMPTY_BUFFER);
    }
 
    public void writePayloadHeader()
@@ -153,6 +159,11 @@ public final class CDRBuffer
          case CDR_BE, PL_CDR_BE -> ByteOrder.BIG_ENDIAN;
          default -> throw new RuntimeException("Unsupported encapsulation");
       };
+   }
+
+   public void setBuffer(ByteBuffer buffer)
+   {
+      this.buffer = buffer;
    }
 
    public ByteBuffer getBufferUnsafe()
