@@ -4,14 +4,13 @@ import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
-import java.io.Closeable;
 import java.nio.ByteBuffer;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
-public class ROS2Publisher<T extends ROS2Message<T>> implements Closeable
+public class ROS2Publisher<T extends ROS2Message<T>>
 {
-   protected final Pointer fastddsPublisher;
+   private final Pointer fastddsPublisher;
    private final Pointer fastddsDataWriter;
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
@@ -19,15 +18,12 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements Closeable
    private ByteBuffer writeBuffer;
    private CDRBuffer cdrBuffer;
 
-   protected ROS2Publisher(Pointer fastddsPublisher, String publisherProfileName, ROS2TopicData topicData)
+   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2TopicData topicData)
    {
-      this.fastddsPublisher = fastddsPublisher;
+      this.fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-
-      writeBuffer = ByteBuffer.allocate(1);
-      cdrBuffer = new CDRBuffer(writeBuffer);
    }
 
    public void publish(T message)
@@ -35,7 +31,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements Closeable
       // TODO: remove +4 payload header
       int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
 
-      if (writeBuffer.capacity() < messageSizeBytes)
+      if (writeBuffer == null || writeBuffer.capacity() < messageSizeBytes)
       {
          writeBuffer = ByteBuffer.allocate(messageSizeBytes);
          cdrBuffer = new CDRBuffer(writeBuffer);
@@ -53,11 +49,12 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements Closeable
       fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
    }
 
-   @Override
-   public void close()
+   protected void close(Pointer fastddsParticipant)
    {
       topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
       fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
+
+      fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
    }
 }

@@ -16,6 +16,7 @@ public final class CDRBuffer
 
    private final ByteBuffer buffer;
 
+   // TODO: add set buffer method
    public CDRBuffer(ByteBuffer buffer)
    {
       this.buffer = buffer;
