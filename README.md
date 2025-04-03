@@ -5,6 +5,7 @@ Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64)
 - (soon) Windows (Windows 10+ x86_64)
 - (soon) macOS (macOS 13+ Intel, Apple Silicon)
+- (possibly soon) Android
 
 Requires Java 17.
 
