@@ -1,0 +1,23 @@
+# jros2
+A ROS 2-compatible library for Java.
+
+Supported platforms:
+- Linux (Ubuntu 20.04+ or similar x86_64, arm64)
+- (soon) Windows (Windows 10+ x86_64)
+- (soon) macOS (macOS 13+ Intel, Apple Silicon)
+
+Requires Java 17.
+
+## Features
+- Does not require a ROS 2 installation on the system
+- Publish and subscribe to ROS 2 topics
+- Supports custom message types
+- Generate Java classes from .msg packages
+- Fast-DDS backend
+- Minimal and fast implementation
+- (soon) ROS 2 services
+- (soon) ROS 2 actions
+- (soon) ROS 2 parameters
+
+## Usage
+TODO:
