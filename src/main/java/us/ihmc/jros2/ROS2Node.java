@@ -8,6 +8,7 @@ import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
+import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
@@ -41,8 +42,8 @@ public class ROS2Node implements Closeable
 
    private final Pointer fastddsParticipant;
    private final Map<ROS2Topic<?>, ROS2TopicData> topicData = new HashMap<>();
-   private final List<ROS2Publisher> publishers = new ArrayList<>();
-   private final List<ROS2Subscription> subscriptions = new ArrayList<>();
+   private final List<ROS2Publisher<?>> publishers = new ArrayList<>();
+   private final List<ROS2Subscription<?>> subscriptions = new ArrayList<>();
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
@@ -128,7 +129,7 @@ public class ROS2Node implements Closeable
       return topicData;
    }
 
-   public <T extends ROS2Message<T>> ROS2Publisher createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
       ProfilesXML profilesXML = new ProfilesXML();
       PublisherProfileType publisherProfile = new PublisherProfileType();
@@ -151,7 +152,7 @@ public class ROS2Node implements Closeable
       ROS2TopicData topicData = getOrCreateTopicData(topic);
       Pointer fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
 
-      ROS2Publisher publisher = new ROS2Publisher(fastddsPublisher, publisherProfileName, topicData);
+      ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsPublisher, publisherProfileName, topicData);
       synchronized (publishers)
       {
          publishers.add(publisher);
@@ -160,10 +161,66 @@ public class ROS2Node implements Closeable
       return publisher;
    }
 
-   public ROS2Subscription createSubscription(Class<?> topicType, String topicName, ROS2SubscriptionCallback callback, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
    {
-      // TODO:
-      return null;
+      final boolean removed;
+      synchronized (publishers)
+      {
+         removed = publishers.remove(publisher);
+      }
+
+      publisher.close();
+
+      fastddsjava_delete_publisher(fastddsParticipant, publisher.fastddsPublisher);
+
+      return removed;
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
+   {
+      ProfilesXML profilesXML = new ProfilesXML();
+      SubscriberProfileType subscriberProfile = new SubscriberProfileType();
+      String subscriberProfileName = UUID.randomUUID().toString();
+      subscriberProfile.setProfileName(subscriberProfileName);
+      profilesXML.addSubscriberProfile(subscriberProfile);
+
+      // TODO: translate qosProfile into profilesXML
+
+      // TODO: keep try-catch?
+      try
+      {
+         profilesXML.load();
+      }
+      catch (fastddsjavaException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      ROS2TopicData topicData = getOrCreateTopicData(topic);
+      Pointer fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
+
+      ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsSubscriber, subscriberProfileName, callback, topicData);
+      synchronized (subscriptions)
+      {
+         subscriptions.add(subscription);
+      }
+
+      return subscription;
+   }
+
+   public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
+   {
+      final boolean removed;
+      synchronized (subscriptions)
+      {
+         removed = subscriptions.remove(subscription);
+      }
+
+      subscription.close();
+
+      fastddsjava_delete_subscriber(fastddsParticipant, subscription.fastddsSubscriber);
+
+      return removed;
    }
 
    public ROS2Service createService(Class<?> serviceType, String serviceName, Object callback)
@@ -184,12 +241,12 @@ public class ROS2Node implements Closeable
       return null;
    }
 
-   public List<ROS2Publisher> getPublishers()
+   public List<ROS2Publisher<?>> getPublishers()
    {
       return Collections.unmodifiableList(publishers);
    }
 
-   public List<ROS2Subscription> getSubscriptions()
+   public List<ROS2Subscription<?>> getSubscriptions()
    {
       return Collections.unmodifiableList(subscriptions);
    }

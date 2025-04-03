@@ -9,9 +9,9 @@ import java.nio.ByteBuffer;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
-public class ROS2Publisher implements Closeable
+public class ROS2Publisher<T extends ROS2Message<T>> implements Closeable
 {
-   private final Pointer fastddsPublisher;
+   protected final Pointer fastddsPublisher;
    private final Pointer fastddsDataWriter;
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
@@ -30,7 +30,7 @@ public class ROS2Publisher implements Closeable
       cdrBuffer = new CDRBuffer(writeBuffer);
    }
 
-   public <T extends ROS2Message<T>> void publish(T message)
+   public void publish(T message)
    {
       // TODO: remove +4 payload header
       int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();

@@ -1,5 +1,6 @@
 package us.ihmc.jros2;
 
-public class ROS2SubscriptionCallback
+public interface ROS2SubscriptionCallback<T extends ROS2Message<T>>
 {
+   void onMessage(T message);
 }
