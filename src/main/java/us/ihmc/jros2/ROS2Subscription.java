@@ -3,8 +3,8 @@ package us.ihmc.jros2;
 import org.bytedeco.javacpp.Pointer;
 import org.bytedeco.javacpp.annotation.Const;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
-import us.ihmc.fastddsjava.pointers.fastddsjava;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
@@ -13,7 +13,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import java.io.Closeable;
 import java.nio.ByteBuffer;
 
-import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_create_datareader;
+import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Subscription<T extends ROS2Message<T>> implements Closeable
 {
@@ -34,6 +34,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements Closeable
    {
       this.fastddsSubscriber = fastddsSubscriber;
       this.fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
+      this.callback = callback;
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
 
@@ -61,11 +62,26 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements Closeable
       cdrBuffer = new CDRBuffer(readBuffer);
    }
 
+   // TODO: investigate threading and allocations
    protected void onDataCallback(Pointer dataReader)
    {
       if (callback != null)
       {
+         // Allocate if there is a ROS2Subscription callback
+         fastddsjava_TopicDataWrapper callbackTopicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+         SampleInfo callbackSampleInfo = new SampleInfo();
 
+         fastddsjava_datareader_read_next_sample(dataReader, callbackTopicDataWrapper, callbackSampleInfo);
+
+         CDRBuffer callbackCDRBuffer = new CDRBuffer(callbackTopicDataWrapper.data_ptr().asByteBuffer());
+
+         callbackCDRBuffer.readPayloadHeader();
+
+         T t = null; // TODO:
+
+         t.deserialize(callbackCDRBuffer);
+
+         callback.onMessage(t);
       }
    }
 
@@ -77,7 +93,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements Closeable
    @Override
    public void close()
    {
-      fastddsjava.fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
+      fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
 
       fastddsDataReaderListener.close();
       fastddsDataCallback.close();
