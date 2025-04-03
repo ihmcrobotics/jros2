@@ -16,7 +16,7 @@ public class ROS2PublishSubscribeTest
    {
       ROS2Node ros2Node = new ROS2Node("test_node", 113);
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_bool");
-      ROS2Publisher publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
 
       Bool bool = new Bool();
       bool.setData(true);
