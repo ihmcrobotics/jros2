@@ -12,7 +12,6 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 {
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
-   private final ROS2TopicData topicData;
 
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
@@ -24,7 +23,6 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2TopicData topicData)
    {
       this.callback = callback;
-      this.topicData = topicData;
 
       fastddsDataCallback = new fastddsjava_OnDataCallback()
       {
@@ -73,6 +71,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       fastddsDataReaderListener.close();
       fastddsDataCallback.close();
       fastddsSubscriptionCallback.close();
+      subscriptionReader.close();
 
       fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
    }
