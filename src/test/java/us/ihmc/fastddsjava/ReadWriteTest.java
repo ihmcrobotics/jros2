@@ -91,8 +91,9 @@ public class ReadWriteTest
       Pointer data = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
 
-      // pack wrapper with data
-      topicDataWrapper.data_vector().put(sampleData);
+      // Pack wrapper with data
+      topicDataWrapper.data_vector().resize(sampleData.length);
+      topicDataWrapper.data_ptr().put(sampleData);
 
       // Create reader with listener
 
@@ -196,7 +197,8 @@ public class ReadWriteTest
          do
          {
             byte[] sampleData = generateRandomBytes(currentDataLength);
-            topicDataWrapperWrite.data_vector().put(sampleData);
+            topicDataWrapperWrite.data_vector().resize(sampleData.length);
+            topicDataWrapperWrite.data_ptr().put(sampleData);
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
