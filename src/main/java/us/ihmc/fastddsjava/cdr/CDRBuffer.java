@@ -43,10 +43,10 @@ public final class CDRBuffer
    {
       if (buffer.position() == 0)
       {
-         // RepresentationIdentifier
-         short encapsulation = buffer.getShort();
+         // RepresentationIdentifier (encapsulation)
+         buffer.getShort();
          // RepresentationOptions
-         short options = buffer.getShort();
+         buffer.getShort();
       }
    }
 

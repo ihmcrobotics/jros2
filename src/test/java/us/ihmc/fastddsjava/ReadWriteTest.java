@@ -4,7 +4,6 @@ import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.RepeatedTest;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
-import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
@@ -13,7 +12,6 @@ import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +60,8 @@ public class ReadWriteTest
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "example_subscriber");
+
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
       final AtomicBoolean received = new AtomicBoolean(false);
@@ -73,8 +73,7 @@ public class ReadWriteTest
       SampleInfo sampleInfo = new SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
-         @Override
-         public void call(Pointer dataReader)
+         public void call()
          {
             synchronized (received)
             {
@@ -87,18 +86,7 @@ public class ReadWriteTest
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
-
-      // Add subscription callback
-      final AtomicInteger numberOfMatches = new AtomicInteger();
-      fastddsjava_OnSubscriptionCallback onSubscriptionCallback = new fastddsjava_OnSubscriptionCallback() {
-         @Override
-         public void call(Pointer dataReader, SubscriptionMatchedStatus info)
-         {
-            // Record number of matches
-            numberOfMatches.set(info.total_count());
-         }
-      };
-      listener.set_on_subscription_callback(onSubscriptionCallback);
+      fastddsjava_datareader_set_listener(dataReader, listener);
 
       Pointer data = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
@@ -107,7 +95,6 @@ public class ReadWriteTest
       topicDataWrapper.data_vector().put(sampleData);
 
       // Create reader with listener
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
 
       // Send the data
       retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
@@ -122,9 +109,6 @@ public class ReadWriteTest
          }
       }
 
-      // Assert there was only 1 match
-      assertEquals(1, numberOfMatches.get());
-
       // Assert the data was received correctly
       assertTrue(dataCorrect.get());
 
@@ -133,7 +117,6 @@ public class ReadWriteTest
       topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
-      assertTrue(onSubscriptionCallback.releaseReference());
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
       retcodeThrowOnError(fastddsjava_delete_subscriber(participant, subscriber));
@@ -169,6 +152,7 @@ public class ReadWriteTest
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "example_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
       final AtomicBoolean received = new AtomicBoolean(false);
@@ -181,7 +165,7 @@ public class ReadWriteTest
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
-         public void call(Pointer dataReader)
+         public void call()
          {
             synchronized (received)
             {
@@ -200,21 +184,7 @@ public class ReadWriteTest
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
-
-      // Add subscription callback
-      final AtomicInteger numberOfMatches = new AtomicInteger();
-      fastddsjava_OnSubscriptionCallback onSubscriptionCallback = new fastddsjava_OnSubscriptionCallback() {
-         @Override
-         public void call(Pointer dataReader, SubscriptionMatchedStatus info)
-         {
-            // Record number of matches
-            numberOfMatches.set(info.total_count());
-         }
-      };
-      listener.set_on_subscription_callback(onSubscriptionCallback);
-
-      // Create reader with listener
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, listener, "example_subscriber");
+      fastddsjava_datareader_set_listener(dataReader, listener);
 
       // Send the data
       Pointer dataWrite = topicDataWrapperType.create_data();
@@ -255,9 +225,6 @@ public class ReadWriteTest
          }
       }
 
-      // Assert there was only 1 match
-      assertEquals(1, numberOfMatches.get());
-
       // Assert that the received data length was equal to the expected final data length
       assertEquals(finalDataLength, receivedDataLength.get());
 
@@ -266,7 +233,6 @@ public class ReadWriteTest
       topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(dataWrite);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
-      assertTrue(onSubscriptionCallback.releaseReference());
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
       retcodeThrowOnError(fastddsjava_delete_subscriber(participant, subscriber));

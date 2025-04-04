@@ -35,4 +35,21 @@ public class ROS2PublishSubscribeTest
 
       ros2Node.close();
    }
+
+   @Test
+   public void subscribeTest() throws InterruptedException
+   {
+      ROS2Node ros2Node = new ROS2Node("test_node", 113);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_bool");
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) reader ->
+      {
+         Bool msg = new Bool();
+         reader.takeNextSample(msg);
+
+         System.out.println(msg.getData());
+
+      }, ROS2QoSProfile.DEFAULT);
+
+      Thread.sleep(10000000);
+   }
 }

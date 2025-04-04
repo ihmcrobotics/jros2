@@ -102,8 +102,9 @@ private:
 
 class fastddsjava_DataReaderListener : public eprosima::fastdds::dds::DataReaderListener {
 public:
-    typedef std::function<void(void*)> fastddsjava_OnDataCallback;
-    typedef std::function<void(void*, const eprosima::fastdds::dds::SubscriptionMatchedStatus* info)> fastddsjava_OnSubscriptionCallback;
+    // Do not accept anything in the callback functions so that in JNI, we do not create new Pointer objects, which generate garbage
+    typedef std::function<void()> fastddsjava_OnDataCallback;
+    typedef std::function<void()> fastddsjava_OnSubscriptionCallback;
 
     void set_on_data_available_callback(fastddsjava_OnDataCallback callback) {
         this->on_data_callback = callback;
@@ -115,13 +116,13 @@ public:
 
     JAVACPP_SKIP void on_data_available(eprosima::fastdds::dds::DataReader* reader) override {
         if (on_data_callback)
-            on_data_callback(reader);
+            on_data_callback();
     }
 
     JAVACPP_SKIP void on_subscription_matched(eprosima::fastdds::dds::DataReader* reader,
                                                 const eprosima::fastdds::dds::SubscriptionMatchedStatus& info) override {
         if (on_subscription_callback)
-            on_subscription_callback(reader, &info);
+            on_subscription_callback();
     }
 
 private:
@@ -276,6 +277,18 @@ uint32_t fastddsjava_datareader_set_listener(void* reader_, fastddsjava_DataRead
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
     return reader->set_listener(listener);
+}
+
+uint32_t fastddsjava_datareader_get_unread_count(void* reader_) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    return reader->get_unread_count();
+}
+
+uint32_t fastddsjava_datareader_get_subscription_matched_status(void* reader_, eprosima::fastdds::dds::SubscriptionMatchedStatus status) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    return reader->get_subscription_matched_status(status);
 }
 
 uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {

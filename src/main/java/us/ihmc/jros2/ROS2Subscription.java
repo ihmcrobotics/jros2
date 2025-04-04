@@ -1,94 +1,69 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.javacpp.annotation.Const;
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
-import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
-
-import java.nio.ByteBuffer;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Subscription<T extends ROS2Message<T>>
 {
-   private Pointer fastddsSubscriber;
-   private Pointer fastddsDataReader;
+   private final Pointer fastddsSubscriber;
+   private final Pointer fastddsDataReader;
    private final ROS2TopicData topicData;
-   private final fastddsjava_TopicDataWrapper topicDataWrapper;
 
-   private fastddsjava_OnDataCallback fastddsDataCallback;
-   private fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
-   private fastddsjava_DataReaderListener fastddsDataReaderListener;
-   private ROS2SubscriptionCallback callback;
-
-   private ByteBuffer readBuffer;
-   private CDRBuffer cdrBuffer;
+   private final fastddsjava_OnDataCallback fastddsDataCallback;
+   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
+   private final fastddsjava_DataReaderListener fastddsDataReaderListener;
+   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
+   private final ROS2SubscriptionReader<T> subscriptionReader;
+   private final ROS2SubscriptionCallback<T> callback;
 
    protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2TopicData topicData)
    {
-      this.fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      this.fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       this.callback = callback;
       this.topicData = topicData;
-      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
 
       fastddsDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
-         public void call(Pointer dataReader)
+         public void call()
          {
-            onDataCallback(dataReader);
+            onDataCallback();
          }
       };
       fastddsSubscriptionCallback = new fastddsjava_OnSubscriptionCallback()
       {
          @Override
-         public void call(Pointer dataReader, SubscriptionMatchedStatus info)
+         public void call()
          {
-            onSubscriptionCallback(dataReader, info);
+            onSubscriptionCallback();
          }
       };
       fastddsDataReaderListener = new fastddsjava_DataReaderListener();
       fastddsDataReaderListener.set_on_data_available_callback(fastddsDataCallback);
       fastddsDataReaderListener.set_on_subscription_callback(fastddsSubscriptionCallback);
+      subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
-      readBuffer = ByteBuffer.allocate(1);
-      cdrBuffer = new CDRBuffer(readBuffer);
+      this.fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
+      this.fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, fastddsDataReaderListener, subscriberProfileName);
+
+      subscriptionReader = new ROS2SubscriptionReader<>(fastddsDataReader, topicData);
    }
 
-   // TODO: investigate threading and allocations
-   protected void onDataCallback(Pointer dataReader)
+   private void onDataCallback()
    {
       if (callback != null)
       {
-         // Allocate if there is a ROS2Subscription callback
-         fastddsjava_TopicDataWrapper callbackTopicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-         SampleInfo callbackSampleInfo = new SampleInfo();
-
-         fastddsjava_datareader_take_next_sample(dataReader, callbackTopicDataWrapper, callbackSampleInfo);
-
-         CDRBuffer callbackCDRBuffer = new CDRBuffer(callbackTopicDataWrapper.data_ptr().asByteBuffer());
-
-         callbackCDRBuffer.readPayloadHeader();
-
-         T t = null; // TODO:
-
-         t.deserialize(callbackCDRBuffer);
-
-         callback.onMessage(t);
+         callback.onMessage(subscriptionReader);
       }
-
-
    }
 
-   protected void onSubscriptionCallback(Pointer dataReader, @Const SubscriptionMatchedStatus info)
+   private void onSubscriptionCallback()
    {
-      // TODO:
+      fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
    }
 
    protected void close(Pointer fastddsParticipant)

@@ -2,7 +2,6 @@ package us.ihmc.fastddsjava.pointers;
 
 import org.bytedeco.javacpp.FunctionPointer;
 import org.bytedeco.javacpp.Pointer;
-import org.bytedeco.javacpp.annotation.Const;
 import org.bytedeco.javacpp.annotation.Platform;
 import org.bytedeco.javacpp.annotation.Properties;
 import org.bytedeco.javacpp.tools.Info;
@@ -78,7 +77,7 @@ public class fastddsjavaInfoMapper implements InfoMapper
       public    fastddsjava_OnDataCallback(Pointer p) { super(p); }
       protected fastddsjava_OnDataCallback() { allocate(); }
       private native void allocate();
-      public native void call(Pointer dataReader);
+      public native void call();
    }
 
    public static class fastddsjava_OnSubscriptionCallback extends FunctionPointer
@@ -86,6 +85,6 @@ public class fastddsjavaInfoMapper implements InfoMapper
       public    fastddsjava_OnSubscriptionCallback(Pointer p) { super(p); }
       protected fastddsjava_OnSubscriptionCallback() { allocate(); }
       private native void allocate();
-      public native void call(Pointer dataReader, @Const SubscriptionMatchedStatus info);
+      public native void call();
    }
 }

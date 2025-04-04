@@ -114,6 +114,10 @@ public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_samp
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_, fastddsjava_DataReaderListener listener/*=nullptr*/);
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_);
 
+public static native @Cast("uint32_t") int fastddsjava_datareader_get_unread_count(Pointer reader_);
+
+public static native @Cast("uint32_t") int fastddsjava_datareader_get_subscription_matched_status(Pointer reader_, @ByVal SubscriptionMatchedStatus status);
+
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
 
 // #endif // FASTDDSJAVA_H

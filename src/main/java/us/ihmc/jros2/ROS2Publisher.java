@@ -16,14 +16,16 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
 
    private ByteBuffer writeBuffer;
-   private CDRBuffer cdrBuffer;
+   private final CDRBuffer cdrBuffer;
 
    protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2TopicData topicData)
    {
-      this.fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
-      this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+
+      this.fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
+      this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
 
       cdrBuffer = new CDRBuffer();
    }

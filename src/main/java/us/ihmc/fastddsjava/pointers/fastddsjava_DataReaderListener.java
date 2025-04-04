@@ -27,6 +27,7 @@ public class fastddsjava_DataReaderListener extends Pointer {
         return new fastddsjava_DataReaderListener((Pointer)this).offsetAddress(i);
     }
 
+    // Do not accept anything in the callback functions so that in JNI, we do not create new Pointer objects, which generate garbage
 
     public native void set_on_data_available_callback(@ByVal fastddsjava_OnDataCallback callback);
 
