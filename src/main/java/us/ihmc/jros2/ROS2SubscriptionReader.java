@@ -20,7 +20,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 
    private final SampleInfo sampleInfo;
 
-   public ROS2SubscriptionReader(Pointer fastddsDataReader, ROS2TopicData topicData)
+   protected ROS2SubscriptionReader(Pointer fastddsDataReader, ROS2TopicData topicData)
    {
       this.fastddsDataReader = fastddsDataReader;
       this.topicData = topicData;
