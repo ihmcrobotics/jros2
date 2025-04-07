@@ -11,7 +11,7 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
  */
 public final class CDRBuffer
 {
-   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
+   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(1);
 
    // RepresentationIdentifier, RepresentationOptions
    public static final byte[] PAYLOAD_HEADER = {0, 1, 0, 0};
@@ -28,26 +28,43 @@ public final class CDRBuffer
       this(EMPTY_BUFFER);
    }
 
+   public ByteBuffer getBufferUnsafe()
+   {
+      return buffer;
+   }
+
+   public void ensureRemainingCapacity(int capacity)
+   {
+      int remainingCapacity = buffer.capacity() - buffer.position();
+
+      if (remainingCapacity < capacity)
+      {
+         ByteBuffer newBuffer = ByteBuffer.allocate(buffer.position() + capacity);
+
+         newBuffer.put(buffer);
+
+         buffer = newBuffer;
+
+         buffer.rewind(); // TODO check
+      }
+   }
+
    public void writePayloadHeader()
    {
-      if (buffer.position() == 0)
-      {
-         buffer.put(PAYLOAD_HEADER);
+      buffer.put(PAYLOAD_HEADER);
 
-         // TODO:
-         buffer.order(ByteOrder.LITTLE_ENDIAN);
-      }
+      // TODO:
+      buffer.order(ByteOrder.LITTLE_ENDIAN);
    }
 
    public void readPayloadHeader()
    {
-      if (buffer.position() == 0)
-      {
-         // RepresentationIdentifier (encapsulation)
-         buffer.getShort();
-         // RepresentationOptions
-         buffer.getShort();
-      }
+      buffer.order(ByteOrder.BIG_ENDIAN); // BE for reading header
+      // RepresentationIdentifier (encapsulation)
+      short encapsulation = buffer.getShort();
+      buffer.order(byteOrder(encapsulation));
+      // RepresentationOptions
+      buffer.getShort();
    }
 
    public void writeByte(byte value)
@@ -159,15 +176,5 @@ public final class CDRBuffer
          case CDR_BE, PL_CDR_BE -> ByteOrder.BIG_ENDIAN;
          default -> throw new RuntimeException("Unsupported encapsulation");
       };
-   }
-
-   public void setBuffer(ByteBuffer buffer)
-   {
-      this.buffer = buffer;
-   }
-
-   public ByteBuffer getBufferUnsafe()
-   {
-      return buffer;
    }
 }
