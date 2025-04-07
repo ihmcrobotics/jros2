@@ -31,6 +31,14 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       elements[position++] = element;
    }
 
+   public T add()
+   {
+      assert elements != null;
+      assert position <= elements.length;
+
+      return elements[position++];
+   }
+
    @Override
    public int elements()
    {
