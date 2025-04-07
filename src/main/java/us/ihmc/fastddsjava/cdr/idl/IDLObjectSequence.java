@@ -81,6 +81,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public void set(IDLObjectSequence<T> other)
    {
       assert clazz == other.clazz;
+      assert other.elements != null;
 
       elements = Arrays.copyOf(other.elements, other.elements.length);
    }
