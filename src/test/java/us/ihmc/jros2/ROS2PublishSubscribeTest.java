@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.jros2.testmessages.Bool;
 
+import java.util.function.Consumer;
+
 public class ROS2PublishSubscribeTest
 {
    static

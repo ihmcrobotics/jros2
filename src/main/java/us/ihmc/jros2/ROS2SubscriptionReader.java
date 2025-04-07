@@ -5,8 +5,6 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
-import java.nio.ByteBuffer;
-
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_get_unread_count;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_take_next_sample;
 
@@ -16,7 +14,6 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final CDRBuffer cdrBuffer = new CDRBuffer();
-   private ByteBuffer readBuffer;
 
    private final SampleInfo sampleInfo;
 
@@ -36,21 +33,22 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 
    public void takeNextSample(T data)
    {
-      int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + data.calculateSizeBytes();
-
-      if (readBuffer == null || readBuffer.capacity() < messageSizeBytes)
+      if (cdrBuffer.getBufferUnsafe().position() != 0)
       {
-         readBuffer = ByteBuffer.allocate(messageSizeBytes);
-         cdrBuffer.setBuffer(readBuffer);
+         throw new RuntimeException("Unsafe buffer position");
       }
 
       fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
+
+      int sampleSize = (int) topicDataWrapper.data_vector().size();
+      cdrBuffer.ensureRemainingCapacity(sampleSize);
+      topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
 
       cdrBuffer.readPayloadHeader();
 
       data.deserialize(cdrBuffer);
 
-      readBuffer.rewind();
+      cdrBuffer.getBufferUnsafe().rewind();
    }
 
    protected void close()

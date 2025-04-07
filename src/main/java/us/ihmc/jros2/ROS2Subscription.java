@@ -61,7 +61,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    private void onSubscriptionCallback()
    {
+      // TODO:
+      System.out.println("on subscription callback");
       fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
+      System.out.println(subscriptionMatchedStatus.current_count());
    }
 
    protected void close(Pointer fastddsParticipant)

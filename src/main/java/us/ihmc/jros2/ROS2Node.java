@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
@@ -170,7 +171,7 @@ public class ROS2Node implements Closeable
       return removed;
    }
 
-   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback callback, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
    {
       ProfilesXML profilesXML = new ProfilesXML();
       SubscriberProfileType subscriberProfile = new SubscriberProfileType();
@@ -198,6 +199,11 @@ public class ROS2Node implements Closeable
       }
 
       return subscription;
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, Consumer<T> callback, ROS2QoSProfile qosProfile)
+   {
+      return  null;
    }
 
    public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)

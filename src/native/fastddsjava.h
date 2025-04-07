@@ -46,8 +46,7 @@ public:
         uint32_t data_length = calculate_serialized_size(data, data_representation);
         payload.length = data_length;
         memcpy(payload.data, data->data_vector.data(), data_length);
-
-        payload.max_size = payload.length;
+        payload.max_size = data_length;
 
         return true;
     };

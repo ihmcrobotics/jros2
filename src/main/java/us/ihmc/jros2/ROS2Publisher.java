@@ -4,8 +4,6 @@ import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
-import java.nio.ByteBuffer;
-
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Publisher<T extends ROS2Message<T>>
@@ -15,12 +13,10 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
 
-   private ByteBuffer writeBuffer;
    private final CDRBuffer cdrBuffer;
 
    protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2TopicData topicData)
    {
-
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
 
@@ -35,20 +31,15 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       // TODO: remove +4 payload header
       int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
 
-      if (writeBuffer == null || writeBuffer.capacity() < messageSizeBytes)
-      {
-         writeBuffer = ByteBuffer.allocate(messageSizeBytes);
-         cdrBuffer.setBuffer(writeBuffer);
-      }
+      cdrBuffer.ensureRemainingCapacity(messageSizeBytes);
 
       // TODO: check if we can shrink the writeBuffer to save memory
 
-      writeBuffer.rewind();
       cdrBuffer.writePayloadHeader();
       message.serialize(cdrBuffer);
 
       topicDataWrapper.data_vector().resize(messageSizeBytes);
-      topicDataWrapper.data_ptr().put(writeBuffer.array(), 0, messageSizeBytes);
+      topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
 
       fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
    }
