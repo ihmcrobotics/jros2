@@ -3,81 +3,79 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
-public class IDLObjectSequence<T extends CDRSerializable> extends ArrayList<T> implements IDLSequence<IDLObjectSequence<T>>
+public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
 {
-   private final Constructor<T> clazzConstructor;
+   private final Class<T> clazz;
+   private T[] elements;
+   private int position;
 
-   public IDLObjectSequence(Class<T> clazz, int initialCapacity)
+   public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      super(initialCapacity);
-      try
-      {
-         this.clazzConstructor = clazz.getDeclaredConstructor();
-      }
-      catch (NoSuchMethodException e)
-      {
-         throw new RuntimeException(e);
-      }
+      super(capacity);
+      this.clazz = clazz;
    }
 
    public IDLObjectSequence(Class<T> clazz)
    {
-      this(clazz, 10);
+      this.clazz = clazz;
+   }
+
+   public void add(T element)
+   {
+      assert elements != null;
+      assert position <= elements.length;
+
+      elements[position++] = element;
    }
 
    @Override
-   public int elements()
+   protected void ensureCapacity(int capacity)
    {
-      return size();
+      if (elements == null)
+      {
+         elements = (T[]) Array.newInstance(clazz, capacity);
+      }
+      else if (elements.length != capacity)
+      {
+         elements = Arrays.copyOf(elements, capacity);
+      }
    }
 
    @Override
    public int elementSizeBytes(int i)
    {
-      T element = get(i);
+      assert elements != null;
 
-      return element.calculateSizeBytes();
+      return elements[i].calculateSizeBytes();
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      T element = createInstance();
+      assert elements != null;
+      assert position <= elements.length;
+
+      T element = elements[position++];
 
       element.deserialize(buffer);
-
-      add(element);
    }
 
    @Override
    public void writeElement(int i, CDRBuffer buffer)
    {
-      T element = get(i);
+      assert elements != null;
 
-      element.serialize(buffer);
+      elements[i].serialize(buffer);
    }
 
    @Override
    public void set(IDLObjectSequence<T> other)
    {
-      // TODO: speed this up?
-      clear();
+      assert clazz == other.clazz;
 
-      this.addAll(other);
-   }
-
-   private T createInstance()
-   {
-      try
-      {
-         return clazzConstructor.newInstance();
-      }
-      catch (Exception e)
-      {
-         throw new RuntimeException(e);
-      }
+      elements = Arrays.copyOf(other.elements, other.elements.length);
    }
 }

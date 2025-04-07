@@ -47,10 +47,6 @@ dependencies {
     api("com.sun.xml.bind:jaxb-impl:4.0.5") {
         isTransitive = true
     }
-    api("net.sf.trove4j:trove4j:3.0.3") {
-        isTransitive = true
-    }
-
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }

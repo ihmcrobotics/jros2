@@ -1,14 +1,42 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
-import gnu.trove.list.array.TIntArrayList;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
-public class IDLIntSequence extends TIntArrayList implements IDLSequence<IDLIntSequence>
+import java.nio.IntBuffer;
+
+public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 {
-   @Override
-   public int elements()
+   private IntBuffer buffer;
+
+   public IDLIntSequence(int capacity)
    {
-      return size();
+      super(capacity);
+   }
+
+   public IDLIntSequence()
+   {
+
+   }
+
+   public void add(int element)
+   {
+      buffer.put(element);
+   }
+
+   @Override
+   protected void ensureCapacity(int capacity)
+   {
+      if (buffer == null || buffer.capacity() != capacity)
+      {
+         IntBuffer newBuffer = IntBuffer.allocate(capacity);
+
+         if (buffer != null)
+         {
+            newBuffer.put(buffer);
+         }
+
+         buffer = newBuffer;
+      }
    }
 
    @Override
@@ -18,25 +46,28 @@ public class IDLIntSequence extends TIntArrayList implements IDLSequence<IDLIntS
    }
 
    @Override
-   public void readElement(CDRBuffer buffer)
+   public void readElement(CDRBuffer cdrBuffer)
    {
-      add(buffer.readInt());
+      assert buffer != null;
+
+      buffer.put(cdrBuffer.readInt());
    }
 
    @Override
-   public void writeElement(int i, CDRBuffer buffer)
+   public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      buffer.writeInt(get(i));
+      assert buffer != null;
+
+      cdrBuffer.writeInt(buffer.get(i));
    }
 
    @Override
    public void set(IDLIntSequence other)
    {
-      resetQuick();
+      elements(other.elements());
 
-      for (int i = 0; i < other.size(); i++)
-      {
-         add(other.get(i));
-      }
+      buffer.rewind();
+      buffer.put(other.buffer);
+      buffer.rewind();
    }
 }

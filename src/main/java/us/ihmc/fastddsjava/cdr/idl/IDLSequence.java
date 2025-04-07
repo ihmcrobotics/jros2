@@ -3,26 +3,50 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
-public interface IDLSequence<T extends IDLSequence<T>> extends CDRSerializable
+public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   int elements();
+   private int elements;
 
-   int elementSizeBytes(int i);
+   public IDLSequence(int capacity)
+   {
+      elements(capacity);
+   }
+
+   public IDLSequence()
+   {
+
+   }
+
+   public int elements()
+   {
+      return elements;
+   }
+
+   protected void elements(int elements)
+   {
+      this.elements = elements;
+
+      ensureCapacity(elements);
+   }
+
+   protected abstract void ensureCapacity(int capacity);
+
+   public abstract int elementSizeBytes(int i);
 
    /**
     * Read the next element out of the buffer using CDR
     */
-   void readElement(CDRBuffer buffer);
+   public abstract void readElement(CDRBuffer buffer);
 
    /**
     * Write element i to the buffer using CDR
     */
-   void writeElement(int i, CDRBuffer buffer);
+   public abstract void writeElement(int i, CDRBuffer buffer);
 
-   void set(T other);
+   public abstract void set(T other);
 
    @Override
-   default int calculateSizeBytes(int currentAlignment)
+   public int calculateSizeBytes(int currentAlignment)
    {
       int initialAlignment = currentAlignment;
 
@@ -37,7 +61,7 @@ public interface IDLSequence<T extends IDLSequence<T>> extends CDRSerializable
    }
 
    @Override
-   default void serialize(CDRBuffer buffer)
+   public void serialize(CDRBuffer buffer)
    {
       int elements = elements();
 
@@ -50,7 +74,7 @@ public interface IDLSequence<T extends IDLSequence<T>> extends CDRSerializable
    }
 
    @Override
-   default void deserialize(CDRBuffer buffer)
+   public void deserialize(CDRBuffer buffer)
    {
       int elements = buffer.readInt();
 
