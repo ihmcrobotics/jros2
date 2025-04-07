@@ -284,7 +284,7 @@ uint32_t fastddsjava_datareader_get_unread_count(void* reader_) {
     return reader->get_unread_count();
 }
 
-uint32_t fastddsjava_datareader_get_subscription_matched_status(void* reader_, eprosima::fastdds::dds::SubscriptionMatchedStatus status) {
+uint32_t fastddsjava_datareader_get_subscription_matched_status(void* reader_, eprosima::fastdds::dds::SubscriptionMatchedStatus& status) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
     return reader->get_subscription_matched_status(status);
