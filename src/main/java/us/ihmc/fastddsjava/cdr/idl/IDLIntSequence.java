@@ -20,13 +20,16 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 
    public void add(int element)
    {
+      if (buffer.position() == buffer.capacity())
+         ensureMinCapacity(2 * buffer.capacity());
       buffer.put(element);
+      elements(buffer.position());
    }
 
    @Override
-   protected void ensureCapacity(int capacity)
+   protected void ensureMinCapacity(int capacity)
    {
-      if (buffer == null || buffer.capacity() != capacity)
+      if (buffer == null || buffer.capacity() < capacity)
       {
          IntBuffer newBuffer = IntBuffer.allocate(capacity);
 
@@ -64,6 +67,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    @Override
    public void set(IDLIntSequence other)
    {
+      ensureMinCapacity(other.elements());
       elements(other.elements());
 
       buffer.rewind();

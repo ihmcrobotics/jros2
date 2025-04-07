@@ -29,10 +29,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       assert position <= elements.length;
 
       elements[position++] = element;
+      elements(position);
    }
 
    @Override
-   protected void ensureCapacity(int capacity)
+   protected void ensureMinCapacity(int capacity)
    {
       if (elements == null)
       {
@@ -77,5 +78,6 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       assert clazz == other.clazz;
 
       elements = Arrays.copyOf(other.elements, other.elements.length);
+      elements(other.elements());
    }
 }

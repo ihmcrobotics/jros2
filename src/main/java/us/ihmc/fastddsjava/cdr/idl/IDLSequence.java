@@ -9,7 +9,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
    public IDLSequence(int capacity)
    {
-      elements(capacity);
+      ensureMinCapacity(capacity);
    }
 
    public IDLSequence()
@@ -25,11 +25,9 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    protected void elements(int elements)
    {
       this.elements = elements;
-
-      ensureCapacity(elements);
    }
 
-   protected abstract void ensureCapacity(int capacity);
+   protected abstract void ensureMinCapacity(int capacity);
 
    public abstract int elementSizeBytes(int i);
 
