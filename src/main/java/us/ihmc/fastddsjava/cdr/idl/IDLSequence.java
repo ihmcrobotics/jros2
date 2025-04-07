@@ -5,8 +5,6 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   private int elements;
-
    public IDLSequence(int capacity)
    {
       ensureMinCapacity(capacity);
@@ -17,15 +15,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
    }
 
-   public int elements()
-   {
-      return elements;
-   }
-
-   protected void elements(int elements)
-   {
-      this.elements = elements;
-   }
+   public abstract int elements();
 
    protected abstract void ensureMinCapacity(int capacity);
 
