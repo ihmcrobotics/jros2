@@ -58,10 +58,20 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       cdrBuffer.getBufferUnsafe().rewind();
    }
 
-   protected void close()
+   protected synchronized void close()
    {
-      topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+      if (!isClosed())
+      {
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
-      sampleInfo.close();
+         sampleInfo.close();
+
+         topicDataWrapper.setNull();
+      }
+   }
+
+   protected boolean isClosed()
+   {
+      return topicDataWrapper.isNull();
    }
 }
