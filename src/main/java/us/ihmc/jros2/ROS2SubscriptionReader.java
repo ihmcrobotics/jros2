@@ -20,8 +20,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    private final Pointer fastddsDataReader;
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
-   private final CDRBuffer cdrBuffer = new CDRBuffer();
-
+   private final CDRBuffer cdrBuffer;
    private final SampleInfo sampleInfo;
 
    protected ROS2SubscriptionReader(Pointer fastddsDataReader, ROS2TopicData topicData)
@@ -29,7 +28,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       this.fastddsDataReader = fastddsDataReader;
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-
+      cdrBuffer = new CDRBuffer();
       sampleInfo = new SampleInfo();
    }
 
