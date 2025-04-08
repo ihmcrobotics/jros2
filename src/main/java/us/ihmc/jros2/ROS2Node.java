@@ -101,7 +101,6 @@ public class ROS2Node implements Closeable
          if (this.topicData.containsKey(topic))
             return this.topicData.get(topic);
 
-
          ProfilesXML profilesXML = new ProfilesXML();
          TopicProfileType topicProfile = new TopicProfileType();
          String topicProfileName = UUID.randomUUID().toString();
@@ -246,8 +245,11 @@ public class ROS2Node implements Closeable
    }
 
    @Override
-   public void close()
+   public synchronized void close()
    {
+      if (fastddsParticipant.isNull())
+         return;
+
       for (ROS2Topic<?> topic : topicData.keySet())
       {
          ROS2TopicData topicData = this.topicData.get(topic);
@@ -264,5 +266,7 @@ public class ROS2Node implements Closeable
 
       int ret = fastddsjava_delete_participant(fastddsParticipant);
       fastddsjavaTools.retcodePrintOnError(ret);
+
+      fastddsParticipant.setNull();
    }
 }

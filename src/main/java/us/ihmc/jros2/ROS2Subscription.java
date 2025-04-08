@@ -72,8 +72,11 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       fastddsjavaTools.retcodePrintOnError(ret);
    }
 
-   protected void close(Pointer fastddsParticipant)
+   protected synchronized void close(Pointer fastddsParticipant)
    {
+      if (fastddsSubscriber.isNull())
+         return;
+
       int ret = fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
       fastddsjavaTools.retcodePrintOnError(ret);
 
@@ -84,5 +87,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
       ret = fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
       fastddsjavaTools.retcodePrintOnError(ret);
+
+      fastddsSubscriber.setNull();
    }
 }

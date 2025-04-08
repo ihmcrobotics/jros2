@@ -49,8 +49,11 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       fastddsjavaTools.retcodePrintOnError(ret);
    }
 
-   protected void close(Pointer fastddsParticipant)
+   protected synchronized void close(Pointer fastddsParticipant)
    {
+      if (fastddsPublisher.isNull())
+         return;
+
       topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
       int ret = fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
@@ -58,5 +61,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 
       ret = fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
       fastddsjavaTools.retcodePrintOnError(ret);
+
+      fastddsPublisher.setNull();
    }
 }
