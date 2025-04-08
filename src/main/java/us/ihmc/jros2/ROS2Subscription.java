@@ -1,13 +1,13 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
-import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 
+import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Subscription<T extends ROS2Message<T>>
@@ -68,24 +68,21 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    private void onSubscriptionCallback()
    {
-      int ret = fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
-      fastddsjavaTools.retcodePrintOnError(ret);
+      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
    }
 
    protected synchronized void close(Pointer fastddsParticipant)
    {
       if (!fastddsSubscriber.isNull())
       {
-         int ret = fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
-         fastddsjavaTools.retcodePrintOnError(ret);
+         retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
          fastddsDataReaderListener.close();
          fastddsDataCallback.close();
          fastddsSubscriptionCallback.close();
          subscriptionReader.close();
 
-         ret = fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
-         fastddsjavaTools.retcodePrintOnError(ret);
+         retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
 
          fastddsSubscriber.setNull();
       }

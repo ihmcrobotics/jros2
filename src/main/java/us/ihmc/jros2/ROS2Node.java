@@ -2,7 +2,6 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
-import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
@@ -25,6 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Node implements Closeable
@@ -253,18 +253,14 @@ public class ROS2Node implements Closeable
          {
             ROS2TopicData topicData = this.topicData.get(topic);
 
-            int ret = fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
-            fastddsjavaTools.retcodePrintOnError(ret);
-
-            ret = fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
-            fastddsjavaTools.retcodePrintOnError(ret);
+            retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+            retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
 
             topicData.topicDataWrapperType.close();
             topicData.fastddsTypeSupport.close();
          }
 
-         int ret = fastddsjava_delete_participant(fastddsParticipant);
-         fastddsjavaTools.retcodePrintOnError(ret);
+         retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
 
          fastddsParticipant.setNull();
       }

@@ -2,12 +2,12 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.log.LogTools;
 
+import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_get_unread_count;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_take_next_sample;
 
@@ -46,8 +46,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
          return;
       }
 
-      int ret = fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
-      fastddsjavaTools.retcodePrintOnError(ret);
+      retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
 
       int sampleSize = (int) topicDataWrapper.data_vector().size();
       cdrBuffer.ensureRemainingCapacity(sampleSize);
