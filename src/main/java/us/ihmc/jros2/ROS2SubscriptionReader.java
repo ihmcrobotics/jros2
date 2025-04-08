@@ -53,7 +53,6 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
 
       cdrBuffer.readPayloadHeader();
-
       data.deserialize(cdrBuffer);
 
       cdrBuffer.getBufferUnsafe().rewind();

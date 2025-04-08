@@ -34,9 +34,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    {
       if (!isClosed())
       {
-         // TODO: remove +4 payload header
          int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
-
          cdrBuffer.ensureRemainingCapacity(messageSizeBytes);
 
          // TODO: check if we can shrink the writeBuffer to save memory
