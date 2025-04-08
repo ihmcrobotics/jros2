@@ -13,25 +13,25 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="livelinessQosPolicyType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="kind" minOccurs="0"&gt;
- *           &lt;simpleType&gt;
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *               &lt;enumeration value="AUTOMATIC"/&gt;
- *               &lt;enumeration value="MANUAL_BY_PARTICIPANT"/&gt;
- *               &lt;enumeration value="MANUAL_BY_TOPIC"/&gt;
- *             &lt;/restriction&gt;
- *           &lt;/simpleType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="lease_duration" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *         &lt;element name="announcement_period" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="livelinessQosPolicyType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="kind" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;enumeration value="AUTOMATIC"/>
+ *               &lt;enumeration value="MANUAL_BY_PARTICIPANT"/>
+ *               &lt;enumeration value="MANUAL_BY_TOPIC"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="lease_duration" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *         &lt;element name="announcement_period" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

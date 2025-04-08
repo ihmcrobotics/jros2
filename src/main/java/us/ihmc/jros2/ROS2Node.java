@@ -100,35 +100,34 @@ public class ROS2Node implements Closeable
       {
          if (this.topicData.containsKey(topic))
             return this.topicData.get(topic);
-      }
 
-      ProfilesXML profilesXML = new ProfilesXML();
-      TopicProfileType topicProfile = new TopicProfileType();
-      String topicProfileName = UUID.randomUUID().toString();
-      topicProfile.setProfileName(topicProfileName);
-      profilesXML.addTopicProfile(topicProfile);
 
-      try
-      {
-         profilesXML.load();
-      }
-      catch (fastddsjavaException e)
-      {
-         LogTools.error(e);
-      }
+         ProfilesXML profilesXML = new ProfilesXML();
+         TopicProfileType topicProfile = new TopicProfileType();
+         String topicProfileName = UUID.randomUUID().toString();
+         topicProfile.setProfileName(topicProfileName);
+         profilesXML.addTopicProfile(topicProfile);
 
-      String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-      Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-      fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-      Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
-      ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
-      synchronized (this.topicData)
-      {
+         try
+         {
+            profilesXML.load();
+         }
+         catch (fastddsjavaException e)
+         {
+            LogTools.error(e);
+         }
+
+         String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+         fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+         Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+         fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+         Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
+         ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+
          this.topicData.put(topic, topicData);
-      }
 
-      return topicData;
+         return topicData;
+      }
    }
 
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
@@ -254,37 +253,16 @@ public class ROS2Node implements Closeable
          ROS2TopicData topicData = this.topicData.get(topic);
 
          int ret = fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
-         try
-         {
-            fastddsjavaTools.retcodeThrowOnError(ret);
-         }
-         catch (fastddsjavaException e)
-         {
-            LogTools.error(e);
-         }
+         fastddsjavaTools.retcodePrintOnError(ret);
 
          ret = fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
-         try
-         {
-            fastddsjavaTools.retcodeThrowOnError(ret);
-         }
-         catch (fastddsjavaException e)
-         {
-            LogTools.error(e);
-         }
+         fastddsjavaTools.retcodePrintOnError(ret);
 
          topicData.topicDataWrapperType.close();
          topicData.fastddsTypeSupport.close();
       }
 
       int ret = fastddsjava_delete_participant(fastddsParticipant);
-      try
-      {
-         fastddsjavaTools.retcodeThrowOnError(ret);
-      }
-      catch (fastddsjavaException e)
-      {
-         LogTools.error(e);
-      }
+      fastddsjavaTools.retcodePrintOnError(ret);
    }
 }

@@ -2,11 +2,9 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
-import us.ihmc.log.LogTools;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
@@ -48,14 +46,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
 
       int ret = fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
-      try
-      {
-         fastddsjavaTools.retcodeThrowOnError(ret);
-      }
-      catch (fastddsjavaException e)
-      {
-         LogTools.error(e);
-      }
+      fastddsjavaTools.retcodePrintOnError(ret);
    }
 
    protected void close(Pointer fastddsParticipant)
@@ -63,23 +54,9 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
       int ret = fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
-      try
-      {
-         fastddsjavaTools.retcodeThrowOnError(ret);
-      }
-      catch (fastddsjavaException e)
-      {
-         LogTools.error(e);
-      }
+      fastddsjavaTools.retcodePrintOnError(ret);
 
       ret = fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
-      try
-      {
-         fastddsjavaTools.retcodeThrowOnError(ret);
-      }
-      catch (fastddsjavaException e)
-      {
-         LogTools.error(e);
-      }
+      fastddsjavaTools.retcodePrintOnError(ret);
    }
 }

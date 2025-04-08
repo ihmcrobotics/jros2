@@ -1,5 +1,7 @@
 package us.ihmc.fastddsjava;
 
+import us.ihmc.log.LogTools;
+
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public final class fastddsjavaTools
@@ -45,5 +47,17 @@ public final class fastddsjavaTools
    {
       if (RETCODE_OK() != ReturnCode_t)
          throw new fastddsjavaException(ReturnCode_t);
+   }
+
+   public static void retcodePrintOnError(int ReturnCode_t)
+   {
+      try
+      {
+         retcodeThrowOnError(ReturnCode_t);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 }
