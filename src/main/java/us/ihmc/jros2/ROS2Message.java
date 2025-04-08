@@ -1,8 +1,10 @@
 package us.ihmc.jros2;
 
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
+import us.ihmc.log.LogTools;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
 {
@@ -22,7 +24,21 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (NoSuchFieldException | IllegalAccessException e)
       {
-         e.printStackTrace();
+         LogTools.error(e);
+      }
+
+      return null;
+   }
+
+   static <T extends ROS2Message<T>> T createInstance(Class<T> topicType)
+   {
+      try
+      {
+         return topicType.getDeclaredConstructor().newInstance();
+      }
+      catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
+      {
+         LogTools.error(e);
       }
 
       return null;

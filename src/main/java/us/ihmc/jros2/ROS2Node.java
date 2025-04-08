@@ -202,7 +202,12 @@ public class ROS2Node implements Closeable
 
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, Consumer<T> callback, ROS2QoSProfile qosProfile)
    {
-      return null;
+      return createSubscription(topic, (ROS2SubscriptionCallback<T>) reader ->
+      {
+         T message = ROS2Message.createInstance(topic.topicType());
+         reader.takeNextSample(message);
+         callback.accept(message);
+      }, qosProfile);
    }
 
    public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)

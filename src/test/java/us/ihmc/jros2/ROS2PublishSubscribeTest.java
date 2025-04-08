@@ -114,7 +114,7 @@ public class ROS2PublishSubscribeTest
 
          // Publish a message to ensure subscriptions don't receive anything after being destroyed
          Process process = ROS2TestTools.launchROS2PublishProcess(domainId,
-                                                                  "--once",
+                                                                  "--once -w 0",
                                                                   topicName,
                                                                   "std_msgs/msg/Bool",
                                                                   "{data: true}",
