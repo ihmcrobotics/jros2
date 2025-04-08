@@ -14,27 +14,27 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="builtinAttributesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="discovery_config" type="{http://www.eprosima.com}discoverySettingsType" minOccurs="0"/>
- *         &lt;element name="avoid_builtin_multicast" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
- *         &lt;element name="use_WriterLivelinessProtocol" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
- *         &lt;element name="metatraffic_external_unicast_locators" type="{http://www.eprosima.com}externalLocatorListType" minOccurs="0"/>
- *         &lt;element name="metatrafficUnicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/>
- *         &lt;element name="metatrafficMulticastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/>
- *         &lt;element name="initialPeersList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/>
- *         &lt;element name="readerHistoryMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/>
- *         &lt;element name="writerHistoryMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/>
- *         &lt;element name="readerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *         &lt;element name="writerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *         &lt;element name="mutation_tries" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *         &lt;element name="flow_controller_name" type="{http://www.eprosima.com}string" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="builtinAttributesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="discovery_config" type="{http://www.eprosima.com}discoverySettingsType" minOccurs="0"/&gt;
+ *         &lt;element name="avoid_builtin_multicast" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="use_WriterLivelinessProtocol" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
+ *         &lt;element name="metatraffic_external_unicast_locators" type="{http://www.eprosima.com}externalLocatorListType" minOccurs="0"/&gt;
+ *         &lt;element name="metatrafficUnicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/&gt;
+ *         &lt;element name="metatrafficMulticastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/&gt;
+ *         &lt;element name="initialPeersList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/&gt;
+ *         &lt;element name="readerHistoryMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="writerHistoryMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="readerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *         &lt;element name="writerPayloadSize" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *         &lt;element name="mutation_tries" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *         &lt;element name="flow_controller_name" type="{http://www.eprosima.com}string" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

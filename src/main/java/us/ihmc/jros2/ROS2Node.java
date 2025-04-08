@@ -34,21 +34,6 @@ public class ROS2Node implements Closeable
       fastddsjavaNativeLibrary.load();
    }
 
-   private static final TransportDescriptorType[] DEFAULT_TRANSPORTS;
-
-   static
-   {
-      TransportDescriptorType udp4Transport = new TransportDescriptorType();
-      udp4Transport.setTransportId(UUID.randomUUID().toString());
-      udp4Transport.setType("UDPv4");
-
-      TransportDescriptorType shmTransport = new TransportDescriptorType();
-      shmTransport.setTransportId(UUID.randomUUID().toString());
-      shmTransport.setType("SHM");
-
-      DEFAULT_TRANSPORTS = new TransportDescriptorType[] {udp4Transport, shmTransport};
-   }
-
    private final Pointer fastddsParticipant;
    private final Map<ROS2Topic<?>, ROS2TopicData> topicData;
    private final List<ROS2Publisher<?>> publishers;
@@ -58,22 +43,29 @@ public class ROS2Node implements Closeable
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-      for (TransportDescriptorType transport : transports)
-         transportDescriptorListType.getTransportDescriptor().add(transport);
-      profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-
       ParticipantProfileType participantProfile = new ParticipantProfileType();
       String participantProfileName = UUID.randomUUID().toString();
       participantProfile.setDomainId(domainId);
       participantProfile.setProfileName(participantProfileName);
       Rtps rtps = new Rtps();
       rtps.setName(name);
-      rtps.setUseBuiltinTransports(transports.length != 0);
-      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-      for (TransportDescriptorType transport : transports)
-         userTransports.getTransportId().add(transport.getTransportId());
-      rtps.setUserTransports(userTransports);
+
+      boolean useCustomTransports = transports != null && transports.length != 0;
+      rtps.setUseBuiltinTransports(!useCustomTransports);
+      if (useCustomTransports)
+      {
+         rtps.setUseBuiltinTransports(false);
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         for (TransportDescriptorType transport : transports)
+            transportDescriptorListType.getTransportDescriptor().add(transport);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+
+         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+         for (TransportDescriptorType transport : transports)
+            userTransports.getTransportId().add(transport.getTransportId());
+         rtps.setUserTransports(userTransports);
+      }
+
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
@@ -94,12 +86,12 @@ public class ROS2Node implements Closeable
 
    public ROS2Node(String name)
    {
-      this(name, 0, DEFAULT_TRANSPORTS);
+      this(name, 0);
    }
 
    public ROS2Node(String name, int domainId)
    {
-      this(name, domainId, DEFAULT_TRANSPORTS);
+      this(name, domainId, (TransportDescriptorType[]) null);
    }
 
    protected <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
