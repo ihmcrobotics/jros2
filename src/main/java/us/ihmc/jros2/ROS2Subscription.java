@@ -73,7 +73,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    protected synchronized void close(Pointer fastddsParticipant)
    {
-      if (!fastddsSubscriber.isNull())
+      if (!isClosed())
       {
          retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
@@ -86,5 +86,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
          fastddsSubscriber.setNull();
       }
+   }
+
+   protected boolean isClosed()
+   {
+      return fastddsSubscriber.isNull();
    }
 }

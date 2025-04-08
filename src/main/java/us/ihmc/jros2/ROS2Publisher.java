@@ -30,27 +30,30 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       cdrBuffer = new CDRBuffer();
    }
 
-   public void publish(T message)
+   public synchronized void publish(T message)
    {
-      // TODO: remove +4 payload header
-      int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+      if (!isClosed())
+      {
+         // TODO: remove +4 payload header
+         int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
 
-      cdrBuffer.ensureRemainingCapacity(messageSizeBytes);
+         cdrBuffer.ensureRemainingCapacity(messageSizeBytes);
 
-      // TODO: check if we can shrink the writeBuffer to save memory
+         // TODO: check if we can shrink the writeBuffer to save memory
 
-      cdrBuffer.writePayloadHeader();
-      message.serialize(cdrBuffer);
+         cdrBuffer.writePayloadHeader();
+         message.serialize(cdrBuffer);
 
-      topicDataWrapper.data_vector().resize(messageSizeBytes);
-      topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
+         topicDataWrapper.data_vector().resize(messageSizeBytes);
+         topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
 
-      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+         retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+      }
    }
 
    protected synchronized void close(Pointer fastddsParticipant)
    {
-      if (!fastddsPublisher.isNull())
+      if (!isClosed())
       {
          topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
@@ -59,5 +62,10 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 
          fastddsPublisher.setNull();
       }
+   }
+
+   protected boolean isClosed()
+   {
+      return fastddsPublisher.isNull();
    }
 }

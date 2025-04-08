@@ -247,7 +247,7 @@ public class ROS2Node implements Closeable
    @Override
    public synchronized void close()
    {
-      if (!fastddsParticipant.isNull())
+      if (!isClosed())
       {
          for (ROS2Topic<?> topic : topicData.keySet())
          {
@@ -264,5 +264,10 @@ public class ROS2Node implements Closeable
 
          fastddsParticipant.setNull();
       }
+   }
+
+   public boolean isClosed()
+   {
+      return fastddsParticipant.isNull();
    }
 }
