@@ -43,6 +43,9 @@ dependencies {
     api("us.ihmc:ihmc-native-library-loader:2.0.4") {
         isTransitive = true
     }
+    api("us.ihmc:log-tools:0.6.5") {
+        isTransitive = true
+    }
     // Match this version with YoVariables
     api("com.sun.xml.bind:jaxb-impl:4.0.5") {
         isTransitive = true

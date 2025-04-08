@@ -13,6 +13,7 @@ import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
+import us.ihmc.log.LogTools;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -75,14 +76,13 @@ public class ROS2Node implements Closeable
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
-      // TODO: keep try-catch?
       try
       {
          profilesXML.load();
       }
       catch (fastddsjavaException e)
       {
-         throw new RuntimeException(e);
+         LogTools.error(e);
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
@@ -112,14 +112,13 @@ public class ROS2Node implements Closeable
       topicProfile.setProfileName(topicProfileName);
       profilesXML.addTopicProfile(topicProfile);
 
-      // TODO: keep try-catch?
       try
       {
          profilesXML.load();
       }
       catch (fastddsjavaException e)
       {
-         throw new RuntimeException(e);
+         LogTools.error(e);
       }
 
       String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
@@ -146,14 +145,13 @@ public class ROS2Node implements Closeable
 
       // TODO: translate qosProfile into profilesXML
 
-      // TODO: keep try-catch?
       try
       {
          profilesXML.load();
       }
       catch (fastddsjavaException e)
       {
-         throw new RuntimeException(e);
+         LogTools.error(e);
       }
 
       ROS2TopicData topicData = getOrCreateTopicData(topic);
@@ -187,14 +185,13 @@ public class ROS2Node implements Closeable
 
       // TODO: translate qosProfile into profilesXML
 
-      // TODO: keep try-catch?
       try
       {
          profilesXML.load();
       }
       catch (fastddsjavaException e)
       {
-         throw new RuntimeException(e);
+         LogTools.error(e);
       }
 
       ROS2TopicData topicData = getOrCreateTopicData(topic);

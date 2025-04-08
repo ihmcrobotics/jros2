@@ -33,7 +33,7 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
 
    private static boolean loaded = false;
 
-   public static boolean load() {
+   public static synchronized boolean load() {
       if (!loaded) {
          fastddsjavaNativeLibrary lib = new fastddsjavaNativeLibrary();
          loaded = NativeLibraryLoader.loadLibrary(lib);
