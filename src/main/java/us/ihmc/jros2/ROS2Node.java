@@ -2,6 +2,7 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
@@ -26,6 +27,11 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Node implements Closeable
 {
+   static
+   {
+      fastddsjavaNativeLibrary.load();
+   }
+
    private static final TransportDescriptorType[] DEFAULT_TRANSPORTS;
 
    static

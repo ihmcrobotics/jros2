@@ -1,7 +1,6 @@
 package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.jros2.testmessages.Bool;
 
 import java.io.IOException;
@@ -12,11 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ROS2PublishSubscribeTest
 {
-   static
-   {
-      fastddsjavaNativeLibrary.load();
-   }
-
    @Test
    public void testROS2Publisher() throws InterruptedException, IOException
    {

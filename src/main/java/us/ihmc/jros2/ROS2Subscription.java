@@ -1,6 +1,7 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
@@ -10,6 +11,11 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Subscription<T extends ROS2Message<T>>
 {
+   static
+   {
+      fastddsjavaNativeLibrary.load();
+   }
+
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
 

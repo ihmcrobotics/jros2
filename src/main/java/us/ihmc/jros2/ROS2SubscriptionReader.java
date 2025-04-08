@@ -2,6 +2,7 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
@@ -10,6 +11,11 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_ta
 
 public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 {
+   static
+   {
+      fastddsjavaNativeLibrary.load();
+   }
+
    private final Pointer fastddsDataReader;
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
