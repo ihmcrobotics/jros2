@@ -21,17 +21,14 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    private final Pointer fastddsDataWriter;
    private final ROS2TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
-
    private final CDRBuffer cdrBuffer;
 
    protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2TopicData topicData)
    {
       this.topicData = topicData;
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-
       this.fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       this.fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
-
       cdrBuffer = new CDRBuffer();
    }
 
@@ -65,8 +62,24 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    {
       topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
-      fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
+      int ret = fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
 
-      fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
+      ret = fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 }
