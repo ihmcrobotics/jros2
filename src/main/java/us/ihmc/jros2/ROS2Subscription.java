@@ -68,7 +68,8 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    private void onSubscriptionCallback()
    {
-      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
+      // TODO:
+//      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
    }
 
    protected synchronized void close(Pointer fastddsParticipant)
