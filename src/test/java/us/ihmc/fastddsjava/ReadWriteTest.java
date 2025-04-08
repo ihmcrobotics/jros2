@@ -305,25 +305,25 @@ public class ReadWriteTest
       Pointer dataWrite = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
       Thread writerThread = new Thread(() ->
-                                       {
-                                          for (int i = 0; i < messagesToSend; ++i)
-                                          {
-                                             byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
-                                             topicDataWrapperWrite.data_vector().resize(sampleData.length);
-                                             topicDataWrapperWrite.data_ptr().put(sampleData);
+      {
+         for (int i = 0; i < messagesToSend; ++i)
+         {
+            byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
+            topicDataWrapperWrite.data_vector().resize(sampleData.length);
+            topicDataWrapperWrite.data_ptr().put(sampleData);
 
-                                             int writerRetCode;
-                                             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-                                             try
-                                             {
-                                                retcodeThrowOnError(writerRetCode);
-                                             }
-                                             catch (fastddsjavaException e)
-                                             {
-                                                throw new RuntimeException(e);
-                                             }
-                                          }
-                                       }, "WriterThread");
+            int writerRetCode;
+            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+            try
+            {
+               retcodeThrowOnError(writerRetCode);
+            }
+            catch (fastddsjavaException e)
+            {
+               throw new RuntimeException(e);
+            }
+         }
+      }, "WriterThread");
       writerThread.start();
 
       // Wait to receive data
