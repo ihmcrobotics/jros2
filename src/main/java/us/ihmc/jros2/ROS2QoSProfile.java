@@ -3,7 +3,7 @@ package us.ihmc.jros2;
 import java.time.Duration;
 
 /**
- * https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html
+ * <a href="https://docs.ros.org/en/rolling/Concepts/Intermediate/About-Quality-of-Service-Settings.html">Quality of Service settings</a>
  */
 public class ROS2QoSProfile
 {

@@ -147,7 +147,8 @@ public class ROS2Node implements Closeable
       publisherProfile.setProfileName(publisherProfileName);
       profilesXML.addPublisherProfile(publisherProfile);
 
-      // TODO: translate qosProfile into profilesXML
+      // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
+      QoSTools.translateQoS(qosProfile, publisherProfile);
 
       try
       {
@@ -187,7 +188,8 @@ public class ROS2Node implements Closeable
       subscriberProfile.setProfileName(subscriberProfileName);
       profilesXML.addSubscriberProfile(subscriberProfile);
 
-      // TODO: translate qosProfile into profilesXML
+      // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
+      QoSTools.translateQoS(qosProfile, subscriberProfile);
 
       try
       {
@@ -259,8 +261,25 @@ public class ROS2Node implements Closeable
       {
          ROS2TopicData topicData = this.topicData.get(topic);
 
-         fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
-         fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
+         int ret = fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
+         try
+         {
+            fastddsjavaTools.retcodeThrowOnError(ret);
+         }
+         catch (fastddsjavaException e)
+         {
+            LogTools.error(e);
+         }
+
+         ret = fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
+         try
+         {
+            fastddsjavaTools.retcodeThrowOnError(ret);
+         }
+         catch (fastddsjavaException e)
+         {
+            LogTools.error(e);
+         }
 
          topicData.topicDataWrapperType.close();
          topicData.fastddsTypeSupport.close();
