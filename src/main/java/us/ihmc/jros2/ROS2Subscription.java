@@ -1,11 +1,14 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
+import us.ihmc.log.LogTools;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
@@ -67,18 +70,42 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    private void onSubscriptionCallback()
    {
-      fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
+      int ret = fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 
    protected void close(Pointer fastddsParticipant)
    {
-      fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
+      int ret = fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
 
       fastddsDataReaderListener.close();
       fastddsDataCallback.close();
       fastddsSubscriptionCallback.close();
       subscriptionReader.close();
 
-      fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
+      ret = fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 }

@@ -2,6 +2,7 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
@@ -49,9 +50,9 @@ public class ROS2Node implements Closeable
    }
 
    private final Pointer fastddsParticipant;
-   private final Map<ROS2Topic<?>, ROS2TopicData> topicData = new HashMap<>();
-   private final List<ROS2Publisher<?>> publishers = new ArrayList<>();
-   private final List<ROS2Subscription<?>> subscriptions = new ArrayList<>();
+   private final Map<ROS2Topic<?>, ROS2TopicData> topicData;
+   private final List<ROS2Publisher<?>> publishers;
+   private final List<ROS2Subscription<?>> subscriptions;
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
@@ -86,6 +87,9 @@ public class ROS2Node implements Closeable
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
+      topicData = new HashMap<>();
+      publishers = new ArrayList<>();
+      subscriptions = new ArrayList<>();
    }
 
    public ROS2Node(String name)
@@ -206,7 +210,7 @@ public class ROS2Node implements Closeable
 
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, Consumer<T> callback, ROS2QoSProfile qosProfile)
    {
-      return  null;
+      return null;
    }
 
    public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
@@ -262,6 +266,14 @@ public class ROS2Node implements Closeable
          topicData.fastddsTypeSupport.close();
       }
 
-      fastddsjava_delete_participant(fastddsParticipant);
+      int ret = fastddsjava_delete_participant(fastddsParticipant);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 }

@@ -2,8 +2,11 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.log.LogTools;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
@@ -47,7 +50,15 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       topicDataWrapper.data_vector().resize(messageSizeBytes);
       topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
 
-      fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
+      int ret = fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper);
+      try
+      {
+         fastddsjavaTools.retcodeThrowOnError(ret);
+      }
+      catch (fastddsjavaException e)
+      {
+         LogTools.error(e);
+      }
    }
 
    protected void close(Pointer fastddsParticipant)

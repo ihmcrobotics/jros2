@@ -5,6 +5,7 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.log.LogTools;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_get_unread_count;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.fastddsjava_datareader_take_next_sample;
@@ -41,7 +42,8 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    {
       if (cdrBuffer.getBufferUnsafe().position() != 0)
       {
-         throw new RuntimeException("Unsafe buffer position");
+         LogTools.error("Unsafe buffer position");
+         return;
       }
 
       fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
