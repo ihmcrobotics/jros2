@@ -74,20 +74,20 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    protected synchronized void close(Pointer fastddsParticipant)
    {
-      if (fastddsSubscriber.isNull())
-         return;
+      if (!fastddsSubscriber.isNull())
+      {
+         int ret = fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
+         fastddsjavaTools.retcodePrintOnError(ret);
 
-      int ret = fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader);
-      fastddsjavaTools.retcodePrintOnError(ret);
+         fastddsDataReaderListener.close();
+         fastddsDataCallback.close();
+         fastddsSubscriptionCallback.close();
+         subscriptionReader.close();
 
-      fastddsDataReaderListener.close();
-      fastddsDataCallback.close();
-      fastddsSubscriptionCallback.close();
-      subscriptionReader.close();
+         ret = fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
+         fastddsjavaTools.retcodePrintOnError(ret);
 
-      ret = fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber);
-      fastddsjavaTools.retcodePrintOnError(ret);
-
-      fastddsSubscriber.setNull();
+         fastddsSubscriber.setNull();
+      }
    }
 }

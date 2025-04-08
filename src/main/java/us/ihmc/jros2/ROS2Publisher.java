@@ -51,17 +51,17 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 
    protected synchronized void close(Pointer fastddsParticipant)
    {
-      if (fastddsPublisher.isNull())
-         return;
+      if (!fastddsPublisher.isNull())
+      {
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
-      topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         int ret = fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
+         fastddsjavaTools.retcodePrintOnError(ret);
 
-      int ret = fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter);
-      fastddsjavaTools.retcodePrintOnError(ret);
+         ret = fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
+         fastddsjavaTools.retcodePrintOnError(ret);
 
-      ret = fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher);
-      fastddsjavaTools.retcodePrintOnError(ret);
-
-      fastddsPublisher.setNull();
+         fastddsPublisher.setNull();
+      }
    }
 }

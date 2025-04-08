@@ -247,26 +247,26 @@ public class ROS2Node implements Closeable
    @Override
    public synchronized void close()
    {
-      if (fastddsParticipant.isNull())
-         return;
-
-      for (ROS2Topic<?> topic : topicData.keySet())
+      if (!fastddsParticipant.isNull())
       {
-         ROS2TopicData topicData = this.topicData.get(topic);
+         for (ROS2Topic<?> topic : topicData.keySet())
+         {
+            ROS2TopicData topicData = this.topicData.get(topic);
 
-         int ret = fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
+            int ret = fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic);
+            fastddsjavaTools.retcodePrintOnError(ret);
+
+            ret = fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
+            fastddsjavaTools.retcodePrintOnError(ret);
+
+            topicData.topicDataWrapperType.close();
+            topicData.fastddsTypeSupport.close();
+         }
+
+         int ret = fastddsjava_delete_participant(fastddsParticipant);
          fastddsjavaTools.retcodePrintOnError(ret);
 
-         ret = fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name());
-         fastddsjavaTools.retcodePrintOnError(ret);
-
-         topicData.topicDataWrapperType.close();
-         topicData.fastddsTypeSupport.close();
+         fastddsParticipant.setNull();
       }
-
-      int ret = fastddsjava_delete_participant(fastddsParticipant);
-      fastddsjavaTools.retcodePrintOnError(ret);
-
-      fastddsParticipant.setNull();
    }
 }
