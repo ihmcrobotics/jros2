@@ -11,6 +11,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
+import static us.ihmc.fastddsjava.fastddsjavaTools.retcodeThrowOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public class ROS2Subscription<T extends ROS2Message<T>>
@@ -104,6 +105,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    {
       if (!isClosed())
       {
+         retcodePrintOnError(fastddsjava_datareader_delete_contained_entities(fastddsDataReader));
          retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
          fastddsDataReaderListener.close();

@@ -14,16 +14,16 @@ import jakarta.xml.bind.annotation.XmlValue;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="builtinTransportsType">
- *   &lt;simpleContent>
- *     &lt;extension base="&lt;http://www.eprosima.com>builtinTransportKind">
- *       &lt;attribute name="max_msg_size" type="{http://www.eprosima.com}string" />
- *       &lt;attribute name="sockets_size" type="{http://www.eprosima.com}string" />
- *       &lt;attribute name="non_blocking" type="{http://www.eprosima.com}boolean" />
- *       &lt;attribute name="tcp_negotiation_timeout" type="{http://www.eprosima.com}uint32" />
- *     &lt;/extension>
- *   &lt;/simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="builtinTransportsType"&gt;
+ *   &lt;simpleContent&gt;
+ *     &lt;extension base="&lt;http://www.eprosima.com&gt;builtinTransportKind"&gt;
+ *       &lt;attribute name="max_msg_size" type="{http://www.eprosima.com}string" /&gt;
+ *       &lt;attribute name="sockets_size" type="{http://www.eprosima.com}string" /&gt;
+ *       &lt;attribute name="non_blocking" type="{http://www.eprosima.com}boolean" /&gt;
+ *       &lt;attribute name="tcp_negotiation_timeout" type="{http://www.eprosima.com}uint32" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

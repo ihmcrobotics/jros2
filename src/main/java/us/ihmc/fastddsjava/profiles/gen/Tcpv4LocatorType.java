@@ -14,19 +14,19 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tcpv4LocatorType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="port" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="physical_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="address" type="{http://www.eprosima.com}ipv4Address" minOccurs="0"/>
- *         &lt;element name="unique_lan_id" type="{http://www.eprosima.com}string" minOccurs="0"/>
- *         &lt;element name="wan_address" type="{http://www.eprosima.com}ipv4AddressFormat" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="tcpv4LocatorType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="port" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="physical_port" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="address" type="{http://www.eprosima.com}ipv4Address" minOccurs="0"/&gt;
+ *         &lt;element name="unique_lan_id" type="{http://www.eprosima.com}string" minOccurs="0"/&gt;
+ *         &lt;element name="wan_address" type="{http://www.eprosima.com}ipv4AddressFormat" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

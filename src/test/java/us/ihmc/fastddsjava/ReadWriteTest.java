@@ -119,6 +119,7 @@ public class ReadWriteTest
       assertTrue(sampleInfo.releaseReference());
       topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(data);
+      retcodeThrowOnError(fastddsjava_datareader_delete_contained_entities(dataReader));
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
@@ -236,6 +237,7 @@ public class ReadWriteTest
       assertTrue(sampleInfo.releaseReference());
       topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(dataWrite);
+      retcodeThrowOnError(fastddsjava_datareader_delete_contained_entities(dataReader));
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
@@ -342,6 +344,7 @@ public class ReadWriteTest
       assertTrue(sampleInfo.releaseReference());
       topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(dataWrite);
+      retcodeThrowOnError(fastddsjava_datareader_delete_contained_entities(dataReader));
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());

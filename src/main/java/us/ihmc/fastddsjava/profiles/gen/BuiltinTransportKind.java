@@ -12,19 +12,19 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="builtinTransportKind">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="NONE"/>
- *     &lt;enumeration value="DEFAULT"/>
- *     &lt;enumeration value="DEFAULTv6"/>
- *     &lt;enumeration value="SHM"/>
- *     &lt;enumeration value="UDPv4"/>
- *     &lt;enumeration value="UDPv6"/>
- *     &lt;enumeration value="LARGE_DATA"/>
- *     &lt;enumeration value="LARGE_DATAv6"/>
- *     &lt;enumeration value="P2P"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="builtinTransportKind"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="NONE"/&gt;
+ *     &lt;enumeration value="DEFAULT"/&gt;
+ *     &lt;enumeration value="DEFAULTv6"/&gt;
+ *     &lt;enumeration value="SHM"/&gt;
+ *     &lt;enumeration value="UDPv4"/&gt;
+ *     &lt;enumeration value="UDPv6"/&gt;
+ *     &lt;enumeration value="LARGE_DATA"/&gt;
+ *     &lt;enumeration value="LARGE_DATAv6"/&gt;
+ *     &lt;enumeration value="P2P"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

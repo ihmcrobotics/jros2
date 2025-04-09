@@ -13,31 +13,31 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dataReaderQosPoliciesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="data_sharing" type="{http://www.eprosima.com}dataSharingQosPolicyType" minOccurs="0"/>
- *         &lt;element name="deadline" type="{http://www.eprosima.com}deadlineQosPolicyType" minOccurs="0"/>
- *         &lt;element name="destination_order" type="{http://www.eprosima.com}destinationOrderQosPolicyType" minOccurs="0"/>
- *         &lt;element name="disablePositiveAcks" type="{http://www.eprosima.com}disablePositiveAcksQosPolicyType" minOccurs="0"/>
- *         &lt;element name="durability" type="{http://www.eprosima.com}durabilityQosPolicyType" minOccurs="0"/>
- *         &lt;element name="durabilityService" type="{http://www.eprosima.com}durabilityServiceQosPolicyType" minOccurs="0"/>
- *         &lt;element name="groupData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/>
- *         &lt;element name="latencyBudget" type="{http://www.eprosima.com}latencyBudgetQosPolicyType" minOccurs="0"/>
- *         &lt;element name="lifespan" type="{http://www.eprosima.com}lifespanQosPolicyType" minOccurs="0"/>
- *         &lt;element name="liveliness" type="{http://www.eprosima.com}livelinessQosPolicyType" minOccurs="0"/>
- *         &lt;element name="ownership" type="{http://www.eprosima.com}ownershipQosPolicyType" minOccurs="0"/>
- *         &lt;element name="partition" type="{http://www.eprosima.com}partitionQosPolicyType" minOccurs="0"/>
- *         &lt;element name="presentation" type="{http://www.eprosima.com}presentationQosPolicyType" minOccurs="0"/>
- *         &lt;element name="reliability" type="{http://www.eprosima.com}reliabilityQosPolicyType" minOccurs="0"/>
- *         &lt;element name="timeBasedFilter" type="{http://www.eprosima.com}timeBasedFilterQosPolicyType" minOccurs="0"/>
- *         &lt;element name="topicData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/>
- *         &lt;element name="userData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="dataReaderQosPoliciesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="data_sharing" type="{http://www.eprosima.com}dataSharingQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="deadline" type="{http://www.eprosima.com}deadlineQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="destination_order" type="{http://www.eprosima.com}destinationOrderQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="disablePositiveAcks" type="{http://www.eprosima.com}disablePositiveAcksQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="durability" type="{http://www.eprosima.com}durabilityQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="durabilityService" type="{http://www.eprosima.com}durabilityServiceQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="groupData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="latencyBudget" type="{http://www.eprosima.com}latencyBudgetQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="lifespan" type="{http://www.eprosima.com}lifespanQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="liveliness" type="{http://www.eprosima.com}livelinessQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="ownership" type="{http://www.eprosima.com}ownershipQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="partition" type="{http://www.eprosima.com}partitionQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="presentation" type="{http://www.eprosima.com}presentationQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="reliability" type="{http://www.eprosima.com}reliabilityQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="timeBasedFilter" type="{http://www.eprosima.com}timeBasedFilterQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="topicData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="userData" type="{http://www.eprosima.com}octectVectorQosPolicyType" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

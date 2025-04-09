@@ -118,6 +118,8 @@ public static native @Cast("uint32_t") int fastddsjava_datareader_get_unread_cou
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_get_subscription_matched_status(Pointer reader_, @ByRef SubscriptionMatchedStatus status);
 
+public static native @Cast("uint32_t") int fastddsjava_datareader_delete_contained_entities(Pointer reader_);
+
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
 
 // #endif // FASTDDSJAVA_H

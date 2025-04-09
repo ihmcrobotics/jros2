@@ -14,20 +14,20 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="durabilityServiceQosPolicyType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="service_cleanup_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
- *         &lt;element name="history_kind" type="{http://www.eprosima.com}historyQosKindPolicyType" minOccurs="0"/>
- *         &lt;element name="history_depth" type="{http://www.eprosima.com}int32" minOccurs="0"/>
- *         &lt;element name="max_samples" type="{http://www.eprosima.com}int32" minOccurs="0"/>
- *         &lt;element name="max_instances" type="{http://www.eprosima.com}int32" minOccurs="0"/>
- *         &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}int32" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="durabilityServiceQosPolicyType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="service_cleanup_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
+ *         &lt;element name="history_kind" type="{http://www.eprosima.com}historyQosKindPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="history_depth" type="{http://www.eprosima.com}int32" minOccurs="0"/&gt;
+ *         &lt;element name="max_samples" type="{http://www.eprosima.com}int32" minOccurs="0"/&gt;
+ *         &lt;element name="max_instances" type="{http://www.eprosima.com}int32" minOccurs="0"/&gt;
+ *         &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}int32" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
