@@ -3,6 +3,7 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.testmessages.Bool;
 
 import java.io.IOException;
@@ -136,7 +137,10 @@ public class ROS2PublishSubscribeTest
       // Create ROS 2 node, topic, and publisher
       ROS2Node ros2Node = new ROS2Node("test_node", domainId);
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
-      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+
+      ROS2QoSProfile qosProfile = new ROS2QoSProfile();
+      qosProfile.durability(Durability.TRANSIENT_LOCAL);
+      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, qosProfile);
 
       // Create a Bool message and publish it
       Bool bool = new Bool();
@@ -147,7 +151,7 @@ public class ROS2PublishSubscribeTest
       String result = ROS2TestTools.ros2EchoOnce(domainId, topicName);
 
       // Ensure the value received by ros2 matches the value we published
-      assertTrue(result.contains(String.valueOf(expectedValue)));
+      assertTrue(result.contains(String.valueOf(expectedValue)), result);
 
       // Close stuff
       ros2Node.destroyPublisher(publisher);
@@ -158,7 +162,7 @@ public class ROS2PublishSubscribeTest
    public void testROS2Subscription() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
-      final int domainId = 113;
+      final int domainId = 112;
       final String topicName = "/ihmc/test_bool";
 
       // Create the ROS 2 node, topic, and subscription
