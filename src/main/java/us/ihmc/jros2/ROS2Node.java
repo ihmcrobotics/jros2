@@ -254,6 +254,21 @@ public class ROS2Node implements Closeable
    {
       if (!isClosed())
       {
+         // Delete publishers
+         for (ROS2Publisher<?> publisher : publishers)
+         {
+            destroyPublisher(publisher);
+         }
+         publishers.clear();
+
+         // Delete subscriptions
+         for (ROS2Subscription<?> subscription : subscriptions)
+         {
+            destroySubscription(subscription);
+         }
+         subscriptions.clear();
+
+         // Delete topics
          for (ROS2Topic<?> topic : topicData.keySet())
          {
             ROS2TopicData topicData = this.topicData.get(topic);
@@ -264,6 +279,7 @@ public class ROS2Node implements Closeable
             topicData.topicDataWrapperType.close();
             topicData.fastddsTypeSupport.close();
          }
+         topicData.clear();
 
          retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
 
