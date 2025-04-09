@@ -9,8 +9,6 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.jros2.testmessages.CustomMessage;
 import us.ihmc.jros2.testmessages.CustomMessage2;
 
-import java.nio.ByteBuffer;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodeThrowOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -94,15 +92,17 @@ public class CustomMessageTest
       customMessage2.getCustomMessageList().add(customMessage1);
       customMessage2.getCustomMessageList().add(customMessage1);
 
-      ByteBuffer buffer = ByteBuffer.allocate(customMessage2.calculateSizeBytes() + 4);
-      CDRBuffer cdrBuffer = new CDRBuffer(buffer);
+      int payloadSize = CDRBuffer.PAYLOAD_HEADER.length + customMessage2.calculateSizeBytes();
+
+      CDRBuffer cdrBuffer = new CDRBuffer();
+      cdrBuffer.ensureRemainingCapacity(payloadSize);
 
       cdrBuffer.writePayloadHeader();
       customMessage2.serialize(cdrBuffer);
 
-      topicDataWrapper.data_vector().resize(customMessage2.calculateSizeBytes() + 4);
+      topicDataWrapper.data_vector().resize(payloadSize);
 
-      topicDataWrapper.data_ptr().put(buffer.array());
+      topicDataWrapper.data_ptr().put();
 
       int iter = 0;
 

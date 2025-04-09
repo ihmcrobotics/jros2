@@ -11,21 +11,14 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
  */
 public final class CDRBuffer
 {
-   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(1);
-
    // RepresentationIdentifier, RepresentationOptions
    public static final byte[] PAYLOAD_HEADER = {0, 1, 0, 0};
 
    private ByteBuffer buffer;
 
-   public CDRBuffer(ByteBuffer buffer)
-   {
-      this.buffer = buffer;
-   }
-
    public CDRBuffer()
    {
-      this(EMPTY_BUFFER);
+      buffer = ByteBuffer.allocate(1);
    }
 
    public ByteBuffer getBufferUnsafe()
