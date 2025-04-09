@@ -94,47 +94,44 @@ public class ROS2Node implements Closeable
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   protected <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
+   protected synchronized <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       if (!isClosed())
       {
-         synchronized (this.topicData)
+         if (this.topicData.containsKey(topic))
+            return this.topicData.get(topic);
+
+         ProfilesXML profilesXML = new ProfilesXML();
+         TopicProfileType topicProfile = new TopicProfileType();
+         String topicProfileName = UUID.randomUUID().toString();
+         topicProfile.setProfileName(topicProfileName);
+         profilesXML.addTopicProfile(topicProfile);
+
+         try
          {
-            if (this.topicData.containsKey(topic))
-               return this.topicData.get(topic);
-
-            ProfilesXML profilesXML = new ProfilesXML();
-            TopicProfileType topicProfile = new TopicProfileType();
-            String topicProfileName = UUID.randomUUID().toString();
-            topicProfile.setProfileName(topicProfileName);
-            profilesXML.addTopicProfile(topicProfile);
-
-            try
-            {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               LogTools.error(e);
-            }
-
-            String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
-            fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-            Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-            fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-            Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
-            ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
-
-            this.topicData.put(topic, topicData);
-
-            return topicData;
+            profilesXML.load();
          }
+         catch (fastddsjavaException e)
+         {
+            LogTools.error(e);
+         }
+
+         String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+         fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+         Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+         fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+         Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
+         ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+
+         this.topicData.put(topic, topicData);
+
+         return topicData;
       }
 
       return null;
    }
 
-   public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   public synchronized <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
       if (!isClosed())
       {
@@ -158,10 +155,8 @@ public class ROS2Node implements Closeable
 
          ROS2TopicData topicData = getOrCreateTopicData(topic);
          ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topicData);
-         synchronized (publishers)
-         {
-            publishers.add(publisher);
-         }
+
+         publishers.add(publisher);
 
          return publisher;
       }
@@ -169,23 +164,26 @@ public class ROS2Node implements Closeable
       return null;
    }
 
-   public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
+   public synchronized <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
    {
       boolean removed = false;
 
       if (!isClosed())
       {
-         synchronized (publishers)
+         removed = publishers.remove(publisher);
+
+         if (removed)
          {
-            removed = publishers.remove(publisher);
+            publisher.close(fastddsParticipant);
          }
-         publisher.close(fastddsParticipant);
       }
 
       return removed;
    }
 
-   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
+   public synchronized <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic,
+                                                                                         ROS2SubscriptionCallback<T> callback,
+                                                                                         ROS2QoSProfile qosProfile)
    {
       if (!isClosed())
       {
@@ -198,23 +196,20 @@ public class ROS2Node implements Closeable
          // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
          QoSTools.translateQoS(qosProfile, subscriberProfile);
 
-         synchronized (subscriptions)
+         try
          {
-            try
-            {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               LogTools.error(e);
-            }
-
-            ROS2TopicData topicData = getOrCreateTopicData(topic);
-            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
-
-            subscriptions.add(subscription);
-            return subscription;
+            profilesXML.load();
          }
+         catch (fastddsjavaException e)
+         {
+            LogTools.error(e);
+         }
+
+         ROS2TopicData topicData = getOrCreateTopicData(topic);
+         ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
+
+         subscriptions.add(subscription);
+         return subscription;
       }
 
       return null;
@@ -230,19 +225,18 @@ public class ROS2Node implements Closeable
       }, qosProfile);
    }
 
-   public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
+   public synchronized <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
    {
       boolean removed = false;
 
       if (!isClosed())
       {
-         synchronized (subscriptions)
-         {
-            removed = subscriptions.remove(subscription);
-         }
+         removed = subscriptions.remove(subscription);
 
          if (removed)
+         {
             subscription.close(fastddsParticipant);
+         }
       }
 
       return removed;
@@ -282,41 +276,33 @@ public class ROS2Node implements Closeable
       if (!isClosed())
       {
          // Delete publishers
-         synchronized (publishers)
+         for (ROS2Publisher<?> publisher : publishers)
          {
-            for (ROS2Publisher<?> publisher : publishers)
-            {
-               destroyPublisher(publisher);
-            }
-            publishers.clear();
+            destroyPublisher(publisher);
          }
+         publishers.clear();
 
          // Delete subscriptions
-         synchronized (subscriptions)
+         for (ROS2Subscription<?> subscription : subscriptions)
          {
-            for (ROS2Subscription<?> subscription : subscriptions)
-            {
-               destroySubscription(subscription);
-            }
-            subscriptions.clear();
+            destroySubscription(subscription);
          }
+         subscriptions.clear();
 
          // Delete topics
-         synchronized (topicData)
+         for (ROS2Topic<?> topic : topicData.keySet())
          {
-            for (ROS2Topic<?> topic : topicData.keySet())
-            {
-               ROS2TopicData topicData = this.topicData.get(topic);
+            ROS2TopicData topicData = this.topicData.get(topic);
 
-               retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
-               retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
+            retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+            retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
 
-               topicData.topicDataWrapperType.close();
-               topicData.fastddsTypeSupport.close();
-            }
-            topicData.clear();
+            topicData.topicDataWrapperType.close();
+            topicData.fastddsTypeSupport.close();
          }
+         topicData.clear();
 
+         // Delete participant
          retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
 
          fastddsParticipant.setNull();
