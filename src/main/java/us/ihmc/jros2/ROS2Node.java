@@ -198,23 +198,23 @@ public class ROS2Node implements Closeable
          // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
          QoSTools.translateQoS(qosProfile, subscriberProfile);
 
-         try
-         {
-            profilesXML.load();
-         }
-         catch (fastddsjavaException e)
-         {
-            LogTools.error(e);
-         }
-
-         ROS2TopicData topicData = getOrCreateTopicData(topic);
-         ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
          synchronized (subscriptions)
          {
-            subscriptions.add(subscription);
-         }
+            try
+            {
+               profilesXML.load();
+            }
+            catch (fastddsjavaException e)
+            {
+               LogTools.error(e);
+            }
 
-         return subscription;
+            ROS2TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
+
+            subscriptions.add(subscription);
+            return subscription;
+         }
       }
 
       return null;
@@ -240,7 +240,9 @@ public class ROS2Node implements Closeable
          {
             removed = subscriptions.remove(subscription);
          }
-         subscription.close(fastddsParticipant);
+
+         if (removed)
+            subscription.close(fastddsParticipant);
       }
 
       return removed;

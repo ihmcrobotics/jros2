@@ -13,14 +13,14 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="publisherProfileType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eprosima.com}publisherProfileNoAttributesType">
- *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" />
- *       &lt;attribute name="is_default_profile" type="{http://www.eprosima.com}boolean" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="publisherProfileType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eprosima.com}publisherProfileNoAttributesType"&gt;
+ *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" /&gt;
+ *       &lt;attribute name="is_default_profile" type="{http://www.eprosima.com}boolean" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

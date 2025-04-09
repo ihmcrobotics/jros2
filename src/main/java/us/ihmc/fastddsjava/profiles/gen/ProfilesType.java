@@ -17,24 +17,24 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="profilesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence maxOccurs="unbounded">
- *         &lt;choice>
- *           &lt;element name="domainparticipant_factory" type="{http://www.eprosima.com}domainParticipantFactoryProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="participant" type="{http://www.eprosima.com}participantProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="data_writer" type="{http://www.eprosima.com}publisherProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="data_reader" type="{http://www.eprosima.com}subscriberProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="transport_descriptors" type="{http://www.eprosima.com}TransportDescriptorListType"/>
- *           &lt;element name="topic" type="{http://www.eprosima.com}topicProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="replier" type="{http://www.eprosima.com}replierRequesterProfileType" maxOccurs="unbounded"/>
- *           &lt;element name="requester" type="{http://www.eprosima.com}replierRequesterProfileType" maxOccurs="unbounded"/>
- *         &lt;/choice>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="profilesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence maxOccurs="unbounded"&gt;
+ *         &lt;choice&gt;
+ *           &lt;element name="domainparticipant_factory" type="{http://www.eprosima.com}domainParticipantFactoryProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="participant" type="{http://www.eprosima.com}participantProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="data_writer" type="{http://www.eprosima.com}publisherProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="data_reader" type="{http://www.eprosima.com}subscriberProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="transport_descriptors" type="{http://www.eprosima.com}TransportDescriptorListType"/&gt;
+ *           &lt;element name="topic" type="{http://www.eprosima.com}topicProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="replier" type="{http://www.eprosima.com}replierRequesterProfileType" maxOccurs="unbounded"/&gt;
+ *           &lt;element name="requester" type="{http://www.eprosima.com}replierRequesterProfileType" maxOccurs="unbounded"/&gt;
+ *         &lt;/choice&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -47,13 +47,13 @@ public class ProfilesType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "domainparticipant_factory", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "participant", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "data_writer", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "data_reader", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "transport_descriptors", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "topic", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "replier", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "transport_descriptors", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "data_writer", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "requester", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "participant", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "requester", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<?>> domainparticipantFactoryOrParticipantOrDataWriter;
 
@@ -76,13 +76,13 @@ public class ProfilesType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DomainParticipantFactoryProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link ParticipantProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PublisherProfileType }{@code >}
      * {@link JAXBElement }{@code <}{@link SubscriberProfileType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}
      * {@link JAXBElement }{@code <}{@link TopicProfileType }{@code >}
      * {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}
-     * {@link JAXBElement }{@code <}{@link TransportDescriptorListType }{@code >}
-     * {@link JAXBElement }{@code <}{@link PublisherProfileType }{@code >}
      * {@link JAXBElement }{@code <}{@link ReplierRequesterProfileType }{@code >}
-     * {@link JAXBElement }{@code <}{@link ParticipantProfileType }{@code >}
      * 
      * 
      */

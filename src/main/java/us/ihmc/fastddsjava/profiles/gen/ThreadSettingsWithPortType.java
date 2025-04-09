@@ -13,13 +13,13 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="threadSettingsWithPortType">
- *   &lt;complexContent>
- *     &lt;extension base="{http://www.eprosima.com}threadSettingsType">
- *       &lt;attribute name="port" use="required" type="{http://www.eprosima.com}uint32" />
- *     &lt;/extension>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="threadSettingsWithPortType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;extension base="{http://www.eprosima.com}threadSettingsType"&gt;
+ *       &lt;attribute name="port" use="required" type="{http://www.eprosima.com}uint32" /&gt;
+ *     &lt;/extension&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

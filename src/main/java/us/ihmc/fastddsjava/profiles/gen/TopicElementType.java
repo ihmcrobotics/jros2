@@ -14,30 +14,30 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="topicElementType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="historyQos" type="{http://www.eprosima.com}historyQosPolicyType" minOccurs="0"/>
- *         &lt;element name="resourceLimitsQos" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;all>
- *                   &lt;element name="max_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="max_instances" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="allocated_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="extra_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                 &lt;/all>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="topicElementType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="historyQos" type="{http://www.eprosima.com}historyQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="resourceLimitsQos" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;all&gt;
+ *                   &lt;element name="max_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="max_instances" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="allocated_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="extra_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                 &lt;/all&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -106,19 +106,19 @@ public class TopicElementType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;all>
-     *         &lt;element name="max_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="max_instances" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="allocated_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="extra_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *       &lt;/all>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;all&gt;
+     *         &lt;element name="max_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="max_instances" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="max_samples_per_instance" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="allocated_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="extra_samples" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *       &lt;/all&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
