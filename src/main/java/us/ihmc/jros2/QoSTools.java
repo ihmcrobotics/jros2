@@ -6,9 +6,7 @@ import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.DataWriterQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.DeadlineQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.DurabilityQosPolicyType;
-import us.ihmc.fastddsjava.profiles.gen.DurabilityServiceQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.DurationType;
-import us.ihmc.fastddsjava.profiles.gen.HistoryQosKindPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.LifespanQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.LivelinessQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
@@ -22,7 +20,6 @@ final class QoSTools
 {
    static void translateQoS(ROS2QoSProfile qosProfile, PublisherProfileType publisherProfile)
    {
-      DurabilityServiceQosPolicyType durabilityServiceQosPolicyType = new DurabilityServiceQosPolicyType();
       ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
       DurabilityQosPolicyType durabilityQosPolicyType = new DurabilityQosPolicyType();
       DeadlineQosPolicyType deadlineQosPolicyType = new DeadlineQosPolicyType();
@@ -32,12 +29,12 @@ final class QoSTools
       // History type
       switch (qosProfile.getHistory())
       {
-         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_LAST);
-         case KEEP_ALL -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_ALL);
+         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityQosPolicyType.setKind("KEEP_LAST");
+         case KEEP_ALL -> durabilityQosPolicyType.setKind("KEEP_ALL");
       }
 
       // History depth
-      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
+      //      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
 
       // Reliability
       switch (qosProfile.getReliability())
@@ -75,7 +72,7 @@ final class QoSTools
       switch (qosProfile.getLiveliness())
       {
          case SYSTEM_DEFAULT, AUTOMATIC -> livelinessQosPolicyType.setKind("AUTOMATIC");
-         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_PARTICIPANT");
+         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_TOPIC");
       }
 
       // Lease duration
@@ -90,19 +87,17 @@ final class QoSTools
       livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
 
       DataWriterQosPoliciesType dataWriterQosPoliciesType = new DataWriterQosPoliciesType();
-      dataWriterQosPoliciesType.setDurabilityService(durabilityServiceQosPolicyType);
+      dataWriterQosPoliciesType.setDurability(durabilityQosPolicyType);
       dataWriterQosPoliciesType.setDeadline(deadlineQosPolicyType);
       dataWriterQosPoliciesType.setLifespan(lifespanQosPolicyType);
       dataWriterQosPoliciesType.setReliability(reliabilityQosPolicyType);
-      dataWriterQosPoliciesType.setDurability(durabilityQosPolicyType);
-      dataWriterQosPoliciesType.setLiveliness(livelinessQosPolicyType);
+      //      dataWriterQosPoliciesType.setLiveliness(livelinessQosPolicyType); // TODO:
 
       publisherProfile.setQos(dataWriterQosPoliciesType);
    }
 
    static void translateQoS(ROS2QoSProfile qosProfile, SubscriberProfileType subscriberProfile)
    {
-      DurabilityServiceQosPolicyType durabilityServiceQosPolicyType = new DurabilityServiceQosPolicyType();
       ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
       DurabilityQosPolicyType durabilityQosPolicyType = new DurabilityQosPolicyType();
       DeadlineQosPolicyType deadlineQosPolicyType = new DeadlineQosPolicyType();
@@ -112,12 +107,12 @@ final class QoSTools
       // History type
       switch (qosProfile.getHistory())
       {
-         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_LAST);
-         case KEEP_ALL -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_ALL);
+         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityQosPolicyType.setKind("KEEP_LAST");
+         case KEEP_ALL -> durabilityQosPolicyType.setKind("KEEP_ALL");
       }
 
       // History depth
-      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
+      //      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
 
       // Reliability
       switch (qosProfile.getReliability())
@@ -155,7 +150,7 @@ final class QoSTools
       switch (qosProfile.getLiveliness())
       {
          case SYSTEM_DEFAULT, AUTOMATIC -> livelinessQosPolicyType.setKind("AUTOMATIC");
-         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_PARTICIPANT");
+         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_TOPIC");
       }
 
       // Lease duration
@@ -170,12 +165,11 @@ final class QoSTools
       livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
 
       DataReaderQosPoliciesType dataReaderQosPoliciesType = new DataReaderQosPoliciesType();
-      dataReaderQosPoliciesType.setDurabilityService(durabilityServiceQosPolicyType);
+      dataReaderQosPoliciesType.setDurability(durabilityQosPolicyType);
       dataReaderQosPoliciesType.setDeadline(deadlineQosPolicyType);
       dataReaderQosPoliciesType.setLifespan(lifespanQosPolicyType);
       dataReaderQosPoliciesType.setReliability(reliabilityQosPolicyType);
-      dataReaderQosPoliciesType.setDurability(durabilityQosPolicyType);
-      dataReaderQosPoliciesType.setLiveliness(livelinessQosPolicyType);
+      //      dataReaderQosPoliciesType.setLiveliness(livelinessQosPolicyType); // TODO:
 
       subscriberProfile.setQos(dataReaderQosPoliciesType);
    }
