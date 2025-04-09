@@ -11,17 +11,17 @@ public class ROS2QoSProfile
 
    public enum History
    {
-      KEEP_LAST, KEEP_ALL
+      SYSTEM_DEFAULT, KEEP_LAST, KEEP_ALL
    }
 
    public enum Reliability
    {
-      BEST_EFFORT, RELIABLE
+      SYSTEM_DEFAULT, BEST_EFFORT, RELIABLE
    }
 
    public enum Durability
    {
-      TRANSIENT_LOCAL, VOLATILE
+      SYSTEM_DEFAULT, TRANSIENT_LOCAL, VOLATILE
    }
 
    public enum Liveliness
@@ -41,10 +41,10 @@ public class ROS2QoSProfile
    public ROS2QoSProfile()
    {
       // Defaults
-      history = History.KEEP_LAST;
+      history = History.SYSTEM_DEFAULT;
       depth = 10;
-      reliability = Reliability.RELIABLE;
-      durability = Durability.VOLATILE;
+      reliability = Reliability.SYSTEM_DEFAULT;
+      durability = Durability.SYSTEM_DEFAULT;
       deadline = Duration.ofSeconds(0);
       lifespan = Duration.ofSeconds(0);
       liveliness = Liveliness.SYSTEM_DEFAULT;

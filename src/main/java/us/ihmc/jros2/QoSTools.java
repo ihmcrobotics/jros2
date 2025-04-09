@@ -1,40 +1,182 @@
 package us.ihmc.jros2;
 
+import jakarta.xml.bind.JAXBElement;
+import us.ihmc.fastddsjava.profiles.ProfilesXML;
+import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
+import us.ihmc.fastddsjava.profiles.gen.DataWriterQosPoliciesType;
+import us.ihmc.fastddsjava.profiles.gen.DeadlineQosPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.DurabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.DurabilityServiceQosPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.DurationType;
 import us.ihmc.fastddsjava.profiles.gen.HistoryQosKindPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.LifespanQosPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.LivelinessQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ReliabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 
+import javax.xml.namespace.QName;
+import java.time.Duration;
+
 final class QoSTools
 {
-   protected static void translateQoS(ROS2QoSProfile qosProfile, PublisherProfileType publisherProfile)
-   {
-
-   }
-
-   protected static void translateQoS(ROS2QoSProfile qoSProfile, SubscriberProfileType subscriberProfile)
+   static void translateQoS(ROS2QoSProfile qosProfile, PublisherProfileType publisherProfile)
    {
       DurabilityServiceQosPolicyType durabilityServiceQosPolicyType = new DurabilityServiceQosPolicyType();
       ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
+      DurabilityQosPolicyType durabilityQosPolicyType = new DurabilityQosPolicyType();
+      DeadlineQosPolicyType deadlineQosPolicyType = new DeadlineQosPolicyType();
+      LifespanQosPolicyType lifespanQosPolicyType = new LifespanQosPolicyType();
+      LivelinessQosPolicyType livelinessQosPolicyType = new LivelinessQosPolicyType();
 
       // History type
-      switch (qoSProfile.getHistory())
+      switch (qosProfile.getHistory())
       {
-         case KEEP_LAST -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_LAST);
+         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_LAST);
          case KEEP_ALL -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_ALL);
       }
 
       // History depth
-      durabilityServiceQosPolicyType.setHistoryDepth(qoSProfile.getDepth());
+      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
 
       // Reliability
-      switch (qoSProfile.getReliability())
+      switch (qosProfile.getReliability())
       {
-         case BEST_EFFORT -> reliabilityQosPolicyType.setKind("BEST_EFFORT");
+         case SYSTEM_DEFAULT, BEST_EFFORT -> reliabilityQosPolicyType.setKind("BEST_EFFORT");
+         case RELIABLE -> reliabilityQosPolicyType.setKind("RELIABLE");
       }
 
+      // Durability
+      switch (qosProfile.getDurability())
+      {
+         case SYSTEM_DEFAULT, TRANSIENT_LOCAL -> durabilityQosPolicyType.setKind("TRANSIENT_LOCAL");
+         case VOLATILE -> durabilityQosPolicyType.setKind("VOLATILE");
+      }
 
+      // Deadline
+      Duration deadline = qosProfile.getDeadline();
+      DurationType deadlineDurationType = new DurationType();
+      deadlineDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(deadline.getNano())));
+      deadlineDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(deadline.getSeconds())));
+      deadlineQosPolicyType.setPeriod(deadlineDurationType);
 
+      // Lifespan
+      Duration lifespan = qosProfile.getLifespan();
+      DurationType lifespanDurationType = new DurationType();
+      lifespanDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(lifespan.getNano())));
+      lifespanDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(lifespan.getSeconds())));
+      lifespanQosPolicyType.setDuration(lifespanDurationType);
+
+      // Liveliness
+      switch (qosProfile.getLiveliness())
+      {
+         case SYSTEM_DEFAULT, AUTOMATIC -> livelinessQosPolicyType.setKind("AUTOMATIC");
+         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_PARTICIPANT");
+      }
+
+      // Lease duration
+      Duration leaseDuration = qosProfile.getLeaseDuration();
+      DurationType leaseDurationType = new DurationType();
+      leaseDurationType.getSecOrNanosec()
+                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"),
+                                              String.class,
+                                              Integer.toString(leaseDuration.getNano())));
+      leaseDurationType.getSecOrNanosec()
+                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(leaseDuration.getSeconds())));
+      livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
+
+      DataWriterQosPoliciesType dataWriterQosPoliciesType = new DataWriterQosPoliciesType();
+      dataWriterQosPoliciesType.setDurabilityService(durabilityServiceQosPolicyType);
+      dataWriterQosPoliciesType.setDeadline(deadlineQosPolicyType);
+      dataWriterQosPoliciesType.setLifespan(lifespanQosPolicyType);
+      dataWriterQosPoliciesType.setReliability(reliabilityQosPolicyType);
+      dataWriterQosPoliciesType.setDurability(durabilityQosPolicyType);
+      dataWriterQosPoliciesType.setLiveliness(livelinessQosPolicyType);
+
+      publisherProfile.setQos(dataWriterQosPoliciesType);
+   }
+
+   static void translateQoS(ROS2QoSProfile qosProfile, SubscriberProfileType subscriberProfile)
+   {
+      DurabilityServiceQosPolicyType durabilityServiceQosPolicyType = new DurabilityServiceQosPolicyType();
+      ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
+      DurabilityQosPolicyType durabilityQosPolicyType = new DurabilityQosPolicyType();
+      DeadlineQosPolicyType deadlineQosPolicyType = new DeadlineQosPolicyType();
+      LifespanQosPolicyType lifespanQosPolicyType = new LifespanQosPolicyType();
+      LivelinessQosPolicyType livelinessQosPolicyType = new LivelinessQosPolicyType();
+
+      // History type
+      switch (qosProfile.getHistory())
+      {
+         case SYSTEM_DEFAULT, KEEP_LAST -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_LAST);
+         case KEEP_ALL -> durabilityServiceQosPolicyType.setHistoryKind(HistoryQosKindPolicyType.KEEP_ALL);
+      }
+
+      // History depth
+      durabilityServiceQosPolicyType.setHistoryDepth(qosProfile.getDepth());
+
+      // Reliability
+      switch (qosProfile.getReliability())
+      {
+         case SYSTEM_DEFAULT, BEST_EFFORT -> reliabilityQosPolicyType.setKind("BEST_EFFORT");
+         case RELIABLE -> reliabilityQosPolicyType.setKind("RELIABLE");
+      }
+
+      // Durability
+      switch (qosProfile.getDurability())
+      {
+         case SYSTEM_DEFAULT, TRANSIENT_LOCAL -> durabilityQosPolicyType.setKind("TRANSIENT_LOCAL");
+         case VOLATILE -> durabilityQosPolicyType.setKind("VOLATILE");
+      }
+
+      // Deadline
+      Duration deadline = qosProfile.getDeadline();
+      DurationType deadlineDurationType = new DurationType();
+      deadlineDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(deadline.getNano())));
+      deadlineDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(deadline.getSeconds())));
+      deadlineQosPolicyType.setPeriod(deadlineDurationType);
+
+      // Lifespan
+      Duration lifespan = qosProfile.getLifespan();
+      DurationType lifespanDurationType = new DurationType();
+      lifespanDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(lifespan.getNano())));
+      lifespanDurationType.getSecOrNanosec()
+                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(lifespan.getSeconds())));
+      lifespanQosPolicyType.setDuration(lifespanDurationType);
+
+      // Liveliness
+      switch (qosProfile.getLiveliness())
+      {
+         case SYSTEM_DEFAULT, AUTOMATIC -> livelinessQosPolicyType.setKind("AUTOMATIC");
+         case MANUAL_BY_TOPIC -> livelinessQosPolicyType.setKind("MANUAL_BY_PARTICIPANT");
+      }
+
+      // Lease duration
+      Duration leaseDuration = qosProfile.getLeaseDuration();
+      DurationType leaseDurationType = new DurationType();
+      leaseDurationType.getSecOrNanosec()
+                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"),
+                                              String.class,
+                                              Integer.toString(leaseDuration.getNano())));
+      leaseDurationType.getSecOrNanosec()
+                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(leaseDuration.getSeconds())));
+      livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
+
+      DataReaderQosPoliciesType dataReaderQosPoliciesType = new DataReaderQosPoliciesType();
+      dataReaderQosPoliciesType.setDurabilityService(durabilityServiceQosPolicyType);
+      dataReaderQosPoliciesType.setDeadline(deadlineQosPolicyType);
+      dataReaderQosPoliciesType.setLifespan(lifespanQosPolicyType);
+      dataReaderQosPoliciesType.setReliability(reliabilityQosPolicyType);
+      dataReaderQosPoliciesType.setDurability(durabilityQosPolicyType);
+      dataReaderQosPoliciesType.setLiveliness(livelinessQosPolicyType);
+
+      subscriberProfile.setQos(dataReaderQosPoliciesType);
    }
 }
