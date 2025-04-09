@@ -278,14 +278,14 @@ public class ROS2Node implements Closeable
          // Delete publishers
          for (ROS2Publisher<?> publisher : publishers)
          {
-            destroyPublisher(publisher);
+            publisher.close(fastddsParticipant);
          }
          publishers.clear();
 
          // Delete subscriptions
          for (ROS2Subscription<?> subscription : subscriptions)
          {
-            destroySubscription(subscription);
+            subscription.close(fastddsParticipant);
          }
          subscriptions.clear();
 
