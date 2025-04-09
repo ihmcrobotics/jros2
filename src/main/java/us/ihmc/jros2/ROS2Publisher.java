@@ -34,16 +34,16 @@ public class ROS2Publisher<T extends ROS2Message<T>>
    {
       if (!isClosed())
       {
-         int messageSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
-         cdrBuffer.ensureRemainingCapacity(messageSizeBytes);
+         int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+         cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
 
          // TODO: check if we can shrink the writeBuffer to save memory
 
          cdrBuffer.writePayloadHeader();
          message.serialize(cdrBuffer);
 
-         topicDataWrapper.data_vector().resize(messageSizeBytes);
-         topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, messageSizeBytes);
+         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
          retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
       }

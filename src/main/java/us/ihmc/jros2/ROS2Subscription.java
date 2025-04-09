@@ -88,10 +88,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
          while (ok == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
          {
-            int sampleSize = (int) topicDataWrapper.data_vector().size();
+            int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
             cdrBuffer.getBufferUnsafe().rewind();
-            cdrBuffer.ensureRemainingCapacity(sampleSize);
-            topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
+            cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
+            topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
             callback.onMessage(subscriptionReader);
          }
