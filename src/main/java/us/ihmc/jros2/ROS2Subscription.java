@@ -1,11 +1,14 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
+import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
+import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -20,16 +23,29 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
 
+   private final fastddsjava_DataReaderListener fastddsDataReaderListener;
+
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
-   private final fastddsjava_DataReaderListener fastddsDataReaderListener;
-   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
-   private final ROS2SubscriptionReader<T> subscriptionReader;
+
+   private final ROS2TopicData topicData;
+   private final fastddsjava_TopicDataWrapper topicDataWrapper;
+   private final CDRBuffer cdrBuffer;
+   private final SampleInfo sampleInfo;
+
    private final ROS2SubscriptionCallback<T> callback;
+   private final ROS2SubscriptionReader<T> subscriptionReader;
+
+   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
 
    protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2TopicData topicData)
    {
       this.callback = callback;
+      this.topicData = topicData;
+
+      cdrBuffer = new CDRBuffer();
+      sampleInfo = new SampleInfo();
+      subscriptionReader = new ROS2SubscriptionReader<>(cdrBuffer);
 
       fastddsDataCallback = new fastddsjava_OnDataCallback()
       {
@@ -52,18 +68,31 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       fastddsDataReaderListener.set_on_subscription_callback(fastddsSubscriptionCallback);
       subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
-      this.fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      this.fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, fastddsDataReaderListener, subscriberProfileName);
+      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
+      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, fastddsDataReaderListener, subscriberProfileName);
 
-      subscriptionReader = new ROS2SubscriptionReader<>(fastddsDataReader, topicData);
+      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
    }
 
-   private void onDataCallback()
+   public int getUnreadCount()
    {
-      if (callback != null)
-      {
-         callback.onMessage(subscriptionReader);
-      }
+      return fastddsjava_datareader_get_unread_count(fastddsDataReader);
+   }
+
+   private synchronized void onDataCallback()
+   {
+      if (callback == null || isClosed())
+         return;
+
+      retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
+
+      int sampleSize = (int) topicDataWrapper.data_vector().size();
+      cdrBuffer.getBufferUnsafe().rewind();
+      cdrBuffer.ensureRemainingCapacity(sampleSize);
+      topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
+
+      cdrBuffer.readPayloadHeader();
+      callback.onMessage(subscriptionReader);
    }
 
    private void onSubscriptionCallback()
@@ -81,10 +110,14 @@ public class ROS2Subscription<T extends ROS2Message<T>>
          fastddsDataReaderListener.close();
          fastddsDataCallback.close();
          fastddsSubscriptionCallback.close();
-         subscriptionReader.close();
+
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         sampleInfo.close();
+         topicDataWrapper.close();
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
 
+         fastddsSubscriber.close();
          fastddsSubscriber.setNull();
       }
    }
