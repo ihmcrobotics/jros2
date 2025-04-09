@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ROS2PublishSubscribeTest
 {
-   private static final Random RANDOM = new Random();
+   private static final Random RANDOM = new Random(1881108);
 
    @Test
    public void testROS2PublisherAPI()
