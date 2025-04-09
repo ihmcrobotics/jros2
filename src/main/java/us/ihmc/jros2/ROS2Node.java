@@ -255,31 +255,40 @@ public class ROS2Node implements Closeable
       if (!isClosed())
       {
          // Delete publishers
-         for (ROS2Publisher<?> publisher : publishers)
+         synchronized (publishers)
          {
-            destroyPublisher(publisher);
+            for (ROS2Publisher<?> publisher : publishers)
+            {
+               destroyPublisher(publisher);
+            }
+            publishers.clear();
          }
-         publishers.clear();
 
          // Delete subscriptions
-         for (ROS2Subscription<?> subscription : subscriptions)
+         synchronized (subscriptions)
          {
-            destroySubscription(subscription);
+            for (ROS2Subscription<?> subscription : subscriptions)
+            {
+               destroySubscription(subscription);
+            }
+            subscriptions.clear();
          }
-         subscriptions.clear();
 
          // Delete topics
-         for (ROS2Topic<?> topic : topicData.keySet())
+         synchronized (topicData)
          {
-            ROS2TopicData topicData = this.topicData.get(topic);
+            for (ROS2Topic<?> topic : topicData.keySet())
+            {
+               ROS2TopicData topicData = this.topicData.get(topic);
 
-            retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
-            retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
+               retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+               retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
 
-            topicData.topicDataWrapperType.close();
-            topicData.fastddsTypeSupport.close();
+               topicData.topicDataWrapperType.close();
+               topicData.fastddsTypeSupport.close();
+            }
+            topicData.clear();
          }
-         topicData.clear();
 
          retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
 
