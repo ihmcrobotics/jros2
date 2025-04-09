@@ -13,18 +13,18 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="writerTimesType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="initial_heartbeat_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *         &lt;element name="heartbeat_period" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *         &lt;element name="nack_response_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *         &lt;element name="nack_supression_duration" type="{http://www.eprosima.com}durationType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="writerTimesType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="initial_heartbeat_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *         &lt;element name="heartbeat_period" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *         &lt;element name="nack_response_delay" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *         &lt;element name="nack_supression_duration" type="{http://www.eprosima.com}durationType" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

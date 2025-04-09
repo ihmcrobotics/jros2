@@ -17,40 +17,40 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="bitmaskDcl"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence&gt;
- *         &lt;element name="bit_value" maxOccurs="unbounded" minOccurs="0"&gt;
- *           &lt;complexType&gt;
- *             &lt;complexContent&gt;
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *                 &lt;attribute name="position"&gt;
- *                   &lt;simpleType&gt;
- *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedShort"&gt;
- *                       &lt;minInclusive value="0"/&gt;
- *                       &lt;maxInclusive value="63"/&gt;
- *                     &lt;/restriction&gt;
- *                   &lt;/simpleType&gt;
- *                 &lt;/attribute&gt;
- *               &lt;/restriction&gt;
- *             &lt;/complexContent&gt;
- *           &lt;/complexType&gt;
- *         &lt;/element&gt;
- *       &lt;/sequence&gt;
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" /&gt;
- *       &lt;attribute name="bit_bound"&gt;
- *         &lt;simpleType&gt;
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short"&gt;
- *             &lt;minInclusive value="1"/&gt;
- *             &lt;maxInclusive value="64"/&gt;
- *           &lt;/restriction&gt;
- *         &lt;/simpleType&gt;
- *       &lt;/attribute&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="bitmaskDcl">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence>
+ *         &lt;element name="bit_value" maxOccurs="unbounded" minOccurs="0">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" />
+ *                 &lt;attribute name="position">
+ *                   &lt;simpleType>
+ *                     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedShort">
+ *                       &lt;minInclusive value="0"/>
+ *                       &lt;maxInclusive value="63"/>
+ *                     &lt;/restriction>
+ *                   &lt;/simpleType>
+ *                 &lt;/attribute>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *       &lt;/sequence>
+ *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
+ *       &lt;attribute name="bit_bound">
+ *         &lt;simpleType>
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}short">
+ *             &lt;minInclusive value="1"/>
+ *             &lt;maxInclusive value="64"/>
+ *           &lt;/restriction>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -153,21 +153,21 @@ public class BitmaskDcl {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" /&gt;
-     *       &lt;attribute name="position"&gt;
-     *         &lt;simpleType&gt;
-     *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedShort"&gt;
-     *             &lt;minInclusive value="0"/&gt;
-     *             &lt;maxInclusive value="63"/&gt;
-     *           &lt;/restriction&gt;
-     *         &lt;/simpleType&gt;
-     *       &lt;/attribute&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" />
+     *       &lt;attribute name="position">
+     *         &lt;simpleType>
+     *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedShort">
+     *             &lt;minInclusive value="0"/>
+     *             &lt;maxInclusive value="63"/>
+     *           &lt;/restriction>
+     *         &lt;/simpleType>
+     *       &lt;/attribute>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 

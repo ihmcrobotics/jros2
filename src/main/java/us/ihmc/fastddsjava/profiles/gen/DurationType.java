@@ -17,49 +17,49 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="durationType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;choice&gt;
- *           &lt;element name="sec" minOccurs="0"&gt;
- *             &lt;simpleType&gt;
- *               &lt;union&gt;
- *                 &lt;simpleType&gt;
- *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *                     &lt;minLength value="1"/&gt;
- *                     &lt;enumeration value="DURATION_INFINITY"/&gt;
- *                     &lt;enumeration value="DURATION_INFINITE_SEC"/&gt;
- *                   &lt;/restriction&gt;
- *                 &lt;/simpleType&gt;
- *                 &lt;simpleType&gt;
- *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt"&gt;
- *                   &lt;/restriction&gt;
- *                 &lt;/simpleType&gt;
- *               &lt;/union&gt;
- *             &lt;/simpleType&gt;
- *           &lt;/element&gt;
- *           &lt;element name="nanosec" minOccurs="0"&gt;
- *             &lt;simpleType&gt;
- *               &lt;union&gt;
- *                 &lt;simpleType&gt;
- *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *                     &lt;enumeration value="DURATION_INFINITY"/&gt;
- *                     &lt;enumeration value="DURATION_INFINITE_NSEC"/&gt;
- *                   &lt;/restriction&gt;
- *                 &lt;/simpleType&gt;
- *                 &lt;simpleType&gt;
- *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt"&gt;
- *                   &lt;/restriction&gt;
- *                 &lt;/simpleType&gt;
- *               &lt;/union&gt;
- *             &lt;/simpleType&gt;
- *           &lt;/element&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="durationType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;choice>
+ *           &lt;element name="sec" minOccurs="0">
+ *             &lt;simpleType>
+ *               &lt;union>
+ *                 &lt;simpleType>
+ *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *                     &lt;minLength value="1"/>
+ *                     &lt;enumeration value="DURATION_INFINITY"/>
+ *                     &lt;enumeration value="DURATION_INFINITE_SEC"/>
+ *                   &lt;/restriction>
+ *                 &lt;/simpleType>
+ *                 &lt;simpleType>
+ *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt">
+ *                   &lt;/restriction>
+ *                 &lt;/simpleType>
+ *               &lt;/union>
+ *             &lt;/simpleType>
+ *           &lt;/element>
+ *           &lt;element name="nanosec" minOccurs="0">
+ *             &lt;simpleType>
+ *               &lt;union>
+ *                 &lt;simpleType>
+ *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *                     &lt;enumeration value="DURATION_INFINITY"/>
+ *                     &lt;enumeration value="DURATION_INFINITE_NSEC"/>
+ *                   &lt;/restriction>
+ *                 &lt;/simpleType>
+ *                 &lt;simpleType>
+ *                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}unsignedInt">
+ *                   &lt;/restriction>
+ *                 &lt;/simpleType>
+ *               &lt;/union>
+ *             &lt;/simpleType>
+ *           &lt;/element>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

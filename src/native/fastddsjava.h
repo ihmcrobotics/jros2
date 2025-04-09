@@ -290,12 +290,6 @@ uint32_t fastddsjava_datareader_get_subscription_matched_status(void* reader_, e
     return reader->get_subscription_matched_status(status);
 }
 
-uint32_t fastddsjava_datareader_delete_contained_entities(void* reader_) {
-    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
-
-    return reader->delete_contained_entities();
-}
-
 uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
