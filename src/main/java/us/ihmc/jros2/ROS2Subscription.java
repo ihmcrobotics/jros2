@@ -23,7 +23,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
 
-   private final fastddsjava_DataReaderListener fastddsDataReaderListener;
+   private final fastddsjava_DataReaderListener listener;
 
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
@@ -65,13 +65,14 @@ public class ROS2Subscription<T extends ROS2Message<T>>
             onSubscriptionCallback();
          }
       };
-      fastddsDataReaderListener = new fastddsjava_DataReaderListener();
-      fastddsDataReaderListener.set_on_data_available_callback(fastddsDataCallback);
-      fastddsDataReaderListener.set_on_subscription_callback(fastddsSubscriptionCallback);
+      listener = new fastddsjava_DataReaderListener();
+      listener.set_on_data_available_callback(fastddsDataCallback);
+      listener.set_on_subscription_callback(fastddsSubscriptionCallback);
       subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, fastddsDataReaderListener, subscriberProfileName);
+      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
+      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
    }
 
    public int getUnreadCount()
@@ -83,14 +84,19 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    {
       if (callback != null && !isClosed())
       {
-         retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
+         final int unread = getUnreadCount();
 
-         int sampleSize = (int) topicDataWrapper.data_vector().size();
-         cdrBuffer.getBufferUnsafe().rewind();
-         cdrBuffer.ensureRemainingCapacity(sampleSize);
-         topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
+         for (int i = 0; i < unread; i++)
+         {
+            retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
 
-         callback.onMessage(subscriptionReader);
+            int sampleSize = (int) topicDataWrapper.data_vector().size();
+            cdrBuffer.getBufferUnsafe().rewind();
+            cdrBuffer.ensureRemainingCapacity(sampleSize);
+            topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
+
+            callback.onMessage(subscriptionReader);
+         }
       }
    }
 
@@ -106,7 +112,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       {
          retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
-         fastddsDataReaderListener.close();
+         listener.close();
          fastddsDataCallback.close();
          fastddsSubscriptionCallback.close();
 
