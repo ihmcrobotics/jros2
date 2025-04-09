@@ -162,7 +162,7 @@ public class ROS2PublishSubscribeTest
    public void testROS2Subscription() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
-      final int domainId = 112;
+      final int domainId = 113;
       final String topicName = "/ihmc/test_bool";
 
       // Create the ROS 2 node, topic, and subscription
@@ -212,7 +212,7 @@ public class ROS2PublishSubscribeTest
 
    @RepeatedTest(10)
    @Timeout(30)
-   public void testRemoveDeadlock()
+   public void testCrazyMultithreading()
    {
       final int domainId = 113;
 
@@ -232,14 +232,11 @@ public class ROS2PublishSubscribeTest
             {
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
 
-               ROS2Subscription<Bool> subscription = subscriberNode.createSubscription(topic,
-                                                                                       (ROS2SubscriptionCallback<Bool>) subscriber ->
-                                                                                       {
-                                                                                          Bool data = new Bool();
-                                                                                          subscriber.takeNextSample(
-                                                                                                data);
-                                                                                       },
-                                                                                       ROS2QoSProfile.DEFAULT);
+               ROS2Subscription<Bool> subscription = subscriberNode.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) subscriber ->
+               {
+                  Bool data = new Bool();
+                  subscriber.takeNextSample(data);
+               }, ROS2QoSProfile.DEFAULT);
 
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
 
@@ -270,7 +267,6 @@ public class ROS2PublishSubscribeTest
       {
          while (destroyThread.isAlive())
          {
-            LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
             publisher.publish(messageToPublish);
          }
       }, "publishThread");
@@ -289,5 +285,49 @@ public class ROS2PublishSubscribeTest
       publisherNode.destroyPublisher(publisher);
       publisherNode.close();
       subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testHang() throws InterruptedException
+   {
+      final int domainId = 113;
+      final String topicName = "/ihmc/test_bool";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+
+      // Create a publisher
+      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+
+      // Publisher will publish in a free loop until subscription is created and destroyed
+      Bool messageToPublish = new Bool();
+      messageToPublish.setData(true);
+      Thread publishThread = new Thread(() ->
+      {
+         while (!Thread.interrupted())
+         {
+            publisher.publish(messageToPublish);
+         }
+      }, "publishThread");
+      publishThread.start();
+
+      // Create a subscription
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) subscriber ->
+      {
+         Bool data = new Bool();
+         subscriber.takeNextSample(data);
+      }, ROS2QoSProfile.DEFAULT);
+
+      // Destroy it
+      ros2Node.destroySubscription(subscription);
+
+      // Tell the publish thread to stop
+      publishThread.interrupt();
+      publishThread.join();
+
+      ros2Node.destroyPublisher(publisher);
+      ros2Node.close();
    }
 }
