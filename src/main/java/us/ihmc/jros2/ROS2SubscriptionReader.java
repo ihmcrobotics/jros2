@@ -13,6 +13,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 
    public void takeNextSample(T data)
    {
+      cdrBuffer.readPayloadHeader();
       data.deserialize(cdrBuffer);
    }
 }

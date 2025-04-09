@@ -47,6 +47,8 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       sampleInfo = new SampleInfo();
       subscriptionReader = new ROS2SubscriptionReader<>(cdrBuffer);
 
+      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+
       fastddsDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
@@ -70,8 +72,6 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, fastddsDataReaderListener, subscriberProfileName);
-
-      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
    }
 
    public int getUnreadCount()
@@ -81,18 +81,17 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
    private synchronized void onDataCallback()
    {
-      if (callback == null || isClosed())
-         return;
+      if (callback != null && !isClosed())
+      {
+         retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
 
-      retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
+         int sampleSize = (int) topicDataWrapper.data_vector().size();
+         cdrBuffer.getBufferUnsafe().rewind();
+         cdrBuffer.ensureRemainingCapacity(sampleSize);
+         topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
 
-      int sampleSize = (int) topicDataWrapper.data_vector().size();
-      cdrBuffer.getBufferUnsafe().rewind();
-      cdrBuffer.ensureRemainingCapacity(sampleSize);
-      topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, sampleSize);
-
-      cdrBuffer.readPayloadHeader();
-      callback.onMessage(subscriptionReader);
+         callback.onMessage(subscriptionReader);
+      }
    }
 
    private void onSubscriptionCallback()
@@ -117,7 +116,6 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
 
-         fastddsSubscriber.close();
          fastddsSubscriber.setNull();
       }
    }
