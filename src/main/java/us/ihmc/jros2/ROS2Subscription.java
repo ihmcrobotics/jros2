@@ -84,12 +84,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    {
       if (callback != null && !isClosed())
       {
-         final int unread = getUnreadCount();
+         final int ok = RETCODE_OK();
 
-         for (int i = 0; i < unread; i++)
+         while (ok == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
          {
-            retcodePrintOnError(fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo));
-
             int sampleSize = (int) topicDataWrapper.data_vector().size();
             cdrBuffer.getBufferUnsafe().rewind();
             cdrBuffer.ensureRemainingCapacity(sampleSize);
