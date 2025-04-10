@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Consumer;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
@@ -38,6 +40,11 @@ public class ROS2Node implements Closeable
    private final Map<ROS2Topic<?>, ROS2TopicData> topicData;
    private final List<ROS2Publisher<?>> publishers;
    private final List<ROS2Subscription<?>> subscriptions;
+
+   private final Object profilesXMLLock;
+   private final ReadWriteLock closeLock;
+
+   private boolean closed;
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
@@ -82,6 +89,10 @@ public class ROS2Node implements Closeable
       topicData = new HashMap<>();
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
+
+      profilesXMLLock = new Object();
+      closeLock = new ReentrantReadWriteLock(true);
+      closed = false;
    }
 
    public ROS2Node(String name)
@@ -94,126 +105,175 @@ public class ROS2Node implements Closeable
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   protected synchronized <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
+   protected <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
-      if (!isClosed())
+      closeLock.readLock().lock();
+      try
       {
-         if (this.topicData.containsKey(topic))
+         if (!closed)
          {
-            return this.topicData.get(topic);
+            synchronized (this.topicData)
+            {
+               if (this.topicData.containsKey(topic))
+               {
+                  return this.topicData.get(topic);
+               }
+               else
+               {
+                  ProfilesXML profilesXML = new ProfilesXML();
+                  TopicProfileType topicProfile = new TopicProfileType();
+                  String topicProfileName = UUID.randomUUID().toString();
+                  topicProfile.setProfileName(topicProfileName);
+                  profilesXML.addTopicProfile(topicProfile);
+
+                  try
+                  {
+                     profilesXML.load();
+                  }
+                  catch (fastddsjavaException e)
+                  {
+                     LogTools.error(e);
+                  }
+
+                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+                  fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+                  Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+                  fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
+                  ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+
+                  this.topicData.put(topic, topicData);
+
+                  return topicData;
+               }
+            }
          }
-         else
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
+   }
+
+   public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
          {
             ProfilesXML profilesXML = new ProfilesXML();
-            TopicProfileType topicProfile = new TopicProfileType();
-            String topicProfileName = UUID.randomUUID().toString();
-            topicProfile.setProfileName(topicProfileName);
-            profilesXML.addTopicProfile(topicProfile);
+            PublisherProfileType publisherProfile = new PublisherProfileType();
+            String publisherProfileName = UUID.randomUUID().toString();
+            publisherProfile.setProfileName(publisherProfileName);
+            profilesXML.addPublisherProfile(publisherProfile);
+
+            // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
+            QoSTools.translateQoS(qosProfile, publisherProfile);
 
             try
             {
-               profilesXML.load();
+               synchronized (profilesXMLLock)
+               {
+                  profilesXML.load();
+               }
             }
             catch (fastddsjavaException e)
             {
                LogTools.error(e);
             }
 
-            String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
-            fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-            Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-            fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-            Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
-            ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+            ROS2TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topicData);
 
-            this.topicData.put(topic, topicData);
+            synchronized (publishers)
+            {
+               publishers.add(publisher);
+            }
 
-            return topicData;
+            return publisher;
          }
       }
-
-      return null;
-   }
-
-   public synchronized <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
-   {
-      if (!isClosed())
+      finally
       {
-         ProfilesXML profilesXML = new ProfilesXML();
-         PublisherProfileType publisherProfile = new PublisherProfileType();
-         String publisherProfileName = UUID.randomUUID().toString();
-         publisherProfile.setProfileName(publisherProfileName);
-         profilesXML.addPublisherProfile(publisherProfile);
-
-         // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
-         QoSTools.translateQoS(qosProfile, publisherProfile);
-
-         try
-         {
-            profilesXML.load();
-         }
-         catch (fastddsjavaException e)
-         {
-            LogTools.error(e);
-         }
-
-         ROS2TopicData topicData = getOrCreateTopicData(topic);
-         ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topicData);
-
-         publishers.add(publisher);
-
-         return publisher;
+         closeLock.readLock().unlock();
       }
 
       return null;
    }
 
-   public synchronized <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
+   public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
    {
       boolean removed = false;
 
-      if (!isClosed())
+      closeLock.readLock().lock();
+      try
       {
-         removed = publishers.remove(publisher);
-
-         if (removed)
+         if (!closed)
          {
-            publisher.close(fastddsParticipant);
+            synchronized (publishers)
+            {
+               removed = publishers.remove(publisher);
+            }
+
+            if (removed)
+            {
+               publisher.close(fastddsParticipant);
+            }
          }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
       }
 
       return removed;
    }
 
-   public synchronized <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic,
-                                                                                         ROS2SubscriptionCallback<T> callback,
-                                                                                         ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
    {
-      if (!isClosed())
+      closeLock.readLock().lock();
+      try
       {
-         ProfilesXML profilesXML = new ProfilesXML();
-         SubscriberProfileType subscriberProfile = new SubscriberProfileType();
-         String subscriberProfileName = UUID.randomUUID().toString();
-         subscriberProfile.setProfileName(subscriberProfileName);
-         profilesXML.addSubscriberProfile(subscriberProfile);
-
-         // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
-         QoSTools.translateQoS(qosProfile, subscriberProfile);
-
-         try
+         if (!closed)
          {
-            profilesXML.load();
-         }
-         catch (fastddsjavaException e)
-         {
-            LogTools.error(e);
-         }
+            ProfilesXML profilesXML = new ProfilesXML();
+            SubscriberProfileType subscriberProfile = new SubscriberProfileType();
+            String subscriberProfileName = UUID.randomUUID().toString();
+            subscriberProfile.setProfileName(subscriberProfileName);
+            profilesXML.addSubscriberProfile(subscriberProfile);
 
-         ROS2TopicData topicData = getOrCreateTopicData(topic);
-         ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
+            // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
+            QoSTools.translateQoS(qosProfile, subscriberProfile);
 
-         subscriptions.add(subscription);
-         return subscription;
+            try
+            {
+               synchronized (profilesXMLLock)
+               {
+                  profilesXML.load();
+               }
+            }
+            catch (fastddsjavaException e)
+            {
+               LogTools.error(e);
+            }
+
+            ROS2TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
+
+            synchronized (subscriptions)
+            {
+               subscriptions.add(subscription);
+            }
+
+            return subscription;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
       }
 
       return null;
@@ -229,18 +289,29 @@ public class ROS2Node implements Closeable
       }, qosProfile);
    }
 
-   public synchronized <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
+   public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
    {
       boolean removed = false;
 
-      if (!isClosed())
+      closeLock.readLock().lock();
+      try
       {
-         removed = subscriptions.remove(subscription);
-
-         if (removed)
+         if (!closed)
          {
-            subscription.close(fastddsParticipant);
+            synchronized (subscriptions)
+            {
+               removed = subscriptions.remove(subscription);
+            }
+
+            if (removed)
+            {
+               subscription.close(fastddsParticipant);
+            }
          }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
       }
 
       return removed;
@@ -275,46 +346,54 @@ public class ROS2Node implements Closeable
    }
 
    @Override
-   public synchronized void close()
+   public void close()
    {
-      if (!isClosed())
+      // Wait until all readers are finished, then start closing
+      closeLock.writeLock().lock();
+      boolean wasClosed = closed;
+      closed = true;
+      closeLock.writeLock().unlock();
+
+      if (!wasClosed)
       {
-         // Delete publishers
-         for (ROS2Publisher<?> publisher : publishers)
+         synchronized (publishers)
          {
-            publisher.close(fastddsParticipant);
+            // Delete publishers
+            for (ROS2Publisher<?> publisher : publishers)
+            {
+               publisher.close(fastddsParticipant);
+            }
+            publishers.clear();
          }
-         publishers.clear();
 
-         // Delete subscriptions
-         for (ROS2Subscription<?> subscription : subscriptions)
+         synchronized (subscriptions)
          {
-            subscription.close(fastddsParticipant);
+            // Delete subscriptions
+            for (ROS2Subscription<?> subscription : subscriptions)
+            {
+               subscription.close(fastddsParticipant);
+            }
+            subscriptions.clear();
          }
-         subscriptions.clear();
 
-         // Delete topics
-         for (ROS2Topic<?> topic : topicData.keySet())
+         synchronized (topicData)
          {
-            ROS2TopicData topicData = this.topicData.get(topic);
+            // Delete topics
+            for (ROS2Topic<?> topic : topicData.keySet())
+            {
+               ROS2TopicData topicData = this.topicData.get(topic);
 
-            retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
-            retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
+               retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+               retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
 
-            topicData.topicDataWrapperType.close();
-            topicData.fastddsTypeSupport.close();
+               topicData.topicDataWrapperType.close();
+               topicData.fastddsTypeSupport.close();
+            }
+            topicData.clear();
          }
-         topicData.clear();
 
          // Delete participant
          retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
-
-         fastddsParticipant.setNull();
       }
-   }
-
-   public boolean isClosed()
-   {
-      return fastddsParticipant.isNull();
    }
 }

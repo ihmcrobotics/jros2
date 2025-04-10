@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 // https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/making_xml_profiles.html
+// TODO: Can this be garbage free?
 public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
