@@ -40,7 +40,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       cdrBuffer = new CDRBuffer();
    }
 
-   public synchronized void publish(T message)
+   public void publish(T message)
    {
       closeLock.readLock().lock();
       try
@@ -70,7 +70,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       }
    }
 
-   protected synchronized void close(Pointer fastddsParticipant)
+   protected void close(Pointer fastddsParticipant)
    {
       closeLock.writeLock().lock();
       boolean wasClosed = closed;
