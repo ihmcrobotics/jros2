@@ -41,9 +41,7 @@ public class ROS2Node implements Closeable
    private final List<ROS2Publisher<?>> publishers;
    private final List<ROS2Subscription<?>> subscriptions;
 
-   private final Object profilesXMLLock;
    private final ReadWriteLock closeLock;
-
    private boolean closed;
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
@@ -90,7 +88,6 @@ public class ROS2Node implements Closeable
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
 
-      profilesXMLLock = new Object();
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
    }
@@ -175,10 +172,7 @@ public class ROS2Node implements Closeable
 
             try
             {
-               synchronized (profilesXMLLock)
-               {
-                  profilesXML.load();
-               }
+               profilesXML.load();
             }
             catch (fastddsjavaException e)
             {
@@ -250,10 +244,7 @@ public class ROS2Node implements Closeable
 
             try
             {
-               synchronized (profilesXMLLock)
-               {
-                  profilesXML.load();
-               }
+               profilesXML.load();
             }
             catch (fastddsjavaException e)
             {
