@@ -15,9 +15,28 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
    }
 
+   /**
+    * @return The number of elements in the sequence.
+    */
    public abstract int elements();
 
+   /**
+    * @return The capacity of the sequence.
+    */
    public abstract int capacity();
+
+   /**
+    * @return The remaining capacity.
+    */
+   public int remainingCapacity()
+   {
+      return capacity() - elements();
+   }
+
+   /**
+    * Clears all elements from the sequence.
+    */
+   public abstract void clear();
 
    protected abstract void ensureMinCapacity(int capacity);
 

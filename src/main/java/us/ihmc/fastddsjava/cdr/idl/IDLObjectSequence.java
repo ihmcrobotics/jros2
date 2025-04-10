@@ -52,6 +52,12 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    @Override
+   public void clear()
+   {
+      position = 0;
+   }
+
+   @Override
    protected void ensureMinCapacity(int capacity)
    {
       if (elements == null)

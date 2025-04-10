@@ -30,6 +30,12 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
       return buffer.capacity();
    }
 
+   @Override
+   public void clear()
+   {
+      buffer.clear();
+   }
+
    public void add(long element)
    {
       if (buffer.position() == buffer.capacity())

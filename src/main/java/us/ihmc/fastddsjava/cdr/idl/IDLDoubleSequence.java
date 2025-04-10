@@ -30,6 +30,12 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
       return buffer.capacity();
    }
 
+   @Override
+   public void clear()
+   {
+      buffer.clear();
+   }
+
    public void add(double element)
    {
       if (buffer.position() == buffer.capacity())

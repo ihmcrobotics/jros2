@@ -30,6 +30,12 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
       return buffer.capacity();
    }
 
+   @Override
+   public void clear()
+   {
+      buffer.clear();
+   }
+
    public void add(float element)
    {
       if (buffer.position() == buffer.capacity())
