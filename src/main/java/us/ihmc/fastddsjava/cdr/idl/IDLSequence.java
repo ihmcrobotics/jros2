@@ -17,6 +17,8 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
    public abstract int elements();
 
+   public abstract int capacity();
+
    protected abstract void ensureMinCapacity(int capacity);
 
    public abstract int elementSizeBytes(int i);

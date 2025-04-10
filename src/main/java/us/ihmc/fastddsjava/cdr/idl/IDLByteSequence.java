@@ -24,6 +24,12 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       return buffer.position();
    }
 
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
    public void add(byte element)
    {
       if (buffer.position() == buffer.capacity())

@@ -24,6 +24,12 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       return buffer.position();
    }
 
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
    public void add(int element)
    {
       if (buffer.position() == buffer.capacity())

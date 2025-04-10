@@ -24,6 +24,12 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
       return buffer.position();
    }
 
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
    public void add(double element)
    {
       if (buffer.position() == buffer.capacity())

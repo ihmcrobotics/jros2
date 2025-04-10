@@ -24,6 +24,12 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
       return buffer.position();
    }
 
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
    public void add(short element)
    {
       if (buffer.position() == buffer.capacity())
