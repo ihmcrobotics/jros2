@@ -54,6 +54,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
          if (buffer != null)
          {
             newBuffer.put(buffer);
+            newBuffer.position(buffer.position());
          }
 
          buffer = newBuffer;
@@ -85,10 +86,10 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    @Override
    public void set(IDLFloatSequence other)
    {
+      clear();
       ensureMinCapacity(other.elements());
 
-      buffer.rewind();
       buffer.put(other.buffer);
-      buffer.rewind();
+      buffer.position(other.elements());
    }
 }

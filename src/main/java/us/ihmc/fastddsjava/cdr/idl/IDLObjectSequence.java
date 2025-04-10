@@ -64,7 +64,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       {
          elements = (T[]) Array.newInstance(clazz, capacity);
       }
-      else if (elements.length != capacity)
+      else if (elements.length < capacity)
       {
          elements = Arrays.copyOf(elements, capacity);
       }
@@ -103,6 +103,10 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       assert clazz == other.clazz;
       assert other.elements != null;
 
-      elements = Arrays.copyOf(other.elements, other.elements.length);
+      clear();
+      ensureMinCapacity(other.elements());
+
+      System.arraycopy(other.elements, 0, elements, 0, other.elements.length);
+      position = other.elements();
    }
 }

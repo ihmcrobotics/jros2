@@ -54,6 +54,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
          if (buffer != null)
          {
             newBuffer.put(buffer);
+            newBuffer.position(buffer.position());
          }
 
          buffer = newBuffer;
@@ -85,10 +86,10 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    @Override
    public void set(IDLDoubleSequence other)
    {
+      clear();
       ensureMinCapacity(other.elements());
 
-      buffer.rewind();
       buffer.put(other.buffer);
-      buffer.rewind();
+      buffer.position(other.elements());
    }
 }
