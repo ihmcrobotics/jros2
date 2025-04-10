@@ -2,7 +2,6 @@ package us.ihmc.fastddsjava;
 
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.cdr.idl.IDLByteSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLSequence;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,6 +28,6 @@ public class IDLSequenceTest
       byteSequence.add((byte) (initialCapacity + 1));
 
       assertEquals(initialCapacity + 1, byteSequence.elements());
-      assertEquals(2 * initialCapacity, byteSequence.elements());
+      assertEquals(2 * initialCapacity, byteSequence.capacity());
    }
 }

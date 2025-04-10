@@ -38,6 +38,15 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     */
    public abstract void clear();
 
+   /**
+    * Ensures the capacity is at least {@code capacity}.
+    *
+    * @param capacity The minimum required capacity.
+    * @implSpec If the current capacity is greater than or equal to {@code capacity}, the capacity need not be changed.
+    *       Otherwise, the capacity should be increased to be grater than or equal to {@code capacity}.
+    *       <p>
+    *       Elements should not be added or removed by this method.
+    */
    protected abstract void ensureMinCapacity(int capacity);
 
    public abstract int elementSizeBytes(int i);
@@ -52,6 +61,12 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     */
    public abstract void writeElement(int i, CDRBuffer buffer);
 
+   /**
+    * Sets this sequence to {@code other}.
+    *
+    * @param other The sequence to set from.
+    * @implSpec {@link #elements()} and {@link #capacity()} of this sequence should return the same values as {@code other} after calling this method.
+    */
    public abstract void set(T other);
 
    @Override
