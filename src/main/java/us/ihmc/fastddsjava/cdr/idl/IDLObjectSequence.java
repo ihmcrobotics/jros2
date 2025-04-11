@@ -3,40 +3,51 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
 {
-   private final Class<T> clazz;
    private T[] elements;
    private int position;
 
+   private final Supplier<T> allocator;
+
    public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      super(capacity);
-      this.clazz = clazz;
+      this(capacity, () -> classAllocator(clazz));
+   }
+
+   public IDLObjectSequence(int capacity, Supplier<T> allocator)
+   {
+      this.allocator = allocator;
+      position = 0;
+
+      ensureMinCapacity(capacity);
    }
 
    public IDLObjectSequence(Class<T> clazz)
    {
-      this.clazz = clazz;
+      this(() -> classAllocator(clazz));
    }
 
-   public void add(T element)
+   public IDLObjectSequence(Supplier<T> allocator)
    {
-      assert elements != null;
-      assert position <= elements.length;
-
-      elements[position++] = element;
+      this.allocator = allocator;
+      position = 0;
    }
 
-   public T add()
+   private static <T extends CDRSerializable> T classAllocator(Class<T> clazz)
    {
-      assert elements != null;
-      assert position <= elements.length;
-
-      return elements[position++];
+      try
+      {
+         return clazz.getDeclaredConstructor().newInstance();
+      }
+      catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    @Override
@@ -48,6 +59,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public int capacity()
    {
+      if (elements == null)
+      {
+         return 0;
+      }
+
       return elements.length;
    }
 
@@ -57,16 +73,59 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       position = 0;
    }
 
-   @Override
-   protected void ensureMinCapacity(int capacity)
+   public void add(T element)
    {
       if (elements == null)
       {
-         elements = (T[]) Array.newInstance(clazz, capacity);
+         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
       }
-      else if (elements.length < capacity)
+      else if (position == elements.length)
       {
-         elements = Arrays.copyOf(elements, capacity);
+         ensureMinCapacity(2 * elements.length);
+      }
+
+      elements[position++] = element;
+   }
+
+   public T add()
+   {
+      if (elements == null)
+      {
+         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+      }
+      else if (position == elements.length)
+      {
+         ensureMinCapacity(2 * elements.length);
+      }
+
+      if (elements[position] == null)
+         elements[position] = allocator.get();
+
+      return elements[position++];
+   }
+
+   public T get(int index)
+   {
+      assert index < elements();
+      return elements[index];
+   }
+
+   public T[] getArrayUnsafe()
+   {
+      return elements;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   protected void ensureMinCapacity(int desiredCapacity)
+   {
+      if (elements == null)
+      {
+         elements = (T[]) new CDRSerializable[desiredCapacity];
+      }
+      else if (elements.length < desiredCapacity)
+      {
+         elements = Arrays.copyOf(elements, desiredCapacity);
       }
    }
 
@@ -74,6 +133,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public int elementSizeBytes(int i)
    {
       assert elements != null;
+      assert i < elements();
 
       return elements[i].calculateSizeBytes();
    }
@@ -82,7 +142,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public void readElement(CDRBuffer buffer)
    {
       assert elements != null;
-      assert position <= elements.length;
+      assert position < elements.length;
 
       T element = elements[position++];
 
@@ -93,6 +153,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public void writeElement(int i, CDRBuffer buffer)
    {
       assert elements != null;
+      assert i < elements();
 
       elements[i].serialize(buffer);
    }
@@ -100,13 +161,14 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public void set(IDLObjectSequence<T> other)
    {
-      assert clazz == other.clazz;
       assert other.elements != null;
 
       clear();
-      ensureMinCapacity(other.elements());
 
-      System.arraycopy(other.elements, 0, elements, 0, other.elements.length);
+      int othersElements = other.elements();
+      ensureMinCapacity(othersElements);
+
+      System.arraycopy(other.elements, 0, elements, 0, othersElements);
       position = other.elements();
    }
 }

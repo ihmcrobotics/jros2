@@ -21,40 +21,71 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
    @Override
    public int elements()
    {
+      if (buffer == null)
+      {
+         return 0;
+      }
+
       return buffer.position();
    }
 
    @Override
    public int capacity()
    {
+      if (buffer == null)
+      {
+         return 0;
+      }
+
       return buffer.capacity();
    }
 
    @Override
    public void clear()
    {
-      buffer.clear();
+      if (buffer != null)
+      {
+         buffer.clear();
+      }
    }
 
    public void add(short element)
    {
-      if (buffer.position() == buffer.capacity())
+      if (buffer == null)
+      {
+         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+      }
+      else if (buffer.position() == buffer.capacity())
+      {
          ensureMinCapacity(2 * buffer.capacity());
+      }
 
       buffer.put(element);
    }
 
-   @Override
-   protected void ensureMinCapacity(int capacity)
+   public short get(int index)
    {
-      if (buffer == null || buffer.capacity() < capacity)
-      {
-         ShortBuffer newBuffer = ShortBuffer.allocate(capacity);
+      assert index < elements();
+      return buffer.get(index);
+   }
 
-         if (buffer != null)
+   public ShortBuffer getBufferUnsafe()
+   {
+      return buffer;
+   }
+
+   @Override
+   protected void ensureMinCapacity(int desiredCapacity)
+   {
+      if (capacity() < desiredCapacity)
+      {
+         ShortBuffer newBuffer = ShortBuffer.allocate(desiredCapacity);
+
+         int currentElements = elements();
+         if (currentElements != 0)
          {
-            newBuffer.put(buffer);
-            newBuffer.position(buffer.position());
+            newBuffer.put(0, buffer, 0, currentElements);
+            newBuffer.position(currentElements);
          }
 
          buffer = newBuffer;
@@ -87,9 +118,11 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
    public void set(IDLShortSequence other)
    {
       clear();
-      ensureMinCapacity(other.elements());
 
-      buffer.put(other.buffer);
-      buffer.position(other.elements());
+      int othersElements = other.elements();
+      ensureMinCapacity(othersElements);
+
+      buffer.put(0, other.buffer, 0, othersElements);
+      buffer.position(othersElements);
    }
 }
