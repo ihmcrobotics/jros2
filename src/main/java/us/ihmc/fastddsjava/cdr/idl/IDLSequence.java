@@ -5,7 +5,7 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   protected static final int DEFAULT_INITIAL_CAPACITY = 8;
+   protected static final int DEFAULT_INITIAL_CAPACITY = 1;
 
    public IDLSequence(int capacity)
    {
