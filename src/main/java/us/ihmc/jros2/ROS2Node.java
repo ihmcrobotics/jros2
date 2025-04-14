@@ -35,6 +35,7 @@ public class ROS2Node implements Closeable
       fastddsjavaNativeLibrary.load();
    }
 
+   private final int domainId;
    private final Pointer fastddsParticipant;
    private final Map<ROS2Topic<?>, TopicData> topicData;
    private final List<ROS2Publisher<?>> publishers;
@@ -45,6 +46,8 @@ public class ROS2Node implements Closeable
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
+      this.domainId = domainId;
+
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
@@ -310,6 +313,11 @@ public class ROS2Node implements Closeable
    public Object getParameter(String name)
    {
       throw new RuntimeException("Not yet implemented");
+   }
+
+   public int getDomainId()
+   {
+      return domainId;
    }
 
    public List<ROS2Publisher<?>> getPublishers()

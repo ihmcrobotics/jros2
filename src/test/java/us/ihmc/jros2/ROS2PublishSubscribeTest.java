@@ -27,11 +27,10 @@ public class ROS2PublishSubscribeTest
    @Timeout(30)
    public void testROS2PublisherAPI()
    {
-      int domainId = 113;
       String topicName = "/ihmc/test_bool";
 
       // Create ROS 2 node and topic
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       assertDoesNotThrow(() ->
@@ -88,11 +87,10 @@ public class ROS2PublishSubscribeTest
    @Timeout(30)
    public void testROS2SubscriptionAPI()
    {
-      int domainId = 113;
       String topicName = "/ihmc/test_bool";
 
       // Create ROS 2 node and topic
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       assertDoesNotThrow(() ->
@@ -112,7 +110,7 @@ public class ROS2PublishSubscribeTest
          ros2Node.destroySubscription(subscription1);
 
          // Publish a message to ensure subscriptions don't receive anything after being destroyed
-         Process process = ROS2TestTools.launchROS2PublishProcess(domainId,
+         Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                   "--once -w 0",
                                                                   topicName,
                                                                   "std_msgs/msg/Bool",
@@ -130,11 +128,10 @@ public class ROS2PublishSubscribeTest
    public void testROS2Publisher() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
-      int domainId = 113;
       String topicName = "/ihmc/test_bool";
 
       // Create ROS 2 node, topic, and publisher
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       ROS2QoSProfile qosProfile = new ROS2QoSProfile();
@@ -147,7 +144,7 @@ public class ROS2PublishSubscribeTest
       publisher.publish(bool);
 
       // Use ros2 topic echo --once to get the value of the published message
-      String result = ROS2TestTools.ros2EchoOnce(domainId, topicName);
+      String result = ROS2TestTools.ros2EchoOnce(ros2Node.getDomainId(), topicName);
 
       // Ensure the value received by ros2 matches the value we published
       assertTrue(result.contains(String.valueOf(expectedValue)), result);
@@ -163,11 +160,10 @@ public class ROS2PublishSubscribeTest
    public void testROS2Subscription1() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
-      final int domainId = 113;
       final String topicName = "/ihmc/test_bool";
 
       // Create the ROS 2 node, topic, and subscription
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
@@ -184,7 +180,7 @@ public class ROS2PublishSubscribeTest
       }, ROS2QoSProfile.DEFAULT);
 
       // Launch a ROS 2 process to publish a Bool message
-      Process process = ROS2TestTools.launchROS2PublishProcess(domainId,
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
                                                                "std_msgs/msg/Bool",
@@ -217,11 +213,10 @@ public class ROS2PublishSubscribeTest
    public void testROS2Subscription2() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
-      final int domainId = 113;
       final String topicName = "/ihmc/test_bool";
 
       // Create the ROS 2 node, topic, and subscription
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
@@ -236,7 +231,7 @@ public class ROS2PublishSubscribeTest
       }, ROS2QoSProfile.DEFAULT);
 
       // Launch a ROS 2 process to publish a Bool message
-      Process process = ROS2TestTools.launchROS2PublishProcess(domainId,
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
                                                                "std_msgs/msg/Bool",
@@ -268,11 +263,10 @@ public class ROS2PublishSubscribeTest
    public void testCrazyMultithreading()
    {
       Instant start = Instant.now();
-      final int domainId = 113;
 
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_topic");
-      ROS2Node publisherNode = new ROS2Node("publisher_node", domainId);
-      ROS2Node subscriberNode = new ROS2Node("subscriber_node", domainId);
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
 
       ROS2Publisher<Bool> publisher = publisherNode.createPublisher(topic, ROS2QoSProfile.DEFAULT);
 
@@ -350,11 +344,10 @@ public class ROS2PublishSubscribeTest
    @Timeout(30)
    public void testHang() throws InterruptedException
    {
-      final int domainId = 113;
       final String topicName = "/ihmc/test_bool";
 
       // Create the ROS 2 node, topic, and subscription
-      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       // Create a publisher

@@ -69,7 +69,7 @@ public class ReadWriteTest
       participantProfileType.setRtps(rtps);
 
       participantProfileType.setProfileName("unit_test_participant");
-      participantProfileType.setDomainId(145);
+      participantProfileType.setDomainId(100);
       profilesXML.addParticipantProfile(participantProfileType);
 
       // Add topic profile
