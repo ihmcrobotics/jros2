@@ -36,8 +36,8 @@ public class ROS2PublishSubscribeTest
       assertDoesNotThrow(() ->
       {
          // Create publishers
-         ROS2Publisher<Bool> publisher1 = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
-         ROS2Publisher<Bool> publisher2 = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+         ROS2Publisher<Bool> publisher1 = ros2Node.createPublisher(topic);
+         ROS2Publisher<Bool> publisher2 = ros2Node.createPublisher(topic);
 
          // Try publishing concurrently
          Thread[] publishThreads = new Thread[10];
@@ -268,7 +268,7 @@ public class ROS2PublishSubscribeTest
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
 
-      ROS2Publisher<Bool> publisher = publisherNode.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Publisher<Bool> publisher = publisherNode.createPublisher(topic);
 
       Thread destroyThread = new Thread(() ->
       {
@@ -351,7 +351,7 @@ public class ROS2PublishSubscribeTest
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       // Create a publisher
-      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic);
 
       // Publisher will publish in a free loop until subscription is created and destroyed
       Bool messageToPublish = new Bool();

@@ -200,6 +200,11 @@ public class ROS2Node implements Closeable
       return null;
    }
 
+   public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic)
+   {
+      return createPublisher(topic, ROS2QoSProfile.DEFAULT);
+   }
+
    public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
    {
       boolean removed = false;

@@ -16,12 +16,12 @@ public class ROS2QoSProfile
 
    public enum Reliability
    {
-      SYSTEM_DEFAULT, BEST_EFFORT, RELIABLE
+      SYSTEM_DEFAULT, RELIABLE, BEST_EFFORT
    }
 
    public enum Durability
    {
-      SYSTEM_DEFAULT, TRANSIENT_LOCAL, VOLATILE
+      SYSTEM_DEFAULT, VOLATILE, TRANSIENT_LOCAL
    }
 
    public enum Liveliness
