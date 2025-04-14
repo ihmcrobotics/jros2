@@ -5,23 +5,17 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.function.Supplier;
 
 public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
 {
+   private final Class<T> clazz;
+
    private T[] elements;
    private int position;
 
-   private final Supplier<T> allocator;
-
    public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      this(capacity, () -> classAllocator(clazz));
-   }
-
-   public IDLObjectSequence(int capacity, Supplier<T> allocator)
-   {
-      this.allocator = allocator;
+      this.clazz = clazz;
       position = 0;
 
       ensureMinCapacity(capacity);
@@ -29,16 +23,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
    public IDLObjectSequence(Class<T> clazz)
    {
-      this(() -> classAllocator(clazz));
-   }
-
-   public IDLObjectSequence(Supplier<T> allocator)
-   {
-      this.allocator = allocator;
+      this.clazz = clazz;
       position = 0;
    }
 
-   private static <T extends CDRSerializable> T classAllocator(Class<T> clazz)
+   private T newInstance()
    {
       try
       {
@@ -99,7 +88,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
 
       if (elements[position] == null)
-         elements[position] = allocator.get();
+         elements[position] = newInstance();
 
       return elements[position++];
    }
@@ -161,6 +150,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public void set(IDLObjectSequence<T> other)
    {
+      assert clazz == other.clazz;
       assert other.elements != null;
 
       clear();
