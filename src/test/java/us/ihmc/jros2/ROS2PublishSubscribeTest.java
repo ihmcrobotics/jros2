@@ -4,7 +4,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
-import us.ihmc.jros2.testmessages.Bool;
+import us.ihmc.jros2.msg.Bool;
 import us.ihmc.log.LogTools;
 
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package us.ihmc.jros2.testmessages;
+package us.ihmc.jros2.msg;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.ROS2Message;

@@ -7,7 +7,7 @@ import us.ihmc.fastddsjava.cdr.idl.IDLDoubleSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLFloatSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLObjectSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLShortSequence;
-import us.ihmc.jros2.testmessages.Bool;
+import us.ihmc.fastddsjava.msg.TestIDLMsg;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -322,7 +322,7 @@ public class IDLSequenceTest
    {
       final int initialCapacity = 8;
 
-      IDLObjectSequence<Bool> sequence = new IDLObjectSequence<>(initialCapacity, Bool.class);
+      IDLObjectSequence<TestIDLMsg> sequence = new IDLObjectSequence<>(initialCapacity, TestIDLMsg.class);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -343,10 +343,10 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(new Bool().calculateSizeBytes(), sequence.elementSizeBytes(0));
+      assertEquals(new TestIDLMsg().calculateSizeBytes(), sequence.elementSizeBytes(0));
 
       // Add one more element (going past the initial capacity)
-      Bool newElement = new Bool();
+      TestIDLMsg newElement = new TestIDLMsg();
       newElement.setData(true);
       sequence.add(newElement);
 
@@ -366,7 +366,7 @@ public class IDLSequenceTest
       int originalElements = sequence.elements();
 
       // Make a copy of the sequence
-      IDLObjectSequence<Bool> copySequence = new IDLObjectSequence<>(Bool.class);
+      IDLObjectSequence<TestIDLMsg> copySequence = new IDLObjectSequence<>(TestIDLMsg.class);
       copySequence.set(sequence);
 
       // Make sure the original wasn't affected by the copy
@@ -387,7 +387,7 @@ public class IDLSequenceTest
       assertEquals(originalElements, copySequence.elements());
 
       // Create a new sequence with no initial buffer
-      IDLObjectSequence<Bool> emptySequence = new IDLObjectSequence<>(Bool.class);
+      IDLObjectSequence<TestIDLMsg> emptySequence = new IDLObjectSequence<>(TestIDLMsg.class);
 
       // Ensure methods work on empty sequences
       assertEquals(0, emptySequence.capacity());
