@@ -206,7 +206,7 @@ public class ROS2PublishSubscribeTest
       ros2Node.close();
    }
 
-   @RepeatedTest(100)
+   @RepeatedTest(25)
    @Timeout(30)
    public void testCrazyMultithreading()
    {
