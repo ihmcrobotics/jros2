@@ -2,6 +2,7 @@ package us.ihmc.fastddsjava;
 
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.cdr.idl.IDLByteSequence;
+import us.ihmc.fastddsjava.cdr.idl.IDLCharSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLDoubleSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLFloatSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLObjectSequence;
@@ -81,6 +82,82 @@ public class IDLSequenceTest
 
       // Create a new sequence with no initial buffer
       IDLByteSequence emptySequence = new IDLByteSequence();
+
+      // Ensure methods work on empty sequences
+      assertEquals(0, emptySequence.capacity());
+      assertEquals(0, emptySequence.elements());
+      assertDoesNotThrow(emptySequence::clear);
+   }
+
+   @Test
+   public void testIDLCharSequence()
+   {
+      final int initialCapacity = 8;
+
+      IDLCharSequence sequence = new IDLCharSequence(initialCapacity);
+
+      // The sequence should have no elements
+      assertEquals(0, sequence.elements());
+
+      // It's capacity should be the requested initial capacity
+      assertEquals(initialCapacity, sequence.capacity());
+
+      // Add initialCapacity number of elements to the sequence
+      for (int i = 0; i < initialCapacity; ++i)
+      {
+         sequence.add((char) i);
+      }
+
+      // It should have initialCapacity elements
+      assertEquals(initialCapacity, sequence.elements());
+
+      // The capacity should not have changed
+      assertEquals(initialCapacity, sequence.capacity());
+
+      // Make sure elementSizeBytes is correct
+      assertEquals(Byte.BYTES, sequence.elementSizeBytes(0));
+
+      // Add one more element (going past the initial capacity)
+      sequence.add((char) initialCapacity);
+
+      // The element should have been added
+      assertEquals(initialCapacity + 1, sequence.elements());
+
+      // Current capacity should be greater than the initial capacity
+      assertTrue(sequence.capacity() > initialCapacity);
+
+      // Make sure the elements we added are stored correctly
+      for (int i = 0; i < sequence.elements(); ++i)
+      {
+         assertEquals((byte) i, sequence.get(i));
+      }
+
+      int originalCapacity = sequence.capacity();
+      int originalElements = sequence.elements();
+
+      // Make a copy of the sequence
+      IDLCharSequence copySequence = new IDLCharSequence();
+      copySequence.set(sequence);
+
+      // Make sure the original wasn't affected by the copy
+      assertEquals(originalCapacity, sequence.capacity());
+      assertEquals(originalElements, sequence.elements());
+
+      // The copy should have same number of elements as the original
+      assertEquals(copySequence.elements(), sequence.elements());
+
+      // Clear the original sequence
+      sequence.clear();
+
+      // Make sure it has no elements, but capacity should not be affected
+      assertEquals(0, sequence.elements());
+      assertEquals(originalCapacity, sequence.capacity());
+
+      // Make sure the copy wasn't affected by changes to the original
+      assertEquals(originalElements, copySequence.elements());
+
+      // Create a new sequence with no initial buffer
+      IDLCharSequence emptySequence = new IDLCharSequence();
 
       // Ensure methods work on empty sequences
       assertEquals(0, emptySequence.capacity());
