@@ -299,20 +299,17 @@ public class ROS2Node implements Closeable
 
    public ROS2Service createService(Class<?> serviceType, String serviceName, Object callback)
    {
-      // TODO:
-      return null;
+      throw new RuntimeException("Not yet implemented");
    }
 
    public Object declareParameter(String name, Object value)
    {
-      // TODO:
-      return null;
+      throw new RuntimeException("Not yet implemented");
    }
 
    public Object getParameter(String name)
    {
-      // TODO:
-      return null;
+      throw new RuntimeException("Not yet implemented");
    }
 
    public List<ROS2Publisher<?>> getPublishers()

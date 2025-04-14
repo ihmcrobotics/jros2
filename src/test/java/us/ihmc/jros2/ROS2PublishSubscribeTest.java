@@ -264,6 +264,8 @@ public class ROS2PublishSubscribeTest
       {
          while (destroyThread.isAlive())
          {
+            LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
+
             publisher.publish(messageToPublish);
          }
       }, "publishThread");
