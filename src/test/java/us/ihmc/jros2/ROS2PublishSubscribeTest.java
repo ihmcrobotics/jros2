@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.Consumer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,21 +96,15 @@ public class ROS2PublishSubscribeTest
       assertDoesNotThrow(() ->
       {
          // Create subscriptions
-         ROS2Subscription<Bool> subscription1 = ros2Node.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) reader ->
+         ROS2Subscription<Bool> subscription1 = ros2Node.createSubscription(topic, reader ->
          {
             Bool message = new Bool();
-            reader.takeNextSample(message);
-            assert false; // Should never reach here since we don't publish anything
-         }, ROS2QoSProfile.DEFAULT);
-
-         ROS2Subscription<Bool> subscription2 = ros2Node.createSubscription(topic, (Consumer<Bool>) message ->
-         {
+            reader.read(message);
             assert false; // Should never reach here since we don't publish anything
          }, ROS2QoSProfile.DEFAULT);
 
          // Ensure we can destroy subscriptions
          ros2Node.destroySubscription(subscription1);
-         ros2Node.destroySubscription(subscription2);
 
          // Oops, I "accidentally" destroyed it again
          ros2Node.destroySubscription(subscription1);
@@ -173,10 +166,10 @@ public class ROS2PublishSubscribeTest
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
 
       final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
-      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) reader ->
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
       {
          Bool msg = new Bool();
-         reader.takeNextSample(msg);
+         reader.read(msg);
 
          synchronized (valueReceived)
          {
@@ -236,10 +229,10 @@ public class ROS2PublishSubscribeTest
             {
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
 
-               ROS2Subscription<Bool> subscription = subscriberNode.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) subscriber ->
+               ROS2Subscription<Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
                {
                   Bool data = new Bool();
-                  subscriber.takeNextSample(data);
+                  subscriber.read(data);
                }, ROS2QoSProfile.DEFAULT);
 
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
@@ -321,10 +314,10 @@ public class ROS2PublishSubscribeTest
       publishThread.start();
 
       // Create a subscription
-      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, (ROS2SubscriptionCallback<Bool>) subscriber ->
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, subscriber ->
       {
          Bool data = new Bool();
-         subscriber.takeNextSample(data);
+         subscriber.read(data);
       }, ROS2QoSProfile.DEFAULT);
 
       // Destroy it

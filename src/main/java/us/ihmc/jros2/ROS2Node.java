@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Consumer;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -252,7 +251,7 @@ public class ROS2Node implements Closeable
             }
 
             ROS2TopicData topicData = getOrCreateTopicData(topic);
-            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topicData);
+            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
 
             synchronized (subscriptions)
             {
@@ -268,16 +267,6 @@ public class ROS2Node implements Closeable
       }
 
       return null;
-   }
-
-   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, Consumer<T> callback, ROS2QoSProfile qosProfile)
-   {
-      return createSubscription(topic, (ROS2SubscriptionCallback<T>) reader ->
-      {
-         T message = ROS2Message.createInstance(topic.topicType());
-         reader.takeNextSample(message);
-         callback.accept(message);
-      }, qosProfile);
    }
 
    public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
