@@ -31,7 +31,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
 
-   private final ROS2TopicData topicData;
+   private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final CDRBuffer cdrBuffer;
    private final SampleInfo sampleInfo;
@@ -44,7 +44,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private final ReadWriteLock closeLock;
    private boolean closed;
 
-   protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2Topic<T> topic, ROS2TopicData topicData)
+   /**
+    * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
+    */
+   protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2Topic<T> topic, TopicData topicData)
    {
       this.callback = callback;
       this.topicData = topicData;

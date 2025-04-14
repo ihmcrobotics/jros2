@@ -36,7 +36,7 @@ public class ROS2Node implements Closeable
    }
 
    private final Pointer fastddsParticipant;
-   private final Map<ROS2Topic<?>, ROS2TopicData> topicData;
+   private final Map<ROS2Topic<?>, TopicData> topicData;
    private final List<ROS2Publisher<?>> publishers;
    private final List<ROS2Subscription<?>> subscriptions;
 
@@ -101,7 +101,7 @@ public class ROS2Node implements Closeable
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   protected <T extends ROS2Message<T>> ROS2TopicData getOrCreateTopicData(ROS2Topic<T> topic)
+   protected <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       closeLock.readLock().lock();
       try
@@ -136,7 +136,7 @@ public class ROS2Node implements Closeable
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
                   fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
                   Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
-                  ROS2TopicData topicData = new ROS2TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+                  TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
 
                   this.topicData.put(topic, topicData);
 
@@ -178,7 +178,7 @@ public class ROS2Node implements Closeable
                LogTools.error(e);
             }
 
-            ROS2TopicData topicData = getOrCreateTopicData(topic);
+            TopicData topicData = getOrCreateTopicData(topic);
             ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topicData);
 
             synchronized (publishers)
@@ -250,7 +250,7 @@ public class ROS2Node implements Closeable
                LogTools.error(e);
             }
 
-            ROS2TopicData topicData = getOrCreateTopicData(topic);
+            TopicData topicData = getOrCreateTopicData(topic);
             ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
 
             synchronized (subscriptions)
@@ -297,7 +297,7 @@ public class ROS2Node implements Closeable
       return removed;
    }
 
-   public ROS2Service createService(Class<?> serviceType, String serviceName, Object callback)
+   public Object createService(Class<?> serviceType, String serviceName, Object callback)
    {
       throw new RuntimeException("Not yet implemented");
    }
@@ -358,7 +358,7 @@ public class ROS2Node implements Closeable
             // Delete topics
             for (ROS2Topic<?> topic : topicData.keySet())
             {
-               ROS2TopicData topicData = this.topicData.get(topic);
+               TopicData topicData = this.topicData.get(topic);
 
                retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
                retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));

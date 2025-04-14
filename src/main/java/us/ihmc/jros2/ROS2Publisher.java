@@ -20,14 +20,17 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 
    private final Pointer fastddsPublisher;
    private final Pointer fastddsDataWriter;
-   private final ROS2TopicData topicData;
+   private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final CDRBuffer cdrBuffer;
 
    private final ReadWriteLock closeLock;
    private boolean closed;
 
-   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2TopicData topicData)
+   /**
+    * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
+    */
+   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, TopicData topicData)
    {
       this.topicData = topicData;
 

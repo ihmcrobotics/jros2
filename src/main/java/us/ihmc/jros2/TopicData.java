@@ -4,7 +4,10 @@ import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 
-class ROS2TopicData
+/**
+ * An internal class for maintaining memory relating to Fast-DDS topic types.
+ */
+class TopicData
 {
    static
    {
@@ -15,7 +18,7 @@ class ROS2TopicData
    protected Pointer fastddsTypeSupport;
    protected Pointer fastddsTopic;
 
-   protected ROS2TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
+   protected TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
    {
       this.topicDataWrapperType = topicDataWrapperType;
       this.fastddsTypeSupport = fastddsTypeSupport;
