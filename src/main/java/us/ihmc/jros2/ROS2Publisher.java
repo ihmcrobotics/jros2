@@ -2,7 +2,6 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.util.concurrent.locks.ReadWriteLock;
@@ -15,7 +14,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 {
    static
    {
-      fastddsjavaNativeLibrary.load();
+      jros2.loadLibrary();
    }
 
    private final Pointer fastddsPublisher;
