@@ -3,40 +3,40 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
-import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
 public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
 {
    private final Class<T> clazz;
+
    private T[] elements;
    private int position;
 
    public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      super(capacity);
       this.clazz = clazz;
+      position = 0;
+
+      ensureMinCapacity(capacity);
    }
 
    public IDLObjectSequence(Class<T> clazz)
    {
       this.clazz = clazz;
+      position = 0;
    }
 
-   public void add(T element)
+   private T newInstance()
    {
-      assert elements != null;
-      assert position <= elements.length;
-
-      elements[position++] = element;
-   }
-
-   public T add()
-   {
-      assert elements != null;
-      assert position <= elements.length;
-
-      return elements[position++];
+      try
+      {
+         return clazz.getDeclaredConstructor().newInstance();
+      }
+      catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
+      {
+         throw new RuntimeException(e);
+      }
    }
 
    @Override
@@ -46,15 +46,75 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    @Override
-   protected void ensureMinCapacity(int capacity)
+   public int capacity()
    {
       if (elements == null)
       {
-         elements = (T[]) Array.newInstance(clazz, capacity);
+         return 0;
       }
-      else if (elements.length != capacity)
+
+      return elements.length;
+   }
+
+   @Override
+   public void clear()
+   {
+      position = 0;
+   }
+
+   public void add(T element)
+   {
+      if (elements == null)
       {
-         elements = Arrays.copyOf(elements, capacity);
+         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+      }
+      else if (position == elements.length)
+      {
+         ensureMinCapacity(2 * elements.length);
+      }
+
+      elements[position++] = element;
+   }
+
+   public T add()
+   {
+      if (elements == null)
+      {
+         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+      }
+      else if (position == elements.length)
+      {
+         ensureMinCapacity(2 * elements.length);
+      }
+
+      if (elements[position] == null)
+         elements[position] = newInstance();
+
+      return elements[position++];
+   }
+
+   public T get(int index)
+   {
+      assert index < elements();
+      return elements[index];
+   }
+
+   public T[] getArrayUnsafe()
+   {
+      return elements;
+   }
+
+   @Override
+   @SuppressWarnings("unchecked")
+   protected void ensureMinCapacity(int desiredCapacity)
+   {
+      if (elements == null)
+      {
+         elements = (T[]) new CDRSerializable[desiredCapacity];
+      }
+      else if (elements.length < desiredCapacity)
+      {
+         elements = Arrays.copyOf(elements, desiredCapacity);
       }
    }
 
@@ -62,6 +122,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public int elementSizeBytes(int i)
    {
       assert elements != null;
+      assert i < elements();
 
       return elements[i].calculateSizeBytes();
    }
@@ -70,7 +131,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public void readElement(CDRBuffer buffer)
    {
       assert elements != null;
-      assert position <= elements.length;
+      assert position < elements.length;
 
       T element = elements[position++];
 
@@ -81,6 +142,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public void writeElement(int i, CDRBuffer buffer)
    {
       assert elements != null;
+      assert i < elements();
 
       elements[i].serialize(buffer);
    }
@@ -91,6 +153,12 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       assert clazz == other.clazz;
       assert other.elements != null;
 
-      elements = Arrays.copyOf(other.elements, other.elements.length);
+      clear();
+
+      int othersElements = other.elements();
+      ensureMinCapacity(othersElements);
+
+      System.arraycopy(other.elements, 0, elements, 0, othersElements);
+      position = other.elements();
    }
 }

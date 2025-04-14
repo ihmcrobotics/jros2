@@ -2,18 +2,18 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
-import java.nio.IntBuffer;
+import java.nio.CharBuffer;
 
-public class IDLIntSequence extends IDLSequence<IDLIntSequence>
+public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 {
-   private IntBuffer buffer;
+   private CharBuffer buffer;
 
-   public IDLIntSequence(int capacity)
+   public IDLCharSequence(int capacity)
    {
       super(capacity);
    }
 
-   public IDLIntSequence()
+   public IDLCharSequence()
    {
 
    }
@@ -49,7 +49,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       }
    }
 
-   public void add(int element)
+   public void add(char element)
    {
       if (buffer == null)
       {
@@ -63,13 +63,13 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       buffer.put(element);
    }
 
-   public int get(int index)
+   public char get(int index)
    {
       assert index < elements();
       return buffer.get(index);
    }
 
-   public IntBuffer getBufferUnsafe()
+   public CharBuffer getBufferUnsafe()
    {
       return buffer;
    }
@@ -79,7 +79,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    {
       if (capacity() < desiredCapacity)
       {
-         IntBuffer newBuffer = IntBuffer.allocate(desiredCapacity);
+         CharBuffer newBuffer = CharBuffer.allocate(desiredCapacity);
 
          int currentElements = elements();
          if (currentElements != 0)
@@ -95,7 +95,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    @Override
    public int elementSizeBytes(int i)
    {
-      return 4;
+      return 1;
    }
 
    @Override
@@ -103,7 +103,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    {
       assert buffer != null;
 
-      buffer.put(cdrBuffer.readInt());
+      buffer.put(cdrBuffer.readChar());
    }
 
    @Override
@@ -111,11 +111,11 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    {
       assert buffer != null;
 
-      cdrBuffer.writeInt(buffer.get(i));
+      cdrBuffer.writeChar(buffer.get(i));
    }
 
    @Override
-   public void set(IDLIntSequence other)
+   public void set(IDLCharSequence other)
    {
       clear();
 

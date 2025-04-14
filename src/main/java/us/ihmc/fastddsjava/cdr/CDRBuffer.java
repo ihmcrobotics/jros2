@@ -70,6 +70,16 @@ public final class CDRBuffer
       return buffer.get();
    }
 
+   public void writeChar(char value)
+   {
+      writeByte((byte) value);
+   }
+
+   public char readChar()
+   {
+      return (char) readByte();
+   }
+
    public void writeShort(short value)
    {
       alignBuffer(2);
