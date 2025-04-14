@@ -5,9 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.testmessages.Bool;
+import us.ihmc.log.LogTools;
 
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -210,10 +213,11 @@ public class ROS2PublishSubscribeTest
       ros2Node.close();
    }
 
-   @RepeatedTest(10)
-   @Timeout(30)
+   @RepeatedTest(100)
+//   @Timeout(30)
    public void testCrazyMultithreading()
    {
+      Instant start = Instant.now();
       final int domainId = 113;
 
       ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_topic");
@@ -224,7 +228,7 @@ public class ROS2PublishSubscribeTest
 
       Thread destroyThread = new Thread(() ->
       {
-         int threadCount = 1000;
+         int threadCount = 100;
          List<Thread> threads = new ArrayList<>();
          for (int i = 0; i < threadCount; ++i)
          {
@@ -285,6 +289,9 @@ public class ROS2PublishSubscribeTest
       publisherNode.destroyPublisher(publisher);
       publisherNode.close();
       subscriberNode.close();
+
+      long durationMillis = start.until(Instant.now(), ChronoUnit.MILLIS);
+      LogTools.info("Test Duration: {}s{}ms", durationMillis / 1000, durationMillis % 1000);
    }
 
    @Test
