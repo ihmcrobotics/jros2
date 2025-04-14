@@ -13,17 +13,17 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="domainParticipantFactoryProfileType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="qos" type="{http://www.eprosima.com}domainParticipantFactoryQosPoliciesType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="is_default_profile" type="{http://www.eprosima.com}boolean" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="domainParticipantFactoryProfileType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="qos" type="{http://www.eprosima.com}domainParticipantFactoryQosPoliciesType" minOccurs="0"/>
+ *       &lt;/all>
+ *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="is_default_profile" type="{http://www.eprosima.com}boolean" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

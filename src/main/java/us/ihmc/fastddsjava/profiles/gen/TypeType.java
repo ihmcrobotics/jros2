@@ -16,22 +16,22 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="typeType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;choice&gt;
- *           &lt;element name="enum" type="{http://www.eprosima.com}enumDcl" maxOccurs="unbounded"/&gt;
- *           &lt;element name="typedef" type="{http://www.eprosima.com}typedefDcl" maxOccurs="unbounded"/&gt;
- *           &lt;element name="struct" type="{http://www.eprosima.com}structDcl" maxOccurs="unbounded"/&gt;
- *           &lt;element name="union" type="{http://www.eprosima.com}unionDcl" maxOccurs="unbounded"/&gt;
- *           &lt;element name="bitset" type="{http://www.eprosima.com}bitsetDcl" maxOccurs="unbounded"/&gt;
- *           &lt;element name="bitmask" type="{http://www.eprosima.com}bitmaskDcl" maxOccurs="unbounded"/&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="typeType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;choice>
+ *           &lt;element name="enum" type="{http://www.eprosima.com}enumDcl" maxOccurs="unbounded"/>
+ *           &lt;element name="typedef" type="{http://www.eprosima.com}typedefDcl" maxOccurs="unbounded"/>
+ *           &lt;element name="struct" type="{http://www.eprosima.com}structDcl" maxOccurs="unbounded"/>
+ *           &lt;element name="union" type="{http://www.eprosima.com}unionDcl" maxOccurs="unbounded"/>
+ *           &lt;element name="bitset" type="{http://www.eprosima.com}bitsetDcl" maxOccurs="unbounded"/>
+ *           &lt;element name="bitmask" type="{http://www.eprosima.com}bitmaskDcl" maxOccurs="unbounded"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

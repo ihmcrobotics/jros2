@@ -2,16 +2,25 @@ package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Timeout;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
-import us.ihmc.fastddsjava.profiles.ProfilesHelper;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
+import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
+import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
+import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
+import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,11 +36,9 @@ public class ReadWriteTest
    {
       fastddsjavaNativeLibrary.load();
 
-      ProfilesXML profilesXML = ProfilesHelper.unitTestProfile();
-
       try
       {
-         profilesXML.load();
+         profile().load();
       }
       catch (fastddsjavaException e)
       {
@@ -39,7 +46,52 @@ public class ReadWriteTest
       }
    }
 
+   private static ProfilesXML profile()
+   {
+      ProfilesXML profilesXML = new ProfilesXML();
+
+      // Add transport
+      TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+      TransportDescriptorType udp4Transport = new TransportDescriptorType();
+      udp4Transport.setTransportId(UUID.randomUUID().toString());
+      udp4Transport.setType("UDPv4");
+      transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
+      profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+
+      // Add participant profile
+      ParticipantProfileType participantProfileType = new ParticipantProfileType();
+
+      Rtps rtps = new Rtps();
+      rtps.setUseBuiltinTransports(true);
+      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+      userTransports.getTransportId().add(udp4Transport.getTransportId());
+      rtps.setUserTransports(userTransports);
+      participantProfileType.setRtps(rtps);
+
+      participantProfileType.setProfileName("unit_test_participant");
+      participantProfileType.setDomainId(145);
+      profilesXML.addParticipantProfile(participantProfileType);
+
+      // Add topic profile
+      TopicProfileType topicProfileType = new TopicProfileType();
+      topicProfileType.setProfileName("unit_test_topic");
+      profilesXML.addTopicProfile(topicProfileType);
+
+      // Add publisher profile / AKA data writer profile
+      PublisherProfileType publisherProfileType = new PublisherProfileType();
+      publisherProfileType.setProfileName("unit_test_publisher");
+      profilesXML.addPublisherProfile(publisherProfileType);
+
+      // Add subscriber profile / AKA data reader profile
+      SubscriberProfileType subscriberProfileType = new SubscriberProfileType();
+      subscriberProfileType.setProfileName("unit_test_subscriber");
+      profilesXML.addSubscriberProfile(subscriberProfileType);
+
+      return profilesXML;
+   }
+
    @RepeatedTest(5000)
+   @Timeout(30)
    public void readWriteTest() throws InterruptedException, fastddsjavaException
    {
       int retCode;
@@ -49,20 +101,20 @@ public class ReadWriteTest
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
-      Pointer participant = fastddsjava_create_participant("example_participant");
+      Pointer participant = fastddsjava_create_participant("unit_test_participant");
 
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
 
       // Publisher
-      Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
-      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_publisher");
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
 
       // Subscriber
-      Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "example_subscriber");
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "unit_test_subscriber");
 
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
@@ -132,6 +184,7 @@ public class ReadWriteTest
    }
 
    @RepeatedTest(5000)
+   @Timeout(30)
    public void readWriteTestWithGrowingData() throws InterruptedException, fastddsjavaException
    {
       int retCode;
@@ -142,20 +195,20 @@ public class ReadWriteTest
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
-      Pointer participant = fastddsjava_create_participant("example_participant");
+      Pointer participant = fastddsjava_create_participant("unit_test_participant");
 
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
 
       // Publisher
-      Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
-      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_publisher");
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
 
       // Subscriber
-      Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "example_subscriber");
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "unit_test_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
       final AtomicBoolean received = new AtomicBoolean(false);
@@ -249,6 +302,7 @@ public class ReadWriteTest
    }
 
    @RepeatedTest(5000)
+   @Timeout(30)
    public void readWriteTestWithRandomDataSize() throws InterruptedException, fastddsjavaException
    {
       Random random = new Random();
@@ -262,20 +316,20 @@ public class ReadWriteTest
       fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
-      Pointer participant = fastddsjava_create_participant("example_participant");
+      Pointer participant = fastddsjava_create_participant("unit_test_participant");
 
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "example_topic", "example_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
 
       // Publisher
-      Pointer publisher = fastddsjava_create_publisher(participant, "example_publisher");
-      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "example_publisher");
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
 
       // Subscriber
-      Pointer subscriber = fastddsjava_create_subscriber(participant, "example_subscriber");
-      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "example_subscriber");
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "unit_test_subscriber");
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
       final AtomicInteger received = new AtomicInteger(0);

@@ -15,28 +15,28 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="locatorListType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;element name="locator" maxOccurs="unbounded"&gt;
- *           &lt;complexType&gt;
- *             &lt;complexContent&gt;
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *                 &lt;choice&gt;
- *                   &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4LocatorType" maxOccurs="unbounded"/&gt;
- *                   &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6LocatorType" maxOccurs="unbounded"/&gt;
- *                   &lt;element name="tcpv4" type="{http://www.eprosima.com}tcpv4LocatorType" maxOccurs="unbounded"/&gt;
- *                   &lt;element name="tcpv6" type="{http://www.eprosima.com}tcpv6LocatorType" maxOccurs="unbounded"/&gt;
- *                 &lt;/choice&gt;
- *               &lt;/restriction&gt;
- *             &lt;/complexContent&gt;
- *           &lt;/complexType&gt;
- *         &lt;/element&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="locatorListType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;element name="locator" maxOccurs="unbounded">
+ *           &lt;complexType>
+ *             &lt;complexContent>
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *                 &lt;choice>
+ *                   &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4LocatorType" maxOccurs="unbounded"/>
+ *                   &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6LocatorType" maxOccurs="unbounded"/>
+ *                   &lt;element name="tcpv4" type="{http://www.eprosima.com}tcpv4LocatorType" maxOccurs="unbounded"/>
+ *                   &lt;element name="tcpv6" type="{http://www.eprosima.com}tcpv6LocatorType" maxOccurs="unbounded"/>
+ *                 &lt;/choice>
+ *               &lt;/restriction>
+ *             &lt;/complexContent>
+ *           &lt;/complexType>
+ *         &lt;/element>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
@@ -86,18 +86,18 @@ public class LocatorListType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType&gt;
-     *   &lt;complexContent&gt;
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
-     *       &lt;choice&gt;
-     *         &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4LocatorType" maxOccurs="unbounded"/&gt;
-     *         &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6LocatorType" maxOccurs="unbounded"/&gt;
-     *         &lt;element name="tcpv4" type="{http://www.eprosima.com}tcpv4LocatorType" maxOccurs="unbounded"/&gt;
-     *         &lt;element name="tcpv6" type="{http://www.eprosima.com}tcpv6LocatorType" maxOccurs="unbounded"/&gt;
-     *       &lt;/choice&gt;
-     *     &lt;/restriction&gt;
-     *   &lt;/complexContent&gt;
-     * &lt;/complexType&gt;
+     * &lt;complexType>
+     *   &lt;complexContent>
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+     *       &lt;choice>
+     *         &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4LocatorType" maxOccurs="unbounded"/>
+     *         &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6LocatorType" maxOccurs="unbounded"/>
+     *         &lt;element name="tcpv4" type="{http://www.eprosima.com}tcpv4LocatorType" maxOccurs="unbounded"/>
+     *         &lt;element name="tcpv6" type="{http://www.eprosima.com}tcpv6LocatorType" maxOccurs="unbounded"/>
+     *       &lt;/choice>
+     *     &lt;/restriction>
+     *   &lt;/complexContent>
+     * &lt;/complexType>
      * </pre>
      * 
      * 

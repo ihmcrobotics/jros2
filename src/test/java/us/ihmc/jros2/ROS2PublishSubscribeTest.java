@@ -24,6 +24,7 @@ public class ROS2PublishSubscribeTest
    private static final Random RANDOM = new Random(1881108);
 
    @Test
+   @Timeout(30)
    public void testROS2PublisherAPI()
    {
       int domainId = 113;
@@ -84,6 +85,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @Timeout(30)
    public void testROS2SubscriptionAPI()
    {
       int domainId = 113;
@@ -124,6 +126,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @Timeout(30)
    public void testROS2Publisher() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
@@ -155,7 +158,9 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   public void testROS2Subscription() throws InterruptedException, IOException
+   @Timeout(30)
+   // Allocation-free subscription
+   public void testROS2Subscription1() throws InterruptedException, IOException
    {
       final boolean expectedValue = true;
       final int domainId = 113;
@@ -171,6 +176,58 @@ public class ROS2PublishSubscribeTest
          Bool msg = new Bool();
          reader.read(msg);
 
+         synchronized (valueReceived)
+         {
+            valueReceived.set(msg.getData());
+            valueReceived.notify();
+         }
+      }, ROS2QoSProfile.DEFAULT);
+
+      // Launch a ROS 2 process to publish a Bool message
+      Process process = ROS2TestTools.launchROS2PublishProcess(domainId,
+                                                               "--once",
+                                                               topicName,
+                                                               "std_msgs/msg/Bool",
+                                                               "{data: " + expectedValue + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+      // Wait for subscription to receive the Bool message
+      synchronized (valueReceived)
+      {
+         if (valueReceived.get() != expectedValue)
+         {
+            valueReceived.wait();
+         }
+      }
+
+      // Assert the received value is correct
+      assertEquals(expectedValue, valueReceived.get());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      // Close stuff
+      ros2Node.destroySubscription(subscription);
+      ros2Node.close();
+   }
+
+   @Test
+   @Timeout(30)
+   // Allocation subscription
+   public void testROS2Subscription2() throws InterruptedException, IOException
+   {
+      final boolean expectedValue = true;
+      final int domainId = 113;
+      final String topicName = "/ihmc/test_bool";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node", domainId);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+
+      final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
+      {
+         Bool msg = reader.read();
          synchronized (valueReceived)
          {
             valueReceived.set(msg.getData());

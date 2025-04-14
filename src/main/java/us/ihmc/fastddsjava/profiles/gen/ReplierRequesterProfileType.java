@@ -14,22 +14,22 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="replierRequesterProfileType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all minOccurs="0"&gt;
- *         &lt;element name="request_topic_name" type="{http://www.eprosima.com}string" minOccurs="0"/&gt;
- *         &lt;element name="reply_topic_name" type="{http://www.eprosima.com}string" minOccurs="0"/&gt;
- *         &lt;element name="data_writer" type="{http://www.eprosima.com}publisherProfileNoAttributesType" minOccurs="0"/&gt;
- *         &lt;element name="data_reader" type="{http://www.eprosima.com}subscriberProfileNoAttributesType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="service_name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="request_type" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="reply_type" use="required" type="{http://www.eprosima.com}string" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="replierRequesterProfileType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all minOccurs="0">
+ *         &lt;element name="request_topic_name" type="{http://www.eprosima.com}string" minOccurs="0"/>
+ *         &lt;element name="reply_topic_name" type="{http://www.eprosima.com}string" minOccurs="0"/>
+ *         &lt;element name="data_writer" type="{http://www.eprosima.com}publisherProfileNoAttributesType" minOccurs="0"/>
+ *         &lt;element name="data_reader" type="{http://www.eprosima.com}subscriberProfileNoAttributesType" minOccurs="0"/>
+ *       &lt;/all>
+ *       &lt;attribute name="profile_name" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="service_name" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="request_type" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="reply_type" use="required" type="{http://www.eprosima.com}string" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

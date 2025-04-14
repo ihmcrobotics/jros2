@@ -13,26 +13,26 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="memberDcl"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="type" use="required"&gt;
- *         &lt;simpleType&gt;
- *           &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType"&gt;
- *           &lt;/union&gt;
- *         &lt;/simpleType&gt;
- *       &lt;/attribute&gt;
- *       &lt;attribute name="nonBasicTypeName" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="stringMaxLength" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="sequenceMaxLength" type="{http://www.eprosima.com}int32" /&gt;
- *       &lt;attribute name="arrayDimensions" type="{http://www.eprosima.com}arrayDim" /&gt;
- *       &lt;attribute name="key_type" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="key" type="{http://www.eprosima.com}string" /&gt;
- *       &lt;attribute name="mapMaxLength" type="{http://www.eprosima.com}int32" /&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="memberDcl">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;attribute name="name" use="required" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="type" use="required">
+ *         &lt;simpleType>
+ *           &lt;union memberTypes=" {http://www.eprosima.com}primitiveTypes {http://www.eprosima.com}nonBasicType">
+ *           &lt;/union>
+ *         &lt;/simpleType>
+ *       &lt;/attribute>
+ *       &lt;attribute name="nonBasicTypeName" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="stringMaxLength" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="sequenceMaxLength" type="{http://www.eprosima.com}int32" />
+ *       &lt;attribute name="arrayDimensions" type="{http://www.eprosima.com}arrayDim" />
+ *       &lt;attribute name="key_type" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="key" type="{http://www.eprosima.com}string" />
+ *       &lt;attribute name="mapMaxLength" type="{http://www.eprosima.com}int32" />
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
