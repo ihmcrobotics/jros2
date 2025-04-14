@@ -207,7 +207,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @RepeatedTest(100)
-//   @Timeout(30)
+   @Timeout(30)
    public void testCrazyMultithreading()
    {
       Instant start = Instant.now();
