@@ -6,9 +6,11 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public final class fastddsjavaTools
 {
+   private static final int OK = RETCODE_OK(); // Minor optimization
+
    public static String retcodeName(int ReturnCode_t)
    {
-      if (RETCODE_OK() == ReturnCode_t)
+      if (OK == ReturnCode_t)
          return "RETCODE_OK";
       else if (RETCODE_ERROR() == ReturnCode_t)
          return "RETCODE_ERROR";
@@ -45,7 +47,7 @@ public final class fastddsjavaTools
 
    public static void retcodeThrowOnError(int ReturnCode_t) throws fastddsjavaException
    {
-      if (RETCODE_OK() != ReturnCode_t)
+      if (OK != ReturnCode_t)
          throw new fastddsjavaException(ReturnCode_t);
    }
 
