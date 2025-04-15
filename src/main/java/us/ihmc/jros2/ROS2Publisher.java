@@ -10,6 +10,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
+/**
+ * A ROS 2-compatible publisher for publishing {@link ROS2Message} types.
+ */
 public class ROS2Publisher<T extends ROS2Message<T>>
 {
    static

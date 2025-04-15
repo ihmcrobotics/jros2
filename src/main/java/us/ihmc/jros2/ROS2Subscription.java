@@ -15,6 +15,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
+/**
+ * A ROS 2-compatible subscription for ingesting {@link ROS2Message} types.
+ */
 public class ROS2Subscription<T extends ROS2Message<T>>
 {
    static
@@ -46,7 +49,11 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   protected ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, ROS2Topic<T> topic, TopicData topicData)
+   protected ROS2Subscription(Pointer fastddsParticipant,
+                              String subscriberProfileName,
+                              ROS2SubscriptionCallback<T> callback,
+                              ROS2Topic<T> topic,
+                              TopicData topicData)
    {
       this.callback = callback;
       this.topicData = topicData;
@@ -120,7 +127,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private void onSubscriptionCallback()
    {
       // TODO:
-//      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
+      //      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
    }
 
    protected void close(Pointer fastddsParticipant)

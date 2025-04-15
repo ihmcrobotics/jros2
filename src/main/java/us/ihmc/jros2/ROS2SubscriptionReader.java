@@ -3,8 +3,7 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 /**
- * A way to read ROS2Message from a {@link CDRBuffer}, given a {@link ROS2Topic}
- *
+ * A way to read ROS2Message from a {@link CDRBuffer}, given a {@link ROS2Topic}.
  * Provides both an allocation-free and an allocation approach.
  */
 public class ROS2SubscriptionReader<T extends ROS2Message<T>>
@@ -22,7 +21,8 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    /**
-    * Read from the {@link CDRBuffer} into data (allocation free)
+    * Read from the {@link CDRBuffer} into data (allocation free).
+    *
     * @param data The message to pack
     */
    public void read(T data)
@@ -33,7 +33,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    /**
-    * Read from the {@link CDRBuffer} and return a new message (allocates)
+    * Read from the {@link CDRBuffer} and return a new message (allocates).
     */
    public T read()
    {
