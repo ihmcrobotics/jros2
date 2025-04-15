@@ -1,7 +1,6 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
-import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 
 /**
@@ -11,14 +10,14 @@ class TopicData
 {
    static
    {
-      fastddsjavaNativeLibrary.load();
+      jros2.load();
    }
 
-   protected fastddsjava_TopicDataWrapperType topicDataWrapperType;
-   protected Pointer fastddsTypeSupport;
-   protected Pointer fastddsTopic;
+   final fastddsjava_TopicDataWrapperType topicDataWrapperType;
+   final Pointer fastddsTypeSupport;
+   final Pointer fastddsTopic;
 
-   protected TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
+   TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
    {
       this.topicDataWrapperType = topicDataWrapperType;
       this.fastddsTypeSupport = fastddsTypeSupport;

@@ -7,6 +7,11 @@ import java.time.Duration;
  */
 public class ROS2QoSProfile
 {
+   static
+   {
+      jros2.load();
+   }
+
    public static final ROS2QoSProfile DEFAULT = new ROS2QoSProfile();
 
    public enum History

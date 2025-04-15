@@ -2,7 +2,6 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
-import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
@@ -32,7 +31,7 @@ public class ROS2Node implements Closeable
 {
    static
    {
-      fastddsjavaNativeLibrary.load();
+      jros2.load();
    }
 
    private final int domainId;
@@ -96,7 +95,7 @@ public class ROS2Node implements Closeable
 
    public ROS2Node(String name)
    {
-      this(name, 0);
+      this(name, jros2.get().defaultDomainId());
    }
 
    public ROS2Node(String name, int domainId)

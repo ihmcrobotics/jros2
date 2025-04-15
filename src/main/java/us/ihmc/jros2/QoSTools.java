@@ -18,6 +18,15 @@ import java.time.Duration;
 
 final class QoSTools
 {
+   static
+   {
+      jros2.load();
+   }
+
+   /**
+    * Translate {@link ROS2QoSProfile} into a Fast-DDS {@link PublisherProfileType}.
+    * Use when building a {@link ROS2Publisher}.
+    */
    static void translateQoS(ROS2QoSProfile qosProfile, PublisherProfileType publisherProfile)
    {
       ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
@@ -100,6 +109,10 @@ final class QoSTools
       publisherProfile.setQos(dataWriterQosPoliciesType);
    }
 
+   /**
+    * Translate {@link ROS2QoSProfile} into a Fast-DDS {@link SubscriberProfileType}.
+    * Use when building a {@link ROS2Subscription}.
+    */
    static void translateQoS(ROS2QoSProfile qosProfile, SubscriberProfileType subscriberProfile)
    {
       ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
