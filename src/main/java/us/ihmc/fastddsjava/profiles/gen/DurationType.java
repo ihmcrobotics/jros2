@@ -71,8 +71,8 @@ import jakarta.xml.bind.annotation.XmlType;
 public class DurationType {
 
     @XmlElementRefs({
-        @XmlElementRef(name = "nanosec", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "sec", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "sec", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "nanosec", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<String>> secOrNanosec;
 
