@@ -10,7 +10,7 @@ class TopicData
 {
    static
    {
-      jros2.loadLibrary();
+      jros2.load();
    }
 
    protected fastddsjava_TopicDataWrapperType topicDataWrapperType;

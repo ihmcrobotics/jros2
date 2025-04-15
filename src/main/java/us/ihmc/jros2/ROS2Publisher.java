@@ -14,7 +14,7 @@ public class ROS2Publisher<T extends ROS2Message<T>>
 {
    static
    {
-      jros2.loadLibrary();
+      jros2.load();
    }
 
    private final Pointer fastddsPublisher;

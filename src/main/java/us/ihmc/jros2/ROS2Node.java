@@ -31,7 +31,7 @@ public class ROS2Node implements Closeable
 {
    static
    {
-      jros2.loadLibrary();
+      jros2.load();
    }
 
    private final int domainId;
@@ -95,7 +95,7 @@ public class ROS2Node implements Closeable
 
    public ROS2Node(String name)
    {
-      this(name, 0);
+      this(name, jros2.get().defaultDomainId());
    }
 
    public ROS2Node(String name, int domainId)
