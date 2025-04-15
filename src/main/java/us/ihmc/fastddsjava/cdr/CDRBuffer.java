@@ -80,6 +80,34 @@ public final class CDRBuffer
       return (char) readByte();
    }
 
+   public void writeWideChar(char value)
+   {
+      // Write number of bytes this character uses
+      writeByte((byte) 2);
+
+      // Write the value
+      buffer.putChar(value);
+   }
+
+   public char readWideChar()
+   {
+      // Read the number of bytes the wchar uses
+      byte charBytes = readByte();
+
+      // We can only accept 2 byte characters in Java
+      return switch (charBytes)
+      {
+         case 1 -> readChar();
+         case 2 -> buffer.getChar();
+         default ->
+         {
+            // Skip the character and return null character
+            buffer.position(buffer.position() + charBytes);
+            yield '\u0000';
+         }
+      };
+   }
+
    public void writeShort(short value)
    {
       alignBuffer(2);
@@ -153,6 +181,38 @@ public final class CDRBuffer
          case 1 -> true;
          default -> throw new RuntimeException("Unknown boolean value");
       };
+   }
+
+   public void readString(StringBuilder destination)
+   {
+      // Get the length of the string
+      int length = readInt() - 1; // -1 to remove null terminator
+
+      // Pack the string into the destination
+      destination.ensureCapacity(length);
+      for (int i = 0; i < length; ++i)
+      {
+         destination.setCharAt(i, readChar());
+      }
+
+      // Read the null terminator
+      readChar();
+   }
+
+   public void writeString(StringBuilder value)
+   {
+      // Write length of string
+      int length = value.length();
+      writeInt(length + 1); // length of string + null terminator
+
+      // Write the string
+      for (int i = 0; i < length; ++i)
+      {
+         writeChar(value.charAt(i));
+      }
+
+      // Add null terminator
+      writeChar('\0');
    }
 
    public void alignBuffer(int byteBoundary)

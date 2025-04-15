@@ -7,6 +7,7 @@ import us.ihmc.fastddsjava.cdr.idl.IDLDoubleSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLFloatSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLObjectSequence;
 import us.ihmc.fastddsjava.cdr.idl.IDLShortSequence;
+import us.ihmc.fastddsjava.cdr.idl.IDLStringSequence;
 import us.ihmc.fastddsjava.msg.TestIDLMsg;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +70,12 @@ public class IDLSequenceTest
 
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
+
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
 
       // Clear the original sequence
       sequence.clear();
@@ -146,6 +153,12 @@ public class IDLSequenceTest
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
 
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
+
       // Clear the original sequence
       sequence.clear();
 
@@ -222,6 +235,12 @@ public class IDLSequenceTest
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
 
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
+
       // Clear the original sequence
       sequence.clear();
 
@@ -297,6 +316,12 @@ public class IDLSequenceTest
 
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
+
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
 
       // Clear the original sequence
       sequence.clear();
@@ -376,6 +401,12 @@ public class IDLSequenceTest
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
 
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
+
       // Clear the original sequence
       sequence.clear();
 
@@ -452,6 +483,12 @@ public class IDLSequenceTest
       // The copy should have same number of elements as the original
       assertEquals(copySequence.elements(), sequence.elements());
 
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.get(i), sequence.get(i));
+      }
+
       // Clear the original sequence
       sequence.clear();
 
@@ -464,6 +501,88 @@ public class IDLSequenceTest
 
       // Create a new sequence with no initial buffer
       IDLShortSequence emptySequence = new IDLShortSequence();
+
+      // Ensure methods work on empty sequences
+      assertEquals(0, emptySequence.capacity());
+      assertEquals(0, emptySequence.elements());
+      assertDoesNotThrow(emptySequence::clear);
+   }
+
+   @Test
+   public void testIDLStringSequence()
+   {
+      final int initialCapacity = 8;
+
+      IDLStringSequence sequence = new IDLStringSequence(initialCapacity);
+
+      // The sequence should have no elements
+      assertEquals(0, sequence.elements());
+
+      // It's capacity should be the requested initial capacity
+      assertEquals(initialCapacity, sequence.capacity());
+
+      // Add initialCapacity number of elements to the sequence
+      for (int i = 0; i < initialCapacity; ++i)
+      {
+         sequence.add(String.valueOf(i));
+      }
+
+      // It should have initialCapacity elements
+      assertEquals(initialCapacity, sequence.elements());
+
+      // The capacity should not have changed
+      assertEquals(initialCapacity, sequence.capacity());
+
+      // Add one more element (going past the initial capacity)
+      sequence.add(String.valueOf(initialCapacity));
+
+      // Make sure elementSizeBytes is correct
+      assertEquals(1, sequence.elementSizeBytes(0));
+
+      // The element should have been added
+      assertEquals(initialCapacity + 1, sequence.elements());
+
+      // Current capacity should be greater than the initial capacity
+      assertTrue(sequence.capacity() > initialCapacity);
+
+      // Make sure the elements we added are stored correctly
+      for (int i = 0; i < sequence.elements(); ++i)
+      {
+         assertEquals(String.valueOf(i), sequence.getAsString(i));
+      }
+
+      int originalCapacity = sequence.capacity();
+      int originalElements = sequence.elements();
+
+      // Make a copy of the sequence
+      IDLStringSequence copySequence = new IDLStringSequence();
+      copySequence.set(sequence);
+
+      // Make sure the original wasn't affected by the copy
+      assertEquals(originalCapacity, sequence.capacity());
+      assertEquals(originalElements, sequence.elements());
+
+      // The copy should have same number of elements as the original
+      assertEquals(copySequence.elements(), sequence.elements());
+
+      // Make sure elements are equal in the copy
+      for (int i = 0; i < copySequence.elements(); ++i)
+      {
+         assertEquals(copySequence.getAsString(i), sequence.getAsString(i));
+      }
+
+      // Clear the original sequence
+      sequence.clear();
+
+      // Make sure it has no elements, but capacity should not be affected
+      assertEquals(0, sequence.elements());
+      assertEquals(originalCapacity, sequence.capacity());
+
+      // Make sure the copy wasn't affected by changes to the original
+      assertEquals(originalElements, copySequence.elements());
+
+      // Create a new sequence with no initial buffer
+      IDLStringSequence emptySequence = new IDLStringSequence();
 
       // Ensure methods work on empty sequences
       assertEquals(0, emptySequence.capacity());
