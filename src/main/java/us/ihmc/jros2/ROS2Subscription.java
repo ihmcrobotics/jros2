@@ -92,6 +92,8 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       return fastddsjava_datareader_get_unread_count(fastddsDataReader);
    }
 
+   private final int OK = RETCODE_OK();
+
    private void onDataCallback()
    {
       closeLock.readLock().lock();
@@ -99,9 +101,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       {
          if (callback != null && !closed)
          {
-            final int ok = RETCODE_OK();
-
-            while (ok == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+            while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
             {
                int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
                cdrBuffer.getBufferUnsafe().rewind();
