@@ -92,7 +92,7 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       return fastddsjava_datareader_get_unread_count(fastddsDataReader);
    }
 
-   private final int OK = RETCODE_OK();
+   private static final int OK = RETCODE_OK();
 
    private void onDataCallback()
    {
