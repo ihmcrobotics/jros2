@@ -13,11 +13,11 @@ class TopicData
       jros2.load();
    }
 
-   protected fastddsjava_TopicDataWrapperType topicDataWrapperType;
-   protected Pointer fastddsTypeSupport;
-   protected Pointer fastddsTopic;
+   final fastddsjava_TopicDataWrapperType topicDataWrapperType;
+   final Pointer fastddsTypeSupport;
+   final Pointer fastddsTopic;
 
-   protected TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
+   TopicData(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport, Pointer fastddsTopic)
    {
       this.topicDataWrapperType = topicDataWrapperType;
       this.fastddsTypeSupport = fastddsTypeSupport;

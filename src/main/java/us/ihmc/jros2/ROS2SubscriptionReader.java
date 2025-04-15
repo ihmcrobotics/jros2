@@ -8,6 +8,11 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
  */
 public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 {
+   static
+   {
+      jros2.load();
+   }
+
    private final CDRBuffer cdrBuffer;
    private final ROS2Topic<T> topic;
 

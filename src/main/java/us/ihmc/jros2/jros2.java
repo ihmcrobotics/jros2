@@ -6,15 +6,18 @@ final class jros2 implements jros2Settings
 {
    private static jros2 instance;
 
+   private final jros2SettingsDefault settingsDefault;
    private final jros2SettingsEnv settingsEnv;
    private final jros2SettingsProp settingsProp;
    private final jros2SettingsFile settingsFile;
+
    private final boolean loaded;
 
-   jros2()
+   private jros2()
    {
       loaded = fastddsjavaNativeLibrary.load();
 
+      settingsDefault = new jros2SettingsDefault();
       settingsEnv = new jros2SettingsEnv();
       settingsProp = new jros2SettingsProp();
       settingsFile = new jros2SettingsFile();
@@ -24,7 +27,7 @@ final class jros2 implements jros2Settings
       instance = this;
    }
 
-   static void load()
+   static synchronized void load()
    {
       if (instance == null)
       {
@@ -42,7 +45,7 @@ final class jros2 implements jros2Settings
       return instance;
    }
 
-   public boolean isLoaded()
+   boolean isLoaded()
    {
       return loaded;
    }
@@ -52,17 +55,17 @@ final class jros2 implements jros2Settings
    {
       int defaultDomainId = 0;
 
-      if (settingsEnv.defaultDomainId() != 0)
+      if (settingsEnv.defaultDomainId() != settingsDefault.defaultDomainId())
       {
 
       }
 
-      if (settingsProp.defaultDomainId() != 0)
+      if (settingsProp.defaultDomainId() != settingsDefault.defaultDomainId())
       {
 
       }
 
-      if (settingsFile.defaultDomainId() != 0)
+      if (settingsFile.defaultDomainId() != settingsDefault.defaultDomainId())
       {
 
       }
@@ -73,17 +76,17 @@ final class jros2 implements jros2Settings
    @Override
    public String[] interfaceWhitelist()
    {
-      if (settingsEnv.interfaceWhitelist().length > 0)
+      if (settingsEnv.interfaceWhitelist() != settingsDefault.interfaceWhitelist())
       {
 
       }
 
-      if (settingsProp.interfaceWhitelist().length > 0)
+      if (settingsProp.interfaceWhitelist() != settingsDefault.interfaceWhitelist())
       {
 
       }
 
-      if (settingsFile.interfaceWhitelist().length > 0)
+      if (settingsFile.interfaceWhitelist() != settingsDefault.interfaceWhitelist())
       {
 
       }
