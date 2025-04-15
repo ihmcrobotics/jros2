@@ -18,11 +18,6 @@ import java.time.Duration;
 
 final class QoSTools
 {
-   static
-   {
-      jros2.load();
-   }
-
    /**
     * Translate {@link ROS2QoSProfile} into a Fast-DDS {@link PublisherProfileType}.
     * Use when building a {@link ROS2Publisher}.

@@ -8,11 +8,6 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
  */
 class TopicData
 {
-   static
-   {
-      jros2.load();
-   }
-
    final fastddsjava_TopicDataWrapperType topicDataWrapperType;
    final Pointer fastddsTypeSupport;
    final Pointer fastddsTopic;
