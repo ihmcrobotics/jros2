@@ -130,6 +130,9 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       //      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
    }
 
+   /**
+    * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
+    */
    protected void close(Pointer fastddsParticipant)
    {
       closeLock.writeLock().lock();

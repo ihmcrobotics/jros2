@@ -75,6 +75,9 @@ public class ROS2Publisher<T extends ROS2Message<T>>
       }
    }
 
+   /**
+    * Use {@link ROS2Node#destroyPublisher(ROS2Publisher)}
+    */
    protected void close(Pointer fastddsParticipant)
    {
       closeLock.writeLock().lock();

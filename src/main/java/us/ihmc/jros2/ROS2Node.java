@@ -27,6 +27,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
+/**
+ * A base ROS 2-compatible "node" which provides functionality for managing ROS 2-compatible publishers, subscribers.
+ * Uses Fast-DDS middleware via the {@link us.ihmc.fastddsjava} package. Fully thread-safe.
+ */
 public class ROS2Node implements Closeable
 {
    static
