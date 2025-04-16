@@ -34,6 +34,7 @@ public class ROS2Node implements Closeable
       jros2.load();
    }
 
+   private final String name;
    private final int domainId;
    private final Pointer fastddsParticipant;
    private final Map<ROS2Topic<?>, TopicData> topicData;
@@ -45,6 +46,7 @@ public class ROS2Node implements Closeable
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
+      this.name = name;
       this.domainId = domainId;
 
       ProfilesXML profilesXML = new ProfilesXML();
@@ -317,6 +319,11 @@ public class ROS2Node implements Closeable
    public Object getParameter(String name)
    {
       throw new RuntimeException("Not yet implemented");
+   }
+
+   public String getName()
+   {
+      return name;
    }
 
    public int getDomainId()
