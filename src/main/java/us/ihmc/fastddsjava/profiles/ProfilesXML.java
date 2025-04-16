@@ -22,18 +22,22 @@ import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 // https://fast-dds.docs.eprosima.com/en/latest/fastdds/xml_configuration/making_xml_profiles.html
-// TODO: Can this be garbage free?
 public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
 
-   private final ProfilesType profilesType = new ProfilesType();
-   private final LibrarySettingsType librarySettingsType = new LibrarySettingsType();
-   private final LogType logType = new LogType();
-   private final TypesType typesType = new TypesType();
+   private final ProfilesType profilesType;
+   private final LibrarySettingsType librarySettingsType;
+   private final LogType logType;
+   private final TypesType typesType;
 
    public ProfilesXML()
    {
+      profilesType = new ProfilesType();
+      librarySettingsType = new LibrarySettingsType();
+      logType = new LogType();
+      typesType = new TypesType();
+
       librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
    }
 
@@ -73,25 +77,19 @@ public class ProfilesXML
    public void addPublisherProfile(PublisherProfileType publisherProfileType)
    {
       profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_writer"),
-                                         PublisherProfileType.class,
-                                         publisherProfileType));
+                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_writer"), PublisherProfileType.class, publisherProfileType));
    }
 
    public void addSubscriberProfile(SubscriberProfileType subscriberProfileType)
    {
       profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_reader"),
-                                         SubscriberProfileType.class,
-                                         subscriberProfileType));
+                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_reader"), SubscriberProfileType.class, subscriberProfileType));
    }
 
    public void addTopicProfile(TopicProfileType topicProfileType)
    {
       profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "topic"),
-                                         TopicProfileType.class,
-                                         topicProfileType));
+                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "topic"), TopicProfileType.class, topicProfileType));
    }
 
    public void addTransportDescriptorsProfile(TransportDescriptorListType transportDescriptorListType)
