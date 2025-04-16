@@ -278,6 +278,11 @@ public class ROS2Node implements Closeable
       return null;
    }
 
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback)
+   {
+      return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
+   }
+
    public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
    {
       boolean removed = false;
