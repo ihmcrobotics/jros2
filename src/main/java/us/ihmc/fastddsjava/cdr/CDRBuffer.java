@@ -204,7 +204,7 @@ public final class CDRBuffer
       destination.ensureCapacity(charLength);
       for (int i = 0; i < charLength; ++i)
       {
-         int wchar = readInt();
+         int wchar = readWchar();
          destination.setCharAt(i, (char) wchar); // This is safe - last 2 bytes are always unused
       }
 
@@ -214,7 +214,7 @@ public final class CDRBuffer
    public void writeWString(StringBuilder value)
    {
       int charLength = value.length();
-      writeInt(charLength);
+      writeWchar(charLength);
 
       for (int i = 0; i < charLength; i++)
       {
