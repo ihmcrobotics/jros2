@@ -21,7 +21,7 @@ public class IDLWStringSequence extends IDLStringSequence
       assert elements != null;
       assert i < elements();
 
-      return elements[i].length() * 4;
+      return elements[i].length() * 4; // 4 bytes per character
    }
 
    @Override
