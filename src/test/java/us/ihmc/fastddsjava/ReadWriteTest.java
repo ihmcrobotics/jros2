@@ -2,7 +2,6 @@ package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.RepeatedTest;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
@@ -91,14 +90,15 @@ public class ReadWriteTest
       return profilesXML;
    }
 
+   @RepeatedTest(5000)
    @Timeout(30)
-   @Test
    public void readWriteTest() throws InterruptedException, fastddsjavaException
    {
       int retCode;
+      final byte[] sampleData = generateRandomBytes(100000);
 
       // Topic type
-      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("example_interfaces::msg::dds_::String_", CDR_LE);
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
       Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
 
       Pointer participant = fastddsjava_create_participant("unit_test_participant");
@@ -106,7 +106,11 @@ public class ReadWriteTest
       retCode = fastddsjava_register_type(participant, typeSupport);
       retcodeThrowOnError(retCode);
 
-      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "rt/test_wstring", "unit_test_topic");
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
+
+      // Publisher
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
 
       // Subscriber
       Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
@@ -115,6 +119,7 @@ public class ReadWriteTest
       fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
 
       final AtomicBoolean received = new AtomicBoolean(false);
+      final AtomicBoolean dataCorrect = new AtomicBoolean(false);
 
       // Add callback to listener
       Pointer dataReceive = topicDataWrapperType.create_data();
@@ -127,16 +132,7 @@ public class ReadWriteTest
             synchronized (received)
             {
                fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
-
-               byte[] data = topicDataWrapperReceive.data_vector().get();
-
-               System.out.println("got data");
-
-               for (int i = 0; i < data.length; i++)
-               {
-                  System.out.println(Byte.toUnsignedInt(data[i]));
-               }
-               System.out.println();
+               dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
 
                received.set(true);
                received.notify();
@@ -145,6 +141,19 @@ public class ReadWriteTest
       };
       listener.set_on_data_available_callback(onDataCallback);
       fastddsjava_datareader_set_listener(dataReader, listener);
+
+      Pointer data = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
+
+      // Pack wrapper with data
+      topicDataWrapper.data_vector().resize(sampleData.length);
+      topicDataWrapper.data_ptr().put(sampleData);
+
+      // Create reader with listener
+
+      // Send the data
+      retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+      retcodeThrowOnError(retCode);
 
       // Wait to receive data
       synchronized (received)
@@ -156,14 +165,18 @@ public class ReadWriteTest
       }
 
       // Assert the data was received correctly
+      assertTrue(dataCorrect.get());
 
       // Delete / release all references
       assertTrue(sampleInfo.releaseReference());
       topicDataWrapperType.delete_data(dataReceive);
+      topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
       retcodeThrowOnError(fastddsjava_delete_subscriber(participant, subscriber));
+      retcodeThrowOnError(fastddsjava_delete_datawriter(publisher, dataWriter));
+      retcodeThrowOnError(fastddsjava_delete_publisher(participant, publisher));
       retcodeThrowOnError(fastddsjava_delete_topic(participant, topic));
       retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
       retcodeThrowOnError(fastddsjava_delete_participant(participant));
