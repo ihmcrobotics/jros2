@@ -1,8 +1,6 @@
 package us.ihmc.jros2;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,18 +32,24 @@ public class ROS2MessageGenerator
       }
    }
 
-   public static void main(String[] args) throws IOException
+   private static final String TEST_MSG = """
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+                  
+                  
+         bool[<=3] some_bool
+                  
+         """;
+
+   private static void parse()
    {
-      File testFile = new File("Bool.msg");
+      String messageContent = TEST_MSG;
 
-      if (!testFile.exists())
-      {
-         return;
-      }
-
-      String testFileContent = Files.readString(testFile.toPath());
-
-      String[] tokens = testFileContent.replace("\n", " <NEWLINE> ").trim().split("\\s+");
+      String[] tokens = messageContent.replace("\n", " <NEWLINE> ").trim().split("\\s+");
 
       for (int i = 0; i < tokens.length; ++i)
       {
@@ -116,5 +120,10 @@ public class ROS2MessageGenerator
             }
          }
       }
+   }
+
+   public static void main(String[] args) throws IOException
+   {
+      parse();
    }
 }
