@@ -1,6 +1,7 @@
 package us.ihmc.jros2;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,6 +33,19 @@ public class ROS2MessageGenerator
       }
    }
 
+   private static class MessageContext
+   {
+      protected String name;
+      // TODO constants
+      protected Map<String, Field> fields = new HashMap<>();
+
+      @Override
+      public String toString()
+      {
+         return "MessageContext{" + "name='" + name + '\'' + ", fields=" + fields + '}';
+      }
+   }
+
    private static final String TEST_MSG = """
          # Some comment
          # Some comment
@@ -41,15 +55,21 @@ public class ROS2MessageGenerator
          # Some comment
                   
                   
-         bool[<=3] some_bool
+         bool[1] field1
+         bool[<=3] field2
+         nontype[<=234] field3
+         float32[] field4 # Some comment
+                  
+           uint8 field5
+                  
+         # Some comment
+                  
                   
          """;
 
-   private static void parse()
+   private static void parse(String content, MessageContext context)
    {
-      String messageContent = TEST_MSG;
-
-      String[] tokens = messageContent.replace("\n", " <NEWLINE> ").trim().split("\\s+");
+      String[] tokens = content.replace("\n", " <NEWLINE> ").trim().split("\\s+");
 
       for (int i = 0; i < tokens.length; ++i)
       {
@@ -116,14 +136,24 @@ public class ROS2MessageGenerator
 
                Field field = new Field(type, fieldName, array, upperBounded, unbounded, length);
 
-               System.out.println(field);
+               context.fields.put(fieldName, field);
             }
          }
       }
    }
 
-   public static void main(String[] args) throws IOException
+   public static void generate(MessageContext context)
    {
-      parse();
+      
+   }
+
+   public static void main(String[] args)
+   {
+      MessageContext context = new MessageContext();
+      context.name = "TestMsg.msg";
+
+      parse(TEST_MSG, context);
+
+      System.out.println(context);
    }
 }
