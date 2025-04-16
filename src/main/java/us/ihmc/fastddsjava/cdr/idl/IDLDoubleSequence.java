@@ -66,6 +66,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    public double get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

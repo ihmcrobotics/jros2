@@ -66,6 +66,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    public long get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

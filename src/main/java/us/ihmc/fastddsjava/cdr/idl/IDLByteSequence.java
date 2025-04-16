@@ -66,6 +66,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    public byte get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

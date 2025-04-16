@@ -80,32 +80,14 @@ public final class CDRBuffer
       return (char) readByte();
    }
 
-   public void writeWideChar(char value)
+   public void writeWchar(int value)
    {
-      // Write number of bytes this character uses
-      writeByte((byte) 2);
-
-      // Write the value
-      buffer.putChar(value);
+      writeInt(value);
    }
 
-   public char readWideChar()
+   public int readWchar()
    {
-      // Read the number of bytes the wchar uses
-      byte charBytes = readByte();
-
-      // We can only accept 2 byte characters in Java
-      return switch (charBytes)
-      {
-         case 1 -> readChar();
-         case 2 -> buffer.getChar();
-         default ->
-         {
-            // Skip the character and return null character
-            buffer.position(buffer.position() + charBytes);
-            yield '\u0000';
-         }
-      };
+      return readInt();
    }
 
    public void writeShort(short value)
@@ -203,7 +185,7 @@ public final class CDRBuffer
    {
       // Write length of string
       int length = value.length();
-      writeInt(length + 1); // length of string + null terminator
+      writeInt(length + 1); // Length of string + null terminator
 
       // Write the string
       for (int i = 0; i < length; ++i)
@@ -213,6 +195,33 @@ public final class CDRBuffer
 
       // Add null terminator
       writeChar('\0');
+   }
+
+   public void readWString(StringBuilder destination)
+   {
+      int charLength = readInt();
+
+      destination.ensureCapacity(charLength);
+      for (int i = 0; i < charLength; ++i)
+      {
+         int wchar = readInt();
+         destination.setCharAt(i, (char) wchar); // This is safe - last 2 bytes are always unused
+      }
+
+      // wstring has no null terminator
+   }
+
+   public void writeWString(StringBuilder value)
+   {
+      int charLength = value.length();
+      writeInt(charLength);
+
+      for (int i = 0; i < charLength; i++)
+      {
+         writeInt(value.codePointAt(i));
+      }
+
+      // wstring has no null terminator
    }
 
    public void alignBuffer(int byteBoundary)
