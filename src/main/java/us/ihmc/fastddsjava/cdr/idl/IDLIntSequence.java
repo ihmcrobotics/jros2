@@ -66,6 +66,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    public int get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

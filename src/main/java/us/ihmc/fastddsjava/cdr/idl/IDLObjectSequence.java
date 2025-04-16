@@ -98,6 +98,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public T get(int index)
    {
       assert index < elements();
+
       return elements[index];
    }
 

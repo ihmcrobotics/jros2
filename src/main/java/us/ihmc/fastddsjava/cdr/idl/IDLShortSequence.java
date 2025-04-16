@@ -66,6 +66,7 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
    public short get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

@@ -1,7 +1,5 @@
 package us.ihmc.jros2;
 
-import us.ihmc.log.LogTools;
-
 interface jros2Settings
 {
    /**
@@ -45,16 +43,24 @@ interface jros2Settings
          {
             return Integer.parseInt(System.getenv("ROS_DOMAIN_ID"));
          }
-         catch (NumberFormatException e)
+         catch (NumberFormatException ignored)
          {
-            return 0;
+            return new jros2SettingsDefault().defaultDomainId();
          }
       }
 
       @Override
       public String[] interfaceWhitelist()
       {
-         return System.getProperty("ROS_ADDRESS_RESTRICTION").split("\\s*,\\s*");
+         String property = System.getenv("ROS_ADDRESS_RESTRICTION");
+         if (property != null)
+         {
+            return property.split("\\s*,\\s*");
+         }
+         else
+         {
+            return new jros2SettingsDefault().interfaceWhitelist();
+         }
       }
    }
 
@@ -70,18 +76,24 @@ interface jros2Settings
          {
             return Integer.parseInt(System.getProperty("ros.domain.id"));
          }
-         catch (NumberFormatException e)
+         catch (NumberFormatException ignored)
          {
-            LogTools.error(e);
+            return new jros2SettingsDefault().defaultDomainId();
          }
-
-         return 0;
       }
 
       @Override
       public String[] interfaceWhitelist()
       {
-         return System.getProperty("ros.address.restriction").split("\\s*,\\s*");
+         String property = System.getProperty("ros.address.restriction");
+         if (property != null)
+         {
+            return property.split("\\s*,\\s*");
+         }
+         else
+         {
+            return new jros2SettingsDefault().interfaceWhitelist();
+         }
       }
    }
 }

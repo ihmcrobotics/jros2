@@ -22,7 +22,8 @@ final class jros2 implements jros2Settings
       settingsProp = new jros2SettingsProp();
       settingsFile = new jros2SettingsFile();
 
-      settingsFile.load();
+      // TODO:
+//      settingsFile.load();
 
       instance = this;
    }

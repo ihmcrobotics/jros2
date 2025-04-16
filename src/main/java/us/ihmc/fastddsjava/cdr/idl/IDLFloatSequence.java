@@ -66,6 +66,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    public float get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 

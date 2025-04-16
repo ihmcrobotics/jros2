@@ -8,8 +8,8 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 {
    private static final int DEFAULT_STRING_CAPACITY = 16;
 
-   private StringBuilder[] elements;
-   private int position;
+   protected StringBuilder[] elements;
+   protected int position;
 
    public IDLStringSequence(int capacity)
    {
@@ -95,6 +95,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    public StringBuilder get(int index)
    {
       assert index < elements();
+
       return elements[index];
    }
 

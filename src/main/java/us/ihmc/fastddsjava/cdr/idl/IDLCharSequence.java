@@ -66,6 +66,7 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    public char get(int index)
    {
       assert index < elements();
+
       return buffer.get(index);
    }
 
