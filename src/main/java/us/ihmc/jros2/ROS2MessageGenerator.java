@@ -24,6 +24,16 @@ public class ROS2MessageGenerator
                                                        "string",
                                                        "wstring"};
 
+   private record Field(String type, String name, boolean array, boolean upperBounded, boolean unbounded, int length)
+   {
+      @Override
+      public String toString()
+      {
+         return "Field{" + "type='" + type + '\'' + ", name='" + name + '\'' + ", array=" + array + ", upperBounded=" + upperBounded + ", unbounded="
+                + unbounded + ", length=" + length + '}';
+      }
+   }
+
    public static void main(String[] args) throws IOException
    {
       File testFile = new File("Bool.msg");
@@ -62,31 +72,47 @@ public class ROS2MessageGenerator
 
          for (String type : TYPES)
          {
-            Pattern pattern = Pattern.compile(type + "(\\[(<=)?\\d*])?$");
+            Pattern pattern = Pattern.compile(type + "(\\[(<=)?(\\d*)?])?$");
             Matcher matcher = pattern.matcher(token);
 
             if (matcher.matches())
             {
-               boolean arr = token.contains("[");
-               boolean seq = false;
-               boolean unbounded = false;
+               boolean array = token.contains("[");
+               boolean upperBounded = false;
                int length = 0;
+               boolean unbounded = false;
 
-               if (arr)
+               if (array)
                {
                   String boundOp = matcher.group(2);
                   String lengthStr = matcher.group(3);
-                  length = Integer.parseInt(lengthStr); // TODO: NumberFormatException check
+
+                  if (lengthStr != null && !lengthStr.isEmpty())
+                  {
+                     try
+                     {
+                        length = Integer.parseInt(lengthStr);
+                     }
+                     catch (NumberFormatException ignored)
+                     {
+                     }
+                  }
+                  else
+                  {
+                     unbounded = true;
+                  }
 
                   if (boundOp != null)
                   {
-                     // It's a bounded sequence, not a fixed array
+                     upperBounded = true;
                   }
                }
 
                String fieldName = tokens[i + 1];
 
-               System.out.println("field: " + fieldName + " (" + type + ")");
+               Field field = new Field(type, fieldName, array, upperBounded, unbounded, length);
+
+               System.out.println(field);
             }
          }
       }
