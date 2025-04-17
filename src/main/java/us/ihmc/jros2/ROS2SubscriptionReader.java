@@ -6,7 +6,7 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
  * A way to read ROS2Message from a {@link CDRBuffer}, given a {@link ROS2Topic}.
  * Provides both an allocation-free and an allocation approach.
  */
-public class ROS2SubscriptionReader<T extends ROS2Message<T>>
+public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements MessageStatisticsProvider
 {
    static
    {
@@ -50,5 +50,29 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       }
 
       return data;
+   }
+
+   @Override
+   public long getNumberOfReceivedMessages()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getCurrentMessageSize()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getLargestMessageSize()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getCumulativePayloadBytes()
+   {
+      return 0;
    }
 }

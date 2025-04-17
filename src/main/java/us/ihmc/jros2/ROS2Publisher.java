@@ -13,7 +13,7 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 /**
  * A ROS 2-compatible publisher for publishing {@link ROS2Message} types.
  */
-public class ROS2Publisher<T extends ROS2Message<T>>
+public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatisticsProvider
 {
    static
    {
@@ -92,5 +92,29 @@ public class ROS2Publisher<T extends ROS2Message<T>>
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
          retcodePrintOnError(fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher));
       }
+   }
+
+   @Override
+   public long getNumberOfReceivedMessages()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getCurrentMessageSize()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getLargestMessageSize()
+   {
+      return 0;
+   }
+
+   @Override
+   public long getCumulativePayloadBytes()
+   {
+      return 0;
    }
 }
