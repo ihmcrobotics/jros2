@@ -1,6 +1,10 @@
 package us.ihmc.jros2;
 
+import org.stringtemplate.v4.ST;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,21 +27,44 @@ public class ROS2MessageGenerator
                                                        "string",
                                                        "wstring"};
 
-   private record Field(String type, String name, boolean array, boolean upperBounded, boolean unbounded, int length)
+   public static class Field
    {
+      public String type;
+      public String name;
+      public boolean array;
+      public boolean upperBounded;
+      public boolean unbounded;
+      public int length;
+
+      public Field(String type, String name, boolean array, boolean upperBounded, boolean unbounded, int length)
+      {
+         this.type = type;
+         this.name = name;
+         this.array = array;
+         this.upperBounded = upperBounded;
+         this.unbounded = unbounded;
+         this.length = length;
+      }
+
       @Override
       public String toString()
       {
          return "Field{" + "type='" + type + '\'' + ", name='" + name + '\'' + ", array=" + array + ", upperBounded=" + upperBounded + ", unbounded="
                 + unbounded + ", length=" + length + '}';
       }
+
+      public String getName()
+      {
+         return name;
+      }
    }
 
    private static class MessageContext
    {
-      protected String name;
+      public String name;
+      public String className;
       // TODO constants
-      protected Map<String, Field> fields = new HashMap<>();
+      public Map<String, Field> fields = new HashMap<>();
 
       @Override
       public String toString()
@@ -142,18 +169,74 @@ public class ROS2MessageGenerator
       }
    }
 
+   private static final String template = """
+         package us.ihmc.jros2.msg;
+                  
+         import us.ihmc.fastddsjava.cdr.CDRBuffer;
+         import us.ihmc.jros2.ROS2Message;
+                  
+         public class <className> implements ROS2Message<<className>>
+         {
+            public static final String name = "std_msgs::msg::dds_::Bool_";
+                  
+            <fields:{ field | private <field.type> <field.name>_;\n }>
+            @Override
+            public int calculateSizeBytes(int currentAlignment)
+            {
+               int initialAlignment = currentAlignment;
+                  
+               currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // 1 byte for data
+                  
+               return currentAlignment - initialAlignment;
+            }
+                  
+            @Override
+            public void serialize(CDRBuffer buffer)
+            {
+               buffer.writeBoolean(data_);
+            }
+                  
+            @Override
+            public void deserialize(CDRBuffer buffer)
+            {
+               data_ = buffer.readBoolean();
+            }
+                  
+            @Override
+            public String getName()
+            {
+               return name;
+            }
+                  
+            @Override
+            public void set(<className> from)
+            {
+               data_ = from.data_;
+            }
+         }
+         """;
+
    public static void generate(MessageContext context)
    {
-      
+      List<Field> fields = new ArrayList<>(context.fields.values());
+
+      ST st = new ST(template);
+      st.add("fields", fields);
+      st.add("name", context.name);
+      st.add("className", context.className);
+      System.out.println(st.render());
    }
 
    public static void main(String[] args)
    {
       MessageContext context = new MessageContext();
       context.name = "TestMsg.msg";
+      context.className = "TestMsg";
 
       parse(TEST_MSG, context);
 
-      System.out.println(context);
+      generate(context);
+
+      //      System.out.println(context);
    }
 }

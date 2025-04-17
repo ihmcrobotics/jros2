@@ -50,6 +50,10 @@ dependencies {
     api("com.sun.xml.bind:jaxb-impl:4.0.5") {
         isTransitive = true
     }
+    api("org.antlr:ST4:4.3.4") {
+        isTransitive = true
+    }
+
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
 }
