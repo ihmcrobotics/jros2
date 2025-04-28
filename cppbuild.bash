@@ -22,10 +22,8 @@ fi
 tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 
 FASTDDS_VERSION=3.2.0
-if [ ! -f "Fast-DDS-$FASTDDS_VERSION.tar.gz" ]; then
-  curl -o Fast-DDS-$FASTDDS_VERSION.tar.gz https://codeload.github.com/eProsima/Fast-DDS/tar.gz/refs/tags/v$FASTDDS_VERSION
-fi
-tar -xvf Fast-DDS-$FASTDDS_VERSION.tar.gz
+# Using git for libtinyxml and libasio submodules
+git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS-$FASTDDS_VERSION
 
 INSTALL_DIR=$(pwd)
 
@@ -50,9 +48,10 @@ popd
 # Build Fast-DDS
 pushd .
 cd Fast-DDS-$FASTDDS_VERSION
+git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --target install -j $(nproc)
 popd
 
