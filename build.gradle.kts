@@ -58,8 +58,9 @@ dependencies {
         isTransitive = true
     }
 
-    testImplementation(platform("org.junit:junit-bom:5.9.1"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+    testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
 }
 
 tasks.test {
