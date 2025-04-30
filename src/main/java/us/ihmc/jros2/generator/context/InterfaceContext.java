@@ -1,4 +1,4 @@
-package us.ihmc.jros2.interfaces.context;
+package us.ihmc.jros2.generator.context;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

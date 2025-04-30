@@ -1,4 +1,4 @@
-package us.ihmc.jros2.interfaces.context;
+package us.ihmc.jros2.generator.context;
 
 public class Field // Cannot be a record
 {

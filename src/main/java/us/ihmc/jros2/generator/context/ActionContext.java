@@ -1,4 +1,4 @@
-package us.ihmc.jros2.interfaces.context;
+package us.ihmc.jros2.generator.context;
 
 import java.util.HashMap;
 import java.util.Map;

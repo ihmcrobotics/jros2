@@ -1,8 +1,8 @@
-package us.ihmc.jros2.interfaces;
+package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
-import us.ihmc.jros2.interfaces.context.Field;
-import us.ihmc.jros2.interfaces.context.MsgContext;
+import us.ihmc.jros2.generator.context.Field;
+import us.ihmc.jros2.generator.context.MsgContext;
 
 import java.io.File;
 import java.io.IOException;
