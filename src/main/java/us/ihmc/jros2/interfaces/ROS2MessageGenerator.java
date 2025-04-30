@@ -1,11 +1,11 @@
 package us.ihmc.jros2.interfaces;
 
 import org.stringtemplate.v4.ST;
+import us.ihmc.jros2.interfaces.context.Field;
+import us.ihmc.jros2.interfaces.context.MsgContext;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,52 +38,6 @@ public class ROS2MessageGenerator
                                                        "string",
                                                        "wstring"};
 
-   public static class Field
-   {
-      public String type;
-      public String name;
-      public boolean array;
-      public boolean upperBounded;
-      public boolean unbounded;
-      public int length;
-
-      public Field(String type, String name, boolean array, boolean upperBounded, boolean unbounded, int length)
-      {
-         this.type = type;
-         this.name = name;
-         this.array = array;
-         this.upperBounded = upperBounded;
-         this.unbounded = unbounded;
-         this.length = length;
-      }
-
-      @Override
-      public String toString()
-      {
-         return "Field{" + "type='" + type + '\'' + ", name='" + name + '\'' + ", array=" + array + ", upperBounded=" + upperBounded + ", unbounded="
-                + unbounded + ", length=" + length + '}';
-      }
-
-      public String getName()
-      {
-         return name;
-      }
-   }
-
-   private static class MessageContext
-   {
-      public String name;
-      public String className;
-      // TODO constants
-      public Map<String, Field> fields = new HashMap<>();
-
-      @Override
-      public String toString()
-      {
-         return "MessageContext{" + "name='" + name + '\'' + ", fields=" + fields + '}';
-      }
-   }
-
    private static final String TEST_MSG = """
          # Some comment
          # Some comment
@@ -105,7 +59,7 @@ public class ROS2MessageGenerator
                   
          """;
 
-   private static void parse(String content, MessageContext context)
+   private static void parse(String content, MsgContext context)
    {
       String[] tokens = content.replace("\n", " <NEWLINE> ").trim().split("\\s+");
 
@@ -174,7 +128,7 @@ public class ROS2MessageGenerator
 
                Field field = new Field(type, fieldName, array, upperBounded, unbounded, length);
 
-               context.fields.put(fieldName, field);
+               context.getFields().put(fieldName, field);
             }
          }
       }
@@ -227,22 +181,20 @@ public class ROS2MessageGenerator
          }
          """;
 
-   public static void generate(MessageContext context)
+   public static void generate(MsgContext context)
    {
-      List<Field> fields = new ArrayList<>(context.fields.values());
+      List<Field> fields = new ArrayList<>(context.getFields().values());
 
       ST st = new ST(template);
       st.add("fields", fields);
-      st.add("name", context.name);
-      st.add("className", context.className);
+      st.add("name", context.getName());
+      st.add("className", context.getJavaClassName());
       System.out.println(st.render());
    }
 
    public static void main(String[] args)
    {
-      MessageContext context = new MessageContext();
-      context.name = "TestMsg.msg";
-      context.className = "TestMsg";
+      MsgContext context = new MsgContext("test_pkg", "TestMsg.msg");
 
       parse(TEST_MSG, context);
 

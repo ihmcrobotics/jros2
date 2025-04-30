@@ -23,7 +23,7 @@ public abstract class InterfaceContext
 
    public String getNameWithoutExtension()
    {
-      return getName().substring(0, getName().indexOf(".") - 1);
+      return getName().substring(0, getName().indexOf("."));
    }
 
    public String getJavaClassName()
