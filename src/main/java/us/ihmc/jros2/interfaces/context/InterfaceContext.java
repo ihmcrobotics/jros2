@@ -60,8 +60,6 @@ public abstract class InterfaceContext
 
       for (int position = 0; position < tokens.length; ++position)
       {
-         onToken(tokens, position);
-
          // Skip new lines
          if (tokens[position].equals("<NEWLINE>"))
          {
@@ -80,6 +78,8 @@ public abstract class InterfaceContext
             position = position + j;
             continue;
          }
+
+         onToken(tokens, position);
 
          Field field = parseField(tokens, position);
 
