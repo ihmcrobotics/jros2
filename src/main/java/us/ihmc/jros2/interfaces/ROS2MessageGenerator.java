@@ -1,4 +1,4 @@
-package us.ihmc.jros2;
+package us.ihmc.jros2.interfaces;
 
 import org.stringtemplate.v4.ST;
 
@@ -11,6 +11,17 @@ import java.util.regex.Pattern;
 
 public class ROS2MessageGenerator
 {
+   /*
+      Iterate through all messages in every package and subpackage recursively in ros2_interfaces dir
+
+      Add all messages to some data structure before parsing, so they can reference each other. We can
+      error if a declared message type in a .msg field doesn't exist.
+
+
+
+    */
+
+
    private static final String[] TYPES = new String[] {"bool",
                                                        "byte",
                                                        "char",
