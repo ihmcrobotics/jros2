@@ -4,8 +4,15 @@ import org.stringtemplate.v4.ST;
 import us.ihmc.jros2.interfaces.context.Field;
 import us.ihmc.jros2.interfaces.context.MsgContext;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class ROS2MessageGenerator
 {
@@ -19,26 +26,84 @@ public class ROS2MessageGenerator
 
     */
 
-   private static final String TEST_MSG = """
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
-                  
-                  
-         bool[1] field1
-         bool[<=3] field2
-         nontype[<=234] field3
-         float32[] field4 # Some comment
-                  
-           uint8 field5
-                  
-         # Some comment
-                  
-                  
-         """;
+   private final Map<String, MsgContext> msgs;
+
+   public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
+   {
+      msgs = new HashMap<>();
+
+      for (Path ros2pkgPath : ros2pkgPathsToInclude)
+      {
+         findMsgsInPkg(ros2pkgPath);
+      }
+   }
+
+   private void findMsgsInPkg(Path ros2pkgPath)
+   {
+      if (!ros2pkgPath.resolve("package.xml").toFile().exists())
+      {
+         throw new RuntimeException(ros2pkgPath + " is not a ROS 2 package path");
+      }
+
+      File msgDir = ros2pkgPath.resolve("msg").toFile();
+
+      if (!msgDir.exists() || !msgDir.isDirectory())
+      {
+         throw new RuntimeException(ros2pkgPath + " does not contain a msg directory");
+      }
+
+      for (File file : Objects.requireNonNull(msgDir.listFiles()))
+      {
+         if (file.isFile() && file.getName().endsWith(".msg"))
+         {
+            String fileContent;
+
+            try
+            {
+               fileContent = Files.readString(file.toPath());
+            }
+            catch (IOException e)
+            {
+               throw new RuntimeException("Could not read .msg file:  " + file.getName());
+            }
+
+            MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
+
+            msgs.put(file.getName(), context);
+         }
+      }
+   }
+
+   public static void main(String[] args)
+   {
+      ROS2MessageGenerator messageGenerator = new ROS2MessageGenerator(Path.of(new File("ros2_interfaces/common_interfaces/actionlib_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/diagnostic_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/geometry_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/nav_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/sensor_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/shape_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/std_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/stereo_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/trajectory_msgs").toURI()),
+                                                                       Path.of(new File("ros2_interfaces/common_interfaces/visualization_msgs").toURI()));
+
+
+      messageGenerator.msgs.forEach((s, msgContext) -> {
+         System.out.println(msgContext.getROS2PackageName());
+      });
+
+   }
+
+   public static void generate(MsgContext context)
+   {
+      List<Field> fields = new ArrayList<>(context.getFields().values());
+
+      ST st = new ST(template);
+      st.add("fields", fields);
+      st.add("name", context.getName());
+      st.add("className", context.getJavaClassName());
+      System.out.println(st.render());
+   }
 
    private static final String template = """
          package us.ihmc.jros2.msg;
@@ -87,25 +152,24 @@ public class ROS2MessageGenerator
          }
          """;
 
-   public static void generate(MsgContext context)
-   {
-      List<Field> fields = new ArrayList<>(context.getFields().values());
-
-      ST st = new ST(template);
-      st.add("fields", fields);
-      st.add("name", context.getName());
-      st.add("className", context.getJavaClassName());
-      System.out.println(st.render());
-   }
-
-   public static void main(String[] args)
-   {
-      MsgContext context = new MsgContext("test_pkg", "TestMsg.msg");
-
-      context.parse(TEST_MSG);
-
-      generate(context);
-
-      //      System.out.println(context);
-   }
+   private static final String TEST_MSG = """
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+         # Some comment
+                  
+                  
+         bool[1] field1
+         bool[<=3] field2
+         nontype[<=234] field3
+         float32[] field4 # Some comment
+                  
+           uint8 field5
+                  
+         # Some comment
+                  
+                  
+         """;
 }

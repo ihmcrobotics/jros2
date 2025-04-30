@@ -11,9 +11,9 @@ public class ActionContext extends InterfaceContext
    private final Map<String, Field> resultFields;
    private final Map<String, Field> feedbackFields;
 
-   public ActionContext(String packageName, String name)
+   public ActionContext(String packageName, String name, String fileContent)
    {
-      super(packageName, name);
+      super(packageName, name, fileContent);
 
       goalFields = new HashMap<>();
       resultFields = new HashMap<>();

@@ -5,29 +5,32 @@ import java.util.regex.Pattern;
 
 public abstract class InterfaceContext
 {
-   private static final String[] TYPES = new String[] {"bool",
-                                                       "byte",
-                                                       "char",
-                                                       "float32",
-                                                       "float64",
-                                                       "int8",
-                                                       "uint8",
-                                                       "int16",
-                                                       "uint16",
-                                                       "int32",
-                                                       "uint32",
-                                                       "int64",
-                                                       "uint64",
-                                                       "string",
-                                                       "wstring"};
+   // https://docs.ros.org/en/humble/Concepts/Basic/About-Interfaces.html#field-types
+   private static final String[] BUILT_IN_TYPES = new String[] {"bool",
+                                                                "byte",
+                                                                "char",
+                                                                "float32",
+                                                                "float64",
+                                                                "int8",
+                                                                "uint8",
+                                                                "int16",
+                                                                "uint16",
+                                                                "int32",
+                                                                "uint32",
+                                                                "int64",
+                                                                "uint64",
+                                                                "string",
+                                                                "wstring"};
 
    private final String ros2packageName;
-   private final String name;
+   private final String name; // Includes extension (e.g. <.msg, .srv, .action>)
+   private final String fileContent;
 
-   public InterfaceContext(String packageName, String name)
+   public InterfaceContext(String packageName, String name, String fileContent)
    {
       this.ros2packageName = packageName;
       this.name = name;
+      this.fileContent = fileContent;
    }
 
    public String getROS2PackageName()
@@ -38,6 +41,11 @@ public abstract class InterfaceContext
    public String getName()
    {
       return name;
+   }
+
+   public String getFileContent()
+   {
+      return fileContent;
    }
 
    public String getNameWithoutExtension()
@@ -94,7 +102,7 @@ public abstract class InterfaceContext
    {
       String token = tokens[position];
 
-      for (String type : TYPES)
+      for (String type : BUILT_IN_TYPES)
       {
          Pattern pattern = Pattern.compile(type + "(\\[(<=)?(\\d*)?])?$");
          Matcher matcher = pattern.matcher(token);
