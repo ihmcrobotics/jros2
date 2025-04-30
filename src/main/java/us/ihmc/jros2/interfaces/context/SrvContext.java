@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class SrvContext extends InterfaceContext
 {
+   private int section = 0; // 0 = request, 1 = reply
+
    private final Map<String, Field> requestFields;
    private final Map<String, Field> replyFields;
 
@@ -14,6 +16,26 @@ public class SrvContext extends InterfaceContext
 
       requestFields = new HashMap<>();
       replyFields = new HashMap<>();
+   }
+
+   @Override
+   protected void onToken(String[] tokens, int position)
+   {
+      if (tokens[position].equals("---"))
+      {
+         if (section < 1)
+            section++;
+      }
+   }
+
+   @Override
+   protected void onField(Field field)
+   {
+      switch (section)
+      {
+         case 0 -> requestFields.put(field.getName(), field);
+         case 1 -> replyFields.put(field.getName(), field);
+      }
    }
 
    public Map<String, Field> getRequestFields()

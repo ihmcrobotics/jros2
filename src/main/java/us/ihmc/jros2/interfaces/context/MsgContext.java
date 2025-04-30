@@ -14,6 +14,18 @@ public class MsgContext extends InterfaceContext
       fields = new HashMap<>();
    }
 
+   @Override
+   protected void onToken(String[] tokens, int position)
+   {
+      // Do nothing
+   }
+
+   @Override
+   protected void onField(Field field)
+   {
+      fields.put(field.getName(), field);
+   }
+
    public Map<String, Field> getFields()
    {
       return fields;

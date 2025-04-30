@@ -1,6 +1,6 @@
 package us.ihmc.jros2.interfaces.context;
 
-public class Field
+public class Field // Cannot be a record
 {
    private final String type;
    private final String name;
