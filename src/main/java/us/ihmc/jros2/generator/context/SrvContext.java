@@ -24,7 +24,9 @@ public class SrvContext extends InterfaceContext
       if (tokens[position].equals("---"))
       {
          if (section < 1)
+         {
             section++;
+         }
       }
    }
 

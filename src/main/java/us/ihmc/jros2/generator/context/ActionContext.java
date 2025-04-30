@@ -26,7 +26,9 @@ public class ActionContext extends InterfaceContext
       if (tokens[position].equals("---"))
       {
          if (section < 2)
+         {
             section++;
+         }
       }
    }
 
