@@ -1,5 +1,7 @@
 package us.ihmc.jros2;
 
+import java.util.Map;
+
 interface jros2Settings
 {
    /**
@@ -36,12 +38,29 @@ interface jros2Settings
     */
    class jros2SettingsEnv implements jros2Settings
    {
+      private final Map<String, String> env;
+
+      public jros2SettingsEnv()
+      {
+         this(System.getenv());
+      }
+
+      /**
+       * Constructor mainly for unit tests, so a fake environment can be given.
+       *
+       * @param env The system environment.
+       */
+      public jros2SettingsEnv(Map<String, String> env)
+      {
+         this.env = env;
+      }
+
       @Override
       public int defaultDomainId()
       {
          try
          {
-            return Integer.parseInt(System.getenv("ROS_DOMAIN_ID"));
+            return Integer.parseInt(env.get("ROS_DOMAIN_ID"));
          }
          catch (NumberFormatException ignored)
          {
@@ -52,7 +71,7 @@ interface jros2Settings
       @Override
       public String[] interfaceWhitelist()
       {
-         String property = System.getenv("ROS_ADDRESS_RESTRICTION");
+         String property = env.get("ROS_ADDRESS_RESTRICTION");
          if (property != null)
          {
             return property.split("\\s*,\\s*");

@@ -12,31 +12,31 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="IntPrimitiveTypes">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="bool"/>
- *     &lt;enumeration value="char"/>
- *     &lt;enumeration value="char8"/>
- *     &lt;enumeration value="wchar"/>
- *     &lt;enumeration value="char16"/>
- *     &lt;enumeration value="byte"/>
- *     &lt;enumeration value="octet"/>
- *     &lt;enumeration value="int8"/>
- *     &lt;enumeration value="uint8"/>
- *     &lt;enumeration value="short"/>
- *     &lt;enumeration value="uShort"/>
- *     &lt;enumeration value="int16"/>
- *     &lt;enumeration value="uint16"/>
- *     &lt;enumeration value="long"/>
- *     &lt;enumeration value="uLong"/>
- *     &lt;enumeration value="int32"/>
- *     &lt;enumeration value="uint32"/>
- *     &lt;enumeration value="longLong"/>
- *     &lt;enumeration value="uLongLong"/>
- *     &lt;enumeration value="int64"/>
- *     &lt;enumeration value="uint64"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="IntPrimitiveTypes"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="bool"/&gt;
+ *     &lt;enumeration value="char"/&gt;
+ *     &lt;enumeration value="char8"/&gt;
+ *     &lt;enumeration value="wchar"/&gt;
+ *     &lt;enumeration value="char16"/&gt;
+ *     &lt;enumeration value="byte"/&gt;
+ *     &lt;enumeration value="octet"/&gt;
+ *     &lt;enumeration value="int8"/&gt;
+ *     &lt;enumeration value="uint8"/&gt;
+ *     &lt;enumeration value="short"/&gt;
+ *     &lt;enumeration value="uShort"/&gt;
+ *     &lt;enumeration value="int16"/&gt;
+ *     &lt;enumeration value="uint16"/&gt;
+ *     &lt;enumeration value="long"/&gt;
+ *     &lt;enumeration value="uLong"/&gt;
+ *     &lt;enumeration value="int32"/&gt;
+ *     &lt;enumeration value="uint32"/&gt;
+ *     &lt;enumeration value="longLong"/&gt;
+ *     &lt;enumeration value="uLongLong"/&gt;
+ *     &lt;enumeration value="int64"/&gt;
+ *     &lt;enumeration value="uint64"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  */

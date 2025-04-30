@@ -14,45 +14,45 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="rtpsParticipantAllocationAttributesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="remote_locators" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;all>
- *                   &lt;element name="max_unicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="max_multicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                 &lt;/all>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="total_participants" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
- *         &lt;element name="total_readers" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
- *         &lt;element name="total_writers" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
- *         &lt;element name="send_buffers" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;all>
- *                   &lt;element name="preallocated_number" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *                   &lt;element name="dynamic" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
- *                   &lt;element name="network_buffers_config" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
- *                 &lt;/all>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="max_properties" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *         &lt;element name="max_user_data" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *         &lt;element name="max_partitions" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="rtpsParticipantAllocationAttributesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="remote_locators" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;all&gt;
+ *                   &lt;element name="max_unicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="max_multicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                 &lt;/all&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="total_participants" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
+ *         &lt;element name="total_readers" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
+ *         &lt;element name="total_writers" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
+ *         &lt;element name="send_buffers" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;all&gt;
+ *                   &lt;element name="preallocated_number" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *                   &lt;element name="dynamic" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
+ *                   &lt;element name="network_buffers_config" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
+ *                 &lt;/all&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="max_properties" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *         &lt;element name="max_user_data" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *         &lt;element name="max_partitions" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -282,16 +282,16 @@ public class RtpsParticipantAllocationAttributesType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;all>
-     *         &lt;element name="max_unicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="max_multicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *       &lt;/all>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;all&gt;
+     *         &lt;element name="max_unicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="max_multicast_locators" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *       &lt;/all&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -366,17 +366,17 @@ public class RtpsParticipantAllocationAttributesType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;all>
-     *         &lt;element name="preallocated_number" type="{http://www.eprosima.com}uint32" minOccurs="0"/>
-     *         &lt;element name="dynamic" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
-     *         &lt;element name="network_buffers_config" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
-     *       &lt;/all>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;all&gt;
+     *         &lt;element name="preallocated_number" type="{http://www.eprosima.com}uint32" minOccurs="0"/&gt;
+     *         &lt;element name="dynamic" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
+     *         &lt;element name="network_buffers_config" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
+     *       &lt;/all&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
