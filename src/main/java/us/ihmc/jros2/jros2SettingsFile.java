@@ -4,7 +4,6 @@ import us.ihmc.log.LogTools;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -16,6 +15,9 @@ import java.util.Properties;
  */
 class jros2SettingsFile implements jros2Settings
 {
+   static final String DOMAIN_ID_KEY = "jros2DefaultDomainID";
+   static final String INTERFACE_WHITELIST_KEY = "jros2AddressWhitelist";
+
    private static final Path DEFAULT_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
    private static final Path COMPATIBILITY_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "IHMCNetworkParameters.ini");
 
@@ -23,7 +25,10 @@ class jros2SettingsFile implements jros2Settings
    private final Path compatibilityFilePath;
 
    private int defaultDomainId;
+   private boolean hasDefaultDomainId;
+
    private String[] interfaceWhitelist;
+   private boolean hasInterfaceWhitelist;
 
    jros2SettingsFile()
    {
@@ -38,6 +43,9 @@ class jros2SettingsFile implements jros2Settings
       jros2SettingsDefault defaults = new jros2SettingsDefault();
       defaultDomainId = defaults.defaultDomainId(); // Default ROS 2 domain ID
       interfaceWhitelist = defaults.interfaceWhitelist();
+
+      hasDefaultDomainId = false;
+      hasInterfaceWhitelist = false;
 
       load();
    }
@@ -58,9 +66,9 @@ class jros2SettingsFile implements jros2Settings
 
       // Create the properties
       Properties properties = new Properties();
-      properties.setProperty("jros2DefaultDomainID", String.valueOf(defaultDomainId));
+      properties.setProperty(DOMAIN_ID_KEY, String.valueOf(defaultDomainId));
       if (interfaceWhitelist.length > 0)
-         properties.setProperty("jros2AddressWhitelist", String.join(", ", interfaceWhitelist));
+         properties.setProperty(INTERFACE_WHITELIST_KEY, String.join(", ", interfaceWhitelist));
 
       // Write them out
       try (FileOutputStream output = new FileOutputStream(file))
@@ -102,7 +110,8 @@ class jros2SettingsFile implements jros2Settings
 
       try
       {
-         defaultDomainId = Integer.parseInt(properties.getProperty("jros2DefaultDomainID"));
+         defaultDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
+         hasDefaultDomainId = true;
       }
       catch (NumberFormatException e)
       {
@@ -110,11 +119,10 @@ class jros2SettingsFile implements jros2Settings
          LogTools.error("Could not parse jros2DefaultDomainID in {}", file.getAbsolutePath());
       }
 
-      if (properties.containsKey("jros2AddressWhitelist"))
+      if (properties.containsKey(INTERFACE_WHITELIST_KEY))
       {
-         interfaceWhitelist = Arrays.stream(properties.getProperty("jros2AddressWhitelist").split("\\s*,\\s*")) // Split CSV into multiple strings
-                                    .filter(s -> !s.isEmpty()) // Remove empty strings
-                                    .toArray(String[]::new); // Create the array of strings
+         interfaceWhitelist = properties.getProperty(INTERFACE_WHITELIST_KEY).split("\\s*,\\s*"); // Split CSV into multiple strings
+         hasInterfaceWhitelist = true;
       }
       else
       {
@@ -160,8 +168,20 @@ class jros2SettingsFile implements jros2Settings
    }
 
    @Override
+   public boolean hasDefaultDomainId()
+   {
+      return hasDefaultDomainId;
+   }
+
+   @Override
    public String[] interfaceWhitelist()
    {
       return interfaceWhitelist;
+   }
+
+   @Override
+   public boolean hasInterfaceWhitelist()
+   {
+      return hasInterfaceWhitelist;
    }
 }
