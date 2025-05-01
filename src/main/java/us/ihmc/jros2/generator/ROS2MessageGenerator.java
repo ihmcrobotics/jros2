@@ -1,7 +1,7 @@
 package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
-import us.ihmc.jros2.generator.context.Field;
+import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
 
 import java.io.File;
@@ -96,7 +96,7 @@ public class ROS2MessageGenerator
 
    public static void generate(MsgContext context)
    {
-      List<Field> fields = new ArrayList<>(context.getFields().values());
+      List<InterfaceField> fields = new ArrayList<>(context.getFields().values());
 
       ST st = new ST(template);
       st.add("fields", fields);
@@ -115,7 +115,7 @@ public class ROS2MessageGenerator
          {
             public static final String name = "std_msgs::msg::dds_::Bool_";
                   
-            <fields:{ field | private <field.type> <field.name>_;\n }>
+            <<fields:{ field | private <field.type> <field.name>_;\n }>>
             @Override
             public int calculateSizeBytes(int currentAlignment)
             {

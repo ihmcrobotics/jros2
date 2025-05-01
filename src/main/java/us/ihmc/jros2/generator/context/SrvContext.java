@@ -7,8 +7,8 @@ public class SrvContext extends InterfaceContext
 {
    private int section = 0; // 0 = request, 1 = reply
 
-   private final Map<String, Field> requestFields;
-   private final Map<String, Field> replyFields;
+   private final Map<String, InterfaceField> requestFields;
+   private final Map<String, InterfaceField> replyFields;
 
    public SrvContext(String packageName, String name, String fileContent)
    {
@@ -19,19 +19,16 @@ public class SrvContext extends InterfaceContext
    }
 
    @Override
-   protected void onToken(String[] tokens, int position)
+   protected void onSection()
    {
-      if (tokens[position].equals("---"))
+      if (section < 1)
       {
-         if (section < 1)
-         {
-            section++;
-         }
+         section++;
       }
    }
 
    @Override
-   protected void onField(Field field)
+   protected void onField(InterfaceField field)
    {
       switch (section)
       {
@@ -40,12 +37,12 @@ public class SrvContext extends InterfaceContext
       }
    }
 
-   public Map<String, Field> getRequestFields()
+   public Map<String, InterfaceField> getRequestFields()
    {
       return requestFields;
    }
 
-   public Map<String, Field> getReplyFields()
+   public Map<String, InterfaceField> getReplyFields()
    {
       return replyFields;
    }

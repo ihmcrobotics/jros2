@@ -1,27 +1,24 @@
 package us.ihmc.jros2.generator.context;
 
-public class Field // Cannot be a record
+public class InterfaceField // Cannot be a record
 {
-   private final String type;
-   private final String name;
-   private final boolean array;
-   private final boolean upperBounded;
-   private final boolean unbounded;
-   private final int length;
-
-   public Field(String type, String name, boolean array, boolean upperBounded, boolean unbounded, int length)
-   {
-      this.type = type;
-      this.name = name;
-      this.array = array;
-      this.upperBounded = upperBounded;
-      this.unbounded = unbounded;
-      this.length = length;
-   }
+   private String type;
+   private String name;
+   private boolean stringUpperBounded;
+   private int stringLength;
+   private boolean array;
+   private boolean upperBounded;
+   private boolean unbounded;
+   private int length;
 
    public String getType()
    {
       return type;
+   }
+
+   public void type(String type)
+   {
+      this.type = type;
    }
 
    public String getName()
@@ -29,9 +26,39 @@ public class Field // Cannot be a record
       return name;
    }
 
+   public void name(String name)
+   {
+      this.name = name;
+   }
+
+   public boolean isStringUpperBounded()
+   {
+      return stringUpperBounded;
+   }
+
+   public void stringUpperBounded(boolean stringUpperBounded)
+   {
+      this.stringUpperBounded = stringUpperBounded;
+   }
+
+   public int getStringLength()
+   {
+      return stringLength;
+   }
+
+   public void stringLength(int stringLength)
+   {
+      this.stringLength = stringLength;
+   }
+
    public boolean isArray()
    {
       return array;
+   }
+
+   public void array(boolean array)
+   {
+
    }
 
    public boolean isUpperBounded()
@@ -39,13 +66,28 @@ public class Field // Cannot be a record
       return upperBounded;
    }
 
+   public void upperBounded(boolean upperBounded)
+   {
+      this.upperBounded = upperBounded;
+   }
+
    public boolean isUnbounded()
    {
       return unbounded;
    }
 
+   public void unbounded(boolean unbounded)
+   {
+      this.unbounded = unbounded;
+   }
+
    public int getLength()
    {
       return length;
+   }
+
+   public void length(int length)
+   {
+      this.length = length;
    }
 }

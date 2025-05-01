@@ -7,9 +7,9 @@ public class ActionContext extends InterfaceContext
 {
    private int section = 0; // 0 = goal, 1 = result, 2 = feedback
 
-   private final Map<String, Field> goalFields;
-   private final Map<String, Field> resultFields;
-   private final Map<String, Field> feedbackFields;
+   private final Map<String, InterfaceField> goalFields;
+   private final Map<String, InterfaceField> resultFields;
+   private final Map<String, InterfaceField> feedbackFields;
 
    public ActionContext(String packageName, String name, String fileContent)
    {
@@ -21,19 +21,16 @@ public class ActionContext extends InterfaceContext
    }
 
    @Override
-   protected void onToken(String[] tokens, int position)
+   protected void onSection()
    {
-      if (tokens[position].equals("---"))
+      if (section < 2)
       {
-         if (section < 2)
-         {
-            section++;
-         }
+         section++;
       }
    }
 
    @Override
-   protected void onField(Field field)
+   protected void onField(InterfaceField field)
    {
       switch (section)
       {
@@ -43,17 +40,17 @@ public class ActionContext extends InterfaceContext
       }
    }
 
-   public Map<String, Field> getGoalFields()
+   public Map<String, InterfaceField> getGoalFields()
    {
       return goalFields;
    }
 
-   public Map<String, Field> getResultFields()
+   public Map<String, InterfaceField> getResultFields()
    {
       return resultFields;
    }
 
-   public Map<String, Field> getFeedbackFields()
+   public Map<String, InterfaceField> getFeedbackFields()
    {
       return feedbackFields;
    }

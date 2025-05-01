@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class MsgContext extends InterfaceContext
 {
-   private final Map<String, Field> fields;
+   private final Map<String, InterfaceField> fields;
 
    public MsgContext(String packageName, String name, String fileContent)
    {
@@ -15,18 +15,18 @@ public class MsgContext extends InterfaceContext
    }
 
    @Override
-   protected void onToken(String[] tokens, int position)
+   protected void onSection()
    {
-      // Do nothing
+      // Do nothing, msg definitions do not have sections
    }
 
    @Override
-   protected void onField(Field field)
+   protected void onField(InterfaceField field)
    {
       fields.put(field.getName(), field);
    }
 
-   public Map<String, Field> getFields()
+   public Map<String, InterfaceField> getFields()
    {
       return fields;
    }
