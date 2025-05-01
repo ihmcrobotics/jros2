@@ -12,7 +12,7 @@ class jros2SettingsEnv implements jros2Settings
 
    private final Map<String, String> env;
 
-   public jros2SettingsEnv()
+   jros2SettingsEnv()
    {
       this(System.getenv());
    }
@@ -22,7 +22,7 @@ class jros2SettingsEnv implements jros2Settings
     *
     * @param env The system environment.
     */
-   public jros2SettingsEnv(Map<String, String> env)
+   jros2SettingsEnv(Map<String, String> env)
    {
       this.env = env;
    }
