@@ -89,7 +89,7 @@ public class ROS2MessageGenerator
 
 
       messageGenerator.msgs.forEach((s, msgContext) -> {
-         System.out.println(msgContext.getROS2PackageName());
+         msgContext.parse(messageGenerator.msgs);
       });
 
    }
