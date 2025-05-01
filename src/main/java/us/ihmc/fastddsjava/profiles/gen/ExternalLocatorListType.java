@@ -16,18 +16,18 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="externalLocatorListType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;sequence maxOccurs="unbounded"&gt;
- *         &lt;choice&gt;
- *           &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4ExternalLocatorType" maxOccurs="unbounded"/&gt;
- *           &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6ExternalLocatorType" maxOccurs="unbounded"/&gt;
- *         &lt;/choice&gt;
- *       &lt;/sequence&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="externalLocatorListType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;sequence maxOccurs="unbounded">
+ *         &lt;choice>
+ *           &lt;element name="udpv4" type="{http://www.eprosima.com}udpv4ExternalLocatorType" maxOccurs="unbounded"/>
+ *           &lt;element name="udpv6" type="{http://www.eprosima.com}udpv6ExternalLocatorType" maxOccurs="unbounded"/>
+ *         &lt;/choice>
+ *       &lt;/sequence>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

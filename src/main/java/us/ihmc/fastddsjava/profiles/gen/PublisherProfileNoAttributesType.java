@@ -15,26 +15,26 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="publisherProfileNoAttributesType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="topic" type="{http://www.eprosima.com}topicElementType" minOccurs="0"/&gt;
- *         &lt;element name="qos" type="{http://www.eprosima.com}dataWriterQosPoliciesType" minOccurs="0"/&gt;
- *         &lt;element name="times" type="{http://www.eprosima.com}writerTimesType" minOccurs="0"/&gt;
- *         &lt;element name="unicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/&gt;
- *         &lt;element name="multicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/&gt;
- *         &lt;element name="external_unicast_locators" type="{http://www.eprosima.com}externalLocatorListType" minOccurs="0"/&gt;
- *         &lt;element name="ignore_non_matching_locators" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="historyMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/&gt;
- *         &lt;element name="propertiesPolicy" type="{http://www.eprosima.com}propertyPolicyType" minOccurs="0"/&gt;
- *         &lt;element name="userDefinedID" type="{http://www.eprosima.com}int16" minOccurs="0"/&gt;
- *         &lt;element name="entityID" type="{http://www.eprosima.com}int16" minOccurs="0"/&gt;
- *         &lt;element name="matchedSubscribersAllocation" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="publisherProfileNoAttributesType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="topic" type="{http://www.eprosima.com}topicElementType" minOccurs="0"/>
+ *         &lt;element name="qos" type="{http://www.eprosima.com}dataWriterQosPoliciesType" minOccurs="0"/>
+ *         &lt;element name="times" type="{http://www.eprosima.com}writerTimesType" minOccurs="0"/>
+ *         &lt;element name="unicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/>
+ *         &lt;element name="multicastLocatorList" type="{http://www.eprosima.com}locatorListType" minOccurs="0"/>
+ *         &lt;element name="external_unicast_locators" type="{http://www.eprosima.com}externalLocatorListType" minOccurs="0"/>
+ *         &lt;element name="ignore_non_matching_locators" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="historyMemoryPolicy" type="{http://www.eprosima.com}historyMemoryPolicyType" minOccurs="0"/>
+ *         &lt;element name="propertiesPolicy" type="{http://www.eprosima.com}propertyPolicyType" minOccurs="0"/>
+ *         &lt;element name="userDefinedID" type="{http://www.eprosima.com}int16" minOccurs="0"/>
+ *         &lt;element name="entityID" type="{http://www.eprosima.com}int16" minOccurs="0"/>
+ *         &lt;element name="matchedSubscribersAllocation" type="{http://www.eprosima.com}allocationConfigType" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 

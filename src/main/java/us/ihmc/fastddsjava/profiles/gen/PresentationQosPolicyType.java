@@ -13,25 +13,25 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="presentationQosPolicyType"&gt;
- *   &lt;complexContent&gt;
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
- *       &lt;all&gt;
- *         &lt;element name="access_scope" minOccurs="0"&gt;
- *           &lt;simpleType&gt;
- *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
- *               &lt;enumeration value="INSTANCE"/&gt;
- *               &lt;enumeration value="TOPIC"/&gt;
- *               &lt;enumeration value="GROUP"/&gt;
- *             &lt;/restriction&gt;
- *           &lt;/simpleType&gt;
- *         &lt;/element&gt;
- *         &lt;element name="coherent_access" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *         &lt;element name="ordered_access" type="{http://www.eprosima.com}boolean" minOccurs="0"/&gt;
- *       &lt;/all&gt;
- *     &lt;/restriction&gt;
- *   &lt;/complexContent&gt;
- * &lt;/complexType&gt;
+ * &lt;complexType name="presentationQosPolicyType">
+ *   &lt;complexContent>
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
+ *       &lt;all>
+ *         &lt;element name="access_scope" minOccurs="0">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;enumeration value="INSTANCE"/>
+ *               &lt;enumeration value="TOPIC"/>
+ *               &lt;enumeration value="GROUP"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
+ *         &lt;element name="coherent_access" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *         &lt;element name="ordered_access" type="{http://www.eprosima.com}boolean" minOccurs="0"/>
+ *       &lt;/all>
+ *     &lt;/restriction>
+ *   &lt;/complexContent>
+ * &lt;/complexType>
  * </pre>
  * 
  * 
