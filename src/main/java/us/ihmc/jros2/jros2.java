@@ -61,28 +61,28 @@ final class jros2 implements jros2Settings
    }
 
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       // Loop through setting sources in order of priority
       for (jros2Settings settings : settingsSources)
       {
          // If the source specifies a default domain id, return the value
-         if (settings.hasDefaultDomainId())
+         if (settings.hasROSDomainId())
          {
-            return settings.defaultDomainId();
+            return settings.rosDomainId();
          }
       }
 
       // Realistically should never reach here
-      return settingsSources[settingsSources.length - 1].defaultDomainId();
+      return settingsSources[settingsSources.length - 1].rosDomainId();
    }
 
    @Override
-   public boolean hasDefaultDomainId()
+   public boolean hasROSDomainId()
    {
       for (jros2Settings settings : settingsSources)
       {
-         if (settings.hasDefaultDomainId())
+         if (settings.hasROSDomainId())
          {
             return true;
          }

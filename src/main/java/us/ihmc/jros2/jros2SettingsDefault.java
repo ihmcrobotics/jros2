@@ -3,13 +3,13 @@ package us.ihmc.jros2;
 class jros2SettingsDefault implements jros2Settings
 {
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       return 0;
    }
 
    @Override
-   public boolean hasDefaultDomainId()
+   public boolean hasROSDomainId()
    {
       return true;
    }

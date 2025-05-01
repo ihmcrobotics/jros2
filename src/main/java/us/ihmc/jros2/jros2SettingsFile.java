@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -15,8 +14,8 @@ import java.util.Properties;
  */
 class jros2SettingsFile implements jros2Settings
 {
-   static final String DOMAIN_ID_KEY = "jros2DefaultDomainID";
-   static final String INTERFACE_WHITELIST_KEY = "jros2AddressWhitelist";
+   static final String DOMAIN_ID_KEY = "jros2.ros.domain.id";
+   static final String INTERFACE_WHITELIST_KEY = "jros2.fastdds.interface.whitelist";
 
    private static final Path DEFAULT_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
    private static final Path COMPATIBILITY_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "IHMCNetworkParameters.ini");
@@ -41,7 +40,7 @@ class jros2SettingsFile implements jros2Settings
       this.compatibilityFilePath = compatibilityFilePath;
 
       jros2SettingsDefault defaults = new jros2SettingsDefault();
-      defaultDomainId = defaults.defaultDomainId(); // Default ROS 2 domain ID
+      defaultDomainId = defaults.rosDomainId(); // Default ROS 2 domain ID
       interfaceWhitelist = defaults.interfaceWhitelist();
 
       hasDefaultDomainId = false;
@@ -151,24 +150,16 @@ class jros2SettingsFile implements jros2Settings
             LogTools.warn("Found RTPSDomainID in {}, but failed to parse the value ({}).", compatibilityFilePath.getFileName(), rtpsDomainId);
          }
       }
-
-      String interfaceWhitelistCSV = compatibilityProperties.getProperty("RTPSSubnet");
-      if (interfaceWhitelistCSV != null)
-      {
-         interfaceWhitelist = Arrays.stream(interfaceWhitelistCSV.split("\\s*,\\s*")) // Split CSV into multiple strings
-                                    .filter(s -> !s.isEmpty()) // Remove empty strings
-                                    .toArray(String[]::new); // Create the array of strings
-      }
    }
 
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       return defaultDomainId;
    }
 
    @Override
-   public boolean hasDefaultDomainId()
+   public boolean hasROSDomainId()
    {
       return hasDefaultDomainId;
    }

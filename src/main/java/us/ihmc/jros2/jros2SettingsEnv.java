@@ -8,7 +8,7 @@ import java.util.Map;
 class jros2SettingsEnv implements jros2Settings
 {
    static final String DOMAIN_ID_KEY = "ROS_DOMAIN_ID";
-   static final String INTERFACE_WHITELIST_KEY = "ROS_ADDRESS_RESTRICTION";
+   static final String INTERFACE_WHITELIST_KEY = "FASTDDS_INTERFACE_WHITELIST";
 
    private final Map<String, String> env;
 
@@ -28,7 +28,7 @@ class jros2SettingsEnv implements jros2Settings
    }
 
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       try
       {
@@ -36,12 +36,12 @@ class jros2SettingsEnv implements jros2Settings
       }
       catch (NumberFormatException ignored)
       {
-         return new jros2SettingsDefault().defaultDomainId();
+         return new jros2SettingsDefault().rosDomainId();
       }
    }
 
    @Override
-   public boolean hasDefaultDomainId()
+   public boolean hasROSDomainId()
    {
       return env.containsKey(DOMAIN_ID_KEY);
    }

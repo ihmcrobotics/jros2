@@ -34,9 +34,9 @@ public class jros2SettingsTest
       final int environmentDomainId = 112;
       final int fileDomainId = 113;
 
-      final String[] systemPropertyInterfaceWhitelist = {"192.0.2.1/8"};
-      final String[] environmentInterfaceWhitelist = {"192.0.2.2/8", "127.0.0.1/24"};
-      final String[] fileInterfaceWhitelist = {"192.0.2.3/8", "127.0.0.1/8", "0.0.0.0/32"};
+      final String[] systemPropertyInterfaceWhitelist = {"192.0.2.1"};
+      final String[] environmentInterfaceWhitelist = {"192.0.2.2", "127.0.0.1"};
+      final String[] fileInterfaceWhitelist = {"192.0.2.3", "127.0.0.1", "0.0.0.0"};
 
       // Temporary paths
       final Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
@@ -154,16 +154,16 @@ public class jros2SettingsTest
                jros2 instance = new jros2(settingsList.toArray(jros2Settings[]::new));
 
                // The instance should always have values, since the default settings are always added
-               assertTrue(instance.hasDefaultDomainId());
+               assertTrue(instance.hasROSDomainId());
                assertTrue(instance.hasInterfaceWhitelist());
 
                // Ensure the jros2 instance settings values match the highest priority settings that has values.
                for (jros2Settings settings : settingsList)
                {
-                  boolean hasValues = settings.hasDefaultDomainId() && settings.hasInterfaceWhitelist();
+                  boolean hasValues = settings.hasROSDomainId() && settings.hasInterfaceWhitelist();
                   if (hasValues)
                   {
-                     assertEquals(settings.defaultDomainId(), instance.defaultDomainId());
+                     assertEquals(settings.rosDomainId(), instance.rosDomainId());
                      assertEquals(settings.interfaceWhitelist().length, instance.interfaceWhitelist().length);
                      for (int i = 0; i < settings.interfaceWhitelist().length; ++i)
                      {
@@ -192,9 +192,9 @@ public class jros2SettingsTest
    public void testDefaultSettings()
    {
       jros2Settings defaultSettings = new jros2SettingsDefault();
-      assertTrue(defaultSettings.hasDefaultDomainId());
+      assertTrue(defaultSettings.hasROSDomainId());
       assertTrue(defaultSettings.hasInterfaceWhitelist());
-      assertEquals(0, defaultSettings.defaultDomainId());
+      assertEquals(0, defaultSettings.rosDomainId());
       assertEquals(0, defaultSettings.interfaceWhitelist().length);
    }
 
@@ -224,7 +224,7 @@ public class jros2SettingsTest
 
          // Values should match default values
          jros2Settings defaultSettings = new jros2SettingsDefault();
-         assertEquals(defaultSettings.defaultDomainId(), fileSettings.defaultDomainId());
+         assertEquals(defaultSettings.rosDomainId(), fileSettings.rosDomainId());
          assertEquals(defaultSettings.interfaceWhitelist().length, fileSettings.interfaceWhitelist().length);
       }
       finally
@@ -241,7 +241,7 @@ public class jros2SettingsTest
    public void testFileSettingsWithValues() throws IOException
    {
       Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2Settings.properties");
+      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
       Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
 
       File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
@@ -255,7 +255,7 @@ public class jros2SettingsTest
 
          // Put property values
          int domainId = 113;
-         String[] interfaceWhitelist = {"127.0.0.1/8", "192.0.2.1/24"};
+         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
          StringJoiner csvWhitelist = new StringJoiner(", ");
          for (String intrface : interfaceWhitelist)
@@ -271,11 +271,11 @@ public class jros2SettingsTest
 
          jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
 
-         assertTrue(fileSettings.hasDefaultDomainId());
+         assertTrue(fileSettings.hasROSDomainId());
          assertTrue(fileSettings.hasInterfaceWhitelist());
 
          // Ensure values are correct
-         assertEquals(domainId, fileSettings.defaultDomainId());
+         assertEquals(domainId, fileSettings.rosDomainId());
          for (int i = 0; i < interfaceWhitelist.length; ++i)
          {
             assertEquals(interfaceWhitelist[i], fileSettings.interfaceWhitelist()[i]);
@@ -295,7 +295,7 @@ public class jros2SettingsTest
    public void testFileSettingsCompatibilityFile() throws IOException
    {
       Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2Settings.properties");
+      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
       Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
 
       File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
@@ -308,7 +308,7 @@ public class jros2SettingsTest
 
          // Write the properties to the compatibility file
          int domainId = 113;
-         String[] interfaceWhitelist = {"127.0.0.1/8", "192.0.2.1/24"};
+         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
          StringJoiner csvWhitelist = new StringJoiner(", ");
          for (String intrface : interfaceWhitelist)
@@ -326,14 +326,14 @@ public class jros2SettingsTest
          // Create jros2SettingsFile and ensure values are taken from compatibility file
          jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
 
-         assertTrue(fileSettings.hasDefaultDomainId());
-         assertTrue(fileSettings.hasInterfaceWhitelist());
+         // ROS domain id should be taken from the compatibility file
+         assertTrue(fileSettings.hasROSDomainId());
 
-         assertEquals(domainId, fileSettings.defaultDomainId());
-         for (int i = 0; i < interfaceWhitelist.length; ++i)
-         {
-            assertEquals(interfaceWhitelist[i], fileSettings.interfaceWhitelist()[i]);
-         }
+         // Interface whitelist cannot be taken from the compatibility file
+         assertFalse(fileSettings.hasInterfaceWhitelist());
+
+         // Ensure the ROS domain id matches
+         assertEquals(domainId, fileSettings.rosDomainId());
       }
       finally
       {
@@ -349,7 +349,7 @@ public class jros2SettingsTest
    public void testFileSettingsBothFiles() throws IOException
    {
       Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2Settings.properties");
+      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
       Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
 
       File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
@@ -364,7 +364,7 @@ public class jros2SettingsTest
 
          // Write the properties to the properties file
          int domainId = 113;
-         String[] interfaceWhitelist = {"127.0.0.1/8", "192.0.2.1/24"};
+         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
          StringJoiner csvWhitelist = new StringJoiner(", ");
          for (String intrface : interfaceWhitelist)
@@ -381,7 +381,7 @@ public class jros2SettingsTest
          // Write a compatibility properties file with different values
          Properties compatibilityProperties = new Properties();
          compatibilityProperties.setProperty("RTPSDomainID", String.valueOf(domainId - 1));
-         compatibilityProperties.setProperty("RTPSSubnet", "0.0.0.0/32");
+         compatibilityProperties.setProperty("RTPSSubnet", "0.0.0.0");
          try (FileOutputStream output = new FileOutputStream(fakeCompatibilityFile))
          {
             compatibilityProperties.store(output, null);
@@ -390,10 +390,10 @@ public class jros2SettingsTest
          // Create jros2SettingsFile and ensure values are taken from the properties file, NOT compatibility file
          jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
 
-         assertTrue(fileSettings.hasDefaultDomainId());
+         assertTrue(fileSettings.hasROSDomainId());
          assertTrue(fileSettings.hasInterfaceWhitelist());
 
-         assertEquals(domainId, fileSettings.defaultDomainId());
+         assertEquals(domainId, fileSettings.rosDomainId());
          for (int i = 0; i < interfaceWhitelist.length; ++i)
          {
             assertEquals(interfaceWhitelist[i], fileSettings.interfaceWhitelist()[i]);
@@ -419,16 +419,16 @@ public class jros2SettingsTest
       jros2Settings environmentSettings = new jros2SettingsEnv(environment);
 
       // No environment variables defined. Should say it doesn't have values
-      assertFalse(environmentSettings.hasDefaultDomainId());
+      assertFalse(environmentSettings.hasROSDomainId());
       assertFalse(environmentSettings.hasInterfaceWhitelist());
 
       // No environment variables defined. Should return default values
-      assertEquals(defaultSettings.defaultDomainId(), environmentSettings.defaultDomainId());
+      assertEquals(defaultSettings.rosDomainId(), environmentSettings.rosDomainId());
       assertEquals(defaultSettings.interfaceWhitelist().length, environmentSettings.interfaceWhitelist().length);
 
       //// ENVIRONMENT WITH VALUES DEFINED ////
       int domainId = 113;
-      String[] interfaceWhitelist = {"127.0.0.1/8", "192.0.2.1/24"};
+      String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
       StringJoiner csvWhitelist = new StringJoiner(", ");
       for (String intrface : interfaceWhitelist)
@@ -438,11 +438,11 @@ public class jros2SettingsTest
       environmentSettings = new jros2SettingsEnv(environment);
 
       // Should report that it has values
-      assertTrue(environmentSettings.hasDefaultDomainId());
+      assertTrue(environmentSettings.hasROSDomainId());
       assertTrue(environmentSettings.hasInterfaceWhitelist());
 
       // Now the values should reflect the newly defined system properties
-      assertEquals(domainId, environmentSettings.defaultDomainId());
+      assertEquals(domainId, environmentSettings.rosDomainId());
       for (int i = 0; i < interfaceWhitelist.length; ++i)
       {
          assertEquals(interfaceWhitelist[i], environmentSettings.interfaceWhitelist()[i]);
@@ -460,15 +460,15 @@ public class jros2SettingsTest
       jros2Settings systemPropertySettings = new jros2SettingsProp();
 
       // Should say that it doesn't have values
-      assertFalse(systemPropertySettings.hasDefaultDomainId());
+      assertFalse(systemPropertySettings.hasROSDomainId());
       assertFalse(systemPropertySettings.hasInterfaceWhitelist());
 
       // No system properties defined. Should return default values
-      assertEquals(defaultSettings.defaultDomainId(), systemPropertySettings.defaultDomainId());
+      assertEquals(defaultSettings.rosDomainId(), systemPropertySettings.rosDomainId());
       assertEquals(defaultSettings.interfaceWhitelist().length, systemPropertySettings.interfaceWhitelist().length);
 
       int domainId = 113;
-      String[] interfaceWhitelist = {"127.0.0.1/8", "192.0.2.1/24"};
+      String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
       StringJoiner csvWhitelist = new StringJoiner(", ");
       for (String intrface : interfaceWhitelist)
@@ -479,11 +479,11 @@ public class jros2SettingsTest
       System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
 
       // Now it should have values
-      assertTrue(systemPropertySettings.hasDefaultDomainId());
+      assertTrue(systemPropertySettings.hasROSDomainId());
       assertTrue(systemPropertySettings.hasInterfaceWhitelist());
 
       // The values should reflect the newly defined system properties
-      assertEquals(domainId, systemPropertySettings.defaultDomainId());
+      assertEquals(domainId, systemPropertySettings.rosDomainId());
       for (int i = 0; i < interfaceWhitelist.length; ++i)
       {
          assertEquals(interfaceWhitelist[i], systemPropertySettings.interfaceWhitelist()[i]);
@@ -491,7 +491,7 @@ public class jros2SettingsTest
 
       // Change up the system properties
       int newDomainId = 219;
-      String[] newInterfaceWhitelist = {"198.51.100.5/32"};
+      String[] newInterfaceWhitelist = {"198.51.100.5"};
 
       StringJoiner newCSVWhitelist = new StringJoiner(", ");
       for (String intrface : newInterfaceWhitelist)
@@ -502,11 +502,11 @@ public class jros2SettingsTest
       System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, newCSVWhitelist.toString());
 
       // Should still have values
-      assertTrue(systemPropertySettings.hasDefaultDomainId());
+      assertTrue(systemPropertySettings.hasROSDomainId());
       assertTrue(systemPropertySettings.hasInterfaceWhitelist());
 
       // Now the values should reflect the newly defined system properties
-      assertEquals(newDomainId, systemPropertySettings.defaultDomainId());
+      assertEquals(newDomainId, systemPropertySettings.rosDomainId());
       for (int i = 0; i < newInterfaceWhitelist.length; ++i)
       {
          assertEquals(newInterfaceWhitelist[i], systemPropertySettings.interfaceWhitelist()[i]);

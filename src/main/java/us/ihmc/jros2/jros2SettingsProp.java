@@ -6,10 +6,10 @@ package us.ihmc.jros2;
 class jros2SettingsProp implements jros2Settings
 {
    static final String DOMAIN_ID_KEY = "ros.domain.id";
-   static final String INTERFACE_WHITELIST_KEY = "ros.address.restriction";
+   static final String INTERFACE_WHITELIST_KEY = "fastdds.interface.whitelist";
 
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       try
       {
@@ -17,12 +17,12 @@ class jros2SettingsProp implements jros2Settings
       }
       catch (NumberFormatException ignored)
       {
-         return new jros2SettingsDefault().defaultDomainId();
+         return new jros2SettingsDefault().rosDomainId();
       }
    }
 
    @Override
-   public boolean hasDefaultDomainId()
+   public boolean hasROSDomainId()
    {
       return System.getProperties().containsKey(DOMAIN_ID_KEY);
    }
