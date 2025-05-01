@@ -101,7 +101,7 @@ public class ROS2Node implements Closeable
 
    public ROS2Node(String name)
    {
-      this(name, jros2.get().defaultDomainId());
+      this(name, jros2.get().rosDomainId());
    }
 
    public ROS2Node(String name, int domainId)

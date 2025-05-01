@@ -14,44 +14,77 @@ import java.util.Properties;
  */
 class jros2SettingsFile implements jros2Settings
 {
-   private static final Path FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
+   static final String DOMAIN_ID_KEY = "jros2.ros.domain.id";
+   static final String INTERFACE_WHITELIST_KEY = "jros2.fastdds.interface.whitelist";
+
+   private static final Path DEFAULT_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
    private static final Path COMPATIBILITY_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "IHMCNetworkParameters.ini");
 
+   private final Path filePath;
+   private final Path compatibilityFilePath;
+
    private int defaultDomainId;
+   private boolean hasDefaultDomainId;
+
    private String[] interfaceWhitelist;
+   private boolean hasInterfaceWhitelist;
 
    jros2SettingsFile()
    {
-      defaultDomainId = 0; // Default ROS 2 domain ID
-      interfaceWhitelist = new String[] {};
+      this(DEFAULT_FILE_PATH, COMPATIBILITY_FILE_PATH);
    }
 
-   protected void save() throws IOException
+   jros2SettingsFile(Path filePath, Path compatibilityFilePath)
    {
-      File file = FILE_PATH.toFile();
+      this.filePath = filePath;
+      this.compatibilityFilePath = compatibilityFilePath;
+
+      jros2SettingsDefault defaults = new jros2SettingsDefault();
+      defaultDomainId = defaults.rosDomainId(); // Default ROS 2 domain ID
+      interfaceWhitelist = defaults.interfaceWhitelist();
+
+      hasDefaultDomainId = false;
+      hasInterfaceWhitelist = false;
+
+      load();
+   }
+
+   private void createNewSettingsFile() throws IOException
+   {
+      File file = filePath.toFile();
 
       file.getParentFile().mkdirs();
       file.createNewFile();
 
-      Properties properties = new Properties();
-      properties.setProperty("jros2DefaultDomainID", String.valueOf(defaultDomainId));
-      properties.setProperty("jros2AddressWhitelist", String.join(", ", interfaceWhitelist));
+      // If the compatibility file exists, read values from it
+      File compatibilityFile = compatibilityFilePath.toFile();
+      if (compatibilityFile.exists())
+      {
+         setFromCompatibilityFile(compatibilityFile);
+      }
 
+      // Create the properties
+      Properties properties = new Properties();
+      properties.setProperty(DOMAIN_ID_KEY, String.valueOf(defaultDomainId));
+      if (interfaceWhitelist.length > 0)
+         properties.setProperty(INTERFACE_WHITELIST_KEY, String.join(", ", interfaceWhitelist));
+
+      // Write them out
       try (FileOutputStream output = new FileOutputStream(file))
       {
          properties.store(output, null);
       }
    }
 
-   protected void load()
+   private void load()
    {
-      File file = FILE_PATH.toFile();
+      File file = filePath.toFile();
 
       if (!file.exists())
       {
          try
          {
-            save();
+            createNewSettingsFile();
          }
          catch (IOException e)
          {
@@ -76,7 +109,8 @@ class jros2SettingsFile implements jros2Settings
 
       try
       {
-         defaultDomainId = Integer.parseInt(properties.getProperty("jros2DefaultDomainID"));
+         defaultDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
+         hasDefaultDomainId = true;
       }
       catch (NumberFormatException e)
       {
@@ -84,18 +118,61 @@ class jros2SettingsFile implements jros2Settings
          LogTools.error("Could not parse jros2DefaultDomainID in {}", file.getAbsolutePath());
       }
 
-      interfaceWhitelist = properties.getProperty("jros2AddressWhitelist").split("\\s*,\\s*");
+      if (properties.containsKey(INTERFACE_WHITELIST_KEY))
+      {
+         interfaceWhitelist = properties.getProperty(INTERFACE_WHITELIST_KEY).split("\\s*,\\s*"); // Split CSV into multiple strings
+         hasInterfaceWhitelist = true;
+      }
+      else
+      {
+         interfaceWhitelist = new String[0];
+      }
+   }
+
+   private void setFromCompatibilityFile(File compatibilityFile) throws IOException
+   {
+      Properties compatibilityProperties = new Properties();
+
+      try (FileInputStream input = new FileInputStream(compatibilityFile))
+      {
+         compatibilityProperties.load(input);
+      }
+
+      String rtpsDomainId = compatibilityProperties.getProperty("RTPSDomainID");
+      if (rtpsDomainId != null)
+      {
+         try
+         {
+            defaultDomainId = Integer.parseInt(rtpsDomainId);
+         }
+         catch (NumberFormatException numberFormatException)
+         {
+            LogTools.warn("Found RTPSDomainID in {}, but failed to parse the value ({}).", compatibilityFilePath.getFileName(), rtpsDomainId);
+         }
+      }
    }
 
    @Override
-   public int defaultDomainId()
+   public int rosDomainId()
    {
       return defaultDomainId;
+   }
+
+   @Override
+   public boolean hasROSDomainId()
+   {
+      return hasDefaultDomainId;
    }
 
    @Override
    public String[] interfaceWhitelist()
    {
       return interfaceWhitelist;
+   }
+
+   @Override
+   public boolean hasInterfaceWhitelist()
+   {
+      return hasInterfaceWhitelist;
    }
 }
