@@ -50,7 +50,7 @@ class jros2SettingsFile implements jros2Settings
       load();
    }
 
-   protected void createNewSettingsFile() throws IOException
+   private void createNewSettingsFile() throws IOException
    {
       File file = filePath.toFile();
 
