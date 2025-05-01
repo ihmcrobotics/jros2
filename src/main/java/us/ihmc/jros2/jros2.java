@@ -63,10 +63,10 @@ final class jros2 implements jros2Settings
    @Override
    public int defaultDomainId()
    {
-      // Loop through setting locations in order of priority
+      // Loop through setting sources in order of priority
       for (jros2Settings settings : settingsSources)
       {
-         // If the location specifies a default domain id, return the value
+         // If the source specifies a default domain id, return the value
          if (settings.hasDefaultDomainId())
          {
             return settings.defaultDomainId();
@@ -94,10 +94,10 @@ final class jros2 implements jros2Settings
    @Override
    public String[] interfaceWhitelist()
    {
-      // Loop through setting locations in order of priority
+      // Loop through setting sources in order of priority
       for (jros2Settings settings : settingsSources)
       {
-         // If the location specifies a default domain id, return the value
+         // If the source specifies a default domain id, return the value
          if (settings.hasInterfaceWhitelist())
          {
             return settings.interfaceWhitelist();
