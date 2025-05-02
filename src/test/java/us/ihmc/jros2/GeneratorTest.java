@@ -7,7 +7,7 @@ import us.ihmc.jros2.generator.context.MsgContext;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ROS2MessageGeneratorTest
+public class GeneratorTest
 {
    @Test
    public void testInterfaceContextAndParsing()
