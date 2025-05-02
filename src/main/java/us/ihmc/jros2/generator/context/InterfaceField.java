@@ -10,6 +10,9 @@ public class InterfaceField // Cannot be a record
    private boolean upperBounded;
    private boolean unbounded;
    private int length;
+   private String constantValue;
+   private String headerComment;
+   private String trailingComment;
 
    public String getType()
    {
@@ -58,7 +61,7 @@ public class InterfaceField // Cannot be a record
 
    public void array(boolean array)
    {
-
+      this.array = array;
    }
 
    public boolean isUpperBounded()
@@ -89,5 +92,35 @@ public class InterfaceField // Cannot be a record
    public void length(int length)
    {
       this.length = length;
+   }
+
+   public String getConstantValue()
+   {
+      return constantValue;
+   }
+
+   public void constantValue(String constantValue)
+   {
+      this.constantValue = constantValue;
+   }
+
+   public String getHeaderComment()
+   {
+      return headerComment;
+   }
+
+   public void headerComment(String headerComment)
+   {
+      this.headerComment = headerComment;
+   }
+
+   public String getTrailingComment()
+   {
+      return trailingComment;
+   }
+
+   public void trailingComment(String trailingComment)
+   {
+      this.trailingComment = trailingComment;
    }
 }

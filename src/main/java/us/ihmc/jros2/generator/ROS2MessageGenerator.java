@@ -90,6 +90,10 @@ public class ROS2MessageGenerator
 
       messageGenerator.msgs.forEach((s, msgContext) -> {
          msgContext.parse(messageGenerator.msgs);
+         msgContext.getFields().forEach((s1, interfaceField) -> {
+            System.out.println(interfaceField.getHeaderComment());
+            System.out.println(interfaceField.getType() + " " + interfaceField.getName());
+         });
       });
 
    }

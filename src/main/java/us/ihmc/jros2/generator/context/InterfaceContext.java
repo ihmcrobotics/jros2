@@ -1,15 +1,16 @@
 package us.ihmc.jros2.generator.context;
 
-import java.util.Arrays;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public abstract class InterfaceContext
 {
    private final String ros2packageName;
-   private final String name; // Includes extension (e.g. <.msg, .srv, .action>)
+   private final String name; // Includes extension (i.e. <.msg, .srv, .action>)
    private final String fileContent;
+   private String headerComment;
 
    public InterfaceContext(String packageName, String name, String fileContent)
    {
@@ -33,6 +34,11 @@ public abstract class InterfaceContext
       return fileContent;
    }
 
+   public String getHeaderComment()
+   {
+      return headerComment;
+   }
+
    public String getNameWithoutExtension()
    {
       return getName().substring(0, getName().indexOf("."));
@@ -51,52 +57,54 @@ public abstract class InterfaceContext
    {
       String[] lines = fileContent.split("\\R");
 
+      StringJoiner commentLines = new StringJoiner("\n");
+
       for (String line : lines)
       {
-         String[] lineTokens = line.split("\\s+(?![^\\[]*\\])"); // TODO:
+         // Remove leading or trailing whitespace
+         line = line.trim();
 
-         // Remove all tokens that come after a comment token
-         for (int i = 0; i < lineTokens.length; i++)
+         String trailingComment = null;
+
+         // If the entire line is a comment
+         if (line.startsWith("#"))
          {
-            if (lineTokens[i].startsWith("#"))
-            {
-               lineTokens = Arrays.copyOfRange(lineTokens, 0, Math.max(i - 1, 0));
-               break;
-            }
+            commentLines.add(line);
+            continue;
          }
 
-         switch (lineTokens.length)
+         // If the line contains a comment, but it isn't the entire line
+         if (line.contains("#"))
          {
-            case 0:
-               break;
-            case 1:
-               if (lineTokens[0].equals("---")) // Section separator (valid for services and actions)
-               {
-                  onSection();
-               }
-               break;
-            case 2:
-            case 3:
-               // Field, field with default value, or constant field
-               InterfaceField field = parseField(lineTokens, discoveredTypes);
+            String lineWithCommentRemoved = line.substring(0, line.indexOf("#"));
+            trailingComment = line.substring(line.indexOf("#"));
+            line = lineWithCommentRemoved;
+         }
 
-               if (field != null)
-               {
-                  onField(field);
-               }
-
-               break;
+         // If the line is a section separator
+         if (line.equals("---"))
+         {
+            onSection();
+         }
+         else
+         {
+            InterfaceField field = parseField(line, commentLines.toString(), trailingComment, discoveredTypes);
+            commentLines = new StringJoiner("\n");
+            if (field != null)
+            {
+               onField(field);
+            }
          }
       }
    }
 
-   private static final Pattern STRING_WSTRING_PATTERN = Pattern.compile(
+   private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
          "^(?<strtype>string|wstring)(?<strlen><=\\d+)?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])?$");
-   private static final Pattern TYPE_PATTERN = Pattern.compile("^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<length>\\d+)?])?$");
+   private static final Pattern TYPE_PATTERN = Pattern.compile("^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
-   private static InterfaceField parseField(String[] lineTokens, Map<String, MsgContext> discoveredTypes)
+   private static InterfaceField parseField(String line, String headerComment, String trailingComment, Map<String, MsgContext> discoveredTypes)
    {
-      Matcher string_wstring_matcher = STRING_WSTRING_PATTERN.matcher(lineTokens[0]);
+      Matcher string_wstring_matcher = STRING_WSTRING_TYPE_PATTERN.matcher(line);
 
       InterfaceField field = null;
 
@@ -110,29 +118,38 @@ public abstract class InterfaceContext
          String sequenceBoundsStr = string_wstring_matcher.group("seqbounds"); // e.g. <=
          String lengthStr = string_wstring_matcher.group("len"); // e.g. 4
 
+         // TODO
          field = new InterfaceField();
          field.type(stringTypeStr);
          field.stringLength(lengthStr == null ? -1 : Integer.parseInt(stringLengthStr));
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
          field.length(lengthStr == null ? -1 : Integer.parseInt(lengthStr));
+         field.headerComment(headerComment);
+         field.trailingComment(trailingComment);
       }
 
-      Matcher typeMatcher = TYPE_PATTERN.matcher(lineTokens[0]);
+      Matcher typeMatcher = TYPE_PATTERN.matcher(line);
 
       if (typeMatcher.matches())
       {
-         // Example: MyCustomType[<=4]
-         String typeStr = typeMatcher.group("type"); // e.g. MyCustomType
-         String arrayStr = typeMatcher.group("arr"); // e.g. [<=4]
-         String sequenceBoundsStr = typeMatcher.group("seqbounds"); // e.g. <=
-         String lengthStr = typeMatcher.group("length"); // e.g. 4
+         // Example: MyCustomType[<=4] my_type = {data: 1}
+         String typeStr = typeMatcher.group("type"); // MyCustomType
+         String arrayStr = typeMatcher.group("arr"); // [<=4]
+         String sequenceBoundsStr = typeMatcher.group("seqbounds"); // <=
+         String lengthStr = typeMatcher.group("len"); // 4
+         String fieldNameStr = typeMatcher.group("fname"); // my_type
+         String constValStr = typeMatcher.group("constval"); // {data: 1}
 
          field = new InterfaceField();
          field.type(typeStr);
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
          field.length(lengthStr == null ? -1 : Integer.parseInt(lengthStr));
+         field.name(fieldNameStr);
+         field.constantValue(constValStr);
+         field.headerComment(headerComment);
+         field.trailingComment(trailingComment);
       }
 
       // Check if the type is valid
