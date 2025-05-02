@@ -34,7 +34,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, transports);
 
-      int capacity = 16;
+      int capacity = 32;
 
       // TODO: Name, daemon, etc
       tasks = new ArrayBlockingQueue<>(capacity);
@@ -103,12 +103,9 @@ public class AsyncROS2Node extends ROS2Node
       super.close();
    }
 
-   protected void addTask(Runnable task)
+   protected boolean addTask(Runnable task)
    {
-      if (!tasks.offer(task))
-      {
-         LogTools.error("Task queue full. Failed to add a task.");
-      }
+      return tasks.offer(task);
    }
 
    private void publishLoop()

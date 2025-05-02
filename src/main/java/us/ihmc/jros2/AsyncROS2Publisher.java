@@ -6,10 +6,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<T>
 {
+   private static final int CAPACITY = 32;
+
    private final AsyncROS2Node node;
 
    private final T[] messagesToPublish;
-   private int capacity;
    private int position;
    private final AtomicInteger queueSize;
 
@@ -23,12 +24,11 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       this.node = node;
 
       // TODO: how should we set the capacity?
-      capacity = 16;
       position = 0;
       queueSize = new AtomicInteger(0);
       //noinspection unchecked
-      messagesToPublish = (T[]) new ROS2Message[capacity];
-      for (int i = 0; i < capacity; ++i)
+      messagesToPublish = (T[]) new ROS2Message[CAPACITY];
+      for (int i = 0; i < CAPACITY; ++i)
       {
          messagesToPublish[i] = ROS2Message.createInstance(topic.topicType());
       }
@@ -42,7 +42,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       {
          if (!closed)
          {
-            if (queueSize.getAndIncrement() >= capacity)
+            if (queueSize.getAndIncrement() >= CAPACITY)
             {
                // TODO: Better behavior/message
                queueSize.decrementAndGet();
@@ -51,8 +51,16 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
             T messageToPublish = messagesToPublish[position];
             messageToPublish.set(message);
-            node.addTask(() -> publishTask(messageToPublish));
-            position = (position + 1) % capacity;
+
+            if (node.addTask(() -> publishTask(messageToPublish)))
+            {
+               position = (position + 1) % CAPACITY;
+            }
+            else
+            {
+               queueSize.decrementAndGet();
+               throw new RuntimeException("AsyncROS2Node did not accept the task");
+            }
          }
       }
       finally
