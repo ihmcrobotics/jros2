@@ -11,6 +11,7 @@ public class InterfaceField // Cannot be a record
    private boolean unbounded;
    private int length;
    private String constantValue;
+   private String defaultValue;
    private String headerComment;
    private String trailingComment;
 
@@ -102,6 +103,16 @@ public class InterfaceField // Cannot be a record
    public void constantValue(String constantValue)
    {
       this.constantValue = constantValue;
+   }
+
+   public String getDefaultValue()
+   {
+      return defaultValue;
+   }
+
+   public void defaultValue(String defaultValue)
+   {
+      this.defaultValue = defaultValue;
    }
 
    public String getHeaderComment()

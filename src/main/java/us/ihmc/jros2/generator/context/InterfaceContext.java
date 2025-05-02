@@ -100,7 +100,8 @@ public abstract class InterfaceContext
 
    private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
          "^(?<strtype>string|wstring)(?<strlen><=\\d+)?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])?$");
-   private static final Pattern TYPE_PATTERN = Pattern.compile("^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
+   private static final Pattern TYPE_PATTERN = Pattern.compile(
+         "^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
    private static InterfaceField parseField(String line, String headerComment, String trailingComment, Map<String, MsgContext> discoveredTypes)
    {
@@ -133,13 +134,15 @@ public abstract class InterfaceContext
 
       if (typeMatcher.matches())
       {
-         // Example: MyCustomType[<=4] my_type = {data: 1}
+         // Example with const val: MyCustomType[<=4] my_type = {data: 1}
+         // Example with default val: MyCustomType[<=4] my_type {data: 1}
          String typeStr = typeMatcher.group("type"); // MyCustomType
          String arrayStr = typeMatcher.group("arr"); // [<=4]
          String sequenceBoundsStr = typeMatcher.group("seqbounds"); // <=
          String lengthStr = typeMatcher.group("len"); // 4
          String fieldNameStr = typeMatcher.group("fname"); // my_type
          String constValStr = typeMatcher.group("constval"); // {data: 1}
+         String defaultValStr = typeMatcher.group("defval"); // {data: 1}
 
          field = new InterfaceField();
          field.type(typeStr);
@@ -148,6 +151,7 @@ public abstract class InterfaceContext
          field.length(lengthStr == null ? -1 : Integer.parseInt(lengthStr));
          field.name(fieldNameStr);
          field.constantValue(constValStr);
+         field.defaultValue(defaultValStr);
          field.headerComment(headerComment);
          field.trailingComment(trailingComment);
       }

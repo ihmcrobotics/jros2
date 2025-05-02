@@ -16,16 +16,6 @@ import java.util.Objects;
 
 public class ROS2MessageGenerator
 {
-   /*
-      Iterate through all messages in every package and subpackage recursively in ros2_interfaces dir
-
-      Add all messages to some data structure before parsing, so they can reference each other. We can
-      error if a declared message type in a .msg field doesn't exist.
-
-
-
-    */
-
    private final Map<String, MsgContext> msgs;
 
    public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
