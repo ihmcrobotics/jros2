@@ -3,6 +3,7 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import us.ihmc.jros2.generator.context.MsgContext;
+import us.ihmc.jros2.generator.context.SrvContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.Map;
 public class GeneratorTest
 {
    @Test
-   public void testInterfaceContextAndParsing()
+   public void testMsgContextAndParsing()
    {
       Map<String, MsgContext> knownMsgs = new HashMap<>();
 
@@ -57,5 +58,36 @@ public class GeneratorTest
       Assertions.assertEquals("float32", testMsg2.getFields().get("other_const").getType());
       Assertions.assertEquals("4.0", testMsg2.getFields().get("other_const").getConstantValue());
       Assertions.assertEquals("string", testMsg2.getFields().get("s").getType());
+   }
+
+   @Test
+   public void testSrvContextAndParsing()
+   {
+      Map<String, MsgContext> knownMsgs = new HashMap<>();
+
+      MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
+            # Some comment about test_int # # # #
+            # Some comment about test_int (line 2) # # # #
+            # Some comment about test_int (line 3) # # # #
+            uint32 test_int # Some additional comment about test_int
+            uint32 const_int=5
+            uint8 def_int 10
+            """);
+      knownMsgs.put(testMsg.getName(), testMsg);
+      testMsg.parse(knownMsgs);
+
+      SrvContext testSrv = new SrvContext("test_srvs", "TestService", """
+            int64 a # request field a
+            int64 b # request field b
+            TestMsg c # request field c
+            ---
+            int64 r # reply field r
+            """);
+      testSrv.parse(knownMsgs);
+
+      Assertions.assertEquals("int64", testSrv.getRequestFields().get("a").getType());
+      Assertions.assertEquals("int64", testSrv.getRequestFields().get("b").getType());
+      Assertions.assertEquals("TestMsg", testSrv.getRequestFields().get("c").getType());
+      Assertions.assertEquals("int64", testSrv.getReplyFields().get("r").getType());
    }
 }
