@@ -49,8 +49,9 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
                throw new RuntimeException("Exceeded queue size :(");
             }
 
-            messagesToPublish[position].set(message);
-            node.addTask(() -> publishTask(messagesToPublish[position]));
+            T messageToPublish = messagesToPublish[position];
+            messageToPublish.set(message);
+            node.addTask(() -> publishTask(messageToPublish));
             position = (position + 1) % capacity;
          }
       }
