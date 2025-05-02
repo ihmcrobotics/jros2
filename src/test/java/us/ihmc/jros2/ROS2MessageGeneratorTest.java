@@ -15,7 +15,8 @@ public class ROS2MessageGeneratorTest
       Map<String, MsgContext> knownMsgs = new HashMap<>();
 
       MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
-            uint32 test_int
+            # Some comment about test_int # # # #
+            uint32 test_int # Some additional comment about test_int
             uint32 const_int=5
             uint8 def_int 10
             """);
@@ -28,6 +29,8 @@ public class ROS2MessageGeneratorTest
       Assertions.assertEquals(3, testMsg.getFields().size());
 
       Assertions.assertEquals("uint32", testMsg.getFields().get("test_int").getType());
+      Assertions.assertEquals("# Some comment about test_int # # # #", testMsg.getFields().get("test_int").getHeaderComment());
+      Assertions.assertEquals("# Some additional comment about test_int", testMsg.getFields().get("test_int").getTrailingComment());
       Assertions.assertEquals("uint32", testMsg.getFields().get("const_int").getType());
       Assertions.assertEquals("5", testMsg.getFields().get("const_int").getConstantValue());
       Assertions.assertEquals("10", testMsg.getFields().get("def_int").getDefaultValue());
@@ -48,6 +51,7 @@ public class ROS2MessageGeneratorTest
       Assertions.assertEquals("TestMsg", testMsg2.getFields().get("test_msg").getType());
       Assertions.assertEquals("float32", testMsg2.getFields().get("other_data").getType());
       Assertions.assertEquals("float32", testMsg2.getFields().get("other_const").getType());
+      Assertions.assertEquals("4.0", testMsg2.getFields().get("other_const").getConstantValue());
       Assertions.assertEquals("string", testMsg2.getFields().get("s").getType());
    }
 }

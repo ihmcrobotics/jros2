@@ -76,7 +76,7 @@ public abstract class InterfaceContext
          // If the line contains a comment, but it isn't the entire line
          if (line.contains("#"))
          {
-            String lineWithCommentRemoved = line.substring(0, line.indexOf("#"));
+            String lineWithCommentRemoved = line.substring(0, line.indexOf("#")).trim();
             trailingComment = line.substring(line.indexOf("#"));
             line = lineWithCommentRemoved;
          }
