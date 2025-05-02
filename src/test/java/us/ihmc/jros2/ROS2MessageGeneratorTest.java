@@ -16,6 +16,8 @@ public class ROS2MessageGeneratorTest
 
       MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
             # Some comment about test_int # # # #
+            # Some comment about test_int (line 2) # # # #
+            # Some comment about test_int (line 3) # # # #
             uint32 test_int # Some additional comment about test_int
             uint32 const_int=5
             uint8 def_int 10
@@ -29,7 +31,9 @@ public class ROS2MessageGeneratorTest
       Assertions.assertEquals(3, testMsg.getFields().size());
 
       Assertions.assertEquals("uint32", testMsg.getFields().get("test_int").getType());
-      Assertions.assertEquals("# Some comment about test_int # # # #", testMsg.getFields().get("test_int").getHeaderComment());
+      Assertions.assertEquals(
+            "# Some comment about test_int # # # #\n# Some comment about test_int (line 2) # # # #\n# Some comment about test_int (line 3) # # # #",
+            testMsg.getFields().get("test_int").getHeaderComment());
       Assertions.assertEquals("# Some additional comment about test_int", testMsg.getFields().get("test_int").getTrailingComment());
       Assertions.assertEquals("uint32", testMsg.getFields().get("const_int").getType());
       Assertions.assertEquals("5", testMsg.getFields().get("const_int").getConstantValue());
