@@ -39,14 +39,14 @@ public class GeneratorTest
             testMsg.getHeaderComment());
       Assertions.assertEquals(3, testMsg.getFields().size());
 
-      Assertions.assertEquals("uint32", testMsg.getFields().get("test_int").getType());
+      Assertions.assertEquals("uint32", testMsg.getField("test_int").getType());
       Assertions.assertEquals(
             "# Some comment about test_int # # # #\n# Some comment about test_int (line 2) # # # #\n# Some comment about test_int (line 3) # # # #",
-            testMsg.getFields().get("test_int").getHeaderComment());
-      Assertions.assertEquals("# Some additional comment about test_int", testMsg.getFields().get("test_int").getTrailingComment());
-      Assertions.assertEquals("uint32", testMsg.getFields().get("const_int").getType());
-      Assertions.assertEquals("5", testMsg.getFields().get("const_int").getConstantValue());
-      Assertions.assertEquals("10", testMsg.getFields().get("def_int").getDefaultValue());
+            testMsg.getField("test_int").getHeaderComment());
+      Assertions.assertEquals("# Some additional comment about test_int", testMsg.getField("test_int").getTrailingComment());
+      Assertions.assertEquals("uint32", testMsg.getField("const_int").getType());
+      Assertions.assertEquals("5", testMsg.getField("const_int").getConstantValue());
+      Assertions.assertEquals("10", testMsg.getField("def_int").getDefaultValue());
 
       MsgContext testMsg2 = new MsgContext("test_msgs", "TestMsg2.msg", """
             TestMsg test_msg
@@ -61,11 +61,11 @@ public class GeneratorTest
       Assertions.assertEquals("TestMsg2", testMsg2.getName());
       Assertions.assertEquals(4, testMsg2.getFields().size());
 
-      Assertions.assertEquals("TestMsg", testMsg2.getFields().get("test_msg").getType());
-      Assertions.assertEquals("float32", testMsg2.getFields().get("other_data").getType());
-      Assertions.assertEquals("float32", testMsg2.getFields().get("other_const").getType());
-      Assertions.assertEquals("4.0", testMsg2.getFields().get("other_const").getConstantValue());
-      Assertions.assertEquals("string", testMsg2.getFields().get("s").getType());
+      Assertions.assertEquals("TestMsg", testMsg2.getField("test_msg").getType());
+      Assertions.assertEquals("float32", testMsg2.getField("other_data").getType());
+      Assertions.assertEquals("float32", testMsg2.getField("other_const").getType());
+      Assertions.assertEquals("4.0", testMsg2.getField("other_const").getConstantValue());
+      Assertions.assertEquals("string", testMsg2.getField("s").getType());
    }
 
    @Test

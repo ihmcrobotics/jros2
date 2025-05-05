@@ -1,6 +1,8 @@
 package us.ihmc.jros2.generator.context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MsgContext extends InterfaceContext
@@ -28,8 +30,13 @@ public class MsgContext extends InterfaceContext
       fields.put(field.getName(), field);
    }
 
-   public Map<String, InterfaceField> getFields()
+   public InterfaceField getField(String name)
    {
-      return fields;
+      return fields.get(name);
+   }
+
+   public List<InterfaceField> getFields()
+   {
+      return new ArrayList<>(this.fields.values());
    }
 }

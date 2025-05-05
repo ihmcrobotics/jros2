@@ -1,16 +1,13 @@
 package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
-import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -79,23 +76,18 @@ public class ROS2MessageGenerator
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/trajectory_msgs").toURI()),
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/visualization_msgs").toURI()));
 
-      for (String msgName : messageGenerator.msgs.keySet())
-      {
-         MsgContext msgContext = messageGenerator.msgs.get(msgName);
+      MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
 
-         System.out.println(msgContext.getName());
-      }
 
+      messageGenerator.generate(msgContext);
    }
 
-   public static void generate(MsgContext context)
+   public void generate(MsgContext context)
    {
-      List<InterfaceField> fields = new ArrayList<>(context.getFields().values());
+      context.parse(msgs);
 
       ST st = new ST(template);
-      st.add("fields", fields);
-      st.add("name", context.getName());
-      st.add("className", context.getJavaClassname());
+      st.add("context", context);
       System.out.println(st.render());
    }
 
@@ -105,11 +97,11 @@ public class ROS2MessageGenerator
          import us.ihmc.fastddsjava.cdr.CDRBuffer;
          import us.ihmc.jros2.ROS2Message;
                   
-         public class <className> implements ROS2Message<<className>>
+         public class <context.name> implements ROS2Message
          {
-            public static final String name = "std_msgs::msg::dds_::Bool_";
+            public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>";
                   
-            <<fields:{ field | private <field.type> <field.name>_;\n }>>
+            <context.fields:{ field | private <field.type> <field.name>_;\n }>
             @Override
             public int calculateSizeBytes(int currentAlignment)
             {
@@ -139,7 +131,7 @@ public class ROS2MessageGenerator
             }
                   
             @Override
-            public void set(<className> from)
+            public void set(<context.name> from)
             {
                data_ = from.data_;
             }
@@ -157,7 +149,7 @@ public class ROS2MessageGenerator
                   
          bool[1] field1
          bool[<=3] field2
-         nontype[<=234] field3
+         uint8[<=234] field3
          float32[] field4 # Some comment
                   
            uint8 field5
