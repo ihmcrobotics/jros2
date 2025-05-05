@@ -1,3 +1,7 @@
+<p align="center"><img src="media/jros2.png" width="30%" /><br><br></p>
+
+-----------------
+
 # jros2
 A ROS 2-compatible library for Java.
 
