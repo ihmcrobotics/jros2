@@ -57,6 +57,7 @@ public abstract class InterfaceContext
    {
       String[] lines = fileContent.split("\\R");
 
+      boolean parsedFirstField = false;
       StringJoiner commentLines = new StringJoiner("\n");
 
       for (String line : lines)
@@ -86,6 +87,11 @@ public abstract class InterfaceContext
          {
             onSection();
          }
+         else if (line.isEmpty() && !parsedFirstField)
+         {
+            headerComment = commentLines.toString();
+            commentLines = new StringJoiner("\n");
+         }
          else
          {
             InterfaceField field = parseField(line, commentLines.toString(), trailingComment, discoveredTypes);
@@ -93,6 +99,7 @@ public abstract class InterfaceContext
             if (field != null)
             {
                onField(field);
+               parsedFirstField = true;
             }
          }
       }
