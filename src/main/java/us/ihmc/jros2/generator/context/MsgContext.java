@@ -7,9 +7,11 @@ public class MsgContext extends InterfaceContext
 {
    private final Map<String, InterfaceField> fields;
 
-   public MsgContext(String packageName, String name, String fileContent)
+   public MsgContext(String packageName, String fileName, String fileContent)
    {
-      super(packageName, name, fileContent);
+      super(packageName, fileName, fileContent);
+
+      assert fileName.endsWith(".msg");
 
       fields = new HashMap<>();
    }

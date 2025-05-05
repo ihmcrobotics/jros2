@@ -10,9 +10,11 @@ public class SrvContext extends InterfaceContext
    private final Map<String, InterfaceField> requestFields;
    private final Map<String, InterfaceField> replyFields;
 
-   public SrvContext(String packageName, String name, String fileContent)
+   public SrvContext(String packageName, String fileName, String fileContent)
    {
-      super(packageName, name, fileContent);
+      super(packageName, fileName, fileContent);
+
+      assert fileName.endsWith(".srv");
 
       requestFields = new HashMap<>();
       replyFields = new HashMap<>();

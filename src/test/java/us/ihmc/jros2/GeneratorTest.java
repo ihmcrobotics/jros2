@@ -32,8 +32,8 @@ public class GeneratorTest
       testMsg.parse(knownMsgs);
 
       Assertions.assertEquals("test_msgs", testMsg.getROS2PackageName());
-      Assertions.assertEquals("TestMsg.msg", testMsg.getName());
-      Assertions.assertEquals("TestMsg", testMsg.getNameWithoutExtension());
+      Assertions.assertEquals("TestMsg.msg", testMsg.getFileName());
+      Assertions.assertEquals("TestMsg", testMsg.getName());
       Assertions.assertEquals(
             "# Header comment for the entire message\n# Header comment for the entire message (line 2)\n# Header comment for the entire message (line 3)",
             testMsg.getHeaderComment());
@@ -57,8 +57,8 @@ public class GeneratorTest
       testMsg2.parse(knownMsgs);
 
       Assertions.assertEquals("test_msgs", testMsg2.getROS2PackageName());
-      Assertions.assertEquals("TestMsg2.msg", testMsg2.getName());
-      Assertions.assertEquals("TestMsg2", testMsg2.getNameWithoutExtension());
+      Assertions.assertEquals("TestMsg2.msg", testMsg2.getFileName());
+      Assertions.assertEquals("TestMsg2", testMsg2.getName());
       Assertions.assertEquals(4, testMsg2.getFields().size());
 
       Assertions.assertEquals("TestMsg", testMsg2.getFields().get("test_msg").getType());
@@ -84,7 +84,7 @@ public class GeneratorTest
       knownMsgs.put(testMsg.getName(), testMsg);
       testMsg.parse(knownMsgs);
 
-      SrvContext testSrv = new SrvContext("test_srvs", "TestService", """
+      SrvContext testSrv = new SrvContext("test_srvs", "TestService.srv", """
             int64 a # request field a
             int64 b # request field b
             TestMsg c # request field c
@@ -117,7 +117,7 @@ public class GeneratorTest
       knownMsgs.put(testMsg.getName(), testMsg);
       testMsg.parse(knownMsgs);
 
-      ActionContext testAction = new ActionContext("test_actions", "TestAction", """
+      ActionContext testAction = new ActionContext("test_actions", "TestAction.action", """
             # Some header for the entire action file
             
             # Goal header comment

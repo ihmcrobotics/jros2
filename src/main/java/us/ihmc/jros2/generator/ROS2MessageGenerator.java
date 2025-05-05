@@ -59,9 +59,11 @@ public class ROS2MessageGenerator
 
             MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
 
-            msgs.put(file.getName(), context);
+            msgs.put(context.getName(), context);
          }
       }
+
+      msgs.forEach((msgName, msgContext) -> msgContext.parse(msgs));
    }
 
    public static void main(String[] args)
@@ -77,14 +79,12 @@ public class ROS2MessageGenerator
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/trajectory_msgs").toURI()),
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/visualization_msgs").toURI()));
 
+      for (String msgName : messageGenerator.msgs.keySet())
+      {
+         MsgContext msgContext = messageGenerator.msgs.get(msgName);
 
-      messageGenerator.msgs.forEach((s, msgContext) -> {
-         msgContext.parse(messageGenerator.msgs);
-         msgContext.getFields().forEach((s1, interfaceField) -> {
-            System.out.println(interfaceField.getHeaderComment());
-            System.out.println(interfaceField.getType() + " " + interfaceField.getName());
-         });
-      });
+         System.out.println(msgContext.getName());
+      }
 
    }
 
@@ -95,7 +95,7 @@ public class ROS2MessageGenerator
       ST st = new ST(template);
       st.add("fields", fields);
       st.add("name", context.getName());
-      st.add("className", context.getJavaClassName());
+      st.add("className", context.getJavaClassname());
       System.out.println(st.render());
    }
 

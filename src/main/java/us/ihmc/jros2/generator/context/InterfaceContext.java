@@ -7,26 +7,24 @@ import java.util.regex.Pattern;
 
 public abstract class InterfaceContext
 {
-   private final String ros2packageName;
-   private final String name; // Includes extension (i.e. <.msg, .srv, .action>)
+   private final String fileName; // Includes extension (i.e. <.msg, .srv, .action>)
    private final String fileContent;
+   private final String name;
+   private final String ros2packageName;
+
    private String headerComment;
 
-   public InterfaceContext(String packageName, String name, String fileContent)
+   public InterfaceContext(String packageName, String fileName, String fileContent)
    {
-      this.ros2packageName = packageName;
-      this.name = name;
+      this.fileName = fileName;
       this.fileContent = fileContent;
+      this.name = fileName.substring(0, fileName.indexOf("."));
+      this.ros2packageName = packageName;
    }
 
-   public String getROS2PackageName()
+   public String getFileName()
    {
-      return ros2packageName;
-   }
-
-   public String getName()
-   {
-      return name;
+      return fileName;
    }
 
    public String getFileContent()
@@ -34,19 +32,25 @@ public abstract class InterfaceContext
       return fileContent;
    }
 
+   public String getName()
+   {
+      return name;
+   }
+
+   public String getJavaClassname()
+   {
+      // TODO: Some sanitation required
+      return getName();
+   }
+
+   public String getROS2PackageName()
+   {
+      return ros2packageName;
+   }
+
    public String getHeaderComment()
    {
       return headerComment;
-   }
-
-   public String getNameWithoutExtension()
-   {
-      return getName().substring(0, getName().indexOf("."));
-   }
-
-   public String getJavaClassName()
-   {
-      return getNameWithoutExtension();
    }
 
    protected abstract void onSection();
@@ -190,7 +194,7 @@ public abstract class InterfaceContext
             default:
                for (MsgContext otherMsg : discoveredTypes.values())
                {
-                  if (field.getType().equals(otherMsg.getNameWithoutExtension()))
+                  if (field.getType().equals(otherMsg.getName()))
                   {
                      valid = true;
                      break;
