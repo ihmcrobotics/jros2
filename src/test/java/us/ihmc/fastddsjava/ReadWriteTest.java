@@ -185,7 +185,7 @@ public class ReadWriteTest
 
    @RepeatedTest(5000)
    @Timeout(30)
-   public void readWriteTestWithGrowingData() throws InterruptedException, fastddsjavaException
+   public void readWriteTestWithGrowingDataSize() throws InterruptedException, fastddsjavaException
    {
       int retCode;
       final int initialDataLength = 1;

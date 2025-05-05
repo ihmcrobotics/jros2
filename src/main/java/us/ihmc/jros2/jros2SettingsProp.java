@@ -33,7 +33,7 @@ class jros2SettingsProp implements jros2Settings
       String property = System.getProperty(INTERFACE_WHITELIST_KEY);
       if (property != null)
       {
-         return property.split("\\s*,\\s*");
+         return jros2Settings.splitInterfaceWhitelistFromCSV(property);
       }
       else
       {

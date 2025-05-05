@@ -25,4 +25,16 @@ interface jros2Settings
     * @return Whether an interface whitelist has been specified.
     */
    boolean hasInterfaceWhitelist();
+
+   static String[] splitInterfaceWhitelistFromCSV(String interfaceWhitelistCSV)
+   {
+      if (interfaceWhitelistCSV.trim().isEmpty())
+      {
+         return new String[0];
+      }
+      else
+      {
+         return interfaceWhitelistCSV.split("\\s*,\\s*");
+      }
+   }
 }

@@ -52,7 +52,7 @@ class jros2SettingsEnv implements jros2Settings
       String property = env.get(INTERFACE_WHITELIST_KEY);
       if (property != null)
       {
-         return property.split("\\s*,\\s*");
+         return jros2Settings.splitInterfaceWhitelistFromCSV(property);
       }
       else
       {
