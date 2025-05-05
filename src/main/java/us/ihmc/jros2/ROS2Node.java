@@ -40,13 +40,13 @@ public class ROS2Node implements Closeable
 
    private final String name;
    private final int domainId;
-   private final Pointer fastddsParticipant;
+   protected final Pointer fastddsParticipant;
    private final Map<ROS2Topic<?>, TopicData> topicData;
-   private final List<ROS2Publisher<?>> publishers;
+   protected final List<ROS2Publisher<?>> publishers;
    private final List<ROS2Subscription<?>> subscriptions;
 
-   private final ReadWriteLock closeLock;
-   private boolean closed;
+   protected final ReadWriteLock closeLock;
+   protected boolean closed;
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {

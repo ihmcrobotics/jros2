@@ -26,8 +26,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final CDRBuffer cdrBuffer;
 
-   private final ReadWriteLock closeLock;
-   private boolean closed;
+   protected final ReadWriteLock closeLock;
+   protected boolean closed;
 
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
