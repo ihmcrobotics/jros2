@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SrvContext extends InterfaceContext
 {
-   private int section = 0; // 0 = request, 1 = reply
+   private int section; // 0 = request, 1 = reply
 
    private final Map<String, InterfaceField> requestFields;
    private final Map<String, InterfaceField> replyFields;

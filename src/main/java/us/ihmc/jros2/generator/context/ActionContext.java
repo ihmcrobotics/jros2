@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class ActionContext extends InterfaceContext
 {
-   private int section = 0; // 0 = goal, 1 = result, 2 = feedback
+   private int section; // 0 = goal, 1 = result, 2 = feedback
 
    private final Map<String, InterfaceField> goalFields;
    private final Map<String, InterfaceField> resultFields;
