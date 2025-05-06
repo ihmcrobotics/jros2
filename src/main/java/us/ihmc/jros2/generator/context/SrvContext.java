@@ -1,6 +1,6 @@
 package us.ihmc.jros2.generator.context;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SrvContext extends InterfaceContext
@@ -16,8 +16,8 @@ public class SrvContext extends InterfaceContext
 
       assert fileName.endsWith(".srv");
 
-      requestFields = new HashMap<>();
-      replyFields = new HashMap<>();
+      requestFields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
+      replyFields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
    }
 
    @Override

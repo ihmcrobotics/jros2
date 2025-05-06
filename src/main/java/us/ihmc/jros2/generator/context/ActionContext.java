@@ -1,6 +1,6 @@
 package us.ihmc.jros2.generator.context;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ActionContext extends InterfaceContext
@@ -17,9 +17,9 @@ public class ActionContext extends InterfaceContext
 
       assert fileName.endsWith(".action");
 
-      goalFields = new HashMap<>();
-      resultFields = new HashMap<>();
-      feedbackFields = new HashMap<>();
+      goalFields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
+      resultFields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
+      feedbackFields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
    }
 
    @Override
