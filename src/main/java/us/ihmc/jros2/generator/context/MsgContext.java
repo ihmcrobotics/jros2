@@ -1,7 +1,7 @@
 package us.ihmc.jros2.generator.context;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +15,7 @@ public class MsgContext extends InterfaceContext
 
       assert fileName.endsWith(".msg");
 
-      fields = new HashMap<>();
+      fields = new LinkedHashMap<>(); // LinkedHashMap to keep insertion order
    }
 
    @Override
@@ -37,6 +37,8 @@ public class MsgContext extends InterfaceContext
 
    public List<InterfaceField> getFields()
    {
-      return new ArrayList<>(this.fields.values());
+      List<InterfaceField> fields = new ArrayList<>();
+      this.fields.forEach((fieldName, field) -> fields.add(field));
+      return fields;
    }
 }

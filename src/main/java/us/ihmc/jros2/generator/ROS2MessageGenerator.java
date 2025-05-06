@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -17,7 +17,7 @@ public class ROS2MessageGenerator
 
    public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
    {
-      msgs = new HashMap<>();
+      msgs = new LinkedHashMap<>();
 
       for (Path ros2pkgPath : ros2pkgPathsToInclude)
       {
@@ -101,27 +101,74 @@ public class ROS2MessageGenerator
          {
             public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>";
                   
-            <context.fields:{ field | private <field.type> <field.name>_;\n }>
+            <context.fields:{ field |
+            <if(field.builtinType)>
+            <if(field.array&&field.fixedSize)>
+         private <field.builtinTypeJavaType>[] <field.name>_;
+            <elseif(field.array&&!field.fixedSize)>
+         private <field.builtinTypeIDLSequenceType> <field.name>_;
+            <else>
+         private <field.builtinTypeJavaType> <field.name>_;
+            <endif>
+            <endif>
+            }>
             @Override
             public int calculateSizeBytes(int currentAlignment)
             {
                int initialAlignment = currentAlignment;
-                  
-               currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // 1 byte for data
-                  
+               
+               <context.fields:{ field |
+               <if(field.builtinType)>
+               <if(field.array&&field.fixedSize)>
+         currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.name>_
+               <elseif(field.array&&!field.fixedSize)>
+         currentAlignment += <field.name>_.calculateSizeBytes(currentAlignment);
+               <elseif(!field.array)>
+         currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.name>_
+               <endif>
+               <endif>
+               }>
                return currentAlignment - initialAlignment;
             }
                   
             @Override
             public void serialize(CDRBuffer buffer)
             {
-               buffer.writeBoolean(data_);
+               <context.fields:{ field |
+               <if(field.builtinType)>
+               <if(field.array&&field.fixedSize)>
+         <! TODO: direct array to buffer copy instead of iterating !>
+         for (int i = 0; i \\< <field.name>_.length; ++i)
+         {
+            buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_[i]);
+         \\}
+               <elseif(field.array&&!field.fixedSize)>
+         <field.name>_.serialize(buffer);
+               <elseif(!field.array)>
+         buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_);
+               <endif>
+               <endif>
+               }>
             }
                   
             @Override
             public void deserialize(CDRBuffer buffer)
             {
-               data_ = buffer.readBoolean();
+               <context.fields:{ field |
+               <if(field.builtinType)>
+               <if(field.array&&field.fixedSize)>
+         <! TODO: direct buffer to array copy instead of iterating !>
+         for (int i = 0; i \\< <field.name>_.length; ++i)
+         {
+            <field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>;
+         \\}
+               <elseif(field.array&&!field.fixedSize)>
+         <field.name>_.deserialize(buffer);
+               <elseif(!field.array)>
+         <field.name>_ = buffer.<field.builtinCDRBufferReadMethod>;
+               <endif>
+               <endif>
+               }>
             }
                   
             @Override
@@ -133,7 +180,15 @@ public class ROS2MessageGenerator
             @Override
             public void set(<context.name> from)
             {
-               data_ = from.data_;
+         <! TODO: !>
+               <context.fields:{ field |
+               <if(field.builtinType)>
+               <if(field.array&&field.fixedSize)>
+               <elseif(field.array&&!field.fixedSize)>
+               <elseif(!field.array)>
+               <endif>
+               <endif>
+               }>
             }
          }
          """;

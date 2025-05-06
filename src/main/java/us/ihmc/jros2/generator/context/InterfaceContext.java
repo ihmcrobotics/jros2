@@ -159,6 +159,7 @@ public abstract class InterfaceContext
          field.type(typeStr);
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
+         field.unbounded(arrayStr != null && sequenceBoundsStr == null && lengthStr == null);
          field.length(lengthStr == null ? -1 : Integer.parseInt(lengthStr));
          field.name(fieldNameStr);
          field.constantValue(constValStr);
@@ -172,34 +173,20 @@ public abstract class InterfaceContext
       {
          boolean valid = false;
 
-         switch (field.getType())
+         if (field.isBuiltinType())
          {
-            case "bool":
-            case "byte":
-            case "char":
-            case "float32":
-            case "float64":
-            case "int8":
-            case "uint8":
-            case "int16":
-            case "uint16":
-            case "int32":
-            case "uint32":
-            case "int64":
-            case "uint64":
-            case "string":
-            case "wstring":
-               valid = true;
-               break;
-            default:
-               for (MsgContext otherMsg : discoveredTypes.values())
+            valid = true;
+         }
+         else
+         {
+            for (MsgContext otherMsg : discoveredTypes.values())
+            {
+               if (field.getType().equals(otherMsg.getName()))
                {
-                  if (field.getType().equals(otherMsg.getName()))
-                  {
-                     valid = true;
-                     break;
-                  }
+                  valid = true;
+                  break;
                }
+            }
          }
 
          if (!valid)

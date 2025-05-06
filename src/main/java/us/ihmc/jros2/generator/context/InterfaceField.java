@@ -25,6 +25,210 @@ public class InterfaceField // Cannot be a record
       this.type = type;
    }
 
+   public boolean isBuiltinType()
+   {
+      if (type != null)
+      {
+         switch (type)
+         {
+            case "bool":
+            case "byte":
+            case "char":
+            case "float32":
+            case "float64":
+            case "int8":
+            case "uint8":
+            case "int16":
+            case "uint16":
+            case "int32":
+            case "uint32":
+            case "int64":
+            case "uint64":
+            case "string":
+            case "wstring":
+               return true;
+         }
+      }
+
+      return false;
+   }
+
+   public int getBuiltinTypeSize()
+   {
+      if (type != null)
+      {
+         switch (type)
+         {
+            case "bool":
+            case "byte":
+            case "char":
+            case "uint8":
+            case "int8":
+               return 1;
+            case "int16":
+            case "uint16":
+               return 2;
+            case "float32":
+            case "uint32":
+            case "int32":
+               return 4;
+            case "float64":
+            case "uint64":
+            case "int64":
+               return 8;
+            case "string":
+            case "wstring":
+               return -1; // TODO:
+         }
+      }
+
+      return -1;
+   }
+
+   public String getBuiltinTypeJavaType()
+   {
+      if (type != null)
+      {
+         switch (type)
+         {
+            case "bool":
+               return "boolean";
+            case "byte":
+            case "uint8":
+            case "int8":
+               return "byte";
+            case "char":
+               return "char";
+            case "int16":
+            case "uint16":
+               return "short";
+            case "float32":
+               return "float";
+            case "uint32":
+            case "int32":
+               return "int";
+            case "float64":
+               return "double";
+            case "uint64":
+            case "int64":
+               return "long";
+            case "string":
+            case "wstring":
+               return null; // TODO:
+         }
+      }
+
+      return null;
+   }
+
+   public String getBuiltinTypeIDLSequenceType()
+   {
+      if (type != null)
+      {
+         switch (type)
+         {
+            case "bool":
+               return "IDLBoolSequence";
+            case "byte":
+            case "uint8":
+            case "int8":
+               return "IDLByteSequence";
+            case "char":
+               return "IDLCharSequence";
+            case "int16":
+            case "uint16":
+               return "IDLShortSequence";
+            case "float32":
+               return "IDLFloatSequence";
+            case "uint32":
+            case "int32":
+               return "IDLIntSequence";
+            case "float64":
+               return "IDLDoubleSequence";
+            case "uint64":
+            case "int64":
+               return "IDLLongSequence";
+            case "string":
+            case "wstring":
+               return null; // TODO:
+         }
+      }
+
+      return null;
+   }
+
+   public String getBuiltinCDRBufferWriteMethod()
+   {
+      if (isBuiltinType())
+      {
+         switch (type)
+         {
+            case "bool":
+               return "writeBoolean";
+            case "byte":
+            case "uint8":
+            case "int8":
+               return "writeByte";
+            case "char":
+               return "writeChar";
+            case "int16":
+            case "uint16":
+               return "writeShort";
+            case "float32":
+               return "writeFloat";
+            case "uint32":
+            case "int32":
+               return "writeInt";
+            case "float64":
+               return "writeDouble";
+            case "uint64":
+            case "int64":
+               return "writeLong";
+            case "string":
+            case "wstring":
+               return ""; // TODO:
+         }
+      }
+
+      return null;
+   }
+
+   public String getBuiltinCDRBufferReadMethod()
+   {
+      if (isBuiltinType())
+      {
+         switch (type)
+         {
+            case "bool":
+               return "readBoolean";
+            case "byte":
+            case "uint8":
+            case "int8":
+               return "readByte";
+            case "char":
+               return "readChar";
+            case "int16":
+            case "uint16":
+               return "readShort";
+            case "float32":
+               return "readFloat";
+            case "uint32":
+            case "int32":
+               return "readInt";
+            case "float64":
+               return "readDouble";
+            case "uint64":
+            case "int64":
+               return "readLong";
+            case "string":
+            case "wstring":
+               return ""; // TODO:
+         }
+      }
+
+      return null;
+   }
+
    public String getName()
    {
       return name;
@@ -55,7 +259,7 @@ public class InterfaceField // Cannot be a record
       this.stringLength = stringLength;
    }
 
-   public boolean isArray()
+   public boolean getArray()
    {
       return array;
    }
@@ -65,7 +269,7 @@ public class InterfaceField // Cannot be a record
       this.array = array;
    }
 
-   public boolean isUpperBounded()
+   public boolean getUpperBounded()
    {
       return upperBounded;
    }
@@ -75,7 +279,7 @@ public class InterfaceField // Cannot be a record
       this.upperBounded = upperBounded;
    }
 
-   public boolean isUnbounded()
+   public boolean getUnbounded()
    {
       return unbounded;
    }
@@ -83,6 +287,11 @@ public class InterfaceField // Cannot be a record
    public void unbounded(boolean unbounded)
    {
       this.unbounded = unbounded;
+   }
+
+   public boolean getFixedSize()
+   {
+      return !getUpperBounded() && !getUnbounded();
    }
 
    public int getLength()
