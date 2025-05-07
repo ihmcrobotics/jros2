@@ -1,6 +1,7 @@
 package <context.javaPackageName>;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 <!
