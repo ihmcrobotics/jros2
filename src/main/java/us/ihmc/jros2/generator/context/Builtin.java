@@ -6,6 +6,7 @@ public final class Builtin
     * If the type is a ROS 2 built-in type
     * See: <a href="https://docs.ros.org/en/foxy/Concepts/About-ROS-Interfaces.html#field-types">Field types</a>
     *
+    * @param type the type name
     * @return true if built-in type, false if not a built-in type or the type was not set
     */
    public static boolean isBuiltinType(String type)
@@ -39,6 +40,7 @@ public final class Builtin
    /**
     * The size in bytes of the built-in type
     *
+    * @param builtinType the built-in type name
     * @return the size in bytes, -1 if not a built-in type or the type was not set
     */
    public static int getBuiltinTypeSize(String builtinType)
@@ -75,6 +77,7 @@ public final class Builtin
    /**
     * The corresponding Java type for a ROS 2 built-in type
     *
+    * @param builtinType the built-in type name
     * @return the corresponding Java type or null if not a built-in type or the type was not set
     */
    public static String getBuiltinTypeJavaType(String builtinType)
@@ -115,6 +118,7 @@ public final class Builtin
    /**
     * The {@link us.ihmc.fastddsjava.cdr.idl.IDLSequence} type for a built-in type
     *
+    * @param builtinType the built-in type name
     * @return the {@link us.ihmc.fastddsjava.cdr.idl.IDLSequence} class name (no package prepended) or null if not a default type or the type was not set
     */
    public static String getBuiltinTypeIDLSequenceType(String builtinType)
@@ -150,6 +154,12 @@ public final class Builtin
       }
    }
 
+   /**
+    * The method name within {@link us.ihmc.fastddsjava.cdr.CDRBuffer} used to write the built-in type
+    *
+    * @param builtinType the built-in type name
+    * @return the method name
+    */
    public static String getBuiltinCDRBufferWriteMethod(String builtinType)
    {
       assert isBuiltinType(builtinType);
@@ -185,6 +195,12 @@ public final class Builtin
       }
    }
 
+   /**
+    * The method name within {@link us.ihmc.fastddsjava.cdr.CDRBuffer} used to read the built-in type
+    *
+    * @param builtinType the built-in type name
+    * @return the method name
+    */
    public static String getBuiltinCDRBufferReadMethod(String builtinType)
    {
       assert isBuiltinType(builtinType);
