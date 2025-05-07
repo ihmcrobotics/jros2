@@ -30,7 +30,6 @@ public class <context.name> implements ROS2Message\<<context.name>>
 <endif>
 private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
    }>
-
    public <context.name>()
    {
       <context.fields:{ field |
@@ -39,6 +38,7 @@ private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>
       <endif>
       }>
    }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
