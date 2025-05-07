@@ -22,10 +22,12 @@ import java.util.Objects;
 public class ROS2MessageGenerator
 {
    private final List<MsgContext> msgs;
+   private final Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass;
 
    public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
    {
       msgs = new LinkedList<>();
+      fieldTypeJavaClass = new HashMap<>();
 
       for (Path ros2pkgPath : ros2pkgPathsToInclude)
       {
@@ -71,6 +73,19 @@ public class ROS2MessageGenerator
       }
    }
 
+   /**
+    * When generating {@link ROS2Message} classes, the generator will use the fully qualified path of the class
+    * provided instead of inferring the class.
+    * // TODO: Add a wiki page on github for how to use this
+    *
+    * @param fieldType the field type to associate
+    * @param clazz     the class to be used in the generated Java for the field type
+    */
+   public void registerJavaClass(String fieldType, Class<? extends ROS2Message<?>> clazz)
+   {
+      fieldTypeJavaClass.put(fieldType, clazz);
+   }
+
    public static void main(String[] args)
    {
       ROS2MessageGenerator messageGenerator = new ROS2MessageGenerator(Path.of(new File("ros2_interfaces/common_interfaces/actionlib_msgs").toURI()),
@@ -84,12 +99,11 @@ public class ROS2MessageGenerator
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/trajectory_msgs").toURI()),
                                                                        Path.of(new File("ros2_interfaces/common_interfaces/visualization_msgs").toURI()));
 
+      messageGenerator.registerJavaClass("Bool", CustomBool.class);
+
       MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
 
-      Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass = new HashMap<>();
-      fieldTypeJavaClass.put("Bool", CustomBool.class);
-
-      messageGenerator.generate(msgContext, fieldTypeJavaClass);
+      messageGenerator.generate(msgContext);
    }
 
    private static class CustomBool implements ROS2Message<CustomBool>
@@ -125,7 +139,7 @@ public class ROS2MessageGenerator
       }
    }
 
-   public void generate(MsgContext context, Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass)
+   public void generate(MsgContext context)
    {
       context.parse(msgs);
 
@@ -149,16 +163,13 @@ public class ROS2MessageGenerator
       }
 
       // Handle custom Java classes for fields
-      if (fieldTypeJavaClass != null)
+      for (String fieldType : fieldTypeJavaClass.keySet())
       {
-         for (String fieldType : fieldTypeJavaClass.keySet())
+         for (InterfaceField field : context.getFields())
          {
-            for (InterfaceField field : context.getFields())
+            if (field.getType().equals(fieldType))
             {
-               if (field.getType().equals(fieldType))
-               {
-                  field.javaType(fieldTypeJavaClass.get(fieldType).getCanonicalName());
-               }
+               field.javaType(fieldTypeJavaClass.get(fieldType).getCanonicalName());
             }
          }
       }
