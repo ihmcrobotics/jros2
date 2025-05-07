@@ -137,8 +137,8 @@ final class QoSTools
       // Durability
       switch (qosProfile.getDurability())
       {
-         case SYSTEM_DEFAULT, TRANSIENT_LOCAL -> durabilityQosPolicyType.setKind("TRANSIENT_LOCAL");
-         case VOLATILE -> durabilityQosPolicyType.setKind("VOLATILE");
+         case SYSTEM_DEFAULT, VOLATILE -> durabilityQosPolicyType.setKind("VOLATILE");
+         case TRANSIENT_LOCAL -> durabilityQosPolicyType.setKind("TRANSIENT_LOCAL");
       }
 
       // Deadline
