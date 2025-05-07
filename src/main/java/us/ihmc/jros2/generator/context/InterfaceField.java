@@ -8,6 +8,7 @@ package us.ihmc.jros2.generator.context;
 public class InterfaceField // Cannot be a record
 {
    private String type;
+   private String javaType;
    private String name;
    private boolean stringUpperBounded;
    private int stringLength;
@@ -35,78 +36,21 @@ public class InterfaceField // Cannot be a record
       this.type = type;
    }
 
-   public boolean isBuiltinType()
-   {
-      return Builtin.isBuiltinType(type);
-   }
-
-   public int getBuiltinTypeSize()
-   {
-      return Builtin.getBuiltinTypeSize(type);
-   }
-
-   public String getBuiltinTypeJavaType()
-   {
-      return Builtin.getBuiltinTypeJavaType(type);
-   }
-
-   public String getBuiltinTypeIDLSequenceType()
-   {
-      return Builtin.getBuiltinTypeIDLSequenceType(type);
-   }
-
-   public String getBuiltinCDRBufferWriteMethod()
-   {
-      return Builtin.getBuiltinCDRBufferWriteMethod(type);
-   }
-
-   public String getBuiltinCDRBufferReadMethod()
-   {
-      return Builtin.getBuiltinCDRBufferReadMethod(type);
-   }
-
-   /**
-    * The Java type to represent the ROS 2 interface field type
-    * Handles arrays of fixed size, unbounded arrays, and arrays with an upper bound limit
-    *
-    * @return the class name of the Java type (no package prepended) or null if the type was not set
-    */
    public String getJavaType()
    {
-      if (type != null)
+      if (javaType == null)
       {
-         if (getArray() && !getFixedSize())
-         {
-            if (isBuiltinType())
-            {
-               return getBuiltinTypeIDLSequenceType();
-            }
-            else
-            {
-               return "IDLObjectSequence<" + getType() + ">";
-            }
-         }
-         else
-         {
-            if (isBuiltinType())
-            {
-               if (getType().equals("string") || getType().equals("wstring"))
-               {
-                  return "StringBuilder";
-               }
-               else
-               {
-                  return getBuiltinTypeJavaType();
-               }
-            }
-            else
-            {
-               return getType();
-            }
-         }
+         return inferJavaType();
       }
+      else
+      {
+         return javaType;
+      }
+   }
 
-      return null;
+   public void javaType(String javaType)
+   {
+      this.javaType = javaType;
    }
 
    public String getName()
@@ -211,6 +155,10 @@ public class InterfaceField // Cannot be a record
 
    public void headerComment(String headerComment)
    {
+      if (headerComment != null && headerComment.isEmpty())
+      {
+         headerComment = null;
+      }
       this.headerComment = headerComment;
    }
 
@@ -221,6 +169,78 @@ public class InterfaceField // Cannot be a record
 
    public void trailingComment(String trailingComment)
    {
+      if (trailingComment != null && trailingComment.isEmpty())
+      {
+         trailingComment = null;
+      }
       this.trailingComment = trailingComment;
+   }
+
+   public boolean isBuiltinType()
+   {
+      return Builtin.isBuiltinType(type);
+   }
+
+   public int getBuiltinTypeSize()
+   {
+      return Builtin.getBuiltinTypeSize(type);
+   }
+
+   public String getBuiltinTypeJavaType()
+   {
+      return Builtin.getBuiltinTypeJavaType(type);
+   }
+
+   public String getBuiltinTypeIDLSequenceType()
+   {
+      return Builtin.getBuiltinTypeIDLSequenceType(type);
+   }
+
+   public String getBuiltinCDRBufferWriteMethod()
+   {
+      return Builtin.getBuiltinCDRBufferWriteMethod(type);
+   }
+
+   public String getBuiltinCDRBufferReadMethod()
+   {
+      return Builtin.getBuiltinCDRBufferReadMethod(type);
+   }
+
+   private String inferJavaType()
+   {
+      if (type != null)
+      {
+         if (getArray() && !getFixedSize())
+         {
+            if (isBuiltinType())
+            {
+               return getBuiltinTypeIDLSequenceType();
+            }
+            else
+            {
+               return "IDLObjectSequence<" + getType() + ">"; // TODO: doesn't handle package name
+            }
+         }
+         else
+         {
+            if (isBuiltinType())
+            {
+               if (getType().equals("string") || getType().equals("wstring"))
+               {
+                  return "StringBuilder";
+               }
+               else
+               {
+                  return getBuiltinTypeJavaType();
+               }
+            }
+            else
+            {
+               return getType(); // TODO: doesn't handle package name
+            }
+         }
+      }
+
+      return null;
    }
 }

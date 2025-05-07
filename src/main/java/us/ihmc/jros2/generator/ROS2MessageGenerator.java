@@ -114,14 +114,12 @@ public class ROS2MessageGenerator
    }
 
    private static final String TEST_MSG = """
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
-         # Some comment
+         # msg header line 1
+         # msg header line 2
+         # msg header line 3
                   
-                  
+         # field1 header comment
+         # field1 header comment (line 2)
          bool[1] field1
          bool[<=3] field2
          uint8[<=234] field3

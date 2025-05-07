@@ -10,7 +10,7 @@ public abstract class InterfaceContext
    private final String fileName; // Includes extension (i.e. <.msg, .srv, .action>)
    private final String fileContent;
    private final String name;
-   private final String ros2packageName;
+   private final String packageName;
    private String headerComment;
    private transient boolean parsed;
 
@@ -19,7 +19,7 @@ public abstract class InterfaceContext
       this.fileName = fileName;
       this.fileContent = fileContent;
       this.name = fileName.substring(0, fileName.indexOf("."));
-      this.ros2packageName = packageName;
+      this.packageName = packageName;
    }
 
    public String getFileName()
@@ -43,14 +43,14 @@ public abstract class InterfaceContext
       return getName();
    }
 
-   public String getROS2PackageName()
+   public String getPackageName()
    {
-      return ros2packageName;
+      return packageName;
    }
 
    public String getJavaPackageName()
    {
-      return ros2packageName + ".msg.dds";
+      return packageName + ".msg.dds";
    }
 
    public String getHeaderComment()
@@ -84,7 +84,7 @@ public abstract class InterfaceContext
          // If the entire line is a comment
          if (line.startsWith("#"))
          {
-            commentLines.add(line);
+            commentLines.add(line.trim().substring(1)); // Remove # from start of line
             continue;
          }
 
@@ -92,7 +92,7 @@ public abstract class InterfaceContext
          if (line.contains("#"))
          {
             String lineWithCommentRemoved = line.substring(0, line.indexOf("#")).trim();
-            trailingComment = line.substring(line.indexOf("#"));
+            trailingComment = line.substring(line.indexOf("#") + 1); // Do not include # in trailingComment
             line = lineWithCommentRemoved;
          }
 

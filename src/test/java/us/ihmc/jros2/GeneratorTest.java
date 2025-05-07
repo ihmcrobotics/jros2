@@ -31,7 +31,7 @@ public class GeneratorTest
       knownMsgs.put(testMsg.getName(), testMsg);
       testMsg.parse(knownMsgs);
 
-      Assertions.assertEquals("test_msgs", testMsg.getROS2PackageName());
+      Assertions.assertEquals("test_msgs", testMsg.getPackageName());
       Assertions.assertEquals("TestMsg.msg", testMsg.getFileName());
       Assertions.assertEquals("TestMsg", testMsg.getName());
       Assertions.assertEquals(
@@ -56,7 +56,7 @@ public class GeneratorTest
             """);
       testMsg2.parse(knownMsgs);
 
-      Assertions.assertEquals("test_msgs", testMsg2.getROS2PackageName());
+      Assertions.assertEquals("test_msgs", testMsg2.getPackageName());
       Assertions.assertEquals("TestMsg2.msg", testMsg2.getFileName());
       Assertions.assertEquals("TestMsg2", testMsg2.getName());
       Assertions.assertEquals(4, testMsg2.getFields().size());
