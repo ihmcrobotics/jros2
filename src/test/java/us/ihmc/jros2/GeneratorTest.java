@@ -6,15 +6,15 @@ import us.ihmc.jros2.generator.context.ActionContext;
 import us.ihmc.jros2.generator.context.MsgContext;
 import us.ihmc.jros2.generator.context.SrvContext;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GeneratorTest
 {
    @Test
    public void testMsgContextAndParsing()
    {
-      Map<String, MsgContext> knownMsgs = new HashMap<>();
+      List<MsgContext> knownMsgs = new LinkedList<>();
 
       MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
             # Header comment for the entire message
@@ -28,7 +28,7 @@ public class GeneratorTest
             uint32 const_int=5
             uint8 def_int 10
             """);
-      knownMsgs.put(testMsg.getName(), testMsg);
+      knownMsgs.add(testMsg);
       testMsg.parse(knownMsgs);
 
       Assertions.assertEquals("test_msgs", testMsg.getPackageName());
@@ -71,7 +71,7 @@ public class GeneratorTest
    @Test
    public void testSrvContextAndParsing()
    {
-      Map<String, MsgContext> knownMsgs = new HashMap<>();
+      List<MsgContext> knownMsgs = new LinkedList<>();
 
       MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
             # Some comment about test_int # # # #
@@ -81,7 +81,7 @@ public class GeneratorTest
             uint32 const_int=5
             uint8 def_int 10
             """);
-      knownMsgs.put(testMsg.getName(), testMsg);
+      knownMsgs.add(testMsg);
       testMsg.parse(knownMsgs);
 
       SrvContext testSrv = new SrvContext("test_srvs", "TestService.srv", """
@@ -104,7 +104,7 @@ public class GeneratorTest
    @Test
    public void testActionContextAndParsing()
    {
-      Map<String, MsgContext> knownMsgs = new HashMap<>();
+      List<MsgContext> knownMsgs = new LinkedList<>();
 
       MsgContext testMsg = new MsgContext("test_msgs", "TestMsg.msg", """
             # Some comment about test_int # # # #
@@ -114,7 +114,7 @@ public class GeneratorTest
             uint32 const_int=5
             uint8 def_int 10
             """);
-      knownMsgs.put(testMsg.getName(), testMsg);
+      knownMsgs.add(testMsg);
       testMsg.parse(knownMsgs);
 
       ActionContext testAction = new ActionContext("test_actions", "TestAction.action", """

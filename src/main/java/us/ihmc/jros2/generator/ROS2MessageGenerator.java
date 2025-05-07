@@ -1,6 +1,9 @@
 package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.jros2.ROS2Message;
+import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
 import us.ihmc.log.LogTools;
 
@@ -10,27 +13,28 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class ROS2MessageGenerator
 {
-   private final Map<String, MsgContext> msgs;
+   private final List<MsgContext> msgs;
 
    public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
    {
-      msgs = new LinkedHashMap<>();
+      msgs = new LinkedList<>();
 
       for (Path ros2pkgPath : ros2pkgPathsToInclude)
       {
          findMsgsInPkg(ros2pkgPath);
       }
 
-      for (String msgName : msgs.keySet())
+      for (MsgContext context : msgs)
       {
-         MsgContext msgContext = msgs.get(msgName);
-         msgContext.parse(msgs);
+         context.parse(msgs);
       }
    }
 
@@ -63,7 +67,7 @@ public class ROS2MessageGenerator
 
          MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
 
-         msgs.put(context.getName(), context);
+         msgs.add(context);
       }
    }
 
@@ -82,10 +86,46 @@ public class ROS2MessageGenerator
 
       MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
 
-      messageGenerator.generate(msgContext);
+      Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass = new HashMap<>();
+      fieldTypeJavaClass.put("Bool", CustomBool.class);
+
+      messageGenerator.generate(msgContext, fieldTypeJavaClass);
    }
 
-   public void generate(MsgContext context)
+   private static class CustomBool implements ROS2Message<CustomBool>
+   {
+      @Override
+      public int calculateSizeBytes(int currentAlignment)
+      {
+         return 0;
+      }
+
+      @Override
+      public void serialize(CDRBuffer buffer)
+      {
+
+      }
+
+      @Override
+      public void deserialize(CDRBuffer buffer)
+      {
+
+      }
+
+      @Override
+      public String getName()
+      {
+         return null;
+      }
+
+      @Override
+      public void set(CustomBool from)
+      {
+
+      }
+   }
+
+   public void generate(MsgContext context, Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass)
    {
       context.parse(msgs);
 
@@ -106,6 +146,21 @@ public class ROS2MessageGenerator
       if (template == null)
       {
          return;
+      }
+
+      // Handle custom Java classes for fields
+      if (fieldTypeJavaClass != null)
+      {
+         for (String fieldType : fieldTypeJavaClass.keySet())
+         {
+            for (InterfaceField field : context.getFields())
+            {
+               if (field.getType().equals(fieldType))
+               {
+                  field.javaType(fieldTypeJavaClass.get(fieldType).getCanonicalName());
+               }
+            }
+         }
       }
 
       ST st = new ST(template);

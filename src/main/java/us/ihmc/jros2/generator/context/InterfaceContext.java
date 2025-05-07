@@ -1,6 +1,6 @@
 package us.ihmc.jros2.generator.context;
 
-import java.util.Map;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,7 +62,7 @@ public abstract class InterfaceContext
 
    protected abstract void onField(InterfaceField field);
 
-   public void parse(Map<String, MsgContext> discoveredTypes)
+   public void parse(List<MsgContext> discoveredMsgs)
    {
       if (parsed)
       {
@@ -108,7 +108,7 @@ public abstract class InterfaceContext
          }
          else
          {
-            InterfaceField field = parseField(line, commentLines.toString(), trailingComment, discoveredTypes);
+            InterfaceField field = parseField(line, commentLines.toString(), trailingComment, discoveredMsgs);
             commentLines = new StringJoiner("\n");
             if (field != null)
             {
@@ -126,7 +126,7 @@ public abstract class InterfaceContext
    private static final Pattern TYPE_PATTERN = Pattern.compile(
          "^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
-   private static InterfaceField parseField(String line, String headerComment, String trailingComment, Map<String, MsgContext> discoveredTypes)
+   private static InterfaceField parseField(String line, String headerComment, String trailingComment, List<MsgContext> discoveredMsgs)
    {
       Matcher string_wstring_matcher = STRING_WSTRING_TYPE_PATTERN.matcher(line);
 
@@ -191,7 +191,7 @@ public abstract class InterfaceContext
          }
          else
          {
-            for (MsgContext otherMsg : discoveredTypes.values())
+            for (MsgContext otherMsg : discoveredMsgs)
             {
                if (field.getType().equals(otherMsg.getName()))
                {
