@@ -79,22 +79,21 @@ public class ROS2MessageGenerator
       MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
 
 
-      messageGenerator.generate(msgContext, "us.ihmc.example");
+      messageGenerator.generate(msgContext);
    }
 
-   public void generate(MsgContext context, String javaPackage)
+   public void generate(MsgContext context)
    {
       context.parse(msgs);
 
       ST st = new ST(template);
       st.add("context", context);
-      st.add("javaPackage", context);
       System.out.println(st.render());
    }
 
    // https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
    private static final String template = """
-         package <javaPackage>;
+         package <context.javaPackageName>;
                   
          import us.ihmc.fastddsjava.cdr.CDRBuffer;
          import us.ihmc.jros2.ROS2Message;
@@ -106,7 +105,7 @@ public class ROS2MessageGenerator
             <context.fields:{ field |
          private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
             }>
-            public <context.name>
+            public <context.name>()
             {
                <context.fields:{ field |
                <if(field.array)>
@@ -215,6 +214,7 @@ public class ROS2MessageGenerator
          bool[<=3] field2
          uint8[<=234] field3
          float32[] field4 # Some comment
+         Bool test_bool
                   
            uint8 field5
                   

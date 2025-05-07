@@ -48,6 +48,11 @@ public abstract class InterfaceContext
       return ros2packageName;
    }
 
+   public String getJavaPackageName()
+   {
+      return ros2packageName + ".msg.dds";
+   }
+
    public String getHeaderComment()
    {
       return headerComment;
