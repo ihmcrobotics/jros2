@@ -11,8 +11,11 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    private final AsyncROS2Node node;
 
    private final T[] messagesToPublish;
-   private int position;
+   private int insertPosition;
+   private int publishPosition;
    private final AtomicInteger queueSize;
+
+   private final Runnable publishTask;
 
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
@@ -24,7 +27,8 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       this.node = node;
 
       // TODO: how should we set the capacity?
-      position = 0;
+      insertPosition = 0;
+      publishPosition = 0;
       queueSize = new AtomicInteger(0);
       //noinspection unchecked
       messagesToPublish = (T[]) new ROS2Message[CAPACITY];
@@ -32,6 +36,8 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       {
          messagesToPublish[i] = ROS2Message.createInstance(topic.topicType());
       }
+
+      publishTask = this::publishTask;
    }
 
    @Override
@@ -49,17 +55,20 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
                throw new RuntimeException("Exceeded queue size :(");
             }
 
-            T messageToPublish = messagesToPublish[position];
-            messageToPublish.set(message);
+            synchronized (messagesToPublish)
+            {
+               T messageToPublish = messagesToPublish[insertPosition];
+               messageToPublish.set(message);
 
-            if (node.addTask(() -> publishTask(messageToPublish)))
-            {
-               position = (position + 1) % CAPACITY;
-            }
-            else
-            {
-               queueSize.decrementAndGet();
-               throw new RuntimeException("AsyncROS2Node did not accept the task");
+               if (node.addTask(publishTask))
+               {
+                  insertPosition = (insertPosition + 1) % CAPACITY;
+               }
+               else
+               {
+                  queueSize.decrementAndGet();
+                  throw new RuntimeException("AsyncROS2Node did not accept the task");
+               }
             }
          }
       }
@@ -69,14 +78,18 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       }
    }
 
-   private void publishTask(T messageToPublish)
+   private void publishTask()
    {
       closeLock.readLock().lock();
       try
       {
          if (!closed)
          {
-            super.publish(messageToPublish);
+            synchronized (messagesToPublish)
+            {
+               super.publish(messagesToPublish[publishPosition]);
+               publishPosition = (publishPosition + 1) % CAPACITY;
+            }
          }
       }
       finally
