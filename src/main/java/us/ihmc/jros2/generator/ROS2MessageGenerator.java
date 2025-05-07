@@ -79,27 +79,29 @@ public class ROS2MessageGenerator
       MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
 
 
-      messageGenerator.generate(msgContext);
+      messageGenerator.generate(msgContext, "us.ihmc.example");
    }
 
-   public void generate(MsgContext context)
+   public void generate(MsgContext context, String javaPackage)
    {
       context.parse(msgs);
 
       ST st = new ST(template);
       st.add("context", context);
+      st.add("javaPackage", context);
       System.out.println(st.render());
    }
 
+   // https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
    private static final String template = """
-         package us.ihmc.jros2.msg;
+         package <javaPackage>;
                   
          import us.ihmc.fastddsjava.cdr.CDRBuffer;
          import us.ihmc.jros2.ROS2Message;
                   
-         public class <context.name> implements ROS2Message
+         public class <context.name> implements ROS2Message\\<<context.name>>
          {
-            public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>";
+            public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>_";
                   
             <context.fields:{ field |
          private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
