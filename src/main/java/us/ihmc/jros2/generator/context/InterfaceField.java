@@ -1,10 +1,5 @@
 package us.ihmc.jros2.generator.context;
 
-/**
- * TODO: Allow the generator to take in a custom map of type name to InterfaceField
- *    This is so a user-developer can override generated ROS2Message types with their
- *    own implementation.
- */
 public class InterfaceField // Cannot be a record
 {
    private String type;
@@ -159,6 +154,7 @@ public class InterfaceField // Cannot be a record
       {
          headerComment = null;
       }
+
       this.headerComment = headerComment;
    }
 
@@ -173,6 +169,7 @@ public class InterfaceField // Cannot be a record
       {
          trailingComment = null;
       }
+
       this.trailingComment = trailingComment;
    }
 
