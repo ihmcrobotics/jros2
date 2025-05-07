@@ -96,15 +96,15 @@ public class DiscoverySettingsType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "discoveryServersList", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "static_edp_xml_config", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "simpleEDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "ignoreParticipantFlags", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "initialAnnouncements", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "EDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "leaseAnnouncement", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "discoveryProtocol", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "leaseDuration", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "EDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "clientAnnouncementPeriod", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "simpleEDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "static_edp_xml_config", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "discoveryProtocol", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "initialAnnouncements", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
+        @XmlElementRef(name = "leaseAnnouncement", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<?>> discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags;
 
@@ -127,15 +127,15 @@ public class DiscoverySettingsType {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LocatorListType }{@code >}
+     * {@link JAXBElement }{@code <}{@link DiscoverySettingsType.SimpleEDP }{@code >}
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
+     * {@link JAXBElement }{@code <}{@link DurationType }{@code >}
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
+     * {@link JAXBElement }{@code <}{@link DurationType }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link DiscoverySettingsType.InitialAnnouncements }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link DurationType }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link DurationType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DurationType }{@code >}
-     * {@link JAXBElement }{@code <}{@link DiscoverySettingsType.SimpleEDP }{@code >}
      * 
      * 
      */

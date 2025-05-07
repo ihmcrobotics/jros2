@@ -26,6 +26,12 @@ public class ROS2MessageGenerator
       {
          findMsgsInPkg(ros2pkgPath);
       }
+
+      for (String msgName : msgs.keySet())
+      {
+         MsgContext msgContext = msgs.get(msgName);
+         msgContext.parse(msgs);
+      }
    }
 
    private void findMsgsInPkg(Path ros2pkgPath)
@@ -42,28 +48,23 @@ public class ROS2MessageGenerator
          throw new RuntimeException(ros2pkgPath + " does not contain a msg directory");
       }
 
-      for (File file : Objects.requireNonNull(msgDir.listFiles()))
+      for (File file : Objects.requireNonNull(msgDir.listFiles((f, name) -> name.endsWith(".msg"))))
       {
-         if (file.isFile() && file.getName().endsWith(".msg"))
+         String fileContent;
+
+         try
          {
-            String fileContent;
-
-            try
-            {
-               fileContent = Files.readString(file.toPath());
-            }
-            catch (IOException e)
-            {
-               throw new RuntimeException("Could not read .msg file:  " + file.getName());
-            }
-
-            MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
-
-            msgs.put(context.getName(), context);
+            fileContent = Files.readString(file.toPath(), StandardCharsets.UTF_8);
          }
-      }
+         catch (IOException e)
+         {
+            throw new RuntimeException("Could not read .msg file:  " + file.getName());
+         }
 
-      msgs.forEach((msgName, msgContext) -> msgContext.parse(msgs));
+         MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
+
+         msgs.put(context.getName(), context);
+      }
    }
 
    public static void main(String[] args)

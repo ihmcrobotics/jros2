@@ -3,6 +3,14 @@ package <context.javaPackageName>;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.ROS2Message;
 
+<!
+Template for generating ROS2Message types
+
+Template inputs:
+   context: us.ihmc.jros2.generator.context.MsgContext
+
+Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
+!>
 public class <context.name> implements ROS2Message\<<context.name>>
 {
    public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>_";

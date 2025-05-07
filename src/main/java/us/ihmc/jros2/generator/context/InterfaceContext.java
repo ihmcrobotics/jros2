@@ -11,8 +11,8 @@ public abstract class InterfaceContext
    private final String fileContent;
    private final String name;
    private final String ros2packageName;
-
    private String headerComment;
+   private transient boolean parsed;
 
    public InterfaceContext(String packageName, String fileName, String fileContent)
    {
@@ -64,6 +64,11 @@ public abstract class InterfaceContext
 
    public void parse(Map<String, MsgContext> discoveredTypes)
    {
+      if (parsed)
+      {
+         throw new RuntimeException(fileName + " has already been parsed");
+      }
+
       String[] lines = fileContent.split("\\R");
 
       boolean parsedFirstField = false;
@@ -112,6 +117,8 @@ public abstract class InterfaceContext
             }
          }
       }
+
+      parsed = true;
    }
 
    private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
