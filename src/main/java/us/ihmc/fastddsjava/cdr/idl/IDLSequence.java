@@ -67,7 +67,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     * Sets this sequence to {@code other}.
     *
     * @param other The sequence to set from.
-    * @implSpec {@link #elements()} of this sequence should return the same values as {@code other} after calling this method.
+    * @implSpec {@link #elements()} of this sequence will return the same values as {@code other} after calling this method.
     */
    public abstract void set(T other);
 

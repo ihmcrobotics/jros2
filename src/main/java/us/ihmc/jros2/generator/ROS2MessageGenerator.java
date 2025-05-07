@@ -102,16 +102,17 @@ public class ROS2MessageGenerator
             public static final String name = "<context.ROS2PackageName>::msg::dds_::<context.name>";
                   
             <context.fields:{ field |
-            <if(field.builtinType)>
-            <if(field.array&&field.fixedSize)>
-         private <field.builtinTypeJavaType>[] <field.name>_;
-            <elseif(field.array&&!field.fixedSize)>
-         private <field.builtinTypeIDLSequenceType> <field.name>_;
-            <else>
-         private <field.builtinTypeJavaType> <field.name>_;
-            <endif>
-            <endif>
+         private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
             }>
+            public <context.name>
+            {
+               <context.fields:{ field |
+               <if(field.array)>
+         <field.name>_ = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>()<endif>;
+               <endif>
+               }>
+            }
+            
             @Override
             public int calculateSizeBytes(int currentAlignment)
             {
@@ -180,12 +181,18 @@ public class ROS2MessageGenerator
             @Override
             public void set(<context.name> from)
             {
-         <! TODO: !>
                <context.fields:{ field |
                <if(field.builtinType)>
                <if(field.array&&field.fixedSize)>
+         <! TODO: Use more efficient array copy !>
+         for (int i = 0; i \\< <field.name>_.length; ++i)
+         {
+            <field.name>_[i] = from.<field.name>_[i];
+         \\}
                <elseif(field.array&&!field.fixedSize)>
+         <field.name>_.set(from.<field.name>_);
                <elseif(!field.array)>
+         <field.name> = from.<field.name>_;
                <endif>
                <endif>
                }>

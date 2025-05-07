@@ -157,6 +157,44 @@ public class InterfaceField // Cannot be a record
       return null;
    }
 
+   public String getJavaType()
+   {
+      if (type != null)
+      {
+         if (getArray() && !getFixedSize())
+         {
+            if (isBuiltinType())
+            {
+               return getBuiltinTypeIDLSequenceType();
+            }
+            else
+            {
+               return "IDLObjectSequence<" + getType() + ">";
+            }
+         }
+         else
+         {
+            if (isBuiltinType())
+            {
+               if (getType().equals("string") || getType().equals("wstring"))
+               {
+                  return "StringBuilder";
+               }
+               else
+               {
+                  return getBuiltinTypeJavaType();
+               }
+            }
+            else
+            {
+               return getType();
+            }
+         }
+      }
+
+      return null;
+   }
+
    public String getBuiltinCDRBufferWriteMethod()
    {
       if (isBuiltinType())
