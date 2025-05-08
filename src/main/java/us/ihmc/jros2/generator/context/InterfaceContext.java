@@ -126,7 +126,7 @@ public abstract class InterfaceContext
    private static final Pattern TYPE_PATTERN = Pattern.compile(
          "^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
-   private static InterfaceField parseField(String line, String headerComment, String trailingComment, List<MsgContext> discoveredMsgs)
+   private InterfaceField parseField(String line, String headerComment, String trailingComment, List<MsgContext> discoveredMsgs)
    {
       Matcher string_wstring_matcher = STRING_WSTRING_TYPE_PATTERN.matcher(line);
 
@@ -169,6 +169,10 @@ public abstract class InterfaceContext
 
          field = new InterfaceField();
          field.type(typeStr);
+         if (!Builtin.isBuiltinType(typeStr))
+         {
+            field.javaType(getJavaPackageName() + "." + typeStr);
+         }
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
          field.unbounded(arrayStr != null && sequenceBoundsStr == null && lengthStr == null);

@@ -33,13 +33,13 @@ public class InterfaceField // Cannot be a record
 
    public String getJavaType()
    {
-      if (javaType == null)
+      if (javaType != null)
       {
-         return inferJavaType();
+         return javaType;
       }
       else
       {
-         return javaType;
+         return inferJavaType();
       }
    }
 
@@ -205,39 +205,39 @@ public class InterfaceField // Cannot be a record
 
    private String inferJavaType()
    {
-      if (type != null)
+      if (type == null)
       {
-         if (getArray() && !getFixedSize())
+         throw new RuntimeException("Cannot infer Java type, InterfaceField type has not been set");
+      }
+
+      if (getArray() && !getFixedSize())
+      {
+         if (isBuiltinType())
          {
-            if (isBuiltinType())
+            return getBuiltinTypeIDLSequenceType();
+         }
+         else
+         {
+            return "IDLObjectSequence<" + getType() + ">"; // TODO: doesn't handle package name
+         }
+      }
+      else
+      {
+         if (isBuiltinType())
+         {
+            if (getType().equals("string") || getType().equals("wstring"))
             {
-               return getBuiltinTypeIDLSequenceType();
+               return "StringBuilder";
             }
             else
             {
-               return "IDLObjectSequence<" + getType() + ">"; // TODO: doesn't handle package name
+               return getBuiltinTypeJavaType();
             }
          }
          else
          {
-            if (isBuiltinType())
-            {
-               if (getType().equals("string") || getType().equals("wstring"))
-               {
-                  return "StringBuilder";
-               }
-               else
-               {
-                  return getBuiltinTypeJavaType();
-               }
-            }
-            else
-            {
-               return getType(); // TODO: doesn't handle package name
-            }
+            return getType(); // TODO: doesn't handle package name
          }
       }
-
-      return null;
    }
 }
