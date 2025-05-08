@@ -16,7 +16,7 @@ Template inputs:
 Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
 !>
 <if(context.headerComment)>/**
-  <context.headerComment>
+   <context.headerComment>
 */
 <endif>
 public class <context.name> implements ROS2Message\<<context.name>>
@@ -25,7 +25,7 @@ public class <context.name> implements ROS2Message\<<context.name>>
 
    <context.fields:{ field |
 <if(field.headerComment)>/**
-  <field.headerComment>
+   <field.headerComment>
 */
 <endif>
 private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
@@ -40,7 +40,7 @@ private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>
    }
 
    <context.fields: { field |
-public <field.javaType> get<field.name>()
+public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.name>()
 {
    return <field.name>_;
 \}

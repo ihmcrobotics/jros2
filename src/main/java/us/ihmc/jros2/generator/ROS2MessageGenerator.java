@@ -106,7 +106,7 @@ public class ROS2MessageGenerator
       messageGenerator.generate(msgContext);
    }
 
-   private static class CustomBool implements ROS2Message<CustomBool>
+   public static class CustomBool implements ROS2Message<CustomBool>
    {
       @Override
       public int calculateSizeBytes(int currentAlignment)
