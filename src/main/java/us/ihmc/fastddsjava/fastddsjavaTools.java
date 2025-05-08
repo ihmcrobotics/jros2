@@ -48,7 +48,9 @@ public final class fastddsjavaTools
    public static void retcodeThrowOnError(int ReturnCode_t) throws fastddsjavaException
    {
       if (OK != ReturnCode_t)
+      {
          throw new fastddsjavaException(ReturnCode_t);
+      }
    }
 
    public static void retcodePrintOnError(int ReturnCode_t)
