@@ -8,24 +8,25 @@ import org.gradle.api.tasks.options.Option;
 import us.ihmc.jros2.generator.ROS2MessageGenerator;
 
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 
 public class jros2GenTask extends DefaultTask
 {
-   private String packagePath;
+   private List<String> packagePaths;
    private String outputDir;
    private Map<String, String> typeToClass;
 
    @Input
-   public String getPackagePath()
+   public List<String> getPackagePaths()
    {
-      return packagePath;
+      return packagePaths;
    }
 
-   @Option(option = "packagePath", description = "TODO")
-   public void setPackagePath(String packagePath)
+   @Option(option = "packagePaths", description = "TODO")
+   public void setPackagePaths(List<String> packagePaths)
    {
-      this.packagePath = packagePath;
+      this.packagePaths = packagePaths;
    }
 
    @Input
@@ -56,11 +57,15 @@ public class jros2GenTask extends DefaultTask
    @TaskAction
    public void run()
    {
-      Path packagePath = Path.of(this.packagePath);
       Path outputDir = Path.of(this.outputDir);
 
-      ROS2MessageGenerator generator = new ROS2MessageGenerator(packagePath, outputDir);
+      for (String packagePathStr : packagePaths)
+      {
+         Path packagePath = Path.of(packagePathStr);
 
-      generator.generate();
+         ROS2MessageGenerator generator = new ROS2MessageGenerator(packagePath, outputDir, packagePaths);
+
+         generator.generate();
+      }
    }
 }

@@ -23,15 +23,17 @@ public class ROS2MessageGenerator
    private final List<MsgContext> msgs;
    private final Map<String, Class<?>> fieldTypeJavaClass;
 
-   public ROS2MessageGenerator(Path packagePath, Path outputPath, Path... ros2pkgPathsToInclude)
+   public ROS2MessageGenerator(Path packagePath, Path outputPath, List<String> ros2pkgPathsToInclude)
    {
       this.packagePath = packagePath;
       this.outputPath = outputPath;
       msgs = new LinkedList<>();
       fieldTypeJavaClass = new HashMap<>();
 
-      for (Path ros2pkgPath : ros2pkgPathsToInclude)
+      for (String ros2pkgPathStr : ros2pkgPathsToInclude)
       {
+         Path ros2pkgPath = Path.of(ros2pkgPathStr);
+
          msgs.addAll(findMsgsInPkg(ros2pkgPath));
       }
 
@@ -139,35 +141,23 @@ public class ROS2MessageGenerator
       ST st = new ST(template);
       st.add("context", context);
 
-      String fileContent = st.render();
-      File msgFile = new File(outputPath.toFile(), context.getFileName());
+      Path outputFilePath = outputPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getName() + ".java");
 
-      if (msgFile.exists())
+      if (outputFilePath.toFile().exists())
       {
-         msgFile.delete();
+         outputFilePath.toFile().delete();
       }
+      outputFilePath.toFile().getParentFile().mkdirs();
 
       try
       {
-         msgFile.getParentFile().mkdirs();
-         msgFile.createNewFile();
+         Files.writeString(outputFilePath, st.render(), StandardCharsets.UTF_8);
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
 
-      Path outputFile = outputPath.resolve(context.getName() + ".java");
-
-      try
-      {
-         Files.writeString(outputFile, fileContent, StandardCharsets.UTF_8);
-      }
-      catch (IOException e)
-      {
-         e.printStackTrace();
-      }
-
-      System.out.println("Generated " + outputFile.toFile().getAbsolutePath());
+      System.out.println("Generated " + outputFilePath.toFile().getAbsolutePath());
    }
 }

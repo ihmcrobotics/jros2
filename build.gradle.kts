@@ -13,6 +13,15 @@ sourceSets {
     create("common_interfaces") {
         java.srcDir("src/common_interfaces/java")
         resources.srcDir("src/common_interfaces/resources")
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
+    }
+
+    create("jros2_example_interfaces") {
+        java.srcDir("src/jros2_example_interfaces/java")
+        resources.srcDir("src/jros2_example_interfaces/resources")
+        compileClasspath += sourceSets["main"].output
+        runtimeClasspath += sourceSets["main"].output
     }
 }
 
@@ -77,7 +86,18 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.register<jros2GenTask>("generateTest") {
-    packagePath = projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath
-    outputDir = layout.buildDirectory.get().dir("jros2_example_interfaces").toString()
+tasks.register<jros2GenTask>("generateCommonInterfaces") {
+    packagePaths = listOf(
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("actionlib_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("diagnostic_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("geometry_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("nav_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("sensor_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("shape_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("std_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("stereo_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
+          projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
+    )
+    outputDir = sourceSets["common_interfaces"].java.srcDirs.first().toString()
 }
