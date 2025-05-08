@@ -6,6 +6,13 @@ plugins {
 group = "us.ihmc"
 version = "1.0.0"
 
+sourceSets {
+    create("common_interfaces") {
+        java.srcDir("src/common_interfaces/java")
+        resources.srcDir("src/common_interfaces/resources")
+    }
+}
+
 repositories {
     mavenCentral()
 }

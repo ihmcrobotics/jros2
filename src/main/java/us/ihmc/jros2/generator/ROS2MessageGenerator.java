@@ -1,7 +1,6 @@
 package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.ROS2Message;
 import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
@@ -21,11 +20,13 @@ import java.util.Objects;
 
 public class ROS2MessageGenerator
 {
+   private final Path outputPath;
    private final List<MsgContext> msgs;
    private final Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass;
 
-   public ROS2MessageGenerator(Path... ros2pkgPathsToInclude)
+   public ROS2MessageGenerator(Path outputPath, Path... ros2pkgPathsToInclude)
    {
+      this.outputPath = outputPath;
       msgs = new LinkedList<>();
       fieldTypeJavaClass = new HashMap<>();
 
@@ -86,59 +87,6 @@ public class ROS2MessageGenerator
       fieldTypeJavaClass.put(fieldType, clazz);
    }
 
-   public static void main(String[] args)
-   {
-      ROS2MessageGenerator messageGenerator = new ROS2MessageGenerator(Path.of(new File("ros2_interfaces/common_interfaces/actionlib_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/diagnostic_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/geometry_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/nav_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/sensor_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/shape_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/std_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/stereo_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/trajectory_msgs").toURI()),
-                                                                       Path.of(new File("ros2_interfaces/common_interfaces/visualization_msgs").toURI()));
-
-      messageGenerator.registerJavaClass("Bool", CustomBool.class);
-
-      MsgContext msgContext = new MsgContext("test_msgs", "Test.msg", TEST_MSG);
-
-      messageGenerator.generate(msgContext);
-   }
-
-   public static class CustomBool implements ROS2Message<CustomBool>
-   {
-      @Override
-      public int calculateSizeBytes(int currentAlignment)
-      {
-         return 0;
-      }
-
-      @Override
-      public void serialize(CDRBuffer buffer)
-      {
-
-      }
-
-      @Override
-      public void deserialize(CDRBuffer buffer)
-      {
-
-      }
-
-      @Override
-      public String getName()
-      {
-         return null;
-      }
-
-      @Override
-      public void set(CustomBool from)
-      {
-
-      }
-   }
-
    public void generate(MsgContext context)
    {
       context.parse(msgs);
@@ -176,26 +124,34 @@ public class ROS2MessageGenerator
 
       ST st = new ST(template);
       st.add("context", context);
-      System.out.println(st.render());
-   }
 
-   private static final String TEST_MSG = """
-         # msg header line 1
-         # msg header line 2
-         # msg header line 3
-                  
-         # field1 header comment
-         # field1 header comment (line 2)
-         bool[1] field1
-         bool[<=3] field2
-         uint8[<=234] field3
-         float32[] field4 # Some comment
-         Bool test_bool
-                  
-           uint8 field5
-                  
-         # Some comment
-                  
-                  
-         """;
+      String fileContent = st.render();
+      File msgFile = new File(outputPath.toFile(), context.getFileName());
+
+      if (msgFile.exists())
+      {
+         msgFile.delete();
+      }
+
+      try
+      {
+         msgFile.getParentFile().mkdirs();
+         msgFile.createNewFile();
+      }
+      catch (IOException e)
+      {
+         LogTools.error(e);
+      }
+
+      try
+      {
+         Files.writeString(msgFile.toPath(), fileContent, StandardCharsets.UTF_8);
+      }
+      catch (IOException e)
+      {
+         LogTools.error(e);
+      }
+
+      LogTools.info("Generated " + msgFile.getAbsolutePath());
+   }
 }
