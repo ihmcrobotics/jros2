@@ -48,7 +48,7 @@ public <field.javaType> get<field.name>()
 <if(field.builtinType&&!field.array)>
 public void set<field.name>(<field.javaType> <field.name>_)
 {
-   this.<field.name>_ = <field.name>;
+   this.<field.name>_ = <field.name>_;
 \}
 <endif>
 
@@ -101,12 +101,12 @@ buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_);
 <! TODO: direct buffer to array copy instead of iterating !>
 for (int i = 0; i \< <field.name>_.length; ++i)
 {
-   <field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>;
+   <field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>();
 \}
       <elseif(field.array&&!field.fixedSize)>
 <field.name>_.deserialize(buffer);
       <elseif(!field.array)>
-<field.name>_ = buffer.<field.builtinCDRBufferReadMethod>;
+<field.name>_ = buffer.<field.builtinCDRBufferReadMethod>();
       <endif>
       <endif>
       }>
@@ -132,7 +132,7 @@ for (int i = 0; i \< <field.name>_.length; ++i)
       <elseif(field.array&&!field.fixedSize)>
 <field.name>_.set(from.<field.name>_);
       <elseif(!field.array)>
-<field.name> = from.<field.name>_;
+<field.name>_ = from.<field.name>_;
       <endif>
       <endif>
       }>
