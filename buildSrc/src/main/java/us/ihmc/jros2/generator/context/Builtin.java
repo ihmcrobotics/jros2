@@ -116,10 +116,10 @@ public final class Builtin
    }
 
    /**
-    * The {@link us.ihmc.fastddsjava.cdr.idl.IDLSequence} type for a built-in type
+    * The {@literal us.ihmc.fastddsjava.cdr.idl.IDLSequence} type for a built-in type
     *
     * @param builtinType the built-in type name
-    * @return the {@link us.ihmc.fastddsjava.cdr.idl.IDLSequence} class name (no package prepended) or null if not a default type or the type was not set
+    * @return the {@literal us.ihmc.fastddsjava.cdr.idl.IDLSequence} class name (no package prepended) or null if not a default type or the type was not set
     */
    public static String getBuiltinTypeIDLSequenceType(String builtinType)
    {
@@ -155,7 +155,7 @@ public final class Builtin
    }
 
    /**
-    * The method name within {@link us.ihmc.fastddsjava.cdr.CDRBuffer} used to write the built-in type
+    * The method name within {@literal us.ihmc.fastddsjava.cdr.CDRBuffer} used to write the built-in type
     *
     * @param builtinType the built-in type name
     * @return the method name
@@ -196,7 +196,7 @@ public final class Builtin
    }
 
    /**
-    * The method name within {@link us.ihmc.fastddsjava.cdr.CDRBuffer} used to read the built-in type
+    * The method name within {@literal us.ihmc.fastddsjava.cdr.CDRBuffer} used to read the built-in type
     *
     * @param builtinType the built-in type name
     * @return the method name

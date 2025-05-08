@@ -1,10 +1,8 @@
 package us.ihmc.jros2.generator;
 
 import org.stringtemplate.v4.ST;
-import us.ihmc.jros2.ROS2Message;
 import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
-import us.ihmc.log.LogTools;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +20,7 @@ public class ROS2MessageGenerator
 {
    private final Path outputPath;
    private final List<MsgContext> msgs;
-   private final Map<String, Class<? extends ROS2Message<?>>> fieldTypeJavaClass;
+   private final Map<String, Class<?>> fieldTypeJavaClass;
 
    public ROS2MessageGenerator(Path outputPath, Path... ros2pkgPathsToInclude)
    {
@@ -75,14 +73,14 @@ public class ROS2MessageGenerator
    }
 
    /**
-    * When generating {@link ROS2Message} classes, the generator will use the fully qualified path of the class
+    * When generating Java code, the generator will use the fully qualified path of the class
     * provided instead of inferring the class.
     * // TODO: Add a wiki page on github for how to use this
     *
     * @param fieldType the field type to associate
     * @param clazz     the class to be used in the generated Java for the field type
     */
-   public void registerJavaClass(String fieldType, Class<? extends ROS2Message<?>> clazz)
+   public void registerJavaClass(String fieldType, Class<?> clazz)
    {
       fieldTypeJavaClass.put(fieldType, clazz);
    }
@@ -102,7 +100,7 @@ public class ROS2MessageGenerator
       }
       catch (IOException e)
       {
-         LogTools.error(e);
+         e.printStackTrace();
       }
 
       if (template == null)
@@ -140,7 +138,7 @@ public class ROS2MessageGenerator
       }
       catch (IOException e)
       {
-         LogTools.error(e);
+         e.printStackTrace();
       }
 
       try
@@ -149,9 +147,9 @@ public class ROS2MessageGenerator
       }
       catch (IOException e)
       {
-         LogTools.error(e);
+         e.printStackTrace();
       }
 
-      LogTools.info("Generated " + msgFile.getAbsolutePath());
+      System.out.println("Generated " + msgFile.getAbsolutePath());
    }
 }
