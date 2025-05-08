@@ -54,6 +54,9 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          {
             synchronized (cdrBuffer)
             {
+               // Rewind buffer to ensure we're starting at position = 0
+               cdrBuffer.rewind();
+
                int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
                cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
 

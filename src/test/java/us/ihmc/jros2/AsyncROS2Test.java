@@ -42,7 +42,7 @@ public class AsyncROS2Test
    @Test
    public void testPublishingManyMessages() throws InterruptedException
    {
-      int messagesToPublish = 100;
+      int messagesToPublish = 1000;
       AtomicInteger messagesReceived = new AtomicInteger(0);
       boolean publish = true;
       AtomicBoolean expectedValue = new AtomicBoolean(publish);
@@ -57,7 +57,7 @@ public class AsyncROS2Test
          assertEquals(expectedValue.get(), value.getData());
          expectedValue.set(!expectedValue.get());
 
-         if (messagesReceived.incrementAndGet() > messagesToPublish)
+         if (messagesReceived.incrementAndGet() >= messagesToPublish)
          {
             synchronized (messagesReceived)
             {
@@ -79,7 +79,10 @@ public class AsyncROS2Test
 
       synchronized (messagesReceived)
       {
-         messagesReceived.wait(5000);
+         if (messagesReceived.get() < messagesToPublish)
+         {
+            messagesReceived.wait(10000);
+         }
       }
 
       assertEquals(messagesToPublish, messagesReceived.get());

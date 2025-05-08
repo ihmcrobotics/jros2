@@ -42,6 +42,11 @@ public final class CDRBuffer
       }
    }
 
+   public void rewind()
+   {
+      buffer.rewind();
+   }
+
    public void writePayloadHeader()
    {
       buffer.put(PAYLOAD_HEADER);
