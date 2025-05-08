@@ -15,11 +15,5 @@ public class jros2GeneratorPlugin implements Plugin<Project>
          task.setGroup(TASK_GROUP_NAME);
          task.setDescription("desc");
       });
-
-      plugin.getTasks().register("jros2gen", task ->
-      {
-         task.setGroup(TASK_GROUP_NAME);
-         task.setDescription("desc");
-      });
    }
 }

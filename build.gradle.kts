@@ -1,3 +1,5 @@
+import us.ihmc.jros2.generator.task.jros2GenTask
+
 plugins {
     id("java-library")
     id("maven-publish")
@@ -73,4 +75,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.register<jros2GenTask>("generateTest") {
+    packagePath = projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath
+    outputDir = layout.buildDirectory.get().dir("jros2_example_interfaces").toString()
 }

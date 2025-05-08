@@ -18,19 +18,21 @@ import java.util.Objects;
 
 public class ROS2MessageGenerator
 {
+   private final Path packagePath;
    private final Path outputPath;
    private final List<MsgContext> msgs;
    private final Map<String, Class<?>> fieldTypeJavaClass;
 
-   public ROS2MessageGenerator(Path outputPath, Path... ros2pkgPathsToInclude)
+   public ROS2MessageGenerator(Path packagePath, Path outputPath, Path... ros2pkgPathsToInclude)
    {
+      this.packagePath = packagePath;
       this.outputPath = outputPath;
       msgs = new LinkedList<>();
       fieldTypeJavaClass = new HashMap<>();
 
       for (Path ros2pkgPath : ros2pkgPathsToInclude)
       {
-         findMsgsInPkg(ros2pkgPath);
+         msgs.addAll(findMsgsInPkg(ros2pkgPath));
       }
 
       for (MsgContext context : msgs)
@@ -39,8 +41,10 @@ public class ROS2MessageGenerator
       }
    }
 
-   private void findMsgsInPkg(Path ros2pkgPath)
+   private List<MsgContext> findMsgsInPkg(Path ros2pkgPath)
    {
+      List<MsgContext> msgs = new LinkedList<>();
+
       if (!ros2pkgPath.resolve("package.xml").toFile().exists())
       {
          throw new RuntimeException(ros2pkgPath + " is not a ROS 2 package path");
@@ -70,6 +74,8 @@ public class ROS2MessageGenerator
 
          msgs.add(context);
       }
+
+      return msgs;
    }
 
    /**
@@ -83,6 +89,16 @@ public class ROS2MessageGenerator
    public void registerJavaClass(String fieldType, Class<?> clazz)
    {
       fieldTypeJavaClass.put(fieldType, clazz);
+   }
+
+   public void generate()
+   {
+      List<MsgContext> msgs = findMsgsInPkg(packagePath);
+
+      for (MsgContext context : msgs)
+      {
+         generate(context);
+      }
    }
 
    public void generate(MsgContext context)
@@ -141,15 +157,17 @@ public class ROS2MessageGenerator
          e.printStackTrace();
       }
 
+      Path outputFile = outputPath.resolve(context.getName() + ".java");
+
       try
       {
-         Files.writeString(msgFile.toPath(), fileContent, StandardCharsets.UTF_8);
+         Files.writeString(outputFile, fileContent, StandardCharsets.UTF_8);
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
 
-      System.out.println("Generated " + msgFile.getAbsolutePath());
+      System.out.println("Generated " + outputFile.toFile().getAbsolutePath());
    }
 }
