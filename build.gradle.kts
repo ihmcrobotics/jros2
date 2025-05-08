@@ -1,6 +1,7 @@
 plugins {
     id("java-library")
     id("maven-publish")
+    id("java-gradle-plugin")
 }
 
 group = "us.ihmc"
@@ -12,6 +13,17 @@ sourceSets {
         resources.srcDir("src/common_interfaces/resources")
     }
 }
+
+gradlePlugin {
+    plugins {
+        create("jros2Generator") {
+            id = "us.ihmc.jros2.generator"
+            implementationClass = "us.ihmc.jros2.generator.jros2GeneratorPlugin"
+        }
+    }
+}
+
+apply(plugin = "us.ihmc.jros2.generator")
 
 repositories {
     mavenCentral()
