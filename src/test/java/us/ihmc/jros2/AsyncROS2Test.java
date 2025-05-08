@@ -5,7 +5,11 @@ import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.msg.Bool;
 import us.ihmc.log.LogTools;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,6 +17,7 @@ import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
 public class AsyncROS2Test
 {
    @Test
@@ -97,9 +102,11 @@ public class AsyncROS2Test
    }
 
    @Test
-   public void compareStandardAndAsyncPublisher() throws InterruptedException
+   public void compareStandardAndAsyncPublisher() throws InterruptedException, IOException
    {
       final boolean generateCSV = false;
+      final String fileDirectory = System.getProperty("user.home") + File.separator + "Documents" + File.separator;
+
       final int messagesToPublish = 10000;
       final boolean expected = true;
 
@@ -113,10 +120,10 @@ public class AsyncROS2Test
 
       // Create normal and async publishers
       ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);
-      DoubleStatisticsHelper standardPublisherStatistics = new DoubleStatisticsHelper();
+      DoubleStatisticsHelper standardPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       ROS2Publisher<Bool> asyncPublisher = asyncROS2Node.createPublisher(asyncTopic);
-      DoubleStatisticsHelper asyncPublisherStatistics = new DoubleStatisticsHelper();
+      DoubleStatisticsHelper asyncPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       // Create subscribers
       ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getData());
@@ -128,6 +135,21 @@ public class AsyncROS2Test
 
       BiFunction<ROS2Publisher<Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
       {
+         // Warm up publishers
+         for (int i = 0; i < messagesToPublish / 5; ++i)
+         {
+            ros2Publisher.publish(message);
+            try
+            {
+               Thread.sleep(5);
+            }
+            catch (InterruptedException e)
+            {
+               throw new RuntimeException(e);
+            }
+         }
+
+         // Start publishing and recording statistics
          for (int i = 0; i < messagesToPublish; ++i)
          {
             long start = System.nanoTime();
@@ -177,18 +199,38 @@ public class AsyncROS2Test
       asyncROS2Node.destroyPublisher(asyncPublisher);
       asyncROS2Node.destroySubscription(asyncSubscription);
       asyncROS2Node.close();
+
+      if (generateCSV)
+      {
+         String fileName = "AsyncPublisherComparison" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HHmm")) + ".csv";
+         File csv = new File(fileDirectory + fileName);
+
+         double[] standardHistory = standardPublisherStatistics.getHistory();
+         double[] asyncHistory = asyncPublisherStatistics.getHistory();
+
+         try (FileWriter fileWriter = new FileWriter(csv))
+         {
+            fileWriter.append("Standard Publish Time (s),Async Publish Time (s)\n");
+            for (int i = 0; i < messagesToPublish; ++i)
+            {
+               fileWriter.append(standardHistory[i] + ",").append(asyncHistory[i] + "\n");
+            }
+         }
+      }
    }
 
    private static class DoubleStatisticsHelper extends DoubleSummaryStatistics
    {
       private double squaredSum;
       private double standardDeviation;
+      private final double[] history;
 
-      public DoubleStatisticsHelper()
+      public DoubleStatisticsHelper(int maxSize)
       {
          super();
          squaredSum = 0.0;
          standardDeviation = 0.0;
+         history = new double[maxSize];
       }
 
       @Override
@@ -198,11 +240,17 @@ public class AsyncROS2Test
 
          squaredSum += value * value;
          standardDeviation = Math.sqrt(getCount() * squaredSum - getSum() * getSum()) / getCount();
+         history[(int) getCount() - 1] = value;
       }
 
       public double getStandardDeviation()
       {
          return standardDeviation;
+      }
+
+      public double[] getHistory()
+      {
+         return history;
       }
 
       @Override
@@ -214,6 +262,14 @@ public class AsyncROS2Test
          result.append(standardDeviation).append("}");
 
          return result.toString();
+      }
+   }
+
+   private class WarmUp
+   {
+      public void warmUp()
+      {
+
       }
    }
 }
