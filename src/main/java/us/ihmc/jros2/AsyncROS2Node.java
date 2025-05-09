@@ -34,7 +34,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, transports);
 
-      int capacity = 32;
+      int capacity = 64;
 
       // TODO: Name, daemon, etc
       tasks = new ArrayBlockingQueue<>(capacity, true);
