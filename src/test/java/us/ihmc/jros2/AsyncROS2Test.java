@@ -83,14 +83,14 @@ public class AsyncROS2Test
          bool.setData(publish);
          publisher.publish(bool);
          publish = !publish;
-         Thread.sleep(5);
+         LockSupport.parkNanos(100000); // park for 0.1ms
       }
 
       synchronized (messagesReceived)
       {
          if (messagesReceived.get() < messagesToPublish)
          {
-            messagesReceived.wait(10000);
+            messagesReceived.wait(1000);
          }
       }
 
@@ -99,6 +99,63 @@ public class AsyncROS2Test
       // Close stuff
       asyncNode.destroySubscription(subscription);
       asyncNode.destroyPublisher(publisher);
+      asyncNode.close();
+   }
+
+   @Test
+   public void testMultipleAsyncPublishers() throws InterruptedException
+   {
+      final int publisherCount = 10;
+      final int messagesToPublish = 1000;
+      final boolean expected = true;
+
+      AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
+      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/test_topic");
+
+      ROS2Publisher<?>[] publishers = new ROS2Publisher[publisherCount];
+      Thread[] publisherThreads = new Thread[publisherCount];
+
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         ROS2Publisher<Bool> asyncPublisher = asyncNode.createPublisher(topic);
+         publishers[i] = asyncPublisher;
+         publisherThreads[i] = new Thread(() ->
+         {
+            for (int j = 0; j < messagesToPublish; j++)
+            {
+               Bool message = new Bool();
+               message.setData(expected);
+               asyncPublisher.publish(message);
+               LockSupport.parkNanos(500000); // park for 0.5ms
+            }
+         });
+      }
+
+      AtomicInteger receivedMessageCount = new AtomicInteger(0);
+      ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
+      {
+         Bool received = reader.read();
+         assertEquals(expected, received.getData());
+         receivedMessageCount.incrementAndGet();
+      });
+
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         publisherThreads[i].start();
+      }
+
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         publisherThreads[i].join();
+      }
+
+      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
+
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         asyncNode.destroyPublisher(publishers[i]);
+      }
+      asyncNode.destroySubscription(subscription);
       asyncNode.close();
    }
 

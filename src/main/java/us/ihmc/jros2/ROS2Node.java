@@ -210,7 +210,7 @@ public class ROS2Node implements Closeable
       return createPublisher(topic, ROS2QoSProfile.DEFAULT);
    }
 
-   public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
+   public boolean destroyPublisher(ROS2Publisher<?> publisher)
    {
       boolean removed = false;
 
@@ -287,7 +287,7 @@ public class ROS2Node implements Closeable
       return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
    }
 
-   public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
+   public boolean destroySubscription(ROS2Subscription<?> subscription)
    {
       boolean removed = false;
 
