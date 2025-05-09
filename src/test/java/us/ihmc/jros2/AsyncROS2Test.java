@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,17 +137,10 @@ public class AsyncROS2Test
       BiFunction<ROS2Publisher<Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
       {
          // Warm up publishers
-         for (int i = 0; i < messagesToPublish / 5; ++i)
+         for (int i = 0; i < messagesToPublish / 10; ++i)
          {
             ros2Publisher.publish(message);
-            try
-            {
-               Thread.sleep(5);
-            }
-            catch (InterruptedException e)
-            {
-               throw new RuntimeException(e);
-            }
+            LockSupport.parkNanos(100000); // park for 0.1ms
          }
 
          // Start publishing and recording statistics
@@ -156,14 +150,7 @@ public class AsyncROS2Test
             ros2Publisher.publish(message);
             long duration = System.nanoTime() - start;
             statistics.accept(duration * 1E-9);
-            try
-            {
-               Thread.sleep(5);
-            }
-            catch (InterruptedException e)
-            {
-               throw new RuntimeException(e);
-            }
+            LockSupport.parkNanos(100000); // park for 0.1ms
          }
       };
 
@@ -172,12 +159,14 @@ public class AsyncROS2Test
       Thread asyncPublisherThread = new Thread(runnableProvider.apply(asyncPublisher, asyncPublisherStatistics));
 
       // Start both threads
+      LogTools.info("Starting publish threads...");
       standardPublisherThread.start();
       asyncPublisherThread.start();
 
       // Wait until they finish
       standardPublisherThread.join();
       asyncPublisherThread.join();
+      LogTools.info("Publish threads finished");
 
       // Log statistics
       LogTools.info("Standard publisher statistics: {}", standardPublisherStatistics);
@@ -262,14 +251,6 @@ public class AsyncROS2Test
          result.append(standardDeviation).append("}");
 
          return result.toString();
-      }
-   }
-
-   private class WarmUp
-   {
-      public void warmUp()
-      {
-
       }
    }
 }
