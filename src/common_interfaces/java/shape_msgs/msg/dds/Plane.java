@@ -27,12 +27,6 @@ public class Plane implements ROS2Message<Plane>
 
    }
 
-   public double[] getcoef()
-   {
-      return coef_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -78,4 +72,11 @@ public class Plane implements ROS2Message<Plane>
       }
 
    }
+
+   public double[] getcoef()
+   {
+      return coef_;
+   }
+
+
 }

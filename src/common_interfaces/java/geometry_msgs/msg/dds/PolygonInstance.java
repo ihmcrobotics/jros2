@@ -21,17 +21,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    {
    }
 
-   public long getid()
-   {
-      return id_;
-   }
-
-   public void setid(long id_)
-   {
-      this.id_ = id_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -68,4 +57,16 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
       id_ = from.id_;
 
    }
+
+   public long getid()
+   {
+      return id_;
+   }
+
+   public void setid(long id_)
+   {
+      this.id_ = id_;
+   }
+
+
 }

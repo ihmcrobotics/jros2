@@ -47,4 +47,5 @@ public class Int8MultiArray implements ROS2Message<Int8MultiArray>
    public void set(Int8MultiArray from)
    {
    }
+
 }

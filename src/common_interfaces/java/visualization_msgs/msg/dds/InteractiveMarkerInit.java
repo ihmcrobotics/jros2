@@ -36,32 +36,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 
    }
 
-   public StringBuilder getserver_id()
-   {
-      return server_id_;
-   }
-
-   public void setserver_id(StringBuilder server_id_)
-   {
-      this.server_id_ = server_id_;
-   }
-
-   public long getseq_num()
-   {
-      return seq_num_;
-   }
-
-   public void setseq_num(long seq_num_)
-   {
-      this.seq_num_ = seq_num_;
-   }
-
-   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
-   {
-      return markers_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -102,4 +76,31 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       seq_num_ = from.seq_num_;
 
    }
+
+   public StringBuilder getserver_id()
+   {
+      return server_id_;
+   }
+
+   public void setserver_id(StringBuilder server_id_)
+   {
+      this.server_id_ = server_id_;
+   }
+
+   public long getseq_num()
+   {
+      return seq_num_;
+   }
+
+   public void setseq_num(long seq_num_)
+   {
+      this.seq_num_ = seq_num_;
+   }
+
+   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
+   {
+      return markers_;
+   }
+
+
 }

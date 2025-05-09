@@ -24,32 +24,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    {
    }
 
-   public StringBuilder getbody_frame_id()
-   {
-      return body_frame_id_;
-   }
-
-   public void setbody_frame_id(StringBuilder body_frame_id_)
-   {
-      this.body_frame_id_ = body_frame_id_;
-   }
-
-   public StringBuilder getreference_frame_id()
-   {
-      return reference_frame_id_;
-   }
-
-   public void setreference_frame_id(StringBuilder reference_frame_id_)
-   {
-      this.reference_frame_id_ = reference_frame_id_;
-   }
-
-   public geometry_msgs.msg.dds.Twist getvelocity()
-   {
-      return velocity_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -90,4 +64,31 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       reference_frame_id_ = from.reference_frame_id_;
 
    }
+
+   public StringBuilder getbody_frame_id()
+   {
+      return body_frame_id_;
+   }
+
+   public void setbody_frame_id(StringBuilder body_frame_id_)
+   {
+      this.body_frame_id_ = body_frame_id_;
+   }
+
+   public StringBuilder getreference_frame_id()
+   {
+      return reference_frame_id_;
+   }
+
+   public void setreference_frame_id(StringBuilder reference_frame_id_)
+   {
+      this.reference_frame_id_ = reference_frame_id_;
+   }
+
+   public geometry_msgs.msg.dds.Twist getvelocity()
+   {
+      return velocity_;
+   }
+
+
 }

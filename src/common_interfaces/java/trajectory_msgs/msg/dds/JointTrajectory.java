@@ -31,17 +31,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
-   public  getjoint_names()
-   {
-      return joint_names_;
-   }
-
-   public trajectory_msgs.msg.dds.JointTrajectoryPoint getpoints()
-   {
-      return points_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -78,4 +67,16 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
       joint_names_.set(from.joint_names_);
 
    }
+
+   public  getjoint_names()
+   {
+      return joint_names_;
+   }
+
+   public trajectory_msgs.msg.dds.JointTrajectoryPoint getpoints()
+   {
+      return points_;
+   }
+
+
 }

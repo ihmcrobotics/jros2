@@ -28,22 +28,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    }
 
-   public byte gettype()
-   {
-      return type_;
-   }
-
-   public void settype(byte type_)
-   {
-      this.type_ = type_;
-   }
-
-   public IDLDoubleSequence getdimensions()
-   {
-      return dimensions_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -84,4 +68,21 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       dimensions_.set(from.dimensions_);
 
    }
+
+   public byte gettype()
+   {
+      return type_;
+   }
+
+   public void settype(byte type_)
+   {
+      this.type_ = type_;
+   }
+
+   public IDLDoubleSequence getdimensions()
+   {
+      return dimensions_;
+   }
+
+
 }

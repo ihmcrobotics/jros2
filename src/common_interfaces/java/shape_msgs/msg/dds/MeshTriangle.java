@@ -22,12 +22,6 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 
    }
 
-   public int[] getvertex_indices()
-   {
-      return vertex_indices_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -73,4 +67,11 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
       }
 
    }
+
+   public int[] getvertex_indices()
+   {
+      return vertex_indices_;
+   }
+
+
 }

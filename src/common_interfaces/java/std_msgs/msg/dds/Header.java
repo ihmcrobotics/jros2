@@ -22,17 +22,6 @@ public class Header implements ROS2Message<Header>
    {
    }
 
-   public StringBuilder getframe_id()
-   {
-      return frame_id_;
-   }
-
-   public void setframe_id(StringBuilder frame_id_)
-   {
-      this.frame_id_ = frame_id_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -69,4 +58,16 @@ public class Header implements ROS2Message<Header>
       frame_id_ = from.frame_id_;
 
    }
+
+   public StringBuilder getframe_id()
+   {
+      return frame_id_;
+   }
+
+   public void setframe_id(StringBuilder frame_id_)
+   {
+      this.frame_id_ = frame_id_;
+   }
+
+
 }

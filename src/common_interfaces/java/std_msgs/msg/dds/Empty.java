@@ -45,4 +45,5 @@ public class Empty implements ROS2Message<Empty>
    public void set(Empty from)
    {
    }
+
 }

@@ -23,47 +23,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
    }
 
-   public double getx()
-   {
-      return x_;
-   }
-
-   public void setx(double x_)
-   {
-      this.x_ = x_;
-   }
-
-   public double gety()
-   {
-      return y_;
-   }
-
-   public void sety(double y_)
-   {
-      this.y_ = y_;
-   }
-
-   public double getz()
-   {
-      return z_;
-   }
-
-   public void setz(double z_)
-   {
-      this.z_ = z_;
-   }
-
-   public double getw()
-   {
-      return w_;
-   }
-
-   public void setw(double w_)
-   {
-      this.w_ = w_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -112,4 +71,46 @@ public class Quaternion implements ROS2Message<Quaternion>
       w_ = from.w_;
 
    }
+
+   public double getx()
+   {
+      return x_;
+   }
+
+   public void setx(double x_)
+   {
+      this.x_ = x_;
+   }
+
+   public double gety()
+   {
+      return y_;
+   }
+
+   public void sety(double y_)
+   {
+      this.y_ = y_;
+   }
+
+   public double getz()
+   {
+      return z_;
+   }
+
+   public void setz(double z_)
+   {
+      this.z_ = z_;
+   }
+
+   public double getw()
+   {
+      return w_;
+   }
+
+   public void setw(double w_)
+   {
+      this.w_ = w_;
+   }
+
+
 }

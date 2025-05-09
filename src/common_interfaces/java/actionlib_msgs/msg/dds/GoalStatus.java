@@ -22,32 +22,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
    }
 
-   public actionlib_msgs.msg.dds.GoalID getgoal_id()
-   {
-      return goal_id_;
-   }
-
-   public byte getstatus()
-   {
-      return status_;
-   }
-
-   public void setstatus(byte status_)
-   {
-      this.status_ = status_;
-   }
-
-   public StringBuilder gettext()
-   {
-      return text_;
-   }
-
-   public void settext(StringBuilder text_)
-   {
-      this.text_ = text_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -88,4 +62,31 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       text_ = from.text_;
 
    }
+
+   public actionlib_msgs.msg.dds.GoalID getgoal_id()
+   {
+      return goal_id_;
+   }
+
+   public byte getstatus()
+   {
+      return status_;
+   }
+
+   public void setstatus(byte status_)
+   {
+      this.status_ = status_;
+   }
+
+   public StringBuilder gettext()
+   {
+      return text_;
+   }
+
+   public void settext(StringBuilder text_)
+   {
+      this.text_ = text_;
+   }
+
+
 }

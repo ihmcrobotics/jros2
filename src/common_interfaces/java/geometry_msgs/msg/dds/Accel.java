@@ -43,4 +43,5 @@ public class Accel implements ROS2Message<Accel>
    public void set(Accel from)
    {
    }
+
 }

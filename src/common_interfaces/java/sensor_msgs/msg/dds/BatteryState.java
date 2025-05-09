@@ -38,6 +38,83 @@ public class BatteryState implements ROS2Message<BatteryState>
 
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // voltage_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // temperature_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // current_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // charge_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // capacity_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // design_capacity_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // percentage_
+      currentAlignment += cell_voltage_.calculateSizeBytes(currentAlignment);
+      currentAlignment += cell_temperature_.calculateSizeBytes(currentAlignment);
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // location_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // serial_number_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.writeFloat(voltage_);
+      buffer.writeFloat(temperature_);
+      buffer.writeFloat(current_);
+      buffer.writeFloat(charge_);
+      buffer.writeFloat(capacity_);
+      buffer.writeFloat(design_capacity_);
+      buffer.writeFloat(percentage_);
+      cell_voltage_.serialize(buffer);
+      cell_temperature_.serialize(buffer);
+      buffer.(location_);
+      buffer.(serial_number_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      voltage_ = buffer.readFloat();
+      temperature_ = buffer.readFloat();
+      current_ = buffer.readFloat();
+      charge_ = buffer.readFloat();
+      capacity_ = buffer.readFloat();
+      design_capacity_ = buffer.readFloat();
+      percentage_ = buffer.readFloat();
+      cell_voltage_.deserialize(buffer);
+      cell_temperature_.deserialize(buffer);
+      location_ = buffer.();
+      serial_number_ = buffer.();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(BatteryState from)
+   {
+      voltage_ = from.voltage_;
+      temperature_ = from.temperature_;
+      current_ = from.current_;
+      charge_ = from.charge_;
+      capacity_ = from.capacity_;
+      design_capacity_ = from.design_capacity_;
+      percentage_ = from.percentage_;
+      cell_voltage_.set(from.cell_voltage_);
+      cell_temperature_.set(from.cell_temperature_);
+      location_ = from.location_;
+      serial_number_ = from.serial_number_;
+
+   }
+
    public float getvoltage()
    {
       return voltage_;
@@ -139,80 +216,4 @@ public class BatteryState implements ROS2Message<BatteryState>
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // voltage_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // temperature_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // current_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // charge_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // capacity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // design_capacity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // percentage_
-      currentAlignment += cell_voltage_.calculateSizeBytes(currentAlignment);
-      currentAlignment += cell_temperature_.calculateSizeBytes(currentAlignment);
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // location_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // serial_number_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.writeFloat(voltage_);
-      buffer.writeFloat(temperature_);
-      buffer.writeFloat(current_);
-      buffer.writeFloat(charge_);
-      buffer.writeFloat(capacity_);
-      buffer.writeFloat(design_capacity_);
-      buffer.writeFloat(percentage_);
-      cell_voltage_.serialize(buffer);
-      cell_temperature_.serialize(buffer);
-      buffer.(location_);
-      buffer.(serial_number_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      voltage_ = buffer.readFloat();
-      temperature_ = buffer.readFloat();
-      current_ = buffer.readFloat();
-      charge_ = buffer.readFloat();
-      capacity_ = buffer.readFloat();
-      design_capacity_ = buffer.readFloat();
-      percentage_ = buffer.readFloat();
-      cell_voltage_.deserialize(buffer);
-      cell_temperature_.deserialize(buffer);
-      location_ = buffer.();
-      serial_number_ = buffer.();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(BatteryState from)
-   {
-      voltage_ = from.voltage_;
-      temperature_ = from.temperature_;
-      current_ = from.current_;
-      charge_ = from.charge_;
-      capacity_ = from.capacity_;
-      design_capacity_ = from.design_capacity_;
-      percentage_ = from.percentage_;
-      cell_voltage_.set(from.cell_voltage_);
-      cell_temperature_.set(from.cell_temperature_);
-      location_ = from.location_;
-      serial_number_ = from.serial_number_;
-
-   }
 }

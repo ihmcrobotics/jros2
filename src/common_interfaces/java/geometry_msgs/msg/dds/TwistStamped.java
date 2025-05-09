@@ -20,12 +20,6 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Twist gettwist()
-   {
-      return twist_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    public void set(TwistStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Twist gettwist()
+   {
+      return twist_;
+   }
+
+
 }

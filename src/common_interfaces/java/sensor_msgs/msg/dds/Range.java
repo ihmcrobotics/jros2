@@ -23,57 +23,6 @@ public class Range implements ROS2Message<Range>
    {
    }
 
-   public byte getradiation_type()
-   {
-      return radiation_type_;
-   }
-
-   public void setradiation_type(byte radiation_type_)
-   {
-      this.radiation_type_ = radiation_type_;
-   }
-
-   public float getfield_of_view()
-   {
-      return field_of_view_;
-   }
-
-   public void setfield_of_view(float field_of_view_)
-   {
-      this.field_of_view_ = field_of_view_;
-   }
-
-   public float getmin_range()
-   {
-      return min_range_;
-   }
-
-   public void setmin_range(float min_range_)
-   {
-      this.min_range_ = min_range_;
-   }
-
-   public float getmax_range()
-   {
-      return max_range_;
-   }
-
-   public void setmax_range(float max_range_)
-   {
-      this.max_range_ = max_range_;
-   }
-
-   public float getrange()
-   {
-      return range_;
-   }
-
-   public void setrange(float range_)
-   {
-      this.range_ = range_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -126,4 +75,56 @@ public class Range implements ROS2Message<Range>
       range_ = from.range_;
 
    }
+
+   public byte getradiation_type()
+   {
+      return radiation_type_;
+   }
+
+   public void setradiation_type(byte radiation_type_)
+   {
+      this.radiation_type_ = radiation_type_;
+   }
+
+   public float getfield_of_view()
+   {
+      return field_of_view_;
+   }
+
+   public void setfield_of_view(float field_of_view_)
+   {
+      this.field_of_view_ = field_of_view_;
+   }
+
+   public float getmin_range()
+   {
+      return min_range_;
+   }
+
+   public void setmin_range(float min_range_)
+   {
+      this.min_range_ = min_range_;
+   }
+
+   public float getmax_range()
+   {
+      return max_range_;
+   }
+
+   public void setmax_range(float max_range_)
+   {
+      this.max_range_ = max_range_;
+   }
+
+   public float getrange()
+   {
+      return range_;
+   }
+
+   public void setrange(float range_)
+   {
+      this.range_ = range_;
+   }
+
+
 }

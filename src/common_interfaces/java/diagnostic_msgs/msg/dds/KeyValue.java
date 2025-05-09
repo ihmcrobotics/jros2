@@ -24,27 +24,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
    }
 
-   public StringBuilder getkey()
-   {
-      return key_;
-   }
-
-   public void setkey(StringBuilder key_)
-   {
-      this.key_ = key_;
-   }
-
-   public StringBuilder getvalue()
-   {
-      return value_;
-   }
-
-   public void setvalue(StringBuilder value_)
-   {
-      this.value_ = value_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -85,4 +64,26 @@ public class KeyValue implements ROS2Message<KeyValue>
       value_ = from.value_;
 
    }
+
+   public StringBuilder getkey()
+   {
+      return key_;
+   }
+
+   public void setkey(StringBuilder key_)
+   {
+      this.key_ = key_;
+   }
+
+   public StringBuilder getvalue()
+   {
+      return value_;
+   }
+
+   public void setvalue(StringBuilder value_)
+   {
+      this.value_ = value_;
+   }
+
+
 }

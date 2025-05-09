@@ -23,17 +23,6 @@ public class UInt8 implements ROS2Message<UInt8>
    {
    }
 
-   public byte getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(byte data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class UInt8 implements ROS2Message<UInt8>
       data_ = from.data_;
 
    }
+
+   public byte getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(byte data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

@@ -22,37 +22,6 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
    }
 
-   public double getx()
-   {
-      return x_;
-   }
-
-   public void setx(double x_)
-   {
-      this.x_ = x_;
-   }
-
-   public double gety()
-   {
-      return y_;
-   }
-
-   public void sety(double y_)
-   {
-      this.y_ = y_;
-   }
-
-   public double gettheta()
-   {
-      return theta_;
-   }
-
-   public void settheta(double theta_)
-   {
-      this.theta_ = theta_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -97,4 +66,36 @@ public class Pose2D implements ROS2Message<Pose2D>
       theta_ = from.theta_;
 
    }
+
+   public double getx()
+   {
+      return x_;
+   }
+
+   public void setx(double x_)
+   {
+      this.x_ = x_;
+   }
+
+   public double gety()
+   {
+      return y_;
+   }
+
+   public void sety(double y_)
+   {
+      this.y_ = y_;
+   }
+
+   public double gettheta()
+   {
+      return theta_;
+   }
+
+   public void settheta(double theta_)
+   {
+      this.theta_ = theta_;
+   }
+
+
 }

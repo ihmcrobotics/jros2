@@ -19,12 +19,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 
    }
 
-   public diagnostic_msgs.msg.dds.DiagnosticStatus getstatus()
-   {
-      return status_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -53,4 +47,11 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    public void set(DiagnosticArray from)
    {
    }
+
+   public diagnostic_msgs.msg.dds.DiagnosticStatus getstatus()
+   {
+      return status_;
+   }
+
+
 }

@@ -45,4 +45,5 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    public void set(MultiDOFJointTrajectoryPoint from)
    {
    }
+
 }

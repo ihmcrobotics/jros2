@@ -32,6 +32,67 @@ public class Inertia implements ROS2Message<Inertia>
    {
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // m_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixx_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixy_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixz_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyy_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyz_
+      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // izz_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.writeDouble(m_);
+      buffer.writeDouble(ixx_);
+      buffer.writeDouble(ixy_);
+      buffer.writeDouble(ixz_);
+      buffer.writeDouble(iyy_);
+      buffer.writeDouble(iyz_);
+      buffer.writeDouble(izz_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      m_ = buffer.readDouble();
+      ixx_ = buffer.readDouble();
+      ixy_ = buffer.readDouble();
+      ixz_ = buffer.readDouble();
+      iyy_ = buffer.readDouble();
+      iyz_ = buffer.readDouble();
+      izz_ = buffer.readDouble();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(Inertia from)
+   {
+      m_ = from.m_;
+      ixx_ = from.ixx_;
+      ixy_ = from.ixy_;
+      ixz_ = from.ixz_;
+      iyy_ = from.iyy_;
+      iyz_ = from.iyz_;
+      izz_ = from.izz_;
+
+   }
+
    public double getm()
    {
       return m_;
@@ -103,64 +164,4 @@ public class Inertia implements ROS2Message<Inertia>
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // m_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixx_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixy_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixz_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyy_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyz_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // izz_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.writeDouble(m_);
-      buffer.writeDouble(ixx_);
-      buffer.writeDouble(ixy_);
-      buffer.writeDouble(ixz_);
-      buffer.writeDouble(iyy_);
-      buffer.writeDouble(iyz_);
-      buffer.writeDouble(izz_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      m_ = buffer.readDouble();
-      ixx_ = buffer.readDouble();
-      ixy_ = buffer.readDouble();
-      ixz_ = buffer.readDouble();
-      iyy_ = buffer.readDouble();
-      iyz_ = buffer.readDouble();
-      izz_ = buffer.readDouble();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(Inertia from)
-   {
-      m_ = from.m_;
-      ixx_ = from.ixx_;
-      ixy_ = from.ixy_;
-      ixz_ = from.ixz_;
-      iyy_ = from.iyy_;
-      iyz_ = from.iyz_;
-      izz_ = from.izz_;
-
-   }
 }

@@ -41,57 +41,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
    }
 
-   public int getx_offset()
-   {
-      return x_offset_;
-   }
-
-   public void setx_offset(int x_offset_)
-   {
-      this.x_offset_ = x_offset_;
-   }
-
-   public int gety_offset()
-   {
-      return y_offset_;
-   }
-
-   public void sety_offset(int y_offset_)
-   {
-      this.y_offset_ = y_offset_;
-   }
-
-   public int getheight()
-   {
-      return height_;
-   }
-
-   public void setheight(int height_)
-   {
-      this.height_ = height_;
-   }
-
-   public int getwidth()
-   {
-      return width_;
-   }
-
-   public void setwidth(int width_)
-   {
-      this.width_ = width_;
-   }
-
-   public boolean getdo_rectify()
-   {
-      return do_rectify_;
-   }
-
-   public void setdo_rectify(boolean do_rectify_)
-   {
-      this.do_rectify_ = do_rectify_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -144,4 +93,56 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
       do_rectify_ = from.do_rectify_;
 
    }
+
+   public int getx_offset()
+   {
+      return x_offset_;
+   }
+
+   public void setx_offset(int x_offset_)
+   {
+      this.x_offset_ = x_offset_;
+   }
+
+   public int gety_offset()
+   {
+      return y_offset_;
+   }
+
+   public void sety_offset(int y_offset_)
+   {
+      this.y_offset_ = y_offset_;
+   }
+
+   public int getheight()
+   {
+      return height_;
+   }
+
+   public void setheight(int height_)
+   {
+      this.height_ = height_;
+   }
+
+   public int getwidth()
+   {
+      return width_;
+   }
+
+   public void setwidth(int width_)
+   {
+      this.width_ = width_;
+   }
+
+   public boolean getdo_rectify()
+   {
+      return do_rectify_;
+   }
+
+   public void setdo_rectify(boolean do_rectify_)
+   {
+      this.do_rectify_ = do_rectify_;
+   }
+
+
 }

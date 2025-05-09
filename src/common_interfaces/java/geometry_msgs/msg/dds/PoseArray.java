@@ -21,12 +21,6 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    }
 
-   public geometry_msgs.msg.dds.Pose getposes()
-   {
-      return poses_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -55,4 +49,11 @@ public class PoseArray implements ROS2Message<PoseArray>
    public void set(PoseArray from)
    {
    }
+
+   public geometry_msgs.msg.dds.Pose getposes()
+   {
+      return poses_;
+   }
+
+
 }

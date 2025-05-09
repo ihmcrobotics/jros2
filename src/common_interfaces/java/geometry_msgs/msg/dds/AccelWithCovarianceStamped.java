@@ -17,12 +17,6 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    {
    }
 
-   public geometry_msgs.msg.dds.AccelWithCovariance getaccel()
-   {
-      return accel_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -51,4 +45,11 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    public void set(AccelWithCovarianceStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.AccelWithCovariance getaccel()
+   {
+      return accel_;
+   }
+
+
 }

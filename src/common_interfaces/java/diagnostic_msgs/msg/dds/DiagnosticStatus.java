@@ -40,52 +40,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 
    }
 
-   public byte getlevel()
-   {
-      return level_;
-   }
-
-   public void setlevel(byte level_)
-   {
-      this.level_ = level_;
-   }
-
-   public StringBuilder getname()
-   {
-      return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
-   public StringBuilder getmessage()
-   {
-      return message_;
-   }
-
-   public void setmessage(StringBuilder message_)
-   {
-      this.message_ = message_;
-   }
-
-   public StringBuilder gethardware_id()
-   {
-      return hardware_id_;
-   }
-
-   public void sethardware_id(StringBuilder hardware_id_)
-   {
-      this.hardware_id_ = hardware_id_;
-   }
-
-   public diagnostic_msgs.msg.dds.KeyValue getvalues()
-   {
-      return values_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -134,4 +88,51 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       hardware_id_ = from.hardware_id_;
 
    }
+
+   public byte getlevel()
+   {
+      return level_;
+   }
+
+   public void setlevel(byte level_)
+   {
+      this.level_ = level_;
+   }
+
+   public StringBuilder getname()
+   {
+      return name_;
+   }
+
+   public void setname(StringBuilder name_)
+   {
+      this.name_ = name_;
+   }
+
+   public StringBuilder getmessage()
+   {
+      return message_;
+   }
+
+   public void setmessage(StringBuilder message_)
+   {
+      this.message_ = message_;
+   }
+
+   public StringBuilder gethardware_id()
+   {
+      return hardware_id_;
+   }
+
+   public void sethardware_id(StringBuilder hardware_id_)
+   {
+      this.hardware_id_ = hardware_id_;
+   }
+
+   public diagnostic_msgs.msg.dds.KeyValue getvalues()
+   {
+      return values_;
+   }
+
+
 }

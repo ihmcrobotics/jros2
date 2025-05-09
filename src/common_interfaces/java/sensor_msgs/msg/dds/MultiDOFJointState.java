@@ -21,12 +21,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
-   public  getjoint_names()
-   {
-      return joint_names_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -63,4 +57,11 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
       joint_names_.set(from.joint_names_);
 
    }
+
+   public  getjoint_names()
+   {
+      return joint_names_;
+   }
+
+
 }

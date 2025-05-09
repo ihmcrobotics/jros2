@@ -29,17 +29,6 @@ public class Joy implements ROS2Message<Joy>
 
    }
 
-   public IDLFloatSequence getaxes()
-   {
-      return axes_;
-   }
-
-   public IDLIntSequence getbuttons()
-   {
-      return buttons_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -80,4 +69,16 @@ public class Joy implements ROS2Message<Joy>
       buttons_.set(from.buttons_);
 
    }
+
+   public IDLFloatSequence getaxes()
+   {
+      return axes_;
+   }
+
+   public IDLIntSequence getbuttons()
+   {
+      return buttons_;
+   }
+
+
 }

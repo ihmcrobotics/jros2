@@ -26,22 +26,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    {
    }
 
-   public StringBuilder getchild_frame_id()
-   {
-      return child_frame_id_;
-   }
-
-   public void setchild_frame_id(StringBuilder child_frame_id_)
-   {
-      this.child_frame_id_ = child_frame_id_;
-   }
-
-   public geometry_msgs.msg.dds.Transform gettransform()
-   {
-      return transform_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -78,4 +62,21 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       child_frame_id_ = from.child_frame_id_;
 
    }
+
+   public StringBuilder getchild_frame_id()
+   {
+      return child_frame_id_;
+   }
+
+   public void setchild_frame_id(StringBuilder child_frame_id_)
+   {
+      this.child_frame_id_ = child_frame_id_;
+   }
+
+   public geometry_msgs.msg.dds.Transform gettransform()
+   {
+      return transform_;
+   }
+
+
 }

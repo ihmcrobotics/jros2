@@ -70,6 +70,75 @@ public class Marker implements ROS2Message<Marker>
 
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // frame_locked_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // texture_resource_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // text_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // mesh_resource_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mesh_use_embedded_materials_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.(ns_);
+      buffer.writeInt(id_);
+      buffer.writeInt(type_);
+      buffer.writeInt(action_);
+      buffer.writeBoolean(frame_locked_);
+      buffer.(texture_resource_);
+      buffer.(text_);
+      buffer.(mesh_resource_);
+      buffer.writeBoolean(mesh_use_embedded_materials_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      ns_ = buffer.();
+      id_ = buffer.readInt();
+      type_ = buffer.readInt();
+      action_ = buffer.readInt();
+      frame_locked_ = buffer.readBoolean();
+      texture_resource_ = buffer.();
+      text_ = buffer.();
+      mesh_resource_ = buffer.();
+      mesh_use_embedded_materials_ = buffer.readBoolean();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(Marker from)
+   {
+      ns_ = from.ns_;
+      id_ = from.id_;
+      type_ = from.type_;
+      action_ = from.action_;
+      frame_locked_ = from.frame_locked_;
+      texture_resource_ = from.texture_resource_;
+      text_ = from.text_;
+      mesh_resource_ = from.mesh_resource_;
+      mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
+
+   }
+
    public StringBuilder getns()
    {
       return ns_;
@@ -171,72 +240,4 @@ public class Marker implements ROS2Message<Marker>
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // frame_locked_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // texture_resource_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // text_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // mesh_resource_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mesh_use_embedded_materials_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.(ns_);
-      buffer.writeInt(id_);
-      buffer.writeInt(type_);
-      buffer.writeInt(action_);
-      buffer.writeBoolean(frame_locked_);
-      buffer.(texture_resource_);
-      buffer.(text_);
-      buffer.(mesh_resource_);
-      buffer.writeBoolean(mesh_use_embedded_materials_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      ns_ = buffer.();
-      id_ = buffer.readInt();
-      type_ = buffer.readInt();
-      action_ = buffer.readInt();
-      frame_locked_ = buffer.readBoolean();
-      texture_resource_ = buffer.();
-      text_ = buffer.();
-      mesh_resource_ = buffer.();
-      mesh_use_embedded_materials_ = buffer.readBoolean();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(Marker from)
-   {
-      ns_ = from.ns_;
-      id_ = from.id_;
-      type_ = from.type_;
-      action_ = from.action_;
-      frame_locked_ = from.frame_locked_;
-      texture_resource_ = from.texture_resource_;
-      text_ = from.text_;
-      mesh_resource_ = from.mesh_resource_;
-      mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
-
-   }
 }

@@ -50,27 +50,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
 
    }
 
-   public IDLDoubleSequence getpositions()
-   {
-      return positions_;
-   }
-
-   public IDLDoubleSequence getvelocities()
-   {
-      return velocities_;
-   }
-
-   public IDLDoubleSequence getaccelerations()
-   {
-      return accelerations_;
-   }
-
-   public IDLDoubleSequence geteffort()
-   {
-      return effort_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -119,4 +98,26 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       effort_.set(from.effort_);
 
    }
+
+   public IDLDoubleSequence getpositions()
+   {
+      return positions_;
+   }
+
+   public IDLDoubleSequence getvelocities()
+   {
+      return velocities_;
+   }
+
+   public IDLDoubleSequence getaccelerations()
+   {
+      return accelerations_;
+   }
+
+   public IDLDoubleSequence geteffort()
+   {
+      return effort_;
+   }
+
+
 }

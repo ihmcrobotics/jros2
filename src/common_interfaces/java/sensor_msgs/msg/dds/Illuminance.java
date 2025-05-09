@@ -21,27 +21,6 @@ public class Illuminance implements ROS2Message<Illuminance>
    {
    }
 
-   public double getilluminance()
-   {
-      return illuminance_;
-   }
-
-   public void setilluminance(double illuminance_)
-   {
-      this.illuminance_ = illuminance_;
-   }
-
-   public double getvariance()
-   {
-      return variance_;
-   }
-
-   public void setvariance(double variance_)
-   {
-      this.variance_ = variance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -82,4 +61,26 @@ public class Illuminance implements ROS2Message<Illuminance>
       variance_ = from.variance_;
 
    }
+
+   public double getilluminance()
+   {
+      return illuminance_;
+   }
+
+   public void setilluminance(double illuminance_)
+   {
+      this.illuminance_ = illuminance_;
+   }
+
+   public double getvariance()
+   {
+      return variance_;
+   }
+
+   public void setvariance(double variance_)
+   {
+      this.variance_ = variance_;
+   }
+
+
 }

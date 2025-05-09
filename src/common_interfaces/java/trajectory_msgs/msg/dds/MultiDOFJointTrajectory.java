@@ -27,17 +27,6 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    }
 
-   public  getjoint_names()
-   {
-      return joint_names_;
-   }
-
-   public trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint getpoints()
-   {
-      return points_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -74,4 +63,16 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
       joint_names_.set(from.joint_names_);
 
    }
+
+   public  getjoint_names()
+   {
+      return joint_names_;
+   }
+
+   public trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint getpoints()
+   {
+      return points_;
+   }
+
+
 }

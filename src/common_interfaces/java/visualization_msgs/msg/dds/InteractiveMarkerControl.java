@@ -57,6 +57,63 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
 
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // orientation_mode_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // interaction_mode_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // always_visible_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // independent_marker_orientation_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // description_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.(name_);
+      buffer.writeByte(orientation_mode_);
+      buffer.writeByte(interaction_mode_);
+      buffer.writeBoolean(always_visible_);
+      buffer.writeBoolean(independent_marker_orientation_);
+      buffer.(description_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      name_ = buffer.();
+      orientation_mode_ = buffer.readByte();
+      interaction_mode_ = buffer.readByte();
+      always_visible_ = buffer.readBoolean();
+      independent_marker_orientation_ = buffer.readBoolean();
+      description_ = buffer.();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(InteractiveMarkerControl from)
+   {
+      name_ = from.name_;
+      orientation_mode_ = from.orientation_mode_;
+      interaction_mode_ = from.interaction_mode_;
+      always_visible_ = from.always_visible_;
+      independent_marker_orientation_ = from.independent_marker_orientation_;
+      description_ = from.description_;
+
+   }
+
    public StringBuilder getname()
    {
       return name_;
@@ -123,60 +180,4 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // orientation_mode_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // interaction_mode_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // always_visible_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // independent_marker_orientation_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // description_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.(name_);
-      buffer.writeByte(orientation_mode_);
-      buffer.writeByte(interaction_mode_);
-      buffer.writeBoolean(always_visible_);
-      buffer.writeBoolean(independent_marker_orientation_);
-      buffer.(description_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      name_ = buffer.();
-      orientation_mode_ = buffer.readByte();
-      interaction_mode_ = buffer.readByte();
-      always_visible_ = buffer.readBoolean();
-      independent_marker_orientation_ = buffer.readBoolean();
-      description_ = buffer.();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(InteractiveMarkerControl from)
-   {
-      name_ = from.name_;
-      orientation_mode_ = from.orientation_mode_;
-      interaction_mode_ = from.interaction_mode_;
-      always_visible_ = from.always_visible_;
-      independent_marker_orientation_ = from.independent_marker_orientation_;
-      description_ = from.description_;
-
-   }
 }

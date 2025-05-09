@@ -20,12 +20,6 @@ public class PointStamped implements ROS2Message<PointStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Point getpoint()
-   {
-      return point_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class PointStamped implements ROS2Message<PointStamped>
    public void set(PointStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Point getpoint()
+   {
+      return point_;
+   }
+
+
 }

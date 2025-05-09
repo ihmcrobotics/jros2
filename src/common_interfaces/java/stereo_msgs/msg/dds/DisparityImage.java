@@ -39,57 +39,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
    }
 
-   public float getf()
-   {
-      return f_;
-   }
-
-   public void setf(float f_)
-   {
-      this.f_ = f_;
-   }
-
-   public float gett()
-   {
-      return t_;
-   }
-
-   public void sett(float t_)
-   {
-      this.t_ = t_;
-   }
-
-   public float getmin_disparity()
-   {
-      return min_disparity_;
-   }
-
-   public void setmin_disparity(float min_disparity_)
-   {
-      this.min_disparity_ = min_disparity_;
-   }
-
-   public float getmax_disparity()
-   {
-      return max_disparity_;
-   }
-
-   public void setmax_disparity(float max_disparity_)
-   {
-      this.max_disparity_ = max_disparity_;
-   }
-
-   public float getdelta_d()
-   {
-      return delta_d_;
-   }
-
-   public void setdelta_d(float delta_d_)
-   {
-      this.delta_d_ = delta_d_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -142,4 +91,56 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       delta_d_ = from.delta_d_;
 
    }
+
+   public float getf()
+   {
+      return f_;
+   }
+
+   public void setf(float f_)
+   {
+      this.f_ = f_;
+   }
+
+   public float gett()
+   {
+      return t_;
+   }
+
+   public void sett(float t_)
+   {
+      this.t_ = t_;
+   }
+
+   public float getmin_disparity()
+   {
+      return min_disparity_;
+   }
+
+   public void setmin_disparity(float min_disparity_)
+   {
+      this.min_disparity_ = min_disparity_;
+   }
+
+   public float getmax_disparity()
+   {
+      return max_disparity_;
+   }
+
+   public void setmax_disparity(float max_disparity_)
+   {
+      this.max_disparity_ = max_disparity_;
+   }
+
+   public float getdelta_d()
+   {
+      return delta_d_;
+   }
+
+   public void setdelta_d(float delta_d_)
+   {
+      this.delta_d_ = delta_d_;
+   }
+
+
 }

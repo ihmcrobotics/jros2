@@ -23,17 +23,6 @@ public class Char implements ROS2Message<Char>
    {
    }
 
-   public char getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(char data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class Char implements ROS2Message<Char>
       data_ = from.data_;
 
    }
+
+   public char getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(char data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

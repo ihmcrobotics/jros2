@@ -47,4 +47,5 @@ public class UInt32MultiArray implements ROS2Message<UInt32MultiArray>
    public void set(UInt32MultiArray from)
    {
    }
+
 }

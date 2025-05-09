@@ -22,17 +22,6 @@ public class Odometry implements ROS2Message<Odometry>
    {
    }
 
-   public StringBuilder getchild_frame_id()
-   {
-      return child_frame_id_;
-   }
-
-   public void setchild_frame_id(StringBuilder child_frame_id_)
-   {
-      this.child_frame_id_ = child_frame_id_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -69,4 +58,16 @@ public class Odometry implements ROS2Message<Odometry>
       child_frame_id_ = from.child_frame_id_;
 
    }
+
+   public StringBuilder getchild_frame_id()
+   {
+      return child_frame_id_;
+   }
+
+   public void setchild_frame_id(StringBuilder child_frame_id_)
+   {
+      this.child_frame_id_ = child_frame_id_;
+   }
+
+
 }

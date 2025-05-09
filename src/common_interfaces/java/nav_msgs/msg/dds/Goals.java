@@ -45,4 +45,5 @@ public class Goals implements ROS2Message<Goals>
    public void set(Goals from)
    {
    }
+
 }

@@ -24,37 +24,6 @@ public class Vector3 implements ROS2Message<Vector3>
    {
    }
 
-   public double getx()
-   {
-      return x_;
-   }
-
-   public void setx(double x_)
-   {
-      this.x_ = x_;
-   }
-
-   public double gety()
-   {
-      return y_;
-   }
-
-   public void sety(double y_)
-   {
-      this.y_ = y_;
-   }
-
-   public double getz()
-   {
-      return z_;
-   }
-
-   public void setz(double z_)
-   {
-      this.z_ = z_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -99,4 +68,36 @@ public class Vector3 implements ROS2Message<Vector3>
       z_ = from.z_;
 
    }
+
+   public double getx()
+   {
+      return x_;
+   }
+
+   public void setx(double x_)
+   {
+      this.x_ = x_;
+   }
+
+   public double gety()
+   {
+      return y_;
+   }
+
+   public void sety(double y_)
+   {
+      this.y_ = y_;
+   }
+
+   public double getz()
+   {
+      return z_;
+   }
+
+   public void setz(double z_)
+   {
+      this.z_ = z_;
+   }
+
+
 }

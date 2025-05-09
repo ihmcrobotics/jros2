@@ -23,17 +23,6 @@ public class UInt64 implements ROS2Message<UInt64>
    {
    }
 
-   public long getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(long data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class UInt64 implements ROS2Message<UInt64>
       data_ = from.data_;
 
    }
+
+   public long getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(long data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

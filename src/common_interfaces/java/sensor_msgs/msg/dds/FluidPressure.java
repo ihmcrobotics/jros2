@@ -21,27 +21,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    {
    }
 
-   public double getfluid_pressure()
-   {
-      return fluid_pressure_;
-   }
-
-   public void setfluid_pressure(double fluid_pressure_)
-   {
-      this.fluid_pressure_ = fluid_pressure_;
-   }
-
-   public double getvariance()
-   {
-      return variance_;
-   }
-
-   public void setvariance(double variance_)
-   {
-      this.variance_ = variance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -82,4 +61,26 @@ public class FluidPressure implements ROS2Message<FluidPressure>
       variance_ = from.variance_;
 
    }
+
+   public double getfluid_pressure()
+   {
+      return fluid_pressure_;
+   }
+
+   public void setfluid_pressure(double fluid_pressure_)
+   {
+      this.fluid_pressure_ = fluid_pressure_;
+   }
+
+   public double getvariance()
+   {
+      return variance_;
+   }
+
+   public void setvariance(double variance_)
+   {
+      this.variance_ = variance_;
+   }
+
+
 }

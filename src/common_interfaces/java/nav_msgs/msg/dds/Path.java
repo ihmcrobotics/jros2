@@ -45,4 +45,5 @@ public class Path implements ROS2Message<Path>
    public void set(Path from)
    {
    }
+
 }

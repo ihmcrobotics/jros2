@@ -46,57 +46,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
    }
 
-   public sensor_msgs.msg.dds.NavSatStatus getstatus()
-   {
-      return status_;
-   }
-
-   public double getlatitude()
-   {
-      return latitude_;
-   }
-
-   public void setlatitude(double latitude_)
-   {
-      this.latitude_ = latitude_;
-   }
-
-   public double getlongitude()
-   {
-      return longitude_;
-   }
-
-   public void setlongitude(double longitude_)
-   {
-      this.longitude_ = longitude_;
-   }
-
-   public double getaltitude()
-   {
-      return altitude_;
-   }
-
-   public void setaltitude(double altitude_)
-   {
-      this.altitude_ = altitude_;
-   }
-
-   public double[] getposition_covariance()
-   {
-      return position_covariance_;
-   }
-
-   public byte getposition_covariance_type()
-   {
-      return position_covariance_type_;
-   }
-
-   public void setposition_covariance_type(byte position_covariance_type_)
-   {
-      this.position_covariance_type_ = position_covariance_type_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -158,4 +107,56 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       position_covariance_type_ = from.position_covariance_type_;
 
    }
+
+   public sensor_msgs.msg.dds.NavSatStatus getstatus()
+   {
+      return status_;
+   }
+
+   public double getlatitude()
+   {
+      return latitude_;
+   }
+
+   public void setlatitude(double latitude_)
+   {
+      this.latitude_ = latitude_;
+   }
+
+   public double getlongitude()
+   {
+      return longitude_;
+   }
+
+   public void setlongitude(double longitude_)
+   {
+      this.longitude_ = longitude_;
+   }
+
+   public double getaltitude()
+   {
+      return altitude_;
+   }
+
+   public void setaltitude(double altitude_)
+   {
+      this.altitude_ = altitude_;
+   }
+
+   public double[] getposition_covariance()
+   {
+      return position_covariance_;
+   }
+
+   public byte getposition_covariance_type()
+   {
+      return position_covariance_type_;
+   }
+
+   public void setposition_covariance_type(byte position_covariance_type_)
+   {
+      this.position_covariance_type_ = position_covariance_type_;
+   }
+
+
 }

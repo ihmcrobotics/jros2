@@ -21,27 +21,6 @@ public class Temperature implements ROS2Message<Temperature>
    {
    }
 
-   public double gettemperature()
-   {
-      return temperature_;
-   }
-
-   public void settemperature(double temperature_)
-   {
-      this.temperature_ = temperature_;
-   }
-
-   public double getvariance()
-   {
-      return variance_;
-   }
-
-   public void setvariance(double variance_)
-   {
-      this.variance_ = variance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -82,4 +61,26 @@ public class Temperature implements ROS2Message<Temperature>
       variance_ = from.variance_;
 
    }
+
+   public double gettemperature()
+   {
+      return temperature_;
+   }
+
+   public void settemperature(double temperature_)
+   {
+      this.temperature_ = temperature_;
+   }
+
+   public double getvariance()
+   {
+      return variance_;
+   }
+
+   public void setvariance(double variance_)
+   {
+      this.variance_ = variance_;
+   }
+
+
 }

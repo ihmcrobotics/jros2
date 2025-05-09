@@ -42,47 +42,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
    }
 
-   public StringBuilder getname()
-   {
-      return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
-   public StringBuilder getdescription()
-   {
-      return description_;
-   }
-
-   public void setdescription(StringBuilder description_)
-   {
-      this.description_ = description_;
-   }
-
-   public float getscale()
-   {
-      return scale_;
-   }
-
-   public void setscale(float scale_)
-   {
-      this.scale_ = scale_;
-   }
-
-   public visualization_msgs.msg.dds.MenuEntry getmenu_entries()
-   {
-      return menu_entries_;
-   }
-
-   public visualization_msgs.msg.dds.InteractiveMarkerControl getcontrols()
-   {
-      return controls_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -127,4 +86,46 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       scale_ = from.scale_;
 
    }
+
+   public StringBuilder getname()
+   {
+      return name_;
+   }
+
+   public void setname(StringBuilder name_)
+   {
+      this.name_ = name_;
+   }
+
+   public StringBuilder getdescription()
+   {
+      return description_;
+   }
+
+   public void setdescription(StringBuilder description_)
+   {
+      this.description_ = description_;
+   }
+
+   public float getscale()
+   {
+      return scale_;
+   }
+
+   public void setscale(float scale_)
+   {
+      this.scale_ = scale_;
+   }
+
+   public visualization_msgs.msg.dds.MenuEntry getmenu_entries()
+   {
+      return menu_entries_;
+   }
+
+   public visualization_msgs.msg.dds.InteractiveMarkerControl getcontrols()
+   {
+      return controls_;
+   }
+
+
 }

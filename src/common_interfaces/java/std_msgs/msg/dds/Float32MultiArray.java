@@ -47,4 +47,5 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
    public void set(Float32MultiArray from)
    {
    }
+
 }

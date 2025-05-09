@@ -34,6 +34,63 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // client_id_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // marker_name_
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // control_name_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mouse_point_valid_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.(client_id_);
+      buffer.(marker_name_);
+      buffer.(control_name_);
+      buffer.writeByte(event_type_);
+      buffer.writeInt(menu_entry_id_);
+      buffer.writeBoolean(mouse_point_valid_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      client_id_ = buffer.();
+      marker_name_ = buffer.();
+      control_name_ = buffer.();
+      event_type_ = buffer.readByte();
+      menu_entry_id_ = buffer.readInt();
+      mouse_point_valid_ = buffer.readBoolean();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(InteractiveMarkerFeedback from)
+   {
+      client_id_ = from.client_id_;
+      marker_name_ = from.marker_name_;
+      control_name_ = from.control_name_;
+      event_type_ = from.event_type_;
+      menu_entry_id_ = from.menu_entry_id_;
+      mouse_point_valid_ = from.mouse_point_valid_;
+
+   }
+
    public StringBuilder getclient_id()
    {
       return client_id_;
@@ -95,60 +152,4 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // client_id_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // marker_name_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // control_name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mouse_point_valid_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.(client_id_);
-      buffer.(marker_name_);
-      buffer.(control_name_);
-      buffer.writeByte(event_type_);
-      buffer.writeInt(menu_entry_id_);
-      buffer.writeBoolean(mouse_point_valid_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      client_id_ = buffer.();
-      marker_name_ = buffer.();
-      control_name_ = buffer.();
-      event_type_ = buffer.readByte();
-      menu_entry_id_ = buffer.readInt();
-      mouse_point_valid_ = buffer.readBoolean();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(InteractiveMarkerFeedback from)
-   {
-      client_id_ = from.client_id_;
-      marker_name_ = from.marker_name_;
-      control_name_ = from.control_name_;
-      event_type_ = from.event_type_;
-      menu_entry_id_ = from.menu_entry_id_;
-      mouse_point_valid_ = from.mouse_point_valid_;
-
-   }
 }

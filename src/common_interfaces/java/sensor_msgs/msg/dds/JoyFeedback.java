@@ -29,37 +29,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
    }
 
-   public byte gettype()
-   {
-      return type_;
-   }
-
-   public void settype(byte type_)
-   {
-      this.type_ = type_;
-   }
-
-   public byte getid()
-   {
-      return id_;
-   }
-
-   public void setid(byte id_)
-   {
-      this.id_ = id_;
-   }
-
-   public float getintensity()
-   {
-      return intensity_;
-   }
-
-   public void setintensity(float intensity_)
-   {
-      this.intensity_ = intensity_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -104,4 +73,36 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
       intensity_ = from.intensity_;
 
    }
+
+   public byte gettype()
+   {
+      return type_;
+   }
+
+   public void settype(byte type_)
+   {
+      this.type_ = type_;
+   }
+
+   public byte getid()
+   {
+      return id_;
+   }
+
+   public void setid(byte id_)
+   {
+      this.id_ = id_;
+   }
+
+   public float getintensity()
+   {
+      return intensity_;
+   }
+
+   public void setintensity(float intensity_)
+   {
+      this.intensity_ = intensity_;
+   }
+
+
 }

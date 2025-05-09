@@ -47,4 +47,5 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    public void set(ByteMultiArray from)
    {
    }
+
 }

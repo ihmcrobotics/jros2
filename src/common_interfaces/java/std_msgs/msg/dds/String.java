@@ -23,17 +23,6 @@ public class String implements ROS2Message<String>
    {
    }
 
-   public StringBuilder getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(StringBuilder data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class String implements ROS2Message<String>
       data_ = from.data_;
 
    }
+
+   public StringBuilder getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(StringBuilder data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

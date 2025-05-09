@@ -30,22 +30,6 @@ public class MeshFile implements ROS2Message<MeshFile>
 
    }
 
-   public StringBuilder getfilename()
-   {
-      return filename_;
-   }
-
-   public void setfilename(StringBuilder filename_)
-   {
-      this.filename_ = filename_;
-   }
-
-   public IDLByteSequence getdata()
-   {
-      return data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -86,4 +70,21 @@ public class MeshFile implements ROS2Message<MeshFile>
       data_.set(from.data_);
 
    }
+
+   public StringBuilder getfilename()
+   {
+      return filename_;
+   }
+
+   public void setfilename(StringBuilder filename_)
+   {
+      this.filename_ = filename_;
+   }
+
+   public IDLByteSequence getdata()
+   {
+      return data_;
+   }
+
+
 }

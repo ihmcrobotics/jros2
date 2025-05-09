@@ -20,27 +20,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
    }
 
-   public byte getstatus()
-   {
-      return status_;
-   }
-
-   public void setstatus(byte status_)
-   {
-      this.status_ = status_;
-   }
-
-   public short getservice()
-   {
-      return service_;
-   }
-
-   public void setservice(short service_)
-   {
-      this.service_ = service_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -81,4 +60,26 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
       service_ = from.service_;
 
    }
+
+   public byte getstatus()
+   {
+      return status_;
+   }
+
+   public void setstatus(byte status_)
+   {
+      this.status_ = status_;
+   }
+
+   public short getservice()
+   {
+      return service_;
+   }
+
+   public void setservice(short service_)
+   {
+      this.service_ = service_;
+   }
+
+
 }

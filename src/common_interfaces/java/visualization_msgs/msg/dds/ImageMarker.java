@@ -42,6 +42,63 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // filled_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.(ns_);
+      buffer.writeInt(id_);
+      buffer.writeInt(type_);
+      buffer.writeInt(action_);
+      buffer.writeFloat(scale_);
+      buffer.writeByte(filled_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      ns_ = buffer.();
+      id_ = buffer.readInt();
+      type_ = buffer.readInt();
+      action_ = buffer.readInt();
+      scale_ = buffer.readFloat();
+      filled_ = buffer.readByte();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(ImageMarker from)
+   {
+      ns_ = from.ns_;
+      id_ = from.id_;
+      type_ = from.type_;
+      action_ = from.action_;
+      scale_ = from.scale_;
+      filled_ = from.filled_;
+
+   }
+
    public StringBuilder getns()
    {
       return ns_;
@@ -103,60 +160,4 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // filled_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.(ns_);
-      buffer.writeInt(id_);
-      buffer.writeInt(type_);
-      buffer.writeInt(action_);
-      buffer.writeFloat(scale_);
-      buffer.writeByte(filled_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      ns_ = buffer.();
-      id_ = buffer.readInt();
-      type_ = buffer.readInt();
-      action_ = buffer.readInt();
-      scale_ = buffer.readFloat();
-      filled_ = buffer.readByte();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(ImageMarker from)
-   {
-      ns_ = from.ns_;
-      id_ = from.id_;
-      type_ = from.type_;
-      action_ = from.action_;
-      scale_ = from.scale_;
-      filled_ = from.filled_;
-
-   }
 }

@@ -47,4 +47,5 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    public void set(PolygonInstanceStamped from)
    {
    }
+
 }

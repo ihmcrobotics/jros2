@@ -23,17 +23,6 @@ public class Int32 implements ROS2Message<Int32>
    {
    }
 
-   public int getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(int data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class Int32 implements ROS2Message<Int32>
       data_ = from.data_;
 
    }
+
+   public int getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(int data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

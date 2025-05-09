@@ -20,12 +20,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Polygon getpolygon()
-   {
-      return polygon_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
    public void set(PolygonStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Polygon getpolygon()
+   {
+      return polygon_;
+   }
+
+
 }

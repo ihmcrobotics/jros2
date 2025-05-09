@@ -29,17 +29,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
    }
 
-   public geometry_msgs.msg.dds.Twist gettwist()
-   {
-      return twist_;
-   }
-
-   public double[] getcovariance()
-   {
-      return covariance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -85,4 +74,16 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
       }
 
    }
+
+   public geometry_msgs.msg.dds.Twist gettwist()
+   {
+      return twist_;
+   }
+
+   public double[] getcovariance()
+   {
+      return covariance_;
+   }
+
+
 }

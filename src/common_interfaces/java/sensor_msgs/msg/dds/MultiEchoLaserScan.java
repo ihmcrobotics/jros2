@@ -44,6 +44,67 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    }
 
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_min_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_max_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_increment_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // time_increment_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scan_time_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_min_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_max_
+
+      return currentAlignment - initialAlignment;
+   }
+
+   @Override
+   public void serialize(CDRBuffer buffer)
+   {
+      buffer.writeFloat(angle_min_);
+      buffer.writeFloat(angle_max_);
+      buffer.writeFloat(angle_increment_);
+      buffer.writeFloat(time_increment_);
+      buffer.writeFloat(scan_time_);
+      buffer.writeFloat(range_min_);
+      buffer.writeFloat(range_max_);
+
+   }
+
+   @Override
+   public void deserialize(CDRBuffer buffer)
+   {
+      angle_min_ = buffer.readFloat();
+      angle_max_ = buffer.readFloat();
+      angle_increment_ = buffer.readFloat();
+      time_increment_ = buffer.readFloat();
+      scan_time_ = buffer.readFloat();
+      range_min_ = buffer.readFloat();
+      range_max_ = buffer.readFloat();
+
+   }
+
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void set(MultiEchoLaserScan from)
+   {
+      angle_min_ = from.angle_min_;
+      angle_max_ = from.angle_max_;
+      angle_increment_ = from.angle_increment_;
+      time_increment_ = from.time_increment_;
+      scan_time_ = from.scan_time_;
+      range_min_ = from.range_min_;
+      range_max_ = from.range_max_;
+
+   }
+
    public float getangle_min()
    {
       return angle_min_;
@@ -125,64 +186,4 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    }
 
 
-   @Override
-   public int calculateSizeBytes(int currentAlignment)
-   {
-      int initialAlignment = currentAlignment;
-
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_min_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_max_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_increment_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // time_increment_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scan_time_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_min_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_max_
-
-      return currentAlignment - initialAlignment;
-   }
-
-   @Override
-   public void serialize(CDRBuffer buffer)
-   {
-      buffer.writeFloat(angle_min_);
-      buffer.writeFloat(angle_max_);
-      buffer.writeFloat(angle_increment_);
-      buffer.writeFloat(time_increment_);
-      buffer.writeFloat(scan_time_);
-      buffer.writeFloat(range_min_);
-      buffer.writeFloat(range_max_);
-
-   }
-
-   @Override
-   public void deserialize(CDRBuffer buffer)
-   {
-      angle_min_ = buffer.readFloat();
-      angle_max_ = buffer.readFloat();
-      angle_increment_ = buffer.readFloat();
-      time_increment_ = buffer.readFloat();
-      scan_time_ = buffer.readFloat();
-      range_min_ = buffer.readFloat();
-      range_max_ = buffer.readFloat();
-
-   }
-
-   @Override
-   public String getName()
-   {
-      return name;
-   }
-
-   @Override
-   public void set(MultiEchoLaserScan from)
-   {
-      angle_min_ = from.angle_min_;
-      angle_max_ = from.angle_max_;
-      angle_increment_ = from.angle_increment_;
-      time_increment_ = from.time_increment_;
-      scan_time_ = from.scan_time_;
-      range_min_ = from.range_min_;
-      range_max_ = from.range_max_;
-
-   }
 }

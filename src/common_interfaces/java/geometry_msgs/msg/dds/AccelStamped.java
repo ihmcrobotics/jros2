@@ -17,12 +17,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Accel getaccel()
-   {
-      return accel_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -51,4 +45,11 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    public void set(AccelStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Accel getaccel()
+   {
+      return accel_;
+   }
+
+
 }

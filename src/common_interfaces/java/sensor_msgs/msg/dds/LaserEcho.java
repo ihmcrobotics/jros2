@@ -23,12 +23,6 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 
    }
 
-   public IDLFloatSequence getechoes()
-   {
-      return echoes_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -65,4 +59,11 @@ public class LaserEcho implements ROS2Message<LaserEcho>
       echoes_.set(from.echoes_);
 
    }
+
+   public IDLFloatSequence getechoes()
+   {
+      return echoes_;
+   }
+
+
 }

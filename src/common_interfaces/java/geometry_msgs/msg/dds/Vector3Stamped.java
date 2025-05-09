@@ -21,12 +21,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Vector3 getvector()
-   {
-      return vector_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -55,4 +49,11 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    public void set(Vector3Stamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Vector3 getvector()
+   {
+      return vector_;
+   }
+
+
 }

@@ -33,17 +33,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    }
 
-   public nav_msgs.msg.dds.MapMetaData getinfo()
-   {
-      return info_;
-   }
-
-   public IDLByteSequence getdata()
-   {
-      return data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -80,4 +69,16 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
       data_.set(from.data_);
 
    }
+
+   public nav_msgs.msg.dds.MapMetaData getinfo()
+   {
+      return info_;
+   }
+
+   public IDLByteSequence getdata()
+   {
+      return data_;
+   }
+
+
 }

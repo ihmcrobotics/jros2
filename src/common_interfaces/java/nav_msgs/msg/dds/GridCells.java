@@ -26,27 +26,6 @@ public class GridCells implements ROS2Message<GridCells>
    {
    }
 
-   public float getcell_width()
-   {
-      return cell_width_;
-   }
-
-   public void setcell_width(float cell_width_)
-   {
-      this.cell_width_ = cell_width_;
-   }
-
-   public float getcell_height()
-   {
-      return cell_height_;
-   }
-
-   public void setcell_height(float cell_height_)
-   {
-      this.cell_height_ = cell_height_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -87,4 +66,26 @@ public class GridCells implements ROS2Message<GridCells>
       cell_height_ = from.cell_height_;
 
    }
+
+   public float getcell_width()
+   {
+      return cell_width_;
+   }
+
+   public void setcell_width(float cell_width_)
+   {
+      this.cell_width_ = cell_width_;
+   }
+
+   public float getcell_height()
+   {
+      return cell_height_;
+   }
+
+   public void setcell_height(float cell_height_)
+   {
+      this.cell_height_ = cell_height_;
+   }
+
+
 }

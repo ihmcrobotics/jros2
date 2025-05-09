@@ -20,12 +20,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Wrench getwrench()
-   {
-      return wrench_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    public void set(WrenchStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Wrench getwrench()
+   {
+      return wrench_;
+   }
+
+
 }

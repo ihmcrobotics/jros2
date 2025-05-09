@@ -27,22 +27,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>
 
    }
 
-   public StringBuilder getformat()
-   {
-      return format_;
-   }
-
-   public void setformat(StringBuilder format_)
-   {
-      this.format_ = format_;
-   }
-
-   public IDLByteSequence getdata()
-   {
-      return data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -83,4 +67,21 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       data_.set(from.data_);
 
    }
+
+   public StringBuilder getformat()
+   {
+      return format_;
+   }
+
+   public void setformat(StringBuilder format_)
+   {
+      this.format_ = format_;
+   }
+
+   public IDLByteSequence getdata()
+   {
+      return data_;
+   }
+
+
 }

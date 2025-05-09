@@ -20,12 +20,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Inertia getinertia()
-   {
-      return inertia_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    public void set(InertiaStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Inertia getinertia()
+   {
+      return inertia_;
+   }
+
+
 }

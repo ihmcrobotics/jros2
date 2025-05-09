@@ -19,12 +19,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
 
    }
 
-   public actionlib_msgs.msg.dds.GoalStatus getstatus_list()
-   {
-      return status_list_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -53,4 +47,11 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    public void set(GoalStatusArray from)
    {
    }
+
+   public actionlib_msgs.msg.dds.GoalStatus getstatus_list()
+   {
+      return status_list_;
+   }
+
+
 }

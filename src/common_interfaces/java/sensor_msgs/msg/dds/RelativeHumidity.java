@@ -21,27 +21,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    {
    }
 
-   public double getrelative_humidity()
-   {
-      return relative_humidity_;
-   }
-
-   public void setrelative_humidity(double relative_humidity_)
-   {
-      this.relative_humidity_ = relative_humidity_;
-   }
-
-   public double getvariance()
-   {
-      return variance_;
-   }
-
-   public void setvariance(double variance_)
-   {
-      this.variance_ = variance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -82,4 +61,26 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
       variance_ = from.variance_;
 
    }
+
+   public double getrelative_humidity()
+   {
+      return relative_humidity_;
+   }
+
+   public void setrelative_humidity(double relative_humidity_)
+   {
+      this.relative_humidity_ = relative_humidity_;
+   }
+
+   public double getvariance()
+   {
+      return variance_;
+   }
+
+   public void setvariance(double variance_)
+   {
+      this.variance_ = variance_;
+   }
+
+
 }

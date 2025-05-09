@@ -22,12 +22,6 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
 
    }
 
-   public sensor_msgs.msg.dds.JoyFeedback getarray()
-   {
-      return array_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -56,4 +50,11 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    public void set(JoyFeedbackArray from)
    {
    }
+
+   public sensor_msgs.msg.dds.JoyFeedback getarray()
+   {
+      return array_;
+   }
+
+
 }

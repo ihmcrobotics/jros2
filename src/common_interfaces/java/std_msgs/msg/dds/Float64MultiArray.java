@@ -47,4 +47,5 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
    public void set(Float64MultiArray from)
    {
    }
+
 }

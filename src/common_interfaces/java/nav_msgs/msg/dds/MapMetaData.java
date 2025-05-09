@@ -30,37 +30,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
    }
 
-   public float getresolution()
-   {
-      return resolution_;
-   }
-
-   public void setresolution(float resolution_)
-   {
-      this.resolution_ = resolution_;
-   }
-
-   public int getwidth()
-   {
-      return width_;
-   }
-
-   public void setwidth(int width_)
-   {
-      this.width_ = width_;
-   }
-
-   public int getheight()
-   {
-      return height_;
-   }
-
-   public void setheight(int height_)
-   {
-      this.height_ = height_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -105,4 +74,36 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       height_ = from.height_;
 
    }
+
+   public float getresolution()
+   {
+      return resolution_;
+   }
+
+   public void setresolution(float resolution_)
+   {
+      this.resolution_ = resolution_;
+   }
+
+   public int getwidth()
+   {
+      return width_;
+   }
+
+   public void setwidth(int width_)
+   {
+      this.width_ = width_;
+   }
+
+   public int getheight()
+   {
+      return height_;
+   }
+
+   public void setheight(int height_)
+   {
+      this.height_ = height_;
+   }
+
+
 }

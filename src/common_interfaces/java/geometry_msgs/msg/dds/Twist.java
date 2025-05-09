@@ -46,4 +46,5 @@ public class Twist implements ROS2Message<Twist>
    public void set(Twist from)
    {
    }
+
 }

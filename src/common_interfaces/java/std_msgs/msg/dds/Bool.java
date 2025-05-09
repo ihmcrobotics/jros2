@@ -23,17 +23,6 @@ public class Bool implements ROS2Message<Bool>
    {
    }
 
-   public boolean getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(boolean data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class Bool implements ROS2Message<Bool>
       data_ = from.data_;
 
    }
+
+   public boolean getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(boolean data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

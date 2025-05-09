@@ -20,12 +20,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Quaternion getquaternion()
-   {
-      return quaternion_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    public void set(QuaternionStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Quaternion getquaternion()
+   {
+      return quaternion_;
+   }
+
+
 }

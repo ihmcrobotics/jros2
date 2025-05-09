@@ -34,62 +34,6 @@ public class Image implements ROS2Message<Image>
 
    }
 
-   public int getheight()
-   {
-      return height_;
-   }
-
-   public void setheight(int height_)
-   {
-      this.height_ = height_;
-   }
-
-   public int getwidth()
-   {
-      return width_;
-   }
-
-   public void setwidth(int width_)
-   {
-      this.width_ = width_;
-   }
-
-   public StringBuilder getencoding()
-   {
-      return encoding_;
-   }
-
-   public void setencoding(StringBuilder encoding_)
-   {
-      this.encoding_ = encoding_;
-   }
-
-   public byte getis_bigendian()
-   {
-      return is_bigendian_;
-   }
-
-   public void setis_bigendian(byte is_bigendian_)
-   {
-      this.is_bigendian_ = is_bigendian_;
-   }
-
-   public int getstep()
-   {
-      return step_;
-   }
-
-   public void setstep(int step_)
-   {
-      this.step_ = step_;
-   }
-
-   public IDLByteSequence getdata()
-   {
-      return data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -146,4 +90,61 @@ public class Image implements ROS2Message<Image>
       data_.set(from.data_);
 
    }
+
+   public int getheight()
+   {
+      return height_;
+   }
+
+   public void setheight(int height_)
+   {
+      this.height_ = height_;
+   }
+
+   public int getwidth()
+   {
+      return width_;
+   }
+
+   public void setwidth(int width_)
+   {
+      this.width_ = width_;
+   }
+
+   public StringBuilder getencoding()
+   {
+      return encoding_;
+   }
+
+   public void setencoding(StringBuilder encoding_)
+   {
+      this.encoding_ = encoding_;
+   }
+
+   public byte getis_bigendian()
+   {
+      return is_bigendian_;
+   }
+
+   public void setis_bigendian(byte is_bigendian_)
+   {
+      this.is_bigendian_ = is_bigendian_;
+   }
+
+   public int getstep()
+   {
+      return step_;
+   }
+
+   public void setstep(int step_)
+   {
+      this.step_ = step_;
+   }
+
+   public IDLByteSequence getdata()
+   {
+      return data_;
+   }
+
+
 }

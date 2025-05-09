@@ -22,12 +22,6 @@ public class Polygon implements ROS2Message<Polygon>
 
    }
 
-   public geometry_msgs.msg.dds.Point32 getpoints()
-   {
-      return points_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -56,4 +50,11 @@ public class Polygon implements ROS2Message<Polygon>
    public void set(Polygon from)
    {
    }
+
+   public geometry_msgs.msg.dds.Point32 getpoints()
+   {
+      return points_;
+   }
+
+
 }

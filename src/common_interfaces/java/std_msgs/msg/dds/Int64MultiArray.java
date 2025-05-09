@@ -47,4 +47,5 @@ public class Int64MultiArray implements ROS2Message<Int64MultiArray>
    public void set(Int64MultiArray from)
    {
    }
+
 }

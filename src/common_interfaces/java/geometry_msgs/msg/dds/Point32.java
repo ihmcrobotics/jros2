@@ -28,37 +28,6 @@ public class Point32 implements ROS2Message<Point32>
    {
    }
 
-   public float getx()
-   {
-      return x_;
-   }
-
-   public void setx(float x_)
-   {
-      this.x_ = x_;
-   }
-
-   public float gety()
-   {
-      return y_;
-   }
-
-   public void sety(float y_)
-   {
-      this.y_ = y_;
-   }
-
-   public float getz()
-   {
-      return z_;
-   }
-
-   public void setz(float z_)
-   {
-      this.z_ = z_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -103,4 +72,36 @@ public class Point32 implements ROS2Message<Point32>
       z_ = from.z_;
 
    }
+
+   public float getx()
+   {
+      return x_;
+   }
+
+   public void setx(float x_)
+   {
+      this.x_ = x_;
+   }
+
+   public float gety()
+   {
+      return y_;
+   }
+
+   public void sety(float y_)
+   {
+      this.y_ = y_;
+   }
+
+   public float getz()
+   {
+      return z_;
+   }
+
+   public void setz(float z_)
+   {
+      this.z_ = z_;
+   }
+
+
 }

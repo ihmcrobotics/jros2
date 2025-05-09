@@ -20,12 +20,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
    }
 
-   public geometry_msgs.msg.dds.PoseWithCovariance getpose()
-   {
-      return pose_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    public void set(PoseWithCovarianceStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.PoseWithCovariance getpose()
+   {
+      return pose_;
+   }
+
+
 }

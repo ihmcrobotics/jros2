@@ -25,12 +25,6 @@ public class Mesh implements ROS2Message<Mesh>
 
    }
 
-   public shape_msgs.msg.dds.MeshTriangle gettriangles()
-   {
-      return triangles_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -59,4 +53,11 @@ public class Mesh implements ROS2Message<Mesh>
    public void set(Mesh from)
    {
    }
+
+   public shape_msgs.msg.dds.MeshTriangle gettriangles()
+   {
+      return triangles_;
+   }
+
+
 }

@@ -45,22 +45,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 
    }
 
-   public std_msgs.msg.dds.MultiArrayDimension getdim()
-   {
-      return dim_;
-   }
-
-   public int getdata_offset()
-   {
-      return data_offset_;
-   }
-
-   public void setdata_offset(int data_offset_)
-   {
-      this.data_offset_ = data_offset_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -97,4 +81,21 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
       data_offset_ = from.data_offset_;
 
    }
+
+   public std_msgs.msg.dds.MultiArrayDimension getdim()
+   {
+      return dim_;
+   }
+
+   public int getdata_offset()
+   {
+      return data_offset_;
+   }
+
+   public void setdata_offset(int data_offset_)
+   {
+      this.data_offset_ = data_offset_;
+   }
+
+
 }

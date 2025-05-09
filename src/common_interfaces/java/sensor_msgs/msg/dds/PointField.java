@@ -24,37 +24,6 @@ public class PointField implements ROS2Message<PointField>
    {
    }
 
-   public StringBuilder getname()
-   {
-      return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
-   public int getoffset()
-   {
-      return offset_;
-   }
-
-   public void setoffset(int offset_)
-   {
-      this.offset_ = offset_;
-   }
-
-   public int getcount()
-   {
-      return count_;
-   }
-
-   public void setcount(int count_)
-   {
-      this.count_ = count_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -99,4 +68,36 @@ public class PointField implements ROS2Message<PointField>
       count_ = from.count_;
 
    }
+
+   public StringBuilder getname()
+   {
+      return name_;
+   }
+
+   public void setname(StringBuilder name_)
+   {
+      this.name_ = name_;
+   }
+
+   public int getoffset()
+   {
+      return offset_;
+   }
+
+   public void setoffset(int offset_)
+   {
+      this.offset_ = offset_;
+   }
+
+   public int getcount()
+   {
+      return count_;
+   }
+
+   public void setcount(int count_)
+   {
+      this.count_ = count_;
+   }
+
+
 }

@@ -22,27 +22,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
    }
 
-   public float getu()
-   {
-      return u_;
-   }
-
-   public void setu(float u_)
-   {
-      this.u_ = u_;
-   }
-
-   public float getv()
-   {
-      return v_;
-   }
-
-   public void setv(float v_)
-   {
-      this.v_ = v_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -83,4 +62,26 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
       v_ = from.v_;
 
    }
+
+   public float getu()
+   {
+      return u_;
+   }
+
+   public void setu(float u_)
+   {
+      this.u_ = u_;
+   }
+
+   public float getv()
+   {
+      return v_;
+   }
+
+   public void setv(float v_)
+   {
+      this.v_ = v_;
+   }
+
+
 }

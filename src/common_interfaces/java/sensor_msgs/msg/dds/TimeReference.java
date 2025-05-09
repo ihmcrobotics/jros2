@@ -20,17 +20,6 @@ public class TimeReference implements ROS2Message<TimeReference>
    {
    }
 
-   public StringBuilder getsource()
-   {
-      return source_;
-   }
-
-   public void setsource(StringBuilder source_)
-   {
-      this.source_ = source_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -67,4 +56,16 @@ public class TimeReference implements ROS2Message<TimeReference>
       source_ = from.source_;
 
    }
+
+   public StringBuilder getsource()
+   {
+      return source_;
+   }
+
+   public void setsource(StringBuilder source_)
+   {
+      this.source_ = source_;
+   }
+
+
 }

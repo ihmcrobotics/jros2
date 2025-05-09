@@ -21,17 +21,6 @@ public class Pose implements ROS2Message<Pose>
    {
    }
 
-   public geometry_msgs.msg.dds.Point getposition()
-   {
-      return position_;
-   }
-
-   public geometry_msgs.msg.dds.Quaternion getorientation()
-   {
-      return orientation_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -60,4 +49,16 @@ public class Pose implements ROS2Message<Pose>
    public void set(Pose from)
    {
    }
+
+   public geometry_msgs.msg.dds.Point getposition()
+   {
+      return position_;
+   }
+
+   public geometry_msgs.msg.dds.Quaternion getorientation()
+   {
+      return orientation_;
+   }
+
+
 }

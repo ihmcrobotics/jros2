@@ -33,47 +33,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    }
 
-   public int getheight()
-   {
-      return height_;
-   }
-
-   public void setheight(int height_)
-   {
-      this.height_ = height_;
-   }
-
-   public int getwidth()
-   {
-      return width_;
-   }
-
-   public void setwidth(int width_)
-   {
-      this.width_ = width_;
-   }
-
-   public sensor_msgs.msg.dds.PointField getfields()
-   {
-      return fields_;
-   }
-
-   public IDLByteSequence getdata()
-   {
-      return data_;
-   }
-
-   public boolean getis_dense()
-   {
-      return is_dense_;
-   }
-
-   public void setis_dense(boolean is_dense_)
-   {
-      this.is_dense_ = is_dense_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -122,4 +81,46 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       is_dense_ = from.is_dense_;
 
    }
+
+   public int getheight()
+   {
+      return height_;
+   }
+
+   public void setheight(int height_)
+   {
+      this.height_ = height_;
+   }
+
+   public int getwidth()
+   {
+      return width_;
+   }
+
+   public void setwidth(int width_)
+   {
+      this.width_ = width_;
+   }
+
+   public sensor_msgs.msg.dds.PointField getfields()
+   {
+      return fields_;
+   }
+
+   public IDLByteSequence getdata()
+   {
+      return data_;
+   }
+
+   public boolean getis_dense()
+   {
+      return is_dense_;
+   }
+
+   public void setis_dense(boolean is_dense_)
+   {
+      this.is_dense_ = is_dense_;
+   }
+
+
 }

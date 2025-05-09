@@ -26,12 +26,6 @@ public class PointCloud implements ROS2Message<PointCloud>
 
    }
 
-   public sensor_msgs.msg.dds.ChannelFloat32 getchannels()
-   {
-      return channels_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -60,4 +54,11 @@ public class PointCloud implements ROS2Message<PointCloud>
    public void set(PointCloud from)
    {
    }
+
+   public sensor_msgs.msg.dds.ChannelFloat32 getchannels()
+   {
+      return channels_;
+   }
+
+
 }

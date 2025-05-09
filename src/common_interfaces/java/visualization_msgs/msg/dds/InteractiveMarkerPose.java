@@ -23,17 +23,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    {
    }
 
-   public StringBuilder getname()
-   {
-      return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       name_ = from.name_;
 
    }
+
+   public StringBuilder getname()
+   {
+      return name_;
+   }
+
+   public void setname(StringBuilder name_)
+   {
+      this.name_ = name_;
+   }
+
+
 }

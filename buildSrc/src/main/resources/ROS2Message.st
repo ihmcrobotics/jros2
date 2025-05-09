@@ -39,20 +39,6 @@ private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>
       }>
    }
 
-   <context.fields: { field |
-public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.name>()
-{
-   return <field.name>_;
-\}
-
-<if(field.builtinType&&!field.array)>
-public void set<field.name>(<field.javaType> <field.name>_)
-{
-   this.<field.name>_ = <field.name>_;
-\}
-<endif>
-
-   }>
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -137,4 +123,21 @@ for (int i = 0; i \< <field.name>_.length; ++i)
       <endif>
       }>
    }
+
+<! Getters and setters start !>
+   <context.fields: { field |
+public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.name>()
+{
+   return <field.name>_;
+\}
+
+<if(field.builtinType&&!field.array)>
+public void set<field.name>(<field.javaType> <field.name>_)
+{
+   this.<field.name>_ = <field.name>_;
+\}
+<endif>
+
+   }>
+<! Getters and setters end !>
 }

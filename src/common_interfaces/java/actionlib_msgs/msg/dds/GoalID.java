@@ -24,17 +24,6 @@ public class GoalID implements ROS2Message<GoalID>
    {
    }
 
-   public StringBuilder getid()
-   {
-      return id_;
-   }
-
-   public void setid(StringBuilder id_)
-   {
-      this.id_ = id_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -71,4 +60,16 @@ public class GoalID implements ROS2Message<GoalID>
       id_ = from.id_;
 
    }
+
+   public StringBuilder getid()
+   {
+      return id_;
+   }
+
+   public void setid(StringBuilder id_)
+   {
+      this.id_ = id_;
+   }
+
+
 }

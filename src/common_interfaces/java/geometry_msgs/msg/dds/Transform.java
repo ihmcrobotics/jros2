@@ -21,17 +21,6 @@ public class Transform implements ROS2Message<Transform>
    {
    }
 
-   public geometry_msgs.msg.dds.Vector3 gettranslation()
-   {
-      return translation_;
-   }
-
-   public geometry_msgs.msg.dds.Quaternion getrotation()
-   {
-      return rotation_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -60,4 +49,16 @@ public class Transform implements ROS2Message<Transform>
    public void set(Transform from)
    {
    }
+
+   public geometry_msgs.msg.dds.Vector3 gettranslation()
+   {
+      return translation_;
+   }
+
+   public geometry_msgs.msg.dds.Quaternion getrotation()
+   {
+      return rotation_;
+   }
+
+
 }

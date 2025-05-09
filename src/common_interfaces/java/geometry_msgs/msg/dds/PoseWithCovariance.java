@@ -29,17 +29,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
 
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
-   {
-      return pose_;
-   }
-
-   public double[] getcovariance()
-   {
-      return covariance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -85,4 +74,16 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
       }
 
    }
+
+   public geometry_msgs.msg.dds.Pose getpose()
+   {
+      return pose_;
+   }
+
+   public double[] getcovariance()
+   {
+      return covariance_;
+   }
+
+
 }

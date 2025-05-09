@@ -25,37 +25,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
    }
 
-   public StringBuilder getlabel()
-   {
-      return label_;
-   }
-
-   public void setlabel(StringBuilder label_)
-   {
-      this.label_ = label_;
-   }
-
-   public int getsize()
-   {
-      return size_;
-   }
-
-   public void setsize(int size_)
-   {
-      this.size_ = size_;
-   }
-
-   public int getstride()
-   {
-      return stride_;
-   }
-
-   public void setstride(int stride_)
-   {
-      this.stride_ = stride_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -100,4 +69,36 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       stride_ = from.stride_;
 
    }
+
+   public StringBuilder getlabel()
+   {
+      return label_;
+   }
+
+   public void setlabel(StringBuilder label_)
+   {
+      this.label_ = label_;
+   }
+
+   public int getsize()
+   {
+      return size_;
+   }
+
+   public void setsize(int size_)
+   {
+      this.size_ = size_;
+   }
+
+   public int getstride()
+   {
+      return stride_;
+   }
+
+   public void setstride(int stride_)
+   {
+      this.stride_ = stride_;
+   }
+
+
 }

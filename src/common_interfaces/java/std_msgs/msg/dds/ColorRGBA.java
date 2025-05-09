@@ -20,47 +20,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
    }
 
-   public float getr()
-   {
-      return r_;
-   }
-
-   public void setr(float r_)
-   {
-      this.r_ = r_;
-   }
-
-   public float getg()
-   {
-      return g_;
-   }
-
-   public void setg(float g_)
-   {
-      this.g_ = g_;
-   }
-
-   public float getb()
-   {
-      return b_;
-   }
-
-   public void setb(float b_)
-   {
-      this.b_ = b_;
-   }
-
-   public float geta()
-   {
-      return a_;
-   }
-
-   public void seta(float a_)
-   {
-      this.a_ = a_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -109,4 +68,46 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
       a_ = from.a_;
 
    }
+
+   public float getr()
+   {
+      return r_;
+   }
+
+   public void setr(float r_)
+   {
+      this.r_ = r_;
+   }
+
+   public float getg()
+   {
+      return g_;
+   }
+
+   public void setg(float g_)
+   {
+      this.g_ = g_;
+   }
+
+   public float getb()
+   {
+      return b_;
+   }
+
+   public void setb(float b_)
+   {
+      this.b_ = b_;
+   }
+
+   public float geta()
+   {
+      return a_;
+   }
+
+   public void seta(float a_)
+   {
+      this.a_ = a_;
+   }
+
+
 }

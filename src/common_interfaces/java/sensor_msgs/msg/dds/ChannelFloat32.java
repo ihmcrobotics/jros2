@@ -46,22 +46,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 
    }
 
-   public StringBuilder getname()
-   {
-      return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
-   public IDLFloatSequence getvalues()
-   {
-      return values_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -102,4 +86,21 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       values_.set(from.values_);
 
    }
+
+   public StringBuilder getname()
+   {
+      return name_;
+   }
+
+   public void setname(StringBuilder name_)
+   {
+      this.name_ = name_;
+   }
+
+   public IDLFloatSequence getvalues()
+   {
+      return values_;
+   }
+
+
 }

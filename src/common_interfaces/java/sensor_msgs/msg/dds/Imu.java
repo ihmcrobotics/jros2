@@ -25,22 +25,6 @@ public class Imu implements ROS2Message<Imu>
 
    }
 
-   public double[] getorientation_covariance()
-   {
-      return orientation_covariance_;
-   }
-
-   public double[] getangular_velocity_covariance()
-   {
-      return angular_velocity_covariance_;
-   }
-
-   public double[] getlinear_acceleration_covariance()
-   {
-      return linear_acceleration_covariance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -112,4 +96,21 @@ public class Imu implements ROS2Message<Imu>
       }
 
    }
+
+   public double[] getorientation_covariance()
+   {
+      return orientation_covariance_;
+   }
+
+   public double[] getangular_velocity_covariance()
+   {
+      return angular_velocity_covariance_;
+   }
+
+   public double[] getlinear_acceleration_covariance()
+   {
+      return linear_acceleration_covariance_;
+   }
+
+
 }

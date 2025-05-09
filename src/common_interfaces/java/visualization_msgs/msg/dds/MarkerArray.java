@@ -19,12 +19,6 @@ public class MarkerArray implements ROS2Message<MarkerArray>
 
    }
 
-   public visualization_msgs.msg.dds.Marker getmarkers()
-   {
-      return markers_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -53,4 +47,11 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    public void set(MarkerArray from)
    {
    }
+
+   public visualization_msgs.msg.dds.Marker getmarkers()
+   {
+      return markers_;
+   }
+
+
 }

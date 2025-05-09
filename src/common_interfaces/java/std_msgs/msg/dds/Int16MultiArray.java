@@ -47,4 +47,5 @@ public class Int16MultiArray implements ROS2Message<Int16MultiArray>
    public void set(Int16MultiArray from)
    {
    }
+
 }

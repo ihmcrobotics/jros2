@@ -45,52 +45,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
 
    }
 
-   public StringBuilder getserver_id()
-   {
-      return server_id_;
-   }
-
-   public void setserver_id(StringBuilder server_id_)
-   {
-      this.server_id_ = server_id_;
-   }
-
-   public long getseq_num()
-   {
-      return seq_num_;
-   }
-
-   public void setseq_num(long seq_num_)
-   {
-      this.seq_num_ = seq_num_;
-   }
-
-   public byte gettype()
-   {
-      return type_;
-   }
-
-   public void settype(byte type_)
-   {
-      this.type_ = type_;
-   }
-
-   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
-   {
-      return markers_;
-   }
-
-   public visualization_msgs.msg.dds.InteractiveMarkerPose getposes()
-   {
-      return poses_;
-   }
-
-   public  geterases()
-   {
-      return erases_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -139,4 +93,51 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       erases_.set(from.erases_);
 
    }
+
+   public StringBuilder getserver_id()
+   {
+      return server_id_;
+   }
+
+   public void setserver_id(StringBuilder server_id_)
+   {
+      this.server_id_ = server_id_;
+   }
+
+   public long getseq_num()
+   {
+      return seq_num_;
+   }
+
+   public void setseq_num(long seq_num_)
+   {
+      this.seq_num_ = seq_num_;
+   }
+
+   public byte gettype()
+   {
+      return type_;
+   }
+
+   public void settype(byte type_)
+   {
+      this.type_ = type_;
+   }
+
+   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
+   {
+      return markers_;
+   }
+
+   public visualization_msgs.msg.dds.InteractiveMarkerPose getposes()
+   {
+      return poses_;
+   }
+
+   public  geterases()
+   {
+      return erases_;
+   }
+
+
 }

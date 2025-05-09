@@ -20,12 +20,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
-   {
-      return pose_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -54,4 +48,11 @@ public class PoseStamped implements ROS2Message<PoseStamped>
    public void set(PoseStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.Pose getpose()
+   {
+      return pose_;
+   }
+
+
 }

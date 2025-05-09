@@ -24,12 +24,6 @@ public class MagneticField implements ROS2Message<MagneticField>
 
    }
 
-   public double[] getmagnetic_field_covariance()
-   {
-      return magnetic_field_covariance_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -75,4 +69,11 @@ public class MagneticField implements ROS2Message<MagneticField>
       }
 
    }
+
+   public double[] getmagnetic_field_covariance()
+   {
+      return magnetic_field_covariance_;
+   }
+
+
 }

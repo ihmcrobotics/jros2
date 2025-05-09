@@ -23,17 +23,6 @@ public class Float64 implements ROS2Message<Float64>
    {
    }
 
-   public double getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(double data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class Float64 implements ROS2Message<Float64>
       data_ = from.data_;
 
    }
+
+   public double getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(double data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

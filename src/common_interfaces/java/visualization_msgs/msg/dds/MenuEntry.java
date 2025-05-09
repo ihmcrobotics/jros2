@@ -67,57 +67,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
    }
 
-   public int getid()
-   {
-      return id_;
-   }
-
-   public void setid(int id_)
-   {
-      this.id_ = id_;
-   }
-
-   public int getparent_id()
-   {
-      return parent_id_;
-   }
-
-   public void setparent_id(int parent_id_)
-   {
-      this.parent_id_ = parent_id_;
-   }
-
-   public StringBuilder gettitle()
-   {
-      return title_;
-   }
-
-   public void settitle(StringBuilder title_)
-   {
-      this.title_ = title_;
-   }
-
-   public StringBuilder getcommand()
-   {
-      return command_;
-   }
-
-   public void setcommand(StringBuilder command_)
-   {
-      this.command_ = command_;
-   }
-
-   public byte getcommand_type()
-   {
-      return command_type_;
-   }
-
-   public void setcommand_type(byte command_type_)
-   {
-      this.command_type_ = command_type_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -170,4 +119,56 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       command_type_ = from.command_type_;
 
    }
+
+   public int getid()
+   {
+      return id_;
+   }
+
+   public void setid(int id_)
+   {
+      this.id_ = id_;
+   }
+
+   public int getparent_id()
+   {
+      return parent_id_;
+   }
+
+   public void setparent_id(int parent_id_)
+   {
+      this.parent_id_ = parent_id_;
+   }
+
+   public StringBuilder gettitle()
+   {
+      return title_;
+   }
+
+   public void settitle(StringBuilder title_)
+   {
+      this.title_ = title_;
+   }
+
+   public StringBuilder getcommand()
+   {
+      return command_;
+   }
+
+   public void setcommand(StringBuilder command_)
+   {
+      this.command_ = command_;
+   }
+
+   public byte getcommand_type()
+   {
+      return command_type_;
+   }
+
+   public void setcommand_type(byte command_type_)
+   {
+      this.command_type_ = command_type_;
+   }
+
+
 }

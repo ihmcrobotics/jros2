@@ -23,17 +23,6 @@ public class UInt16 implements ROS2Message<UInt16>
    {
    }
 
-   public short getdata()
-   {
-      return data_;
-   }
-
-   public void setdata(short data_)
-   {
-      this.data_ = data_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -70,4 +59,16 @@ public class UInt16 implements ROS2Message<UInt16>
       data_ = from.data_;
 
    }
+
+   public short getdata()
+   {
+      return data_;
+   }
+
+   public void setdata(short data_)
+   {
+      this.data_ = data_;
+   }
+
+
 }

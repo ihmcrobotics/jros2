@@ -97,72 +97,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    }
 
-   public int getheight()
-   {
-      return height_;
-   }
-
-   public void setheight(int height_)
-   {
-      this.height_ = height_;
-   }
-
-   public int getwidth()
-   {
-      return width_;
-   }
-
-   public void setwidth(int width_)
-   {
-      this.width_ = width_;
-   }
-
-   public StringBuilder getdistortion_model()
-   {
-      return distortion_model_;
-   }
-
-   public void setdistortion_model(StringBuilder distortion_model_)
-   {
-      this.distortion_model_ = distortion_model_;
-   }
-
-   public IDLDoubleSequence getd()
-   {
-      return d_;
-   }
-
-   public double[] getp()
-   {
-      return p_;
-   }
-
-   public int getbinning_x()
-   {
-      return binning_x_;
-   }
-
-   public void setbinning_x(int binning_x_)
-   {
-      this.binning_x_ = binning_x_;
-   }
-
-   public int getbinning_y()
-   {
-      return binning_y_;
-   }
-
-   public void setbinning_y(int binning_y_)
-   {
-      this.binning_y_ = binning_y_;
-   }
-
-   public sensor_msgs.msg.dds.RegionOfInterest getroi()
-   {
-      return roi_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -232,4 +166,71 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       binning_y_ = from.binning_y_;
 
    }
+
+   public int getheight()
+   {
+      return height_;
+   }
+
+   public void setheight(int height_)
+   {
+      this.height_ = height_;
+   }
+
+   public int getwidth()
+   {
+      return width_;
+   }
+
+   public void setwidth(int width_)
+   {
+      this.width_ = width_;
+   }
+
+   public StringBuilder getdistortion_model()
+   {
+      return distortion_model_;
+   }
+
+   public void setdistortion_model(StringBuilder distortion_model_)
+   {
+      this.distortion_model_ = distortion_model_;
+   }
+
+   public IDLDoubleSequence getd()
+   {
+      return d_;
+   }
+
+   public double[] getp()
+   {
+      return p_;
+   }
+
+   public int getbinning_x()
+   {
+      return binning_x_;
+   }
+
+   public void setbinning_x(int binning_x_)
+   {
+      this.binning_x_ = binning_x_;
+   }
+
+   public int getbinning_y()
+   {
+      return binning_y_;
+   }
+
+   public void setbinning_y(int binning_y_)
+   {
+      this.binning_y_ = binning_y_;
+   }
+
+   public sensor_msgs.msg.dds.RegionOfInterest getroi()
+   {
+      return roi_;
+   }
+
+
 }

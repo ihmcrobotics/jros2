@@ -27,27 +27,6 @@ public class JointState implements ROS2Message<JointState>
 
    }
 
-   public  getname()
-   {
-      return name_;
-   }
-
-   public IDLDoubleSequence getposition()
-   {
-      return position_;
-   }
-
-   public IDLDoubleSequence getvelocity()
-   {
-      return velocity_;
-   }
-
-   public IDLDoubleSequence geteffort()
-   {
-      return effort_;
-   }
-
-
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -96,4 +75,26 @@ public class JointState implements ROS2Message<JointState>
       effort_.set(from.effort_);
 
    }
+
+   public  getname()
+   {
+      return name_;
+   }
+
+   public IDLDoubleSequence getposition()
+   {
+      return position_;
+   }
+
+   public IDLDoubleSequence getvelocity()
+   {
+      return velocity_;
+   }
+
+   public IDLDoubleSequence geteffort()
+   {
+      return effort_;
+   }
+
+
 }
