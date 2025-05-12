@@ -1,7 +1,29 @@
 package us.ihmc.jros2;
 
 /**
- * A record to map a "topic type" AKA some specific {@link ROS2Message} type to topic name.
+ * Represents a ROS 2 topic which has a name and the message type sent over it.
+ * <p>
+ * Names are composed of multiple tokens delimited by forward slashes ({@code /}).
+ * This class provides methods for creating new {@link ROS2Topic} objects by
+ * prepending, appending, or inserting tokens into the name of an existing topic object.
+ * <p>
+ * The following is example usage for creating topics for a camera that provides color and depth images:
+ * <pre> {@code
+ * // Create a camera topic namespace
+ * ROS2Topic<?> cameraTopic = new ROS2Topic<>("/camera1");
+ *
+ * // Create color and depth topic namespaces off of the camera topic
+ * ROS2Topic<?> colorTopic = cameraTopic.appendedWith("color");
+ * ROS2Topic<?> depthTopic = cameraTopic.appendedWith("depth");
+ *
+ * // Create base topics off of color and depth namespaces
+ * ROS2Topic<Image> colorImageTopic = colorTopic.appendedWith("image_raw").withType(Image.class);
+ * ROS2Topic<CameraInfo> colorInfoTopic = colorTopic.appendedWith("camera_info").withType(CameraInfo.class);
+ * ROS2Topic<Image> depthImageTopic = depthTopic.appendedWith("image_raw").withType(Image.class);
+ * ROS2Topic<CameraInfo> depthInfoTopic = depthTopic.appendedWith("camera_info").withType(CameraInfo.class);
+ * } </pre>
+ * To learn more about ROS topics, see:
+ * <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS - ROS 2 Design</a>
  */
 public class ROS2Topic<T extends ROS2Message<T>>
 {
@@ -12,8 +34,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
 
    private final Class<T> topicType;
    private final String topicName;
-   private final String rtPrefixedName;
-   private final int numberOfSegments; // not including "rt" segment
+   private final int numberOfTokens;
 
    /**
     * Creates a blank topic with an empty name and no type.
@@ -31,7 +52,6 @@ public class ROS2Topic<T extends ROS2Message<T>>
     * Creates a topic with a name and no type.
     *
     * @param topicName The topic name. Must satisfy constraints set by ROS 2.
-    *                  <p>
     *                  See the "ROS 2 Topic and Servicec Name Constrains" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     */
@@ -44,91 +64,83 @@ public class ROS2Topic<T extends ROS2Message<T>>
     * Creates a topic with a name and type.
     *
     * @param topicName The topic name. Must satisfy constraints set by ROS 2.
-    *                  <p>
     *                  See the "ROS 2 Topic and Servicec Name Constrains" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     * @param topicType The message type sent over this topic.
     */
    public ROS2Topic(String topicName, Class<T> topicType)
    {
-      // Treat null as empty string
-      if (topicName == null)
-      {
-         topicName = "";
-      }
-
-      if (topicName.isEmpty())
+      if (topicName == null || topicName.isEmpty())
       {
          this.topicName = "";
-         numberOfSegments = 0;
+         numberOfTokens = 0;
       }
       else
       {
          this.topicName = topicName;
-         numberOfSegments = topicName.split("/").length - 1;
+         numberOfTokens = topicName.split("/").length - 1;
       }
 
-      rtPrefixedName = "rt" + this.topicName;
       this.topicType = topicType;
    }
 
    /**
-    * Creates a copy of this topic with a name segment appended to this topic's name.
+    * Creates a copy of this topic with a token appended to this topic's name.
     * <p>
-    * This method does NOT modify {@code this} object.
+    * This method does not modify {@code this} object.
     *
-    * @param nameSegment The name segment to append. Should not start or end with a "/".
-    * @return A new topic object with the name segment appended to this topic's name.
+    * @param token The token to append. Should not start or end with a {@code /}.
+    * @return A new topic object with the token appended to this topic's name.
     */
-   public ROS2Topic<T> appendedWith(String nameSegment)
+   public ROS2Topic<T> appendedWith(String token)
    {
-      if (nameSegment == null || nameSegment.isEmpty())
+      if (token == null || token.isEmpty())
       {
          return new ROS2Topic<>(topicName, topicType);
       }
 
-      return new ROS2Topic<>(topicName + "/" + nameSegment, topicType);
+      return new ROS2Topic<>(topicName + "/" + token, topicType);
    }
 
    /**
-    * Creates a copy of this topic with a name segment prepended to this topic's name.
+    * Creates a copy of this topic with a token prepended to this topic's name.
     * <p>
-    * This method does NOT modify {@code this} object.
+    * This method does not modify {@code this} object.
     *
-    * @param nameSegment The name segment to prepend. Should not start or end with a "/".
-    * @return A new topic object with the name segment prepended to this topic's name.
+    * @param token The token to prepend. Should not start or end with a {@code /}.
+    * @return A new topic object with the token prepended to this topic's name.
     */
-   public ROS2Topic<T> prependedWith(String nameSegment)
+   public ROS2Topic<T> prependedWith(String token)
    {
-      if (nameSegment == null || nameSegment.isEmpty())
+      if (token == null || token.isEmpty())
       {
          return new ROS2Topic<>(topicName, topicType);
       }
 
-      return new ROS2Topic<>("/" + nameSegment + topicName, topicType);
+      return new ROS2Topic<>("/" + token + topicName, topicType);
    }
 
    /**
-    * Creates a copy of this topic with a name segment inserted into this topic's name at the given position.
+    * Creates a copy of this topic with a token inserted into this topic's name at the given position.
     * <p>
-    * This method does NOT modify {@code this} object.
+    * This method does not modify {@code this} object.
     *
-    * @param position    The position to insert the name segment at. Can be in the range of {@code [0, numberOfSegments]}.
+    * @param position    The position to insert the token at. Can be in the range of {@code [0, numberOfTokens]}.
     *                    <p> If {@code position == 0}, the behavior is identical to calling {@link #prependedWith(String)}.
-    *                    <p> If {@code position == numberOfSegments}, the behavior is identical to calling {@link #appendedWith(String)}.
-    * @param nameSegment The name segment to insert. Should not start or end with a "/".
-    * @return A new topic object with the name segment inserted into this topic's name at the given position.
+    *                    <p> If {@code position == numberOfTokens}, the behavior is identical to calling {@link #appendedWith(String)}.
+    * @param token The token to insert. Should not start or end with a {@code /}.
+    * @return A new topic object with the token inserted into this topic's name at the given position.
     */
-   public ROS2Topic<T> insert(int position, String nameSegment)
+   public ROS2Topic<T> insert(int position, String token)
    {
       // Ensure good position was given
-      if (position < 0 || position > numberOfSegments)
+      if (position < 0 || position > numberOfTokens)
       {
-         throw new IllegalArgumentException("Position must be in the range [0, numberOfSegments]");
+         throw new IllegalArgumentException("Position must be in the range [0, numberOfTokens]");
       }
 
       // If inserting nothing, we can return early
-      if (nameSegment == null || nameSegment.isEmpty())
+      if (token == null || token.isEmpty())
       {
          return new ROS2Topic<>(topicName, topicType);
       }
@@ -136,29 +148,29 @@ public class ROS2Topic<T extends ROS2Message<T>>
       // Faster options for some insertion positions
       if (position == 0)
       {
-         return prependedWith(nameSegment);
+         return prependedWith(token);
       }
-      else if (position == numberOfSegments)
+      else if (position == numberOfTokens)
       {
-         return appendedWith(nameSegment);
+         return appendedWith(token);
       }
 
-      String[] segments = topicName.split("/"); // Array of existing segments. Note that segments[0] == "".
-      String[] newSegments = new String[numberOfSegments + 1]; // Array where we'll store new segments
-      for (int insert = 0, read = 1; insert < newSegments.length; ++insert, ++read)
+      String[] tokens = topicName.split("/"); // Array of existing tokens. Note that tokens[0] == "".
+      String[] newTokenss = new String[numberOfTokens + 1]; // Array where we'll store new tokens
+      for (int insert = 0, read = 1; insert < newTokenss.length; ++insert, ++read)
       {
-         if (insert == position) // If we're at the insertion position, insert the passed in name segment
+         if (insert == position) // If we're at the insertion position, insert the passed in token
          {
-            newSegments[insert] = nameSegment;
-            read--; // Decrement read position since we didn't read from the existing segments
+            newTokenss[insert] = token;
+            read--; // Decrement read position since we didn't read from the existing tokens
          }
          else // Not at insertion position. Just copy values over.
          {
-            newSegments[insert] = segments[read];
+            newTokenss[insert] = tokens[read];
          }
       }
 
-      return new ROS2Topic<>("/" + String.join("/", newSegments), getType());
+      return new ROS2Topic<>("/" + String.join("/", newTokenss), getType());
    }
 
    /**
@@ -184,19 +196,11 @@ public class ROS2Topic<T extends ROS2Message<T>>
    }
 
    /**
-    * @return This topic's FastDDS name (i.e. this topic's name with "rt" prefixed)
+    * @return The number of tokens in this topic's name. Tokens are separated by {@code /}.
     */
-   public String getFastDDSTopicName()
+   public int numberOfTokens()
    {
-      return rtPrefixedName;
-   }
-
-   /**
-    * @return The number of segments in this topic's name. Segments are separated by "/".
-    */
-   public int numberOfSegments()
-   {
-      return numberOfSegments;
+      return numberOfTokens;
    }
 
    /**
