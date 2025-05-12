@@ -31,7 +31,7 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node and topic
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       assertDoesNotThrow(() ->
       {
@@ -91,7 +91,7 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node and topic
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       assertDoesNotThrow(() ->
       {
@@ -132,7 +132,7 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node, topic, and publisher
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       ROS2QoSProfile qosProfile = new ROS2QoSProfile();
       qosProfile.durability(Durability.TRANSIENT_LOCAL);
@@ -164,7 +164,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
       ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
@@ -217,7 +217,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
       ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
@@ -264,7 +264,7 @@ public class ROS2PublishSubscribeTest
    {
       Instant start = Instant.now();
 
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/ihmc/test_topic");
+      ROS2Topic<Bool> topic = new ROS2Topic<>("/ihmc/test_topic", Bool.class);
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
 
@@ -348,7 +348,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       // Create a publisher
       ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic);

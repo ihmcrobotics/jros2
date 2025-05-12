@@ -139,11 +139,19 @@ public class ROS2Node implements Closeable
                      LogTools.error(e);
                   }
 
-                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+                  /*
+                   * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
+                   * where {@code X} is determined by the subtype of the topic.
+                   * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
+                   * https://design.ros2.org/articles/topic_and_service_names.html
+                   */
+                  // TODO: Support other prefixes depending on ROS subsystem
+                  String prefixedTopicName = "rt" + topic.getName();
+                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
                   fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
+                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, prefixedTopicName, topicProfileName);
                   TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
 
                   this.topicData.put(topic, topicData);
@@ -210,7 +218,7 @@ public class ROS2Node implements Closeable
       return createPublisher(topic, ROS2QoSProfile.DEFAULT);
    }
 
-   public <T extends ROS2Message<T>> boolean destroyPublisher(ROS2Publisher<T> publisher)
+   public boolean destroyPublisher(ROS2Publisher<?> publisher)
    {
       boolean removed = false;
 
@@ -287,7 +295,7 @@ public class ROS2Node implements Closeable
       return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
    }
 
-   public <T extends ROS2Message<T>> boolean destroySubscription(ROS2Subscription<T> subscription)
+   public boolean destroySubscription(ROS2Subscription<?> subscription)
    {
       boolean removed = false;
 

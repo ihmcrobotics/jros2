@@ -34,10 +34,10 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, transports);
 
-      int capacity = 32;
+      int capacity = 64;
 
       // TODO: Name, daemon, etc
-      tasks = new ArrayBlockingQueue<>(capacity);
+      tasks = new ArrayBlockingQueue<>(capacity, true);
       publishThread = new Thread(this::publishLoop);
       publishThread.start();
    }
@@ -112,7 +112,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       try
       {
-         while (!Thread.interrupted())
+         while (!publishThread.isInterrupted())
          {
             tasks.take().run();
          }
