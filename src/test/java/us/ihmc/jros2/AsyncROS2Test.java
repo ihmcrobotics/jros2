@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
 public class AsyncROS2Test
@@ -28,7 +29,7 @@ public class AsyncROS2Test
       final String topicName = "/ihmc/test_bool";
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       ROS2QoSProfile qosProfile = new ROS2QoSProfile();
       qosProfile.durability(Durability.TRANSIENT_LOCAL);
@@ -58,7 +59,7 @@ public class AsyncROS2Test
       final String topicName = "/ihmc/test_bool";
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt" + topicName);
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
       {
@@ -110,7 +111,7 @@ public class AsyncROS2Test
       final boolean expected = true;
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/test_topic");
+      ROS2Topic<Bool> topic = new ROS2Topic<>("test_topic", Bool.class);
 
       ROS2Publisher<?>[] publishers = new ROS2Publisher[publisherCount];
       Thread[] publisherThreads = new Thread[publisherCount];
@@ -173,8 +174,8 @@ public class AsyncROS2Test
       AsyncROS2Node asyncROS2Node = new AsyncROS2Node("async_node");
 
       // Create topics to publish on
-      ROS2Topic<Bool> standardTopic = new ROS2Topic<>(Bool.class, "rt/standard_topic");
-      ROS2Topic<Bool> asyncTopic = new ROS2Topic<>(Bool.class, "rt/async_topic");
+      ROS2Topic<Bool> standardTopic = new ROS2Topic<>("standard_topic", Bool.class);
+      ROS2Topic<Bool> asyncTopic = new ROS2Topic<>("async_topic", Bool.class);
 
       // Create normal and async publishers
       ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);
