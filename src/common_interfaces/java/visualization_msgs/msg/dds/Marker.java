@@ -91,14 +91,14 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(ns_);
+      buffer.writeString(ns_);
       buffer.writeInt(id_);
       buffer.writeInt(type_);
       buffer.writeInt(action_);
       buffer.writeBoolean(frame_locked_);
-      buffer.(texture_resource_);
-      buffer.(text_);
-      buffer.(mesh_resource_);
+      buffer.writeString(texture_resource_);
+      buffer.writeString(text_);
+      buffer.writeString(mesh_resource_);
       buffer.writeBoolean(mesh_use_embedded_materials_);
 
    }
@@ -106,14 +106,14 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      ns_ = buffer.();
+      buffer.readString(ns_);
       id_ = buffer.readInt();
       type_ = buffer.readInt();
       action_ = buffer.readInt();
       frame_locked_ = buffer.readBoolean();
-      texture_resource_ = buffer.();
-      text_ = buffer.();
-      mesh_resource_ = buffer.();
+      buffer.readString(texture_resource_);
+      buffer.readString(text_);
+      buffer.readString(mesh_resource_);
       mesh_use_embedded_materials_ = buffer.readBoolean();
 
    }

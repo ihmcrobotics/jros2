@@ -35,14 +35,14 @@ public class Odometry implements ROS2Message<Odometry>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(child_frame_id_);
+      buffer.writeString(child_frame_id_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      child_frame_id_ = buffer.();
+      buffer.readString(child_frame_id_);
 
    }
 

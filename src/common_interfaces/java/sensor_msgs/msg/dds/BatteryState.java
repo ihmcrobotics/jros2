@@ -70,8 +70,8 @@ public class BatteryState implements ROS2Message<BatteryState>
       buffer.writeFloat(percentage_);
       cell_voltage_.serialize(buffer);
       cell_temperature_.serialize(buffer);
-      buffer.(location_);
-      buffer.(serial_number_);
+      buffer.writeString(location_);
+      buffer.writeString(serial_number_);
 
    }
 
@@ -87,8 +87,8 @@ public class BatteryState implements ROS2Message<BatteryState>
       percentage_ = buffer.readFloat();
       cell_voltage_.deserialize(buffer);
       cell_temperature_.deserialize(buffer);
-      location_ = buffer.();
-      serial_number_ = buffer.();
+      buffer.readString(location_);
+      buffer.readString(serial_number_);
 
    }
 

@@ -17,7 +17,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
        The names of the active joints in each trajectory point. These names are
        ordered and must correspond to the values in each trajectory point.
    */
-   private  joint_names_;
+   private IDLStringSequence joint_names_;
    /**
        Array of trajectory points, which describe the positions, velocities,
        accelerations and/or efforts of the joints at each time point.
@@ -26,7 +26,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    public JointTrajectory()
    {
-      joint_names_ = new ();
+      joint_names_ = new IDLStringSequence();
       points_ = new trajectory_msgs.msg.dds.JointTrajectoryPoint();
 
    }
@@ -68,7 +68,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
-   public  getjoint_names()
+   public IDLStringSequence getjoint_names()
    {
       return joint_names_;
    }

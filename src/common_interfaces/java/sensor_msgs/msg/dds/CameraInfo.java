@@ -118,7 +118,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       buffer.writeInt(height_);
       buffer.writeInt(width_);
-      buffer.(distortion_model_);
+      buffer.writeString(distortion_model_);
       d_.serialize(buffer);
       for (int i = 0; i < p_.length; ++i)
       {
@@ -134,11 +134,11 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       height_ = buffer.readInt();
       width_ = buffer.readInt();
-      distortion_model_ = buffer.();
+      buffer.readString(distortion_model_);
       d_.deserialize(buffer);
       for (int i = 0; i < p_.length; ++i)
       {
-         p_[i] = buffer.readDouble();
+      p_[i] = buffer.readDouble();
       }
       binning_x_ = buffer.readInt();
       binning_y_ = buffer.readInt();

@@ -37,7 +37,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(status_);
-      buffer.(text_);
+      buffer.writeString(text_);
 
    }
 
@@ -45,7 +45,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public void deserialize(CDRBuffer buffer)
    {
       status_ = buffer.readByte();
-      text_ = buffer.();
+      buffer.readString(text_);
 
    }
 

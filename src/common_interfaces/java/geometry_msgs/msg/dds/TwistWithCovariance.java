@@ -54,7 +54,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       for (int i = 0; i < covariance_.length; ++i)
       {
-         covariance_[i] = buffer.readDouble();
+      covariance_[i] = buffer.readDouble();
       }
 
    }

@@ -47,7 +47,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    {
       for (int i = 0; i < vertex_indices_.length; ++i)
       {
-         vertex_indices_[i] = buffer.readInt();
+      vertex_indices_[i] = buffer.readInt();
       }
 
    }

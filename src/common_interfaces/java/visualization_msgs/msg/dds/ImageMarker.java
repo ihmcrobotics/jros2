@@ -60,7 +60,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(ns_);
+      buffer.writeString(ns_);
       buffer.writeInt(id_);
       buffer.writeInt(type_);
       buffer.writeInt(action_);
@@ -72,7 +72,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      ns_ = buffer.();
+      buffer.readString(ns_);
       id_ = buffer.readInt();
       type_ = buffer.readInt();
       action_ = buffer.readInt();

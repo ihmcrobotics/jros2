@@ -57,9 +57,9 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(level_);
-      buffer.(name_);
-      buffer.(message_);
-      buffer.(hardware_id_);
+      buffer.writeString(name_);
+      buffer.writeString(message_);
+      buffer.writeString(hardware_id_);
 
    }
 
@@ -67,9 +67,9 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public void deserialize(CDRBuffer buffer)
    {
       level_ = buffer.readByte();
-      name_ = buffer.();
-      message_ = buffer.();
-      hardware_id_ = buffer.();
+      buffer.readString(name_);
+      buffer.readString(message_);
+      buffer.readString(hardware_id_);
 
    }
 

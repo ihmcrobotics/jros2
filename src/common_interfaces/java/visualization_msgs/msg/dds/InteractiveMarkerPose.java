@@ -36,14 +36,14 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(name_);
+      buffer.writeString(name_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      name_ = buffer.();
+      buffer.readString(name_);
 
    }
 

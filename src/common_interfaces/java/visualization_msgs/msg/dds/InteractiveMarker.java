@@ -57,8 +57,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(name_);
-      buffer.(description_);
+      buffer.writeString(name_);
+      buffer.writeString(description_);
       buffer.writeFloat(scale_);
 
    }
@@ -66,8 +66,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      name_ = buffer.();
-      description_ = buffer.();
+      buffer.readString(name_);
+      buffer.readString(description_);
       scale_ = buffer.readFloat();
 
    }

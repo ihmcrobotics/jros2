@@ -54,7 +54,7 @@ public class Image implements ROS2Message<Image>
    {
       buffer.writeInt(height_);
       buffer.writeInt(width_);
-      buffer.(encoding_);
+      buffer.writeString(encoding_);
       buffer.writeByte(is_bigendian_);
       buffer.writeInt(step_);
       data_.serialize(buffer);
@@ -66,7 +66,7 @@ public class Image implements ROS2Message<Image>
    {
       height_ = buffer.readInt();
       width_ = buffer.readInt();
-      encoding_ = buffer.();
+      buffer.readString(encoding_);
       is_bigendian_ = buffer.readByte();
       step_ = buffer.readInt();
       data_.deserialize(buffer);

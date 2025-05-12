@@ -39,7 +39,7 @@ public class PointField implements ROS2Message<PointField>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(name_);
+      buffer.writeString(name_);
       buffer.writeInt(offset_);
       buffer.writeInt(count_);
 
@@ -48,7 +48,7 @@ public class PointField implements ROS2Message<PointField>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      name_ = buffer.();
+      buffer.readString(name_);
       offset_ = buffer.readInt();
       count_ = buffer.readInt();
 

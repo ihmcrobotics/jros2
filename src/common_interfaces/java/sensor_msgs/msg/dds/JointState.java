@@ -13,14 +13,14 @@ public class JointState implements ROS2Message<JointState>
 {
    public static final String name = "sensor_msgs::msg::dds_::JointState_";
 
-   private  name_;
+   private IDLStringSequence name_;
    private IDLDoubleSequence position_;
    private IDLDoubleSequence velocity_;
    private IDLDoubleSequence effort_;
 
    public JointState()
    {
-      name_ = new ();
+      name_ = new IDLStringSequence();
       position_ = new IDLDoubleSequence();
       velocity_ = new IDLDoubleSequence();
       effort_ = new IDLDoubleSequence();
@@ -76,7 +76,7 @@ public class JointState implements ROS2Message<JointState>
 
    }
 
-   public  getname()
+   public IDLStringSequence getname()
    {
       return name_;
    }

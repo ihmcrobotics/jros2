@@ -109,7 +109,7 @@ public final class Builtin
             return "long";
          case "string":
          case "wstring":
-            return null; // TODO:
+            return "StringBuilder";
          default:
             return null;
       }
@@ -147,8 +147,9 @@ public final class Builtin
          case "int64":
             return "IDLLongSequence";
          case "string":
+            return "IDLStringSequence";
          case "wstring":
-            return null; // TODO:
+            return "IDLWStringSequence";
          default:
             return null;
       }
@@ -188,8 +189,9 @@ public final class Builtin
          case "int64":
             return "writeLong";
          case "string":
+            return "writeString";
          case "wstring":
-            return ""; // TODO:
+            return "writeWString";
          default:
             return null;
       }
@@ -229,8 +231,9 @@ public final class Builtin
          case "int64":
             return "readLong";
          case "string":
+            return "readString";
          case "wstring":
-            return ""; // TODO:
+            return "readWString";
          default:
             return null;
       }

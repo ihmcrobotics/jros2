@@ -75,24 +75,24 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(name_);
+      buffer.writeString(name_);
       buffer.writeByte(orientation_mode_);
       buffer.writeByte(interaction_mode_);
       buffer.writeBoolean(always_visible_);
       buffer.writeBoolean(independent_marker_orientation_);
-      buffer.(description_);
+      buffer.writeString(description_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      name_ = buffer.();
+      buffer.readString(name_);
       orientation_mode_ = buffer.readByte();
       interaction_mode_ = buffer.readByte();
       always_visible_ = buffer.readBoolean();
       independent_marker_orientation_ = buffer.readBoolean();
-      description_ = buffer.();
+      buffer.readString(description_);
 
    }
 

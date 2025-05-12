@@ -38,16 +38,16 @@ public class KeyValue implements ROS2Message<KeyValue>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(key_);
-      buffer.(value_);
+      buffer.writeString(key_);
+      buffer.writeString(value_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      key_ = buffer.();
-      value_ = buffer.();
+      buffer.readString(key_);
+      buffer.readString(value_);
 
    }
 

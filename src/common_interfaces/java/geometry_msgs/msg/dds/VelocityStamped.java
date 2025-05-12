@@ -38,16 +38,16 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(body_frame_id_);
-      buffer.(reference_frame_id_);
+      buffer.writeString(body_frame_id_);
+      buffer.writeString(reference_frame_id_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      body_frame_id_ = buffer.();
-      reference_frame_id_ = buffer.();
+      buffer.readString(body_frame_id_);
+      buffer.readString(reference_frame_id_);
 
    }
 

@@ -35,14 +35,14 @@ public class Header implements ROS2Message<Header>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(frame_id_);
+      buffer.writeString(frame_id_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      frame_id_ = buffer.();
+      buffer.readString(frame_id_);
 
    }
 

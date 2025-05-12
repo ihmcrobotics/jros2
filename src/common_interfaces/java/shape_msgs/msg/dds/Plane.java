@@ -52,7 +52,7 @@ public class Plane implements ROS2Message<Plane>
    {
       for (int i = 0; i < coef_.length; ++i)
       {
-         coef_[i] = buffer.readDouble();
+      coef_[i] = buffer.readDouble();
       }
 
    }

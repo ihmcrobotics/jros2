@@ -13,11 +13,11 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 {
    public static final String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
 
-   private  joint_names_;
+   private IDLStringSequence joint_names_;
 
    public MultiDOFJointState()
    {
-      joint_names_ = new ();
+      joint_names_ = new IDLStringSequence();
 
    }
 
@@ -58,7 +58,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
-   public  getjoint_names()
+   public IDLStringSequence getjoint_names()
    {
       return joint_names_;
    }

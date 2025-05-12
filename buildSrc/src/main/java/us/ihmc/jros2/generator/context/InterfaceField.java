@@ -78,6 +78,7 @@ public class InterfaceField
       this.stringLength = stringLength;
    }
 
+   // TODO: Change name
    public boolean getArray()
    {
       return array;
@@ -88,6 +89,7 @@ public class InterfaceField
       this.array = array;
    }
 
+   // TODO: Change name
    public boolean getUpperBounded()
    {
       return upperBounded;
@@ -98,6 +100,7 @@ public class InterfaceField
       this.upperBounded = upperBounded;
    }
 
+   // TODO: Change name
    public boolean getUnbounded()
    {
       return unbounded;
@@ -108,6 +111,7 @@ public class InterfaceField
       this.unbounded = unbounded;
    }
 
+   // TODO: Change name
    public boolean getFixedSize()
    {
       return !getUpperBounded() && !getUnbounded();
@@ -176,6 +180,11 @@ public class InterfaceField
    public boolean isBuiltinType()
    {
       return Builtin.isBuiltinType(type);
+   }
+
+   public boolean isBuiltinStringType()
+   {
+      return type != null && (type.equals("string") || type.equals("wstring"));
    }
 
    public int getBuiltinTypeSize()

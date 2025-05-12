@@ -35,13 +35,13 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    /**
        Names of markers to be erased
    */
-   private  erases_;
+   private IDLStringSequence erases_;
 
    public InteractiveMarkerUpdate()
    {
       markers_ = new visualization_msgs.msg.dds.InteractiveMarker();
       poses_ = new visualization_msgs.msg.dds.InteractiveMarkerPose();
-      erases_ = new ();
+      erases_ = new IDLStringSequence();
 
    }
 
@@ -61,7 +61,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(server_id_);
+      buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
       buffer.writeByte(type_);
       erases_.serialize(buffer);
@@ -71,7 +71,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      server_id_ = buffer.();
+      buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
       type_ = buffer.readByte();
       erases_.deserialize(buffer);
@@ -134,7 +134,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       return poses_;
    }
 
-   public  geterases()
+   public IDLStringSequence geterases()
    {
       return erases_;
    }

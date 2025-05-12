@@ -52,9 +52,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(client_id_);
-      buffer.(marker_name_);
-      buffer.(control_name_);
+      buffer.writeString(client_id_);
+      buffer.writeString(marker_name_);
+      buffer.writeString(control_name_);
       buffer.writeByte(event_type_);
       buffer.writeInt(menu_entry_id_);
       buffer.writeBoolean(mouse_point_valid_);
@@ -64,9 +64,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      client_id_ = buffer.();
-      marker_name_ = buffer.();
-      control_name_ = buffer.();
+      buffer.readString(client_id_);
+      buffer.readString(marker_name_);
+      buffer.readString(control_name_);
       event_type_ = buffer.readByte();
       menu_entry_id_ = buffer.readInt();
       mouse_point_valid_ = buffer.readBoolean();

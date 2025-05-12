@@ -41,7 +41,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(format_);
+      buffer.writeString(format_);
       data_.serialize(buffer);
 
    }
@@ -49,7 +49,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      format_ = buffer.();
+      buffer.readString(format_);
       data_.deserialize(buffer);
 
    }

@@ -44,7 +44,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(filename_);
+      buffer.writeString(filename_);
       data_.serialize(buffer);
 
    }
@@ -52,7 +52,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      filename_ = buffer.();
+      buffer.readString(filename_);
       data_.deserialize(buffer);
 
    }

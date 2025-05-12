@@ -33,14 +33,14 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(source_);
+      buffer.writeString(source_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      source_ = buffer.();
+      buffer.readString(source_);
 
    }
 

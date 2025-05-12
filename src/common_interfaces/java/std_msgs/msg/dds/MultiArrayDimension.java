@@ -40,7 +40,7 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(label_);
+      buffer.writeString(label_);
       buffer.writeInt(size_);
       buffer.writeInt(stride_);
 
@@ -49,7 +49,7 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      label_ = buffer.();
+      buffer.readString(label_);
       size_ = buffer.readInt();
       stride_ = buffer.readInt();
 

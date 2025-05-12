@@ -86,8 +86,8 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       buffer.writeInt(id_);
       buffer.writeInt(parent_id_);
-      buffer.(title_);
-      buffer.(command_);
+      buffer.writeString(title_);
+      buffer.writeString(command_);
       buffer.writeByte(command_type_);
 
    }
@@ -97,8 +97,8 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       id_ = buffer.readInt();
       parent_id_ = buffer.readInt();
-      title_ = buffer.();
-      command_ = buffer.();
+      buffer.readString(title_);
+      buffer.readString(command_);
       command_type_ = buffer.readByte();
 
    }

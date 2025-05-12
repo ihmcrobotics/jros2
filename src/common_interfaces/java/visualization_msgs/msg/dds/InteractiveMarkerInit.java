@@ -50,7 +50,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(server_id_);
+      buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
 
    }
@@ -58,7 +58,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      server_id_ = buffer.();
+      buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
 
    }

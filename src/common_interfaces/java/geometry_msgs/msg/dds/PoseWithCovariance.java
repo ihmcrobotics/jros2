@@ -54,7 +54,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       for (int i = 0; i < covariance_.length; ++i)
       {
-         covariance_[i] = buffer.readDouble();
+      covariance_[i] = buffer.readDouble();
       }
 
    }

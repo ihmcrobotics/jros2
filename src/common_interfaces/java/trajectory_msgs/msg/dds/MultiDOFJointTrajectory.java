@@ -17,12 +17,12 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 {
    public static final String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectory_";
 
-   private  joint_names_;
+   private IDLStringSequence joint_names_;
    private trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint points_;
 
    public MultiDOFJointTrajectory()
    {
-      joint_names_ = new ();
+      joint_names_ = new IDLStringSequence();
       points_ = new trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint();
 
    }
@@ -64,7 +64,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    }
 
-   public  getjoint_names()
+   public IDLStringSequence getjoint_names()
    {
       return joint_names_;
    }

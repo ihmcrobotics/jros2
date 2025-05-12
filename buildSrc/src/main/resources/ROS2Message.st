@@ -87,12 +87,20 @@ buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_);
 <! TODO: direct buffer to array copy instead of iterating !>
 for (int i = 0; i \< <field.name>_.length; ++i)
 {
-   <field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>();
+      <if(field.builtinStringType)>
+buffer.<field.builtinCDRBufferReadMethod>(<field.name>_[i]);
+      <else>
+<field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>();
+      <endif>
 \}
       <elseif(field.array&&!field.fixedSize)>
 <field.name>_.deserialize(buffer);
       <elseif(!field.array)>
+      <if(field.builtinStringType)>
+buffer.<field.builtinCDRBufferReadMethod>(<field.name>_);
+      <else>
 <field.name>_ = buffer.<field.builtinCDRBufferReadMethod>();
+      <endif>
       <endif>
       <endif>
       }>

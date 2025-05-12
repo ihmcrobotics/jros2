@@ -82,7 +82,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       altitude_ = buffer.readDouble();
       for (int i = 0; i < position_covariance_.length; ++i)
       {
-         position_covariance_[i] = buffer.readDouble();
+      position_covariance_[i] = buffer.readDouble();
       }
       position_covariance_type_ = buffer.readByte();
 

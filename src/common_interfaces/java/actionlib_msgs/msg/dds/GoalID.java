@@ -37,14 +37,14 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(id_);
+      buffer.writeString(id_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      id_ = buffer.();
+      buffer.readString(id_);
 
    }
 

@@ -60,15 +60,15 @@ public class Imu implements ROS2Message<Imu>
    {
       for (int i = 0; i < orientation_covariance_.length; ++i)
       {
-         orientation_covariance_[i] = buffer.readDouble();
+      orientation_covariance_[i] = buffer.readDouble();
       }
       for (int i = 0; i < angular_velocity_covariance_.length; ++i)
       {
-         angular_velocity_covariance_[i] = buffer.readDouble();
+      angular_velocity_covariance_[i] = buffer.readDouble();
       }
       for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
       {
-         linear_acceleration_covariance_[i] = buffer.readDouble();
+      linear_acceleration_covariance_[i] = buffer.readDouble();
       }
 
    }

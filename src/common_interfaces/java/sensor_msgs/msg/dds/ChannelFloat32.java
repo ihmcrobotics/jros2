@@ -60,7 +60,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(name_);
+      buffer.writeString(name_);
       values_.serialize(buffer);
 
    }
@@ -68,7 +68,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      name_ = buffer.();
+      buffer.readString(name_);
       values_.deserialize(buffer);
 
    }

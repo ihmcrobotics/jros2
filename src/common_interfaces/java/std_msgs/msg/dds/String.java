@@ -36,14 +36,14 @@ public class String implements ROS2Message<String>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.(data_);
+      buffer.writeString(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.();
+      buffer.readString(data_);
 
    }
 
