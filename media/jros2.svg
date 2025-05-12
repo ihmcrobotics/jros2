@@ -22,9 +22,9 @@
      inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="3.7005255"
-     inkscape:cx="82.961189"
-     inkscape:cy="-1.2160435"
+     inkscape:zoom="5.2333333"
+     inkscape:cx="95.732484"
+     inkscape:cy="23.789809"
      inkscape:window-width="1312"
      inkscape:window-height="1082"
      inkscape:window-x="983"
@@ -33,39 +33,36 @@
      inkscape:current-layer="svg10"
      inkscape:showpageshadow="2"
      inkscape:deskcolor="#d1d1d1" />
+  <text
+     x="73.549194"
+     y="54.143871"
+     font-family="Roboto"
+     font-size="32px"
+     fill="#000000"
+     alignment-baseline="middle"
+     id="text2"
+     style="fill:#7399c6;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:0.197297"
+     inkscape:export-filename="jros2.png"
+     inkscape:export-xdpi="725.61798"
+     inkscape:export-ydpi="725.61798">jros2</text>
   <g
-     id="g860"
-     inkscape:export-filename="g860.png"
-     inkscape:export-xdpi="453.51126"
-     inkscape:export-ydpi="453.51126">
-    <text
-       x="73.549194"
-       y="54.143871"
-       font-family="Roboto"
-       font-size="32px"
-       fill="#000000"
-       alignment-baseline="middle"
-       id="text2"
-       style="fill:#335a8b;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:0.197297">jros2</text>
-    <g
-       id="g98"
-       transform="translate(-81.071,2.690939)">
-      <line
-         x1="141"
-         y1="32"
-         x2="122"
-         y2="51"
-         stroke="#f89820"
-         stroke-width="3"
-         id="line6" />
-      <line
-         x1="145"
-         y1="36"
-         x2="126"
-         y2="55"
-         stroke="#f89820"
-         stroke-width="3"
-         id="line8" />
-    </g>
+     id="g98"
+     transform="translate(-81.071,2.690939)">
+    <line
+       x1="141"
+       y1="32"
+       x2="122"
+       y2="51"
+       stroke="#f89820"
+       stroke-width="3"
+       id="line6" />
+    <line
+       x1="145"
+       y1="36"
+       x2="126"
+       y2="55"
+       stroke="#f89820"
+       stroke-width="3"
+       id="line8" />
   </g>
 </svg>
