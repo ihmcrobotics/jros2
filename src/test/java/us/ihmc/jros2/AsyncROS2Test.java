@@ -16,7 +16,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
 public class AsyncROS2Test
@@ -110,7 +111,7 @@ public class AsyncROS2Test
       final boolean expected = true;
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(Bool.class, "rt/test_topic");
+      ROS2Topic<Bool> topic = new ROS2Topic<>("test_topic", Bool.class);
 
       ROS2Publisher<?>[] publishers = new ROS2Publisher[publisherCount];
       Thread[] publisherThreads = new Thread[publisherCount];

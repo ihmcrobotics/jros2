@@ -1,5 +1,7 @@
 package us.ihmc.jros2;
 
+import us.ihmc.log.LogTools;
+
 /**
  * Represents a ROS 2 topic which has a name and the message type sent over it.
  * <p>
@@ -52,7 +54,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
     * Creates a topic with a name and no type.
     *
     * @param topicName The topic name. Must satisfy constraints set by ROS 2.
-    *                  See the "ROS 2 Topic and Servicec Name Constrains" section in:
+    *                  See the "ROS 2 Topic and Service Name Constraints" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     */
    public ROS2Topic(String topicName)
@@ -64,7 +66,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
     * Creates a topic with a name and type.
     *
     * @param topicName The topic name. Must satisfy constraints set by ROS 2.
-    *                  See the "ROS 2 Topic and Servicec Name Constrains" section in:
+    *                  See the "ROS 2 Topic and Service Name Constraints" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     * @param topicType The message type sent over this topic.
     */
@@ -156,21 +158,29 @@ public class ROS2Topic<T extends ROS2Message<T>>
       }
 
       String[] tokens = topicName.split("/"); // Array of existing tokens. Note that tokens[0] == "".
-      String[] newTokenss = new String[numberOfTokens + 1]; // Array where we'll store new tokens
-      for (int insert = 0, read = 1; insert < newTokenss.length; ++insert, ++read)
+
+      // Sanity check
+      if (!tokens[0].equals(""))
+      {
+         LogTools.error("Malformed topic name: {}. Failed to insert token at position {}.", topicName, position);
+         return this;
+      }
+
+      String[] newTokens = new String[numberOfTokens + 1]; // Array where we'll store new tokens
+      for (int insert = 0, read = 1; insert < newTokens.length; ++insert, ++read)
       {
          if (insert == position) // If we're at the insertion position, insert the passed in token
          {
-            newTokenss[insert] = token;
+            newTokens[insert] = token;
             read--; // Decrement read position since we didn't read from the existing tokens
          }
          else // Not at insertion position. Just copy values over.
          {
-            newTokenss[insert] = tokens[read];
+            newTokens[insert] = tokens[read];
          }
       }
 
-      return new ROS2Topic<>("/" + String.join("/", newTokenss), getType());
+      return new ROS2Topic<>("/" + String.join("/", newTokens), getType());
    }
 
    /**
