@@ -139,11 +139,11 @@ public class ROS2Node implements Closeable
                      LogTools.error(e);
                   }
 
-                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.topicType());
+                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
                   fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.topicName(), topicProfileName);
+                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, topic.getFastDDSTopicName(), topicProfileName);
                   TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
 
                   this.topicData.put(topic, topicData);

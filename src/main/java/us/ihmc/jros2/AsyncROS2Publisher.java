@@ -34,7 +34,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       messagesToPublish = (T[]) new ROS2Message[CAPACITY];
       for (int i = 0; i < CAPACITY; ++i)
       {
-         messagesToPublish[i] = ROS2Message.createInstance(topic.topicType());
+         messagesToPublish[i] = ROS2Message.createInstance(topic.getType());
       }
 
       publishTask = this::publishTask;

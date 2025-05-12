@@ -42,7 +42,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements Message
     */
    public T read()
    {
-      T data = ROS2Message.createInstance(topic.topicType());
+      T data = ROS2Message.createInstance(topic.getType());
 
       if (data != null)
       {
