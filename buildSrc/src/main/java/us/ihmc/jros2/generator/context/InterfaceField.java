@@ -1,6 +1,6 @@
 package us.ihmc.jros2.generator.context;
 
-public class InterfaceField // Cannot be a record
+public class InterfaceField
 {
    private String type;
    private String javaType;
