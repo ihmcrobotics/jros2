@@ -22,7 +22,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
     */
    protected AsyncROS2Publisher(AsyncROS2Node node, Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
-      super(fastddsParticipant, publisherProfileName, topicData);
+      super(fastddsParticipant, publisherProfileName, topic, topicData);
 
       this.node = node;
 

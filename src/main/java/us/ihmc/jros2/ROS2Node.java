@@ -236,7 +236,7 @@ public class ROS2Node implements Closeable
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
-            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topicData);
+            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
 
             synchronized (publishers)
             {

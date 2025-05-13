@@ -1,10 +1,12 @@
 package us.ihmc.jros2;
 
+import std_msgs.msg.dds.Header;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 import us.ihmc.log.LogTools;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
 {
@@ -37,6 +39,20 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
          LogTools.error(e);
+      }
+
+      return null;
+   }
+
+   static <T extends ROS2Message<T>> Method getHeaderMethod(Class<T> topicType)
+   {
+      Method[] methods = topicType.getDeclaredMethods();
+      for (Method method : methods)
+      {
+         if (Header.class.equals(method.getReturnType()))
+         {
+            return method;
+         }
       }
 
       return null;

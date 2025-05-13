@@ -1,14 +1,20 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import std_msgs.msg.dds.Header;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.log.LogTools;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageData.*;
 
 /**
  * A ROS 2-compatible publisher for publishing {@link ROS2Message} types.
@@ -29,10 +35,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
+   private final HashMap<MessageData, StatisticsCalculator> statisticsCalculators;
+   private long lastPublishTime;
+   private Method getHeaderMethod;
+
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
     */
-   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, TopicData topicData)
+   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
       this.topicData = topicData;
 
@@ -43,6 +53,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       cdrBuffer = new CDRBuffer();
+
+      statisticsCalculators = new HashMap<>(MessageData.values.length);
+      for (MessageData messageData : MessageData.values)
+      {
+         statisticsCalculators.put(messageData, new StatisticsCalculator());
+      }
+      getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
+      lastPublishTime = Long.MIN_VALUE;
    }
 
    public void publish(T message)
@@ -52,12 +70,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          if (!closed)
          {
+            int payloadSizeBytes;
+
             synchronized (cdrBuffer)
             {
                // Rewind buffer to ensure we're starting at position = 0
                cdrBuffer.rewind();
 
-               int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
                cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
 
                // TODO: check if we can shrink the writeBuffer to save memory
@@ -67,14 +87,50 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
                topicDataWrapper.data_vector().resize(payloadSizeBytes);
                topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+
+               statisticsCalculators.get(SIZE).record(payloadSizeBytes);
             }
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+            recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
          }
       }
       finally
       {
          closeLock.readLock().unlock();
+      }
+   }
+
+   private void recordStatistics(T message, long messageSizeBytes, long publishTimeMillis)
+   {
+      synchronized (statisticsCalculators)
+      {
+         // Record message size
+         statisticsCalculators.get(SIZE).record(messageSizeBytes);
+
+         // Record publish period if available
+         if (lastPublishTime != Long.MIN_VALUE)
+         {
+            statisticsCalculators.get(PERIOD).record(publishTimeMillis - lastPublishTime);
+         }
+         lastPublishTime = publishTimeMillis;
+
+         // Record publish age
+         if (getHeaderMethod != null)
+         {
+            try
+            {
+               Header header = (Header) getHeaderMethod.invoke(message);
+               // TODO: Uncomment when Header message is included in generated Java messages, and the timestamp is included in the Header Java message.
+//               long timestampMillis = (1000L * header.getStamp().getsec()) + (header.getStamp().getnanosec() / 1000000L);
+//               statisticsCalculators.get(AGE).record(publishTimeMillis - timestampMillis);
+            }
+            catch (IllegalAccessException | InvocationTargetException e)
+            {
+               LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
+               getHeaderMethod = null;
+            }
+         }
       }
    }
 
@@ -98,26 +154,17 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    }
 
    @Override
-   public long getNumberOfReceivedMessages()
+   public void resetStatistics()
    {
-      return 0;
+      for (StatisticsCalculator calculator : statisticsCalculators.values())
+      {
+         calculator.reset();
+      }
    }
 
    @Override
-   public long getCurrentMessageSize()
+   public void readStatistics(MessageData messageData, Statistics statisticToPack)
    {
-      return 0;
-   }
-
-   @Override
-   public long getLargestMessageSize()
-   {
-      return 0;
-   }
-
-   @Override
-   public long getCumulativePayloadBytes()
-   {
-      return 0;
+      statisticsCalculators.get(messageData).read(statisticToPack);
    }
 }
