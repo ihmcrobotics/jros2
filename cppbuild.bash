@@ -21,7 +21,7 @@ if [ ! -f "Fast-CDR-$FASTCDR_VERSION.tar.gz" ]; then
 fi
 tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 
-FASTDDS_VERSION=3.2.0
+FASTDDS_VERSION=3.2.2
 # Using git for libtinyxml and libasio submodules
 git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS-$FASTDDS_VERSION
 
@@ -85,8 +85,8 @@ mkdir -p ../src/main/resources/fastddsjava/native/linux-x86_64
 if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
   cp install/lib/libfastcdr.so.2.3.0 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
-if [ -f "install/lib/libfastdds.so.3.2.0" ]; then
-  cp install/lib/libfastdds.so.3.2.0 ../src/main/resources/fastddsjava/native/linux-x86_64
+if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
+  cp install/lib/libfastdds.so.3.2.2 ../src/main/resources/fastddsjava/native/linux-x86_64
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64

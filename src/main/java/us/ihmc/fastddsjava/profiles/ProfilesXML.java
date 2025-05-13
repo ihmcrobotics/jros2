@@ -21,7 +21,7 @@ import us.ihmc.fastddsjava.profiles.gen.TypesType;
 import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
-// https://fast-dds.docs.eprosima.com/en/v3.2.0/fastdds/xml_configuration/making_xml_profiles.html
+// https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/making_xml_profiles.html
 public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";

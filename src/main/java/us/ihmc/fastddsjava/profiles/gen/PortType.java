@@ -13,22 +13,22 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="portType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="portBase" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="domainIDGain" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="participantIDGain" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="offsetd0" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="offsetd1" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="offsetd2" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="offsetd3" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *         &lt;element name="offsetd4" type="{http://www.eprosima.com}uint16" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="portType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="portBase" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="domainIDGain" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="participantIDGain" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="offsetd0" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="offsetd1" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="offsetd2" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="offsetd3" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *         &lt;element name="offsetd4" type="{http://www.eprosima.com}uint16" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

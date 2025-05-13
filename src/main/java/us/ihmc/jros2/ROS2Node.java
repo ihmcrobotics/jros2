@@ -47,7 +47,7 @@ public class ROS2Node implements Closeable
     * The domain ID the node will use when writing and reading to the network transport. A valid domain ID must
     * be within the range [0, 232].
     * <p>
-    * See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.0/fastdds/dds_layer/domain/domain.html">Domain</a>
+    * See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/dds_layer/domain/domain.html">Domain</a>
     * See: <a href="https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html">ROS 2 Domain ID</a>
     */
    private final int domainId;

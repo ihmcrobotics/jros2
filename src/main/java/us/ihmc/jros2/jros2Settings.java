@@ -17,7 +17,7 @@ interface jros2Settings
     * A list of addresses (IPv4 or IPv6) and/or interface names which correspond to network interfaces on the host system.
     * {@link ROS2Node} will only be able to communicate using whitelisted network interfaces.
     * Empty or null for no whitelist.
-    * This is a Fast-DDS parameter. See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.0/fastdds/transport/whitelist.html">Interface Whitelist</a>.
+    * This is a Fast-DDS parameter. See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/whitelist.html">Interface Whitelist</a>.
     */
    String[] interfaceWhitelist();
 

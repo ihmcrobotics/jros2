@@ -24,7 +24,7 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
    public NativeLibraryWithDependencies getLibraryWithDependencies(OperatingSystem os, Architecture arch) {
       switch (os) {
          case LINUX64 -> {
-            return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.3.0", "libfastdds.so.3.2.0");
+            return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.3.0", "libfastdds.so.3.2.2");
          }
          case WIN64, MACOSX64 -> throw new RuntimeException("Unsupported platform");
       }

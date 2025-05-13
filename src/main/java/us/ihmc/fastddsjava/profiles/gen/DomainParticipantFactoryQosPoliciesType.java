@@ -13,17 +13,17 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="domainParticipantFactoryQosPoliciesType">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;all>
- *         &lt;element name="entity_factory" type="{http://www.eprosima.com}entityFactoryQosPolicyType" minOccurs="0"/>
- *         &lt;element name="shm_watchdog_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
- *         &lt;element name="file_watch_threads" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/>
- *       &lt;/all>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="domainParticipantFactoryQosPoliciesType"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;all&gt;
+ *         &lt;element name="entity_factory" type="{http://www.eprosima.com}entityFactoryQosPolicyType" minOccurs="0"/&gt;
+ *         &lt;element name="shm_watchdog_thread" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
+ *         &lt;element name="file_watch_threads" type="{http://www.eprosima.com}threadSettingsType" minOccurs="0"/&gt;
+ *       &lt;/all&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
