@@ -18,7 +18,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    private final Runnable publishTask;
 
    /**
-    * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
+    * Use {@link AsyncROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
     */
    protected AsyncROS2Publisher(AsyncROS2Node node, Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
