@@ -25,6 +25,7 @@ import java.io.StringWriter;
 public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
+   private static final Object loadLock = new Object();
 
    private final ProfilesType profilesType;
    private final LibrarySettingsType librarySettingsType;
@@ -45,7 +46,12 @@ public class ProfilesXML
    {
       String xml = marshall();
 
-      fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
+      // This synchronize seems to be required, DomainParticipantFactory#load_XML_profiles_string doesn't seem
+      // to be fully thread-safe and can sometimes result in a native crash.
+      synchronized (loadLock)
+      {
+         fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
+      }
    }
 
    public ProfilesType getProfilesType()
