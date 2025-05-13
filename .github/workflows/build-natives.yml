@@ -22,7 +22,7 @@ jobs:
           # Install newer version of cmake
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
-          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
           echo 'export PATH=/opt/cmake-4.0.2/bin:$PATH' >> ~/.bashrc
           source ~/.bashrc
