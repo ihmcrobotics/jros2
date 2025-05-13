@@ -2,8 +2,11 @@
 
 -----------------
 
+Fast-DDS version: `3.2.2`
+ROS 2 compatible and tested distros: [humble, jazzy]
+
 # jros2
-A ROS 2-compatible library for Java.
+A ROS 2 library for Java.
 
 Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64)
