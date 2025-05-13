@@ -5,8 +5,8 @@
    viewBox="0 0 210 95"
    version="1.1"
    id="svg10"
-   sodipodi:docname="logo.svg"
-   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   sodipodi:docname="jros2.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -19,18 +19,20 @@
      bordercolor="#666666"
      borderopacity="1.0"
      inkscape:pageshadow="2"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pagecheckerboard="0"
      showgrid="false"
-     inkscape:zoom="2.6166667"
-     inkscape:cx="80.063694"
-     inkscape:cy="-8.9808917"
+     inkscape:zoom="5.2333333"
+     inkscape:cx="95.732484"
+     inkscape:cy="23.789809"
      inkscape:window-width="1312"
      inkscape:window-height="1082"
-     inkscape:window-x="1221"
-     inkscape:window-y="404"
+     inkscape:window-x="983"
+     inkscape:window-y="565"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg10" />
+     inkscape:current-layer="svg10"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
   <text
      x="73.549194"
      y="54.143871"
@@ -38,7 +40,11 @@
      font-size="32px"
      fill="#000000"
      alignment-baseline="middle"
-     id="text2">jros2</text>
+     id="text2"
+     style="fill:#7399c6;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-dasharray:none;stroke-opacity:0.197297"
+     inkscape:export-filename="jros2.png"
+     inkscape:export-xdpi="725.61798"
+     inkscape:export-ydpi="725.61798">jros2</text>
   <g
      id="g98"
      transform="translate(-81.071,2.690939)">
