@@ -8,14 +8,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Definition of a mesh.
+   Definition of a mesh.
 */
 public class Mesh implements ROS2Message<Mesh>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::Mesh_";
 
    /**
-       List of triangles; the index values refer to positions in vertices[].
+      List of triangles; the index values refer to positions in vertices[].
    */
    private shape_msgs.msg.dds.MeshTriangle triangles_;
 

@@ -14,9 +14,9 @@ public class PointCloud implements ROS2Message<PointCloud>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud_";
 
    /**
-       Each channel should have the same number of elements as points array,
-       and the data in each channel should correspond 1:1 with each point.
-       Channel names in common practice are listed in ChannelFloat32.msg.
+      Each channel should have the same number of elements as points array,
+      and the data in each channel should correspond 1:1 with each point.
+      Channel names in common practice are listed in ChannelFloat32.msg.
    */
    private sensor_msgs.msg.dds.ChannelFloat32 channels_;
 

@@ -8,8 +8,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents a Polygon with reference coordinate frame and timestamp
-    It includes a unique identification field for disambiguating multiple instances
+   This represents a Polygon with reference coordinate frame and timestamp
+   It includes a unique identification field for disambiguating multiple instances
 */
 public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStamped>
 {

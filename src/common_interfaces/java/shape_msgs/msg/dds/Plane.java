@@ -12,12 +12,12 @@ public class Plane implements ROS2Message<Plane>
    public static final java.lang.String name = "shape_msgs::msg::dds_::Plane_";
 
    /**
-       Representation of a plane, using the plane equation ax + by + cz + d = 0.
+      Representation of a plane, using the plane equation ax + by + cz + d = 0.
 
-       a := coef[0]
-       b := coef[1]
-       c := coef[2]
-       d := coef[3]
+      a := coef[0]
+      b := coef[1]
+      c := coef[2]
+      d := coef[3]
    */
    private double[] coef_;
 

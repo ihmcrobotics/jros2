@@ -14,8 +14,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
 
    /**
-       Identifying string. Must be globally unique in
-       the topic that this message is sent through.
+      Identifying string. Must be globally unique in
+      the topic that this message is sent through.
    */
    private StringBuilder name_;
 

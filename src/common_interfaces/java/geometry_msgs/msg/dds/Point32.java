@@ -8,13 +8,13 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This contains the position of a point in free space(with 32 bits of precision).
-    It is recommended to use Point wherever possible instead of Point32.
+   This contains the position of a point in free space(with 32 bits of precision).
+   It is recommended to use Point wherever possible instead of Point32.
 
-    This recommendation is to promote interoperability.
+   This recommendation is to promote interoperability.
 
-    This message is designed to take up less space when sending
-    lots of points at once, as in the case of a PointCloud.
+   This message is designed to take up less space when sending
+   lots of points at once, as in the case of a PointCloud.
 */
 public class Point32 implements ROS2Message<Point32>
 {

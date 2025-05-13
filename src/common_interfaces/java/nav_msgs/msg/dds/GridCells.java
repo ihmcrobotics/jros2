@@ -14,11 +14,11 @@ public class GridCells implements ROS2Message<GridCells>
    public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
 
    /**
-       Width of each cell
+      Width of each cell
    */
    private float cell_width_;
    /**
-       Height of each cell
+      Height of each cell
    */
    private float cell_height_;
 

@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    frame_id is the location of the temperature reading
+   frame_id is the location of the temperature reading
 */
 public class Temperature implements ROS2Message<Temperature>
 {

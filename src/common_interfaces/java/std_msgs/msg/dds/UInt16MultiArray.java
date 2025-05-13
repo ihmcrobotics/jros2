@@ -8,8 +8,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Please look at the MultiArrayLayout message definition for
-    documentation on all multiarrays.
+   Please look at the MultiArrayLayout message definition for
+   documentation on all multiarrays.
 */
 public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
 {

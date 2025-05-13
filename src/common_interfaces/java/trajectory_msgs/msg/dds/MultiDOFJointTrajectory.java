@@ -8,10 +8,10 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    A representation of a multi-dof joint trajectory (each point is a transformation)
-    Each point along the trajectory will include an array of positions/velocities/accelerations
-    that has the same length as the array of joint names, and has the same order of joints as
-    the joint names array.
+   A representation of a multi-dof joint trajectory (each point is a transformation)
+   Each point along the trajectory will include an array of positions/velocities/accelerations
+   that has the same length as the array of joint names, and has the same order of joints as
+   the joint names array.
 */
 public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTrajectory>
 {

@@ -9,17 +9,17 @@ import us.ihmc.jros2.ROS2Message;
 
 /**
    ######################################################################
-                         Calibration Parameters                         #
+   Calibration Parameters                         #
    ######################################################################
-    These are fixed during camera calibration. Their values will be the #
-    same in all messages until the camera is recalibrated. Note that    #
-    self-calibrating systems may "recalibrate" frequently.              #
-                                                                        #
-    The internal parameters can be used to warp a raw (distorted) image #
-    to:                                                                 #
-      1. An undistorted image (requires D and K)                        #
-      2. A rectified image (requires D, K, R)                           #
-    The projection matrix P projects 3D points into the rectified image.#
+   These are fixed during camera calibration. Their values will be the #
+   same in all messages until the camera is recalibrated. Note that    #
+   self-calibrating systems may "recalibrate" frequently.              #
+   #
+   The internal parameters can be used to warp a raw (distorted) image #
+   to:                                                                 #
+   1. An undistorted image (requires D and K)                        #
+   2. A rectified image (requires D, K, R)                           #
+   The projection matrix P projects 3D points into the rectified image.#
    ######################################################################
 */
 public class CameraInfo implements ROS2Message<CameraInfo>
@@ -27,66 +27,66 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::CameraInfo_";
 
    /**
-       The image dimensions with which the camera was calibrated.
-       Normally this will be the full camera resolution in pixels.
+      The image dimensions with which the camera was calibrated.
+      Normally this will be the full camera resolution in pixels.
    */
    private int height_;
    private int width_;
    /**
-       The distortion model used. Supported models are listed in
-       sensor_msgs/distortion_models.hpp. For most cameras, "plumb_bob" - a
-       simple model of radial and tangential distortion - is sufficent.
+      The distortion model used. Supported models are listed in
+      sensor_msgs/distortion_models.hpp. For most cameras, "plumb_bob" - a
+      simple model of radial and tangential distortion - is sufficent.
    */
    private StringBuilder distortion_model_;
    /**
-       The distortion parameters, size depending on the distortion model.
-       For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
+      The distortion parameters, size depending on the distortion model.
+      For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
    */
    private IDLDoubleSequence d_;
    /**
-       Projection/camera matrix
-           [fx'  0  cx' Tx]
-       P = [ 0  fy' cy' Ty]
-           [ 0   0   1   0]
-       By convention, this matrix specifies the intrinsic (camera) matrix
-        of the processed (rectified) image. That is, the left 3x3 portion
-        is the normal camera intrinsic matrix for the rectified image.
-       It projects 3D points in the camera coordinate frame to 2D pixel
-        coordinates using the focal lengths (fx', fy') and principal point
-        (cx', cy') - these may differ from the values in K.
-       For monocular cameras, Tx = Ty = 0. Normally, monocular cameras will
-        also have R = the identity and P[1:3,1:3] = K.
-       For a stereo pair, the fourth column [Tx Ty 0]' is related to the
-        position of the optical center of the second camera in the first
-        camera's frame. We assume Tz = 0 so both cameras are in the same
-        stereo image plane. The first camera always has Tx = Ty = 0. For
-        the right (second) camera of a horizontal stereo pair, Ty = 0 and
-        Tx = -fx' * B, where B is the baseline between the cameras.
-       Given a 3D point [X Y Z]', the projection (x, y) of the point onto
-        the rectified image is given by:
-        [u v w]' = P * [X Y Z 1]'
-               x = u / w
-               y = v / w
-        This holds for both images of a stereo pair.
+      Projection/camera matrix
+      [fx'  0  cx' Tx]
+      P = [ 0  fy' cy' Ty]
+      [ 0   0   1   0]
+      By convention, this matrix specifies the intrinsic (camera) matrix
+      of the processed (rectified) image. That is, the left 3x3 portion
+      is the normal camera intrinsic matrix for the rectified image.
+      It projects 3D points in the camera coordinate frame to 2D pixel
+      coordinates using the focal lengths (fx', fy') and principal point
+      (cx', cy') - these may differ from the values in K.
+      For monocular cameras, Tx = Ty = 0. Normally, monocular cameras will
+      also have R = the identity and P[1:3,1:3] = K.
+      For a stereo pair, the fourth column [Tx Ty 0]' is related to the
+      position of the optical center of the second camera in the first
+      camera's frame. We assume Tz = 0 so both cameras are in the same
+      stereo image plane. The first camera always has Tx = Ty = 0. For
+      the right (second) camera of a horizontal stereo pair, Ty = 0 and
+      Tx = -fx' * B, where B is the baseline between the cameras.
+      Given a 3D point [X Y Z]', the projection (x, y) of the point onto
+      the rectified image is given by:
+      [u v w]' = P * [X Y Z 1]'
+      x = u / w
+      y = v / w
+      This holds for both images of a stereo pair.
    */
    private double[] p_;
    /**
-       Binning refers here to any camera setting which combines rectangular
-        neighborhoods of pixels into larger "super-pixels." It reduces the
-        resolution of the output image to
-        (width / binning_x) x (height / binning_y).
-       The default values binning_x = binning_y = 0 is considered the same
-        as binning_x = binning_y = 1 (no subsampling).
+      Binning refers here to any camera setting which combines rectangular
+      neighborhoods of pixels into larger "super-pixels." It reduces the
+      resolution of the output image to
+      (width / binning_x) x (height / binning_y).
+      The default values binning_x = binning_y = 0 is considered the same
+      as binning_x = binning_y = 1 (no subsampling).
    */
    private int binning_x_;
    private int binning_y_;
    /**
-       Region of interest (subwindow of full camera resolution), given in
-        full resolution (unbinned) image coordinates. A particular ROI
-        always denotes the same window of pixels on the camera sensor,
-        regardless of binning settings.
-       The default setting of roi (all values 0) is considered the same as
-        full resolution (roi.width = width, roi.height = height).
+      Region of interest (subwindow of full camera resolution), given in
+      full resolution (unbinned) image coordinates. A particular ROI
+      always denotes the same window of pixels on the camera sensor,
+      regardless of binning settings.
+      The default setting of roi (all values 0) is considered the same as
+      full resolution (roi.width = width, roi.height = height).
    */
    private sensor_msgs.msg.dds.RegionOfInterest roi_;
 

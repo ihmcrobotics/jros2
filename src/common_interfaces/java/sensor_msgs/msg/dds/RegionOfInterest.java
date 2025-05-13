@@ -8,12 +8,12 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This message is used to specify a region of interest within an image.
+   This message is used to specify a region of interest within an image.
 
-    When used to specify the ROI setting of the camera when the image was
-    taken, the height and width fields should either match the height and
-    width fields for the associated image; or height = width = 0
-    indicates that the full resolution image was captured.
+   When used to specify the ROI setting of the camera when the image was
+   taken, the height and width fields should either match the height and
+   width fields for the associated image; or height = width = 0
+   indicates that the full resolution image was captured.
 */
 public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
@@ -21,19 +21,19 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    private int x_offset_;
    /**
-       (0 if the ROI includes the left edge of the image)
+      (0 if the ROI includes the left edge of the image)
    */
    private int y_offset_;
    /**
-       (0 if the ROI includes the top edge of the image)
+      (0 if the ROI includes the top edge of the image)
    */
    private int height_;
    private int width_;
    /**
-       True if a distinct rectified ROI should be calculated from the "raw"
-       ROI in this message. Typically this should be False if the full image
-       is captured (ROI not used), and True if a subwindow is captured (ROI
-       used).
+      True if a distinct rectified ROI should be calculated from the "raw"
+      ROI in this message. Typically this should be False if the full image
+      is captured (ROI not used), and True if a subwindow is captured (ROI
+      used).
    */
    private boolean do_rectify_;
 

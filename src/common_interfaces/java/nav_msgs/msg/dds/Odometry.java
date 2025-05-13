@@ -14,7 +14,7 @@ public class Odometry implements ROS2Message<Odometry>
    public static final java.lang.String name = "nav_msgs::msg::dds_::Odometry_";
 
    /**
-       Frame id the pose points to. The twist is in this coordinate frame.
+      Frame id the pose points to. The twist is in this coordinate frame.
    */
    private StringBuilder child_frame_id_;
 

@@ -14,51 +14,51 @@ public class Marker implements ROS2Message<Marker>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::Marker_";
 
    /**
-       Namespace in which to place the object.
-       Used in conjunction with id to create a unique name for the object.
+      Namespace in which to place the object.
+      Used in conjunction with id to create a unique name for the object.
    */
    private StringBuilder ns_;
    /**
-       Object ID used in conjunction with the namespace for manipulating and deleting the object later.
+      Object ID used in conjunction with the namespace for manipulating and deleting the object later.
    */
    private int id_;
    /**
-       Type of object.
+      Type of object.
    */
    private int type_;
    /**
-       Action to take; one of:
-        - 0 add/modify an object
-        - 1 (deprecated)
-        - 2 deletes an object (with the given ns and id)
-        - 3 deletes all objects (or those with the given ns if any)
+      Action to take; one of:
+      - 0 add/modify an object
+      - 1 (deprecated)
+      - 2 deletes an object (with the given ns and id)
+      - 3 deletes all objects (or those with the given ns if any)
    */
    private int action_;
    /**
-       If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
+      If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
    */
    private boolean frame_locked_;
    /**
-       Texture resource is a special URI that can either reference a texture file in
-       a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
-       or an embedded texture via a string matching the format:
-         "embedded://texture_name"
+      Texture resource is a special URI that can either reference a texture file in
+      a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
+      or an embedded texture via a string matching the format:
+      "embedded://texture_name"
    */
    private StringBuilder texture_resource_;
    /**
-       Location of each vertex within the texture; in the range: [0.0-1.0]
+      Location of each vertex within the texture; in the range: [0.0-1.0]
    */
    private visualization_msgs.msg.dds.UVCoordinate uv_coordinates_;
    /**
-       Only used for text markers
+      Only used for text markers
    */
    private StringBuilder text_;
    /**
-       Only used for MESH_RESOURCE markers.
-       Similar to texture_resource, mesh_resource uses resource retriever to load a mesh.
-       Optionally, a mesh file can be sent in-message via the mesh_file field. If doing so,
-       use the following format for mesh_resource:
-         "embedded://mesh_name"
+      Only used for MESH_RESOURCE markers.
+      Similar to texture_resource, mesh_resource uses resource retriever to load a mesh.
+      Optionally, a mesh file can be sent in-message via the mesh_file field. If doing so,
+      use the following format for mesh_resource:
+      "embedded://mesh_name"
    */
    private StringBuilder mesh_resource_;
    private visualization_msgs.msg.dds.MeshFile mesh_file_;

@@ -14,23 +14,23 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticStatus_";
 
    /**
-       Level of operation enumerated above.
+      Level of operation enumerated above.
    */
    private byte level_;
    /**
-       A description of the test/component reporting.
+      A description of the test/component reporting.
    */
    private StringBuilder name_;
    /**
-       A description of the status.
+      A description of the status.
    */
    private StringBuilder message_;
    /**
-       A hardware unique string.
+      A hardware unique string.
    */
    private StringBuilder hardware_id_;
    /**
-       An array of values associated with the status.
+      An array of values associated with the status.
    */
    private diagnostic_msgs.msg.dds.KeyValue values_;
 

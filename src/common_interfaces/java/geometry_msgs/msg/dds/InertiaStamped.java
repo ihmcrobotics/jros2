@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    An Inertia with a time stamp and reference frame.
+   An Inertia with a time stamp and reference frame.
 */
 public class InertiaStamped implements ROS2Message<InertiaStamped>
 {

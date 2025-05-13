@@ -12,7 +12,7 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedbackArray_";
 
    /**
-       This message publishes values for multiple feedback at once.
+      This message publishes values for multiple feedback at once.
    */
    private sensor_msgs.msg.dds.JoyFeedback array_;
 

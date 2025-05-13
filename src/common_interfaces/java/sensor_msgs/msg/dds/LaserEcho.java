@@ -8,8 +8,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This message is a submessage of MultiEchoLaserScan and is not intended
-    to be used separately.
+   This message is a submessage of MultiEchoLaserScan and is not intended
+   to be used separately.
 */
 public class LaserEcho implements ROS2Message<LaserEcho>
 {

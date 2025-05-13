@@ -12,14 +12,14 @@ public class Inertia implements ROS2Message<Inertia>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Inertia_";
 
    /**
-       Mass [kg]
+      Mass [kg]
    */
    private double m_;
    /**
-       Inertia Tensor [kg-m^2]
-           | ixx ixy ixz |
-       I = | ixy iyy iyz |
-           | ixz iyz izz |
+      Inertia Tensor [kg-m^2]
+      | ixx ixy ixz |
+      I = | ixy iyy iyz |
+      | ixz iyz izz |
    */
    private double ixx_;
    private double ixy_;

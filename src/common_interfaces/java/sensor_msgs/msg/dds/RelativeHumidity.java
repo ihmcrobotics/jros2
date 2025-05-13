@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    frame_id is the location of the humidity sensor
+   frame_id is the location of the humidity sensor
 */
 public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 {

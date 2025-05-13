@@ -14,18 +14,18 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerFeedback_";
 
    /**
-       Identifying string. Must be unique in the topic namespace.
+      Identifying string. Must be unique in the topic namespace.
    */
    private StringBuilder client_id_;
    /**
-       Specifies which interactive marker and control this message refers to
+      Specifies which interactive marker and control this message refers to
    */
    private StringBuilder marker_name_;
    private StringBuilder control_name_;
    private byte event_type_;
    /**
-       Contains the ID of the selected menu entry
-       Only valid for MENU_SELECT events.
+      Contains the ID of the selected menu entry
+      Only valid for MENU_SELECT events.
    */
    private int menu_entry_id_;
    private boolean mouse_point_valid_;

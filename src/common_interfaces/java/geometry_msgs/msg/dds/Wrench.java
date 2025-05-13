@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents force in free space, separated into its linear and angular parts.
+   This represents force in free space, separated into its linear and angular parts.
 */
 public class Wrench implements ROS2Message<Wrench>
 {

@@ -14,11 +14,11 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
    /**
-       The type of the shape
+      The type of the shape
    */
    private byte type_;
    /**
-       The dimensions of the shape
+      The dimensions of the shape
    */
    private IDLDoubleSequence dimensions_;
 

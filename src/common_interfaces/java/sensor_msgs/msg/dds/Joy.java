@@ -14,11 +14,11 @@ public class Joy implements ROS2Message<Joy>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Joy_";
 
    /**
-       The axes measurements from a joystick.
+      The axes measurements from a joystick.
    */
    private IDLFloatSequence axes_;
    /**
-       The buttons measurements from a joystick.
+      The buttons measurements from a joystick.
    */
    private IDLIntSequence buttons_;
 

@@ -8,8 +8,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Note that this follows vector semantics with it always anchored at the origin,
-    so the rotational elements of a transform are the only parts applied when transforming.
+   Note that this follows vector semantics with it always anchored at the origin,
+   so the rotational elements of a transform are the only parts applied when transforming.
 */
 public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 {

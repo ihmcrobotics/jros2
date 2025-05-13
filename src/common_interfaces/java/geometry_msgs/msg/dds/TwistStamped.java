@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    A twist with reference coordinate frame and timestamp
+   A twist with reference coordinate frame and timestamp
 */
 public class TwistStamped implements ROS2Message<TwistStamped>
 {

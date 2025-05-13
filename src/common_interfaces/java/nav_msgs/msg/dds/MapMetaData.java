@@ -14,15 +14,15 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
    /**
-       The map resolution [m/cell]
+      The map resolution [m/cell]
    */
    private float resolution_;
    /**
-       Map width [cells]
+      Map width [cells]
    */
    private int width_;
    /**
-       Map height [cells]
+      Map height [cells]
    */
    private int height_;
 

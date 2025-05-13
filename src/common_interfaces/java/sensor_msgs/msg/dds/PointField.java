@@ -14,7 +14,7 @@ public class PointField implements ROS2Message<PointField>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
    /**
-       Common PointField names are x, y, z, intensity, rgb, rgba
+      Common PointField names are x, y, z, intensity, rgb, rgba
    */
    private StringBuilder name_;
    private int offset_;

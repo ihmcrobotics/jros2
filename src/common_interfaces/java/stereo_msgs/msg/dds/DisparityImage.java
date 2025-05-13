@@ -14,24 +14,24 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    public static final java.lang.String name = "stereo_msgs::msg::dds_::DisparityImage_";
 
    /**
-       Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
+      Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
    private float f_;
    private float t_;
    /**
-       The range of disparities searched.
-       In the disparity image, any disparity less than min_disparity is invalid.
-       The disparity search range defines the horopter, or 3D volume that the
-       stereo algorithm can "see". Points with Z outside of:
-           Z_min = fT / max_disparity
-           Z_max = fT / min_disparity
-       could not be found.
+      The range of disparities searched.
+      In the disparity image, any disparity less than min_disparity is invalid.
+      The disparity search range defines the horopter, or 3D volume that the
+      stereo algorithm can "see". Points with Z outside of:
+      Z_min = fT / max_disparity
+      Z_max = fT / min_disparity
+      could not be found.
    */
    private float min_disparity_;
    private float max_disparity_;
    /**
-       Smallest allowed disparity increment. The smallest achievable depth range
-       resolution is delta_Z = (Z^2/fT)*delta_d.
+      Smallest allowed disparity increment. The smallest achievable depth range
+      resolution is delta_Z = (Z^2/fT)*delta_d.
    */
    private float delta_d_;
 

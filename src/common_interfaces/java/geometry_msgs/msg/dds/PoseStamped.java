@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    A Pose with reference coordinate frame and timestamp
+   A Pose with reference coordinate frame and timestamp
 */
 public class PoseStamped implements ROS2Message<PoseStamped>
 {

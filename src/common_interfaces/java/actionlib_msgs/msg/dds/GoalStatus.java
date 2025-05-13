@@ -14,7 +14,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    private actionlib_msgs.msg.dds.GoalID goal_id_;
    private byte status_;
    /**
-       Allow for the user to associate a string with GoalStatus for debugging.
+      Allow for the user to associate a string with GoalStatus for debugging.
    */
    private StringBuilder text_;
 

@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    frame_id is the location and direction of the reading
+   frame_id is the location and direction of the reading
 */
 public class Illuminance implements ROS2Message<Illuminance>
 {

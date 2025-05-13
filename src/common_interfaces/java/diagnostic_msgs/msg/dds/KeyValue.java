@@ -12,11 +12,11 @@ public class KeyValue implements ROS2Message<KeyValue>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::KeyValue_";
 
    /**
-       What to label this value when viewing.
+      What to label this value when viewing.
    */
    private StringBuilder key_;
    /**
-       A value to track over time.
+      A value to track over time.
    */
    private StringBuilder value_;
 

@@ -8,19 +8,19 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Used to send raw mesh files.
+   Used to send raw mesh files.
 */
 public class MeshFile implements ROS2Message<MeshFile>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MeshFile_";
 
    /**
-       The filename is used for both debug purposes and to provide a file extension
-       for whatever parser is used.
+      The filename is used for both debug purposes and to provide a file extension
+      for whatever parser is used.
    */
    private StringBuilder filename_;
    /**
-       This stores the raw text of the mesh file.
+      This stores the raw text of the mesh file.
    */
    private IDLByteSequence data_;
 

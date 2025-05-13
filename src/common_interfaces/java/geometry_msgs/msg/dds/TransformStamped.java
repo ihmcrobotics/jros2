@@ -14,11 +14,11 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TransformStamped_";
 
    /**
-       The frame id of the child frame to which this transform points.
+      The frame id of the child frame to which this transform points.
    */
    private StringBuilder child_frame_id_;
    /**
-       Translation and rotation in 3-dimensions of child_frame_id from header.frame_id.
+      Translation and rotation in 3-dimensions of child_frame_id from header.frame_id.
    */
    private geometry_msgs.msg.dds.Transform transform_;
 

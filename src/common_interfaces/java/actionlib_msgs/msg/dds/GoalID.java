@@ -14,9 +14,9 @@ public class GoalID implements ROS2Message<GoalID>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalID_";
 
    /**
-       The id provides a way to associate feedback and
-       result message with specific goal requests. The id
-       specified must be unique.
+      The id provides a way to associate feedback and
+      result message with specific goal requests. The id
+      specified must be unique.
    */
    private StringBuilder id_;
 

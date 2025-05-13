@@ -14,26 +14,26 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerUpdate_";
 
    /**
-       Identifying string. Must be unique in the topic namespace
-       that this server works on.
+      Identifying string. Must be unique in the topic namespace
+      that this server works on.
    */
    private StringBuilder server_id_;
    /**
-       Sequence number.
-       The client will use this to detect if it has missed an update.
+      Sequence number.
+      The client will use this to detect if it has missed an update.
    */
    private long seq_num_;
    private byte type_;
    /**
-       Markers to be added or updated
+      Markers to be added or updated
    */
    private visualization_msgs.msg.dds.InteractiveMarker markers_;
    /**
-       Poses of markers that should be moved
+      Poses of markers that should be moved
    */
    private visualization_msgs.msg.dds.InteractiveMarkerPose poses_;
    /**
-       Names of markers to be erased
+      Names of markers to be erased
    */
    private IDLStringSequence erases_;
 

@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents an orientation with reference coordinate frame and timestamp.
+   This represents an orientation with reference coordinate frame and timestamp.
 */
 public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 {

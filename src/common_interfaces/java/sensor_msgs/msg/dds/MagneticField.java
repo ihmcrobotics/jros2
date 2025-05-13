@@ -8,9 +8,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    field vector in Tesla
-    If your sensor does not output 3 axes,
-    put NaNs in the components not reported.
+   field vector in Tesla
+   If your sensor does not output 3 axes,
+   put NaNs in the components not reported.
 */
 public class MagneticField implements ROS2Message<MagneticField>
 {

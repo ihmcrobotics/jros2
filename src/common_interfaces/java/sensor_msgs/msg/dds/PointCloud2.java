@@ -14,13 +14,13 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
 
    /**
-       2D structure of the point cloud. If the cloud is unordered, height is
-       1 and width is the length of the point cloud.
+      2D structure of the point cloud. If the cloud is unordered, height is
+      1 and width is the length of the point cloud.
    */
    private int height_;
    private int width_;
    /**
-       Describes the channels and their layout in the binary data blob.
+      Describes the channels and their layout in the binary data blob.
    */
    private sensor_msgs.msg.dds.PointField fields_;
    private IDLByteSequence data_;

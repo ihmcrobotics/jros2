@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents an orientation in free space in quaternion form.
+   This represents an orientation in free space in quaternion form.
 */
 public class Quaternion implements ROS2Message<Quaternion>
 {

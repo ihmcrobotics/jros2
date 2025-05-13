@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Definition of a triangle's vertices.
+   Definition of a triangle's vertices.
 */
 public class MeshTriangle implements ROS2Message<MeshTriangle>
 {

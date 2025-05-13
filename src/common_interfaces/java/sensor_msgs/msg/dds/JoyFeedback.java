@@ -15,13 +15,13 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
 
    private byte type_;
    /**
-       This will hold an id number for each type of each feedback.
-       Example, the first led would be id=0, the second would be id=1
+      This will hold an id number for each type of each feedback.
+      Example, the first led would be id=0, the second would be id=1
    */
    private byte id_;
    /**
-       Intensity of the feedback, from 0.0 to 1.0, inclusive.  If device is
-       actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.
+      Intensity of the feedback, from 0.0 to 1.0, inclusive.  If device is
+      actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.
    */
    private float intensity_;
 

@@ -8,11 +8,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    the first ray in the scan.
+   the first ray in the scan.
 
-    in frame frame_id, angles are measured around
-    the positive Z axis (counterclockwise, if Z is up)
-    with zero angle being forward along the x axis
+   in frame frame_id, angles are measured around
+   the positive Z axis (counterclockwise, if Z is up)
+   with zero angle being forward along the x axis
 */
 public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 {
@@ -23,17 +23,17 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    private float angle_increment_;
    private float time_increment_;
    /**
-       is moving, this will be used in interpolating position
-       of 3d points
+      is moving, this will be used in interpolating position
+      of 3d points
    */
    private float scan_time_;
    private float range_min_;
    private float range_max_;
    private sensor_msgs.msg.dds.LaserEcho ranges_;
    /**
-       (Note: NaNs, values < range_min or > range_max should be discarded)
-       +Inf measurements are out of range
-       -Inf measurements are too close to determine exact distance.
+      (Note: NaNs, values < range_min or > range_max should be discarded)
+      +Inf measurements are out of range
+      -Inf measurements are too close to determine exact distance.
    */
    private sensor_msgs.msg.dds.LaserEcho intensities_;
 

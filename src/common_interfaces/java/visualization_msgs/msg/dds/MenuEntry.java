@@ -8,57 +8,57 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    MenuEntry message.
+   MenuEntry message.
 
-    Each InteractiveMarker message has an array of MenuEntry messages.
-    A collection of MenuEntries together describe a
-    menu/submenu/subsubmenu/etc tree, though they are stored in a flat
-    array.  The tree structure is represented by giving each menu entry
-    an ID number and a "parent_id" field.  Top-level entries are the
-    ones with parent_id = 0.  Menu entries are ordered within their
-    level the same way they are ordered in the containing array.  Parent
-    entries must appear before their children.
+   Each InteractiveMarker message has an array of MenuEntry messages.
+   A collection of MenuEntries together describe a
+   menu/submenu/subsubmenu/etc tree, though they are stored in a flat
+   array.  The tree structure is represented by giving each menu entry
+   an ID number and a "parent_id" field.  Top-level entries are the
+   ones with parent_id = 0.  Menu entries are ordered within their
+   level the same way they are ordered in the containing array.  Parent
+   entries must appear before their children.
 
-    Example:
-    - id = 3
-      parent_id = 0
-      title = "fun"
-    - id = 2
-      parent_id = 0
-      title = "robot"
-    - id = 4
-      parent_id = 2
-      title = "pr2"
-    - id = 5
-      parent_id = 2
-      title = "turtle"
+   Example:
+   - id = 3
+   parent_id = 0
+   title = "fun"
+   - id = 2
+   parent_id = 0
+   title = "robot"
+   - id = 4
+   parent_id = 2
+   title = "pr2"
+   - id = 5
+   parent_id = 2
+   title = "turtle"
 
-    Gives a menu tree like this:
-     - fun
-     - robot
-       - pr2
-       - turtle
+   Gives a menu tree like this:
+   - fun
+   - robot
+   - pr2
+   - turtle
 */
 public class MenuEntry implements ROS2Message<MenuEntry>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MenuEntry_";
 
    /**
-       ID is a number for each menu entry.  Must be unique within the
-       control, and should never be 0.
+      ID is a number for each menu entry.  Must be unique within the
+      control, and should never be 0.
    */
    private int id_;
    /**
-       ID of the parent of this menu entry, if it is a submenu.  If this
-       menu entry is a top-level entry, set parent_id to 0.
+      ID of the parent of this menu entry, if it is a submenu.  If this
+      menu entry is a top-level entry, set parent_id to 0.
    */
    private int parent_id_;
    /**
-       menu / entry title
+      menu / entry title
    */
    private StringBuilder title_;
    /**
-       Arguments to command indicated by command_type (below)
+      Arguments to command indicated by command_type (below)
    */
    private StringBuilder command_;
    private byte command_type_;

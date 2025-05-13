@@ -14,28 +14,28 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
 
    /**
-       Satellite fix status information.
+      Satellite fix status information.
    */
    private sensor_msgs.msg.dds.NavSatStatus status_;
    /**
-       Latitude [degrees]. Positive is north of equator; negative is south.
+      Latitude [degrees]. Positive is north of equator; negative is south.
    */
    private double latitude_;
    /**
-       Longitude [degrees]. Positive is east of prime meridian; negative is west.
+      Longitude [degrees]. Positive is east of prime meridian; negative is west.
    */
    private double longitude_;
    /**
-       Altitude [m]. Positive is above the WGS 84 ellipsoid
-       (quiet NaN if no altitude is available).
+      Altitude [m]. Positive is above the WGS 84 ellipsoid
+      (quiet NaN if no altitude is available).
    */
    private double altitude_;
    /**
-       Position covariance [m^2] defined relative to a tangential plane
-       through the reported position. The components are East, North, and
-       Up (ENU), in row-major order.
+      Position covariance [m^2] defined relative to a tangential plane
+      through the reported position. The components are East, North, and
+      Up (ENU), in row-major order.
 
-       Beware: this coordinate system exhibits singularities at the poles.
+      Beware: this coordinate system exhibits singularities at the poles.
    */
    private double[] position_covariance_;
    private byte position_covariance_type_;

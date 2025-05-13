@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    frame_id is the location of the pressure sensor
+   frame_id is the location of the pressure sensor
 */
 public class FluidPressure implements ROS2Message<FluidPressure>
 {

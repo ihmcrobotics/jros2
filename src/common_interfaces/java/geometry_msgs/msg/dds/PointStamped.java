@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents a Point with reference coordinate frame and timestamp
+   This represents a Point with reference coordinate frame and timestamp
 */
 public class PointStamped implements ROS2Message<PointStamped>
 {

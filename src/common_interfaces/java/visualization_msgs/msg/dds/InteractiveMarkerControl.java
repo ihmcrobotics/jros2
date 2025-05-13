@@ -8,46 +8,46 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    Represents a control that is to be displayed together with an interactive marker
+   Represents a control that is to be displayed together with an interactive marker
 */
 public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerControl>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
 
    /**
-       Identifying string for this control.
-       You need to assign a unique value to this to receive feedback from the GUI
-       on what actions the user performs on this control (e.g. a button click).
+      Identifying string for this control.
+      You need to assign a unique value to this to receive feedback from the GUI
+      on what actions the user performs on this control (e.g. a button click).
    */
    private StringBuilder name_;
    private byte orientation_mode_;
    private byte interaction_mode_;
    /**
-       If true, the contained markers will also be visible
-       when the gui is not in interactive mode.
+      If true, the contained markers will also be visible
+      when the gui is not in interactive mode.
    */
    private boolean always_visible_;
    /**
-       Markers to be displayed as custom visual representation.
-       Leave this empty to use the default control handles.
+      Markers to be displayed as custom visual representation.
+      Leave this empty to use the default control handles.
 
-       Note:
-       - The markers can be defined in an arbitrary coordinate frame,
-         but will be transformed into the local frame of the interactive marker.
-       - If the header of a marker is empty, its pose will be interpreted as
-         relative to the pose of the parent interactive marker.
+      Note:
+      - The markers can be defined in an arbitrary coordinate frame,
+      but will be transformed into the local frame of the interactive marker.
+      - If the header of a marker is empty, its pose will be interpreted as
+      relative to the pose of the parent interactive marker.
    */
    private visualization_msgs.msg.dds.Marker markers_;
    /**
-       In VIEW_FACING mode, set this to true if you don't want the markers
-       to be aligned with the camera view point. The markers will show up
-       as in INHERIT mode.
+      In VIEW_FACING mode, set this to true if you don't want the markers
+      to be aligned with the camera view point. The markers will show up
+      as in INHERIT mode.
    */
    private boolean independent_marker_orientation_;
    /**
-       Short description (< 40 characters) of what this control does,
-       e.g. "Move the robot".
-       Default: A generic description based on the interaction mode
+      Short description (< 40 characters) of what this control does,
+      e.g. "Move the robot".
+      Default: A generic description based on the interaction mode
    */
    private StringBuilder description_;
 

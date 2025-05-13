@@ -14,27 +14,27 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::ImageMarker_";
 
    /**
-       Namespace which is used with the id to form a unique id.
+      Namespace which is used with the id to form a unique id.
    */
    private StringBuilder ns_;
    /**
-       Unique id within the namespace.
+      Unique id within the namespace.
    */
    private int id_;
    /**
-       One of the above types, e.g. CIRCLE, LINE_STRIP, etc.
+      One of the above types, e.g. CIRCLE, LINE_STRIP, etc.
    */
    private int type_;
    /**
-       Either ADD or REMOVE.
+      Either ADD or REMOVE.
    */
    private int action_;
    /**
-       The scale of the object, e.g. the diameter for a CIRCLE.
+      The scale of the object, e.g. the diameter for a CIRCLE.
    */
    private float scale_;
    /**
-       Whether or not to fill in the shape with color.
+      Whether or not to fill in the shape with color.
    */
    private byte filled_;
 

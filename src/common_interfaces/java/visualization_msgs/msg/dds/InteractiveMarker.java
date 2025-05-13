@@ -14,24 +14,24 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarker_";
 
    /**
-       Identifying string. Must be globally unique in
-       the topic that this message is sent through.
+      Identifying string. Must be globally unique in
+      the topic that this message is sent through.
    */
    private StringBuilder name_;
    /**
-       Short description (< 40 characters).
+      Short description (< 40 characters).
    */
    private StringBuilder description_;
    /**
-       Scale to be used for default controls (default=1).
+      Scale to be used for default controls (default=1).
    */
    private float scale_;
    /**
-       All menu and submenu entries associated with this marker.
+      All menu and submenu entries associated with this marker.
    */
    private visualization_msgs.msg.dds.MenuEntry menu_entries_;
    /**
-       List of controls displayed for this marker.
+      List of controls displayed for this marker.
    */
    private visualization_msgs.msg.dds.InteractiveMarkerControl controls_;
 

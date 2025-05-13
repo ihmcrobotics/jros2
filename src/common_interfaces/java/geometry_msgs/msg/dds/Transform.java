@@ -8,7 +8,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    This represents the transform between two coordinate frames in free space.
+   This represents the transform between two coordinate frames in free space.
 */
 public class Transform implements ROS2Message<Transform>
 {

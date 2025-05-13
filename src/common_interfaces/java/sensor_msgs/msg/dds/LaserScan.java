@@ -8,11 +8,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-    the first ray in the scan.
+   the first ray in the scan.
 
-    in frame frame_id, angles are measured around
-    the positive Z axis (counterclockwise, if Z is up)
-    with zero angle being forward along the x axis
+   in frame frame_id, angles are measured around
+   the positive Z axis (counterclockwise, if Z is up)
+   with zero angle being forward along the x axis
 */
 public class LaserScan implements ROS2Message<LaserScan>
 {
@@ -23,15 +23,15 @@ public class LaserScan implements ROS2Message<LaserScan>
    private float angle_increment_;
    private float time_increment_;
    /**
-       is moving, this will be used in interpolating position
-       of 3d points
+      is moving, this will be used in interpolating position
+      of 3d points
    */
    private float scan_time_;
    private float range_min_;
    private float range_max_;
    private IDLFloatSequence ranges_;
    /**
-       (Note: values < range_min or > range_max should be discarded)
+      (Note: values < range_min or > range_max should be discarded)
    */
    private IDLFloatSequence intensities_;
 
