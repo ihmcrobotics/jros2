@@ -260,6 +260,16 @@ public class ROS2PublishSubscribeTest
 
    @RepeatedTest(25)
    @Timeout(30)
+   /*
+     Test description:
+        There are 2 nodes: [publisherNode, subscriberNode].
+        There is 1 topic: /ihmc/test_topic of type Bool
+     <p>
+        The goal of this test is to destroy a subscription while it is reading data from a publisher.
+        To do this, we create 100 subscriptions, each on a separate thread, wait a random and small
+        amount of time, then destroy the subscription within its thread while a separate publisher
+        thread is publishing messages which are being read by the subscription.
+    */
    public void testCrazyMultithreading()
    {
       Instant start = Instant.now();
