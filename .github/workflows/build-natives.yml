@@ -1,0 +1,21 @@
+name: Build natives
+
+on:
+  workflow_call:
+
+jobs:
+  gradle-test:
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:20.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get -y install build-essential cmake
+
+      - name: Compile
+        run: |
+          bash cppbuild.bash
