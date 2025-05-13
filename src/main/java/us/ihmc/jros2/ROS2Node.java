@@ -38,11 +38,39 @@ public class ROS2Node implements Closeable
       jros2.load();
    }
 
+   /**
+    * A colloquial name for the node, not used internally.
+    */
    private final String name;
+
+   /**
+    * The domain ID the node will use when writing and reading to the network transport. A valid domain ID must
+    * be within the range [0, 232].
+    * <p>
+    * See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.0/fastdds/dds_layer/domain/domain.html">Domain</a>
+    * See: <a href="https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html">ROS 2 Domain ID</a>
+    */
    private final int domainId;
+
+   /**
+    * Pointer to a Fast-DDS participant used by this node in native memory. For internal use only.
+    */
    protected final Pointer fastddsParticipant;
+
+   /**
+    * A helper map linking {@link ROS2Topic}\s to {@link TopicData}, where TopicData is a set of Fast-DDS pointers required
+    * for creating and using a topic. For internal use only.
+    */
    private final Map<ROS2Topic<?>, TopicData> topicData;
+
+   /**
+    * A list of {@link ROS2Publisher}\s managed by this node.
+    */
    protected final List<ROS2Publisher<?>> publishers;
+
+   /**
+    * A list of {@link ROS2Subscription}\s managed by this node.
+    */
    private final List<ROS2Subscription<?>> subscriptions;
 
    protected final ReadWriteLock closeLock;
@@ -50,7 +78,16 @@ public class ROS2Node implements Closeable
 
    protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
    {
+      if (name == null)
+      {
+         throw new NullPointerException("name cannot be null when constructing a ROS2Node");
+      }
       this.name = name;
+
+      if (domainId < 0 || domainId > 232)
+      {
+         throw new RuntimeException("Invalid domain ID used when constructing a ROS2Node (" + domainId + ")");
+      }
       this.domainId = domainId;
 
       ProfilesXML profilesXML = new ProfilesXML();
