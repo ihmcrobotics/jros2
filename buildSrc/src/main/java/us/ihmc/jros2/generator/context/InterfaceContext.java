@@ -84,7 +84,7 @@ public abstract class InterfaceContext
          // If the entire line is a comment
          if (line.startsWith("#"))
          {
-            commentLines.add(line.trim().substring(1)); // Remove # from start of line
+            commentLines.add(line.substring(1).trim()); // Remove # from start of line
             continue;
          }
 
@@ -92,7 +92,7 @@ public abstract class InterfaceContext
          if (line.contains("#"))
          {
             String lineWithCommentRemoved = line.substring(0, line.indexOf("#")).trim();
-            trailingComment = line.substring(line.indexOf("#") + 1); // Do not include # in trailingComment
+            trailingComment = line.substring(line.indexOf("#") + 1).trim(); // Do not include # in trailingComment
             line = lineWithCommentRemoved;
          }
 

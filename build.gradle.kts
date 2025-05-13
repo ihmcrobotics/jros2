@@ -9,6 +9,11 @@ plugins {
 group = "us.ihmc"
 version = "1.0.0"
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
 sourceSets {
     create("common_interfaces") {
         java.srcDir("src/common_interfaces/java")

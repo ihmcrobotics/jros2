@@ -25,5 +25,13 @@ repositories {
 }
 
 dependencies {
-   api("org.antlr:ST4:4.3.4");
+   api("org.antlr:ST4:4.3.4")
+
+   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
+   testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
+   testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
+}
+
+tasks.test {
+   useJUnitPlatform()
 }
