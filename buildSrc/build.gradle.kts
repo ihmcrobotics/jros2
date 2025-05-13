@@ -34,4 +34,12 @@ dependencies {
 
 tasks.test {
    useJUnitPlatform()
+
+   testLogging {
+      events("passed", "failed", "skipped", "standard_out", "standard_error")
+      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+      showExceptions = true
+      showCauses = true
+      showStackTraces = true
+   }
 }

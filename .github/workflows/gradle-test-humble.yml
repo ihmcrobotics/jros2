@@ -27,5 +27,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run Gradle tests
-        run: ./gradlew test --info --stacktrace
+      - name: Run JUnit tests
+        run: ./gradlew test
+
+      - name: Run JUnit tests (Gradle plugin)
+        run: cd buildSrc && ./gradlew test
