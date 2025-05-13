@@ -15,6 +15,7 @@ Requires Java 17.
 
 ## Features
 - Does not require a ROS 2 installation on the system
+- Ready-to-use Java library, just add to your Maven or Gradle dependencies!
 - Publish and subscribe to ROS 2 topics
 - Supports custom message types
 - Generate Java classes from .msg packages
