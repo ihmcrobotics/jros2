@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 
 public class ROS2TestTools
 {
-   public static String ROS_DISTRO = System.getProperty("ROS_DISTRO", "jazzy");
+   public static String ROS_DISTRO = System.getProperty("ROS_DISTRO", "humble");
 
    /**
     * Launches {@code ros2 subCommand}
