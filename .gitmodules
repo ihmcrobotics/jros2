@@ -2,3 +2,6 @@
 	path = ros2_interfaces/common_interfaces
 	url = https://github.com/ros2/common_interfaces
 	branch = humble
+[submodule "ros2_interfaces/rcl_interfaces"]
+	path = ros2_interfaces/rcl_interfaces
+	url = https://github.com/ros2/rcl_interfaces
