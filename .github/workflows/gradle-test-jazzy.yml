@@ -1,4 +1,4 @@
-name: Gradle test (ROS 2 Humble)
+name: Gradle test (ROS 2 jazzy)
 
 on:
   workflow_dispatch:
@@ -11,9 +11,9 @@ jobs:
   gradle-test:
     runs-on: self-hosted
     container:
-      image: osrf/ros:humble-desktop
+      image: osrf/ros:jazzy-desktop
     env:
-      ROS_DISTRO: humble
+      ROS_DISTRO: jazzy
     steps:
       - name: Install dependencies
         run: |
