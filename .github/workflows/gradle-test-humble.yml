@@ -12,8 +12,6 @@ jobs:
     runs-on: self-hosted
     container:
       image: osrf/ros:humble-desktop
-    env:
-      ROS_DISTRO: humble
     steps:
       - name: Install dependencies
         run: |
@@ -30,7 +28,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run JUnit tests
-        run: ./gradlew test
+        run: ROS_DISTRO=humble ./gradlew test
 
       - name: Run JUnit tests (Gradle plugin)
         run: cd buildSrc && ../gradlew test
