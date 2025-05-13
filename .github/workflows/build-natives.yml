@@ -8,6 +8,9 @@ jobs:
     runs-on: self-hosted
     container:
       image: ubuntu:20.04
+      env:
+        TZ: "America/Chicago"
+        DEBIAN_FRONTEND: noninteractive
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
