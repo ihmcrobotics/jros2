@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class TwistStamped implements ROS2Message<TwistStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::TwistStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistStamped_";
 
    private geometry_msgs.msg.dds.Twist twist_;
 
@@ -39,7 +39,7 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

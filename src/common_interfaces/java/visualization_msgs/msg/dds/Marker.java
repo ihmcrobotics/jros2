@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Marker implements ROS2Message<Marker>
 {
-   public static final String name = "visualization_msgs::msg::dds_::Marker_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::Marker_";
 
    /**
        Namespace in which to place the object.
@@ -119,7 +119,7 @@ public class Marker implements ROS2Message<Marker>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

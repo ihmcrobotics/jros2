@@ -14,7 +14,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MagneticField implements ROS2Message<MagneticField>
 {
-   public static final String name = "sensor_msgs::msg::dds_::MagneticField_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::MagneticField_";
 
    private double[] magnetic_field_covariance_;
 
@@ -55,7 +55,7 @@ public class MagneticField implements ROS2Message<MagneticField>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

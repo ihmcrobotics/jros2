@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class ByteMultiArray implements ROS2Message<ByteMultiArray>
 {
-   public static final String name = "std_msgs::msg::dds_::ByteMultiArray_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::ByteMultiArray_";
 
    public ByteMultiArray()
    {
@@ -38,7 +38,7 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class JointTrajectory implements ROS2Message<JointTrajectory>
 {
-   public static final String name = "trajectory_msgs::msg::dds_::JointTrajectory_";
+   public static final java.lang.String name = "trajectory_msgs::msg::dds_::JointTrajectory_";
 
    /**
        The names of the active joints in each trajectory point. These names are
@@ -56,7 +56,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

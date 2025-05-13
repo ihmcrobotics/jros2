@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
 {
-   public static final String name = "sensor_msgs::msg::dds_::JoyFeedbackArray_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedbackArray_";
 
    /**
        This message publishes values for multiple feedback at once.
@@ -41,7 +41,7 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

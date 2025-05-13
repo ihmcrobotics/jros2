@@ -21,7 +21,7 @@ Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheats
 <endif>
 public class <context.name> implements ROS2Message\<<context.name>>
 {
-   public static final String name = "<context.packageName>::msg::dds_::<context.name>_";
+   public static final java.lang.String name = "<context.packageName>::msg::dds_::<context.name>_";
 
    <context.fields:{ field |
 <if(field.headerComment)>/**
@@ -107,7 +107,7 @@ buffer.<field.builtinCDRBufferReadMethod>(<field.name>_);
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

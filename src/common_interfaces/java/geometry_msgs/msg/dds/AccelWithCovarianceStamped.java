@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarianceStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::AccelWithCovarianceStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovarianceStamped_";
 
    private geometry_msgs.msg.dds.AccelWithCovariance accel_;
 
@@ -36,7 +36,7 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

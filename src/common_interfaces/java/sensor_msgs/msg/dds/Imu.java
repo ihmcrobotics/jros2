@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Imu implements ROS2Message<Imu>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Imu_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
 
    private double[] orientation_covariance_;
    private double[] angular_velocity_covariance_;
@@ -74,7 +74,7 @@ public class Imu implements ROS2Message<Imu>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

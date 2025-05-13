@@ -24,7 +24,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class CameraInfo implements ROS2Message<CameraInfo>
 {
-   public static final String name = "sensor_msgs::msg::dds_::CameraInfo_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::CameraInfo_";
 
    /**
        The image dimensions with which the camera was calibrated.
@@ -146,7 +146,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

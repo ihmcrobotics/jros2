@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 {
-   public static final String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
 
    /**
        Identifying string. Must be globally unique in
@@ -48,7 +48,7 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

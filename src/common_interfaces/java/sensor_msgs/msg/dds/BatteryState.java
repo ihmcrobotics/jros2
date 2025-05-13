@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class BatteryState implements ROS2Message<BatteryState>
 {
-   public static final String name = "sensor_msgs::msg::dds_::BatteryState_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::BatteryState_";
 
    private float voltage_;
    private float temperature_;
@@ -93,7 +93,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

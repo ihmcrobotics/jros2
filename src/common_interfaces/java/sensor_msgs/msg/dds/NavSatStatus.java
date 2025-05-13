@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class NavSatStatus implements ROS2Message<NavSatStatus>
 {
-   public static final String name = "sensor_msgs::msg::dds_::NavSatStatus_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatStatus_";
 
    private byte status_;
    private short service_;
@@ -48,7 +48,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

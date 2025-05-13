@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerControl>
 {
-   public static final String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
 
    /**
        Identifying string for this control.
@@ -97,7 +97,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

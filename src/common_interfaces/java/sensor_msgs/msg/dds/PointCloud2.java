@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PointCloud2 implements ROS2Message<PointCloud2>
 {
-   public static final String name = "sensor_msgs::msg::dds_::PointCloud2_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
 
    /**
        2D structure of the point cloud. If the cloud is unordered, height is
@@ -67,7 +67,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

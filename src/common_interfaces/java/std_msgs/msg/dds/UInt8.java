@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class UInt8 implements ROS2Message<UInt8>
 {
-   public static final String name = "std_msgs::msg::dds_::UInt8_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::UInt8_";
 
    private byte data_;
 
@@ -48,7 +48,7 @@ public class UInt8 implements ROS2Message<UInt8>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

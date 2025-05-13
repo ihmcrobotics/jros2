@@ -19,7 +19,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Image implements ROS2Message<Image>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Image_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
    private int height_;
    private int width_;
@@ -74,7 +74,7 @@ public class Image implements ROS2Message<Image>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

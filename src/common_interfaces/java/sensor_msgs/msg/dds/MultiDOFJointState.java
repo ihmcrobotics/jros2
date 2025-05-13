@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 {
-   public static final String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
 
    private IDLStringSequence joint_names_;
 
@@ -46,7 +46,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

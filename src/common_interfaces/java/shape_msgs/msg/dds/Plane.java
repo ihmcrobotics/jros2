@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class Plane implements ROS2Message<Plane>
 {
-   public static final String name = "shape_msgs::msg::dds_::Plane_";
+   public static final java.lang.String name = "shape_msgs::msg::dds_::Plane_";
 
    /**
        Representation of a plane, using the plane equation ax + by + cz + d = 0.
@@ -58,7 +58,7 @@ public class Plane implements ROS2Message<Plane>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

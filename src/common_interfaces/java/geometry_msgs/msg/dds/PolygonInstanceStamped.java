@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
 
    public PolygonInstanceStamped()
    {
@@ -38,7 +38,7 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

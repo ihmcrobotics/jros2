@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Quaternion implements ROS2Message<Quaternion>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Quaternion_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Quaternion_";
 
    private double x_;
    private double y_;
@@ -57,7 +57,7 @@ public class Quaternion implements ROS2Message<Quaternion>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

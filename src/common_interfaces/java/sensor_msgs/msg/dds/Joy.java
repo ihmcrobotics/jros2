@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Joy implements ROS2Message<Joy>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Joy_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Joy_";
 
    /**
        The axes measurements from a joystick.
@@ -57,7 +57,7 @@ public class Joy implements ROS2Message<Joy>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

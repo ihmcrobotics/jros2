@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PointStamped implements ROS2Message<PointStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::PointStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::PointStamped_";
 
    private geometry_msgs.msg.dds.Point point_;
 
@@ -39,7 +39,7 @@ public class PointStamped implements ROS2Message<PointStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

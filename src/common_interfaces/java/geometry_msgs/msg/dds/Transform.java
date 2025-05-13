@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Transform implements ROS2Message<Transform>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Transform_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Transform_";
 
    private geometry_msgs.msg.dds.Vector3 translation_;
    private geometry_msgs.msg.dds.Quaternion rotation_;
@@ -40,7 +40,7 @@ public class Transform implements ROS2Message<Transform>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

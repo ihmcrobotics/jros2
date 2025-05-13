@@ -16,7 +16,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class CompressedImage implements ROS2Message<CompressedImage>
 {
-   public static final String name = "sensor_msgs::msg::dds_::CompressedImage_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::CompressedImage_";
 
    private StringBuilder format_;
    private IDLByteSequence data_;
@@ -55,7 +55,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

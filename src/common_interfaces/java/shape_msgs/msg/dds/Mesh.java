@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Mesh implements ROS2Message<Mesh>
 {
-   public static final String name = "shape_msgs::msg::dds_::Mesh_";
+   public static final java.lang.String name = "shape_msgs::msg::dds_::Mesh_";
 
    /**
        List of triangles; the index values refer to positions in vertices[].
@@ -44,7 +44,7 @@ public class Mesh implements ROS2Message<Mesh>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

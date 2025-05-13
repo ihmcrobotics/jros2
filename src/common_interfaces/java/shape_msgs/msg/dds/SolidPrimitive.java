@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 {
-   public static final String name = "shape_msgs::msg::dds_::SolidPrimitive_";
+   public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
    /**
        The type of the shape
@@ -56,7 +56,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

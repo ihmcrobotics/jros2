@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PointCloud implements ROS2Message<PointCloud>
 {
-   public static final String name = "sensor_msgs::msg::dds_::PointCloud_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud_";
 
    /**
        Each channel should have the same number of elements as points array,
@@ -45,7 +45,7 @@ public class PointCloud implements ROS2Message<PointCloud>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

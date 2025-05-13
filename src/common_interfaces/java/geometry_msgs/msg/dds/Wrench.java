@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Wrench implements ROS2Message<Wrench>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Wrench_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Wrench_";
 
    public Wrench()
    {
@@ -37,7 +37,7 @@ public class Wrench implements ROS2Message<Wrench>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

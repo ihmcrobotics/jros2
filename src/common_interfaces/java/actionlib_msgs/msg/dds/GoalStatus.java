@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class GoalStatus implements ROS2Message<GoalStatus>
 {
-   public static final String name = "actionlib_msgs::msg::dds_::GoalStatus_";
+   public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatus_";
 
    private actionlib_msgs.msg.dds.GoalID goal_id_;
    private byte status_;
@@ -50,7 +50,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

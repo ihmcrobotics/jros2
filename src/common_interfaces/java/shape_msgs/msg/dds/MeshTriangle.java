@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MeshTriangle implements ROS2Message<MeshTriangle>
 {
-   public static final String name = "shape_msgs::msg::dds_::MeshTriangle_";
+   public static final java.lang.String name = "shape_msgs::msg::dds_::MeshTriangle_";
 
    private int[] vertex_indices_;
 
@@ -53,7 +53,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

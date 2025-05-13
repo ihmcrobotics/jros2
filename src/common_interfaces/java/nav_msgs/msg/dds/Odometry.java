@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Odometry implements ROS2Message<Odometry>
 {
-   public static final String name = "nav_msgs::msg::dds_::Odometry_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::Odometry_";
 
    /**
        Frame id the pose points to. The twist is in this coordinate frame.
@@ -47,7 +47,7 @@ public class Odometry implements ROS2Message<Odometry>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

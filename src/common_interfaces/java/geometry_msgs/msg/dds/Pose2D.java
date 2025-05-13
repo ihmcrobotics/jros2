@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Pose2D implements ROS2Message<Pose2D>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Pose2D_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Pose2D_";
 
    private double x_;
    private double y_;
@@ -53,7 +53,7 @@ public class Pose2D implements ROS2Message<Pose2D>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

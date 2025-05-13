@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Polygon implements ROS2Message<Polygon>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Polygon_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Polygon_";
 
    private geometry_msgs.msg.dds.Point32 points_;
 
@@ -41,7 +41,7 @@ public class Polygon implements ROS2Message<Polygon>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

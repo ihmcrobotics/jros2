@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class InertiaStamped implements ROS2Message<InertiaStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::InertiaStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::InertiaStamped_";
 
    private geometry_msgs.msg.dds.Inertia inertia_;
 
@@ -39,7 +39,7 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Byte implements ROS2Message<Byte>
 {
-   public static final String name = "std_msgs::msg::dds_::Byte_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Byte_";
 
    private byte data_;
 
@@ -48,7 +48,7 @@ public class Byte implements ROS2Message<Byte>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

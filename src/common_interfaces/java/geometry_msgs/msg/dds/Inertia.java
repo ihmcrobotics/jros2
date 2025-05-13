@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class Inertia implements ROS2Message<Inertia>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Inertia_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Inertia_";
 
    /**
        Mass [kg]
@@ -75,7 +75,7 @@ public class Inertia implements ROS2Message<Inertia>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 {
-   public static final String name = "nav_msgs::msg::dds_::OccupancyGrid_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::OccupancyGrid_";
 
    /**
        MetaData for the map
@@ -58,7 +58,7 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

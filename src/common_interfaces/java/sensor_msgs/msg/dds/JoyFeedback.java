@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class JoyFeedback implements ROS2Message<JoyFeedback>
 {
-   public static final String name = "sensor_msgs::msg::dds_::JoyFeedback_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedback_";
 
    private byte type_;
    /**
@@ -60,7 +60,7 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

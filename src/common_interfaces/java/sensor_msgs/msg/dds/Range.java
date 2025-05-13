@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Range implements ROS2Message<Range>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Range_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
    private byte radiation_type_;
    private float field_of_view_;
@@ -60,7 +60,7 @@ public class Range implements ROS2Message<Range>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Vector3Stamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Vector3Stamped_";
 
    private geometry_msgs.msg.dds.Vector3 vector_;
 
@@ -40,7 +40,7 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

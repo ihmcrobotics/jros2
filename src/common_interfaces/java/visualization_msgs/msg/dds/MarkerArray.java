@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class MarkerArray implements ROS2Message<MarkerArray>
 {
-   public static final String name = "visualization_msgs::msg::dds_::MarkerArray_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::MarkerArray_";
 
    private visualization_msgs.msg.dds.Marker markers_;
 
@@ -38,7 +38,7 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

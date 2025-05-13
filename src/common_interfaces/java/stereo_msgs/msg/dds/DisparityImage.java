@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class DisparityImage implements ROS2Message<DisparityImage>
 {
-   public static final String name = "stereo_msgs::msg::dds_::DisparityImage_";
+   public static final java.lang.String name = "stereo_msgs::msg::dds_::DisparityImage_";
 
    /**
        Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
@@ -76,7 +76,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

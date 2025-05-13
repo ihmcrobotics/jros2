@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class Point implements ROS2Message<Point>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Point_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Point_";
 
    /**
        This contains the position of a point in free space
@@ -53,7 +53,7 @@ public class Point implements ROS2Message<Point>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

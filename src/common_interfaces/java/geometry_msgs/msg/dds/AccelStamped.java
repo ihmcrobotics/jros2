@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class AccelStamped implements ROS2Message<AccelStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::AccelStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelStamped_";
 
    private geometry_msgs.msg.dds.Accel accel_;
 
@@ -36,7 +36,7 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

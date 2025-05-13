@@ -17,7 +17,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
-   public static final String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
 
    private int x_offset_;
    /**
@@ -78,7 +78,7 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

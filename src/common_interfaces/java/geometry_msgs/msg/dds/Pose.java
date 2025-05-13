@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Pose implements ROS2Message<Pose>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Pose_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Pose_";
 
    private geometry_msgs.msg.dds.Point position_;
    private geometry_msgs.msg.dds.Quaternion orientation_;
@@ -40,7 +40,7 @@ public class Pose implements ROS2Message<Pose>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

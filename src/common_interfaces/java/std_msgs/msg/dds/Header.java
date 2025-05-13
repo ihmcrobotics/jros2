@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Header implements ROS2Message<Header>
 {
-   public static final String name = "std_msgs::msg::dds_::Header_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Header_";
 
    /**
        Transform frame with which this data is associated.
@@ -47,7 +47,7 @@ public class Header implements ROS2Message<Header>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

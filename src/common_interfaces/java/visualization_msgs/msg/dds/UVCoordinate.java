@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class UVCoordinate implements ROS2Message<UVCoordinate>
 {
-   public static final String name = "visualization_msgs::msg::dds_::UVCoordinate_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::UVCoordinate_";
 
    /**
        Location of the pixel as a ratio of the width of a 2D texture.
@@ -50,7 +50,7 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

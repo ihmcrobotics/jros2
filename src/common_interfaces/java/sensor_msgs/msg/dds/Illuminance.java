@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Illuminance implements ROS2Message<Illuminance>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Illuminance_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
 
    private double illuminance_;
    private double variance_;
@@ -49,7 +49,7 @@ public class Illuminance implements ROS2Message<Illuminance>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

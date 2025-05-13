@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class ImageMarker implements ROS2Message<ImageMarker>
 {
-   public static final String name = "visualization_msgs::msg::dds_::ImageMarker_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::ImageMarker_";
 
    /**
        Namespace which is used with the id to form a unique id.
@@ -82,7 +82,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

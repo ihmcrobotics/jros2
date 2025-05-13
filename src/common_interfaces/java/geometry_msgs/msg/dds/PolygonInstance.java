@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PolygonInstance implements ROS2Message<PolygonInstance>
 {
-   public static final String name = "geometry_msgs::msg::dds_::PolygonInstance_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstance_";
 
    private long id_;
 
@@ -46,7 +46,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

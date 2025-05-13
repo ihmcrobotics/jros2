@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 {
-   public static final String name = "std_msgs::msg::dds_::MultiArrayDimension_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayDimension_";
 
    private StringBuilder label_;
    private int size_;
@@ -56,7 +56,7 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

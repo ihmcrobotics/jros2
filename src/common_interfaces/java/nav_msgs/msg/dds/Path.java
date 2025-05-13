@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Path implements ROS2Message<Path>
 {
-   public static final String name = "nav_msgs::msg::dds_::Path_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::Path_";
 
    public Path()
    {
@@ -36,7 +36,7 @@ public class Path implements ROS2Message<Path>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

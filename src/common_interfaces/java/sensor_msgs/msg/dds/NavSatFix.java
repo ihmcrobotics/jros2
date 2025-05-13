@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class NavSatFix implements ROS2Message<NavSatFix>
 {
-   public static final String name = "sensor_msgs::msg::dds_::NavSatFix_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
 
    /**
        Satellite fix status information.
@@ -89,7 +89,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

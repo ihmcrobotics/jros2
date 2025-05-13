@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class JointState implements ROS2Message<JointState>
 {
-   public static final String name = "sensor_msgs::msg::dds_::JointState_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::JointState_";
 
    private IDLStringSequence name_;
    private IDLDoubleSequence position_;
@@ -61,7 +61,7 @@ public class JointState implements ROS2Message<JointState>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

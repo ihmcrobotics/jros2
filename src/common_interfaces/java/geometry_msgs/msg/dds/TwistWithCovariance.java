@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 {
-   public static final String name = "geometry_msgs::msg::dds_::TwistWithCovariance_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistWithCovariance_";
 
    private geometry_msgs.msg.dds.Twist twist_;
    /**
@@ -60,7 +60,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

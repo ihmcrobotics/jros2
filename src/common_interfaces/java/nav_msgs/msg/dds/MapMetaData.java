@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MapMetaData implements ROS2Message<MapMetaData>
 {
-   public static final String name = "nav_msgs::msg::dds_::MapMetaData_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
    /**
        The map resolution [m/cell]
@@ -61,7 +61,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

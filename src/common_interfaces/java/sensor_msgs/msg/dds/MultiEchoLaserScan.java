@@ -16,7 +16,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 {
-   public static final String name = "sensor_msgs::msg::dds_::MultiEchoLaserScan_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiEchoLaserScan_";
 
    private float angle_min_;
    private float angle_max_;
@@ -87,7 +87,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -18,7 +18,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Point32 implements ROS2Message<Point32>
 {
-   public static final String name = "geometry_msgs::msg::dds_::Point32_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::Point32_";
 
    private float x_;
    private float y_;
@@ -59,7 +59,7 @@ public class Point32 implements ROS2Message<Point32>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

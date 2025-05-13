@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MeshFile implements ROS2Message<MeshFile>
 {
-   public static final String name = "visualization_msgs::msg::dds_::MeshFile_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::MeshFile_";
 
    /**
        The filename is used for both debug purposes and to provide a file extension
@@ -58,7 +58,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

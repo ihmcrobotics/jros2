@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 {
-   public static final String name = "diagnostic_msgs::msg::dds_::DiagnosticArray_";
+   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticArray_";
 
    private diagnostic_msgs.msg.dds.DiagnosticStatus status_;
 
@@ -38,7 +38,7 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

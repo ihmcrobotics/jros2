@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 {
-   public static final String name = "diagnostic_msgs::msg::dds_::DiagnosticStatus_";
+   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticStatus_";
 
    /**
        Level of operation enumerated above.
@@ -74,7 +74,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

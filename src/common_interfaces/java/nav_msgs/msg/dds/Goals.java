@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Goals implements ROS2Message<Goals>
 {
-   public static final String name = "nav_msgs::msg::dds_::Goals_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::Goals_";
 
    public Goals()
    {
@@ -36,7 +36,7 @@ public class Goals implements ROS2Message<Goals>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

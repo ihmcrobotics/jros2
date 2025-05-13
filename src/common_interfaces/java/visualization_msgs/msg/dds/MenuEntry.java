@@ -41,7 +41,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MenuEntry implements ROS2Message<MenuEntry>
 {
-   public static final String name = "visualization_msgs::msg::dds_::MenuEntry_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::MenuEntry_";
 
    /**
        ID is a number for each menu entry.  Must be unique within the
@@ -104,7 +104,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Bool implements ROS2Message<Bool>
 {
-   public static final String name = "std_msgs::msg::dds_::Bool_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Bool_";
 
    private boolean data_;
 
@@ -48,7 +48,7 @@ public class Bool implements ROS2Message<Bool>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

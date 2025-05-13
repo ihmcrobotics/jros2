@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class KeyValue implements ROS2Message<KeyValue>
 {
-   public static final String name = "diagnostic_msgs::msg::dds_::KeyValue_";
+   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::KeyValue_";
 
    /**
        What to label this value when viewing.
@@ -52,7 +52,7 @@ public class KeyValue implements ROS2Message<KeyValue>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

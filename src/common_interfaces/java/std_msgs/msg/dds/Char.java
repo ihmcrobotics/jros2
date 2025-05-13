@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Char implements ROS2Message<Char>
 {
-   public static final String name = "std_msgs::msg::dds_::Char_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Char_";
 
    private char data_;
 
@@ -48,7 +48,7 @@ public class Char implements ROS2Message<Char>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

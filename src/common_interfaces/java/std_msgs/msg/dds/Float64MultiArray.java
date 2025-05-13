@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Float64MultiArray implements ROS2Message<Float64MultiArray>
 {
-   public static final String name = "std_msgs::msg::dds_::Float64MultiArray_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Float64MultiArray_";
 
    public Float64MultiArray()
    {
@@ -38,7 +38,7 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class TimeReference implements ROS2Message<TimeReference>
 {
-   public static final String name = "sensor_msgs::msg::dds_::TimeReference_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
 
    private StringBuilder source_;
 
@@ -45,7 +45,7 @@ public class TimeReference implements ROS2Message<TimeReference>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

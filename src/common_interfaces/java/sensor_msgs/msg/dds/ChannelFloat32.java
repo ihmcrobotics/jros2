@@ -27,7 +27,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 {
-   public static final String name = "sensor_msgs::msg::dds_::ChannelFloat32_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::ChannelFloat32_";
 
    /**
        The channel name should give semantics of the channel (e.g.
@@ -74,7 +74,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

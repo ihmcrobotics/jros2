@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PoseArray implements ROS2Message<PoseArray>
 {
-   public static final String name = "geometry_msgs::msg::dds_::PoseArray_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
 
    private geometry_msgs.msg.dds.Pose poses_;
 
@@ -40,7 +40,7 @@ public class PoseArray implements ROS2Message<PoseArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

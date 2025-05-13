@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class TransformStamped implements ROS2Message<TransformStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::TransformStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::TransformStamped_";
 
    /**
        The frame id of the child frame to which this transform points.
@@ -51,7 +51,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

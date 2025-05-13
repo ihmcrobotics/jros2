@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class PointField implements ROS2Message<PointField>
 {
-   public static final String name = "sensor_msgs::msg::dds_::PointField_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
    /**
        Common PointField names are x, y, z, intensity, rgb, rgba
@@ -55,7 +55,7 @@ public class PointField implements ROS2Message<PointField>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

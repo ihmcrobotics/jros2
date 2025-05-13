@@ -13,7 +13,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class UInt8MultiArray implements ROS2Message<UInt8MultiArray>
 {
-   public static final String name = "std_msgs::msg::dds_::UInt8MultiArray_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::UInt8MultiArray_";
 
    public UInt8MultiArray()
    {
@@ -38,7 +38,7 @@ public class UInt8MultiArray implements ROS2Message<UInt8MultiArray>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

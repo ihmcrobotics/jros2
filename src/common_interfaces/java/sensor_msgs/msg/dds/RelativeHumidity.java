@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 {
-   public static final String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
 
    private double relative_humidity_;
    private double variance_;
@@ -49,7 +49,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

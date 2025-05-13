@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GoalID implements ROS2Message<GoalID>
 {
-   public static final String name = "actionlib_msgs::msg::dds_::GoalID_";
+   public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalID_";
 
    /**
        The id provides a way to associate feedback and
@@ -49,7 +49,7 @@ public class GoalID implements ROS2Message<GoalID>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -16,7 +16,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class LaserScan implements ROS2Message<LaserScan>
 {
-   public static final String name = "sensor_msgs::msg::dds_::LaserScan_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
 
    private float angle_min_;
    private float angle_max_;
@@ -91,7 +91,7 @@ public class LaserScan implements ROS2Message<LaserScan>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

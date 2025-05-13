@@ -9,7 +9,7 @@ import us.ihmc.jros2.ROS2Message;
 
 public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 {
-   public static final String name = "visualization_msgs::msg::dds_::InteractiveMarkerInit_";
+   public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerInit_";
 
    /**
        Identifying string. Must be unique in the topic namespace
@@ -64,7 +64,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

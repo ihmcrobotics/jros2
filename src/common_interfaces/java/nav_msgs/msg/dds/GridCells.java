@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GridCells implements ROS2Message<GridCells>
 {
-   public static final String name = "nav_msgs::msg::dds_::GridCells_";
+   public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
 
    /**
        Width of each cell
@@ -54,7 +54,7 @@ public class GridCells implements ROS2Message<GridCells>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

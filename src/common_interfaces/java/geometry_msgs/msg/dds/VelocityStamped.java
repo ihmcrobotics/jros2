@@ -14,7 +14,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class VelocityStamped implements ROS2Message<VelocityStamped>
 {
-   public static final String name = "geometry_msgs::msg::dds_::VelocityStamped_";
+   public static final java.lang.String name = "geometry_msgs::msg::dds_::VelocityStamped_";
 
    private StringBuilder body_frame_id_;
    private StringBuilder reference_frame_id_;
@@ -52,7 +52,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

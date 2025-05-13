@@ -12,7 +12,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Temperature implements ROS2Message<Temperature>
 {
-   public static final String name = "sensor_msgs::msg::dds_::Temperature_";
+   public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
 
    private double temperature_;
    private double variance_;
@@ -49,7 +49,7 @@ public class Temperature implements ROS2Message<Temperature>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

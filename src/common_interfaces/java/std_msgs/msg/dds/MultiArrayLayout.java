@@ -34,7 +34,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 {
-   public static final String name = "std_msgs::msg::dds_::MultiArrayLayout_";
+   public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayLayout_";
 
    private std_msgs.msg.dds.MultiArrayDimension dim_;
    private int data_offset_;
@@ -70,7 +70,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }

@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTrajectoryPoint>
 {
-   public static final String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectoryPoint_";
+   public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectoryPoint_";
 
    public MultiDOFJointTrajectoryPoint()
    {
@@ -36,7 +36,7 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    }
 
    @Override
-   public String getName()
+   public java.lang.String getName()
    {
       return name;
    }
