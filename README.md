@@ -14,6 +14,7 @@ Supported platforms:
 Requires Java 17.
 
 ## Features
+- Fully compatible with ROS 2 humble or newer (may also work with older ROS 2 distros)
 - Does not require a ROS 2 installation on the system
 - Ready-to-use Java library, just add to your Maven or Gradle dependencies!
 - Publish and subscribe to ROS 2 topics
