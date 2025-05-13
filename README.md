@@ -6,6 +6,8 @@ Fast-DDS version: `3.2.2`
 
 ROS 2 compatible and tested distros: `[humble, jazzy]`
 
+[Get started here](https://github.com/ihmcrobotics/jros2/wiki)
+
 # jros2
 A ROS 2 library for Java.
 
