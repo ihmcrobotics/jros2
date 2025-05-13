@@ -49,7 +49,7 @@ publishing {
             from(components["java"])
 
             groupId = project.group.toString()
-            artifactId = "fastddsjava"
+            artifactId = "jros2"
             version = project.version.toString()
         }
     }
