@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install build-essential cmake curl unzip openjdk-17-jdk jaxb
+          apt-get -y install build-essential git cmake curl unzip openjdk-17-jdk jaxb
 
       - name: Compile
         run: |
