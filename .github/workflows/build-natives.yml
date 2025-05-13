@@ -18,7 +18,10 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install build-essential git cmake curl unzip openjdk-17-jdk jaxb
+          apt-get -y install build-essential git curl unzip openjdk-17-jdk jaxb
+          # Install newer version of cmake
+          bash <(wget -qO- https://apt.kitware.com/kitware-archive.sh)
+          apt-get -y install cmake
 
       - name: Compile
         run: |
