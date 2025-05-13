@@ -9,7 +9,7 @@ on:
 
 jobs:
   gradle-test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     container:
       image: osrf/ros:humble-desktop
     steps:
