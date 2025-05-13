@@ -1,7 +1,7 @@
 name: Gradle test (ROS 2 Humble)
 
 on:
-  workflow_call:
+  workflow_dispatch:
 #  push:
 #    branches: [ main ]
 #  pull_request:

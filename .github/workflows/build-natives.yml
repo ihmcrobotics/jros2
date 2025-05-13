@@ -1,7 +1,7 @@
 name: Build natives
 
 on:
-  workflow_call:
+  workflow_dispatch:
 
 jobs:
   gradle-test:
