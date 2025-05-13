@@ -12,9 +12,6 @@ jobs:
         TZ: "America/Chicago"
         DEBIAN_FRONTEND: noninteractive
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Install dependencies
         run: |
           apt-get update
@@ -24,11 +21,16 @@ jobs:
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
           mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Compile
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
           ls -al
-      - name: Commit generated java and native libraries
+
+      - name: Commit generated Java and native libraries
         uses: EndBug/add-and-commit@v9
         with:
           add: '*.java *.so *.so.*' # Only commit generated java from Linux
