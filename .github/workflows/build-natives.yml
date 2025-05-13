@@ -27,11 +27,12 @@ jobs:
       - name: Compile
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
+          ls -al
       - name: Commit generated java and native libraries
         uses: EndBug/add-and-commit@v9
         with:
           add: '*.java *.so *.so.*' # Only commit generated java from Linux
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Linux'
+          message: 'Rebuild natives for Linux (x86_64)'
           push: true
