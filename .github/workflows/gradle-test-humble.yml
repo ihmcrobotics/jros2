@@ -15,6 +15,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
+          apt-get update
           apt-get install -y wget curl unzip
 
       - name: Checkout repository
