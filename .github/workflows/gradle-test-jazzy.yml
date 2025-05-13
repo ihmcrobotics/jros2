@@ -1,4 +1,4 @@
-name: Gradle test (ROS 2 jazzy)
+name: Gradle test (ROS 2 Jazzy)
 
 on:
   workflow_dispatch:
