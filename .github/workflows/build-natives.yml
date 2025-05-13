@@ -24,9 +24,6 @@ jobs:
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
           mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
-          export PATH=/opt/cmake-4.0.2/bin:$PATH
-          echo 'export PATH=/opt/cmake-4.0.2/bin:$PATH' >> ~/.bashrc
-          cmake --version
       - name: Compile
         run: |
-          bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
