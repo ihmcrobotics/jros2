@@ -1,7 +1,7 @@
 package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.jros2.msg.Bool;
+import std_msgs.msg.dds.Bool;
 
 import static org.junit.jupiter.api.Assertions.*;
 

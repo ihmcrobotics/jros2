@@ -1,8 +1,8 @@
 package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
+import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
-import us.ihmc.jros2.msg.Bool;
 import us.ihmc.log.LogTools;
 
 import java.io.File;
@@ -36,7 +36,7 @@ public class AsyncROS2Test
       ROS2Publisher<Bool> publisher = asyncNode.createPublisher(topic, qosProfile);
 
       Bool bool = new Bool();
-      bool.setData(expectedValue);
+      bool.setdata(expectedValue);
       publisher.publish(bool);
 
       String result = ROS2TestTools.ros2EchoOnce(asyncNode.getDomainId(), topicName);
@@ -64,7 +64,7 @@ public class AsyncROS2Test
       ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
       {
          Bool value = reader.read();
-         assertEquals(expectedValue.get(), value.getData());
+         assertEquals(expectedValue.get(), value.getdata());
          expectedValue.set(!expectedValue.get());
 
          if (messagesReceived.incrementAndGet() >= messagesToPublish)
@@ -81,7 +81,7 @@ public class AsyncROS2Test
       Bool bool = new Bool();
       for (int i = 0; i < messagesToPublish; ++i)
       {
-         bool.setData(publish);
+         bool.setdata(publish);
          publisher.publish(bool);
          publish = !publish;
          LockSupport.parkNanos(100000); // park for 0.1ms
@@ -125,7 +125,7 @@ public class AsyncROS2Test
             for (int j = 0; j < messagesToPublish; j++)
             {
                Bool message = new Bool();
-               message.setData(expected);
+               message.setdata(expected);
                asyncPublisher.publish(message);
                LockSupport.parkNanos(500000); // park for 0.5ms
             }
@@ -136,7 +136,7 @@ public class AsyncROS2Test
       ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
       {
          Bool received = reader.read();
-         assertEquals(expected, received.getData());
+         assertEquals(expected, received.getdata());
          receivedMessageCount.incrementAndGet();
       });
 
@@ -185,12 +185,12 @@ public class AsyncROS2Test
       DoubleStatisticsHelper asyncPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       // Create subscribers
-      ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getData());
+      ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getdata());
       ROS2Subscription<Bool> standardSubscription = ros2Node.createSubscription(standardTopic, callback);
       ROS2Subscription<Bool> asyncSubscription = asyncROS2Node.createSubscription(asyncTopic, callback);
 
       Bool message = new Bool();
-      message.setData(expected);
+      message.setdata(expected);
 
       BiFunction<ROS2Publisher<Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
       {

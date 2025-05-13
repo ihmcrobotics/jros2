@@ -3,8 +3,8 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
-import us.ihmc.jros2.msg.Bool;
 import us.ihmc.log.LogTools;
 
 import java.io.IOException;
@@ -140,7 +140,7 @@ public class ROS2PublishSubscribeTest
 
       // Create a Bool message and publish it
       Bool bool = new Bool();
-      bool.setData(expectedValue);
+      bool.setdata(expectedValue);
       publisher.publish(bool);
 
       // Use ros2 topic echo --once to get the value of the published message
@@ -174,7 +174,7 @@ public class ROS2PublishSubscribeTest
 
          synchronized (valueReceived)
          {
-            valueReceived.set(msg.getData());
+            valueReceived.set(msg.getdata());
             valueReceived.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
@@ -225,7 +225,7 @@ public class ROS2PublishSubscribeTest
          Bool msg = reader.read();
          synchronized (valueReceived)
          {
-            valueReceived.set(msg.getData());
+            valueReceived.set(msg.getdata());
             valueReceived.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
@@ -310,7 +310,7 @@ public class ROS2PublishSubscribeTest
       destroyThread.start();
 
       Bool messageToPublish = new Bool();
-      messageToPublish.setData(true);
+      messageToPublish.setdata(true);
       Thread publishThread = new Thread(() ->
       {
          while (destroyThread.isAlive())
@@ -355,7 +355,7 @@ public class ROS2PublishSubscribeTest
 
       // Publisher will publish in a free loop until subscription is created and destroyed
       Bool messageToPublish = new Bool();
-      messageToPublish.setData(true);
+      messageToPublish.setdata(true);
       Thread publishThread = new Thread(() ->
       {
          while (!Thread.interrupted())
