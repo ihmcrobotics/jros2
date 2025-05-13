@@ -20,6 +20,8 @@ Requires Java 17.
 - Generate Java classes from .msg packages
 - Fast-DDS backend
 - Minimal and fast implementation
+- Fully thread-safe
+- Async and allocation-free API
 - (soon) ROS 2 services
 - (soon) ROS 2 actions
 - (soon) ROS 2 parameters
