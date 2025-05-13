@@ -13,6 +13,10 @@ jobs:
     container:
       image: osrf/ros:humble-desktop
     steps:
+      - name: Install dependencies
+        run: |
+          apt-get install -y wget curl unzip
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
