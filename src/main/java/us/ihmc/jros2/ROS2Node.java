@@ -28,7 +28,7 @@ import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 /**
- * A ROS 2-compatible "node" which provides functionality for managing ROS 2-compatible publishers, subscriptions.
+ * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
  * Uses Fast-DDS middleware via the {@link us.ihmc.fastddsjava} package. Fully thread-safe.
  */
 public class ROS2Node implements Closeable
