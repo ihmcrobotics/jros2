@@ -14,6 +14,10 @@ public class Marker implements ROS2Message<Marker>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::Marker_";
 
    /**
+      Header for timestamp and frame id.
+   */
+   private visualization_msgs.msg.dds.std_msgs/Header header_;
+   /**
       Namespace in which to place the object.
       Used in conjunction with id to create a unique name for the object.
    */
@@ -35,9 +39,36 @@ public class Marker implements ROS2Message<Marker>
    */
    private int action_;
    /**
+      Pose of the object with respect the frame_id specified in the header.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   /**
+      Scale of the object; 1,1,1 means default (usually 1 meter square).
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Vector3 scale_;
+   /**
+      Color of the object; in the range: [0.0-1.0]
+   */
+   private visualization_msgs.msg.dds.std_msgs/ColorRGBA color_;
+   /**
+      How long the object should last before being automatically deleted.
+      0 indicates forever.
+   */
+   private visualization_msgs.msg.dds.builtin_interfaces/Duration lifetime_;
+   /**
       If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
    */
    private boolean frame_locked_;
+   /**
+      Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Point points_;
+   /**
+      Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
+      The number of colors provided must either be 0 or equal to the number of points provided.
+      NOTE: alpha is not yet used
+   */
+   private visualization_msgs.msg.dds.std_msgs/ColorRGBA colors_;
    /**
       Texture resource is a special URI that can either reference a texture file in
       a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
@@ -45,6 +76,11 @@ public class Marker implements ROS2Message<Marker>
       "embedded://texture_name"
    */
    private StringBuilder texture_resource_;
+   /**
+      An image to be loaded into the rendering engine as the texture for this marker.
+      This will be used iff texture_resource is set to embedded.
+   */
+   private visualization_msgs.msg.dds.sensor_msgs/CompressedImage texture_;
    /**
       Location of each vertex within the texture; in the range: [0.0-1.0]
    */
@@ -66,6 +102,8 @@ public class Marker implements ROS2Message<Marker>
 
    public Marker()
    {
+      points_ = new visualization_msgs.msg.dds.geometry_msgs/Point();
+      colors_ = new visualization_msgs.msg.dds.std_msgs/ColorRGBA();
       uv_coordinates_ = new visualization_msgs.msg.dds.UVCoordinate();
 
    }
@@ -139,6 +177,11 @@ public class Marker implements ROS2Message<Marker>
 
    }
 
+   public visualization_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
    public StringBuilder getns()
    {
       return ns_;
@@ -179,6 +222,26 @@ public class Marker implements ROS2Message<Marker>
       this.action_ = action_;
    }
 
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getpose()
+   {
+      return pose_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Vector3 getscale()
+   {
+      return scale_;
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getcolor()
+   {
+      return color_;
+   }
+
+   public visualization_msgs.msg.dds.builtin_interfaces/Duration getlifetime()
+   {
+      return lifetime_;
+   }
+
    public boolean getframe_locked()
    {
       return frame_locked_;
@@ -189,6 +252,16 @@ public class Marker implements ROS2Message<Marker>
       this.frame_locked_ = frame_locked_;
    }
 
+   public visualization_msgs.msg.dds.geometry_msgs/Point getpoints()
+   {
+      return points_;
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getcolors()
+   {
+      return colors_;
+   }
+
    public StringBuilder gettexture_resource()
    {
       return texture_resource_;
@@ -197,6 +270,11 @@ public class Marker implements ROS2Message<Marker>
    public void settexture_resource(StringBuilder texture_resource_)
    {
       this.texture_resource_ = texture_resource_;
+   }
+
+   public visualization_msgs.msg.dds.sensor_msgs/CompressedImage gettexture()
+   {
+      return texture_;
    }
 
    public visualization_msgs.msg.dds.UVCoordinate getuv_coordinates()

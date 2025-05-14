@@ -15,6 +15,9 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
+   private geometry_msgs.msg.dds.geometry_msgs/PolygonInstance polygon_;
+
    public PolygonInstanceStamped()
    {
    }
@@ -47,5 +50,16 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    public void set(PolygonInstanceStamped from)
    {
    }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public geometry_msgs.msg.dds.geometry_msgs/PolygonInstance getpolygon()
+   {
+      return polygon_;
+   }
+
 
 }

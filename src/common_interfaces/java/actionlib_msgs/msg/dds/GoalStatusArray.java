@@ -11,6 +11,11 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
 {
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatusArray_";
 
+   /**
+      Stores the statuses for goals that are currently being tracked
+      by an action server
+   */
+   private actionlib_msgs.msg.dds.std_msgs/Header header_;
    private actionlib_msgs.msg.dds.GoalStatus status_list_;
 
    public GoalStatusArray()
@@ -46,6 +51,11 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    @Override
    public void set(GoalStatusArray from)
    {
+   }
+
+   public actionlib_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public actionlib_msgs.msg.dds.GoalStatus getstatus_list()

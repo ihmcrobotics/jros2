@@ -7,14 +7,33 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTrajectoryPoint>
 {
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectoryPoint_";
 
+   /**
+      Each multi-dof joint can specify a transform (up to 6 DOF).
+   */
+   private trajectory_msgs.msg.dds.geometry_msgs/Transform transforms_;
+   /**
+      There can be a velocity specified for the origin of the joint.
+   */
+   private trajectory_msgs.msg.dds.geometry_msgs/Twist velocities_;
+   /**
+      There can be an acceleration specified for the origin of the joint.
+   */
+   private trajectory_msgs.msg.dds.geometry_msgs/Twist accelerations_;
+   /**
+      Desired time from the trajectory start to arrive at this trajectory point.
+   */
+   private trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
+
    public MultiDOFJointTrajectoryPoint()
    {
+      transforms_ = new trajectory_msgs.msg.dds.geometry_msgs/Transform();
+      velocities_ = new trajectory_msgs.msg.dds.geometry_msgs/Twist();
+      accelerations_ = new trajectory_msgs.msg.dds.geometry_msgs/Twist();
+
    }
 
    @Override
@@ -45,5 +64,26 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    public void set(MultiDOFJointTrajectoryPoint from)
    {
    }
+
+   public trajectory_msgs.msg.dds.geometry_msgs/Transform gettransforms()
+   {
+      return transforms_;
+   }
+
+   public trajectory_msgs.msg.dds.geometry_msgs/Twist getvelocities()
+   {
+      return velocities_;
+   }
+
+   public trajectory_msgs.msg.dds.geometry_msgs/Twist getaccelerations()
+   {
+      return accelerations_;
+   }
+
+   public trajectory_msgs.msg.dds.builtin_interfaces/Duration gettime_from_start()
+   {
+      return time_from_start_;
+   }
+
 
 }

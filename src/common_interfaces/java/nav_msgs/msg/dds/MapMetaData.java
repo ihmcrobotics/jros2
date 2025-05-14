@@ -8,11 +8,16 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   This hold basic information about the characteristics of the OccupancyGrid
 */
 public class MapMetaData implements ROS2Message<MapMetaData>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
+   /**
+      The time at which the map was loaded
+   */
+   private nav_msgs.msg.dds.builtin_interfaces/Time map_load_time_;
    /**
       The map resolution [m/cell]
    */
@@ -25,6 +30,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       Map height [cells]
    */
    private int height_;
+   /**
+      The origin of the map [m, m, rad].  This is the real-world pose of the
+      bottom left corner of cell (0,0) in the map.
+   */
+   private nav_msgs.msg.dds.geometry_msgs/Pose origin_;
 
    public MapMetaData()
    {
@@ -75,6 +85,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    }
 
+   public nav_msgs.msg.dds.builtin_interfaces/Time getmap_load_time()
+   {
+      return map_load_time_;
+   }
+
    public float getresolution()
    {
       return resolution_;
@@ -103,6 +118,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    public void setheight(int height_)
    {
       this.height_ = height_;
+   }
+
+   public nav_msgs.msg.dds.geometry_msgs/Pose getorigin()
+   {
+      return origin_;
    }
 
 

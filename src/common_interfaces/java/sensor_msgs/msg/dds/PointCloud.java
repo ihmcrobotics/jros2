@@ -8,11 +8,22 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   This message holds a collection of 3d points, plus optional additional
+   information about each point.
 */
 public class PointCloud implements ROS2Message<PointCloud>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud_";
 
+   /**
+      Time of sensor data acquisition, coordinate frame ID.
+   */
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   /**
+      Array of 3d points. Each Point32 should be interpreted as a 3d point
+      in the frame given in the header.
+   */
+   private sensor_msgs.msg.dds.geometry_msgs/Point32 points_;
    /**
       Each channel should have the same number of elements as points array,
       and the data in each channel should correspond 1:1 with each point.
@@ -22,6 +33,7 @@ public class PointCloud implements ROS2Message<PointCloud>
 
    public PointCloud()
    {
+      points_ = new sensor_msgs.msg.dds.geometry_msgs/Point32();
       channels_ = new sensor_msgs.msg.dds.ChannelFloat32();
 
    }
@@ -53,6 +65,16 @@ public class PointCloud implements ROS2Message<PointCloud>
    @Override
    public void set(PointCloud from)
    {
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public sensor_msgs.msg.dds.geometry_msgs/Point32 getpoints()
+   {
+      return points_;
    }
 
    public sensor_msgs.msg.dds.ChannelFloat32 getchannels()

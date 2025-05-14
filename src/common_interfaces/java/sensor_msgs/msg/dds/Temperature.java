@@ -8,12 +8,13 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   frame_id is the location of the temperature reading
+   Single temperature reading.
 */
 public class Temperature implements ROS2Message<Temperature>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private double temperature_;
    private double variance_;
 
@@ -60,6 +61,11 @@ public class Temperature implements ROS2Message<Temperature>
       temperature_ = from.temperature_;
       variance_ = from.variance_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public double gettemperature()

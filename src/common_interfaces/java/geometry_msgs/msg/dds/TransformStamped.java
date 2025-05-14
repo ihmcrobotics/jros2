@@ -8,11 +8,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   This expresses a transform from coordinate frame header.frame_id
+   to the coordinate frame child_frame_id at the time of header.stamp
+
+   This message is mostly used by the
+   <a href="https://index.ros.org/p/tf2/">tf2</a> package.
+   See its documentation for more information.
+
+   The child_frame_id is necessary in addition to the frame_id
+   in the Header to communicate the full reference for the transform
+   in a self contained message.
 */
 public class TransformStamped implements ROS2Message<TransformStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TransformStamped_";
 
+   /**
+      The frame id in the header is used as the reference frame of this transform.
+   */
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    /**
       The frame id of the child frame to which this transform points.
    */
@@ -61,6 +75,11 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    {
       child_frame_id_ = from.child_frame_id_;
 
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public StringBuilder getchild_frame_id()

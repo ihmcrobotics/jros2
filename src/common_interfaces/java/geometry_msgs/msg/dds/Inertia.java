@@ -16,6 +16,10 @@ public class Inertia implements ROS2Message<Inertia>
    */
    private double m_;
    /**
+      Center of mass [m]
+   */
+   private geometry_msgs.msg.dds.geometry_msgs/Vector3 com_;
+   /**
       Inertia Tensor [kg-m^2]
       | ixx ixy ixz |
       I = | ixy iyy iyz |
@@ -101,6 +105,11 @@ public class Inertia implements ROS2Message<Inertia>
    public void setm(double m_)
    {
       this.m_ = m_;
+   }
+
+   public geometry_msgs.msg.dds.geometry_msgs/Vector3 getcom()
+   {
+      return com_;
    }
 
    public double getixx()

@@ -9,23 +9,17 @@ import us.ihmc.jros2.ROS2Message;
 
 /**
    ######################################################################
-   Calibration Parameters                         #
-   ######################################################################
-   These are fixed during camera calibration. Their values will be the #
-   same in all messages until the camera is recalibrated. Note that    #
-   self-calibrating systems may "recalibrate" frequently.              #
-   #
-   The internal parameters can be used to warp a raw (distorted) image #
-   to:                                                                 #
-   1. An undistorted image (requires D and K)                        #
-   2. A rectified image (requires D, K, R)                           #
-   The projection matrix P projects 3D points into the rectified image.#
+   Image acquisition info                          #
    ######################################################################
 */
 public class CameraInfo implements ROS2Message<CameraInfo>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::CameraInfo_";
 
+   /**
+      Time of image acquisition, camera coordinate frame ID
+   */
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
       The image dimensions with which the camera was calibrated.
       Normally this will be the full camera resolution in pixels.
@@ -165,6 +159,11 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       binning_x_ = from.binning_x_;
       binning_y_ = from.binning_y_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public int getheight()

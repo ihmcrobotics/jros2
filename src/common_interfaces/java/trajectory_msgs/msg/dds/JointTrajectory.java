@@ -7,12 +7,15 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class JointTrajectory implements ROS2Message<JointTrajectory>
 {
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::JointTrajectory_";
 
+   /**
+      The header is used to specify the coordinate frame and the reference time for
+      the trajectory durations
+   */
+   private trajectory_msgs.msg.dds.std_msgs/Header header_;
    /**
       The names of the active joints in each trajectory point. These names are
       ordered and must correspond to the values in each trajectory point.
@@ -66,6 +69,11 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
    {
       joint_names_.set(from.joint_names_);
 
+   }
+
+   public trajectory_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public IDLStringSequence getjoint_names()

@@ -13,6 +13,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::ImageMarker_";
 
+   private visualization_msgs.msg.dds.std_msgs/Header header_;
    /**
       Namespace which is used with the id to form a unique id.
    */
@@ -30,16 +31,44 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    */
    private int action_;
    /**
+      Two-dimensional coordinate position, in pixel-coordinates.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Point position_;
+   /**
       The scale of the object, e.g. the diameter for a CIRCLE.
    */
    private float scale_;
    /**
+      The outline color of the marker.
+   */
+   private visualization_msgs.msg.dds.std_msgs/ColorRGBA outline_color_;
+   /**
       Whether or not to fill in the shape with color.
    */
    private byte filled_;
+   /**
+      Fill color; in the range: [0.0-1.0]
+   */
+   private visualization_msgs.msg.dds.std_msgs/ColorRGBA fill_color_;
+   /**
+      How long the object should last before being automatically deleted.
+      0 indicates forever.
+   */
+   private visualization_msgs.msg.dds.builtin_interfaces/Duration lifetime_;
+   /**
+      Coordinates in 2D in pixel coords. Used for LINE_STRIP, LINE_LIST, POINTS, etc.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Point points_;
+   /**
+      The color for each line, point, etc. in the points field.
+   */
+   private visualization_msgs.msg.dds.std_msgs/ColorRGBA outline_colors_;
 
    public ImageMarker()
    {
+      points_ = new visualization_msgs.msg.dds.geometry_msgs/Point();
+      outline_colors_ = new visualization_msgs.msg.dds.std_msgs/ColorRGBA();
+
    }
 
    @Override
@@ -99,6 +128,11 @@ public class ImageMarker implements ROS2Message<ImageMarker>
 
    }
 
+   public visualization_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
    public StringBuilder getns()
    {
       return ns_;
@@ -139,6 +173,11 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       this.action_ = action_;
    }
 
+   public visualization_msgs.msg.dds.geometry_msgs/Point getposition()
+   {
+      return position_;
+   }
+
    public float getscale()
    {
       return scale_;
@@ -149,6 +188,11 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       this.scale_ = scale_;
    }
 
+   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getoutline_color()
+   {
+      return outline_color_;
+   }
+
    public byte getfilled()
    {
       return filled_;
@@ -157,6 +201,26 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    public void setfilled(byte filled_)
    {
       this.filled_ = filled_;
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getfill_color()
+   {
+      return fill_color_;
+   }
+
+   public visualization_msgs.msg.dds.builtin_interfaces/Duration getlifetime()
+   {
+      return lifetime_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Point getpoints()
+   {
+      return points_;
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getoutline_colors()
+   {
+      return outline_colors_;
    }
 
 

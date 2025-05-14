@@ -8,13 +8,30 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   This is a message to hold data from an IMU (Inertial Measurement Unit)
+
+   Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec
+
+   If the covariance of the measurement is known, it should be filled in (if all you know is the
+   variance of each measurement, e.g. from the datasheet, just put those along the diagonal)
+   A covariance matrix of all zeros will be interpreted as "covariance unknown", and to use the
+   data a covariance will have to be assumed or gotten from some other source
+
+   If you have no estimate for one of the data elements (e.g. your IMU doesn't produce an
+   orientation estimate), please set element 0 of the associated covariance matrix to -1
+   If you are interpreting this message, please check for a value of -1 in the first element of each
+   covariance matrix, and disregard the associated estimate.
 */
 public class Imu implements ROS2Message<Imu>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private sensor_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
    private double[] orientation_covariance_;
+   private sensor_msgs.msg.dds.geometry_msgs/Vector3 angular_velocity_;
    private double[] angular_velocity_covariance_;
+   private sensor_msgs.msg.dds.geometry_msgs/Vector3 linear_acceleration_;
    private double[] linear_acceleration_covariance_;
 
    public Imu()
@@ -97,14 +114,34 @@ public class Imu implements ROS2Message<Imu>
 
    }
 
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public sensor_msgs.msg.dds.geometry_msgs/Quaternion getorientation()
+   {
+      return orientation_;
+   }
+
    public double[] getorientation_covariance()
    {
       return orientation_covariance_;
    }
 
+   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getangular_velocity()
+   {
+      return angular_velocity_;
+   }
+
    public double[] getangular_velocity_covariance()
    {
       return angular_velocity_covariance_;
+   }
+
+   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getlinear_acceleration()
+   {
+      return linear_acceleration_;
    }
 
    public double[] getlinear_acceleration_covariance()

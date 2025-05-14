@@ -7,12 +7,23 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarker_";
 
+   /**
+      Time/frame info.
+      If header.time is set to 0, the marker will be retransformed into
+      its frame on each timestep. You will receive the pose feedback
+      in the same frame.
+      Otherwise, you might receive feedback in a different frame.
+      For rviz, this will be the current 'fixed frame' set by the user.
+   */
+   private visualization_msgs.msg.dds.std_msgs/Header header_;
+   /**
+      Initial pose. Also, defines the pivot point for rotations.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
    /**
       Identifying string. Must be globally unique in
       the topic that this message is sent through.
@@ -85,6 +96,16 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       description_ = from.description_;
       scale_ = from.scale_;
 
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getpose()
+   {
+      return pose_;
    }
 
    public StringBuilder getname()

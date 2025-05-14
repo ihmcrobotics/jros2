@@ -11,6 +11,10 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovarianceStamped_";
 
+   /**
+      This represents an estimated accel with reference coordinate frame and timestamp.
+   */
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.AccelWithCovariance accel_;
 
    public AccelWithCovarianceStamped()
@@ -44,6 +48,11 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    @Override
    public void set(AccelWithCovarianceStamped from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.AccelWithCovariance getaccel()

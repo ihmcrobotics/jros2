@@ -8,19 +8,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Header frame_id should be optical frame of camera
-   origin of frame should be optical center of cameara
-   +x should point to the right in the image
-   +y should point down in the image
-   +z should point into to plane of the image
-   If the frame_id here and the frame_id of the CameraInfo
-   message associated with the image conflict
-   the behavior is undefined
+   This message contains an uncompressed image
+   (0, 0) is at top-left corner of image
 */
 public class Image implements ROS2Message<Image>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private int height_;
    private int width_;
    private StringBuilder encoding_;
@@ -89,6 +84,11 @@ public class Image implements ROS2Message<Image>
       step_ = from.step_;
       data_.set(from.data_);
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public int getheight()

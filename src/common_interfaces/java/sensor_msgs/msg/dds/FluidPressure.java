@@ -8,12 +8,17 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   frame_id is the location of the pressure sensor
+   Single pressure reading.  This message is appropriate for measuring the
+   pressure inside of a fluid (air, water, etc).  This also includes
+   atmospheric or barometric pressure.
+
+   This message is not appropriate for force/pressure contact sensors.
 */
 public class FluidPressure implements ROS2Message<FluidPressure>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::FluidPressure_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private double fluid_pressure_;
    private double variance_;
 
@@ -60,6 +65,11 @@ public class FluidPressure implements ROS2Message<FluidPressure>
       fluid_pressure_ = from.fluid_pressure_;
       variance_ = from.variance_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public double getfluid_pressure()

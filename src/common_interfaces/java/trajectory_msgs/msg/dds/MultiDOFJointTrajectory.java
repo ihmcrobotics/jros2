@@ -7,16 +7,14 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-   A representation of a multi-dof joint trajectory (each point is a transformation)
-   Each point along the trajectory will include an array of positions/velocities/accelerations
-   that has the same length as the array of joint names, and has the same order of joints as
-   the joint names array.
-*/
 public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTrajectory>
 {
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectory_";
 
+   /**
+      The header is used to specify the coordinate frame and the reference time for the trajectory durations
+   */
+   private trajectory_msgs.msg.dds.std_msgs/Header header_;
    private IDLStringSequence joint_names_;
    private trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint points_;
 
@@ -62,6 +60,11 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    {
       joint_names_.set(from.joint_names_);
 
+   }
+
+   public trajectory_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public IDLStringSequence getjoint_names()

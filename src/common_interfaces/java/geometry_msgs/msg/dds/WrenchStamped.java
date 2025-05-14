@@ -14,6 +14,7 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::WrenchStamped_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.Wrench wrench_;
 
    public WrenchStamped()
@@ -47,6 +48,11 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    @Override
    public void set(WrenchStamped from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.Wrench getwrench()

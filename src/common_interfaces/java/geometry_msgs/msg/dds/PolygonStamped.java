@@ -14,6 +14,7 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonStamped_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.Polygon polygon_;
 
    public PolygonStamped()
@@ -47,6 +48,11 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
    @Override
    public void set(PolygonStamped from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.Polygon getpolygon()

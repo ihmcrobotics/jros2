@@ -18,10 +18,15 @@ public class Mesh implements ROS2Message<Mesh>
       List of triangles; the index values refer to positions in vertices[].
    */
    private shape_msgs.msg.dds.MeshTriangle triangles_;
+   /**
+      The actual vertices that make up the mesh.
+   */
+   private shape_msgs.msg.dds.geometry_msgs/Point vertices_;
 
    public Mesh()
    {
       triangles_ = new shape_msgs.msg.dds.MeshTriangle();
+      vertices_ = new shape_msgs.msg.dds.geometry_msgs/Point();
 
    }
 
@@ -57,6 +62,11 @@ public class Mesh implements ROS2Message<Mesh>
    public shape_msgs.msg.dds.MeshTriangle gettriangles()
    {
       return triangles_;
+   }
+
+   public shape_msgs.msg.dds.geometry_msgs/Point getvertices()
+   {
+      return vertices_;
    }
 
 

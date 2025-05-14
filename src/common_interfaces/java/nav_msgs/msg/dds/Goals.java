@@ -13,8 +13,23 @@ public class Goals implements ROS2Message<Goals>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Goals_";
 
+   /**
+      This header will store the time at which the poses were computed (not to be confused with the stamps of the poses themselves)
+      In the case that individual poses do not have their frame_id set or their timetamp set they will use the default value here.
+   */
+   private nav_msgs.msg.dds.std_msgs/Header header_;
+   /**
+      An array of goals to for navigation to achieve.
+      The goals should be executed in the order of the array.
+      The header and stamp are intended to be used for computing the position of the goals.
+      They may vary to support cases of goals that are moving with respect to the robot.
+   */
+   private nav_msgs.msg.dds.geometry_msgs/PoseStamped goals_;
+
    public Goals()
    {
+      goals_ = new nav_msgs.msg.dds.geometry_msgs/PoseStamped();
+
    }
 
    @Override
@@ -45,5 +60,16 @@ public class Goals implements ROS2Message<Goals>
    public void set(Goals from)
    {
    }
+
+   public nav_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public nav_msgs.msg.dds.geometry_msgs/PoseStamped getgoals()
+   {
+      return goals_;
+   }
+
 
 }

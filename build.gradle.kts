@@ -121,9 +121,14 @@ tasks.test {
 }
 
 tasks.register<jros2GenTask>("generate_common_interfaces") {
-    description = "Generate ros2/common_interfaces source files"
+    description = "Generate ROS 2 common interfaces source files"
     group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
     packagePaths = listOf(
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rosgraph_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("statistics_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("actionlib_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("diagnostic_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("geometry_msgs").absolutePath,
@@ -136,17 +141,4 @@ tasks.register<jros2GenTask>("generate_common_interfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath
     )
     outputDir = sourceSets["common_interfaces"].java.srcDirs.first().toString()
-}
-
-tasks.register<jros2GenTask>("generate_rcl_interfaces") {
-    description = "Generate ros2/rcl_interfaces source files"
-    group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
-    packagePaths = listOf(
-          projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
-          projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
-          projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
-          projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rosgraph_msgs").absolutePath,
-          projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("statistics_msgs").absolutePath,
-    )
-    outputDir = sourceSets["rcl_interfaces"].java.srcDirs.first().toString()
 }

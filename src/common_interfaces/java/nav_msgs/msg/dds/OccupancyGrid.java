@@ -7,12 +7,14 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::OccupancyGrid_";
 
+   /**
+      This represents a 2-D grid map
+   */
+   private nav_msgs.msg.dds.std_msgs/Header header_;
    /**
       MetaData for the map
    */
@@ -68,6 +70,11 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    {
       data_.set(from.data_);
 
+   }
+
+   public nav_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public nav_msgs.msg.dds.MapMetaData getinfo()

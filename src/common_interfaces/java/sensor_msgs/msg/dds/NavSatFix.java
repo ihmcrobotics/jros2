@@ -8,11 +8,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   Navigation Satellite fix for any Global Navigation Satellite System
+
+   Specified using the WGS 84 reference ellipsoid
 */
 public class NavSatFix implements ROS2Message<NavSatFix>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
 
+   /**
+      header.stamp specifies the ROS time for this measurement (the
+      corresponding satellite time may be reported using the
+      sensor_msgs/TimeReference message).
+
+      header.frame_id is the frame of reference reported by the satellite
+      receiver, usually the location of the antenna.  This is a
+      Euclidean frame relative to the vehicle, not a reference
+      ellipsoid.
+   */
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
       Satellite fix status information.
    */
@@ -106,6 +120,11 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       }
       position_covariance_type_ = from.position_covariance_type_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public sensor_msgs.msg.dds.NavSatStatus getstatus()

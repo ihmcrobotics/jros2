@@ -14,6 +14,14 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
 
    /**
+      Time/frame info.
+   */
+   private visualization_msgs.msg.dds.std_msgs/Header header_;
+   /**
+      Initial pose. Also, defines the pivot point for rotations.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   /**
       Identifying string. Must be globally unique in
       the topic that this message is sent through.
    */
@@ -58,6 +66,16 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    {
       name_ = from.name_;
 
+   }
+
+   public visualization_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getpose()
+   {
+      return pose_;
    }
 
    public StringBuilder getname()

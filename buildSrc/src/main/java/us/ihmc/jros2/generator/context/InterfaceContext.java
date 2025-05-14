@@ -37,6 +37,17 @@ public abstract class InterfaceContext
       return name;
    }
 
+   public String getFullName()
+   {
+      return String.format("%s/%s", packageName, name);
+   }
+
+   public boolean matches(String name)
+   {
+      // Check if the full name (package_name/name) equals the provided name first, then check the shorthand name
+      return getFullName().equals(name) || this.name.equals(name);
+   }
+
    public String getJavaClassname()
    {
       // TODO: Some sanitation required
@@ -124,7 +135,7 @@ public abstract class InterfaceContext
    private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
          "^(?<strtype>string|wstring)(?<strlen><=\\d+)?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])?$");
    private static final Pattern TYPE_PATTERN = Pattern.compile(
-         "^(?<type>[a-zA-Z0-9]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
+         "^(?<type>[a-zA-Z0-9/_]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-z](?!.*__)[a-z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
    private InterfaceField parseField(String line, String headerComment, String trailingComment, List<MsgContext> discoveredMsgs)
    {
@@ -197,7 +208,7 @@ public abstract class InterfaceContext
          {
             for (MsgContext otherMsg : discoveredMsgs)
             {
-               if (field.getType().equals(otherMsg.getName()))
+               if (otherMsg.matches(field.getType()))
                {
                   valid = true;
                   break;
@@ -208,7 +219,7 @@ public abstract class InterfaceContext
          if (!valid)
          {
             // TODO: Replace with custom exception
-            throw new RuntimeException("Invalid message field type: " + field.getType());
+            throw new RuntimeException(String.format("Failed to parse: %s. Invalid field type %s.", fileName, field.getType()));
          }
       }
 

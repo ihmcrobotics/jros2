@@ -8,11 +8,23 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   This message holds a collection of N-dimensional points, which may
+   contain additional information such as normals, intensity, etc. The
+   point data is stored as a binary blob, its layout described by the
+   contents of the "fields" array.
+
+   The point cloud data may be organized 2d (image-like) or 1d (unordered).
+   Point clouds organized as 2d images may be produced by camera depth sensors
+   such as stereo or time-of-flight.
 */
 public class PointCloud2 implements ROS2Message<PointCloud2>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
 
+   /**
+      Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
+   */
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
       2D structure of the point cloud. If the cloud is unordered, height is
       1 and width is the length of the point cloud.
@@ -80,6 +92,11 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       data_.set(from.data_);
       is_dense_ = from.is_dense_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public int getheight()

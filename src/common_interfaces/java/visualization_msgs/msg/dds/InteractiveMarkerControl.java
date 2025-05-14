@@ -20,6 +20,12 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       on what actions the user performs on this control (e.g. a button click).
    */
    private StringBuilder name_;
+   /**
+      Defines the local coordinate frame (relative to the pose of the parent
+      interactive marker) in which is being rotated and translated.
+      Default: Identity
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
    private byte orientation_mode_;
    private byte interaction_mode_;
    /**
@@ -122,6 +128,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public void setname(StringBuilder name_)
    {
       this.name_ = name_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Quaternion getorientation()
+   {
+      return orientation_;
    }
 
    public byte getorientation_mode()

@@ -8,12 +8,15 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   frame_id is the location of the humidity sensor
+   Single reading from a relative humidity sensor.
+   Defines the ratio of partial pressure of water vapor to the saturated vapor
+   pressure at a temperature.
 */
 public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private double relative_humidity_;
    private double variance_;
 
@@ -60,6 +63,11 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
       relative_humidity_ = from.relative_humidity_;
       variance_ = from.variance_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public double getrelative_humidity()

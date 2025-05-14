@@ -8,12 +8,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   frame_id is not used
+   Measurement from an external time source not actively synchronized with the system clock.
 */
 public class TimeReference implements ROS2Message<TimeReference>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private sensor_msgs.msg.dds.builtin_interfaces/Time time_ref_;
    private StringBuilder source_;
 
    public TimeReference()
@@ -55,6 +57,16 @@ public class TimeReference implements ROS2Message<TimeReference>
    {
       source_ = from.source_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public sensor_msgs.msg.dds.builtin_interfaces/Time gettime_ref()
+   {
+      return time_ref_;
    }
 
    public StringBuilder getsource()

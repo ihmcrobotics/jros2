@@ -14,6 +14,7 @@ public class TwistStamped implements ROS2Message<TwistStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistStamped_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.Twist twist_;
 
    public TwistStamped()
@@ -47,6 +48,11 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    @Override
    public void set(TwistStamped from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.Twist gettwist()

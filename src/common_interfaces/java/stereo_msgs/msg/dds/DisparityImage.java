@@ -7,17 +7,30 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class DisparityImage implements ROS2Message<DisparityImage>
 {
    public static final java.lang.String name = "stereo_msgs::msg::dds_::DisparityImage_";
 
    /**
+      Separate header for compatibility with current TimeSynchronizer.
+      Likely to be removed in a later release, use image.header instead.
+   */
+   private stereo_msgs.msg.dds.std_msgs/Header header_;
+   /**
+      Floating point disparity image. The disparities are pre-adjusted for any
+      x-offset between the principal points of the two cameras (in the case
+      that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
+   */
+   private stereo_msgs.msg.dds.sensor_msgs/Image image_;
+   /**
       Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
    private float f_;
    private float t_;
+   /**
+      Subwindow of (potentially) valid disparity values.
+   */
+   private stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest valid_window_;
    /**
       The range of disparities searched.
       In the disparity image, any disparity less than min_disparity is invalid.
@@ -92,6 +105,16 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
+   public stereo_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
+   public stereo_msgs.msg.dds.sensor_msgs/Image getimage()
+   {
+      return image_;
+   }
+
    public float getf()
    {
       return f_;
@@ -110,6 +133,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    public void sett(float t_)
    {
       this.t_ = t_;
+   }
+
+   public stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest getvalid_window()
+   {
+      return valid_window_;
    }
 
    public float getmin_disparity()

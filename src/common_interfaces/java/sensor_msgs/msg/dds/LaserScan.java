@@ -8,16 +8,17 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   the first ray in the scan.
+   Single scan from a planar laser range-finder
 
-   in frame frame_id, angles are measured around
-   the positive Z axis (counterclockwise, if Z is up)
-   with zero angle being forward along the x axis
+   If you have another ranging device with different behavior (e.g. a sonar
+   array), please find or create a different message, since applications
+   will make fairly laser-specific assumptions about this data
 */
 public class LaserScan implements ROS2Message<LaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private float angle_min_;
    private float angle_max_;
    private float angle_increment_;
@@ -109,6 +110,11 @@ public class LaserScan implements ROS2Message<LaserScan>
       ranges_.set(from.ranges_);
       intensities_.set(from.intensities_);
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public float getangle_min()

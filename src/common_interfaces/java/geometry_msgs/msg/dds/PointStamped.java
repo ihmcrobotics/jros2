@@ -14,6 +14,7 @@ public class PointStamped implements ROS2Message<PointStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PointStamped_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.Point point_;
 
    public PointStamped()
@@ -47,6 +48,11 @@ public class PointStamped implements ROS2Message<PointStamped>
    @Override
    public void set(PointStamped from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.Point getpoint()

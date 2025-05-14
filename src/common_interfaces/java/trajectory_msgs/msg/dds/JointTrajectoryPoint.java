@@ -40,6 +40,10 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       denotes a force in newtons.
    */
    private IDLDoubleSequence effort_;
+   /**
+      Desired time from the trajectory start to arrive at this trajectory point.
+   */
+   private trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
 
    public JointTrajectoryPoint()
    {
@@ -117,6 +121,11 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    public IDLDoubleSequence geteffort()
    {
       return effort_;
+   }
+
+   public trajectory_msgs.msg.dds.builtin_interfaces/Duration gettime_from_start()
+   {
+      return time_from_start_;
    }
 
 

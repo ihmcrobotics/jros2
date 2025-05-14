@@ -7,12 +7,14 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerFeedback>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerFeedback_";
 
+   /**
+      Time/frame info.
+   */
+   private visualization_msgs.msg.dds.std_msgs/Header header_;
    /**
       Identifying string. Must be unique in the topic namespace.
    */
@@ -24,10 +26,22 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    private StringBuilder control_name_;
    private byte event_type_;
    /**
+      Current pose of the marker
+      Note: Has to be valid for all feedback types.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   /**
       Contains the ID of the selected menu entry
       Only valid for MENU_SELECT events.
    */
    private int menu_entry_id_;
+   /**
+      If event_type is BUTTON_CLICK, MOUSE_DOWN, or MOUSE_UP, mouse_point
+      may contain the 3 dimensional position of the event on the
+      control.  If it does, mouse_point_valid will be true.  mouse_point
+      will be relative to the frame listed in the header.
+   */
+   private visualization_msgs.msg.dds.geometry_msgs/Point mouse_point_;
    private boolean mouse_point_valid_;
 
    public InteractiveMarkerFeedback()
@@ -91,6 +105,11 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    }
 
+   public visualization_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
    public StringBuilder getclient_id()
    {
       return client_id_;
@@ -131,6 +150,11 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.event_type_ = event_type_;
    }
 
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getpose()
+   {
+      return pose_;
+   }
+
    public int getmenu_entry_id()
    {
       return menu_entry_id_;
@@ -139,6 +163,11 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    public void setmenu_entry_id(int menu_entry_id_)
    {
       this.menu_entry_id_ = menu_entry_id_;
+   }
+
+   public visualization_msgs.msg.dds.geometry_msgs/Point getmouse_point()
+   {
+      return mouse_point_;
    }
 
    public boolean getmouse_point_valid()

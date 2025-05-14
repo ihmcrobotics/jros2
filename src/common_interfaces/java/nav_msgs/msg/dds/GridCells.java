@@ -8,11 +8,13 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   An array of cells in a 2D grid
 */
 public class GridCells implements ROS2Message<GridCells>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
 
+   private nav_msgs.msg.dds.std_msgs/Header header_;
    /**
       Width of each cell
    */
@@ -21,9 +23,15 @@ public class GridCells implements ROS2Message<GridCells>
       Height of each cell
    */
    private float cell_height_;
+   /**
+      Each cell is represented by the Point at the center of the cell
+   */
+   private nav_msgs.msg.dds.geometry_msgs/Point cells_;
 
    public GridCells()
    {
+      cells_ = new nav_msgs.msg.dds.geometry_msgs/Point();
+
    }
 
    @Override
@@ -67,6 +75,11 @@ public class GridCells implements ROS2Message<GridCells>
 
    }
 
+   public nav_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
+   }
+
    public float getcell_width()
    {
       return cell_width_;
@@ -85,6 +98,11 @@ public class GridCells implements ROS2Message<GridCells>
    public void setcell_height(float cell_height_)
    {
       this.cell_height_ = cell_height_;
+   }
+
+   public nav_msgs.msg.dds.geometry_msgs/Point getcells()
+   {
+      return cells_;
    }
 
 

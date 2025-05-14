@@ -8,11 +8,13 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   An array of poses with a header for global reference.
 */
 public class PoseArray implements ROS2Message<PoseArray>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
 
+   private geometry_msgs.msg.dds.std_msgs/Header header_;
    private geometry_msgs.msg.dds.Pose poses_;
 
    public PoseArray()
@@ -48,6 +50,11 @@ public class PoseArray implements ROS2Message<PoseArray>
    @Override
    public void set(PoseArray from)
    {
+   }
+
+   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public geometry_msgs.msg.dds.Pose getposes()

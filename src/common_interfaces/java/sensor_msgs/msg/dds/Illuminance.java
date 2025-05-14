@@ -8,12 +8,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   frame_id is the location and direction of the reading
+   Single photometric illuminance measurement.  Light should be assumed to be
+   measured along the sensor's x-axis (the area of detection is the y-z plane).
+   The illuminance should have a 0 or positive value and be received with
+   the sensor's +X axis pointing toward the light source.
+
+   Photometric illuminance is the measure of the human eye's sensitivity of the
+   intensity of light encountering or passing through a surface.
+
+   All other Photometric and Radiometric measurements should not use this message.
+   This message cannot represent:
+   - Luminous intensity (candela/light source output)
+   - Luminance (nits/light output per area)
+   - Irradiance (watt/area), etc.
 */
 public class Illuminance implements ROS2Message<Illuminance>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
 
+   private sensor_msgs.msg.dds.std_msgs/Header header_;
    private double illuminance_;
    private double variance_;
 
@@ -60,6 +73,11 @@ public class Illuminance implements ROS2Message<Illuminance>
       illuminance_ = from.illuminance_;
       variance_ = from.variance_;
 
+   }
+
+   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   {
+      return header_;
    }
 
    public double getilluminance()
