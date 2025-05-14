@@ -26,7 +26,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       Euclidean frame relative to the vehicle, not a reference
       ellipsoid.
    */
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       Satellite fix status information.
    */
@@ -122,7 +122,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

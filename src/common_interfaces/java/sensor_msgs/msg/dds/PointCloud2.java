@@ -24,7 +24,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    /**
       Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
    */
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       2D structure of the point cloud. If the cloud is unordered, height is
       1 and width is the length of the point cloud.
@@ -94,7 +94,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

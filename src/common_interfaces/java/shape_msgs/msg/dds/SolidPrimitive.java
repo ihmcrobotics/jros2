@@ -21,7 +21,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       The dimensions of the shape
    */
    private IDLDoubleSequence dimensions_;
-   private shape_msgs.msg.dds.geometry_msgs/Polygon polygon_;
+   private geometry_msgs.msg.dds.Polygon polygon_;
 
    public SolidPrimitive()
    {
@@ -85,7 +85,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       return dimensions_;
    }
 
-   public shape_msgs.msg.dds.geometry_msgs/Polygon getpolygon()
+   public geometry_msgs.msg.dds.Polygon getpolygon()
    {
       return polygon_;
    }

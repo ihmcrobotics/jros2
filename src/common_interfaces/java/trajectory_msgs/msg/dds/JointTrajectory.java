@@ -15,7 +15,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
       The header is used to specify the coordinate frame and the reference time for
       the trajectory durations
    */
-   private trajectory_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       The names of the active joints in each trajectory point. These names are
       ordered and must correspond to the values in each trajectory point.
@@ -71,7 +71,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
-   public trajectory_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

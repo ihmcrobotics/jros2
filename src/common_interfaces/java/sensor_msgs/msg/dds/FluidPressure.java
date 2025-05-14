@@ -18,7 +18,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::FluidPressure_";
 
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private double fluid_pressure_;
    private double variance_;
 
@@ -67,7 +67,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

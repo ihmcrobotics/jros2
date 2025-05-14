@@ -17,7 +17,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    /**
       The time at which the map was loaded
    */
-   private nav_msgs.msg.dds.builtin_interfaces/Time map_load_time_;
+   private builtin_interfaces.msg.dds.Time map_load_time_;
    /**
       The map resolution [m/cell]
    */
@@ -34,7 +34,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       The origin of the map [m, m, rad].  This is the real-world pose of the
       bottom left corner of cell (0,0) in the map.
    */
-   private nav_msgs.msg.dds.geometry_msgs/Pose origin_;
+   private geometry_msgs.msg.dds.Pose origin_;
 
    public MapMetaData()
    {
@@ -85,7 +85,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    }
 
-   public nav_msgs.msg.dds.builtin_interfaces/Time getmap_load_time()
+   public builtin_interfaces.msg.dds.Time getmap_load_time()
    {
       return map_load_time_;
    }
@@ -120,7 +120,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       this.height_ = height_;
    }
 
-   public nav_msgs.msg.dds.geometry_msgs/Pose getorigin()
+   public geometry_msgs.msg.dds.Pose getorigin()
    {
       return origin_;
    }

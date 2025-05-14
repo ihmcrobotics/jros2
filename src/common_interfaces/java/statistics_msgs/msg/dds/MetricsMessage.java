@@ -40,11 +40,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    /**
       Measurement window start time
    */
-   private statistics_msgs.msg.dds.builtin_interfaces/Time window_start_;
+   private builtin_interfaces.msg.dds.Time window_start_;
    /**
       Measurement window end time
    */
-   private statistics_msgs.msg.dds.builtin_interfaces/Time window_stop_;
+   private builtin_interfaces.msg.dds.Time window_stop_;
    /**
       A list of statistics data point, defined in StatisticDataPoint.msg
    */
@@ -131,12 +131,12 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       this.unit_ = unit_;
    }
 
-   public statistics_msgs.msg.dds.builtin_interfaces/Time getwindow_start()
+   public builtin_interfaces.msg.dds.Time getwindow_start()
    {
       return window_start_;
    }
 
-   public statistics_msgs.msg.dds.builtin_interfaces/Time getwindow_stop()
+   public builtin_interfaces.msg.dds.Time getwindow_stop()
    {
       return window_stop_;
    }

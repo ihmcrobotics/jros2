@@ -14,7 +14,7 @@ public class GridCells implements ROS2Message<GridCells>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
 
-   private nav_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       Width of each cell
    */
@@ -26,11 +26,11 @@ public class GridCells implements ROS2Message<GridCells>
    /**
       Each cell is represented by the Point at the center of the cell
    */
-   private nav_msgs.msg.dds.geometry_msgs/Point cells_;
+   private geometry_msgs.msg.dds.Point cells_;
 
    public GridCells()
    {
-      cells_ = new nav_msgs.msg.dds.geometry_msgs/Point();
+      cells_ = new geometry_msgs.msg.dds.Point();
 
    }
 
@@ -75,7 +75,7 @@ public class GridCells implements ROS2Message<GridCells>
 
    }
 
-   public nav_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }
@@ -100,7 +100,7 @@ public class GridCells implements ROS2Message<GridCells>
       this.cell_height_ = cell_height_;
    }
 
-   public nav_msgs.msg.dds.geometry_msgs/Point getcells()
+   public geometry_msgs.msg.dds.Point getcells()
    {
       return cells_;
    }

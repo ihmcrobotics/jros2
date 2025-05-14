@@ -19,7 +19,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    /**
       Time of image acquisition, camera coordinate frame ID
    */
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       The image dimensions with which the camera was calibrated.
       Normally this will be the full camera resolution in pixels.
@@ -161,7 +161,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

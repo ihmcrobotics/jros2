@@ -22,7 +22,7 @@ public class Range implements ROS2Message<Range>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private byte radiation_type_;
    private float field_of_view_;
    private float min_range_;
@@ -86,7 +86,7 @@ public class Range implements ROS2Message<Range>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

@@ -18,7 +18,7 @@ public class Inertia implements ROS2Message<Inertia>
    /**
       Center of mass [m]
    */
-   private geometry_msgs.msg.dds.geometry_msgs/Vector3 com_;
+   private geometry_msgs.msg.dds.Vector3 com_;
    /**
       Inertia Tensor [kg-m^2]
       | ixx ixy ixz |
@@ -107,7 +107,7 @@ public class Inertia implements ROS2Message<Inertia>
       this.m_ = m_;
    }
 
-   public geometry_msgs.msg.dds.geometry_msgs/Vector3 getcom()
+   public geometry_msgs.msg.dds.Vector3 getcom()
    {
       return com_;
    }

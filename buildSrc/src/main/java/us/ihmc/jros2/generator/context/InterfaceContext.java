@@ -211,6 +211,8 @@ public abstract class InterfaceContext
                if (otherMsg.matches(field.getType()))
                {
                   valid = true;
+                  // Set the javaType to the discovered MsgContext
+                  field.javaType(String.format("%s.%s", otherMsg.getJavaPackageName(), otherMsg.getName()));
                   break;
                }
             }

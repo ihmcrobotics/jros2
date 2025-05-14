@@ -14,7 +14,7 @@ public class Temperature implements ROS2Message<Temperature>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
 
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private double temperature_;
    private double variance_;
 
@@ -63,7 +63,7 @@ public class Temperature implements ROS2Message<Temperature>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

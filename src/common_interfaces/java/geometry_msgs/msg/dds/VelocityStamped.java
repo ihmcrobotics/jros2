@@ -16,7 +16,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::VelocityStamped_";
 
-   private geometry_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private StringBuilder body_frame_id_;
    private StringBuilder reference_frame_id_;
    private geometry_msgs.msg.dds.Twist velocity_;
@@ -66,7 +66,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

@@ -18,7 +18,7 @@ public class GoalID implements ROS2Message<GoalID>
       It is used by an action server when it tries to preempt all
       goals that were requested before a certain time
    */
-   private actionlib_msgs.msg.dds.builtin_interfaces/Time stamp_;
+   private builtin_interfaces.msg.dds.Time stamp_;
    /**
       The id provides a way to associate feedback and
       result message with specific goal requests. The id
@@ -67,7 +67,7 @@ public class GoalID implements ROS2Message<GoalID>
 
    }
 
-   public actionlib_msgs.msg.dds.builtin_interfaces/Time getstamp()
+   public builtin_interfaces.msg.dds.Time getstamp()
    {
       return stamp_;
    }

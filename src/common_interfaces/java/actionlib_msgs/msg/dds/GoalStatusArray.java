@@ -15,7 +15,7 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
       Stores the statuses for goals that are currently being tracked
       by an action server
    */
-   private actionlib_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private actionlib_msgs.msg.dds.GoalStatus status_list_;
 
    public GoalStatusArray()
@@ -53,7 +53,7 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    {
    }
 
-   public actionlib_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

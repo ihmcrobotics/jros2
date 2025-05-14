@@ -14,7 +14,7 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseWithCovarianceStamped_";
 
-   private geometry_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private geometry_msgs.msg.dds.PoseWithCovariance pose_;
 
    public PoseWithCovarianceStamped()
@@ -50,7 +50,7 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

@@ -18,12 +18,12 @@ public class PointCloud implements ROS2Message<PointCloud>
    /**
       Time of sensor data acquisition, coordinate frame ID.
    */
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       Array of 3d points. Each Point32 should be interpreted as a 3d point
       in the frame given in the header.
    */
-   private sensor_msgs.msg.dds.geometry_msgs/Point32 points_;
+   private geometry_msgs.msg.dds.Point32 points_;
    /**
       Each channel should have the same number of elements as points array,
       and the data in each channel should correspond 1:1 with each point.
@@ -33,7 +33,7 @@ public class PointCloud implements ROS2Message<PointCloud>
 
    public PointCloud()
    {
-      points_ = new sensor_msgs.msg.dds.geometry_msgs/Point32();
+      points_ = new geometry_msgs.msg.dds.Point32();
       channels_ = new sensor_msgs.msg.dds.ChannelFloat32();
 
    }
@@ -67,12 +67,12 @@ public class PointCloud implements ROS2Message<PointCloud>
    {
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.geometry_msgs/Point32 getpoints()
+   public geometry_msgs.msg.dds.Point32 getpoints()
    {
       return points_;
    }

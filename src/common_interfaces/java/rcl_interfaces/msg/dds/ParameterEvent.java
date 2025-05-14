@@ -19,7 +19,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    /**
       The time stamp when this parameter event occurred.
    */
-   private rcl_interfaces.msg.dds.builtin_interfaces/Time stamp_;
+   private builtin_interfaces.msg.dds.Time stamp_;
    /**
       Fully qualified ROS path to node.
    */
@@ -82,7 +82,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
 
    }
 
-   public rcl_interfaces.msg.dds.builtin_interfaces/Time getstamp()
+   public builtin_interfaces.msg.dds.Time getstamp()
    {
       return stamp_;
    }

@@ -43,7 +43,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    /**
       Desired time from the trajectory start to arrive at this trajectory point.
    */
-   private trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
+   private builtin_interfaces.msg.dds.Duration time_from_start_;
 
    public JointTrajectoryPoint()
    {
@@ -123,7 +123,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       return effort_;
    }
 
-   public trajectory_msgs.msg.dds.builtin_interfaces/Duration gettime_from_start()
+   public builtin_interfaces.msg.dds.Duration gettime_from_start()
    {
       return time_from_start_;
    }

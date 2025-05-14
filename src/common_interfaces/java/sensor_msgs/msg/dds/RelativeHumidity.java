@@ -16,7 +16,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
 
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private double relative_humidity_;
    private double variance_;
 
@@ -65,7 +65,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

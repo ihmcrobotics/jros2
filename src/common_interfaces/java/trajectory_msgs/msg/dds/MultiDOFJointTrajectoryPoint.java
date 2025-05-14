@@ -14,25 +14,25 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    /**
       Each multi-dof joint can specify a transform (up to 6 DOF).
    */
-   private trajectory_msgs.msg.dds.geometry_msgs/Transform transforms_;
+   private geometry_msgs.msg.dds.Transform transforms_;
    /**
       There can be a velocity specified for the origin of the joint.
    */
-   private trajectory_msgs.msg.dds.geometry_msgs/Twist velocities_;
+   private geometry_msgs.msg.dds.Twist velocities_;
    /**
       There can be an acceleration specified for the origin of the joint.
    */
-   private trajectory_msgs.msg.dds.geometry_msgs/Twist accelerations_;
+   private geometry_msgs.msg.dds.Twist accelerations_;
    /**
       Desired time from the trajectory start to arrive at this trajectory point.
    */
-   private trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
+   private builtin_interfaces.msg.dds.Duration time_from_start_;
 
    public MultiDOFJointTrajectoryPoint()
    {
-      transforms_ = new trajectory_msgs.msg.dds.geometry_msgs/Transform();
-      velocities_ = new trajectory_msgs.msg.dds.geometry_msgs/Twist();
-      accelerations_ = new trajectory_msgs.msg.dds.geometry_msgs/Twist();
+      transforms_ = new geometry_msgs.msg.dds.Transform();
+      velocities_ = new geometry_msgs.msg.dds.Twist();
+      accelerations_ = new geometry_msgs.msg.dds.Twist();
 
    }
 
@@ -65,22 +65,22 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    {
    }
 
-   public trajectory_msgs.msg.dds.geometry_msgs/Transform gettransforms()
+   public geometry_msgs.msg.dds.Transform gettransforms()
    {
       return transforms_;
    }
 
-   public trajectory_msgs.msg.dds.geometry_msgs/Twist getvelocities()
+   public geometry_msgs.msg.dds.Twist getvelocities()
    {
       return velocities_;
    }
 
-   public trajectory_msgs.msg.dds.geometry_msgs/Twist getaccelerations()
+   public geometry_msgs.msg.dds.Twist getaccelerations()
    {
       return accelerations_;
    }
 
-   public trajectory_msgs.msg.dds.builtin_interfaces/Duration gettime_from_start()
+   public builtin_interfaces.msg.dds.Duration gettime_from_start()
    {
       return time_from_start_;
    }

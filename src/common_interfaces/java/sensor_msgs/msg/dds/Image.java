@@ -15,7 +15,7 @@ public class Image implements ROS2Message<Image>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
-   private sensor_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private int height_;
    private int width_;
    private StringBuilder encoding_;
@@ -86,7 +86,7 @@ public class Image implements ROS2Message<Image>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

@@ -15,13 +15,13 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       Separate header for compatibility with current TimeSynchronizer.
       Likely to be removed in a later release, use image.header instead.
    */
-   private stereo_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       Floating point disparity image. The disparities are pre-adjusted for any
       x-offset between the principal points of the two cameras (in the case
       that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
    */
-   private stereo_msgs.msg.dds.sensor_msgs/Image image_;
+   private sensor_msgs.msg.dds.Image image_;
    /**
       Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
@@ -30,7 +30,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    /**
       Subwindow of (potentially) valid disparity values.
    */
-   private stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest valid_window_;
+   private sensor_msgs.msg.dds.RegionOfInterest valid_window_;
    /**
       The range of disparities searched.
       In the disparity image, any disparity less than min_disparity is invalid.
@@ -105,12 +105,12 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
-   public stereo_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }
 
-   public stereo_msgs.msg.dds.sensor_msgs/Image getimage()
+   public sensor_msgs.msg.dds.Image getimage()
    {
       return image_;
    }
@@ -135,7 +135,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       this.t_ = t_;
    }
 
-   public stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest getvalid_window()
+   public sensor_msgs.msg.dds.RegionOfInterest getvalid_window()
    {
       return valid_window_;
    }

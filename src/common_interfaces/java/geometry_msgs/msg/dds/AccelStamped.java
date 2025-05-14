@@ -14,7 +14,7 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    /**
       An accel with reference coordinate frame and timestamp
    */
-   private geometry_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    private geometry_msgs.msg.dds.Accel accel_;
 
    public AccelStamped()
@@ -50,7 +50,7 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    {
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }

@@ -21,12 +21,12 @@ public class Mesh implements ROS2Message<Mesh>
    /**
       The actual vertices that make up the mesh.
    */
-   private shape_msgs.msg.dds.geometry_msgs/Point vertices_;
+   private geometry_msgs.msg.dds.Point vertices_;
 
    public Mesh()
    {
       triangles_ = new shape_msgs.msg.dds.MeshTriangle();
-      vertices_ = new shape_msgs.msg.dds.geometry_msgs/Point();
+      vertices_ = new geometry_msgs.msg.dds.Point();
 
    }
 
@@ -64,7 +64,7 @@ public class Mesh implements ROS2Message<Mesh>
       return triangles_;
    }
 
-   public shape_msgs.msg.dds.geometry_msgs/Point getvertices()
+   public geometry_msgs.msg.dds.Point getvertices()
    {
       return vertices_;
    }

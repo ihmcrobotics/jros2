@@ -17,15 +17,15 @@ public class Path implements ROS2Message<Path>
    /**
       Indicates the frame_id of the path.
    */
-   private nav_msgs.msg.dds.std_msgs/Header header_;
+   private std_msgs.msg.dds.Header header_;
    /**
       Array of poses to follow.
    */
-   private nav_msgs.msg.dds.geometry_msgs/PoseStamped poses_;
+   private geometry_msgs.msg.dds.PoseStamped poses_;
 
    public Path()
    {
-      poses_ = new nav_msgs.msg.dds.geometry_msgs/PoseStamped();
+      poses_ = new geometry_msgs.msg.dds.PoseStamped();
 
    }
 
@@ -58,12 +58,12 @@ public class Path implements ROS2Message<Path>
    {
    }
 
-   public nav_msgs.msg.dds.std_msgs/Header getheader()
+   public std_msgs.msg.dds.Header getheader()
    {
       return header_;
    }
 
-   public nav_msgs.msg.dds.geometry_msgs/PoseStamped getposes()
+   public geometry_msgs.msg.dds.PoseStamped getposes()
    {
       return poses_;
    }
