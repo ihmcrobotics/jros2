@@ -62,8 +62,8 @@ public class BatteryState implements ROS2Message<BatteryState>
    /**
       If individual temperatures unknown but number of cells known set each to NaN
    */
-   private StringBuilder location_;
-   private StringBuilder serial_number_;
+   private final StringBuilder location_;
+   private final StringBuilder serial_number_;
 
    public BatteryState()
    {
@@ -146,8 +146,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       percentage_ = from.percentage_;
       cell_voltage_.set(from.cell_voltage_);
       cell_temperature_.set(from.cell_temperature_);
-      location_ = from.location_;
-      serial_number_ = from.serial_number_;
+      location_.delete(0, location_.length());
+      location_.insert(0, from.location_);
+      serial_number_.delete(0, serial_number_.length());
+      serial_number_.insert(0, from.serial_number_);
 
    }
 
@@ -236,19 +238,9 @@ public class BatteryState implements ROS2Message<BatteryState>
       return location_;
    }
 
-   public void setlocation(StringBuilder location_)
-   {
-      this.location_ = location_;
-   }
-
    public StringBuilder getserial_number()
    {
       return serial_number_;
-   }
-
-   public void setserial_number(StringBuilder serial_number_)
-   {
-      this.serial_number_ = serial_number_;
    }
 
 

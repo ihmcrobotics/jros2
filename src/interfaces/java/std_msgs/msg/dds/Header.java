@@ -23,7 +23,7 @@ public class Header implements ROS2Message<Header>
    /**
       Transform frame with which this data is associated.
    */
-   private StringBuilder frame_id_;
+   private final StringBuilder frame_id_;
 
    public Header()
    {
@@ -65,7 +65,8 @@ public class Header implements ROS2Message<Header>
    @Override
    public void set(Header from)
    {
-      frame_id_ = from.frame_id_;
+      frame_id_.delete(0, frame_id_.length());
+      frame_id_.insert(0, from.frame_id_);
 
    }
 
@@ -77,11 +78,6 @@ public class Header implements ROS2Message<Header>
    public StringBuilder getframe_id()
    {
       return frame_id_;
-   }
-
-   public void setframe_id(StringBuilder frame_id_)
-   {
-      this.frame_id_ = frame_id_;
    }
 
 

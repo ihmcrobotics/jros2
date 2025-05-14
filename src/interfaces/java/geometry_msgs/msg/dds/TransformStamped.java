@@ -30,7 +30,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    /**
       The frame id of the child frame to which this transform points.
    */
-   private StringBuilder child_frame_id_;
+   private final StringBuilder child_frame_id_;
    /**
       Translation and rotation in 3-dimensions of child_frame_id from header.frame_id.
    */
@@ -77,7 +77,8 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    @Override
    public void set(TransformStamped from)
    {
-      child_frame_id_ = from.child_frame_id_;
+      child_frame_id_.delete(0, child_frame_id_.length());
+      child_frame_id_.insert(0, from.child_frame_id_);
 
    }
 
@@ -89,11 +90,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    public StringBuilder getchild_frame_id()
    {
       return child_frame_id_;
-   }
-
-   public void setchild_frame_id(StringBuilder child_frame_id_)
-   {
-      this.child_frame_id_ = child_frame_id_;
    }
 
    public geometry_msgs.msg.dds.Transform gettransform()

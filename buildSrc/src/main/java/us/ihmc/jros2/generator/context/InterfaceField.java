@@ -37,7 +37,7 @@ public class InterfaceField
    {
       if (javaType != null)
       {
-         if (array && !getFixedSize())
+         if (array && !isFixedSize())
          {
             return "IDLObjectSequence<" + javaType + ">";
          }
@@ -133,8 +133,7 @@ public class InterfaceField
       this.stringLength = stringLength;
    }
 
-   // TODO: Change name
-   public boolean getArray()
+   public boolean isArray()
    {
       return array;
    }
@@ -144,8 +143,7 @@ public class InterfaceField
       this.array = array;
    }
 
-   // TODO: Change name
-   public boolean getUpperBounded()
+   public boolean isUpperBounded()
    {
       return upperBounded;
    }
@@ -155,10 +153,14 @@ public class InterfaceField
       this.upperBounded = upperBounded;
    }
 
-   // TODO: Change name
-   public boolean getUnbounded()
+   public boolean isUnbounded()
    {
       return unbounded;
+   }
+
+   public boolean isSequence()
+   {
+      return array && (upperBounded || unbounded);
    }
 
    public void unbounded(boolean unbounded)
@@ -166,10 +168,9 @@ public class InterfaceField
       this.unbounded = unbounded;
    }
 
-   // TODO: Change name
-   public boolean getFixedSize()
+   public boolean isFixedSize()
    {
-      return !getUpperBounded() && !getUnbounded();
+      return array && !upperBounded && !unbounded;
    }
 
    public int getLength()
@@ -274,7 +275,7 @@ public class InterfaceField
          throw new RuntimeException("Cannot infer Java type, InterfaceField type has not been set");
       }
 
-      if (getArray() && !getFixedSize())
+      if (isArray() && !isFixedSize())
       {
          if (isBuiltinType())
          {

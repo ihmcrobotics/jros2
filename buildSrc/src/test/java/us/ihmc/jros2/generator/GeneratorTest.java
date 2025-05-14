@@ -139,17 +139,17 @@ public class GeneratorTest
       Assertions.assertEquals("Goal header comment", testAction.getGoalFields().get("g").getHeaderComment());
       Assertions.assertEquals("goal", testAction.getGoalFields().get("g").getTrailingComment());
       Assertions.assertEquals("float32", testAction.getGoalFields().get("g").getType());
-      Assertions.assertTrue(testAction.getGoalFields().get("g").getArray());
+      Assertions.assertTrue(testAction.getGoalFields().get("g").isArray());
       Assertions.assertEquals(3, testAction.getGoalFields().get("g").getLength());
 
       Assertions.assertEquals("Result header comment", testAction.getResultFields().get("r").getHeaderComment());
       Assertions.assertEquals("result", testAction.getResultFields().get("r").getTrailingComment());
       Assertions.assertEquals("float32", testAction.getResultFields().get("r").getType());
-      Assertions.assertFalse(testAction.getResultFields().get("r").getArray());
+      Assertions.assertFalse(testAction.getResultFields().get("r").isArray());
 
       Assertions.assertEquals("Feedback header comment", testAction.getFeedbackFields().get("f").getHeaderComment());
       Assertions.assertEquals("feedback", testAction.getFeedbackFields().get("f").getTrailingComment());
       Assertions.assertEquals("TestMsg", testAction.getFeedbackFields().get("f").getType());
-      Assertions.assertFalse(testAction.getFeedbackFields().get("f").getArray());
+      Assertions.assertFalse(testAction.getFeedbackFields().get("f").isArray());
    }
 }

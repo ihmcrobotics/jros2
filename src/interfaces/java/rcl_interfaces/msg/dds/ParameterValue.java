@@ -37,7 +37,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    /**
       A textual value with no practical length limit.
    */
-   private StringBuilder string_value_;
+   private final StringBuilder string_value_;
    /**
       An array of bytes, used for non-textual information.
    */
@@ -57,7 +57,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    /**
       An array of string values.
    */
-   private IDLStringSequence string_array_value_;
+   private final IDLStringSequence string_array_value_;
 
    public ParameterValue()
    {
@@ -134,7 +134,8 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       bool_value_ = from.bool_value_;
       integer_value_ = from.integer_value_;
       double_value_ = from.double_value_;
-      string_value_ = from.string_value_;
+      string_value_.delete(0, string_value_.length());
+      string_value_.insert(0, from.string_value_);
       byte_array_value_.set(from.byte_array_value_);
       bool_array_value_.set(from.bool_array_value_);
       integer_array_value_.set(from.integer_array_value_);
@@ -186,11 +187,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    public StringBuilder getstring_value()
    {
       return string_value_;
-   }
-
-   public void setstring_value(StringBuilder string_value_)
-   {
-      this.string_value_ = string_value_;
    }
 
    public IDLByteSequence getbyte_array_value()

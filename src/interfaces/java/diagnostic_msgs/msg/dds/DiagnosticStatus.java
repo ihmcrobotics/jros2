@@ -28,15 +28,15 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    /**
       A description of the test/component reporting.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       A description of the status.
    */
-   private StringBuilder message_;
+   private final StringBuilder message_;
    /**
       A hardware unique string.
    */
-   private StringBuilder hardware_id_;
+   private final StringBuilder hardware_id_;
    /**
       An array of values associated with the status.
    */
@@ -94,9 +94,12 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public void set(DiagnosticStatus from)
    {
       level_ = from.level_;
-      name_ = from.name_;
-      message_ = from.message_;
-      hardware_id_ = from.hardware_id_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
+      message_.delete(0, message_.length());
+      message_.insert(0, from.message_);
+      hardware_id_.delete(0, hardware_id_.length());
+      hardware_id_.insert(0, from.hardware_id_);
 
    }
 
@@ -115,29 +118,14 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       return name_;
    }
 
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
    public StringBuilder getmessage()
    {
       return message_;
    }
 
-   public void setmessage(StringBuilder message_)
-   {
-      this.message_ = message_;
-   }
-
    public StringBuilder gethardware_id()
    {
       return hardware_id_;
-   }
-
-   public void sethardware_id(StringBuilder hardware_id_)
-   {
-      this.hardware_id_ = hardware_id_;
    }
 
    public IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> getvalues()

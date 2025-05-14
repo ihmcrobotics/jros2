@@ -76,7 +76,7 @@ public class State implements ROS2Message<State>
    /**
       A text label of the state.
    */
-   private StringBuilder label_;
+   private final StringBuilder label_;
 
    public State()
    {
@@ -121,7 +121,8 @@ public class State implements ROS2Message<State>
    public void set(State from)
    {
       id_ = from.id_;
-      label_ = from.label_;
+      label_.delete(0, label_.length());
+      label_.insert(0, from.label_);
 
    }
 
@@ -138,11 +139,6 @@ public class State implements ROS2Message<State>
    public StringBuilder getlabel()
    {
       return label_;
-   }
-
-   public void setlabel(StringBuilder label_)
-   {
-      this.label_ = label_;
    }
 
 

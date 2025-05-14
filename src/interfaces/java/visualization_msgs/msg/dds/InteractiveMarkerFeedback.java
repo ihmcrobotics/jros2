@@ -18,12 +18,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    /**
       Identifying string. Must be unique in the topic namespace.
    */
-   private StringBuilder client_id_;
+   private final StringBuilder client_id_;
    /**
       Specifies which interactive marker and control this message refers to
    */
-   private StringBuilder marker_name_;
-   private StringBuilder control_name_;
+   private final StringBuilder marker_name_;
+   private final StringBuilder control_name_;
    /**
       Type of the event
       KEEP_ALIVE: sent while dragging to keep up control of the marker
@@ -116,9 +116,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void set(InteractiveMarkerFeedback from)
    {
-      client_id_ = from.client_id_;
-      marker_name_ = from.marker_name_;
-      control_name_ = from.control_name_;
+      client_id_.delete(0, client_id_.length());
+      client_id_.insert(0, from.client_id_);
+      marker_name_.delete(0, marker_name_.length());
+      marker_name_.insert(0, from.marker_name_);
+      control_name_.delete(0, control_name_.length());
+      control_name_.insert(0, from.control_name_);
       event_type_ = from.event_type_;
       menu_entry_id_ = from.menu_entry_id_;
       mouse_point_valid_ = from.mouse_point_valid_;
@@ -135,29 +138,14 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return client_id_;
    }
 
-   public void setclient_id(StringBuilder client_id_)
-   {
-      this.client_id_ = client_id_;
-   }
-
    public StringBuilder getmarker_name()
    {
       return marker_name_;
    }
 
-   public void setmarker_name(StringBuilder marker_name_)
-   {
-      this.marker_name_ = marker_name_;
-   }
-
    public StringBuilder getcontrol_name()
    {
       return control_name_;
-   }
-
-   public void setcontrol_name(StringBuilder control_name_)
-   {
-      this.control_name_ = control_name_;
    }
 
    public byte getevent_type()

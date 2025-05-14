@@ -24,7 +24,7 @@ public class GoalID implements ROS2Message<GoalID>
       result message with specific goal requests. The id
       specified must be unique.
    */
-   private StringBuilder id_;
+   private final StringBuilder id_;
 
    public GoalID()
    {
@@ -66,7 +66,8 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void set(GoalID from)
    {
-      id_ = from.id_;
+      id_.delete(0, id_.length());
+      id_.insert(0, from.id_);
 
    }
 
@@ -78,11 +79,6 @@ public class GoalID implements ROS2Message<GoalID>
    public StringBuilder getid()
    {
       return id_;
-   }
-
-   public void setid(StringBuilder id_)
-   {
-      this.id_ = id_;
    }
 
 

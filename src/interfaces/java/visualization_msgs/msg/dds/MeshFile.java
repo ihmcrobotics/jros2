@@ -18,7 +18,7 @@ public class MeshFile implements ROS2Message<MeshFile>
       The filename is used for both debug purposes and to provide a file extension
       for whatever parser is used.
    */
-   private StringBuilder filename_;
+   private final StringBuilder filename_;
    /**
       This stores the raw text of the mesh file.
    */
@@ -67,7 +67,8 @@ public class MeshFile implements ROS2Message<MeshFile>
    @Override
    public void set(MeshFile from)
    {
-      filename_ = from.filename_;
+      filename_.delete(0, filename_.length());
+      filename_.insert(0, from.filename_);
       data_.set(from.data_);
 
    }
@@ -75,11 +76,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    public StringBuilder getfilename()
    {
       return filename_;
-   }
-
-   public void setfilename(StringBuilder filename_)
-   {
-      this.filename_ = filename_;
    }
 
    public IDLByteSequence getdata()

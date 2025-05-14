@@ -26,7 +26,7 @@ public class PointField implements ROS2Message<PointField>
    /**
       Common PointField names are x, y, z, intensity, rgb, rgba
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    private int offset_;
    private int count_;
 
@@ -75,7 +75,8 @@ public class PointField implements ROS2Message<PointField>
    @Override
    public void set(PointField from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
       offset_ = from.offset_;
       count_ = from.count_;
 
@@ -84,11 +85,6 @@ public class PointField implements ROS2Message<PointField>
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
    public int getoffset()

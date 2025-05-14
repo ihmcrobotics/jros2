@@ -23,7 +23,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    /**
       Fully qualified ROS path to node.
    */
-   private StringBuilder node_;
+   private final StringBuilder node_;
    /**
       New parameters that have been set for this node.
    */
@@ -80,7 +80,8 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    @Override
    public void set(ParameterEvent from)
    {
-      node_ = from.node_;
+      node_.delete(0, node_.length());
+      node_.insert(0, from.node_);
 
    }
 
@@ -92,11 +93,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    public StringBuilder getnode()
    {
       return node_;
-   }
-
-   public void setnode(StringBuilder node_)
-   {
-      this.node_ = node_;
    }
 
    public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getnew_parameters()

@@ -33,7 +33,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       The channel name should give semantics of the channel (e.g.
       "intensity" instead of "value").
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       The values array should be 1-1 with the elements of the associated
       PointCloud.
@@ -83,7 +83,8 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    @Override
    public void set(ChannelFloat32 from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
       values_.set(from.values_);
 
    }
@@ -91,11 +92,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
    public IDLFloatSequence getvalues()

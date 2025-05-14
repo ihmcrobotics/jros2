@@ -31,7 +31,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       sensor_msgs/distortion_models.hpp. For most cameras, "plumb_bob" - a
       simple model of radial and tangential distortion - is sufficent.
    */
-   private StringBuilder distortion_model_;
+   private final StringBuilder distortion_model_;
    /**
       The distortion parameters, size depending on the distortion model.
       For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
@@ -153,7 +153,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       height_ = from.height_;
       width_ = from.width_;
-      distortion_model_ = from.distortion_model_;
+      distortion_model_.delete(0, distortion_model_.length());
+      distortion_model_.insert(0, from.distortion_model_);
       d_.set(from.d_);
       for (int i = 0; i < p_.length; ++i)
       {
@@ -192,11 +193,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public StringBuilder getdistortion_model()
    {
       return distortion_model_;
-   }
-
-   public void setdistortion_model(StringBuilder distortion_model_)
-   {
-      this.distortion_model_ = distortion_model_;
    }
 
    public IDLDoubleSequence getd()

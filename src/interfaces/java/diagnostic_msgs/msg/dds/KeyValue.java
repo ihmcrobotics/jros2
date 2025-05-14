@@ -14,11 +14,11 @@ public class KeyValue implements ROS2Message<KeyValue>
    /**
       What to label this value when viewing.
    */
-   private StringBuilder key_;
+   private final StringBuilder key_;
    /**
       A value to track over time.
    */
-   private StringBuilder value_;
+   private final StringBuilder value_;
 
    public KeyValue()
    {
@@ -63,8 +63,10 @@ public class KeyValue implements ROS2Message<KeyValue>
    @Override
    public void set(KeyValue from)
    {
-      key_ = from.key_;
-      value_ = from.value_;
+      key_.delete(0, key_.length());
+      key_.insert(0, from.key_);
+      value_.delete(0, value_.length());
+      value_.insert(0, from.value_);
 
    }
 
@@ -73,19 +75,9 @@ public class KeyValue implements ROS2Message<KeyValue>
       return key_;
    }
 
-   public void setkey(StringBuilder key_)
-   {
-      this.key_ = key_;
-   }
-
    public StringBuilder getvalue()
    {
       return value_;
-   }
-
-   public void setvalue(StringBuilder value_)
-   {
-      this.value_ = value_;
    }
 
 

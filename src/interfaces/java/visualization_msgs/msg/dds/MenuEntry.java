@@ -56,11 +56,11 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    /**
       menu / entry title
    */
-   private StringBuilder title_;
+   private final StringBuilder title_;
    /**
       Arguments to command indicated by command_type (below)
    */
-   private StringBuilder command_;
+   private final StringBuilder command_;
    /**
       Command_type stores the type of response desired when this menu
       entry is clicked.
@@ -127,8 +127,10 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       id_ = from.id_;
       parent_id_ = from.parent_id_;
-      title_ = from.title_;
-      command_ = from.command_;
+      title_.delete(0, title_.length());
+      title_.insert(0, from.title_);
+      command_.delete(0, command_.length());
+      command_.insert(0, from.command_);
       command_type_ = from.command_type_;
 
    }
@@ -158,19 +160,9 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return title_;
    }
 
-   public void settitle(StringBuilder title_)
-   {
-      this.title_ = title_;
-   }
-
    public StringBuilder getcommand()
    {
       return command_;
-   }
-
-   public void setcommand(StringBuilder command_)
-   {
-      this.command_ = command_;
    }
 
    public byte getcommand_type()

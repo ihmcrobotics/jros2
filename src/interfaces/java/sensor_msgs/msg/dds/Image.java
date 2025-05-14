@@ -18,7 +18,7 @@ public class Image implements ROS2Message<Image>
    private final std_msgs.msg.dds.Header header_;
    private int height_;
    private int width_;
-   private StringBuilder encoding_;
+   private final StringBuilder encoding_;
    private byte is_bigendian_;
    private int step_;
    private final IDLByteSequence data_;
@@ -81,7 +81,8 @@ public class Image implements ROS2Message<Image>
    {
       height_ = from.height_;
       width_ = from.width_;
-      encoding_ = from.encoding_;
+      encoding_.delete(0, encoding_.length());
+      encoding_.insert(0, from.encoding_);
       is_bigendian_ = from.is_bigendian_;
       step_ = from.step_;
       data_.set(from.data_);
@@ -116,11 +117,6 @@ public class Image implements ROS2Message<Image>
    public StringBuilder getencoding()
    {
       return encoding_;
-   }
-
-   public void setencoding(StringBuilder encoding_)
-   {
-      this.encoding_ = encoding_;
    }
 
    public byte getis_bigendian()

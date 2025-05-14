@@ -104,7 +104,7 @@ public class Transition implements ROS2Message<Transition>
    /**
       A text label of the transition.
    */
-   private StringBuilder label_;
+   private final StringBuilder label_;
 
    public Transition()
    {
@@ -149,7 +149,8 @@ public class Transition implements ROS2Message<Transition>
    public void set(Transition from)
    {
       id_ = from.id_;
-      label_ = from.label_;
+      label_.delete(0, label_.length());
+      label_.insert(0, from.label_);
 
    }
 
@@ -166,11 +167,6 @@ public class Transition implements ROS2Message<Transition>
    public StringBuilder getlabel()
    {
       return label_;
-   }
-
-   public void setlabel(StringBuilder label_)
-   {
-      this.label_ = label_;
    }
 
 

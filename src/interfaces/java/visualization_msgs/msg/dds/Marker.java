@@ -42,7 +42,7 @@ public class Marker implements ROS2Message<Marker>
       Namespace in which to place the object.
       Used in conjunction with id to create a unique name for the object.
    */
-   private StringBuilder ns_;
+   private final StringBuilder ns_;
    /**
       Object ID used in conjunction with the namespace for manipulating and deleting the object later.
    */
@@ -96,7 +96,7 @@ public class Marker implements ROS2Message<Marker>
       or an embedded texture via a string matching the format:
       "embedded://texture_name"
    */
-   private StringBuilder texture_resource_;
+   private final StringBuilder texture_resource_;
    /**
       An image to be loaded into the rendering engine as the texture for this marker.
       This will be used iff texture_resource is set to embedded.
@@ -109,7 +109,7 @@ public class Marker implements ROS2Message<Marker>
    /**
       Only used for text markers
    */
-   private StringBuilder text_;
+   private final StringBuilder text_;
    /**
       Only used for MESH_RESOURCE markers.
       Similar to texture_resource, mesh_resource uses resource retriever to load a mesh.
@@ -117,7 +117,7 @@ public class Marker implements ROS2Message<Marker>
       use the following format for mesh_resource:
       "embedded://mesh_name"
    */
-   private StringBuilder mesh_resource_;
+   private final StringBuilder mesh_resource_;
    private final visualization_msgs.msg.dds.MeshFile mesh_file_;
    private boolean mesh_use_embedded_materials_;
 
@@ -197,14 +197,18 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void set(Marker from)
    {
-      ns_ = from.ns_;
+      ns_.delete(0, ns_.length());
+      ns_.insert(0, from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
       frame_locked_ = from.frame_locked_;
-      texture_resource_ = from.texture_resource_;
-      text_ = from.text_;
-      mesh_resource_ = from.mesh_resource_;
+      texture_resource_.delete(0, texture_resource_.length());
+      texture_resource_.insert(0, from.texture_resource_);
+      text_.delete(0, text_.length());
+      text_.insert(0, from.text_);
+      mesh_resource_.delete(0, mesh_resource_.length());
+      mesh_resource_.insert(0, from.mesh_resource_);
       mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
 
    }
@@ -217,11 +221,6 @@ public class Marker implements ROS2Message<Marker>
    public StringBuilder getns()
    {
       return ns_;
-   }
-
-   public void setns(StringBuilder ns_)
-   {
-      this.ns_ = ns_;
    }
 
    public int getid()
@@ -299,11 +298,6 @@ public class Marker implements ROS2Message<Marker>
       return texture_resource_;
    }
 
-   public void settexture_resource(StringBuilder texture_resource_)
-   {
-      this.texture_resource_ = texture_resource_;
-   }
-
    public sensor_msgs.msg.dds.CompressedImage gettexture()
    {
       return texture_;
@@ -319,19 +313,9 @@ public class Marker implements ROS2Message<Marker>
       return text_;
    }
 
-   public void settext(StringBuilder text_)
-   {
-      this.text_ = text_;
-   }
-
    public StringBuilder getmesh_resource()
    {
       return mesh_resource_;
-   }
-
-   public void setmesh_resource(StringBuilder mesh_resource_)
-   {
-      this.mesh_resource_ = mesh_resource_;
    }
 
    public visualization_msgs.msg.dds.MeshFile getmesh_file()

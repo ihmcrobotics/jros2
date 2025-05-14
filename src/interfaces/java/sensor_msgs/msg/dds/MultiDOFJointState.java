@@ -33,7 +33,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
 
    private final std_msgs.msg.dds.Header header_;
-   private IDLStringSequence joint_names_;
+   private final IDLStringSequence joint_names_;
    private final IDLObjectSequence<geometry_msgs.msg.dds.Transform> transforms_;
    private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> twist_;
    private final IDLObjectSequence<geometry_msgs.msg.dds.Wrench> wrench_;

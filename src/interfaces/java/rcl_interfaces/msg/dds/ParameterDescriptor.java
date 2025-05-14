@@ -17,7 +17,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       The name of the parameter.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       Enum values are defined in the `ParameterType.msg` message.
    */
@@ -25,7 +25,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       Description of the parameter, visible from introspection tools.
    */
-   private StringBuilder description_;
+   private final StringBuilder description_;
    /**
       Plain English description of additional constraints which cannot be expressed
       with the available constraints, e.g. "only prime numbers".
@@ -33,7 +33,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       By convention, this should only be used to clarify constraints which cannot
       be completely expressed with the parameter constraints below.
    */
-   private StringBuilder additional_constraints_;
+   private final StringBuilder additional_constraints_;
    /**
       If 'true' then the value cannot change after it has been initialized.
    */
@@ -109,10 +109,13 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    @Override
    public void set(ParameterDescriptor from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
       type_ = from.type_;
-      description_ = from.description_;
-      additional_constraints_ = from.additional_constraints_;
+      description_.delete(0, description_.length());
+      description_.insert(0, from.description_);
+      additional_constraints_.delete(0, additional_constraints_.length());
+      additional_constraints_.insert(0, from.additional_constraints_);
       read_only_ = from.read_only_;
       dynamic_typing_ = from.dynamic_typing_;
 
@@ -121,11 +124,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
    public byte gettype()
@@ -143,19 +141,9 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return description_;
    }
 
-   public void setdescription(StringBuilder description_)
-   {
-      this.description_ = description_;
-   }
-
    public StringBuilder getadditional_constraints()
    {
       return additional_constraints_;
-   }
-
-   public void setadditional_constraints(StringBuilder additional_constraints_)
-   {
-      this.additional_constraints_ = additional_constraints_;
    }
 
    public boolean getread_only()

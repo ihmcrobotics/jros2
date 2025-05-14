@@ -17,7 +17,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       Identifying string. Must be unique in the topic namespace
       that this server works on.
    */
-   private StringBuilder server_id_;
+   private final StringBuilder server_id_;
    /**
       Sequence number.
       The client will use this to detect if it has missed an update.
@@ -46,7 +46,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    /**
       Names of markers to be erased
    */
-   private IDLStringSequence erases_;
+   private final IDLStringSequence erases_;
 
    public InteractiveMarkerUpdate()
    {
@@ -99,7 +99,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    @Override
    public void set(InteractiveMarkerUpdate from)
    {
-      server_id_ = from.server_id_;
+      server_id_.delete(0, server_id_.length());
+      server_id_.insert(0, from.server_id_);
       seq_num_ = from.seq_num_;
       type_ = from.type_;
       erases_.set(from.erases_);
@@ -109,11 +110,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public StringBuilder getserver_id()
    {
       return server_id_;
-   }
-
-   public void setserver_id(StringBuilder server_id_)
-   {
-      this.server_id_ = server_id_;
    }
 
    public long getseq_num()

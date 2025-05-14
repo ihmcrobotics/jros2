@@ -18,7 +18,7 @@ public class Parameter implements ROS2Message<Parameter>
    /**
       The full name of the parameter.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       The parameter's value which can be one of several types, see
       `ParameterValue.msg` and `ParameterType.msg`.
@@ -65,18 +65,14 @@ public class Parameter implements ROS2Message<Parameter>
    @Override
    public void set(Parameter from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
 
    }
 
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
    public rcl_interfaces.msg.dds.ParameterValue getvalue()

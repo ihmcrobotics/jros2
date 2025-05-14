@@ -17,7 +17,7 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayDimension_";
 
-   private StringBuilder label_;
+   private final StringBuilder label_;
    private int size_;
    private int stride_;
 
@@ -66,7 +66,8 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    @Override
    public void set(MultiArrayDimension from)
    {
-      label_ = from.label_;
+      label_.delete(0, label_.length());
+      label_.insert(0, from.label_);
       size_ = from.size_;
       stride_ = from.stride_;
 
@@ -75,11 +76,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    public StringBuilder getlabel()
    {
       return label_;
-   }
-
-   public void setlabel(StringBuilder label_)
-   {
-      this.label_ = label_;
    }
 
    public int getsize()

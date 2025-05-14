@@ -17,7 +17,7 @@ public class String implements ROS2Message<String>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::String_";
 
-   private StringBuilder data_;
+   private final StringBuilder data_;
 
    public String()
    {
@@ -58,18 +58,14 @@ public class String implements ROS2Message<String>
    @Override
    public void set(String from)
    {
-      data_ = from.data_;
+      data_.delete(0, data_.length());
+      data_.insert(0, from.data_);
 
    }
 
    public StringBuilder getdata()
    {
       return data_;
-   }
-
-   public void setdata(StringBuilder data_)
-   {
-      this.data_ = data_;
    }
 
 

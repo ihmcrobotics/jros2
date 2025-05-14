@@ -19,7 +19,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       You need to assign a unique value to this to receive feedback from the GUI
       on what actions the user performs on this control (e.g. a button click).
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       Defines the local coordinate frame (relative to the pose of the parent
       interactive marker) in which is being rotated and translated.
@@ -91,7 +91,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       e.g. "Move the robot".
       Default: A generic description based on the interaction mode
    */
-   private StringBuilder description_;
+   private final StringBuilder description_;
 
    public InteractiveMarkerControl()
    {
@@ -150,23 +150,20 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    @Override
    public void set(InteractiveMarkerControl from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
       orientation_mode_ = from.orientation_mode_;
       interaction_mode_ = from.interaction_mode_;
       always_visible_ = from.always_visible_;
       independent_marker_orientation_ = from.independent_marker_orientation_;
-      description_ = from.description_;
+      description_.delete(0, description_.length());
+      description_.insert(0, from.description_);
 
    }
 
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
    public geometry_msgs.msg.dds.Quaternion getorientation()
@@ -222,11 +219,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public StringBuilder getdescription()
    {
       return description_;
-   }
-
-   public void setdescription(StringBuilder description_)
-   {
-      this.description_ = description_;
    }
 
 

@@ -47,7 +47,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    /**
       Allow for the user to associate a string with GoalStatus for debugging.
    */
-   private StringBuilder text_;
+   private final StringBuilder text_;
 
    public GoalStatus()
    {
@@ -93,7 +93,8 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public void set(GoalStatus from)
    {
       status_ = from.status_;
-      text_ = from.text_;
+      text_.delete(0, text_.length());
+      text_.insert(0, from.text_);
 
    }
 
@@ -115,11 +116,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public StringBuilder gettext()
    {
       return text_;
-   }
-
-   public void settext(StringBuilder text_)
-   {
-      this.text_ = text_;
    }
 
 

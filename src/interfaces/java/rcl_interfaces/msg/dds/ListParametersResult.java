@@ -14,12 +14,12 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    /**
       The resulting parameters under the given prefixes.
    */
-   private IDLStringSequence names_;
+   private final IDLStringSequence names_;
    /**
       The resulting prefixes under the given prefixes.
       TODO(wjwwood): link to prefix definition and rules.
    */
-   private IDLStringSequence prefixes_;
+   private final IDLStringSequence prefixes_;
 
    public ListParametersResult()
    {

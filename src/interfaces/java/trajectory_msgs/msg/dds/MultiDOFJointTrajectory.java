@@ -15,7 +15,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
       The header is used to specify the coordinate frame and the reference time for the trajectory durations
    */
    private final std_msgs.msg.dds.Header header_;
-   private IDLStringSequence joint_names_;
+   private final IDLStringSequence joint_names_;
    private final IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint> points_;
 
    public MultiDOFJointTrajectory()

@@ -28,15 +28,15 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    /**
       Name metric measurement source, e.g., node, topic, or process name
    */
-   private StringBuilder measurement_source_name_;
+   private final StringBuilder measurement_source_name_;
    /**
       Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
    */
-   private StringBuilder metrics_source_;
+   private final StringBuilder metrics_source_;
    /**
       Unit of measure of the metric, e.g. percent, mb, seconds, etc.
    */
-   private StringBuilder unit_;
+   private final StringBuilder unit_;
    /**
       Measurement window start time
    */
@@ -100,9 +100,12 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    @Override
    public void set(MetricsMessage from)
    {
-      measurement_source_name_ = from.measurement_source_name_;
-      metrics_source_ = from.metrics_source_;
-      unit_ = from.unit_;
+      measurement_source_name_.delete(0, measurement_source_name_.length());
+      measurement_source_name_.insert(0, from.measurement_source_name_);
+      metrics_source_.delete(0, metrics_source_.length());
+      metrics_source_.insert(0, from.metrics_source_);
+      unit_.delete(0, unit_.length());
+      unit_.insert(0, from.unit_);
 
    }
 
@@ -111,29 +114,14 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return measurement_source_name_;
    }
 
-   public void setmeasurement_source_name(StringBuilder measurement_source_name_)
-   {
-      this.measurement_source_name_ = measurement_source_name_;
-   }
-
    public StringBuilder getmetrics_source()
    {
       return metrics_source_;
    }
 
-   public void setmetrics_source(StringBuilder metrics_source_)
-   {
-      this.metrics_source_ = metrics_source_;
-   }
-
    public StringBuilder getunit()
    {
       return unit_;
-   }
-
-   public void setunit(StringBuilder unit_)
-   {
-      this.unit_ = unit_;
    }
 
    public builtin_interfaces.msg.dds.Time getwindow_start()

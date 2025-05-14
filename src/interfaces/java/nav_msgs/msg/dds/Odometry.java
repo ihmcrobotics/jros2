@@ -23,7 +23,7 @@ public class Odometry implements ROS2Message<Odometry>
    /**
       Frame id the pose points to. The twist is in this coordinate frame.
    */
-   private StringBuilder child_frame_id_;
+   private final StringBuilder child_frame_id_;
    /**
       Estimated pose that is typically relative to a fixed world frame.
    */
@@ -75,7 +75,8 @@ public class Odometry implements ROS2Message<Odometry>
    @Override
    public void set(Odometry from)
    {
-      child_frame_id_ = from.child_frame_id_;
+      child_frame_id_.delete(0, child_frame_id_.length());
+      child_frame_id_.insert(0, from.child_frame_id_);
 
    }
 
@@ -87,11 +88,6 @@ public class Odometry implements ROS2Message<Odometry>
    public StringBuilder getchild_frame_id()
    {
       return child_frame_id_;
-   }
-
-   public void setchild_frame_id(StringBuilder child_frame_id_)
-   {
-      this.child_frame_id_ = child_frame_id_;
    }
 
    public geometry_msgs.msg.dds.PoseWithCovariance getpose()

@@ -25,7 +25,7 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       Identifying string. Must be globally unique in
       the topic that this message is sent through.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
 
    public InteractiveMarkerPose()
    {
@@ -68,7 +68,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void set(InteractiveMarkerPose from)
    {
-      name_ = from.name_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
 
    }
 
@@ -85,11 +86,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    public StringBuilder getname()
    {
       return name_;
-   }
-
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
    }
 
 

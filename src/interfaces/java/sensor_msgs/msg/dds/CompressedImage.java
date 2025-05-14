@@ -15,7 +15,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::CompressedImage_";
 
    private final std_msgs.msg.dds.Header header_;
-   private StringBuilder format_;
+   private final StringBuilder format_;
    private final IDLByteSequence data_;
 
    public CompressedImage()
@@ -62,7 +62,8 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void set(CompressedImage from)
    {
-      format_ = from.format_;
+      format_.delete(0, format_.length());
+      format_.insert(0, from.format_);
       data_.set(from.data_);
 
    }
@@ -75,11 +76,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    public StringBuilder getformat()
    {
       return format_;
-   }
-
-   public void setformat(StringBuilder format_)
-   {
-      this.format_ = format_;
    }
 
    public IDLByteSequence getdata()

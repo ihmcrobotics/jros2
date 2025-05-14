@@ -58,19 +58,19 @@ public class Log implements ROS2Message<Log>
    /**
       The name representing the logger this message came from.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       The full log message.
    */
-   private StringBuilder msg_;
+   private final StringBuilder msg_;
    /**
       The file the message came from.
    */
-   private StringBuilder file_;
+   private final StringBuilder file_;
    /**
       The function the message came from.
    */
-   private StringBuilder function_;
+   private final StringBuilder function_;
    /**
       The line in the file the message came from.
    */
@@ -135,10 +135,14 @@ public class Log implements ROS2Message<Log>
    public void set(Log from)
    {
       level_ = from.level_;
-      name_ = from.name_;
-      msg_ = from.msg_;
-      file_ = from.file_;
-      function_ = from.function_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
+      msg_.delete(0, msg_.length());
+      msg_.insert(0, from.msg_);
+      file_.delete(0, file_.length());
+      file_.insert(0, from.file_);
+      function_.delete(0, function_.length());
+      function_.insert(0, from.function_);
       line_ = from.line_;
 
    }
@@ -163,19 +167,9 @@ public class Log implements ROS2Message<Log>
       return name_;
    }
 
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
    public StringBuilder getmsg()
    {
       return msg_;
-   }
-
-   public void setmsg(StringBuilder msg_)
-   {
-      this.msg_ = msg_;
    }
 
    public StringBuilder getfile()
@@ -183,19 +177,9 @@ public class Log implements ROS2Message<Log>
       return file_;
    }
 
-   public void setfile(StringBuilder file_)
-   {
-      this.file_ = file_;
-   }
-
    public StringBuilder getfunction()
    {
       return function_;
-   }
-
-   public void setfunction(StringBuilder function_)
-   {
-      this.function_ = function_;
    }
 
    public int getline()

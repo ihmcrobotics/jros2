@@ -28,7 +28,7 @@ public class <context.name> implements ROS2Message\<<context.name>>
    <field.headerComment>
 */
 <endif>
-<if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.array)&&!field.builtinStringType)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
+<if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
    }>
    public <context.name>()
    {
@@ -132,8 +132,11 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 {
    <field.javaName>[i] = from.<field.javaName>[i];
 \}
-      <elseif(field.array&&!field.fixedSize)>
+      <elseif(field.sequence)>
 <field.javaName>.set(from.<field.javaName>);
+      <elseif(!field.array&&field.builtinStringType)>
+<field.javaName>.delete(0, <field.javaName>.length());
+<field.javaName>.insert(0, from.<field.javaName>);
       <elseif(!field.array)>
 <field.javaName> = from.<field.javaName>;
       <endif>
@@ -150,7 +153,7 @@ public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.nam
    return <field.javaName>;
 \}
 
-<if(field.builtinType&&!field.array)>
+<if(field.builtinType&&!field.builtinStringType&&!field.array)>
 public void set<field.name>(<field.javaType> <field.javaName>)
 {
    this.<field.javaName> = <field.javaName>;

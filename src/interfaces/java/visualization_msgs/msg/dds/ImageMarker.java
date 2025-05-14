@@ -22,7 +22,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    /**
       Namespace which is used with the id to form a unique id.
    */
-   private StringBuilder ns_;
+   private final StringBuilder ns_;
    /**
       Unique id within the namespace.
    */
@@ -130,7 +130,8 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    @Override
    public void set(ImageMarker from)
    {
-      ns_ = from.ns_;
+      ns_.delete(0, ns_.length());
+      ns_.insert(0, from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
@@ -147,11 +148,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    public StringBuilder getns()
    {
       return ns_;
-   }
-
-   public void setns(StringBuilder ns_)
-   {
-      this.ns_ = ns_;
    }
 
    public int getid()

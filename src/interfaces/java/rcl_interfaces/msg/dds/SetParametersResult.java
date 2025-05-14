@@ -20,7 +20,7 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       Reason why the setting was either successful or a failure. This should only be
       used for logging and user interfaces.
    */
-   private StringBuilder reason_;
+   private final StringBuilder reason_;
 
    public SetParametersResult()
    {
@@ -65,7 +65,8 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    public void set(SetParametersResult from)
    {
       successful_ = from.successful_;
-      reason_ = from.reason_;
+      reason_.delete(0, reason_.length());
+      reason_.insert(0, from.reason_);
 
    }
 
@@ -82,11 +83,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    public StringBuilder getreason()
    {
       return reason_;
-   }
-
-   public void setreason(StringBuilder reason_)
-   {
-      this.reason_ = reason_;
    }
 
 

@@ -28,11 +28,11 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       Identifying string. Must be globally unique in
       the topic that this message is sent through.
    */
-   private StringBuilder name_;
+   private final StringBuilder name_;
    /**
       Short description (< 40 characters).
    */
-   private StringBuilder description_;
+   private final StringBuilder description_;
    /**
       Scale to be used for default controls (default=1).
    */
@@ -96,8 +96,10 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    @Override
    public void set(InteractiveMarker from)
    {
-      name_ = from.name_;
-      description_ = from.description_;
+      name_.delete(0, name_.length());
+      name_.insert(0, from.name_);
+      description_.delete(0, description_.length());
+      description_.insert(0, from.description_);
       scale_ = from.scale_;
 
    }
@@ -117,19 +119,9 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       return name_;
    }
 
-   public void setname(StringBuilder name_)
-   {
-      this.name_ = name_;
-   }
-
    public StringBuilder getdescription()
    {
       return description_;
-   }
-
-   public void setdescription(StringBuilder description_)
-   {
-      this.description_ = description_;
    }
 
    public float getscale()

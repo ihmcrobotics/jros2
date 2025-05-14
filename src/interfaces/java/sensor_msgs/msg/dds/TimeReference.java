@@ -16,7 +16,7 @@ public class TimeReference implements ROS2Message<TimeReference>
 
    private final std_msgs.msg.dds.Header header_;
    private final builtin_interfaces.msg.dds.Time time_ref_;
-   private StringBuilder source_;
+   private final StringBuilder source_;
 
    public TimeReference()
    {
@@ -59,7 +59,8 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void set(TimeReference from)
    {
-      source_ = from.source_;
+      source_.delete(0, source_.length());
+      source_.insert(0, from.source_);
 
    }
 
@@ -76,11 +77,6 @@ public class TimeReference implements ROS2Message<TimeReference>
    public StringBuilder getsource()
    {
       return source_;
-   }
-
-   public void setsource(StringBuilder source_)
-   {
-      this.source_ = source_;
    }
 
 
