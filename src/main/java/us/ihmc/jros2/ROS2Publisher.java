@@ -13,8 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
-import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.PERIOD;
-import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.SIZE;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
  * A ROS 2-compatible publisher for publishing {@link ROS2Message} types.
@@ -123,8 +122,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             try
             {
                Header header = (Header) getHeaderMethod.invoke(message);
-               // TODO: Uncomment when Header message is included in generated Java messages, and the timestamp is included in the Header Java message.
-//               long timestampMillis = (1000L * header.getStamp().getsec()) + (header.getStamp().getnanosec() / 1000000L);
+               // TODO: Uncomment when the time stamp object is not null in the Header message
+//               long timestampMillis = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
 //               statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
             }
             catch (IllegalAccessException | InvocationTargetException e)

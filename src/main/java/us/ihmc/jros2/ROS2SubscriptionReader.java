@@ -52,7 +52,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
          try
          {
             Header header = (Header) getHeaderMethod.invoke(data);
-            // TODO: Uncomment when Header message is included in generated Java messages, and the timestamp is included in the Header Java message.
+            // TODO: Uncomment when the time stamp object is not null in the Header message
 //            lastMessageTimestamp = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
          }
          catch (IllegalAccessException | InvocationTargetException e)

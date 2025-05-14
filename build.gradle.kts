@@ -24,8 +24,8 @@ sourceSets {
     }
 
     named("main") {
-        compileClasspath += sourceSets["common_interfaces"].output
-        runtimeClasspath += sourceSets["common_interfaces"].output
+        compileClasspath += sourceSets["interfaces"].output
+        runtimeClasspath += sourceSets["interfaces"].output
     }
 
     named("test") {
