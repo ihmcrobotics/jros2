@@ -159,5 +159,8 @@ public class StatisticsTest
       assertEquals(publishCount.get() * expectedPeriod, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedPeriod, statistics.get(LATEST), 1E-5);
       assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
+
+      node.destroyPublisher(publisher);
+      node.close();
    }
 }
