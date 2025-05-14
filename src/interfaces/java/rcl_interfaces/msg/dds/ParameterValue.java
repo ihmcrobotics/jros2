@@ -122,12 +122,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ParameterValue from)
    {
       type_ = from.type_;

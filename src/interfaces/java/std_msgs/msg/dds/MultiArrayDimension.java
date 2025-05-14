@@ -58,12 +58,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MultiArrayDimension from)
    {
       label_.delete(0, label_.length());

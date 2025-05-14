@@ -49,12 +49,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PolygonInstance from)
    {
       id_ = from.id_;

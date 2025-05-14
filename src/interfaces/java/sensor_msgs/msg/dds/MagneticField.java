@@ -64,12 +64,6 @@ public class MagneticField implements ROS2Message<MagneticField>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MagneticField from)
    {
       for (int i = 0; i < magnetic_field_covariance_.length; ++i)

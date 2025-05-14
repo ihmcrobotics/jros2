@@ -67,12 +67,6 @@ public class Odometry implements ROS2Message<Odometry>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Odometry from)
    {
       child_frame_id_.delete(0, child_frame_id_.length());

@@ -78,12 +78,6 @@ public class Range implements ROS2Message<Range>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Range from)
    {
       radiation_type_ = from.radiation_type_;

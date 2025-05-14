@@ -67,12 +67,6 @@ public class PointField implements ROS2Message<PointField>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PointField from)
    {
       name_.delete(0, name_.length());

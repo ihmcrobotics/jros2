@@ -60,12 +60,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InteractiveMarkerPose from)
    {
       name_.delete(0, name_.length());

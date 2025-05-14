@@ -54,12 +54,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(RelativeHumidity from)
    {
       relative_humidity_ = from.relative_humidity_;

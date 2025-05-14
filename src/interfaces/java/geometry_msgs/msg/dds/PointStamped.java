@@ -43,12 +43,6 @@ public class PointStamped implements ROS2Message<PointStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PointStamped from)
    {
    }

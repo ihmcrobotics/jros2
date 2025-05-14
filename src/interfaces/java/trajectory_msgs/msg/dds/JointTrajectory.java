@@ -60,12 +60,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(JointTrajectory from)
    {
       joint_names_.set(from.joint_names_);

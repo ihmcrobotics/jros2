@@ -189,12 +189,6 @@ public class Marker implements ROS2Message<Marker>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Marker from)
    {
       ns_.delete(0, ns_.length());

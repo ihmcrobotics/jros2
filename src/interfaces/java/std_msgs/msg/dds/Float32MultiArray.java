@@ -38,12 +38,6 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Float32MultiArray from)
    {
    }

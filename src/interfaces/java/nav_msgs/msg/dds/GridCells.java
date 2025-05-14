@@ -63,12 +63,6 @@ public class GridCells implements ROS2Message<GridCells>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(GridCells from)
    {
       cell_width_ = from.cell_width_;

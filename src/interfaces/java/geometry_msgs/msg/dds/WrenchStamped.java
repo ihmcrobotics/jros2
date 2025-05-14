@@ -43,12 +43,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(WrenchStamped from)
    {
    }

@@ -89,12 +89,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(JointTrajectoryPoint from)
    {
       positions_.set(from.positions_);

@@ -43,12 +43,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(DiagnosticArray from)
    {
    }

@@ -43,12 +43,6 @@ public class Transform implements ROS2Message<Transform>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Transform from)
    {
    }

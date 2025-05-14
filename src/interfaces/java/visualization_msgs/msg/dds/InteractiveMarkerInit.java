@@ -65,12 +65,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InteractiveMarkerInit from)
    {
       server_id_.delete(0, server_id_.length());

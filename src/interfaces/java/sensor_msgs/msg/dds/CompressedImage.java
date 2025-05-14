@@ -54,12 +54,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(CompressedImage from)
    {
       format_.delete(0, format_.length());

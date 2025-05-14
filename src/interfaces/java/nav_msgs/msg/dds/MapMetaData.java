@@ -74,12 +74,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MapMetaData from)
    {
       resolution_ = from.resolution_;

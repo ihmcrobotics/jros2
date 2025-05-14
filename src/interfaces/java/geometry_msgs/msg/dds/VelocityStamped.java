@@ -58,12 +58,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(VelocityStamped from)
    {
       body_frame_id_.delete(0, body_frame_id_.length());

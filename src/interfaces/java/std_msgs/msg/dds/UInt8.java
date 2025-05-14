@@ -48,12 +48,6 @@ public class UInt8 implements ROS2Message<UInt8>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(UInt8 from)
    {
       data_ = from.data_;

@@ -37,12 +37,6 @@ public class Twist implements ROS2Message<Twist>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Twist from)
    {
    }

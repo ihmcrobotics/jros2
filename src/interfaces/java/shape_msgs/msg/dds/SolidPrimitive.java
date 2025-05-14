@@ -80,12 +80,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(SolidPrimitive from)
    {
       type_ = from.type_;

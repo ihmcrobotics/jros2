@@ -78,12 +78,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(RegionOfInterest from)
    {
       x_offset_ = from.x_offset_;

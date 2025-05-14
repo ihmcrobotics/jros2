@@ -38,12 +38,6 @@ public class UInt32MultiArray implements ROS2Message<UInt32MultiArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(UInt32MultiArray from)
    {
    }

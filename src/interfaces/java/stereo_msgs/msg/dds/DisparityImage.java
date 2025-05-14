@@ -93,12 +93,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(DisparityImage from)
    {
       f_ = from.f_;

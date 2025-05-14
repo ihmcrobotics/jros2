@@ -108,12 +108,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InteractiveMarkerFeedback from)
    {
       client_id_.delete(0, client_id_.length());

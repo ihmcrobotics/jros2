@@ -48,12 +48,6 @@ public class Int8 implements ROS2Message<Int8>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Int8 from)
    {
       data_ = from.data_;

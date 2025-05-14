@@ -43,12 +43,6 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(AccelWithCovarianceStamped from)
    {
    }

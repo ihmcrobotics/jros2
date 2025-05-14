@@ -89,12 +89,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MultiEchoLaserScan from)
    {
       angle_min_ = from.angle_min_;

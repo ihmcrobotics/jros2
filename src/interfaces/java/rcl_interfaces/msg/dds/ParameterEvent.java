@@ -72,12 +72,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ParameterEvent from)
    {
       node_.delete(0, node_.length());

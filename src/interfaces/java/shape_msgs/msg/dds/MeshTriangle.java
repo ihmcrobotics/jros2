@@ -53,12 +53,6 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MeshTriangle from)
    {
       for (int i = 0; i < vertex_indices_.length; ++i)

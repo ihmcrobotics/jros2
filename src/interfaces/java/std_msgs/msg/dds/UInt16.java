@@ -48,12 +48,6 @@ public class UInt16 implements ROS2Message<UInt16>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(UInt16 from)
    {
       data_ = from.data_;

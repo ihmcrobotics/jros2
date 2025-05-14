@@ -43,12 +43,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TwistWithCovarianceStamped from)
    {
    }

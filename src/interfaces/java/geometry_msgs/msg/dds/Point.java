@@ -53,12 +53,6 @@ public class Point implements ROS2Message<Point>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Point from)
    {
       x_ = from.x_;

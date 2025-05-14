@@ -44,12 +44,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(GoalStatusArray from)
    {
    }

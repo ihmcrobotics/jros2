@@ -57,12 +57,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Quaternion from)
    {
       x_ = from.x_;

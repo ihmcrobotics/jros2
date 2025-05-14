@@ -50,12 +50,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(UVCoordinate from)
    {
       u_ = from.u_;

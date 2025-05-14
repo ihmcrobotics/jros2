@@ -142,12 +142,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InteractiveMarkerControl from)
    {
       name_.delete(0, name_.length());

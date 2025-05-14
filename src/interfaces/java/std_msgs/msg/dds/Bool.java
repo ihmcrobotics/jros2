@@ -48,12 +48,6 @@ public class Bool implements ROS2Message<Bool>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Bool from)
    {
       data_ = from.data_;

@@ -61,12 +61,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(AccelWithCovariance from)
    {
       for (int i = 0; i < covariance_.length; ++i)

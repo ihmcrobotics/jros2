@@ -44,12 +44,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Vector3Stamped from)
    {
    }

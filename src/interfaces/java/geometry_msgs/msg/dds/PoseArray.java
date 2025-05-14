@@ -43,12 +43,6 @@ public class PoseArray implements ROS2Message<PoseArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PoseArray from)
    {
    }

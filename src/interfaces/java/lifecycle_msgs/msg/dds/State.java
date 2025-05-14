@@ -112,12 +112,6 @@ public class State implements ROS2Message<State>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(State from)
    {
       id_ = from.id_;

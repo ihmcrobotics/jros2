@@ -143,12 +143,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(CameraInfo from)
    {
       height_ = from.height_;

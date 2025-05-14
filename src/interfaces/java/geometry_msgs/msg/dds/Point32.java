@@ -59,12 +59,6 @@ public class Point32 implements ROS2Message<Point32>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Point32 from)
    {
       x_ = from.x_;

@@ -95,12 +95,6 @@ public class Imu implements ROS2Message<Imu>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Imu from)
    {
       for (int i = 0; i < orientation_covariance_.length; ++i)

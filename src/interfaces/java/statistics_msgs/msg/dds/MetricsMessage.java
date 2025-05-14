@@ -92,12 +92,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MetricsMessage from)
    {
       measurement_source_name_.delete(0, measurement_source_name_.length());

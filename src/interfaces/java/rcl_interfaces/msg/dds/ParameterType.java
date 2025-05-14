@@ -51,12 +51,6 @@ public class ParameterType implements ROS2Message<ParameterType>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ParameterType from)
    {
    }

@@ -76,12 +76,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(IntegerRange from)
    {
       from_value_ = from.from_value_;

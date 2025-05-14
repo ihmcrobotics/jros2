@@ -57,12 +57,6 @@ public class Header implements ROS2Message<Header>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Header from)
    {
       frame_id_.delete(0, frame_id_.length());

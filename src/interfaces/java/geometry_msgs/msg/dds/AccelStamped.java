@@ -43,12 +43,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(AccelStamped from)
    {
    }

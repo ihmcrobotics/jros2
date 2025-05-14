@@ -61,12 +61,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(NavSatStatus from)
    {
       status_ = from.status_;

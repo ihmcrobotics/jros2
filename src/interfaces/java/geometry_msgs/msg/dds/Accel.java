@@ -34,12 +34,6 @@ public class Accel implements ROS2Message<Accel>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Accel from)
    {
    }

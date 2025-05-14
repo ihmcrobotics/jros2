@@ -69,12 +69,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TransformStamped from)
    {
       child_frame_id_.delete(0, child_frame_id_.length());

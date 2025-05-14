@@ -43,12 +43,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PolygonStamped from)
    {
    }

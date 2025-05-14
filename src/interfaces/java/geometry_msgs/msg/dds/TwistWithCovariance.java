@@ -61,12 +61,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TwistWithCovariance from)
    {
       for (int i = 0; i < covariance_.length; ++i)

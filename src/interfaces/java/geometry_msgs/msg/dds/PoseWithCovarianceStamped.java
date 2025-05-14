@@ -43,12 +43,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PoseWithCovarianceStamped from)
    {
    }

@@ -48,12 +48,6 @@ public class Byte implements ROS2Message<Byte>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Byte from)
    {
       data_ = from.data_;

@@ -58,12 +58,6 @@ public class Plane implements ROS2Message<Plane>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Plane from)
    {
       for (int i = 0; i < coef_.length; ++i)

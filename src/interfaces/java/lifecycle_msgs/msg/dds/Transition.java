@@ -140,12 +140,6 @@ public class Transition implements ROS2Message<Transition>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Transition from)
    {
       id_ = from.id_;

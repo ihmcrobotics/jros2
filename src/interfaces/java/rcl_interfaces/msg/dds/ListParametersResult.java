@@ -56,12 +56,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ListParametersResult from)
    {
       names_.set(from.names_);

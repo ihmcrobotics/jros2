@@ -57,12 +57,6 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(StatisticDataType from)
    {
    }

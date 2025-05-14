@@ -122,12 +122,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ImageMarker from)
    {
       ns_.delete(0, ns_.length());

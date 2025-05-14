@@ -49,12 +49,6 @@ public class Mesh implements ROS2Message<Mesh>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Mesh from)
    {
    }

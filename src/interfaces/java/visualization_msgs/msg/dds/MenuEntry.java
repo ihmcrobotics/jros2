@@ -117,12 +117,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MenuEntry from)
    {
       id_ = from.id_;

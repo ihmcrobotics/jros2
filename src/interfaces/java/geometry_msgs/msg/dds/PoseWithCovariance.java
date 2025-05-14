@@ -61,12 +61,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PoseWithCovariance from)
    {
       for (int i = 0; i < covariance_.length; ++i)

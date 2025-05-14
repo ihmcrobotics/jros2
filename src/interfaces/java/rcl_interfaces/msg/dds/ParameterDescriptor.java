@@ -101,12 +101,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ParameterDescriptor from)
    {
       name_.delete(0, name_.length());

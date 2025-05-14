@@ -48,12 +48,6 @@ public class Char implements ROS2Message<Char>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Char from)
    {
       data_ = from.data_;

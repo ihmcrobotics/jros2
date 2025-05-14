@@ -38,12 +38,6 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MarkerArray from)
    {
    }

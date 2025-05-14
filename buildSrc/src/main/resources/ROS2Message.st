@@ -115,12 +115,6 @@ buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>);
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(<context.name> from)
    {
       <context.fields:{ field |

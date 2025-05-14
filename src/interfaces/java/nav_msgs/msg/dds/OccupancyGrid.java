@@ -62,12 +62,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(OccupancyGrid from)
    {
       data_.set(from.data_);

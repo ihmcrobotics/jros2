@@ -47,12 +47,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ParameterEventDescriptors from)
    {
    }

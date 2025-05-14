@@ -38,12 +38,6 @@ public class Int64MultiArray implements ROS2Message<Int64MultiArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Int64MultiArray from)
    {
    }

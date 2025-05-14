@@ -48,12 +48,6 @@ public class Float64 implements ROS2Message<Float64>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Float64 from)
    {
       data_ = from.data_;

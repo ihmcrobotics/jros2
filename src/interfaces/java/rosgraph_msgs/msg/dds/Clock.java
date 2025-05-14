@@ -43,12 +43,6 @@ public class Clock implements ROS2Message<Clock>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Clock from)
    {
    }

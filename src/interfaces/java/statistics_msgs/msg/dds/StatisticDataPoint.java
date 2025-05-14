@@ -71,12 +71,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(StatisticDataPoint from)
    {
       data_type_ = from.data_type_;

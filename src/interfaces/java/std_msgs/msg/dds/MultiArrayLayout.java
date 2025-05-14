@@ -70,12 +70,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MultiArrayLayout from)
    {
       data_offset_ = from.data_offset_;

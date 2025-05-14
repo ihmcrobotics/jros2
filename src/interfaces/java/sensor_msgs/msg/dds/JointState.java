@@ -81,12 +81,6 @@ public class JointState implements ROS2Message<JointState>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(JointState from)
    {
       name_.set(from.name_);

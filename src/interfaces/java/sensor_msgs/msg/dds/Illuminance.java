@@ -64,12 +64,6 @@ public class Illuminance implements ROS2Message<Illuminance>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Illuminance from)
    {
       illuminance_ = from.illuminance_;

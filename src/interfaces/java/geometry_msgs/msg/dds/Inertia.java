@@ -81,12 +81,6 @@ public class Inertia implements ROS2Message<Inertia>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Inertia from)
    {
       m_ = from.m_;

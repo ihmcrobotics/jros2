@@ -80,12 +80,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PointCloud2 from)
    {
       height_ = from.height_;

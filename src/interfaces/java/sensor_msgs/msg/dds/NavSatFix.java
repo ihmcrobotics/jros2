@@ -109,12 +109,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(NavSatFix from)
    {
       latitude_ = from.latitude_;

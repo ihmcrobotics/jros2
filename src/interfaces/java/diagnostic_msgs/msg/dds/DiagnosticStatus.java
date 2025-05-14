@@ -85,12 +85,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(DiagnosticStatus from)
    {
       level_ = from.level_;

@@ -60,12 +60,6 @@ public class Duration implements ROS2Message<Duration>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Duration from)
    {
       sec_ = from.sec_;

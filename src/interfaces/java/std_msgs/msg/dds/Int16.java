@@ -48,12 +48,6 @@ public class Int16 implements ROS2Message<Int16>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Int16 from)
    {
       data_ = from.data_;

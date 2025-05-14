@@ -49,12 +49,6 @@ public class Path implements ROS2Message<Path>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Path from)
    {
    }

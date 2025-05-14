@@ -54,12 +54,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ColorRGBA from)
    {
       r_ = from.r_;

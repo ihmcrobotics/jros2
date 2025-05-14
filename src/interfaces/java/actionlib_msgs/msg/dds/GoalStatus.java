@@ -84,12 +84,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(GoalStatus from)
    {
       status_ = from.status_;

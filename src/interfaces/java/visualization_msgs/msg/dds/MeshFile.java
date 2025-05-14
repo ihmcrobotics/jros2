@@ -59,12 +59,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MeshFile from)
    {
       filename_.delete(0, filename_.length());

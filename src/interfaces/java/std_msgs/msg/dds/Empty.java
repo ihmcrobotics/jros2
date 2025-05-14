@@ -36,12 +36,6 @@ public class Empty implements ROS2Message<Empty>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Empty from)
    {
    }

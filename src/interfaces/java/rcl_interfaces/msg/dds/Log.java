@@ -126,12 +126,6 @@ public class Log implements ROS2Message<Log>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Log from)
    {
       level_ = from.level_;

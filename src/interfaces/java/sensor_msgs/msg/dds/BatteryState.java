@@ -129,12 +129,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(BatteryState from)
    {
       voltage_ = from.voltage_;

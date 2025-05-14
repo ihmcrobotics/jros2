@@ -59,12 +59,6 @@ public class Time implements ROS2Message<Time>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Time from)
    {
       sec_ = from.sec_;

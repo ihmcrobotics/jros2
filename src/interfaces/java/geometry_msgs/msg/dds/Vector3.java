@@ -55,12 +55,6 @@ public class Vector3 implements ROS2Message<Vector3>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Vector3 from)
    {
       x_ = from.x_;

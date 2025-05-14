@@ -63,12 +63,6 @@ public class Joy implements ROS2Message<Joy>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Joy from)
    {
       axes_.set(from.axes_);

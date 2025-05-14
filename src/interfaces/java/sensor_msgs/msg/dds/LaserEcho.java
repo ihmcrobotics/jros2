@@ -48,12 +48,6 @@ public class LaserEcho implements ROS2Message<LaserEcho>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(LaserEcho from)
    {
       echoes_.set(from.echoes_);

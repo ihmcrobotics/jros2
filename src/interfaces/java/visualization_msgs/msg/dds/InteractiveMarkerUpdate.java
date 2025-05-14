@@ -91,12 +91,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InteractiveMarkerUpdate from)
    {
       server_id_.delete(0, server_id_.length());

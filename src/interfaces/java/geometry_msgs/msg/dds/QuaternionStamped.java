@@ -43,12 +43,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(QuaternionStamped from)
    {
    }

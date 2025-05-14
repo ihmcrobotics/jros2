@@ -43,12 +43,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(PoseStamped from)
    {
    }

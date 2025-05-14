@@ -52,12 +52,6 @@ public class Goals implements ROS2Message<Goals>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Goals from)
    {
    }

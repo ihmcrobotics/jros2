@@ -53,12 +53,6 @@ public class Pose2D implements ROS2Message<Pose2D>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Pose2D from)
    {
       x_ = from.x_;

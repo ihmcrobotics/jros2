@@ -37,12 +37,6 @@ public class Wrench implements ROS2Message<Wrench>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Wrench from)
    {
    }

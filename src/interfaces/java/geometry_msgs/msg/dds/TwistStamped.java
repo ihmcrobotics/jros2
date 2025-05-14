@@ -43,12 +43,6 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TwistStamped from)
    {
    }

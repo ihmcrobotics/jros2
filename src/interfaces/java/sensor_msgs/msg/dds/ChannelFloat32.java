@@ -75,12 +75,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ChannelFloat32 from)
    {
       name_.delete(0, name_.length());

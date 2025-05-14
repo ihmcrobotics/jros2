@@ -55,12 +55,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(KeyValue from)
    {
       key_.delete(0, key_.length());

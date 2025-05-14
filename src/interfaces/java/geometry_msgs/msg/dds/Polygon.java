@@ -41,12 +41,6 @@ public class Polygon implements ROS2Message<Polygon>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Polygon from)
    {
    }

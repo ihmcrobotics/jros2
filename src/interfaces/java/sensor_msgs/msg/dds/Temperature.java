@@ -52,12 +52,6 @@ public class Temperature implements ROS2Message<Temperature>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Temperature from)
    {
       temperature_ = from.temperature_;

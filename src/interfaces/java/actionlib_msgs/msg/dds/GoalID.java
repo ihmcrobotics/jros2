@@ -58,12 +58,6 @@ public class GoalID implements ROS2Message<GoalID>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(GoalID from)
    {
       id_.delete(0, id_.length());

@@ -57,12 +57,6 @@ public class Parameter implements ROS2Message<Parameter>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Parameter from)
    {
       name_.delete(0, name_.length());

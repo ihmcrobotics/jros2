@@ -56,12 +56,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(FluidPressure from)
    {
       fluid_pressure_ = from.fluid_pressure_;

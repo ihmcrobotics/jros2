@@ -71,12 +71,6 @@ public class Image implements ROS2Message<Image>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Image from)
    {
       height_ = from.height_;

@@ -51,12 +51,6 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TransitionDescription from)
    {
    }

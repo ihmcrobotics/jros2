@@ -51,12 +51,6 @@ public class TimeReference implements ROS2Message<TimeReference>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TimeReference from)
    {
       source_.delete(0, source_.length());

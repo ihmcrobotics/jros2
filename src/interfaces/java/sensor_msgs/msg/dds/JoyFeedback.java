@@ -64,12 +64,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(JoyFeedback from)
    {
       type_ = from.type_;

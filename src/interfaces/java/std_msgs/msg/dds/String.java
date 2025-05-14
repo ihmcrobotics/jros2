@@ -50,12 +50,6 @@ public class String implements ROS2Message<String>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(String from)
    {
       data_.delete(0, data_.length());

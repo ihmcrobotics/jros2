@@ -51,12 +51,6 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MultiDOFJointTrajectory from)
    {
       joint_names_.set(from.joint_names_);

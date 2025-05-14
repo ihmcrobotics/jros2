@@ -41,12 +41,6 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(JoyFeedbackArray from)
    {
    }

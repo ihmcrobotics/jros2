@@ -61,12 +61,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(TransitionEvent from)
    {
       timestamp_ = from.timestamp_;

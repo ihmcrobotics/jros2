@@ -80,12 +80,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(FloatingPointRange from)
    {
       from_value_ = from.from_value_;

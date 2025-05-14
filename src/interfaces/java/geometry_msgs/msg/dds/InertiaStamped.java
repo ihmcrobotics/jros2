@@ -43,12 +43,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(InertiaStamped from)
    {
    }

@@ -93,12 +93,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(LaserScan from)
    {
       angle_min_ = from.angle_min_;

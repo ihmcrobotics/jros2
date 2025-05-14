@@ -38,12 +38,6 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(ByteMultiArray from)
    {
    }

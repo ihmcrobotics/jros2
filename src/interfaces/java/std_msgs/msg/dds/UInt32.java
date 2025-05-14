@@ -48,12 +48,6 @@ public class UInt32 implements ROS2Message<UInt32>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(UInt32 from)
    {
       data_ = from.data_;

@@ -48,12 +48,6 @@ public class Int64 implements ROS2Message<Int64>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(Int64 from)
    {
       data_ = from.data_;

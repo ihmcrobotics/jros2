@@ -73,12 +73,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    }
 
    @Override
-   public java.lang.String getName()
-   {
-      return name;
-   }
-
-   @Override
    public void set(MultiDOFJointState from)
    {
       joint_names_.set(from.joint_names_);
