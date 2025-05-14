@@ -12,7 +12,10 @@ public class Statistics
     */
    public enum StatisticDataType
    {
-      AVERAGE, MINIMUM, MAXIMUM, STDDEV, TOTAL, LATEST, SAMPLE_COUNT;
+      // Types contained in StatisticDataType.msg
+      AVERAGE, MINIMUM, MAXIMUM, STDDEV, SAMPLE_COUNT,
+      // Extra types we find useful
+      TOTAL, LATEST;
 
       // Static set and array for garbage free usage. Treat as read only.
       public static final Set<StatisticDataType> set = EnumSet.allOf(StatisticDataType.class);
@@ -23,9 +26,9 @@ public class Statistics
    private double min;
    private double max;
    private double standardDeviation;
+   private long sampleCount;
    private double total;
    private double latest;
-   private long sampleCount;
 
    public Statistics()
    {
@@ -41,9 +44,9 @@ public class Statistics
       min = Double.NaN;
       max = Double.NaN;
       standardDeviation = Double.NaN;
+      sampleCount = 0;
       total = 0.0;
       latest = Double.NaN;
-      sampleCount = 0;
    }
 
    /**
@@ -62,9 +65,9 @@ public class Statistics
          case MINIMUM -> min;
          case MAXIMUM -> max;
          case STDDEV -> standardDeviation;
+         case SAMPLE_COUNT -> sampleCount;
          case TOTAL -> total;
          case LATEST -> latest;
-         case SAMPLE_COUNT -> sampleCount;
       };
    }
 
@@ -84,9 +87,9 @@ public class Statistics
          case MINIMUM -> min = value;
          case MAXIMUM -> max = value;
          case STDDEV -> standardDeviation = value;
+         case SAMPLE_COUNT -> sampleCount = (long) value;
          case TOTAL -> total = value;
          case LATEST -> latest = value;
-         case SAMPLE_COUNT -> sampleCount = (long) value;
       }
    }
 
@@ -96,8 +99,9 @@ public class Statistics
       StringBuilder builder = new StringBuilder();
       builder.append("statistics: {");
 
-      for (StatisticDataType statisticType : StatisticDataType.values)
+      for (int i = 0; i < StatisticDataType.values.length; ++i)
       {
+         StatisticDataType statisticType = StatisticDataType.values[i];
          builder.append(statisticType.name()).append("=").append(get(statisticType)).append(", ");
       }
       int lastCommaIndex = builder.lastIndexOf(", ");

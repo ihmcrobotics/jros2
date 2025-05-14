@@ -10,13 +10,13 @@ interface MessageStatisticsProvider
    /**
     * Defines the types of data about messages collected.
     */
-   enum MessageData
+   enum MessageMetadataType
    {
       SIZE, PERIOD, AGE;
 
       // Static set and array for garbage free usage. Treat as read only.
-      public static final Set<MessageData> set = EnumSet.allOf(MessageData.class);
-      public static final MessageData[] values = values();
+      public static final Set<MessageMetadataType> set = EnumSet.allOf(MessageMetadataType.class);
+      public static final MessageMetadataType[] values = values();
    }
 
    /**
@@ -25,29 +25,29 @@ interface MessageStatisticsProvider
    void resetStatistics();
 
    /**
-    * Pack the desired {@link MessageData} into the provided {@link Statistics} object.
+    * Pack the desired {@link MessageMetadataType} into the provided {@link Statistics} object.
     * <p>
     * This method is garbage free.
     *
-    * @param messageData     The desired message data.
-    * @param statisticToPack Object to pack statistics into.
+    * @param messageMetadataType The desired message metadata.
+    * @param statisticToPack     Object to pack statistics into.
     */
-   void readStatistics(MessageData messageData, Statistics statisticToPack);
+   void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack);
 
    /**
-    * Get the {@link StatisticDataType} of the desired {@link MessageData} statistics.
+    * Get the {@link StatisticDataType} of the desired {@link MessageMetadataType} statistics.
     * <p>
-    * This method is not garbage free. For garbage free access to the message data statistics,
-    * use {@link #readStatistics(MessageData, Statistics)}.
+    * This method is not garbage free. For garbage free access to the message metadata statistics,
+    * use {@link #readStatistics(MessageMetadataType, Statistics)}.
     *
-    * @param messageData   The desired message data.
-    * @param statisticType The desired statistic type.
-    * @return Value of the desired statistic type of message data statistics.
+    * @param messageMetadataType The desired message metadata.
+    * @param statisticType       The desired statistic type.
+    * @return Value of the desired statistic type of message metadata statistics.
     */
-   default double getStatistic(MessageData messageData, StatisticDataType statisticType)
+   default double getStatistic(MessageMetadataType messageMetadataType, StatisticDataType statisticType)
    {
       Statistics statistics = new Statistics();
-      readStatistics(messageData, statistics);
+      readStatistics(messageMetadataType, statistics);
       return statistics.get(statisticType);
    }
 
@@ -60,7 +60,7 @@ interface MessageStatisticsProvider
     */
    default void readMessageSizeStatistics(Statistics statisticsToPack)
    {
-      readStatistics(MessageData.SIZE, statisticsToPack);
+      readStatistics(MessageMetadataType.SIZE, statisticsToPack);
    }
 
    /**
@@ -74,7 +74,7 @@ interface MessageStatisticsProvider
     */
    default double getMessageSize(StatisticDataType statisticType)
    {
-      return getStatistic(MessageData.SIZE, statisticType);
+      return getStatistic(MessageMetadataType.SIZE, statisticType);
    }
 
    /**
@@ -86,7 +86,7 @@ interface MessageStatisticsProvider
     */
    default void readMessagePeriodStatistics(Statistics statisticsToPack)
    {
-      readStatistics(MessageData.PERIOD, statisticsToPack);
+      readStatistics(MessageMetadataType.PERIOD, statisticsToPack);
    }
 
    /**
@@ -100,7 +100,7 @@ interface MessageStatisticsProvider
     */
    default double getMessagePeriod(StatisticDataType statisticType)
    {
-      return getStatistic(MessageData.PERIOD, statisticType);
+      return getStatistic(MessageMetadataType.PERIOD, statisticType);
    }
 
    /**
@@ -112,7 +112,7 @@ interface MessageStatisticsProvider
     */
    default void readMessageAgeStatistics(Statistics statisticsToPack)
    {
-      readStatistics(MessageData.AGE, statisticsToPack);
+      readStatistics(MessageMetadataType.AGE, statisticsToPack);
    }
 
    /**
@@ -126,6 +126,6 @@ interface MessageStatisticsProvider
     */
    default double getMessageAge(StatisticDataType statisticType)
    {
-      return getStatistic(MessageData.AGE, statisticType);
+      return getStatistic(MessageMetadataType.AGE, statisticType);
    }
 }

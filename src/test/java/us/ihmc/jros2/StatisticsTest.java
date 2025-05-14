@@ -3,7 +3,7 @@ package us.ihmc.jros2;
 import geometry_msgs.msg.dds.PointStamped;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import us.ihmc.jros2.MessageStatisticsProvider.MessageData;
+import us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -26,9 +26,9 @@ public class StatisticsTest
       assertEquals(Double.NaN, statistics.get(MINIMUM));
       assertEquals(Double.NaN, statistics.get(MAXIMUM));
       assertEquals(Double.NaN, statistics.get(STDDEV));
+      assertEquals(0, statistics.get(SAMPLE_COUNT));
       assertEquals(0.0, statistics.get(TOTAL));
       assertEquals(Double.NaN, statistics.get(LATEST));
-      assertEquals(0, statistics.get(SAMPLE_COUNT));
 
       // Set the values
       final double expectedAverage = 5.0;
@@ -43,18 +43,18 @@ public class StatisticsTest
       statistics.set(MINIMUM, expectedMin);
       statistics.set(MAXIMUM, expectedMax);
       statistics.set(STDDEV, expectedStddev);
+      statistics.set(SAMPLE_COUNT, expectedCount);
       statistics.set(TOTAL, expectedTotal);
       statistics.set(LATEST, expectedLatest);
-      statistics.set(SAMPLE_COUNT, expectedCount);
 
       // Assert that values were set correctly
       assertEquals(expectedAverage, statistics.get(AVERAGE));
       assertEquals(expectedMin, statistics.get(MINIMUM));
       assertEquals(expectedMax, statistics.get(MAXIMUM));
       assertEquals(expectedStddev, statistics.get(STDDEV));
+      assertEquals(expectedCount, statistics.get(SAMPLE_COUNT));
       assertEquals(expectedTotal, statistics.get(TOTAL));
       assertEquals(expectedLatest, statistics.get(LATEST));
-      assertEquals(expectedCount, statistics.get(SAMPLE_COUNT));
 
       // Reset the object
       statistics.reset();
@@ -64,9 +64,9 @@ public class StatisticsTest
       assertEquals(Double.NaN, statistics.get(MINIMUM));
       assertEquals(Double.NaN, statistics.get(MAXIMUM));
       assertEquals(Double.NaN, statistics.get(STDDEV));
+      assertEquals(0, statistics.get(SAMPLE_COUNT));
       assertEquals(0.0, statistics.get(TOTAL));
       assertEquals(Double.NaN, statistics.get(LATEST));
-      assertEquals(0, statistics.get(SAMPLE_COUNT));
    }
 
    @Test
@@ -98,9 +98,9 @@ public class StatisticsTest
       assertEquals(1, statistics.get(MINIMUM));
       assertEquals(5, statistics.get(MAXIMUM));
       assertEquals(Math.sqrt(2.0), statistics.get(STDDEV));
+      assertEquals(5, statistics.get(SAMPLE_COUNT));
       assertEquals(15, statistics.get(TOTAL));
       assertEquals(5, statistics.get(LATEST));
-      assertEquals(5, statistics.get(SAMPLE_COUNT));
 
       // Reset the calculator and read again. Should return default values
       calculator.reset();
@@ -140,25 +140,25 @@ public class StatisticsTest
 
       // Read the message size statistics, and assert they make sense
       double expectedSize = message.calculateSizeBytes();
-      publisher.readStatistics(MessageData.SIZE, statistics);
+      publisher.readStatistics(MessageMetadataType.SIZE, statistics);
       assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
       assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
       assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
       assertEquals(0, statistics.get(STDDEV), 1E-7);
+      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals(publishCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
-      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
 
       // Read the message publish period statistics, and assert they make sense
       double expectedPeriod = 100.0;
-      publisher.readStatistics(MessageData.PERIOD, statistics);
+      publisher.readStatistics(MessageMetadataType.PERIOD, statistics);
       assertEquals(expectedPeriod, statistics.get(AVERAGE), 1-5);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), 1E-5);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), 1E-5);
       assertEquals(0, statistics.get(STDDEV), 1E-5);
+      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals(publishCount.get() * expectedPeriod, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedPeriod, statistics.get(LATEST), 1E-5);
-      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
 
       node.destroyPublisher(publisher);
       node.close();

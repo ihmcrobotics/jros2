@@ -47,11 +47,11 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
    static <T extends ROS2Message<T>> Method getHeaderMethod(Class<T> topicType)
    {
       Method[] methods = topicType.getDeclaredMethods();
-      for (Method method : methods)
+      for (int i = 0; i < methods.length; ++i)
       {
-         if (Header.class.equals(method.getReturnType()))
+         if (Header.class.equals(methods[i].getReturnType()))
          {
-            return method;
+            return methods[i];
          }
       }
 

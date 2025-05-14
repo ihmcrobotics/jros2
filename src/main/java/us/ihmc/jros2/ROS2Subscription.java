@@ -9,13 +9,12 @@ import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscrip
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
-import java.util.HashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
-import static us.ihmc.jros2.MessageStatisticsProvider.MessageData.*;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
  * A ROS 2-compatible subscription for ingesting {@link ROS2Message} types.
@@ -48,7 +47,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final ReadWriteLock closeLock;
    private boolean closed;
 
-   private final HashMap<MessageData, StatisticsCalculator> statisticsCalculators;
+   private final StatisticsCalculator[] statisticsCalculators;
+   private final int statisticsCalculatorCount;
    private long lastReceiveTime;
 
    /**
@@ -70,10 +70,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       sampleInfo = new SampleInfo();
       subscriptionReader = new ROS2SubscriptionReader<>(cdrBuffer, topic);
 
-      statisticsCalculators = new HashMap<>(MessageData.values.length);
-      for (MessageData messageData : MessageData.values)
+      statisticsCalculatorCount = MessageMetadataType.values.length;
+      statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
-         statisticsCalculators.put(messageData, new StatisticsCalculator());
+         statisticsCalculators[i] = new StatisticsCalculator();
       }
       lastReceiveTime = Long.MIN_VALUE;
 
@@ -145,19 +146,19 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       synchronized (statisticsCalculators)
       {
          // Record message size
-         statisticsCalculators.get(SIZE).record(messageSizeBytes);
+         statisticsCalculators[SIZE.ordinal()].record(messageSizeBytes);
 
          // Record publish period if available
          if (lastReceiveTime != Long.MIN_VALUE)
          {
-            statisticsCalculators.get(PERIOD).record(receptionTimeMillis - lastReceiveTime);
+            statisticsCalculators[PERIOD.ordinal()].record(receptionTimeMillis - lastReceiveTime);
          }
          lastReceiveTime = receptionTimeMillis;
 
          // Record publish age
          if (messageTimestampMillis != Long.MIN_VALUE)
          {
-            statisticsCalculators.get(AGE).record(receptionTimeMillis - messageTimestampMillis);
+            statisticsCalculators[AGE.ordinal()].record(receptionTimeMillis - messageTimestampMillis);
          }
       }
    }
@@ -197,15 +198,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    @Override
    public void resetStatistics()
    {
-      for (StatisticsCalculator calculator : statisticsCalculators.values())
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
-         calculator.reset();
+         statisticsCalculators[i].reset();
       }
    }
 
    @Override
-   public void readStatistics(MessageData messageData, Statistics statisticToPack)
+   public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
    {
-      statisticsCalculators.get(messageData).read(statisticToPack);
+      statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 }

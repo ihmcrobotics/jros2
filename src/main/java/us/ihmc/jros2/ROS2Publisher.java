@@ -8,13 +8,13 @@ import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
-import static us.ihmc.jros2.MessageStatisticsProvider.MessageData.*;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.PERIOD;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.SIZE;
 
 /**
  * A ROS 2-compatible publisher for publishing {@link ROS2Message} types.
@@ -35,7 +35,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
-   private final HashMap<MessageData, StatisticsCalculator> statisticsCalculators;
+   private final StatisticsCalculator[] statisticsCalculators;
+   private final int statisticsCalculatorCount;
    private long lastPublishTime;
    private Method getHeaderMethod;
 
@@ -54,10 +55,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       cdrBuffer = new CDRBuffer();
 
-      statisticsCalculators = new HashMap<>(MessageData.values.length);
-      for (MessageData messageData : MessageData.values)
+      statisticsCalculatorCount = MessageMetadataType.values.length;
+      statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
-         statisticsCalculators.put(messageData, new StatisticsCalculator());
+         statisticsCalculators[i] = new StatisticsCalculator();
       }
       getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastPublishTime = Long.MIN_VALUE;
@@ -88,7 +90,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
                topicDataWrapper.data_vector().resize(payloadSizeBytes);
                topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
-               statisticsCalculators.get(SIZE).record(payloadSizeBytes);
+               statisticsCalculators[SIZE.ordinal()].record(payloadSizeBytes);
             }
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
@@ -106,12 +108,12 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       synchronized (statisticsCalculators)
       {
          // Record message size
-         statisticsCalculators.get(SIZE).record(messageSizeBytes);
+         statisticsCalculators[SIZE.ordinal()].record(messageSizeBytes);
 
          // Record publish period if available
          if (lastPublishTime != Long.MIN_VALUE)
          {
-            statisticsCalculators.get(PERIOD).record(publishTimeMillis - lastPublishTime);
+            statisticsCalculators[PERIOD.ordinal()].record(publishTimeMillis - lastPublishTime);
          }
          lastPublishTime = publishTimeMillis;
 
@@ -123,7 +125,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
                Header header = (Header) getHeaderMethod.invoke(message);
                // TODO: Uncomment when Header message is included in generated Java messages, and the timestamp is included in the Header Java message.
 //               long timestampMillis = (1000L * header.getStamp().getsec()) + (header.getStamp().getnanosec() / 1000000L);
-//               statisticsCalculators.get(AGE).record(publishTimeMillis - timestampMillis);
+//               statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
             }
             catch (IllegalAccessException | InvocationTargetException e)
             {
@@ -156,15 +158,15 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    @Override
    public void resetStatistics()
    {
-      for (StatisticsCalculator calculator : statisticsCalculators.values())
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
-         calculator.reset();
+         statisticsCalculators[i].reset();
       }
    }
 
    @Override
-   public void readStatistics(MessageData messageData, Statistics statisticToPack)
+   public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
    {
-      statisticsCalculators.get(messageData).read(statisticToPack);
+      statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 }
