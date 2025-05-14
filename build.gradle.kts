@@ -23,14 +23,6 @@ sourceSets {
         runtimeClasspath += sourceSets["main"].output
     }
 
-    create("rcl_interfaces") {
-        java.srcDir("src/rcl_interfaces/java")
-        resources.srcDir("src/rcl_interfaces/resources")
-
-        compileClasspath += sourceSets["main"].output
-        runtimeClasspath += sourceSets["main"].output
-    }
-
     create("jros2_example_interfaces") {
         java.srcDir("src/jros2_example_interfaces/java")
         resources.srcDir("src/jros2_example_interfaces/resources")
@@ -42,9 +34,6 @@ sourceSets {
     named("test") {
         compileClasspath += sourceSets["common_interfaces"].output
         runtimeClasspath += sourceSets["common_interfaces"].output
-
-        compileClasspath += sourceSets["rcl_interfaces"].output
-        runtimeClasspath += sourceSets["rcl_interfaces"].output
 
         compileClasspath += sourceSets["jros2_example_interfaces"].output
         runtimeClasspath += sourceSets["jros2_example_interfaces"].output
@@ -124,11 +113,13 @@ tasks.register<jros2GenTask>("generate_common_interfaces") {
     description = "Generate ROS 2 common interfaces source files"
     group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
     packagePaths = listOf(
+        // rcl_interfaces used as dependency to common_interfaces; we include it here
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rosgraph_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("statistics_msgs").absolutePath,
+
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("actionlib_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("diagnostic_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("geometry_msgs").absolutePath,
