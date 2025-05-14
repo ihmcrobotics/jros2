@@ -16,10 +16,12 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    public IDLSequence(int capacity, int maxSize)
    {
       this.maxSize = maxSize;
+
       if (!isUnbounded() && (capacity > maxSize))
       {
          throw new RuntimeException("capacity cannot be larger than maxSize for an IDLSequence");
       }
+
       ensureMinCapacity(capacity);
    }
 
