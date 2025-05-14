@@ -8,9 +8,14 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 {
    private FloatBuffer buffer;
 
-   public IDLFloatSequence(int capacity)
+   public IDLFloatSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+   }
+
+   public IDLFloatSequence(int maxSize)
+   {
+      super(maxSize);
    }
 
    public IDLFloatSequence()
@@ -53,7 +58,11 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    {
       if (buffer == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (buffer.position() == buffer.capacity())
       {

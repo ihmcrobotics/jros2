@@ -11,9 +11,15 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    protected StringBuilder[] elements;
    protected int position;
 
-   public IDLStringSequence(int capacity)
+   public IDLStringSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+      position = 0;
+   }
+
+   public IDLStringSequence(int maxSize)
+   {
+      super(maxSize);
       position = 0;
    }
 
@@ -54,7 +60,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    {
       if (elements == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (position >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (position == elements.length)
       {

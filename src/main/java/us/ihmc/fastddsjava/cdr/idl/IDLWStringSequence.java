@@ -4,9 +4,15 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 public class IDLWStringSequence extends IDLStringSequence
 {
-   public IDLWStringSequence(int capacity)
+   public IDLWStringSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+      position = 0;
+   }
+
+   public IDLWStringSequence(int maxSize)
+   {
+      super(maxSize);
       position = 0;
    }
 

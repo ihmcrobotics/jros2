@@ -8,9 +8,14 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
 {
    private DoubleBuffer buffer;
 
-   public IDLDoubleSequence(int capacity)
+   public IDLDoubleSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+   }
+
+   public IDLDoubleSequence(int maxSize)
+   {
+      super(maxSize);
    }
 
    public IDLDoubleSequence()
@@ -53,7 +58,11 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    {
       if (buffer == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (buffer.position() == buffer.capacity())
       {

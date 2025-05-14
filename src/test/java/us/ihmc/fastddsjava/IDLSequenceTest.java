@@ -20,8 +20,9 @@ public class IDLSequenceTest
    public void testIDLByteSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLByteSequence sequence = new IDLByteSequence(initialCapacity);
+      IDLByteSequence sequence = new IDLByteSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -102,8 +103,9 @@ public class IDLSequenceTest
    public void testIDLCharSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLCharSequence sequence = new IDLCharSequence(initialCapacity);
+      IDLCharSequence sequence = new IDLCharSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -184,8 +186,9 @@ public class IDLSequenceTest
    public void testIDLDoubleSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLDoubleSequence sequence = new IDLDoubleSequence(initialCapacity);
+      IDLDoubleSequence sequence = new IDLDoubleSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -266,8 +269,9 @@ public class IDLSequenceTest
    public void testIDLFloatSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLFloatSequence sequence = new IDLFloatSequence(initialCapacity);
+      IDLFloatSequence sequence = new IDLFloatSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -348,8 +352,9 @@ public class IDLSequenceTest
    public void testIDLObjectSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLObjectSequence<TestIDLMsg> sequence = new IDLObjectSequence<>(initialCapacity, TestIDLMsg.class);
+      IDLObjectSequence<TestIDLMsg> sequence = new IDLObjectSequence<>(initialCapacity, maxSize, TestIDLMsg.class);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -432,8 +437,9 @@ public class IDLSequenceTest
    public void testIDLShortSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLShortSequence sequence = new IDLShortSequence(initialCapacity);
+      IDLShortSequence sequence = new IDLShortSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -514,8 +520,9 @@ public class IDLSequenceTest
    public void testIDLStringSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
 
-      IDLStringSequence sequence = new IDLStringSequence(initialCapacity);
+      IDLStringSequence sequence = new IDLStringSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -596,9 +603,10 @@ public class IDLSequenceTest
    public void testIDLWStringSequence()
    {
       final int initialCapacity = 8;
+      final int maxSize = -1;
       final int codepointStart = 78419; // Starting at U+13253 (codepoint 78419)
 
-      IDLWStringSequence sequence = new IDLWStringSequence(initialCapacity);
+      IDLWStringSequence sequence = new IDLWStringSequence(initialCapacity, maxSize);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());

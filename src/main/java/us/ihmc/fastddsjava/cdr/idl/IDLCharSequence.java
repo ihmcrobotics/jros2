@@ -8,9 +8,14 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 {
    private CharBuffer buffer;
 
-   public IDLCharSequence(int capacity)
+   public IDLCharSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+   }
+
+   public IDLCharSequence(int maxSize)
+   {
+      super(maxSize);
    }
 
    public IDLCharSequence()
@@ -53,7 +58,11 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    {
       if (buffer == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (buffer.position() == buffer.capacity())
       {

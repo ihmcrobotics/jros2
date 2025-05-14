@@ -8,9 +8,14 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
 {
    private ByteBuffer buffer;
 
-   public IDLBoolSequence(int capacity)
+   public IDLBoolSequence(int capacity, int maxSize)
    {
-      super(capacity);
+      super(capacity, maxSize);
+   }
+
+   public IDLBoolSequence(int maxSize)
+   {
+      super(maxSize);
    }
 
    public IDLBoolSequence()
@@ -53,7 +58,11 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
    {
       if (buffer == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (buffer.position() == buffer.capacity())
       {

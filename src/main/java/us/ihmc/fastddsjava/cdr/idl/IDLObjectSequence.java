@@ -13,12 +13,18 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    private T[] elements;
    private int position;
 
-   public IDLObjectSequence(int capacity, Class<T> clazz)
+   public IDLObjectSequence(int capacity, int maxSize, Class<T> clazz)
    {
+      super(capacity, maxSize);
       this.clazz = clazz;
       position = 0;
+   }
 
-      ensureMinCapacity(capacity);
+   public IDLObjectSequence(int maxSize, Class<T> clazz)
+   {
+      super(maxSize);
+      this.clazz = clazz;
+      position = 0;
    }
 
    public IDLObjectSequence(Class<T> clazz)
@@ -66,7 +72,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    {
       if (elements == null)
       {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+      }
+      else if (!isUnbounded() && (position >= getMaxSize()))
+      {
+         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
       }
       else if (position == elements.length)
       {
