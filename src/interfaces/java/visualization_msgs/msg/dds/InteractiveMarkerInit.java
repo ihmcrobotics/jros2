@@ -87,6 +87,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       this.server_id_ = server_id_;
    }
+
    public long getseq_num()
    {
       return seq_num_;
@@ -96,6 +97,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       this.seq_num_ = seq_num_;
    }
+
    public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
    {
       return markers_;

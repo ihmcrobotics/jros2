@@ -157,6 +157,7 @@ public class Log implements ROS2Message<Log>
    {
       this.level_ = level_;
    }
+
    public StringBuilder getname()
    {
       return name_;
@@ -166,6 +167,7 @@ public class Log implements ROS2Message<Log>
    {
       this.name_ = name_;
    }
+
    public StringBuilder getmsg()
    {
       return msg_;
@@ -175,6 +177,7 @@ public class Log implements ROS2Message<Log>
    {
       this.msg_ = msg_;
    }
+
    public StringBuilder getfile()
    {
       return file_;
@@ -184,6 +187,7 @@ public class Log implements ROS2Message<Log>
    {
       this.file_ = file_;
    }
+
    public StringBuilder getfunction()
    {
       return function_;
@@ -193,6 +197,7 @@ public class Log implements ROS2Message<Log>
    {
       this.function_ = function_;
    }
+
    public int getline()
    {
       return line_;
@@ -202,5 +207,6 @@ public class Log implements ROS2Message<Log>
    {
       this.line_ = line_;
    }
+
 
 }

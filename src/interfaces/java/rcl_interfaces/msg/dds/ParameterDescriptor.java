@@ -127,6 +127,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.name_ = name_;
    }
+
    public byte gettype()
    {
       return type_;
@@ -136,6 +137,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.type_ = type_;
    }
+
    public StringBuilder getdescription()
    {
       return description_;
@@ -145,6 +147,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.description_ = description_;
    }
+
    public StringBuilder getadditional_constraints()
    {
       return additional_constraints_;
@@ -154,6 +157,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.additional_constraints_ = additional_constraints_;
    }
+
    public boolean getread_only()
    {
       return read_only_;
@@ -163,6 +167,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.read_only_ = read_only_;
    }
+
    public boolean getdynamic_typing()
    {
       return dynamic_typing_;
@@ -172,6 +177,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       this.dynamic_typing_ = dynamic_typing_;
    }
+
    public rcl_interfaces.msg.dds.FloatingPointRange getfloating_point_range()
    {
       return floating_point_range_;

@@ -109,6 +109,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    {
       this.height_ = height_;
    }
+
    public int getwidth()
    {
       return width_;
@@ -118,6 +119,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    {
       this.width_ = width_;
    }
+
    public sensor_msgs.msg.dds.PointField getfields()
    {
       return fields_;
@@ -137,5 +139,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    {
       this.is_dense_ = is_dense_;
    }
+
 
 }

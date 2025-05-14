@@ -121,6 +121,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.angle_min_ = angle_min_;
    }
+
    public float getangle_max()
    {
       return angle_max_;
@@ -130,6 +131,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.angle_max_ = angle_max_;
    }
+
    public float getangle_increment()
    {
       return angle_increment_;
@@ -139,6 +141,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.angle_increment_ = angle_increment_;
    }
+
    public float gettime_increment()
    {
       return time_increment_;
@@ -148,6 +151,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.time_increment_ = time_increment_;
    }
+
    public float getscan_time()
    {
       return scan_time_;
@@ -157,6 +161,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.scan_time_ = scan_time_;
    }
+
    public float getrange_min()
    {
       return range_min_;
@@ -166,6 +171,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.range_min_ = range_min_;
    }
+
    public float getrange_max()
    {
       return range_max_;
@@ -175,6 +181,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       this.range_max_ = range_max_;
    }
+
    public sensor_msgs.msg.dds.LaserEcho getranges()
    {
       return ranges_;

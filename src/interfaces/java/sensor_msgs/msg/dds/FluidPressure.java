@@ -83,6 +83,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    {
       this.fluid_pressure_ = fluid_pressure_;
    }
+
    public double getvariance()
    {
       return variance_;
@@ -92,5 +93,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    {
       this.variance_ = variance_;
    }
+
 
 }

@@ -95,6 +95,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    {
       this.child_frame_id_ = child_frame_id_;
    }
+
    public geometry_msgs.msg.dds.Transform gettransform()
    {
       return transform_;

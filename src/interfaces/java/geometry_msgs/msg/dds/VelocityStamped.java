@@ -85,6 +85,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    {
       this.body_frame_id_ = body_frame_id_;
    }
+
    public StringBuilder getreference_frame_id()
    {
       return reference_frame_id_;
@@ -94,6 +95,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    {
       this.reference_frame_id_ = reference_frame_id_;
    }
+
    public geometry_msgs.msg.dds.Twist getvelocity()
    {
       return velocity_;

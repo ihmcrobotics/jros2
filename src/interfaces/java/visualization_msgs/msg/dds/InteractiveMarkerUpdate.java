@@ -115,6 +115,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.server_id_ = server_id_;
    }
+
    public long getseq_num()
    {
       return seq_num_;
@@ -124,6 +125,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.seq_num_ = seq_num_;
    }
+
    public byte gettype()
    {
       return type_;
@@ -133,6 +135,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.type_ = type_;
    }
+
    public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
    {
       return markers_;

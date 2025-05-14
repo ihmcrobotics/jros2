@@ -160,6 +160,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.voltage_ = voltage_;
    }
+
    public float gettemperature()
    {
       return temperature_;
@@ -169,6 +170,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.temperature_ = temperature_;
    }
+
    public float getcurrent()
    {
       return current_;
@@ -178,6 +180,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.current_ = current_;
    }
+
    public float getcharge()
    {
       return charge_;
@@ -187,6 +190,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.charge_ = charge_;
    }
+
    public float getcapacity()
    {
       return capacity_;
@@ -196,6 +200,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.capacity_ = capacity_;
    }
+
    public float getdesign_capacity()
    {
       return design_capacity_;
@@ -205,6 +210,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.design_capacity_ = design_capacity_;
    }
+
    public float getpercentage()
    {
       return percentage_;
@@ -214,6 +220,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.percentage_ = percentage_;
    }
+
    public IDLFloatSequence getcell_voltage()
    {
       return cell_voltage_;
@@ -233,6 +240,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.location_ = location_;
    }
+
    public StringBuilder getserial_number()
    {
       return serial_number_;
@@ -242,5 +250,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.serial_number_ = serial_number_;
    }
+
 
 }

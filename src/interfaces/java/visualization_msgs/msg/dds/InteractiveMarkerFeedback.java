@@ -139,6 +139,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.client_id_ = client_id_;
    }
+
    public StringBuilder getmarker_name()
    {
       return marker_name_;
@@ -148,6 +149,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.marker_name_ = marker_name_;
    }
+
    public StringBuilder getcontrol_name()
    {
       return control_name_;
@@ -157,6 +159,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.control_name_ = control_name_;
    }
+
    public byte getevent_type()
    {
       return event_type_;
@@ -166,6 +169,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.event_type_ = event_type_;
    }
+
    public geometry_msgs.msg.dds.Pose getpose()
    {
       return pose_;
@@ -180,6 +184,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.menu_entry_id_ = menu_entry_id_;
    }
+
    public geometry_msgs.msg.dds.Point getmouse_point()
    {
       return mouse_point_;
@@ -194,5 +199,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.mouse_point_valid_ = mouse_point_valid_;
    }
+
 
 }

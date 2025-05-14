@@ -153,6 +153,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.ns_ = ns_;
    }
+
    public int getid()
    {
       return id_;
@@ -162,6 +163,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.id_ = id_;
    }
+
    public int gettype()
    {
       return type_;
@@ -171,6 +173,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.type_ = type_;
    }
+
    public int getaction()
    {
       return action_;
@@ -180,6 +183,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.action_ = action_;
    }
+
    public geometry_msgs.msg.dds.Point getposition()
    {
       return position_;
@@ -194,6 +198,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.scale_ = scale_;
    }
+
    public std_msgs.msg.dds.ColorRGBA getoutline_color()
    {
       return outline_color_;
@@ -208,6 +213,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.filled_ = filled_;
    }
+
    public std_msgs.msg.dds.ColorRGBA getfill_color()
    {
       return fill_color_;

@@ -81,6 +81,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    {
       this.format_ = format_;
    }
+
    public IDLByteSequence getdata()
    {
       return data_;

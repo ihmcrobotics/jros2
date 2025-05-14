@@ -102,6 +102,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       this.type_ = type_;
    }
+
    public IDLDoubleSequence getdimensions()
    {
       return dimensions_;

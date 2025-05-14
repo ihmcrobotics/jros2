@@ -70,4 +70,5 @@ public class UInt8 implements ROS2Message<UInt8>
       this.data_ = data_;
    }
 
+
 }

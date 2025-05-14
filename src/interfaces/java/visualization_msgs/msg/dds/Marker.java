@@ -223,6 +223,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.ns_ = ns_;
    }
+
    public int getid()
    {
       return id_;
@@ -232,6 +233,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.id_ = id_;
    }
+
    public int gettype()
    {
       return type_;
@@ -241,6 +243,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.type_ = type_;
    }
+
    public int getaction()
    {
       return action_;
@@ -250,6 +253,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.action_ = action_;
    }
+
    public geometry_msgs.msg.dds.Pose getpose()
    {
       return pose_;
@@ -279,6 +283,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.frame_locked_ = frame_locked_;
    }
+
    public geometry_msgs.msg.dds.Point getpoints()
    {
       return points_;
@@ -298,6 +303,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.texture_resource_ = texture_resource_;
    }
+
    public sensor_msgs.msg.dds.CompressedImage gettexture()
    {
       return texture_;
@@ -317,6 +323,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.text_ = text_;
    }
+
    public StringBuilder getmesh_resource()
    {
       return mesh_resource_;
@@ -326,6 +333,7 @@ public class Marker implements ROS2Message<Marker>
    {
       this.mesh_resource_ = mesh_resource_;
    }
+
    public visualization_msgs.msg.dds.MeshFile getmesh_file()
    {
       return mesh_file_;
@@ -340,5 +348,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.mesh_use_embedded_materials_ = mesh_use_embedded_materials_;
    }
+
 
 }

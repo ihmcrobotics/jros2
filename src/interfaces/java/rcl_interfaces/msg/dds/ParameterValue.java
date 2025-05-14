@@ -152,6 +152,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       this.type_ = type_;
    }
+
    public boolean getbool_value()
    {
       return bool_value_;
@@ -161,6 +162,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       this.bool_value_ = bool_value_;
    }
+
    public long getinteger_value()
    {
       return integer_value_;
@@ -170,6 +172,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       this.integer_value_ = integer_value_;
    }
+
    public double getdouble_value()
    {
       return double_value_;
@@ -179,6 +182,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       this.double_value_ = double_value_;
    }
+
    public StringBuilder getstring_value()
    {
       return string_value_;
@@ -188,6 +192,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       this.string_value_ = string_value_;
    }
+
    public IDLByteSequence getbyte_array_value()
    {
       return byte_array_value_;

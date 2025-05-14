@@ -93,6 +93,7 @@ public class Odometry implements ROS2Message<Odometry>
    {
       this.child_frame_id_ = child_frame_id_;
    }
+
    public geometry_msgs.msg.dds.PoseWithCovariance getpose()
    {
       return pose_;

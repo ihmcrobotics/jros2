@@ -82,6 +82,7 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    {
       this.timestamp_ = timestamp_;
    }
+
    public lifecycle_msgs.msg.dds.Transition gettransition()
    {
       return transition_;

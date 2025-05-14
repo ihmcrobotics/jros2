@@ -87,6 +87,7 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.type_ = type_;
    }
+
    public byte getid()
    {
       return id_;
@@ -96,6 +97,7 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.id_ = id_;
    }
+
    public float getintensity()
    {
       return intensity_;
@@ -105,5 +107,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.intensity_ = intensity_;
    }
+
 
 }

@@ -108,6 +108,7 @@ public class Range implements ROS2Message<Range>
    {
       this.radiation_type_ = radiation_type_;
    }
+
    public float getfield_of_view()
    {
       return field_of_view_;
@@ -117,6 +118,7 @@ public class Range implements ROS2Message<Range>
    {
       this.field_of_view_ = field_of_view_;
    }
+
    public float getmin_range()
    {
       return min_range_;
@@ -126,6 +128,7 @@ public class Range implements ROS2Message<Range>
    {
       this.min_range_ = min_range_;
    }
+
    public float getmax_range()
    {
       return max_range_;
@@ -135,6 +138,7 @@ public class Range implements ROS2Message<Range>
    {
       this.max_range_ = max_range_;
    }
+
    public float getrange()
    {
       return range_;
@@ -144,5 +148,6 @@ public class Range implements ROS2Message<Range>
    {
       this.range_ = range_;
    }
+
 
 }

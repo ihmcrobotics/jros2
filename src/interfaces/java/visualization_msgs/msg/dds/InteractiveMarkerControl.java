@@ -168,6 +168,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.name_ = name_;
    }
+
    public geometry_msgs.msg.dds.Quaternion getorientation()
    {
       return orientation_;
@@ -182,6 +183,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.orientation_mode_ = orientation_mode_;
    }
+
    public byte getinteraction_mode()
    {
       return interaction_mode_;
@@ -191,6 +193,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.interaction_mode_ = interaction_mode_;
    }
+
    public boolean getalways_visible()
    {
       return always_visible_;
@@ -200,6 +203,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.always_visible_ = always_visible_;
    }
+
    public visualization_msgs.msg.dds.Marker getmarkers()
    {
       return markers_;
@@ -214,6 +218,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.independent_marker_orientation_ = independent_marker_orientation_;
    }
+
    public StringBuilder getdescription()
    {
       return description_;
@@ -223,5 +228,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.description_ = description_;
    }
+
 
 }

@@ -70,4 +70,5 @@ public class Float32 implements ROS2Message<Float32>
       this.data_ = data_;
    }
 
+
 }

@@ -111,6 +111,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       this.status_ = status_;
    }
+
    public StringBuilder gettext()
    {
       return text_;
@@ -120,5 +121,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       this.text_ = text_;
    }
+
 
 }

@@ -155,6 +155,7 @@ public void set<field.name>(<field.javaType> <field.javaName>)
 {
    this.<field.javaName> = <field.javaName>;
 \}
+
 <endif>
 <endif>
    }>

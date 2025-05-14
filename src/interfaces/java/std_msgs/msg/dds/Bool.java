@@ -70,4 +70,5 @@ public class Bool implements ROS2Message<Bool>
       this.data_ = data_;
    }
 
+
 }

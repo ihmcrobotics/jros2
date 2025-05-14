@@ -83,6 +83,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       this.status_ = status_;
    }
+
    public short getservice()
    {
       return service_;
@@ -92,5 +93,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       this.service_ = service_;
    }
+
 
 }

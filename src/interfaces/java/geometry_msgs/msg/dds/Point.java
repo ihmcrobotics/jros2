@@ -76,6 +76,7 @@ public class Point implements ROS2Message<Point>
    {
       this.x_ = x_;
    }
+
    public double gety()
    {
       return y_;
@@ -85,6 +86,7 @@ public class Point implements ROS2Message<Point>
    {
       this.y_ = y_;
    }
+
    public double getz()
    {
       return z_;
@@ -94,5 +96,6 @@ public class Point implements ROS2Message<Point>
    {
       this.z_ = z_;
    }
+
 
 }

@@ -90,6 +90,7 @@ public class PointField implements ROS2Message<PointField>
    {
       this.name_ = name_;
    }
+
    public int getoffset()
    {
       return offset_;
@@ -99,6 +100,7 @@ public class PointField implements ROS2Message<PointField>
    {
       this.offset_ = offset_;
    }
+
    public int getcount()
    {
       return count_;
@@ -108,5 +110,6 @@ public class PointField implements ROS2Message<PointField>
    {
       this.count_ = count_;
    }
+
 
 }

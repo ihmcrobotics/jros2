@@ -115,6 +115,7 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       this.measurement_source_name_ = measurement_source_name_;
    }
+
    public StringBuilder getmetrics_source()
    {
       return metrics_source_;
@@ -124,6 +125,7 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       this.metrics_source_ = metrics_source_;
    }
+
    public StringBuilder getunit()
    {
       return unit_;
@@ -133,6 +135,7 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       this.unit_ = unit_;
    }
+
    public builtin_interfaces.msg.dds.Time getwindow_start()
    {
       return window_start_;

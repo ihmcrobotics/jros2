@@ -70,4 +70,5 @@ public class Int32 implements ROS2Message<Int32>
       this.data_ = data_;
    }
 
+
 }

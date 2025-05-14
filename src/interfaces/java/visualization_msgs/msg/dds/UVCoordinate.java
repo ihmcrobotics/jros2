@@ -72,6 +72,7 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       this.u_ = u_;
    }
+
    public float getv()
    {
       return v_;
@@ -81,5 +82,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       this.v_ = v_;
    }
+
 
 }

@@ -147,6 +147,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.latitude_ = latitude_;
    }
+
    public double getlongitude()
    {
       return longitude_;
@@ -156,6 +157,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.longitude_ = longitude_;
    }
+
    public double getaltitude()
    {
       return altitude_;
@@ -165,6 +167,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.altitude_ = altitude_;
    }
+
    public double[] getposition_covariance()
    {
       return position_covariance_;
@@ -179,5 +182,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.position_covariance_type_ = position_covariance_type_;
    }
+
 
 }

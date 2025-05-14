@@ -142,6 +142,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.id_ = id_;
    }
+
    public int getparent_id()
    {
       return parent_id_;
@@ -151,6 +152,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.parent_id_ = parent_id_;
    }
+
    public StringBuilder gettitle()
    {
       return title_;
@@ -160,6 +162,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.title_ = title_;
    }
+
    public StringBuilder getcommand()
    {
       return command_;
@@ -169,6 +172,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.command_ = command_;
    }
+
    public byte getcommand_type()
    {
       return command_type_;
@@ -178,5 +182,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.command_type_ = command_type_;
    }
+
 
 }

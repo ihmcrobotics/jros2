@@ -81,6 +81,7 @@ public class Time implements ROS2Message<Time>
    {
       this.sec_ = sec_;
    }
+
    public int getnanosec()
    {
       return nanosec_;
@@ -90,5 +91,6 @@ public class Time implements ROS2Message<Time>
    {
       this.nanosec_ = nanosec_;
    }
+
 
 }

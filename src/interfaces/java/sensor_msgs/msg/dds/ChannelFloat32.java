@@ -97,6 +97,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       this.name_ = name_;
    }
+
    public IDLFloatSequence getvalues()
    {
       return values_;

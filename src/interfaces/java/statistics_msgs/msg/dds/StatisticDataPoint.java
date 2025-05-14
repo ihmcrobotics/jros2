@@ -93,6 +93,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       this.data_type_ = data_type_;
    }
+
    public double getdata()
    {
       return data_;
@@ -102,5 +103,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       this.data_ = data_;
    }
+
 
 }

@@ -162,6 +162,7 @@ public class Transition implements ROS2Message<Transition>
    {
       this.id_ = id_;
    }
+
    public StringBuilder getlabel()
    {
       return label_;
@@ -171,5 +172,6 @@ public class Transition implements ROS2Message<Transition>
    {
       this.label_ = label_;
    }
+
 
 }

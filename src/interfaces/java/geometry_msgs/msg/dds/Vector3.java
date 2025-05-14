@@ -78,6 +78,7 @@ public class Vector3 implements ROS2Message<Vector3>
    {
       this.x_ = x_;
    }
+
    public double gety()
    {
       return y_;
@@ -87,6 +88,7 @@ public class Vector3 implements ROS2Message<Vector3>
    {
       this.y_ = y_;
    }
+
    public double getz()
    {
       return z_;
@@ -96,5 +98,6 @@ public class Vector3 implements ROS2Message<Vector3>
    {
       this.z_ = z_;
    }
+
 
 }

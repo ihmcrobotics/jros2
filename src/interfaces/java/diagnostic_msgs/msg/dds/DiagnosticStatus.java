@@ -109,6 +109,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       this.level_ = level_;
    }
+
    public StringBuilder getname()
    {
       return name_;
@@ -118,6 +119,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       this.name_ = name_;
    }
+
    public StringBuilder getmessage()
    {
       return message_;
@@ -127,6 +129,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       this.message_ = message_;
    }
+
    public StringBuilder gethardware_id()
    {
       return hardware_id_;
@@ -136,6 +139,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       this.hardware_id_ = hardware_id_;
    }
+
    public diagnostic_msgs.msg.dds.KeyValue getvalues()
    {
       return values_;
