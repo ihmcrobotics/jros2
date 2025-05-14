@@ -39,6 +39,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
 
    public InteractiveMarkerUpdate()
    {
+      server_id_ = new StringBuilder();
       markers_ = new visualization_msgs.msg.dds.InteractiveMarker();
       poses_ = new visualization_msgs.msg.dds.InteractiveMarkerPose();
       erases_ = new IDLStringSequence();

@@ -29,6 +29,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    public JointTrajectory()
    {
+      header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
       points_ = new trajectory_msgs.msg.dds.JointTrajectoryPoint();
 

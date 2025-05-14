@@ -19,6 +19,7 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    public PoseArray()
    {
+      header_ = new std_msgs.msg.dds.Header();
       poses_ = new geometry_msgs.msg.dds.Pose();
 
    }

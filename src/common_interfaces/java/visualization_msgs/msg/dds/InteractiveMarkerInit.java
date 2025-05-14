@@ -32,6 +32,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 
    public InteractiveMarkerInit()
    {
+      server_id_ = new StringBuilder();
       markers_ = new visualization_msgs.msg.dds.InteractiveMarker();
 
    }

@@ -35,6 +35,11 @@ public class Odometry implements ROS2Message<Odometry>
 
    public Odometry()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      child_frame_id_ = new StringBuilder();
+      pose_ = new geometry_msgs.msg.dds.PoseWithCovariance();
+      twist_ = new geometry_msgs.msg.dds.TwistWithCovariance();
+
    }
 
    @Override

@@ -59,7 +59,10 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
 
    public InteractiveMarkerControl()
    {
+      name_ = new StringBuilder();
+      orientation_ = new geometry_msgs.msg.dds.Quaternion();
       markers_ = new visualization_msgs.msg.dds.Marker();
+      description_ = new StringBuilder();
 
    }
 

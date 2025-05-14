@@ -29,6 +29,7 @@ public class Joy implements ROS2Message<Joy>
 
    public Joy()
    {
+      header_ = new std_msgs.msg.dds.Header();
       axes_ = new IDLFloatSequence();
       buttons_ = new IDLIntSequence();
 

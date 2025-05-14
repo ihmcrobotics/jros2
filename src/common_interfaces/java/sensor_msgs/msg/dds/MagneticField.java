@@ -27,6 +27,8 @@ public class MagneticField implements ROS2Message<MagneticField>
 
    public MagneticField()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      magnetic_field_ = new geometry_msgs.msg.dds.Vector3();
       magnetic_field_covariance_ = new double[9];
 
    }

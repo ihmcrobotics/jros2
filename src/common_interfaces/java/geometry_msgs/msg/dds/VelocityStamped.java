@@ -23,6 +23,11 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 
    public VelocityStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      body_frame_id_ = new StringBuilder();
+      reference_frame_id_ = new StringBuilder();
+      velocity_ = new geometry_msgs.msg.dds.Twist();
+
    }
 
    @Override

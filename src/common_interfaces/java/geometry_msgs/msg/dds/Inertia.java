@@ -34,6 +34,8 @@ public class Inertia implements ROS2Message<Inertia>
 
    public Inertia()
    {
+      com_ = new geometry_msgs.msg.dds.Vector3();
+
    }
 
    @Override

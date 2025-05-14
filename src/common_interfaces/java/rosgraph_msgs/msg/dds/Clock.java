@@ -20,6 +20,8 @@ public class Clock implements ROS2Message<Clock>
 
    public Clock()
    {
+      clock_ = new builtin_interfaces.msg.dds.Time();
+
    }
 
    @Override

@@ -22,6 +22,8 @@ public class PointField implements ROS2Message<PointField>
 
    public PointField()
    {
+      name_ = new StringBuilder();
+
    }
 
    @Override

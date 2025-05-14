@@ -19,6 +19,9 @@ public class Transform implements ROS2Message<Transform>
 
    public Transform()
    {
+      translation_ = new geometry_msgs.msg.dds.Vector3();
+      rotation_ = new geometry_msgs.msg.dds.Quaternion();
+
    }
 
    @Override

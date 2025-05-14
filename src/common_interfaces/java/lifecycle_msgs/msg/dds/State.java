@@ -24,6 +24,8 @@ public class State implements ROS2Message<State>
 
    public State()
    {
+      label_ = new StringBuilder();
+
    }
 
    @Override

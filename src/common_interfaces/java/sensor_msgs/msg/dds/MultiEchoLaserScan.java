@@ -40,6 +40,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    public MultiEchoLaserScan()
    {
+      header_ = new std_msgs.msg.dds.Header();
       ranges_ = new sensor_msgs.msg.dds.LaserEcho();
       intensities_ = new sensor_msgs.msg.dds.LaserEcho();
 

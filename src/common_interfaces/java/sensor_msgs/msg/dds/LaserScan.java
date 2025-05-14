@@ -38,6 +38,7 @@ public class LaserScan implements ROS2Message<LaserScan>
 
    public LaserScan()
    {
+      header_ = new std_msgs.msg.dds.Header();
       ranges_ = new IDLFloatSequence();
       intensities_ = new IDLFloatSequence();
 

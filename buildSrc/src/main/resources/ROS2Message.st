@@ -35,6 +35,8 @@ private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>
       <context.fields:{ field |
       <if(field.array)>
 <field.name>_ = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>()<endif>;
+      <elseif(!field.builtinType||field.builtinStringType)>
+<field.name>_ = new <field.javaType>();
       <endif>
       }>
    }

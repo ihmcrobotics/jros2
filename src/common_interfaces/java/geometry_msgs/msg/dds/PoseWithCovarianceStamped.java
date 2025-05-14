@@ -19,6 +19,9 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
 
    public PoseWithCovarianceStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.PoseWithCovariance();
+
    }
 
    @Override

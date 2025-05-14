@@ -56,6 +56,8 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
    public NavSatFix()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      status_ = new sensor_msgs.msg.dds.NavSatStatus();
       position_covariance_ = new double[9];
 
    }

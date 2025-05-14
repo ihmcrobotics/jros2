@@ -33,6 +33,7 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
       transforms_ = new geometry_msgs.msg.dds.Transform();
       velocities_ = new geometry_msgs.msg.dds.Twist();
       accelerations_ = new geometry_msgs.msg.dds.Twist();
+      time_from_start_ = new builtin_interfaces.msg.dds.Duration();
 
    }
 

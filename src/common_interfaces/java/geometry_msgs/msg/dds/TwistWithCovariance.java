@@ -25,6 +25,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
    public TwistWithCovariance()
    {
+      twist_ = new geometry_msgs.msg.dds.Twist();
       covariance_ = new double[36];
 
    }

@@ -20,6 +20,9 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 
    public GoalStatus()
    {
+      goal_id_ = new actionlib_msgs.msg.dds.GoalID();
+      text_ = new StringBuilder();
+
    }
 
    @Override

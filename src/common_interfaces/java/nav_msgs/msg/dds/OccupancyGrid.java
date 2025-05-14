@@ -31,6 +31,8 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    public OccupancyGrid()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      info_ = new nav_msgs.msg.dds.MapMetaData();
       data_ = new IDLByteSequence();
 
    }

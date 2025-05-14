@@ -20,6 +20,8 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
    public PolygonInstance()
    {
+      polygon_ = new geometry_msgs.msg.dds.Polygon();
+
    }
 
    @Override

@@ -24,6 +24,8 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
 
    public SetParametersResult()
    {
+      reason_ = new StringBuilder();
+
    }
 
    @Override

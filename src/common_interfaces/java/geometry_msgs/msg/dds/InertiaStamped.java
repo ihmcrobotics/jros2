@@ -19,6 +19,9 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 
    public InertiaStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      inertia_ = new geometry_msgs.msg.dds.Inertia();
+
    }
 
    @Override

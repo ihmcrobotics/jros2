@@ -102,9 +102,20 @@ public class Marker implements ROS2Message<Marker>
 
    public Marker()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      ns_ = new StringBuilder();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      scale_ = new geometry_msgs.msg.dds.Vector3();
+      color_ = new std_msgs.msg.dds.ColorRGBA();
+      lifetime_ = new builtin_interfaces.msg.dds.Duration();
       points_ = new geometry_msgs.msg.dds.Point();
       colors_ = new std_msgs.msg.dds.ColorRGBA();
+      texture_resource_ = new StringBuilder();
+      texture_ = new sensor_msgs.msg.dds.CompressedImage();
       uv_coordinates_ = new visualization_msgs.msg.dds.UVCoordinate();
+      text_ = new StringBuilder();
+      mesh_resource_ = new StringBuilder();
+      mesh_file_ = new visualization_msgs.msg.dds.MeshFile();
 
    }
 

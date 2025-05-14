@@ -29,6 +29,10 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    public InteractiveMarkerPose()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      name_ = new StringBuilder();
+
    }
 
    @Override

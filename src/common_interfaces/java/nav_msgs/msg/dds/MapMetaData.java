@@ -38,6 +38,9 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    public MapMetaData()
    {
+      map_load_time_ = new builtin_interfaces.msg.dds.Time();
+      origin_ = new geometry_msgs.msg.dds.Pose();
+
    }
 
    @Override

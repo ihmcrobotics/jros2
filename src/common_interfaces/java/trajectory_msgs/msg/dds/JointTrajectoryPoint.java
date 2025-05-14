@@ -51,6 +51,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       velocities_ = new IDLDoubleSequence();
       accelerations_ = new IDLDoubleSequence();
       effort_ = new IDLDoubleSequence();
+      time_from_start_ = new builtin_interfaces.msg.dds.Duration();
 
    }
 

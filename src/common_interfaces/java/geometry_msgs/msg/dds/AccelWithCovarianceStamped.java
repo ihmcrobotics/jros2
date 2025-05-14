@@ -19,6 +19,9 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
 
    public AccelWithCovarianceStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      accel_ = new geometry_msgs.msg.dds.AccelWithCovariance();
+
    }
 
    @Override

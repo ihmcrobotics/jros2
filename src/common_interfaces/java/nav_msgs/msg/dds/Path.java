@@ -25,6 +25,7 @@ public class Path implements ROS2Message<Path>
 
    public Path()
    {
+      header_ = new std_msgs.msg.dds.Header();
       poses_ = new geometry_msgs.msg.dds.PoseStamped();
 
    }

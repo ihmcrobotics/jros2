@@ -27,6 +27,8 @@ public class Transition implements ROS2Message<Transition>
 
    public Transition()
    {
+      label_ = new StringBuilder();
+
    }
 
    @Override

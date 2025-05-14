@@ -32,6 +32,8 @@ public class Illuminance implements ROS2Message<Illuminance>
 
    public Illuminance()
    {
+      header_ = new std_msgs.msg.dds.Header();
+
    }
 
    @Override

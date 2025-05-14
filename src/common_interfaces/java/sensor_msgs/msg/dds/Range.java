@@ -31,6 +31,8 @@ public class Range implements ROS2Message<Range>
 
    public Range()
    {
+      header_ = new std_msgs.msg.dds.Header();
+
    }
 
    @Override

@@ -52,6 +52,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
 
    public MetricsMessage()
    {
+      measurement_source_name_ = new StringBuilder();
+      metrics_source_ = new StringBuilder();
+      unit_ = new StringBuilder();
+      window_start_ = new builtin_interfaces.msg.dds.Time();
+      window_stop_ = new builtin_interfaces.msg.dds.Time();
       statistics_ = new statistics_msgs.msg.dds.StatisticDataPoint();
 
    }

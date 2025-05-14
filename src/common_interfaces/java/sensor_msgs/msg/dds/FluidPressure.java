@@ -24,6 +24,8 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 
    public FluidPressure()
    {
+      header_ = new std_msgs.msg.dds.Header();
+
    }
 
    @Override

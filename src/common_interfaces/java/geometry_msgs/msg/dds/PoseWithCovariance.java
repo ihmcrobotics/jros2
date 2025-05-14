@@ -25,6 +25,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
 
    public PoseWithCovariance()
    {
+      pose_ = new geometry_msgs.msg.dds.Pose();
       covariance_ = new double[36];
 
    }

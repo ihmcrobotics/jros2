@@ -27,6 +27,9 @@ public class Parameter implements ROS2Message<Parameter>
 
    public Parameter()
    {
+      name_ = new StringBuilder();
+      value_ = new rcl_interfaces.msg.dds.ParameterValue();
+
    }
 
    @Override

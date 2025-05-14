@@ -39,6 +39,7 @@ public class JointState implements ROS2Message<JointState>
 
    public JointState()
    {
+      header_ = new std_msgs.msg.dds.Header();
       name_ = new IDLStringSequence();
       position_ = new IDLDoubleSequence();
       velocity_ = new IDLDoubleSequence();

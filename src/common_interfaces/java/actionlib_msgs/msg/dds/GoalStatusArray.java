@@ -20,6 +20,7 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
 
    public GoalStatusArray()
    {
+      header_ = new std_msgs.msg.dds.Header();
       status_list_ = new actionlib_msgs.msg.dds.GoalStatus();
 
    }

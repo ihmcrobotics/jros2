@@ -38,6 +38,10 @@ public class TransformStamped implements ROS2Message<TransformStamped>
 
    public TransformStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      child_frame_id_ = new StringBuilder();
+      transform_ = new geometry_msgs.msg.dds.Transform();
+
    }
 
    @Override

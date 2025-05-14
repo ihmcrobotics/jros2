@@ -21,6 +21,8 @@ public class String implements ROS2Message<String>
 
    public String()
    {
+      data_ = new StringBuilder();
+
    }
 
    @Override

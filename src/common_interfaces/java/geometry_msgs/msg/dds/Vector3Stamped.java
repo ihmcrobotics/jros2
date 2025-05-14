@@ -20,6 +20,9 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 
    public Vector3Stamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      vector_ = new geometry_msgs.msg.dds.Vector3();
+
    }
 
    @Override

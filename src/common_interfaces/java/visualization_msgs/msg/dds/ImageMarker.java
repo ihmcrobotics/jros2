@@ -66,6 +66,12 @@ public class ImageMarker implements ROS2Message<ImageMarker>
 
    public ImageMarker()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      ns_ = new StringBuilder();
+      position_ = new geometry_msgs.msg.dds.Point();
+      outline_color_ = new std_msgs.msg.dds.ColorRGBA();
+      fill_color_ = new std_msgs.msg.dds.ColorRGBA();
+      lifetime_ = new builtin_interfaces.msg.dds.Duration();
       points_ = new geometry_msgs.msg.dds.Point();
       outline_colors_ = new std_msgs.msg.dds.ColorRGBA();
 

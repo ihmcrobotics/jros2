@@ -19,6 +19,9 @@ public class AccelStamped implements ROS2Message<AccelStamped>
 
    public AccelStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      accel_ = new geometry_msgs.msg.dds.Accel();
+
    }
 
    @Override

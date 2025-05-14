@@ -19,6 +19,9 @@ public class PointStamped implements ROS2Message<PointStamped>
 
    public PointStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      point_ = new geometry_msgs.msg.dds.Point();
+
    }
 
    @Override

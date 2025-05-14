@@ -20,6 +20,8 @@ public class Temperature implements ROS2Message<Temperature>
 
    public Temperature()
    {
+      header_ = new std_msgs.msg.dds.Header();
+
    }
 
    @Override

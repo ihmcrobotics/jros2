@@ -19,6 +19,9 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 
    public PolygonStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      polygon_ = new geometry_msgs.msg.dds.Polygon();
+
    }
 
    @Override

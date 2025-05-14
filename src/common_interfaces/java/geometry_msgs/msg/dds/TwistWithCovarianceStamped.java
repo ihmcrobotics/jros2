@@ -19,6 +19,9 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
 
    public TwistWithCovarianceStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      twist_ = new geometry_msgs.msg.dds.TwistWithCovariance();
+
    }
 
    @Override

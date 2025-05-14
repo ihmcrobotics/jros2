@@ -30,6 +30,10 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
 
    public TransitionEvent()
    {
+      transition_ = new lifecycle_msgs.msg.dds.Transition();
+      start_state_ = new lifecycle_msgs.msg.dds.State();
+      goal_state_ = new lifecycle_msgs.msg.dds.State();
+
    }
 
    @Override

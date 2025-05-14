@@ -65,6 +65,9 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
    public MenuEntry()
    {
+      title_ = new StringBuilder();
+      command_ = new StringBuilder();
+
    }
 
    @Override

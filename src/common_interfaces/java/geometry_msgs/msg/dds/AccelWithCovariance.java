@@ -25,6 +25,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
 
    public AccelWithCovariance()
    {
+      accel_ = new geometry_msgs.msg.dds.Accel();
       covariance_ = new double[36];
 
    }

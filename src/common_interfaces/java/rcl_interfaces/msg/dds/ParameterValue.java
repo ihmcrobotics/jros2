@@ -61,6 +61,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    public ParameterValue()
    {
+      string_value_ = new StringBuilder();
       byte_array_value_ = new IDLByteSequence();
       bool_array_value_ = new IDLBoolSequence();
       integer_array_value_ = new IDLLongSequence();

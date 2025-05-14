@@ -27,6 +27,9 @@ public class Header implements ROS2Message<Header>
 
    public Header()
    {
+      stamp_ = new builtin_interfaces.msg.dds.Time();
+      frame_id_ = new StringBuilder();
+
    }
 
    @Override

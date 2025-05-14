@@ -19,6 +19,9 @@ public class TwistStamped implements ROS2Message<TwistStamped>
 
    public TwistStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      twist_ = new geometry_msgs.msg.dds.Twist();
+
    }
 
    @Override

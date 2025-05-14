@@ -19,6 +19,9 @@ public class PoseStamped implements ROS2Message<PoseStamped>
 
    public PoseStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+
    }
 
    @Override

@@ -35,6 +35,8 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       cell_voltage_ = new IDLFloatSequence();
       cell_temperature_ = new IDLFloatSequence();
+      location_ = new StringBuilder();
+      serial_number_ = new StringBuilder();
 
    }
 

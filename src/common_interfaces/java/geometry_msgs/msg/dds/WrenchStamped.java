@@ -19,6 +19,9 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 
    public WrenchStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      wrench_ = new geometry_msgs.msg.dds.Wrench();
+
    }
 
    @Override

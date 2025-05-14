@@ -30,6 +30,7 @@ public class GridCells implements ROS2Message<GridCells>
 
    public GridCells()
    {
+      header_ = new std_msgs.msg.dds.Header();
       cells_ = new geometry_msgs.msg.dds.Point();
 
    }

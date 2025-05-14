@@ -23,6 +23,8 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 
    public MultiArrayDimension()
    {
+      label_ = new StringBuilder();
+
    }
 
    @Override

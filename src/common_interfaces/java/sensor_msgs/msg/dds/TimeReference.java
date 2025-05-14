@@ -20,6 +20,10 @@ public class TimeReference implements ROS2Message<TimeReference>
 
    public TimeReference()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      time_ref_ = new builtin_interfaces.msg.dds.Time();
+      source_ = new StringBuilder();
+
    }
 
    @Override

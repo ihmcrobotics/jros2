@@ -39,6 +39,8 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
 
    public ParameterEvent()
    {
+      stamp_ = new builtin_interfaces.msg.dds.Time();
+      node_ = new StringBuilder();
       new_parameters_ = new rcl_interfaces.msg.dds.Parameter();
       changed_parameters_ = new rcl_interfaces.msg.dds.Parameter();
       deleted_parameters_ = new rcl_interfaces.msg.dds.Parameter();

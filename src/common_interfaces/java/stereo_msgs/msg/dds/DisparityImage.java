@@ -50,6 +50,10 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    public DisparityImage()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      image_ = new sensor_msgs.msg.dds.Image();
+      valid_window_ = new sensor_msgs.msg.dds.RegionOfInterest();
+
    }
 
    @Override

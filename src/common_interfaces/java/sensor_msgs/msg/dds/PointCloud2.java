@@ -40,6 +40,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    public PointCloud2()
    {
+      header_ = new std_msgs.msg.dds.Header();
       fields_ = new sensor_msgs.msg.dds.PointField();
       data_ = new IDLByteSequence();
 

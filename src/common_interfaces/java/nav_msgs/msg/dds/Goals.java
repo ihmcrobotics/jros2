@@ -28,6 +28,7 @@ public class Goals implements ROS2Message<Goals>
 
    public Goals()
    {
+      header_ = new std_msgs.msg.dds.Header();
       goals_ = new geometry_msgs.msg.dds.PoseStamped();
 
    }

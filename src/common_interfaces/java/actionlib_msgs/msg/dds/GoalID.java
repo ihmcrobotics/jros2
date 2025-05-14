@@ -28,6 +28,9 @@ public class GoalID implements ROS2Message<GoalID>
 
    public GoalID()
    {
+      stamp_ = new builtin_interfaces.msg.dds.Time();
+      id_ = new StringBuilder();
+
    }
 
    @Override

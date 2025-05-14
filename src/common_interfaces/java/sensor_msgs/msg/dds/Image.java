@@ -25,6 +25,8 @@ public class Image implements ROS2Message<Image>
 
    public Image()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      encoding_ = new StringBuilder();
       data_ = new IDLByteSequence();
 
    }

@@ -53,6 +53,9 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
 
    public ParameterDescriptor()
    {
+      name_ = new StringBuilder();
+      description_ = new StringBuilder();
+      additional_constraints_ = new StringBuilder();
       floating_point_range_ = new rcl_interfaces.msg.dds.FloatingPointRange();
       integer_range_ = new rcl_interfaces.msg.dds.IntegerRange();
 

@@ -26,6 +26,7 @@ public class MeshFile implements ROS2Message<MeshFile>
 
    public MeshFile()
    {
+      filename_ = new StringBuilder();
       data_ = new IDLByteSequence();
 
    }

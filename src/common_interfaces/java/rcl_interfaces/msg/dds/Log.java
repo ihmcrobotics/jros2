@@ -47,6 +47,12 @@ public class Log implements ROS2Message<Log>
 
    public Log()
    {
+      stamp_ = new builtin_interfaces.msg.dds.Time();
+      name_ = new StringBuilder();
+      msg_ = new StringBuilder();
+      file_ = new StringBuilder();
+      function_ = new StringBuilder();
+
    }
 
    @Override

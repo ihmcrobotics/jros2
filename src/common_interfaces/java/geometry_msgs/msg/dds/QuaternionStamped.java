@@ -19,6 +19,9 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 
    public QuaternionStamped()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      quaternion_ = new geometry_msgs.msg.dds.Quaternion();
+
    }
 
    @Override

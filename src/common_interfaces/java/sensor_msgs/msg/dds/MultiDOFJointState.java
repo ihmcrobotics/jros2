@@ -40,6 +40,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    public MultiDOFJointState()
    {
+      header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
       transforms_ = new geometry_msgs.msg.dds.Transform();
       twist_ = new geometry_msgs.msg.dds.Twist();

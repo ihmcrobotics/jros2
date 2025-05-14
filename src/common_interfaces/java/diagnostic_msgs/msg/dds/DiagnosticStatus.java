@@ -36,6 +36,9 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 
    public DiagnosticStatus()
    {
+      name_ = new StringBuilder();
+      message_ = new StringBuilder();
+      hardware_id_ = new StringBuilder();
       values_ = new diagnostic_msgs.msg.dds.KeyValue();
 
    }

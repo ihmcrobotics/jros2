@@ -42,6 +42,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 
    public ChannelFloat32()
    {
+      name_ = new StringBuilder();
       values_ = new IDLFloatSequence();
 
    }

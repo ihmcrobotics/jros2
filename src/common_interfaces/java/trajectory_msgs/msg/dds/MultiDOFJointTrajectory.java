@@ -20,6 +20,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    public MultiDOFJointTrajectory()
    {
+      header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
       points_ = new trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint();
 

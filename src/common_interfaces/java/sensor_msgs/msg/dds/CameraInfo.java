@@ -86,8 +86,11 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    public CameraInfo()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      distortion_model_ = new StringBuilder();
       d_ = new IDLDoubleSequence();
       p_ = new double[12];
+      roi_ = new sensor_msgs.msg.dds.RegionOfInterest();
 
    }
 

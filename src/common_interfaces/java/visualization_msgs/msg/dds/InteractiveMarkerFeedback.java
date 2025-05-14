@@ -46,6 +46,13 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    public InteractiveMarkerFeedback()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      client_id_ = new StringBuilder();
+      marker_name_ = new StringBuilder();
+      control_name_ = new StringBuilder();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      mouse_point_ = new geometry_msgs.msg.dds.Point();
+
    }
 
    @Override

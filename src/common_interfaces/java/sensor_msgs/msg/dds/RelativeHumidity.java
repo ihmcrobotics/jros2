@@ -22,6 +22,8 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 
    public RelativeHumidity()
    {
+      header_ = new std_msgs.msg.dds.Header();
+
    }
 
    @Override

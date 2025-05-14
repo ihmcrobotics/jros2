@@ -26,6 +26,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    public SolidPrimitive()
    {
       dimensions_ = new IDLDoubleSequence();
+      polygon_ = new geometry_msgs.msg.dds.Polygon();
 
    }
 

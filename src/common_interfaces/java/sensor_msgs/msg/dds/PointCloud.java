@@ -33,6 +33,7 @@ public class PointCloud implements ROS2Message<PointCloud>
 
    public PointCloud()
    {
+      header_ = new std_msgs.msg.dds.Header();
       points_ = new geometry_msgs.msg.dds.Point32();
       channels_ = new sensor_msgs.msg.dds.ChannelFloat32();
 

@@ -48,6 +48,10 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
    public InteractiveMarker()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      name_ = new StringBuilder();
+      description_ = new StringBuilder();
       menu_entries_ = new visualization_msgs.msg.dds.MenuEntry();
       controls_ = new visualization_msgs.msg.dds.InteractiveMarkerControl();
 

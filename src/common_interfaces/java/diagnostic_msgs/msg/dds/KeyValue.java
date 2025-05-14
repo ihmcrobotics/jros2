@@ -22,6 +22,9 @@ public class KeyValue implements ROS2Message<KeyValue>
 
    public KeyValue()
    {
+      key_ = new StringBuilder();
+      value_ = new StringBuilder();
+
    }
 
    @Override

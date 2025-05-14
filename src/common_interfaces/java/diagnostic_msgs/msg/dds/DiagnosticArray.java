@@ -19,6 +19,7 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 
    public DiagnosticArray()
    {
+      header_ = new std_msgs.msg.dds.Header();
       status_ = new diagnostic_msgs.msg.dds.DiagnosticStatus();
 
    }

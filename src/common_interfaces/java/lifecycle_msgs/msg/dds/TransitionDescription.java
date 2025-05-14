@@ -26,6 +26,10 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
 
    public TransitionDescription()
    {
+      transition_ = new lifecycle_msgs.msg.dds.Transition();
+      start_state_ = new lifecycle_msgs.msg.dds.State();
+      goal_state_ = new lifecycle_msgs.msg.dds.State();
+
    }
 
    @Override

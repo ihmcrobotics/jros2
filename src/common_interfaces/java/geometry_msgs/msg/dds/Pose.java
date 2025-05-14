@@ -19,6 +19,9 @@ public class Pose implements ROS2Message<Pose>
 
    public Pose()
    {
+      position_ = new geometry_msgs.msg.dds.Point();
+      orientation_ = new geometry_msgs.msg.dds.Quaternion();
+
    }
 
    @Override

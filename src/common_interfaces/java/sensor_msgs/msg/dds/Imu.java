@@ -36,8 +36,12 @@ public class Imu implements ROS2Message<Imu>
 
    public Imu()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      orientation_ = new geometry_msgs.msg.dds.Quaternion();
       orientation_covariance_ = new double[9];
+      angular_velocity_ = new geometry_msgs.msg.dds.Vector3();
       angular_velocity_covariance_ = new double[9];
+      linear_acceleration_ = new geometry_msgs.msg.dds.Vector3();
       linear_acceleration_covariance_ = new double[9];
 
    }
