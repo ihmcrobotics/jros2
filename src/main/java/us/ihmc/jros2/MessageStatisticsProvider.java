@@ -19,6 +19,9 @@ interface MessageStatisticsProvider
       public static final MessageData[] values = values();
    }
 
+   /**
+    * Reset all statistics gathered.
+    */
    void resetStatistics();
 
    /**

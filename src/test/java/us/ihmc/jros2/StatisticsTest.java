@@ -1,6 +1,14 @@
 package us.ihmc.jros2;
 
+import geometry_msgs.msg.dds.PointStamped;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import us.ihmc.jros2.MessageStatisticsProvider.MessageData;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.jros2.Statistics.StatisticDataType.*;
@@ -98,5 +106,58 @@ public class StatisticsTest
       calculator.reset();
       calculator.read(statistics);
       assertEquals(defaultStatisticsValues.toString(), statistics.toString());
+   }
+
+   // TODO: Enable when messages are generated correctly
+   @Disabled
+   @Test
+   public void testPublisherStatistics() throws InterruptedException
+   {
+      // Create a publisher
+      ROS2Node node = new ROS2Node("test_node");
+      ROS2Topic<PointStamped> topic = new ROS2Topic<>("test_topic", PointStamped.class);
+      ROS2Publisher<PointStamped> publisher = node.createPublisher(topic);
+
+      // Create the message to publish
+      PointStamped message = new PointStamped();
+      message.getpoint().setx(1.0);
+      message.getpoint().sety(2.0);
+      message.getpoint().setz(3.0);
+
+      // Publish messages at a fixed rate for a few seconds
+      AtomicInteger publishCount = new AtomicInteger(0);
+      ScheduledExecutorService publishExecutor = Executors.newSingleThreadScheduledExecutor();
+      publishExecutor.scheduleAtFixedRate(() ->
+      {
+         publisher.publish(message);
+         publishCount.incrementAndGet();
+      }, 0, 100, TimeUnit.MILLISECONDS);
+
+      Thread.sleep(3000);
+      publishExecutor.shutdown();
+
+      Statistics statistics = new Statistics();
+
+      // Read the message size statistics, and assert they make sense
+      double expectedSize = message.calculateSizeBytes();
+      publisher.readStatistics(MessageData.SIZE, statistics);
+      assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
+      assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
+      assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
+      assertEquals(0, statistics.get(STDDEV), 1E-7);
+      assertEquals(publishCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
+      assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
+      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
+
+      // Read the message publish period statistics, and assert they make sense
+      double expectedPeriod = 100.0;
+      publisher.readStatistics(MessageData.PERIOD, statistics);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), 1-5);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 1E-5);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 1E-5);
+      assertEquals(0, statistics.get(STDDEV), 1E-5);
+      assertEquals(publishCount.get() * expectedPeriod, statistics.get(TOTAL), 1E-4);
+      assertEquals(expectedPeriod, statistics.get(LATEST), 1E-5);
+      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
    }
 }

@@ -12,13 +12,7 @@ public class Statistics
     */
    public enum StatisticDataType
    {
-      AVERAGE,
-      MINIMUM,
-      MAXIMUM,
-      STDDEV,
-      TOTAL,
-      LATEST,
-      SAMPLE_COUNT;
+      AVERAGE, MINIMUM, MAXIMUM, STDDEV, TOTAL, LATEST, SAMPLE_COUNT;
 
       // Static set and array for garbage free usage. Treat as read only.
       public static final Set<StatisticDataType> set = EnumSet.allOf(StatisticDataType.class);

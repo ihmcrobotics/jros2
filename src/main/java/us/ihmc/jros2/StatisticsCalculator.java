@@ -23,6 +23,12 @@ public class StatisticsCalculator
       reset();
    }
 
+   /**
+    * Read the current values of statistics.
+    * If there are no samples, the {@link Statistics} object will be set to its default values.
+    *
+    * @param statisticsToPack The {@link Statistics} object to pack current values into.
+    */
    public void read(Statistics statisticsToPack)
    {
       if (statisticsToPack != null)
@@ -42,7 +48,22 @@ public class StatisticsCalculator
             lock.readLock().unlock();
          }
       }
+   }
 
+   /**
+    * Reset the statistics.
+    */
+   public void reset()
+   {
+      lock.writeLock().lock();
+      average = 0.0;
+      min = Double.MAX_VALUE;
+      max = Double.MIN_VALUE;
+      m2 = 0.0;
+      total = 0.0;
+      latest = Double.NaN;
+      sampleCount = 0;
+      lock.writeLock().unlock();
    }
 
    void record(double value)
@@ -60,18 +81,5 @@ public class StatisticsCalculator
          latest = value;
          lock.writeLock().unlock();
       }
-   }
-
-   public void reset()
-   {
-      lock.writeLock().lock();
-      average = 0.0;
-      min = Double.MAX_VALUE;
-      max = Double.MIN_VALUE;
-      m2 = 0.0;
-      total = 0.0;
-      latest = Double.NaN;
-      sampleCount = 0;
-      lock.writeLock().unlock();
    }
 }
