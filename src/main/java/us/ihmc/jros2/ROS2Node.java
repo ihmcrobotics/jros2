@@ -105,13 +105,17 @@ public class ROS2Node implements Closeable
       {
          rtps.setUseBuiltinTransports(false);
          TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         for (TransportDescriptorType transport : transports)
-            transportDescriptorListType.getTransportDescriptor().add(transport);
+         for (int i = 0; i < transports.length; ++i)
+         {
+            transportDescriptorListType.getTransportDescriptor().add(transports[i]);
+         }
          profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
          ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         for (TransportDescriptorType transport : transports)
-            userTransports.getTransportId().add(transport.getTransportId());
+         for (int i = 0; i < transports.length; ++i)
+         {
+            userTransports.getTransportId().add(transports[i].getTransportId());
+         }
          rtps.setUserTransports(userTransports);
       }
 
