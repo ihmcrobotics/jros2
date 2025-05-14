@@ -61,6 +61,16 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       Arguments to command indicated by command_type (below)
    */
    private StringBuilder command_;
+   /**
+      Command_type stores the type of response desired when this menu
+      entry is clicked.
+      FEEDBACK: send an InteractiveMarkerFeedback message with menu_entry_id set to this entry's id.
+      ROSRUN: execute "rosrun" with arguments given in the command field (above).
+      ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
+   */
+   public static final byte FEEDBACK = 0;
+   public static final byte ROSRUN = 1;
+   public static final byte ROSLAUNCH = 2;
    private byte command_type_;
 
    public MenuEntry()
@@ -132,7 +142,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.id_ = id_;
    }
-
    public int getparent_id()
    {
       return parent_id_;
@@ -142,7 +151,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.parent_id_ = parent_id_;
    }
-
    public StringBuilder gettitle()
    {
       return title_;
@@ -152,7 +160,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.title_ = title_;
    }
-
    public StringBuilder getcommand()
    {
       return command_;
@@ -162,7 +169,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.command_ = command_;
    }
-
    public byte getcommand_type()
    {
       return command_type_;
@@ -172,6 +178,5 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.command_type_ = command_type_;
    }
-
 
 }

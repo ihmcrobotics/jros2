@@ -70,5 +70,4 @@ public class UInt32 implements ROS2Message<UInt32>
       this.data_ = data_;
    }
 
-
 }

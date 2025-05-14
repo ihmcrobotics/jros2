@@ -78,7 +78,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       this.r_ = r_;
    }
-
    public float getg()
    {
       return g_;
@@ -88,7 +87,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       this.g_ = g_;
    }
-
    public float getb()
    {
       return b_;
@@ -98,7 +96,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       this.b_ = b_;
    }
-
    public float geta()
    {
       return a_;
@@ -108,6 +105,5 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       this.a_ = a_;
    }
-
 
 }

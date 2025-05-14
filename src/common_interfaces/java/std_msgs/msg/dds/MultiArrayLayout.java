@@ -97,5 +97,4 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
       this.data_offset_ = data_offset_;
    }
 
-
 }

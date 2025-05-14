@@ -7,12 +7,16 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class JoyFeedback implements ROS2Message<JoyFeedback>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedback_";
 
+   /**
+      Declare of the type of feedback
+   */
+   public static final byte TYPE_LED = 0;
+   public static final byte TYPE_RUMBLE = 1;
+   public static final byte TYPE_BUZZER = 2;
    private byte type_;
    /**
       This will hold an id number for each type of each feedback.
@@ -83,7 +87,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.type_ = type_;
    }
-
    public byte getid()
    {
       return id_;
@@ -93,7 +96,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.id_ = id_;
    }
-
    public float getintensity()
    {
       return intensity_;
@@ -103,6 +105,5 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.intensity_ = intensity_;
    }
-
 
 }

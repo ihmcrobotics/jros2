@@ -7,12 +7,17 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class ImageMarker implements ROS2Message<ImageMarker>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::ImageMarker_";
 
+   public static final int CIRCLE = 0;
+   public static final int LINE_STRIP = 1;
+   public static final int LINE_LIST = 2;
+   public static final int POLYGON = 3;
+   public static final int POINTS = 4;
+   public static final int ADD = 0;
+   public static final int REMOVE = 1;
    private std_msgs.msg.dds.Header header_;
    /**
       Namespace which is used with the id to form a unique id.
@@ -148,7 +153,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.ns_ = ns_;
    }
-
    public int getid()
    {
       return id_;
@@ -158,7 +162,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.id_ = id_;
    }
-
    public int gettype()
    {
       return type_;
@@ -168,7 +171,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.type_ = type_;
    }
-
    public int getaction()
    {
       return action_;
@@ -178,7 +180,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.action_ = action_;
    }
-
    public geometry_msgs.msg.dds.Point getposition()
    {
       return position_;
@@ -193,7 +194,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.scale_ = scale_;
    }
-
    public std_msgs.msg.dds.ColorRGBA getoutline_color()
    {
       return outline_color_;
@@ -208,7 +208,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       this.filled_ = filled_;
    }
-
    public std_msgs.msg.dds.ColorRGBA getfill_color()
    {
       return fill_color_;

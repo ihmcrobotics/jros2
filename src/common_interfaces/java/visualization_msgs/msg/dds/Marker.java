@@ -8,11 +8,32 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   See:
+   - http://www.ros.org/wiki/rviz/DisplayTypes/Marker
+   - http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes
+
+   for more information on using this message with rviz.
 */
 public class Marker implements ROS2Message<Marker>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::Marker_";
 
+   public static final int ARROW = 0;
+   public static final int CUBE = 1;
+   public static final int SPHERE = 2;
+   public static final int CYLINDER = 3;
+   public static final int LINE_STRIP = 4;
+   public static final int LINE_LIST = 5;
+   public static final int CUBE_LIST = 6;
+   public static final int SPHERE_LIST = 7;
+   public static final int POINTS = 8;
+   public static final int TEXT_VIEW_FACING = 9;
+   public static final int MESH_RESOURCE = 10;
+   public static final int TRIANGLE_LIST = 11;
+   public static final int ADD = 0;
+   public static final int MODIFY = 0;
+   public static final int DELETE = 2;
+   public static final int DELETEALL = 3;
    /**
       Header for timestamp and frame id.
    */
@@ -202,7 +223,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.ns_ = ns_;
    }
-
    public int getid()
    {
       return id_;
@@ -212,7 +232,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.id_ = id_;
    }
-
    public int gettype()
    {
       return type_;
@@ -222,7 +241,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.type_ = type_;
    }
-
    public int getaction()
    {
       return action_;
@@ -232,7 +250,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.action_ = action_;
    }
-
    public geometry_msgs.msg.dds.Pose getpose()
    {
       return pose_;
@@ -262,7 +279,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.frame_locked_ = frame_locked_;
    }
-
    public geometry_msgs.msg.dds.Point getpoints()
    {
       return points_;
@@ -282,7 +298,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.texture_resource_ = texture_resource_;
    }
-
    public sensor_msgs.msg.dds.CompressedImage gettexture()
    {
       return texture_;
@@ -302,7 +317,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.text_ = text_;
    }
-
    public StringBuilder getmesh_resource()
    {
       return mesh_resource_;
@@ -312,7 +326,6 @@ public class Marker implements ROS2Message<Marker>
    {
       this.mesh_resource_ = mesh_resource_;
    }
-
    public visualization_msgs.msg.dds.MeshFile getmesh_file()
    {
       return mesh_file_;
@@ -327,6 +340,5 @@ public class Marker implements ROS2Message<Marker>
    {
       this.mesh_use_embedded_materials_ = mesh_use_embedded_materials_;
    }
-
 
 }

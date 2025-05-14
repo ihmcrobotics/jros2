@@ -8,11 +8,45 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   Constants are chosen to match the enums in the linux kernel
+   defined in include/linux/power_supply.h as of version 3.7
+   The one difference is for style reasons the constants are
+   all uppercase not mixed case.
 */
 public class BatteryState implements ROS2Message<BatteryState>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::BatteryState_";
 
+   /**
+      Power supply status constants
+   */
+   public static final byte POWER_SUPPLY_STATUS_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_STATUS_CHARGING = 1;
+   public static final byte POWER_SUPPLY_STATUS_DISCHARGING = 2;
+   public static final byte POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
+   public static final byte POWER_SUPPLY_STATUS_FULL = 4;
+   /**
+      Power supply health constants
+   */
+   public static final byte POWER_SUPPLY_HEALTH_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_HEALTH_GOOD = 1;
+   public static final byte POWER_SUPPLY_HEALTH_OVERHEAT = 2;
+   public static final byte POWER_SUPPLY_HEALTH_DEAD = 3;
+   public static final byte POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
+   public static final byte POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
+   public static final byte POWER_SUPPLY_HEALTH_COLD = 6;
+   public static final byte POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
+   public static final byte POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
+   /**
+      Power supply technology (chemistry) constants
+   */
+   public static final byte POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LION = 2;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NICD = 5;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
    private float voltage_;
    private float temperature_;
    private float current_;
@@ -126,7 +160,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.voltage_ = voltage_;
    }
-
    public float gettemperature()
    {
       return temperature_;
@@ -136,7 +169,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.temperature_ = temperature_;
    }
-
    public float getcurrent()
    {
       return current_;
@@ -146,7 +178,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.current_ = current_;
    }
-
    public float getcharge()
    {
       return charge_;
@@ -156,7 +187,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.charge_ = charge_;
    }
-
    public float getcapacity()
    {
       return capacity_;
@@ -166,7 +196,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.capacity_ = capacity_;
    }
-
    public float getdesign_capacity()
    {
       return design_capacity_;
@@ -176,7 +205,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.design_capacity_ = design_capacity_;
    }
-
    public float getpercentage()
    {
       return percentage_;
@@ -186,7 +214,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.percentage_ = percentage_;
    }
-
    public IDLFloatSequence getcell_voltage()
    {
       return cell_voltage_;
@@ -206,7 +233,6 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.location_ = location_;
    }
-
    public StringBuilder getserial_number()
    {
       return serial_number_;
@@ -216,6 +242,5 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       this.serial_number_ = serial_number_;
    }
-
 
 }

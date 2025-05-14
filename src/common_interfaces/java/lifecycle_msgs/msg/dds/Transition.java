@@ -8,14 +8,95 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   #
-   # Fields
-   #
+   Reserved [0-9], publicly available transitions.
+   When a node is in one of these primary states, these transitions can be
+   invoked.
 */
 public class Transition implements ROS2Message<Transition>
 {
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::Transition_";
 
+   /**
+      This transition will instantiate the node, but will not run any code beyond
+      the constructor.
+   */
+   public static final byte TRANSITION_CREATE = 0;
+   /**
+      The node's onConfigure callback will be called to allow the node to load its
+      configuration and conduct any required setup.
+   */
+   public static final byte TRANSITION_CONFIGURE = 1;
+   /**
+      The node's callback onCleanup will be called in this transition to allow the
+      node to load its configuration and conduct any required setup.
+   */
+   public static final byte TRANSITION_CLEANUP = 2;
+   /**
+      The node's callback onActivate will be executed to do any final preparations
+      to start executing.
+   */
+   public static final byte TRANSITION_ACTIVATE = 3;
+   /**
+      The node's callback onDeactivate will be executed to do any cleanup to start
+      executing, and reverse the onActivate changes.
+   */
+   public static final byte TRANSITION_DEACTIVATE = 4;
+   /**
+      This signals shutdown during an unconfigured state, the node's callback
+      onShutdown will be executed to do any cleanup necessary before destruction.
+   */
+   public static final byte TRANSITION_UNCONFIGURED_SHUTDOWN = 5;
+   /**
+      This signals shutdown during an inactive state, the node's callback onShutdown
+      will be executed to do any cleanup necessary before destruction.
+   */
+   public static final byte TRANSITION_INACTIVE_SHUTDOWN = 6;
+   /**
+      This signals shutdown during an active state, the node's callback onShutdown
+      will be executed to do any cleanup necessary before destruction.
+   */
+   public static final byte TRANSITION_ACTIVE_SHUTDOWN = 7;
+   /**
+      This transition will simply cause the deallocation of the node.
+   */
+   public static final byte TRANSITION_DESTROY = 8;
+   /**
+      Reserved [10-69], private transitions
+      These transitions are not publicly available and cannot be invoked by a user.
+      The following transitions are implicitly invoked based on the callback
+      feedback of the intermediate transition states.
+   */
+   public static final byte TRANSITION_ON_CONFIGURE_SUCCESS = 10;
+   public static final byte TRANSITION_ON_CONFIGURE_FAILURE = 11;
+   public static final byte TRANSITION_ON_CONFIGURE_ERROR = 12;
+   public static final byte TRANSITION_ON_CLEANUP_SUCCESS = 20;
+   public static final byte TRANSITION_ON_CLEANUP_FAILURE = 21;
+   public static final byte TRANSITION_ON_CLEANUP_ERROR = 22;
+   public static final byte TRANSITION_ON_ACTIVATE_SUCCESS = 30;
+   public static final byte TRANSITION_ON_ACTIVATE_FAILURE = 31;
+   public static final byte TRANSITION_ON_ACTIVATE_ERROR = 32;
+   public static final byte TRANSITION_ON_DEACTIVATE_SUCCESS = 40;
+   public static final byte TRANSITION_ON_DEACTIVATE_FAILURE = 41;
+   public static final byte TRANSITION_ON_DEACTIVATE_ERROR = 42;
+   public static final byte TRANSITION_ON_SHUTDOWN_SUCCESS = 50;
+   public static final byte TRANSITION_ON_SHUTDOWN_FAILURE = 51;
+   public static final byte TRANSITION_ON_SHUTDOWN_ERROR = 52;
+   public static final byte TRANSITION_ON_ERROR_SUCCESS = 60;
+   public static final byte TRANSITION_ON_ERROR_FAILURE = 61;
+   public static final byte TRANSITION_ON_ERROR_ERROR = 62;
+   /**
+      The transition callback successfully performed its required functionality.
+   */
+   public static final byte TRANSITION_CALLBACK_SUCCESS = 97;
+   /**
+      The transition callback failed to perform its required functionality.
+   */
+   public static final byte TRANSITION_CALLBACK_FAILURE = 98;
+   /**
+      The transition callback encountered an error that requires special cleanup, if
+      possible.
+   */
+   public static final byte TRANSITION_CALLBACK_ERROR = 99;
    /**
       The transition id from above definitions.
    */
@@ -81,7 +162,6 @@ public class Transition implements ROS2Message<Transition>
    {
       this.id_ = id_;
    }
-
    public StringBuilder getlabel()
    {
       return label_;
@@ -91,6 +171,5 @@ public class Transition implements ROS2Message<Transition>
    {
       this.label_ = label_;
    }
-
 
 }

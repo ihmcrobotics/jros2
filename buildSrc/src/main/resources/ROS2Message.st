@@ -28,15 +28,15 @@ public class <context.name> implements ROS2Message\<<context.name>>
    <field.headerComment>
 */
 <endif>
-private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>_;
+<if(field.constantValue)>public static final<else>private<endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
    }>
    public <context.name>()
    {
       <context.fields:{ field |
       <if(field.array)>
-<field.name>_ = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>()<endif>;
+<field.javaName> = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>()<endif>;
       <elseif(!field.builtinType||field.builtinStringType)>
-<field.name>_ = new <field.javaType>();
+<field.javaName> = new <field.javaType>();
       <endif>
       }>
    }
@@ -47,13 +47,15 @@ private <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.name>
       int initialAlignment = currentAlignment;
 
       <context.fields:{ field |
+      <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
-currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.name>_
+currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.javaName>
       <elseif(field.array&&!field.fixedSize)>
-currentAlignment += <field.name>_.calculateSizeBytes(currentAlignment);
+currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
       <elseif(!field.array)>
-currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.name>_
+currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
+      <endif>
       <endif>
       <endif>
       }>
@@ -64,17 +66,19 @@ currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignme
    public void serialize(CDRBuffer buffer)
    {
       <context.fields:{ field |
+      <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
 <! TODO: direct array to buffer copy instead of iterating !>
-for (int i = 0; i \< <field.name>_.length; ++i)
+for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_[i]);
+   buffer.<field.builtinCDRBufferWriteMethod>(<field.javaName>[i]);
 \}
       <elseif(field.array&&!field.fixedSize)>
-<field.name>_.serialize(buffer);
+<field.javaName>.serialize(buffer);
       <elseif(!field.array)>
-buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_);
+buffer.<field.builtinCDRBufferWriteMethod>(<field.javaName>);
+      <endif>
       <endif>
       <endif>
       }>
@@ -84,24 +88,26 @@ buffer.<field.builtinCDRBufferWriteMethod>(<field.name>_);
    public void deserialize(CDRBuffer buffer)
    {
       <context.fields:{ field |
+      <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
 <! TODO: direct buffer to array copy instead of iterating !>
-for (int i = 0; i \< <field.name>_.length; ++i)
+for (int i = 0; i \< <field.javaName>.length; ++i)
 {
       <if(field.builtinStringType)>
-buffer.<field.builtinCDRBufferReadMethod>(<field.name>_[i]);
+buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>[i]);
       <else>
-<field.name>_[i] = buffer.<field.builtinCDRBufferReadMethod>();
+<field.javaName>[i] = buffer.<field.builtinCDRBufferReadMethod>();
       <endif>
 \}
       <elseif(field.array&&!field.fixedSize)>
-<field.name>_.deserialize(buffer);
+<field.javaName>.deserialize(buffer);
       <elseif(!field.array)>
       <if(field.builtinStringType)>
-buffer.<field.builtinCDRBufferReadMethod>(<field.name>_);
+buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>);
       <else>
-<field.name>_ = buffer.<field.builtinCDRBufferReadMethod>();
+<field.javaName> = buffer.<field.builtinCDRBufferReadMethod>();
+      <endif>
       <endif>
       <endif>
       <endif>
@@ -118,17 +124,19 @@ buffer.<field.builtinCDRBufferReadMethod>(<field.name>_);
    public void set(<context.name> from)
    {
       <context.fields:{ field |
+      <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
 <! TODO: Use more efficient array copy !>
-for (int i = 0; i \< <field.name>_.length; ++i)
+for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   <field.name>_[i] = from.<field.name>_[i];
+   <field.javaName>[i] = from.<field.javaName>[i];
 \}
       <elseif(field.array&&!field.fixedSize)>
-<field.name>_.set(from.<field.name>_);
+<field.javaName>.set(from.<field.javaName>);
       <elseif(!field.array)>
-<field.name>_ = from.<field.name>_;
+<field.javaName> = from.<field.javaName>;
+      <endif>
       <endif>
       <endif>
       }>
@@ -136,18 +144,19 @@ for (int i = 0; i \< <field.name>_.length; ++i)
 
 <! Getters and setters start !>
    <context.fields: { field |
+<if(!field.constantValue)>
 public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.name>()
 {
-   return <field.name>_;
+   return <field.javaName>;
 \}
 
 <if(field.builtinType&&!field.array)>
-public void set<field.name>(<field.javaType> <field.name>_)
+public void set<field.name>(<field.javaType> <field.javaName>)
 {
-   this.<field.name>_ = <field.name>_;
+   this.<field.javaName> = <field.javaName>;
 \}
 <endif>
-
+<endif>
    }>
 <! Getters and setters end !>
 }

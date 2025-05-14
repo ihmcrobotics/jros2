@@ -91,7 +91,6 @@ public class Illuminance implements ROS2Message<Illuminance>
    {
       this.illuminance_ = illuminance_;
    }
-
    public double getvariance()
    {
       return variance_;
@@ -101,6 +100,5 @@ public class Illuminance implements ROS2Message<Illuminance>
    {
       this.variance_ = variance_;
    }
-
 
 }

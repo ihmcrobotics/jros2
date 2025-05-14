@@ -121,7 +121,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    {
       this.name_ = name_;
    }
-
    public StringBuilder getdescription()
    {
       return description_;
@@ -131,7 +130,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    {
       this.description_ = description_;
    }
-
    public float getscale()
    {
       return scale_;
@@ -141,7 +139,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    {
       this.scale_ = scale_;
    }
-
    public visualization_msgs.msg.dds.MenuEntry getmenu_entries()
    {
       return menu_entries_;

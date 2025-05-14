@@ -81,7 +81,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       this.x_ = x_;
    }
-
    public double gety()
    {
       return y_;
@@ -91,7 +90,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       this.y_ = y_;
    }
-
    public double getz()
    {
       return z_;
@@ -101,7 +99,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       this.z_ = z_;
    }
-
    public double getw()
    {
       return w_;
@@ -111,6 +108,5 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       this.w_ = w_;
    }
-
 
 }

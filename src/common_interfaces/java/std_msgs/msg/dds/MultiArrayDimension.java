@@ -81,7 +81,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       this.label_ = label_;
    }
-
    public int getsize()
    {
       return size_;
@@ -91,7 +90,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       this.size_ = size_;
    }
-
    public int getstride()
    {
       return stride_;
@@ -101,6 +99,5 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       this.stride_ = stride_;
    }
-
 
 }

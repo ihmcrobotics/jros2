@@ -70,5 +70,4 @@ public class Char implements ROS2Message<Char>
       this.data_ = data_;
    }
 
-
 }

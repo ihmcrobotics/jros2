@@ -79,7 +79,6 @@ public class Temperature implements ROS2Message<Temperature>
    {
       this.temperature_ = temperature_;
    }
-
    public double getvariance()
    {
       return variance_;
@@ -89,6 +88,5 @@ public class Temperature implements ROS2Message<Temperature>
    {
       this.variance_ = variance_;
    }
-
 
 }

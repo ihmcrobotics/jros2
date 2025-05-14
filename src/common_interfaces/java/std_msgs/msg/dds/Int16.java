@@ -70,5 +70,4 @@ public class Int16 implements ROS2Message<Int16>
       this.data_ = data_;
    }
 
-
 }

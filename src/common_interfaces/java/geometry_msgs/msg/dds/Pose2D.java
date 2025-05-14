@@ -76,7 +76,6 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
       this.x_ = x_;
    }
-
    public double gety()
    {
       return y_;
@@ -86,7 +85,6 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
       this.y_ = y_;
    }
-
    public double gettheta()
    {
       return theta_;
@@ -96,6 +94,5 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
       this.theta_ = theta_;
    }
-
 
 }

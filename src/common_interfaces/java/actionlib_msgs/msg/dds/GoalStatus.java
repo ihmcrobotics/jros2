@@ -13,6 +13,37 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 
    private actionlib_msgs.msg.dds.GoalID goal_id_;
    private byte status_;
+   public static final byte PENDING = 0;
+   public static final byte ACTIVE = 1;
+   public static final byte PREEMPTED = 2;
+   /**
+      and has since completed its execution (Terminal State).
+   */
+   public static final byte SUCCEEDED = 3;
+   /**
+      (Terminal State).
+   */
+   public static final byte ABORTED = 4;
+   /**
+      to some failure (Terminal State).
+   */
+   public static final byte REJECTED = 5;
+   /**
+      because the goal was unattainable or invalid (Terminal State).
+   */
+   public static final byte PREEMPTING = 6;
+   /**
+      and has not yet completed execution.
+   */
+   public static final byte RECALLING = 7;
+   /**
+      the action server has not yet confirmed that the goal is canceled.
+   */
+   public static final byte RECALLED = 8;
+   /**
+      and was successfully cancelled (Terminal State).
+   */
+   public static final byte LOST = 9;
    /**
       Allow for the user to associate a string with GoalStatus for debugging.
    */
@@ -80,7 +111,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       this.status_ = status_;
    }
-
    public StringBuilder gettext()
    {
       return text_;
@@ -90,6 +120,5 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       this.text_ = text_;
    }
-
 
 }

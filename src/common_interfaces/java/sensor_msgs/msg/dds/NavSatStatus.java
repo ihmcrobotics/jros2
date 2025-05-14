@@ -8,12 +8,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   Navigation Satellite fix status for any Global Navigation Satellite System.
+
+   Whether to output an augmented fix is determined by both the fix
+   type and the last time differential corrections were received.  A
+   fix is valid when status >= STATUS_FIX.
 */
 public class NavSatStatus implements ROS2Message<NavSatStatus>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatStatus_";
 
+   public static final byte STATUS_NO_FIX = -1;
+   public static final byte STATUS_FIX = 0;
+   public static final byte STATUS_SBAS_FIX = 1;
+   public static final byte STATUS_GBAS_FIX = 2;
    private byte status_;
+   public static final short SERVICE_GPS = 1;
+   public static final short SERVICE_GLONASS = 2;
+   public static final short SERVICE_COMPASS = 4;
+   public static final short SERVICE_GALILEO = 8;
    private short service_;
 
    public NavSatStatus()
@@ -70,7 +83,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       this.status_ = status_;
    }
-
    public short getservice()
    {
       return service_;
@@ -80,6 +92,5 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       this.service_ = service_;
    }
-
 
 }

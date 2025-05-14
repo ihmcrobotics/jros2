@@ -98,7 +98,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    {
       this.node_ = node_;
    }
-
    public rcl_interfaces.msg.dds.Parameter getnew_parameters()
    {
       return new_parameters_;

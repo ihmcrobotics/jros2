@@ -1,5 +1,7 @@
 package us.ihmc.jros2.generator.context;
 
+import java.util.Locale;
+
 public class InterfaceField
 {
    private String type;
@@ -56,6 +58,25 @@ public class InterfaceField
    public void name(String name)
    {
       this.name = name;
+   }
+
+   public String getJavaName()
+   {
+      if (name != null)
+      {
+         if (constantValue != null)
+         {
+            // upper snake case constants
+            return name.toUpperCase(Locale.getDefault());
+         }
+         else
+         {
+            // postfix with _ to avoid conflict with Java reserved words (e.g. "default")
+            return name + "_";
+         }
+      }
+
+      return null;
    }
 
    public boolean isStringUpperBounded()

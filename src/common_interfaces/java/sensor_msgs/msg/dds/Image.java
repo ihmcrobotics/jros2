@@ -102,7 +102,6 @@ public class Image implements ROS2Message<Image>
    {
       this.height_ = height_;
    }
-
    public int getwidth()
    {
       return width_;
@@ -112,7 +111,6 @@ public class Image implements ROS2Message<Image>
    {
       this.width_ = width_;
    }
-
    public StringBuilder getencoding()
    {
       return encoding_;
@@ -122,7 +120,6 @@ public class Image implements ROS2Message<Image>
    {
       this.encoding_ = encoding_;
    }
-
    public byte getis_bigendian()
    {
       return is_bigendian_;
@@ -132,7 +129,6 @@ public class Image implements ROS2Message<Image>
    {
       this.is_bigendian_ = is_bigendian_;
    }
-
    public int getstep()
    {
       return step_;
@@ -142,7 +138,6 @@ public class Image implements ROS2Message<Image>
    {
       this.step_ = step_;
    }
-
    public IDLByteSequence getdata()
    {
       return data_;

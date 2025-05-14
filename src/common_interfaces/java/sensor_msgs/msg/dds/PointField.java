@@ -7,12 +7,22 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
-/**
-*/
 public class PointField implements ROS2Message<PointField>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
+   /**
+      This message holds the description of one point entry in the
+      PointCloud2 message format.
+   */
+   public static final byte INT8 = 1;
+   public static final byte UINT8 = 2;
+   public static final byte INT16 = 3;
+   public static final byte UINT16 = 4;
+   public static final byte INT32 = 5;
+   public static final byte UINT32 = 6;
+   public static final byte FLOAT32 = 7;
+   public static final byte FLOAT64 = 8;
    /**
       Common PointField names are x, y, z, intensity, rgb, rgba
    */
@@ -80,7 +90,6 @@ public class PointField implements ROS2Message<PointField>
    {
       this.name_ = name_;
    }
-
    public int getoffset()
    {
       return offset_;
@@ -90,7 +99,6 @@ public class PointField implements ROS2Message<PointField>
    {
       this.offset_ = offset_;
    }
-
    public int getcount()
    {
       return count_;
@@ -100,6 +108,5 @@ public class PointField implements ROS2Message<PointField>
    {
       this.count_ = count_;
    }
-
 
 }

@@ -127,7 +127,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.angle_min_ = angle_min_;
    }
-
    public float getangle_max()
    {
       return angle_max_;
@@ -137,7 +136,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.angle_max_ = angle_max_;
    }
-
    public float getangle_increment()
    {
       return angle_increment_;
@@ -147,7 +145,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.angle_increment_ = angle_increment_;
    }
-
    public float gettime_increment()
    {
       return time_increment_;
@@ -157,7 +154,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.time_increment_ = time_increment_;
    }
-
    public float getscan_time()
    {
       return scan_time_;
@@ -167,7 +163,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.scan_time_ = scan_time_;
    }
-
    public float getrange_min()
    {
       return range_min_;
@@ -177,7 +172,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.range_min_ = range_min_;
    }
-
    public float getrange_max()
    {
       return range_max_;
@@ -187,7 +181,6 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       this.range_max_ = range_max_;
    }
-
    public IDLFloatSequence getranges()
    {
       return ranges_;

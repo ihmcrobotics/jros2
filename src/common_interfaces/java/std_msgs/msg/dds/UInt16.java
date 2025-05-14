@@ -70,5 +70,4 @@ public class UInt16 implements ROS2Message<UInt16>
       this.data_ = data_;
    }
 
-
 }

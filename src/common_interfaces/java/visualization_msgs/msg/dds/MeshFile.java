@@ -81,7 +81,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       this.filename_ = filename_;
    }
-
    public IDLByteSequence getdata()
    {
       return data_;

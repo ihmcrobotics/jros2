@@ -23,6 +23,17 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       The client will use this to detect if it has missed an update.
    */
    private long seq_num_;
+   /**
+      Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
+      UPDATE: Incremental update to previous state.
+      The sequence number must be 1 higher than for
+      the previous update.
+      KEEP_ALIVE: Indicates the that the server is still living.
+      The sequence number does not increase.
+      No payload data should be filled out (markers, poses, or erases).
+   */
+   public static final byte KEEP_ALIVE = 0;
+   public static final byte UPDATE = 1;
    private byte type_;
    /**
       Markers to be added or updated
@@ -104,7 +115,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.server_id_ = server_id_;
    }
-
    public long getseq_num()
    {
       return seq_num_;
@@ -114,7 +124,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.seq_num_ = seq_num_;
    }
-
    public byte gettype()
    {
       return type_;
@@ -124,7 +133,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       this.type_ = type_;
    }
-
    public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
    {
       return markers_;

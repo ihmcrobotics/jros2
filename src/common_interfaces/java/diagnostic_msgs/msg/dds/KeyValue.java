@@ -77,7 +77,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       this.key_ = key_;
    }
-
    public StringBuilder getvalue()
    {
       return value_;
@@ -87,6 +86,5 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       this.value_ = value_;
    }
-
 
 }

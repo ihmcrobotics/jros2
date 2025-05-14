@@ -24,6 +24,19 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    */
    private StringBuilder marker_name_;
    private StringBuilder control_name_;
+   /**
+      Type of the event
+      KEEP_ALIVE: sent while dragging to keep up control of the marker
+      MENU_SELECT: a menu entry has been selected
+      BUTTON_CLICK: a button control has been clicked
+      POSE_UPDATE: the pose has been changed using one of the controls
+   */
+   public static final byte KEEP_ALIVE = 0;
+   public static final byte POSE_UPDATE = 1;
+   public static final byte MENU_SELECT = 2;
+   public static final byte BUTTON_CLICK = 3;
+   public static final byte MOUSE_DOWN = 4;
+   public static final byte MOUSE_UP = 5;
    private byte event_type_;
    /**
       Current pose of the marker
@@ -126,7 +139,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.client_id_ = client_id_;
    }
-
    public StringBuilder getmarker_name()
    {
       return marker_name_;
@@ -136,7 +148,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.marker_name_ = marker_name_;
    }
-
    public StringBuilder getcontrol_name()
    {
       return control_name_;
@@ -146,7 +157,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.control_name_ = control_name_;
    }
-
    public byte getevent_type()
    {
       return event_type_;
@@ -156,7 +166,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.event_type_ = event_type_;
    }
-
    public geometry_msgs.msg.dds.Pose getpose()
    {
       return pose_;
@@ -171,7 +180,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.menu_entry_id_ = menu_entry_id_;
    }
-
    public geometry_msgs.msg.dds.Point getmouse_point()
    {
       return mouse_point_;
@@ -186,6 +194,5 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.mouse_point_valid_ = mouse_point_valid_;
    }
-
 
 }

@@ -102,7 +102,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       this.resolution_ = resolution_;
    }
-
    public int getwidth()
    {
       return width_;
@@ -112,7 +111,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       this.width_ = width_;
    }
-
    public int getheight()
    {
       return height_;
@@ -122,7 +120,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       this.height_ = height_;
    }
-
    public geometry_msgs.msg.dds.Pose getorigin()
    {
       return origin_;

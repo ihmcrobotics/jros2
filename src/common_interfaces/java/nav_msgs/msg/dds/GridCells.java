@@ -90,7 +90,6 @@ public class GridCells implements ROS2Message<GridCells>
    {
       this.cell_width_ = cell_width_;
    }
-
    public float getcell_height()
    {
       return cell_height_;
@@ -100,7 +99,6 @@ public class GridCells implements ROS2Message<GridCells>
    {
       this.cell_height_ = cell_height_;
    }
-
    public geometry_msgs.msg.dds.Point getcells()
    {
       return cells_;

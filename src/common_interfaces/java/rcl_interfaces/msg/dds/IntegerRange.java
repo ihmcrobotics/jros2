@@ -99,7 +99,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
       this.from_value_ = from_value_;
    }
-
    public long getto_value()
    {
       return to_value_;
@@ -109,7 +108,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
       this.to_value_ = to_value_;
    }
-
    public long getstep()
    {
       return step_;
@@ -119,6 +117,5 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
       this.step_ = step_;
    }
-
 
 }

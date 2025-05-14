@@ -103,7 +103,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
       this.from_value_ = from_value_;
    }
-
    public double getto_value()
    {
       return to_value_;
@@ -113,7 +112,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
       this.to_value_ = to_value_;
    }
-
    public double getstep()
    {
       return step_;
@@ -123,6 +121,5 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
       this.step_ = step_;
    }
-
 
 }

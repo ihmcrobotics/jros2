@@ -84,5 +84,4 @@ public class Header implements ROS2Message<Header>
       this.frame_id_ = frame_id_;
    }
 
-
 }

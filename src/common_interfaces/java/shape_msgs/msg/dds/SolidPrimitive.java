@@ -8,11 +8,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+   Defines box, sphere, cylinder, cone and prism.
+   All shapes are defined to have their bounding boxes centered around 0,0,0.
 */
 public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
+   public static final byte BOX = 1;
+   public static final byte SPHERE = 2;
+   public static final byte CYLINDER = 3;
+   public static final byte CONE = 4;
+   public static final byte PRISM = 5;
    /**
       The type of the shape
    */
@@ -21,6 +28,21 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       The dimensions of the shape
    */
    private IDLDoubleSequence dimensions_;
+   /**
+      For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
+   */
+   public static final byte BOX_X = 0;
+   public static final byte BOX_Y = 1;
+   public static final byte BOX_Z = 2;
+   /**
+      For the SPHERE type, only one component is used, and it gives the radius of the sphere.
+   */
+   public static final byte SPHERE_RADIUS = 0;
+   public static final byte CYLINDER_HEIGHT = 0;
+   public static final byte CYLINDER_RADIUS = 1;
+   public static final byte CONE_HEIGHT = 0;
+   public static final byte CONE_RADIUS = 1;
+   public static final byte PRISM_HEIGHT = 0;
    private geometry_msgs.msg.dds.Polygon polygon_;
 
    public SolidPrimitive()
@@ -80,7 +102,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       this.type_ = type_;
    }
-
    public IDLDoubleSequence getdimensions()
    {
       return dimensions_;

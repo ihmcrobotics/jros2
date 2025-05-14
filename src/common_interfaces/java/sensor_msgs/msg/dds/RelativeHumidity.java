@@ -81,7 +81,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    {
       this.relative_humidity_ = relative_humidity_;
    }
-
    public double getvariance()
    {
       return variance_;
@@ -91,6 +90,5 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    {
       this.variance_ = variance_;
    }
-
 
 }

@@ -52,6 +52,10 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       Beware: this coordinate system exhibits singularities at the poles.
    */
    private double[] position_covariance_;
+   public static final byte COVARIANCE_TYPE_UNKNOWN = 0;
+   public static final byte COVARIANCE_TYPE_APPROXIMATED = 1;
+   public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
+   public static final byte COVARIANCE_TYPE_KNOWN = 3;
    private byte position_covariance_type_;
 
    public NavSatFix()
@@ -143,7 +147,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.latitude_ = latitude_;
    }
-
    public double getlongitude()
    {
       return longitude_;
@@ -153,7 +156,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.longitude_ = longitude_;
    }
-
    public double getaltitude()
    {
       return altitude_;
@@ -163,7 +165,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.altitude_ = altitude_;
    }
-
    public double[] getposition_covariance()
    {
       return position_covariance_;
@@ -178,6 +179,5 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       this.position_covariance_type_ = position_covariance_type_;
    }
-
 
 }

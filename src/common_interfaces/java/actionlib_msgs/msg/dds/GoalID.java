@@ -85,5 +85,4 @@ public class GoalID implements ROS2Message<GoalID>
       this.id_ = id_;
    }
 
-
 }

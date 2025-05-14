@@ -70,5 +70,4 @@ public class Byte implements ROS2Message<Byte>
       this.data_ = data_;
    }
 
-
 }

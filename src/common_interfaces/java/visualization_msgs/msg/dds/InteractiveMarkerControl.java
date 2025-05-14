@@ -26,7 +26,43 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       Default: Identity
    */
    private geometry_msgs.msg.dds.Quaternion orientation_;
+   /**
+      Orientation mode: controls how orientation changes.
+      INHERIT: Follow orientation of interactive marker
+      FIXED: Keep orientation fixed at initial state
+      VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
+   */
+   public static final byte INHERIT = 0;
+   public static final byte FIXED = 1;
+   public static final byte VIEW_FACING = 2;
    private byte orientation_mode_;
+   /**
+      Interaction mode for this control
+
+      NONE: This control is only meant for visualization; no context menu.
+      MENU: Like NONE, but right-click menu is active.
+      BUTTON: Element can be left-clicked.
+      MOVE_AXIS: Translate along local x-axis.
+      MOVE_PLANE: Translate in local y-z plane.
+      ROTATE_AXIS: Rotate around local x-axis.
+      MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
+   */
+   public static final byte NONE = 0;
+   public static final byte MENU = 1;
+   public static final byte BUTTON = 2;
+   public static final byte MOVE_AXIS = 3;
+   public static final byte MOVE_PLANE = 4;
+   public static final byte ROTATE_AXIS = 5;
+   public static final byte MOVE_ROTATE = 6;
+   /**
+      "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
+      MOVE_3D: Translate freely in 3D space.
+      ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
+      MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
+   */
+   public static final byte MOVE_3D = 7;
+   public static final byte ROTATE_3D = 8;
+   public static final byte MOVE_ROTATE_3D = 9;
    private byte interaction_mode_;
    /**
       If true, the contained markers will also be visible
@@ -132,7 +168,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.name_ = name_;
    }
-
    public geometry_msgs.msg.dds.Quaternion getorientation()
    {
       return orientation_;
@@ -147,7 +182,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.orientation_mode_ = orientation_mode_;
    }
-
    public byte getinteraction_mode()
    {
       return interaction_mode_;
@@ -157,7 +191,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.interaction_mode_ = interaction_mode_;
    }
-
    public boolean getalways_visible()
    {
       return always_visible_;
@@ -167,7 +200,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.always_visible_ = always_visible_;
    }
-
    public visualization_msgs.msg.dds.Marker getmarkers()
    {
       return markers_;
@@ -182,7 +214,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.independent_marker_orientation_ = independent_marker_orientation_;
    }
-
    public StringBuilder getdescription()
    {
       return description_;
@@ -192,6 +223,5 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       this.description_ = description_;
    }
-
 
 }

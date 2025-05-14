@@ -178,7 +178,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       this.height_ = height_;
    }
-
    public int getwidth()
    {
       return width_;
@@ -188,7 +187,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       this.width_ = width_;
    }
-
    public StringBuilder getdistortion_model()
    {
       return distortion_model_;
@@ -198,7 +196,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       this.distortion_model_ = distortion_model_;
    }
-
    public IDLDoubleSequence getd()
    {
       return d_;
@@ -218,7 +215,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       this.binning_x_ = binning_x_;
    }
-
    public int getbinning_y()
    {
       return binning_y_;
@@ -228,7 +224,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       this.binning_y_ = binning_y_;
    }
-
    public sensor_msgs.msg.dds.RegionOfInterest getroi()
    {
       return roi_;

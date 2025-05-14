@@ -78,7 +78,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    {
       this.successful_ = successful_;
    }
-
    public StringBuilder getreason()
    {
       return reason_;
@@ -88,6 +87,5 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    {
       this.reason_ = reason_;
    }
-
 
 }

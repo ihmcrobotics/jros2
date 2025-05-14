@@ -103,7 +103,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.x_offset_ = x_offset_;
    }
-
    public int gety_offset()
    {
       return y_offset_;
@@ -113,7 +112,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.y_offset_ = y_offset_;
    }
-
    public int getheight()
    {
       return height_;
@@ -123,7 +121,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.height_ = height_;
    }
-
    public int getwidth()
    {
       return width_;
@@ -133,7 +130,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.width_ = width_;
    }
-
    public boolean getdo_rectify()
    {
       return do_rectify_;
@@ -143,6 +139,5 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.do_rectify_ = do_rectify_;
    }
-
 
 }

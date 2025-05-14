@@ -82,7 +82,6 @@ public class Point32 implements ROS2Message<Point32>
    {
       this.x_ = x_;
    }
-
    public float gety()
    {
       return y_;
@@ -92,7 +91,6 @@ public class Point32 implements ROS2Message<Point32>
    {
       this.y_ = y_;
    }
-
    public float getz()
    {
       return z_;
@@ -102,6 +100,5 @@ public class Point32 implements ROS2Message<Point32>
    {
       this.z_ = z_;
    }
-
 
 }

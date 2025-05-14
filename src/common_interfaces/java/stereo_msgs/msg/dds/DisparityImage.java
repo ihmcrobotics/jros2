@@ -128,7 +128,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       this.f_ = f_;
    }
-
    public float gett()
    {
       return t_;
@@ -138,7 +137,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       this.t_ = t_;
    }
-
    public sensor_msgs.msg.dds.RegionOfInterest getvalid_window()
    {
       return valid_window_;
@@ -153,7 +151,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       this.min_disparity_ = min_disparity_;
    }
-
    public float getmax_disparity()
    {
       return max_disparity_;
@@ -163,7 +160,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       this.max_disparity_ = max_disparity_;
    }
-
    public float getdelta_d()
    {
       return delta_d_;
@@ -173,6 +169,5 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       this.delta_d_ = delta_d_;
    }
-
 
 }

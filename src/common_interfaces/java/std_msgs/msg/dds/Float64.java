@@ -70,5 +70,4 @@ public class Float64 implements ROS2Message<Float64>
       this.data_ = data_;
    }
 
-
 }
