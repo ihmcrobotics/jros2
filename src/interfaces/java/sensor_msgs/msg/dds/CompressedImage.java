@@ -16,7 +16,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
 
    private final std_msgs.msg.dds.Header header_;
    private StringBuilder format_;
-   private IDLByteSequence data_;
+   private final IDLByteSequence data_;
 
    public CompressedImage()
    {

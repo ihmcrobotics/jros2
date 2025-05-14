@@ -27,7 +27,7 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
       0 represents unoccupied, 1 represents definitely occupied, and
       -1 represents unknown.
    */
-   private IDLByteSequence data_;
+   private final IDLByteSequence data_;
 
    public OccupancyGrid()
    {

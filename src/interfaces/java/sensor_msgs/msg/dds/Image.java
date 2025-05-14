@@ -21,7 +21,7 @@ public class Image implements ROS2Message<Image>
    private StringBuilder encoding_;
    private byte is_bigendian_;
    private int step_;
-   private IDLByteSequence data_;
+   private final IDLByteSequence data_;
 
    public Image()
    {

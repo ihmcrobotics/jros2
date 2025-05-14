@@ -38,7 +38,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       The values array should be 1-1 with the elements of the associated
       PointCloud.
    */
-   private IDLFloatSequence values_;
+   private final IDLFloatSequence values_;
 
    public ChannelFloat32()
    {

@@ -54,11 +54,11 @@ public class BatteryState implements ROS2Message<BatteryState>
    private float capacity_;
    private float design_capacity_;
    private float percentage_;
-   private IDLFloatSequence cell_voltage_;
+   private final IDLFloatSequence cell_voltage_;
    /**
       If individual voltages unknown but number of cells known set each to NaN
    */
-   private IDLFloatSequence cell_temperature_;
+   private final IDLFloatSequence cell_temperature_;
    /**
       If individual temperatures unknown but number of cells known set each to NaN
    */

@@ -56,8 +56,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       name_ = new StringBuilder();
       description_ = new StringBuilder();
       additional_constraints_ = new StringBuilder();
-      floating_point_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange>(1, rcl_interfaces.msg.dds.FloatingPointRange.class);
-      integer_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange>(1, rcl_interfaces.msg.dds.IntegerRange.class);
+      floating_point_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange>(rcl_interfaces.msg.dds.FloatingPointRange.class);
+      integer_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange>(rcl_interfaces.msg.dds.IntegerRange.class);
 
    }
 

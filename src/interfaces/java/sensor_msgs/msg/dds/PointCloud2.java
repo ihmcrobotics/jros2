@@ -35,7 +35,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
-   private IDLByteSequence data_;
+   private final IDLByteSequence data_;
    private boolean is_dense_;
 
    public PointCloud2()

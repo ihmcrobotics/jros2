@@ -51,7 +51,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
       Beware: this coordinate system exhibits singularities at the poles.
    */
-   private double[] position_covariance_;
+   private final double[] position_covariance_;
    public static final byte COVARIANCE_TYPE_UNKNOWN = 0;
    public static final byte COVARIANCE_TYPE_APPROXIMATED = 1;
    public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;

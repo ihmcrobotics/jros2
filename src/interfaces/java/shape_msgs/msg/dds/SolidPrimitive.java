@@ -27,7 +27,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    /**
       The dimensions of the shape
    */
-   private IDLDoubleSequence dimensions_;
+   private final IDLDoubleSequence dimensions_;
    /**
       For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */

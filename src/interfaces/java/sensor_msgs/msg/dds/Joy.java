@@ -21,11 +21,11 @@ public class Joy implements ROS2Message<Joy>
    /**
       The axes measurements from a joystick.
    */
-   private IDLFloatSequence axes_;
+   private final IDLFloatSequence axes_;
    /**
       The buttons measurements from a joystick.
    */
-   private IDLIntSequence buttons_;
+   private final IDLIntSequence buttons_;
 
    public Joy()
    {

@@ -22,7 +22,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    /**
       This stores the raw text of the mesh file.
    */
-   private IDLByteSequence data_;
+   private final IDLByteSequence data_;
 
    public MeshFile()
    {

@@ -36,7 +36,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       The distortion parameters, size depending on the distortion model.
       For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
    */
-   private IDLDoubleSequence d_;
+   private final IDLDoubleSequence d_;
    /**
       Projection/camera matrix
       [fx'  0  cx' Tx]
@@ -63,7 +63,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       y = v / w
       This holds for both images of a stereo pair.
    */
-   private double[] p_;
+   private final double[] p_;
    /**
       Binning refers here to any camera setting which combines rectangular
       neighborhoods of pixels into larger "super-pixels." It reduces the

@@ -28,11 +28,11 @@ public class Imu implements ROS2Message<Imu>
 
    private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Quaternion orientation_;
-   private double[] orientation_covariance_;
+   private final double[] orientation_covariance_;
    private final geometry_msgs.msg.dds.Vector3 angular_velocity_;
-   private double[] angular_velocity_covariance_;
+   private final double[] angular_velocity_covariance_;
    private final geometry_msgs.msg.dds.Vector3 linear_acceleration_;
-   private double[] linear_acceleration_covariance_;
+   private final double[] linear_acceleration_covariance_;
 
    public Imu()
    {

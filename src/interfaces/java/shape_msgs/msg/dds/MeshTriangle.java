@@ -14,7 +14,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::MeshTriangle_";
 
-   private int[] vertex_indices_;
+   private final int[] vertex_indices_;
 
    public MeshTriangle()
    {

@@ -30,11 +30,11 @@ public class LaserScan implements ROS2Message<LaserScan>
    private float scan_time_;
    private float range_min_;
    private float range_max_;
-   private IDLFloatSequence ranges_;
+   private final IDLFloatSequence ranges_;
    /**
       (Note: values < range_min or > range_max should be discarded)
    */
-   private IDLFloatSequence intensities_;
+   private final IDLFloatSequence intensities_;
 
    public LaserScan()
    {

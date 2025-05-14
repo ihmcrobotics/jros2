@@ -21,7 +21,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
       In order, the parameters are:
       (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)
    */
-   private double[] covariance_;
+   private final double[] covariance_;
 
    public TwistWithCovariance()
    {

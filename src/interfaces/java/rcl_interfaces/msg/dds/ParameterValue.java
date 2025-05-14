@@ -41,19 +41,19 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    /**
       An array of bytes, used for non-textual information.
    */
-   private IDLByteSequence byte_array_value_;
+   private final IDLByteSequence byte_array_value_;
    /**
       An array of boolean values.
    */
-   private IDLBoolSequence bool_array_value_;
+   private final IDLBoolSequence bool_array_value_;
    /**
       An array of 64-bit integer values.
    */
-   private IDLLongSequence integer_array_value_;
+   private final IDLLongSequence integer_array_value_;
    /**
       An array of 64-bit floating point values.
    */
-   private IDLDoubleSequence double_array_value_;
+   private final IDLDoubleSequence double_array_value_;
    /**
       An array of string values.
    */

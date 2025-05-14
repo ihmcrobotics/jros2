@@ -19,7 +19,7 @@ public class Plane implements ROS2Message<Plane>
       c := coef[2]
       d := coef[3]
    */
-   private double[] coef_;
+   private final double[] coef_;
 
    public Plane()
    {

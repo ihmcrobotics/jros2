@@ -15,7 +15,7 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserEcho_";
 
-   private IDLFloatSequence echoes_;
+   private final IDLFloatSequence echoes_;
 
    public LaserEcho()
    {
