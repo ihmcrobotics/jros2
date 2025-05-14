@@ -220,7 +220,6 @@ public abstract class InterfaceContext
 
          if (!valid)
          {
-            // TODO: Replace with custom exception
             throw new RuntimeException(String.format("Failed to parse: %s. Invalid field type %s.", fileName, field.getType()));
          }
       }

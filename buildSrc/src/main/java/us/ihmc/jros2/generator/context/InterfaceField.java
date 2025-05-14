@@ -227,7 +227,7 @@ public class InterfaceField
          }
          else
          {
-            return "IDLObjectSequence<" + getType() + ">"; // TODO: doesn't handle package name
+            return "IDLObjectSequence<" + getType() + ">";
          }
       }
       else
@@ -245,7 +245,7 @@ public class InterfaceField
          }
          else
          {
-            return getType(); // TODO: doesn't handle package name
+            return getType();
          }
       }
    }
