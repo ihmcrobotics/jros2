@@ -14,8 +14,8 @@ public class TimeReference implements ROS2Message<TimeReference>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
 
-   private std_msgs.msg.dds.Header header_;
-   private builtin_interfaces.msg.dds.Time time_ref_;
+   private final std_msgs.msg.dds.Header header_;
+   private final builtin_interfaces.msg.dds.Time time_ref_;
    private StringBuilder source_;
 
    public TimeReference()

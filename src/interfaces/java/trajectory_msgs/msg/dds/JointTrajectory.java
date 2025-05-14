@@ -15,7 +15,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
       The header is used to specify the coordinate frame and the reference time for
       the trajectory durations
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       The names of the active joints in each trajectory point. These names are
       ordered and must correspond to the values in each trajectory point.
@@ -25,13 +25,13 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
       Array of trajectory points, which describe the positions, velocities,
       accelerations and/or efforts of the joints at each time point.
    */
-   private trajectory_msgs.msg.dds.JointTrajectoryPoint points_;
+   private final IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint> points_;
 
    public JointTrajectory()
    {
       header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
-      points_ = new trajectory_msgs.msg.dds.JointTrajectoryPoint();
+      points_ = new IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint>(trajectory_msgs.msg.dds.JointTrajectoryPoint.class);
 
    }
 
@@ -82,7 +82,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
       return joint_names_;
    }
 
-   public trajectory_msgs.msg.dds.JointTrajectoryPoint getpoints()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint> getpoints()
    {
       return points_;
    }

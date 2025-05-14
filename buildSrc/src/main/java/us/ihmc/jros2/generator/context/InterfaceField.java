@@ -37,7 +37,14 @@ public class InterfaceField
    {
       if (javaType != null)
       {
-         return javaType;
+         if (array && !getFixedSize())
+         {
+            return "IDLObjectSequence<" + javaType + ">";
+         }
+         else
+         {
+            return javaType;
+         }
       }
       else
       {
@@ -48,6 +55,33 @@ public class InterfaceField
    public void javaType(String javaType)
    {
       this.javaType = javaType;
+   }
+
+   public boolean isObjectSequence()
+   {
+      String javaType = getJavaType();
+
+      if (javaType != null)
+      {
+         return javaType.startsWith("IDLObjectSequence");
+      }
+      else
+      {
+         return false;
+      }
+   }
+
+   public String getObjectSequenceTypeClass()
+   {
+      if (isObjectSequence())
+      {
+         // TODO: Make this cleaner
+         return getJavaType().replace("<", "").replace(">", "").replace("IDLObjectSequence", "").trim() + ".class";
+      }
+      else
+      {
+         return null;
+      }
    }
 
    public String getName()

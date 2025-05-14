@@ -18,7 +18,7 @@ public class LaserScan implements ROS2Message<LaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
 
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private float angle_min_;
    private float angle_max_;
    private float angle_increment_;

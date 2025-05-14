@@ -37,7 +37,7 @@ public class Marker implements ROS2Message<Marker>
    /**
       Header for timestamp and frame id.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Namespace in which to place the object.
       Used in conjunction with id to create a unique name for the object.
@@ -62,20 +62,20 @@ public class Marker implements ROS2Message<Marker>
    /**
       Pose of the object with respect the frame_id specified in the header.
    */
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       Scale of the object; 1,1,1 means default (usually 1 meter square).
    */
-   private geometry_msgs.msg.dds.Vector3 scale_;
+   private final geometry_msgs.msg.dds.Vector3 scale_;
    /**
       Color of the object; in the range: [0.0-1.0]
    */
-   private std_msgs.msg.dds.ColorRGBA color_;
+   private final std_msgs.msg.dds.ColorRGBA color_;
    /**
       How long the object should last before being automatically deleted.
       0 indicates forever.
    */
-   private builtin_interfaces.msg.dds.Duration lifetime_;
+   private final builtin_interfaces.msg.dds.Duration lifetime_;
    /**
       If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
    */
@@ -83,13 +83,13 @@ public class Marker implements ROS2Message<Marker>
    /**
       Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
    */
-   private geometry_msgs.msg.dds.Point points_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> points_;
    /**
       Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
       The number of colors provided must either be 0 or equal to the number of points provided.
       NOTE: alpha is not yet used
    */
-   private std_msgs.msg.dds.ColorRGBA colors_;
+   private final IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> colors_;
    /**
       Texture resource is a special URI that can either reference a texture file in
       a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
@@ -101,11 +101,11 @@ public class Marker implements ROS2Message<Marker>
       An image to be loaded into the rendering engine as the texture for this marker.
       This will be used iff texture_resource is set to embedded.
    */
-   private sensor_msgs.msg.dds.CompressedImage texture_;
+   private final sensor_msgs.msg.dds.CompressedImage texture_;
    /**
       Location of each vertex within the texture; in the range: [0.0-1.0]
    */
-   private visualization_msgs.msg.dds.UVCoordinate uv_coordinates_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate> uv_coordinates_;
    /**
       Only used for text markers
    */
@@ -118,7 +118,7 @@ public class Marker implements ROS2Message<Marker>
       "embedded://mesh_name"
    */
    private StringBuilder mesh_resource_;
-   private visualization_msgs.msg.dds.MeshFile mesh_file_;
+   private final visualization_msgs.msg.dds.MeshFile mesh_file_;
    private boolean mesh_use_embedded_materials_;
 
    public Marker()
@@ -129,11 +129,11 @@ public class Marker implements ROS2Message<Marker>
       scale_ = new geometry_msgs.msg.dds.Vector3();
       color_ = new std_msgs.msg.dds.ColorRGBA();
       lifetime_ = new builtin_interfaces.msg.dds.Duration();
-      points_ = new geometry_msgs.msg.dds.Point();
-      colors_ = new std_msgs.msg.dds.ColorRGBA();
+      points_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
+      colors_ = new IDLObjectSequence<std_msgs.msg.dds.ColorRGBA>(std_msgs.msg.dds.ColorRGBA.class);
       texture_resource_ = new StringBuilder();
       texture_ = new sensor_msgs.msg.dds.CompressedImage();
-      uv_coordinates_ = new visualization_msgs.msg.dds.UVCoordinate();
+      uv_coordinates_ = new IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate>(visualization_msgs.msg.dds.UVCoordinate.class);
       text_ = new StringBuilder();
       mesh_resource_ = new StringBuilder();
       mesh_file_ = new visualization_msgs.msg.dds.MeshFile();
@@ -284,12 +284,12 @@ public class Marker implements ROS2Message<Marker>
       this.frame_locked_ = frame_locked_;
    }
 
-   public geometry_msgs.msg.dds.Point getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getpoints()
    {
       return points_;
    }
 
-   public std_msgs.msg.dds.ColorRGBA getcolors()
+   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getcolors()
    {
       return colors_;
    }
@@ -309,7 +309,7 @@ public class Marker implements ROS2Message<Marker>
       return texture_;
    }
 
-   public visualization_msgs.msg.dds.UVCoordinate getuv_coordinates()
+   public IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate> getuv_coordinates()
    {
       return uv_coordinates_;
    }

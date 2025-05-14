@@ -16,11 +16,11 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    /**
       Time/frame info.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Initial pose. Also, defines the pivot point for rotations.
    */
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       Identifying string. Must be globally unique in
       the topic that this message is sent through.

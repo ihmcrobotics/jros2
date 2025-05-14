@@ -14,7 +14,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistWithCovariance_";
 
-   private geometry_msgs.msg.dds.Twist twist_;
+   private final geometry_msgs.msg.dds.Twist twist_;
    /**
       Row-major representation of the 6x6 covariance matrix
       The orientation parameters use a fixed-axis representation.

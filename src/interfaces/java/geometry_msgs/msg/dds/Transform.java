@@ -14,8 +14,8 @@ public class Transform implements ROS2Message<Transform>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Transform_";
 
-   private geometry_msgs.msg.dds.Vector3 translation_;
-   private geometry_msgs.msg.dds.Quaternion rotation_;
+   private final geometry_msgs.msg.dds.Vector3 translation_;
+   private final geometry_msgs.msg.dds.Quaternion rotation_;
 
    public Transform()
    {

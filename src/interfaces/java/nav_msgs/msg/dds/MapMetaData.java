@@ -17,7 +17,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    /**
       The time at which the map was loaded
    */
-   private builtin_interfaces.msg.dds.Time map_load_time_;
+   private final builtin_interfaces.msg.dds.Time map_load_time_;
    /**
       The map resolution [m/cell]
    */
@@ -34,7 +34,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       The origin of the map [m, m, rad].  This is the real-world pose of the
       bottom left corner of cell (0,0) in the map.
    */
-   private geometry_msgs.msg.dds.Pose origin_;
+   private final geometry_msgs.msg.dds.Pose origin_;
 
    public MapMetaData()
    {

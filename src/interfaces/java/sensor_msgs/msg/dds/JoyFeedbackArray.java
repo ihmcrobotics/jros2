@@ -14,11 +14,11 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    /**
       This message publishes values for multiple feedback at once.
    */
-   private sensor_msgs.msg.dds.JoyFeedback array_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback> array_;
 
    public JoyFeedbackArray()
    {
-      array_ = new sensor_msgs.msg.dds.JoyFeedback();
+      array_ = new IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback>(sensor_msgs.msg.dds.JoyFeedback.class);
 
    }
 
@@ -51,7 +51,7 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    {
    }
 
-   public sensor_msgs.msg.dds.JoyFeedback getarray()
+   public IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback> getarray()
    {
       return array_;
    }

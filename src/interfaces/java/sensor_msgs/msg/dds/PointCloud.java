@@ -18,24 +18,24 @@ public class PointCloud implements ROS2Message<PointCloud>
    /**
       Time of sensor data acquisition, coordinate frame ID.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Array of 3d points. Each Point32 should be interpreted as a 3d point
       in the frame given in the header.
    */
-   private geometry_msgs.msg.dds.Point32 points_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point32> points_;
    /**
       Each channel should have the same number of elements as points array,
       and the data in each channel should correspond 1:1 with each point.
       Channel names in common practice are listed in ChannelFloat32.msg.
    */
-   private sensor_msgs.msg.dds.ChannelFloat32 channels_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.ChannelFloat32> channels_;
 
    public PointCloud()
    {
       header_ = new std_msgs.msg.dds.Header();
-      points_ = new geometry_msgs.msg.dds.Point32();
-      channels_ = new sensor_msgs.msg.dds.ChannelFloat32();
+      points_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point32>(geometry_msgs.msg.dds.Point32.class);
+      channels_ = new IDLObjectSequence<sensor_msgs.msg.dds.ChannelFloat32>(sensor_msgs.msg.dds.ChannelFloat32.class);
 
    }
 
@@ -73,12 +73,12 @@ public class PointCloud implements ROS2Message<PointCloud>
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Point32 getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getpoints()
    {
       return points_;
    }
 
-   public sensor_msgs.msg.dds.ChannelFloat32 getchannels()
+   public IDLObjectSequence<sensor_msgs.msg.dds.ChannelFloat32> getchannels()
    {
       return channels_;
    }

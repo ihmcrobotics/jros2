@@ -14,7 +14,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovariance_";
 
-   private geometry_msgs.msg.dds.Accel accel_;
+   private final geometry_msgs.msg.dds.Accel accel_;
    /**
       Row-major representation of the 6x6 covariance matrix
       The orientation parameters use a fixed-axis representation.

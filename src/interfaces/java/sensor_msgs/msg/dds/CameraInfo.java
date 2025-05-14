@@ -19,7 +19,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    /**
       Time of image acquisition, camera coordinate frame ID
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       The image dimensions with which the camera was calibrated.
       Normally this will be the full camera resolution in pixels.
@@ -82,7 +82,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       The default setting of roi (all values 0) is considered the same as
       full resolution (roi.width = width, roi.height = height).
    */
-   private sensor_msgs.msg.dds.RegionOfInterest roi_;
+   private final sensor_msgs.msg.dds.RegionOfInterest roi_;
 
    public CameraInfo()
    {

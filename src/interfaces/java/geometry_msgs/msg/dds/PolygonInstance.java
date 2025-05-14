@@ -15,7 +15,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstance_";
 
-   private geometry_msgs.msg.dds.Polygon polygon_;
+   private final geometry_msgs.msg.dds.Polygon polygon_;
    private long id_;
 
    public PolygonInstance()

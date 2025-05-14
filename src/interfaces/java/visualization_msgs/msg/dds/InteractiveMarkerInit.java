@@ -28,12 +28,12 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    /**
       All markers.
    */
-   private visualization_msgs.msg.dds.InteractiveMarker markers_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> markers_;
 
    public InteractiveMarkerInit()
    {
       server_id_ = new StringBuilder();
-      markers_ = new visualization_msgs.msg.dds.InteractiveMarker();
+      markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker>(visualization_msgs.msg.dds.InteractiveMarker.class);
 
    }
 
@@ -98,7 +98,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       this.seq_num_ = seq_num_;
    }
 
-   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getmarkers()
    {
       return markers_;
    }

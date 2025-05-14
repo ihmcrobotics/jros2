@@ -19,7 +19,7 @@ public class Header implements ROS2Message<Header>
    /**
       Two-integer timestamp that is expressed as seconds and nanoseconds.
    */
-   private builtin_interfaces.msg.dds.Time stamp_;
+   private final builtin_interfaces.msg.dds.Time stamp_;
    /**
       Transform frame with which this data is associated.
    */

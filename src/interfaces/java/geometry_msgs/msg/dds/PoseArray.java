@@ -14,13 +14,13 @@ public class PoseArray implements ROS2Message<PoseArray>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Pose poses_;
+   private final std_msgs.msg.dds.Header header_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Pose> poses_;
 
    public PoseArray()
    {
       header_ = new std_msgs.msg.dds.Header();
-      poses_ = new geometry_msgs.msg.dds.Pose();
+      poses_ = new IDLObjectSequence<geometry_msgs.msg.dds.Pose>(geometry_msgs.msg.dds.Pose.class);
 
    }
 
@@ -58,7 +58,7 @@ public class PoseArray implements ROS2Message<PoseArray>
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Pose getposes()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Pose> getposes()
    {
       return poses_;
    }

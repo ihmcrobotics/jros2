@@ -15,8 +15,8 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Vector3Stamped_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Vector3 vector_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Vector3 vector_;
 
    public Vector3Stamped()
    {

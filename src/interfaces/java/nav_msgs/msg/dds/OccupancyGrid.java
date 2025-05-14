@@ -14,11 +14,11 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    /**
       This represents a 2-D grid map
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       MetaData for the map
    */
-   private nav_msgs.msg.dds.MapMetaData info_;
+   private final nav_msgs.msg.dds.MapMetaData info_;
    /**
       The map data, in row-major order, starting with (0,0).
       Cell (1, 0) will be listed second, representing the next cell in the x direction.

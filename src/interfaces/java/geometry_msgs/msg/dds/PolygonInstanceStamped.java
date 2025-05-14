@@ -15,8 +15,8 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.PolygonInstance polygon_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.PolygonInstance polygon_;
 
    public PolygonInstanceStamped()
    {

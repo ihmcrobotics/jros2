@@ -40,15 +40,15 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    /**
       Measurement window start time
    */
-   private builtin_interfaces.msg.dds.Time window_start_;
+   private final builtin_interfaces.msg.dds.Time window_start_;
    /**
       Measurement window end time
    */
-   private builtin_interfaces.msg.dds.Time window_stop_;
+   private final builtin_interfaces.msg.dds.Time window_stop_;
    /**
       A list of statistics data point, defined in StatisticDataPoint.msg
    */
-   private statistics_msgs.msg.dds.StatisticDataPoint statistics_;
+   private final IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> statistics_;
 
    public MetricsMessage()
    {
@@ -57,7 +57,7 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       unit_ = new StringBuilder();
       window_start_ = new builtin_interfaces.msg.dds.Time();
       window_stop_ = new builtin_interfaces.msg.dds.Time();
-      statistics_ = new statistics_msgs.msg.dds.StatisticDataPoint();
+      statistics_ = new IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint>(statistics_msgs.msg.dds.StatisticDataPoint.class);
 
    }
 
@@ -146,7 +146,7 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return window_stop_;
    }
 
-   public statistics_msgs.msg.dds.StatisticDataPoint getstatistics()
+   public IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> getstatistics()
    {
       return statistics_;
    }

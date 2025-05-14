@@ -14,8 +14,8 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    /**
       This represents an estimated accel with reference coordinate frame and timestamp.
    */
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.AccelWithCovariance accel_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.AccelWithCovariance accel_;
 
    public AccelWithCovarianceStamped()
    {

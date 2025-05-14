@@ -14,8 +14,8 @@ public class PoseStamped implements ROS2Message<PoseStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseStamped_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Pose pose_;
 
    public PoseStamped()
    {

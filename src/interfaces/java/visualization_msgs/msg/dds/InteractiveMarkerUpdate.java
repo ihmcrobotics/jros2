@@ -38,11 +38,11 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    /**
       Markers to be added or updated
    */
-   private visualization_msgs.msg.dds.InteractiveMarker markers_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> markers_;
    /**
       Poses of markers that should be moved
    */
-   private visualization_msgs.msg.dds.InteractiveMarkerPose poses_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> poses_;
    /**
       Names of markers to be erased
    */
@@ -51,8 +51,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public InteractiveMarkerUpdate()
    {
       server_id_ = new StringBuilder();
-      markers_ = new visualization_msgs.msg.dds.InteractiveMarker();
-      poses_ = new visualization_msgs.msg.dds.InteractiveMarkerPose();
+      markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker>(visualization_msgs.msg.dds.InteractiveMarker.class);
+      poses_ = new IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose>(visualization_msgs.msg.dds.InteractiveMarkerPose.class);
       erases_ = new IDLStringSequence();
 
    }
@@ -136,12 +136,12 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       this.type_ = type_;
    }
 
-   public visualization_msgs.msg.dds.InteractiveMarker getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getmarkers()
    {
       return markers_;
    }
 
-   public visualization_msgs.msg.dds.InteractiveMarkerPose getposes()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> getposes()
    {
       return poses_;
    }

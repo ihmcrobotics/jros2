@@ -14,25 +14,25 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    /**
       Each multi-dof joint can specify a transform (up to 6 DOF).
    */
-   private geometry_msgs.msg.dds.Transform transforms_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Transform> transforms_;
    /**
       There can be a velocity specified for the origin of the joint.
    */
-   private geometry_msgs.msg.dds.Twist velocities_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> velocities_;
    /**
       There can be an acceleration specified for the origin of the joint.
    */
-   private geometry_msgs.msg.dds.Twist accelerations_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> accelerations_;
    /**
       Desired time from the trajectory start to arrive at this trajectory point.
    */
-   private builtin_interfaces.msg.dds.Duration time_from_start_;
+   private final builtin_interfaces.msg.dds.Duration time_from_start_;
 
    public MultiDOFJointTrajectoryPoint()
    {
-      transforms_ = new geometry_msgs.msg.dds.Transform();
-      velocities_ = new geometry_msgs.msg.dds.Twist();
-      accelerations_ = new geometry_msgs.msg.dds.Twist();
+      transforms_ = new IDLObjectSequence<geometry_msgs.msg.dds.Transform>(geometry_msgs.msg.dds.Transform.class);
+      velocities_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
+      accelerations_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
       time_from_start_ = new builtin_interfaces.msg.dds.Duration();
 
    }
@@ -66,17 +66,17 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    {
    }
 
-   public geometry_msgs.msg.dds.Transform gettransforms()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> gettransforms()
    {
       return transforms_;
    }
 
-   public geometry_msgs.msg.dds.Twist getvelocities()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getvelocities()
    {
       return velocities_;
    }
 
-   public geometry_msgs.msg.dds.Twist getaccelerations()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getaccelerations()
    {
       return accelerations_;
    }

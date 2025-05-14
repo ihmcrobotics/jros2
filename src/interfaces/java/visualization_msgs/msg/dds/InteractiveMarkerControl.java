@@ -25,7 +25,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       interactive marker) in which is being rotated and translated.
       Default: Identity
    */
-   private geometry_msgs.msg.dds.Quaternion orientation_;
+   private final geometry_msgs.msg.dds.Quaternion orientation_;
    /**
       Orientation mode: controls how orientation changes.
       INHERIT: Follow orientation of interactive marker
@@ -79,7 +79,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       - If the header of a marker is empty, its pose will be interpreted as
       relative to the pose of the parent interactive marker.
    */
-   private visualization_msgs.msg.dds.Marker markers_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.Marker> markers_;
    /**
       In VIEW_FACING mode, set this to true if you don't want the markers
       to be aligned with the camera view point. The markers will show up
@@ -97,7 +97,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       name_ = new StringBuilder();
       orientation_ = new geometry_msgs.msg.dds.Quaternion();
-      markers_ = new visualization_msgs.msg.dds.Marker();
+      markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.Marker>(visualization_msgs.msg.dds.Marker.class);
       description_ = new StringBuilder();
 
    }
@@ -204,7 +204,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       this.always_visible_ = always_visible_;
    }
 
-   public visualization_msgs.msg.dds.Marker getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getmarkers()
    {
       return markers_;
    }

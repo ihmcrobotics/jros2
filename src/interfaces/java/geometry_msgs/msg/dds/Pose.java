@@ -14,8 +14,8 @@ public class Pose implements ROS2Message<Pose>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Pose_";
 
-   private geometry_msgs.msg.dds.Point position_;
-   private geometry_msgs.msg.dds.Quaternion orientation_;
+   private final geometry_msgs.msg.dds.Point position_;
+   private final geometry_msgs.msg.dds.Quaternion orientation_;
 
    public Pose()
    {

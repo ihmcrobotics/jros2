@@ -18,15 +18,15 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    /**
       The id and label of this transition event.
    */
-   private lifecycle_msgs.msg.dds.Transition transition_;
+   private final lifecycle_msgs.msg.dds.Transition transition_;
    /**
       The starting state from which this event transitioned.
    */
-   private lifecycle_msgs.msg.dds.State start_state_;
+   private final lifecycle_msgs.msg.dds.State start_state_;
    /**
       The end state of this transition event.
    */
-   private lifecycle_msgs.msg.dds.State goal_state_;
+   private final lifecycle_msgs.msg.dds.State goal_state_;
 
    public TransitionEvent()
    {

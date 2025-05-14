@@ -26,11 +26,11 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       Euclidean frame relative to the vehicle, not a reference
       ellipsoid.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Satellite fix status information.
    */
-   private sensor_msgs.msg.dds.NavSatStatus status_;
+   private final sensor_msgs.msg.dds.NavSatStatus status_;
    /**
       Latitude [degrees]. Positive is north of equator; negative is south.
    */

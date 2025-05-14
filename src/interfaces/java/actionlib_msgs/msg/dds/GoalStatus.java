@@ -11,7 +11,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 {
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatus_";
 
-   private actionlib_msgs.msg.dds.GoalID goal_id_;
+   private final actionlib_msgs.msg.dds.GoalID goal_id_;
    private byte status_;
    public static final byte PENDING = 0;
    public static final byte ACTIVE = 1;

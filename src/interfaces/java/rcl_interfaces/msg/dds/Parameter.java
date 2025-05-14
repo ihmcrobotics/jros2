@@ -23,7 +23,7 @@ public class Parameter implements ROS2Message<Parameter>
       The parameter's value which can be one of several types, see
       `ParameterValue.msg` and `ParameterType.msg`.
    */
-   private rcl_interfaces.msg.dds.ParameterValue value_;
+   private final rcl_interfaces.msg.dds.ParameterValue value_;
 
    public Parameter()
    {

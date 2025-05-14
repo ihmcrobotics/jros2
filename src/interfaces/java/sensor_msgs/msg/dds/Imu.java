@@ -26,12 +26,12 @@ public class Imu implements ROS2Message<Imu>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Quaternion orientation_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Quaternion orientation_;
    private double[] orientation_covariance_;
-   private geometry_msgs.msg.dds.Vector3 angular_velocity_;
+   private final geometry_msgs.msg.dds.Vector3 angular_velocity_;
    private double[] angular_velocity_covariance_;
-   private geometry_msgs.msg.dds.Vector3 linear_acceleration_;
+   private final geometry_msgs.msg.dds.Vector3 linear_acceleration_;
    private double[] linear_acceleration_covariance_;
 
    public Imu()

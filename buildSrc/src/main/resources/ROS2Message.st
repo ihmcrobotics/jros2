@@ -28,13 +28,13 @@ public class <context.name> implements ROS2Message\<<context.name>>
    <field.headerComment>
 */
 <endif>
-<if(field.constantValue)>public static final<else>private<endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
+<if(field.constantValue)>public static final<else>private<if(!field.builtinType&&!field.builtinStringType)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
    }>
    public <context.name>()
    {
       <context.fields:{ field |
       <if(field.array)>
-<field.javaName> = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>()<endif>;
+<field.javaName> = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>(<if(field.objectSequence)><if(field.upperBounded)><field.length>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
       <elseif(!field.builtinType||field.builtinStringType)>
 <field.javaName> = new <field.javaType>();
       <endif>

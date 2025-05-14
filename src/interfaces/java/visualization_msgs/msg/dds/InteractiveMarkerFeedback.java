@@ -14,7 +14,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    /**
       Time/frame info.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Identifying string. Must be unique in the topic namespace.
    */
@@ -42,7 +42,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       Current pose of the marker
       Note: Has to be valid for all feedback types.
    */
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       Contains the ID of the selected menu entry
       Only valid for MENU_SELECT events.
@@ -54,7 +54,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       control.  If it does, mouse_point_valid will be true.  mouse_point
       will be relative to the frame listed in the header.
    */
-   private geometry_msgs.msg.dds.Point mouse_point_;
+   private final geometry_msgs.msg.dds.Point mouse_point_;
    private boolean mouse_point_valid_;
 
    public InteractiveMarkerFeedback()

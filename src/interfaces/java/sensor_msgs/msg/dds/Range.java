@@ -22,7 +22,7 @@ public class Range implements ROS2Message<Range>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Radiation type enums
       If you want a value added to this list, send an email to the ros-users list

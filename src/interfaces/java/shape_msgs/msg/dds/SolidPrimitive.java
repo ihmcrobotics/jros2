@@ -43,7 +43,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    public static final byte CONE_HEIGHT = 0;
    public static final byte CONE_RADIUS = 1;
    public static final byte PRISM_HEIGHT = 0;
-   private geometry_msgs.msg.dds.Polygon polygon_;
+   private final geometry_msgs.msg.dds.Polygon polygon_;
 
    public SolidPrimitive()
    {

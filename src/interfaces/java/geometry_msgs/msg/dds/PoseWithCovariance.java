@@ -14,7 +14,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseWithCovariance_";
 
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       Row-major representation of the 6x6 covariance matrix
       The orientation parameters use a fixed-axis representation.

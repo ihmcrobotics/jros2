@@ -14,15 +14,15 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    /**
       The transition id and label of this description.
    */
-   private lifecycle_msgs.msg.dds.Transition transition_;
+   private final lifecycle_msgs.msg.dds.Transition transition_;
    /**
       The current state from which this transition transitions.
    */
-   private lifecycle_msgs.msg.dds.State start_state_;
+   private final lifecycle_msgs.msg.dds.State start_state_;
    /**
       The desired target state of this transition.
    */
-   private lifecycle_msgs.msg.dds.State goal_state_;
+   private final lifecycle_msgs.msg.dds.State goal_state_;
 
    public TransitionDescription()
    {

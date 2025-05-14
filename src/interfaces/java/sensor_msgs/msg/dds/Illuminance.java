@@ -26,7 +26,7 @@ public class Illuminance implements ROS2Message<Illuminance>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
 
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private double illuminance_;
    private double variance_;
 

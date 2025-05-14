@@ -24,7 +24,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    /**
       Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       2D structure of the point cloud. If the cloud is unordered, height is
       1 and width is the length of the point cloud.
@@ -34,14 +34,14 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    /**
       Describes the channels and their layout in the binary data blob.
    */
-   private sensor_msgs.msg.dds.PointField fields_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
    private IDLByteSequence data_;
    private boolean is_dense_;
 
    public PointCloud2()
    {
       header_ = new std_msgs.msg.dds.Header();
-      fields_ = new sensor_msgs.msg.dds.PointField();
+      fields_ = new IDLObjectSequence<sensor_msgs.msg.dds.PointField>(sensor_msgs.msg.dds.PointField.class);
       data_ = new IDLByteSequence();
 
    }
@@ -120,7 +120,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       this.width_ = width_;
    }
 
-   public sensor_msgs.msg.dds.PointField getfields()
+   public IDLObjectSequence<sensor_msgs.msg.dds.PointField> getfields()
    {
       return fields_;
    }

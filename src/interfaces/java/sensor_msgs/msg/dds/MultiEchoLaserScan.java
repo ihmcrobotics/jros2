@@ -18,7 +18,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiEchoLaserScan_";
 
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private float angle_min_;
    private float angle_max_;
    private float angle_increment_;
@@ -30,19 +30,19 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    private float scan_time_;
    private float range_min_;
    private float range_max_;
-   private sensor_msgs.msg.dds.LaserEcho ranges_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> ranges_;
    /**
       (Note: NaNs, values < range_min or > range_max should be discarded)
       +Inf measurements are out of range
       -Inf measurements are too close to determine exact distance.
    */
-   private sensor_msgs.msg.dds.LaserEcho intensities_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> intensities_;
 
    public MultiEchoLaserScan()
    {
       header_ = new std_msgs.msg.dds.Header();
-      ranges_ = new sensor_msgs.msg.dds.LaserEcho();
-      intensities_ = new sensor_msgs.msg.dds.LaserEcho();
+      ranges_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
+      intensities_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
 
    }
 
@@ -182,12 +182,12 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
       this.range_max_ = range_max_;
    }
 
-   public sensor_msgs.msg.dds.LaserEcho getranges()
+   public IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> getranges()
    {
       return ranges_;
    }
 
-   public sensor_msgs.msg.dds.LaserEcho getintensities()
+   public IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> getintensities()
    {
       return intensities_;
    }

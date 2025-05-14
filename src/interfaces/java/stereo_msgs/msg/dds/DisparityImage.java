@@ -15,13 +15,13 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       Separate header for compatibility with current TimeSynchronizer.
       Likely to be removed in a later release, use image.header instead.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Floating point disparity image. The disparities are pre-adjusted for any
       x-offset between the principal points of the two cameras (in the case
       that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
    */
-   private sensor_msgs.msg.dds.Image image_;
+   private final sensor_msgs.msg.dds.Image image_;
    /**
       Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
@@ -30,7 +30,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    /**
       Subwindow of (potentially) valid disparity values.
    */
-   private sensor_msgs.msg.dds.RegionOfInterest valid_window_;
+   private final sensor_msgs.msg.dds.RegionOfInterest valid_window_;
    /**
       The range of disparities searched.
       In the disparity image, any disparity less than min_disparity is invalid.

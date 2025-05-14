@@ -19,11 +19,11 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       Otherwise, you might receive feedback in a different frame.
       For rviz, this will be the current 'fixed frame' set by the user.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Initial pose. Also, defines the pivot point for rotations.
    */
-   private geometry_msgs.msg.dds.Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       Identifying string. Must be globally unique in
       the topic that this message is sent through.
@@ -40,11 +40,11 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    /**
       All menu and submenu entries associated with this marker.
    */
-   private visualization_msgs.msg.dds.MenuEntry menu_entries_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry> menu_entries_;
    /**
       List of controls displayed for this marker.
    */
-   private visualization_msgs.msg.dds.InteractiveMarkerControl controls_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl> controls_;
 
    public InteractiveMarker()
    {
@@ -52,8 +52,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       pose_ = new geometry_msgs.msg.dds.Pose();
       name_ = new StringBuilder();
       description_ = new StringBuilder();
-      menu_entries_ = new visualization_msgs.msg.dds.MenuEntry();
-      controls_ = new visualization_msgs.msg.dds.InteractiveMarkerControl();
+      menu_entries_ = new IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry>(visualization_msgs.msg.dds.MenuEntry.class);
+      controls_ = new IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl>(visualization_msgs.msg.dds.InteractiveMarkerControl.class);
 
    }
 
@@ -142,12 +142,12 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       this.scale_ = scale_;
    }
 
-   public visualization_msgs.msg.dds.MenuEntry getmenu_entries()
+   public IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry> getmenu_entries()
    {
       return menu_entries_;
    }
 
-   public visualization_msgs.msg.dds.InteractiveMarkerControl getcontrols()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl> getcontrols()
    {
       return controls_;
    }

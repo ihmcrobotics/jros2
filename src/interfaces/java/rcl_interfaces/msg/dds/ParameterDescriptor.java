@@ -45,19 +45,19 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       FloatingPointRange consists of a from_value, a to_value, and a step.
    */
-   private rcl_interfaces.msg.dds.FloatingPointRange floating_point_range_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange> floating_point_range_;
    /**
       IntegerRange consists of a from_value, a to_value, and a step.
    */
-   private rcl_interfaces.msg.dds.IntegerRange integer_range_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange> integer_range_;
 
    public ParameterDescriptor()
    {
       name_ = new StringBuilder();
       description_ = new StringBuilder();
       additional_constraints_ = new StringBuilder();
-      floating_point_range_ = new rcl_interfaces.msg.dds.FloatingPointRange();
-      integer_range_ = new rcl_interfaces.msg.dds.IntegerRange();
+      floating_point_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange>(1, rcl_interfaces.msg.dds.FloatingPointRange.class);
+      integer_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange>(1, rcl_interfaces.msg.dds.IntegerRange.class);
 
    }
 
@@ -178,12 +178,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       this.dynamic_typing_ = dynamic_typing_;
    }
 
-   public rcl_interfaces.msg.dds.FloatingPointRange getfloating_point_range()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange> getfloating_point_range()
    {
       return floating_point_range_;
    }
 
-   public rcl_interfaces.msg.dds.IntegerRange getinteger_range()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange> getinteger_range()
    {
       return integer_range_;
    }

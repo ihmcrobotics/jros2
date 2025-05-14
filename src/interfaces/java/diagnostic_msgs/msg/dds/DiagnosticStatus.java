@@ -40,14 +40,14 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    /**
       An array of values associated with the status.
    */
-   private diagnostic_msgs.msg.dds.KeyValue values_;
+   private final IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> values_;
 
    public DiagnosticStatus()
    {
       name_ = new StringBuilder();
       message_ = new StringBuilder();
       hardware_id_ = new StringBuilder();
-      values_ = new diagnostic_msgs.msg.dds.KeyValue();
+      values_ = new IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue>(diagnostic_msgs.msg.dds.KeyValue.class);
 
    }
 
@@ -140,7 +140,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       this.hardware_id_ = hardware_id_;
    }
 
-   public diagnostic_msgs.msg.dds.KeyValue getvalues()
+   public IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> getvalues()
    {
       return values_;
    }

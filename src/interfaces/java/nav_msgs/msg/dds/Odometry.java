@@ -19,7 +19,7 @@ public class Odometry implements ROS2Message<Odometry>
    /**
       Includes the frame id of the pose parent.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       Frame id the pose points to. The twist is in this coordinate frame.
    */
@@ -27,11 +27,11 @@ public class Odometry implements ROS2Message<Odometry>
    /**
       Estimated pose that is typically relative to a fixed world frame.
    */
-   private geometry_msgs.msg.dds.PoseWithCovariance pose_;
+   private final geometry_msgs.msg.dds.PoseWithCovariance pose_;
    /**
       Estimated linear and angular velocity relative to child_frame_id.
    */
-   private geometry_msgs.msg.dds.TwistWithCovariance twist_;
+   private final geometry_msgs.msg.dds.TwistWithCovariance twist_;
 
    public Odometry()
    {

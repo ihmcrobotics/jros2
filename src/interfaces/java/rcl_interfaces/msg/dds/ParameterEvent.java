@@ -19,7 +19,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    /**
       The time stamp when this parameter event occurred.
    */
-   private builtin_interfaces.msg.dds.Time stamp_;
+   private final builtin_interfaces.msg.dds.Time stamp_;
    /**
       Fully qualified ROS path to node.
    */
@@ -27,23 +27,23 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    /**
       New parameters that have been set for this node.
    */
-   private rcl_interfaces.msg.dds.Parameter new_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> new_parameters_;
    /**
       Parameters that have been changed during this event.
    */
-   private rcl_interfaces.msg.dds.Parameter changed_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> changed_parameters_;
    /**
       Parameters that have been deleted during this event.
    */
-   private rcl_interfaces.msg.dds.Parameter deleted_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> deleted_parameters_;
 
    public ParameterEvent()
    {
       stamp_ = new builtin_interfaces.msg.dds.Time();
       node_ = new StringBuilder();
-      new_parameters_ = new rcl_interfaces.msg.dds.Parameter();
-      changed_parameters_ = new rcl_interfaces.msg.dds.Parameter();
-      deleted_parameters_ = new rcl_interfaces.msg.dds.Parameter();
+      new_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.Parameter>(rcl_interfaces.msg.dds.Parameter.class);
+      changed_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.Parameter>(rcl_interfaces.msg.dds.Parameter.class);
+      deleted_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.Parameter>(rcl_interfaces.msg.dds.Parameter.class);
 
    }
 
@@ -99,17 +99,17 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       this.node_ = node_;
    }
 
-   public rcl_interfaces.msg.dds.Parameter getnew_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getnew_parameters()
    {
       return new_parameters_;
    }
 
-   public rcl_interfaces.msg.dds.Parameter getchanged_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getchanged_parameters()
    {
       return changed_parameters_;
    }
 
-   public rcl_interfaces.msg.dds.Parameter getdeleted_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getdeleted_parameters()
    {
       return deleted_parameters_;
    }

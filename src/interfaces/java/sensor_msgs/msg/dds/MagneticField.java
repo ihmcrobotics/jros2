@@ -21,8 +21,8 @@ public class MagneticField implements ROS2Message<MagneticField>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MagneticField_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Vector3 magnetic_field_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Vector3 magnetic_field_;
    private double[] magnetic_field_covariance_;
 
    public MagneticField()

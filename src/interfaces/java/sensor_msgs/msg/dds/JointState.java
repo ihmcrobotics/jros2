@@ -31,7 +31,7 @@ public class JointState implements ROS2Message<JointState>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JointState_";
 
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private IDLStringSequence name_;
    private IDLDoubleSequence position_;
    private IDLDoubleSequence velocity_;

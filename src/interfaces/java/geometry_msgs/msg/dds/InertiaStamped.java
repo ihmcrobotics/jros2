@@ -14,8 +14,8 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::InertiaStamped_";
 
-   private std_msgs.msg.dds.Header header_;
-   private geometry_msgs.msg.dds.Inertia inertia_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Inertia inertia_;
 
    public InertiaStamped()
    {

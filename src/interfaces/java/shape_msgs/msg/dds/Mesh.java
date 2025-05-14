@@ -17,16 +17,16 @@ public class Mesh implements ROS2Message<Mesh>
    /**
       List of triangles; the index values refer to positions in vertices[].
    */
-   private shape_msgs.msg.dds.MeshTriangle triangles_;
+   private final IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> triangles_;
    /**
       The actual vertices that make up the mesh.
    */
-   private geometry_msgs.msg.dds.Point vertices_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> vertices_;
 
    public Mesh()
    {
-      triangles_ = new shape_msgs.msg.dds.MeshTriangle();
-      vertices_ = new geometry_msgs.msg.dds.Point();
+      triangles_ = new IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle>(shape_msgs.msg.dds.MeshTriangle.class);
+      vertices_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
 
    }
 
@@ -59,12 +59,12 @@ public class Mesh implements ROS2Message<Mesh>
    {
    }
 
-   public shape_msgs.msg.dds.MeshTriangle gettriangles()
+   public IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> gettriangles()
    {
       return triangles_;
    }
 
-   public geometry_msgs.msg.dds.Point getvertices()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getvertices()
    {
       return vertices_;
    }

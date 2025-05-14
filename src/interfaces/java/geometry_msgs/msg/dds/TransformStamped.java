@@ -26,7 +26,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    /**
       The frame id in the header is used as the reference frame of this transform.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       The frame id of the child frame to which this transform points.
    */
@@ -34,7 +34,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    /**
       Translation and rotation in 3-dimensions of child_frame_id from header.frame_id.
    */
-   private geometry_msgs.msg.dds.Transform transform_;
+   private final geometry_msgs.msg.dds.Transform transform_;
 
    public TransformStamped()
    {

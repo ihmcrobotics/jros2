@@ -14,11 +14,11 @@ public class Polygon implements ROS2Message<Polygon>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Polygon_";
 
-   private geometry_msgs.msg.dds.Point32 points_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point32> points_;
 
    public Polygon()
    {
-      points_ = new geometry_msgs.msg.dds.Point32();
+      points_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point32>(geometry_msgs.msg.dds.Point32.class);
 
    }
 
@@ -51,7 +51,7 @@ public class Polygon implements ROS2Message<Polygon>
    {
    }
 
-   public geometry_msgs.msg.dds.Point32 getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getpoints()
    {
       return points_;
    }

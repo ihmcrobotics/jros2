@@ -16,15 +16,15 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterEventDescriptors_";
 
-   private rcl_interfaces.msg.dds.ParameterDescriptor new_parameters_;
-   private rcl_interfaces.msg.dds.ParameterDescriptor changed_parameters_;
-   private rcl_interfaces.msg.dds.ParameterDescriptor deleted_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> new_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> changed_parameters_;
+   private final IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> deleted_parameters_;
 
    public ParameterEventDescriptors()
    {
-      new_parameters_ = new rcl_interfaces.msg.dds.ParameterDescriptor();
-      changed_parameters_ = new rcl_interfaces.msg.dds.ParameterDescriptor();
-      deleted_parameters_ = new rcl_interfaces.msg.dds.ParameterDescriptor();
+      new_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor>(rcl_interfaces.msg.dds.ParameterDescriptor.class);
+      changed_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor>(rcl_interfaces.msg.dds.ParameterDescriptor.class);
+      deleted_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor>(rcl_interfaces.msg.dds.ParameterDescriptor.class);
 
    }
 
@@ -57,17 +57,17 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    {
    }
 
-   public rcl_interfaces.msg.dds.ParameterDescriptor getnew_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getnew_parameters()
    {
       return new_parameters_;
    }
 
-   public rcl_interfaces.msg.dds.ParameterDescriptor getchanged_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getchanged_parameters()
    {
       return changed_parameters_;
    }
 
-   public rcl_interfaces.msg.dds.ParameterDescriptor getdeleted_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getdeleted_parameters()
    {
       return deleted_parameters_;
    }

@@ -11,11 +11,11 @@ public class MarkerArray implements ROS2Message<MarkerArray>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MarkerArray_";
 
-   private visualization_msgs.msg.dds.Marker markers_;
+   private final IDLObjectSequence<visualization_msgs.msg.dds.Marker> markers_;
 
    public MarkerArray()
    {
-      markers_ = new visualization_msgs.msg.dds.Marker();
+      markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.Marker>(visualization_msgs.msg.dds.Marker.class);
 
    }
 
@@ -48,7 +48,7 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    {
    }
 
-   public visualization_msgs.msg.dds.Marker getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getmarkers()
    {
       return markers_;
    }

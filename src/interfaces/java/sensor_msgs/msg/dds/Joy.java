@@ -17,7 +17,7 @@ public class Joy implements ROS2Message<Joy>
    /**
       The timestamp is the time at which data is received from the joystick.
    */
-   private std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       The axes measurements from a joystick.
    */
