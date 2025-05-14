@@ -64,12 +64,12 @@ final class jros2 implements jros2Settings
    public int rosDomainId()
    {
       // Loop through setting sources in order of priority
-      for (jros2Settings settings : settingsSources)
+      for (int i = 0; i < settingsSources.length; ++i)
       {
          // If the source specifies a default domain id, return the value
-         if (settings.hasROSDomainId())
+         if (settingsSources[i].hasROSDomainId())
          {
-            return settings.rosDomainId();
+            return settingsSources[i].rosDomainId();
          }
       }
 
@@ -80,9 +80,9 @@ final class jros2 implements jros2Settings
    @Override
    public boolean hasROSDomainId()
    {
-      for (jros2Settings settings : settingsSources)
+      for (int i = 0; i < settingsSources.length; ++i)
       {
-         if (settings.hasROSDomainId())
+         if (settingsSources[i].hasROSDomainId())
          {
             return true;
          }
@@ -95,12 +95,12 @@ final class jros2 implements jros2Settings
    public String[] interfaceWhitelist()
    {
       // Loop through setting sources in order of priority
-      for (jros2Settings settings : settingsSources)
+      for (int i = 0; i < settingsSources.length; ++i)
       {
          // If the source specifies a default domain id, return the value
-         if (settings.hasInterfaceWhitelist())
+         if (settingsSources[i].hasInterfaceWhitelist())
          {
-            return settings.interfaceWhitelist();
+            return settingsSources[i].interfaceWhitelist();
          }
       }
 
@@ -111,9 +111,9 @@ final class jros2 implements jros2Settings
    @Override
    public boolean hasInterfaceWhitelist()
    {
-      for (jros2Settings settings : settingsSources)
+      for (int i = 0; i < settingsSources.length; ++i)
       {
-         if (settings.hasInterfaceWhitelist())
+         if (settingsSources[i].hasInterfaceWhitelist())
          {
             return true;
          }
