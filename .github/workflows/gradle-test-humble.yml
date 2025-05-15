@@ -34,4 +34,4 @@ jobs:
         run: cd buildSrc && ../gradlew test
 
       - name: Print any error report files
-        run: cat ./hs_err* 2>/dev/null
+        run: cat ./hs_err* 2>/dev/null || exit 0
