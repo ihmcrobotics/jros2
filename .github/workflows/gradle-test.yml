@@ -1,4 +1,4 @@
-name: Gradle test (ROS 2 Humble)
+name: Gradle test
 
 on:
   workflow_dispatch:
@@ -10,8 +10,14 @@ on:
 jobs:
   gradle-test:
     runs-on: self-hosted
+    strategy:
+      matrix:
+        ros_distro: [humble, jazzy]
+        ros_image:
+          - humble: osrf/ros:humble-desktop
+          - jazzy: osrf/ros:jazzy-desktop
     container:
-      image: osrf/ros:humble-desktop
+      image: ${{ matrix.ros_image[matrix.ros_distro] }}
     steps:
       - name: Install dependencies
         run: |
@@ -28,7 +34,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run JUnit tests
-        run: ROS_DISTRO=humble ./gradlew test
+        run: ROS_DISTRO=${{ matrix.ros_distro }} ./gradlew test
 
       - name: Run JUnit tests (Gradle plugin)
         run: cd buildSrc && ../gradlew test
