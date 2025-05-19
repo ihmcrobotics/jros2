@@ -96,8 +96,8 @@ public class Statistics
    @Override
    public String toString()
    {
-      StringBuilder builder = new StringBuilder();
-      builder.append("statistics: {");
+      StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+      builder.append(": {");
 
       for (int i = 0; i < StatisticDataType.values.length; ++i)
       {

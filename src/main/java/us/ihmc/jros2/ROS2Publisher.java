@@ -88,8 +88,6 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
                topicDataWrapper.data_vector().resize(payloadSizeBytes);
                topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-
-               statisticsCalculators[SIZE.ordinal()].record(payloadSizeBytes);
             }
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
@@ -122,9 +120,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             try
             {
                Header header = (Header) getHeaderMethod.invoke(message);
-               // TODO: Uncomment when the time stamp object is not null in the Header message
-//               long timestampMillis = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
-//               statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
+               long timestampMillis = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
+               statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
             }
             catch (IllegalAccessException | InvocationTargetException e)
             {

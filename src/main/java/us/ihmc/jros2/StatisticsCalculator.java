@@ -11,9 +11,9 @@ public class StatisticsCalculator
    private double min;
    private double max;
    private double m2; // M2 from Welford's online algorithm (https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Welford's_online_algorithm)
+   private long sampleCount;
    private double total;
    private double latest;
-   private long sampleCount;
 
    private final ReadWriteLock lock;
 
@@ -60,9 +60,9 @@ public class StatisticsCalculator
       min = Double.MAX_VALUE;
       max = Double.MIN_VALUE;
       m2 = 0.0;
+      sampleCount = 0;
       total = 0.0;
       latest = Double.NaN;
-      sampleCount = 0;
       lock.writeLock().unlock();
    }
 
@@ -81,5 +81,18 @@ public class StatisticsCalculator
          latest = value;
          lock.writeLock().unlock();
       }
+   }
+
+   @Override
+   public String toString()
+   {
+      return "%s: {AVERAGE=%f, MINIMUM=%f, MAXIMUM=%f, STDDEV=%f, SAMPLE_COUNT=%f, TOTAL=%f, LATEST=%f}".formatted(getClass().getSimpleName(),
+                                                                                                                   average,
+                                                                                                                   min,
+                                                                                                                   max,
+                                                                                                                   Math.sqrt(m2 / sampleCount),
+                                                                                                                   (double) sampleCount,
+                                                                                                                   total,
+                                                                                                                   latest);
    }
 }

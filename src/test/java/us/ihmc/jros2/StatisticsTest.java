@@ -1,8 +1,8 @@
 package us.ihmc.jros2;
 
-import geometry_msgs.msg.dds.PointStamped;
-import org.junit.jupiter.api.Disabled;
+import geometry_msgs.msg.dds.Point;
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType;
 
 import java.util.concurrent.Executors;
@@ -108,21 +108,30 @@ public class StatisticsTest
       assertEquals(defaultStatisticsValues.toString(), statistics.toString());
    }
 
-   // TODO: Enable when messages are generated correctly
-   @Disabled
    @Test
-   public void testPublisherStatistics() throws InterruptedException
+   public void testPublisherSubscriptionStatistics() throws InterruptedException
    {
       // Create a publisher
       ROS2Node node = new ROS2Node("test_node");
-      ROS2Topic<PointStamped> topic = new ROS2Topic<>("test_topic", PointStamped.class);
-      ROS2Publisher<PointStamped> publisher = node.createPublisher(topic);
+      ROS2Topic<Point> topic = new ROS2Topic<>("test_topic", Point.class);
+      ROS2Publisher<Point> publisher = node.createPublisher(topic);
 
       // Create the message to publish
-      PointStamped message = new PointStamped();
-      message.getpoint().setx(1.0);
-      message.getpoint().sety(2.0);
-      message.getpoint().setz(3.0);
+      Point message = new Point();
+      message.setx(1.0);
+      message.sety(2.0);
+      message.setz(3.0);
+
+      // Create subscription
+      AtomicInteger receivedCount = new AtomicInteger(0);
+      ROS2Subscription<Point> subscription = node.createSubscription(topic, reader ->
+      {
+         Point received = reader.read();
+         assertEquals(received.getx(), message.getx());
+         assertEquals(received.gety(), message.gety());
+         assertEquals(received.getz(), message.getz());
+         receivedCount.incrementAndGet();
+      });
 
       // Publish messages at a fixed rate for a few seconds
       AtomicInteger publishCount = new AtomicInteger(0);
@@ -138,29 +147,50 @@ public class StatisticsTest
 
       Statistics statistics = new Statistics();
 
-      // Read the message size statistics, and assert they make sense
-      double expectedSize = message.calculateSizeBytes();
+      // Read the message size statistics from the publisher, and assert they make sense
+      double expectedSize = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
       publisher.readStatistics(MessageMetadataType.SIZE, statistics);
       assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
       assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
       assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
-      assertEquals(0, statistics.get(STDDEV), 1E-7);
+      assertEquals(0.0, statistics.get(STDDEV), 1E-7);
       assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals(publishCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
 
-      // Read the message publish period statistics, and assert they make sense
+      // Read the message publish period statistics from the publisher, and assert they make sense
       double expectedPeriod = 100.0;
       publisher.readStatistics(MessageMetadataType.PERIOD, statistics);
-      assertEquals(expectedPeriod, statistics.get(AVERAGE), 1-5);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), 1E-5);
-      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 1E-5);
-      assertEquals(0, statistics.get(STDDEV), 1E-5);
-      assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
-      assertEquals(publishCount.get() * expectedPeriod, statistics.get(TOTAL), 1E-4);
-      assertEquals(expectedPeriod, statistics.get(LATEST), 1E-5);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 5.0);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
+      assertEquals(0.0, statistics.get(STDDEV), 1.0);
+      assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
+      assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);
+
+      // Read the message size statistics from the subscription, and assert they make sense
+      subscription.readStatistics(MessageMetadataType.SIZE, statistics);
+      assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
+      assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
+      assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
+      assertEquals(0.0, statistics.get(STDDEV), 1E-7);
+      assertEquals(receivedCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
+      assertEquals(receivedCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
+      assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
+
+      // Read the message publish period statistics from the subscription, and assert they make sense
+      subscription.readStatistics(MessageMetadataType.PERIOD, statistics);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 5.0);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
+      assertEquals(0.0, statistics.get(STDDEV), 1.0);
+      assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
+      assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);
 
       node.destroyPublisher(publisher);
+      node.destroySubscription(subscription);
       node.close();
    }
 }
