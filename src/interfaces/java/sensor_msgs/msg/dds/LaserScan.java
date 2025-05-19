@@ -49,6 +49,7 @@ public class LaserScan implements ROS2Message<LaserScan>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_min_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_max_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_increment_
@@ -65,6 +66,7 @@ public class LaserScan implements ROS2Message<LaserScan>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeFloat(angle_min_);
       buffer.writeFloat(angle_max_);
       buffer.writeFloat(angle_increment_);
@@ -80,6 +82,7 @@ public class LaserScan implements ROS2Message<LaserScan>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       angle_min_ = buffer.readFloat();
       angle_max_ = buffer.readFloat();
       angle_increment_ = buffer.readFloat();
@@ -95,6 +98,7 @@ public class LaserScan implements ROS2Message<LaserScan>
    @Override
    public void set(LaserScan from)
    {
+      header_.set(from.header_);
       angle_min_ = from.angle_min_;
       angle_max_ = from.angle_max_;
       angle_increment_ = from.angle_increment_;

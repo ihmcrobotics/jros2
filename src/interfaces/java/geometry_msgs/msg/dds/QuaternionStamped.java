@@ -29,22 +29,34 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += quaternion_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      quaternion_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      quaternion_.deserialize(buffer);
+
    }
 
    @Override
    public void set(QuaternionStamped from)
    {
+      header_.set(from.header_);
+      quaternion_.set(from.quaternion_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

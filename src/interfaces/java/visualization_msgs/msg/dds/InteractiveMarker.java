@@ -62,9 +62,13 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // description_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
+      currentAlignment += menu_entries_.calculateSizeBytes(currentAlignment);
+      currentAlignment += controls_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -72,29 +76,41 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      pose_.serialize(buffer);
       buffer.writeString(name_);
       buffer.writeString(description_);
       buffer.writeFloat(scale_);
+      menu_entries_.serialize(buffer);
+      controls_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      pose_.deserialize(buffer);
       buffer.readString(name_);
       buffer.readString(description_);
       scale_ = buffer.readFloat();
+      menu_entries_.deserialize(buffer);
+      controls_.deserialize(buffer);
 
    }
 
    @Override
    public void set(InteractiveMarker from)
    {
+      header_.set(from.header_);
+      pose_.set(from.pose_);
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);
       description_.delete(0, description_.length());
       description_.insert(0, from.description_);
       scale_ = from.scale_;
+      menu_entries_.set(from.menu_entries_);
+      controls_.set(from.controls_);
 
    }
 

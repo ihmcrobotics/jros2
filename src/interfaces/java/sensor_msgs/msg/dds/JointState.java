@@ -52,6 +52,7 @@ public class JointState implements ROS2Message<JointState>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += name_.calculateSizeBytes(currentAlignment);
       currentAlignment += position_.calculateSizeBytes(currentAlignment);
       currentAlignment += velocity_.calculateSizeBytes(currentAlignment);
@@ -63,6 +64,7 @@ public class JointState implements ROS2Message<JointState>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       name_.serialize(buffer);
       position_.serialize(buffer);
       velocity_.serialize(buffer);
@@ -73,6 +75,7 @@ public class JointState implements ROS2Message<JointState>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       name_.deserialize(buffer);
       position_.deserialize(buffer);
       velocity_.deserialize(buffer);
@@ -83,6 +86,7 @@ public class JointState implements ROS2Message<JointState>
    @Override
    public void set(JointState from)
    {
+      header_.set(from.header_);
       name_.set(from.name_);
       position_.set(from.position_);
       velocity_.set(from.velocity_);

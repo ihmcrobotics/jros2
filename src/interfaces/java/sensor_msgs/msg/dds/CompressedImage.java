@@ -31,6 +31,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // format_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
@@ -40,6 +41,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(format_);
       data_.serialize(buffer);
 
@@ -48,6 +50,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(format_);
       data_.deserialize(buffer);
 
@@ -56,6 +59,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void set(CompressedImage from)
    {
+      header_.set(from.header_);
       format_.delete(0, format_.length());
       format_.insert(0, from.format_);
       data_.set(from.data_);

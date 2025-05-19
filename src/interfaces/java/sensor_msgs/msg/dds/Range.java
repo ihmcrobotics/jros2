@@ -46,6 +46,7 @@ public class Range implements ROS2Message<Range>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // radiation_type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // field_of_view_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // min_range_
@@ -58,6 +59,7 @@ public class Range implements ROS2Message<Range>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeByte(radiation_type_);
       buffer.writeFloat(field_of_view_);
       buffer.writeFloat(min_range_);
@@ -69,6 +71,7 @@ public class Range implements ROS2Message<Range>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       radiation_type_ = buffer.readByte();
       field_of_view_ = buffer.readFloat();
       min_range_ = buffer.readFloat();
@@ -80,6 +83,7 @@ public class Range implements ROS2Message<Range>
    @Override
    public void set(Range from)
    {
+      header_.set(from.header_);
       radiation_type_ = from.radiation_type_;
       field_of_view_ = from.field_of_view_;
       min_range_ = from.min_range_;

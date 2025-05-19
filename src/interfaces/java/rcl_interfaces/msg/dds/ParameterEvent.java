@@ -52,7 +52,11 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // node_
+      currentAlignment += new_parameters_.calculateSizeBytes(currentAlignment);
+      currentAlignment += changed_parameters_.calculateSizeBytes(currentAlignment);
+      currentAlignment += deleted_parameters_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -60,22 +64,34 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      stamp_.serialize(buffer);
       buffer.writeString(node_);
+      new_parameters_.serialize(buffer);
+      changed_parameters_.serialize(buffer);
+      deleted_parameters_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      stamp_.deserialize(buffer);
       buffer.readString(node_);
+      new_parameters_.deserialize(buffer);
+      changed_parameters_.deserialize(buffer);
+      deleted_parameters_.deserialize(buffer);
 
    }
 
    @Override
    public void set(ParameterEvent from)
    {
+      stamp_.set(from.stamp_);
       node_.delete(0, node_.length());
       node_.insert(0, from.node_);
+      new_parameters_.set(from.new_parameters_);
+      changed_parameters_.set(from.changed_parameters_);
+      deleted_parameters_.set(from.deleted_parameters_);
 
    }
 

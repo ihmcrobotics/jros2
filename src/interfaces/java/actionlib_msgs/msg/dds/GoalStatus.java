@@ -61,6 +61,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += goal_id_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // status_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // text_
 
@@ -70,6 +71,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      goal_id_.serialize(buffer);
       buffer.writeByte(status_);
       buffer.writeString(text_);
 
@@ -78,6 +80,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      goal_id_.deserialize(buffer);
       status_ = buffer.readByte();
       buffer.readString(text_);
 
@@ -86,6 +89,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    @Override
    public void set(GoalStatus from)
    {
+      goal_id_.set(from.goal_id_);
       status_ = from.status_;
       text_.delete(0, text_.length());
       text_.insert(0, from.text_);

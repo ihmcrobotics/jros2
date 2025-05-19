@@ -60,6 +60,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // message_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // hardware_id_
+      currentAlignment += values_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -71,6 +72,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       buffer.writeString(name_);
       buffer.writeString(message_);
       buffer.writeString(hardware_id_);
+      values_.serialize(buffer);
 
    }
 
@@ -81,6 +83,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       buffer.readString(name_);
       buffer.readString(message_);
       buffer.readString(hardware_id_);
+      values_.deserialize(buffer);
 
    }
 
@@ -94,6 +97,7 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       message_.insert(0, from.message_);
       hardware_id_.delete(0, hardware_id_.length());
       hardware_id_.insert(0, from.hardware_id_);
+      values_.set(from.values_);
 
    }
 

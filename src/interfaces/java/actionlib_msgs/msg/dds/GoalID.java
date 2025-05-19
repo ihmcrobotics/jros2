@@ -38,6 +38,7 @@ public class GoalID implements ROS2Message<GoalID>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // id_
 
       return currentAlignment - initialAlignment;
@@ -46,6 +47,7 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      stamp_.serialize(buffer);
       buffer.writeString(id_);
 
    }
@@ -53,6 +55,7 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      stamp_.deserialize(buffer);
       buffer.readString(id_);
 
    }
@@ -60,6 +63,7 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void set(GoalID from)
    {
+      stamp_.set(from.stamp_);
       id_.delete(0, id_.length());
       id_.insert(0, from.id_);
 

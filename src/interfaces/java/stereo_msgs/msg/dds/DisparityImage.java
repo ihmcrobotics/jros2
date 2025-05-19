@@ -61,8 +61,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += image_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // f_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // t_
+      currentAlignment += valid_window_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // min_disparity_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // max_disparity_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // delta_d_
@@ -73,8 +76,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      image_.serialize(buffer);
       buffer.writeFloat(f_);
       buffer.writeFloat(t_);
+      valid_window_.serialize(buffer);
       buffer.writeFloat(min_disparity_);
       buffer.writeFloat(max_disparity_);
       buffer.writeFloat(delta_d_);
@@ -84,8 +90,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      image_.deserialize(buffer);
       f_ = buffer.readFloat();
       t_ = buffer.readFloat();
+      valid_window_.deserialize(buffer);
       min_disparity_ = buffer.readFloat();
       max_disparity_ = buffer.readFloat();
       delta_d_ = buffer.readFloat();
@@ -95,8 +104,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    @Override
    public void set(DisparityImage from)
    {
+      header_.set(from.header_);
+      image_.set(from.image_);
       f_ = from.f_;
       t_ = from.t_;
+      valid_window_.set(from.valid_window_);
       min_disparity_ = from.min_disparity_;
       max_disparity_ = from.max_disparity_;
       delta_d_ = from.delta_d_;

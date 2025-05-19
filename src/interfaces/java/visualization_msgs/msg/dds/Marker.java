@@ -145,14 +145,24 @@ public class Marker implements ROS2Message<Marker>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
+      currentAlignment += scale_.calculateSizeBytes(currentAlignment);
+      currentAlignment += color_.calculateSizeBytes(currentAlignment);
+      currentAlignment += lifetime_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // frame_locked_
+      currentAlignment += points_.calculateSizeBytes(currentAlignment);
+      currentAlignment += colors_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // texture_resource_
+      currentAlignment += texture_.calculateSizeBytes(currentAlignment);
+      currentAlignment += uv_coordinates_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // text_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // mesh_resource_
+      currentAlignment += mesh_file_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mesh_use_embedded_materials_
 
       return currentAlignment - initialAlignment;
@@ -161,14 +171,24 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(ns_);
       buffer.writeInt(id_);
       buffer.writeInt(type_);
       buffer.writeInt(action_);
+      pose_.serialize(buffer);
+      scale_.serialize(buffer);
+      color_.serialize(buffer);
+      lifetime_.serialize(buffer);
       buffer.writeBoolean(frame_locked_);
+      points_.serialize(buffer);
+      colors_.serialize(buffer);
       buffer.writeString(texture_resource_);
+      texture_.serialize(buffer);
+      uv_coordinates_.serialize(buffer);
       buffer.writeString(text_);
       buffer.writeString(mesh_resource_);
+      mesh_file_.serialize(buffer);
       buffer.writeBoolean(mesh_use_embedded_materials_);
 
    }
@@ -176,14 +196,24 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(ns_);
       id_ = buffer.readInt();
       type_ = buffer.readInt();
       action_ = buffer.readInt();
+      pose_.deserialize(buffer);
+      scale_.deserialize(buffer);
+      color_.deserialize(buffer);
+      lifetime_.deserialize(buffer);
       frame_locked_ = buffer.readBoolean();
+      points_.deserialize(buffer);
+      colors_.deserialize(buffer);
       buffer.readString(texture_resource_);
+      texture_.deserialize(buffer);
+      uv_coordinates_.deserialize(buffer);
       buffer.readString(text_);
       buffer.readString(mesh_resource_);
+      mesh_file_.deserialize(buffer);
       mesh_use_embedded_materials_ = buffer.readBoolean();
 
    }
@@ -191,18 +221,28 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void set(Marker from)
    {
+      header_.set(from.header_);
       ns_.delete(0, ns_.length());
       ns_.insert(0, from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
+      pose_.set(from.pose_);
+      scale_.set(from.scale_);
+      color_.set(from.color_);
+      lifetime_.set(from.lifetime_);
       frame_locked_ = from.frame_locked_;
+      points_.set(from.points_);
+      colors_.set(from.colors_);
       texture_resource_.delete(0, texture_resource_.length());
       texture_resource_.insert(0, from.texture_resource_);
+      texture_.set(from.texture_);
+      uv_coordinates_.set(from.uv_coordinates_);
       text_.delete(0, text_.length());
       text_.insert(0, from.text_);
       mesh_resource_.delete(0, mesh_resource_.length());
       mesh_resource_.insert(0, from.mesh_resource_);
+      mesh_file_.set(from.mesh_file_);
       mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
 
    }

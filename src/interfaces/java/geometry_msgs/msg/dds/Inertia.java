@@ -44,6 +44,7 @@ public class Inertia implements ROS2Message<Inertia>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // m_
+      currentAlignment += com_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixx_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixy_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixz_
@@ -58,6 +59,7 @@ public class Inertia implements ROS2Message<Inertia>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeDouble(m_);
+      com_.serialize(buffer);
       buffer.writeDouble(ixx_);
       buffer.writeDouble(ixy_);
       buffer.writeDouble(ixz_);
@@ -71,6 +73,7 @@ public class Inertia implements ROS2Message<Inertia>
    public void deserialize(CDRBuffer buffer)
    {
       m_ = buffer.readDouble();
+      com_.deserialize(buffer);
       ixx_ = buffer.readDouble();
       ixy_ = buffer.readDouble();
       ixz_ = buffer.readDouble();
@@ -84,6 +87,7 @@ public class Inertia implements ROS2Message<Inertia>
    public void set(Inertia from)
    {
       m_ = from.m_;
+      com_.set(from.com_);
       ixx_ = from.ixx_;
       ixy_ = from.ixy_;
       ixz_ = from.ixz_;

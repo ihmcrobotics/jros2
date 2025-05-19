@@ -29,22 +29,34 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += accel_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      accel_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      accel_.deserialize(buffer);
+
    }
 
    @Override
    public void set(AccelStamped from)
    {
+      header_.set(from.header_);
+      accel_.set(from.accel_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

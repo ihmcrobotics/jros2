@@ -35,6 +35,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += accel_.calculateSizeBytes(currentAlignment);
       currentAlignment += (36 * 8) + CDRBuffer.alignment(currentAlignment, (36 * 8)); // covariance_
 
       return currentAlignment - initialAlignment;
@@ -43,6 +44,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      accel_.serialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
          buffer.writeDouble(covariance_[i]);
@@ -53,6 +55,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      accel_.deserialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
       covariance_[i] = buffer.readDouble();
@@ -63,6 +66,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    @Override
    public void set(AccelWithCovariance from)
    {
+      accel_.set(from.accel_);
       for (int i = 0; i < covariance_.length; ++i)
       {
          covariance_[i] = from.covariance_[i];

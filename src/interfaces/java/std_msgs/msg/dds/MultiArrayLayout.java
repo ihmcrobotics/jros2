@@ -50,6 +50,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += dim_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // data_offset_
 
       return currentAlignment - initialAlignment;
@@ -58,6 +59,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      dim_.serialize(buffer);
       buffer.writeInt(data_offset_);
 
    }
@@ -65,6 +67,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      dim_.deserialize(buffer);
       data_offset_ = buffer.readInt();
 
    }
@@ -72,6 +75,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    @Override
    public void set(MultiArrayLayout from)
    {
+      dim_.set(from.dim_);
       data_offset_ = from.data_offset_;
 
    }

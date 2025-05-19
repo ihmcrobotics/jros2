@@ -91,6 +91,7 @@ public class Log implements ROS2Message<Log>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // level_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // msg_
@@ -104,6 +105,7 @@ public class Log implements ROS2Message<Log>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      stamp_.serialize(buffer);
       buffer.writeByte(level_);
       buffer.writeString(name_);
       buffer.writeString(msg_);
@@ -116,6 +118,7 @@ public class Log implements ROS2Message<Log>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      stamp_.deserialize(buffer);
       level_ = buffer.readByte();
       buffer.readString(name_);
       buffer.readString(msg_);
@@ -128,6 +131,7 @@ public class Log implements ROS2Message<Log>
    @Override
    public void set(Log from)
    {
+      stamp_.set(from.stamp_);
       level_ = from.level_;
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);

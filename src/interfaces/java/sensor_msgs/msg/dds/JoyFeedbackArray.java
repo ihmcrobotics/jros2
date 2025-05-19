@@ -27,22 +27,30 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += array_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      array_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      array_.deserialize(buffer);
+
    }
 
    @Override
    public void set(JoyFeedbackArray from)
    {
+      array_.set(from.array_);
+
    }
 
    public IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback> getarray()

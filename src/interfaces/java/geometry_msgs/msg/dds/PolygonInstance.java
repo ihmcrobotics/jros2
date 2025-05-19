@@ -29,6 +29,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += polygon_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // id_
 
       return currentAlignment - initialAlignment;
@@ -37,6 +38,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      polygon_.serialize(buffer);
       buffer.writeLong(id_);
 
    }
@@ -44,6 +46,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      polygon_.deserialize(buffer);
       id_ = buffer.readLong();
 
    }
@@ -51,6 +54,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    @Override
    public void set(PolygonInstance from)
    {
+      polygon_.set(from.polygon_);
       id_ = from.id_;
 
    }

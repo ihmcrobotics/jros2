@@ -72,6 +72,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // additional_constraints_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // read_only_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // dynamic_typing_
+      currentAlignment += floating_point_range_.calculateSizeBytes(currentAlignment);
+      currentAlignment += integer_range_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -85,6 +87,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       buffer.writeString(additional_constraints_);
       buffer.writeBoolean(read_only_);
       buffer.writeBoolean(dynamic_typing_);
+      floating_point_range_.serialize(buffer);
+      integer_range_.serialize(buffer);
 
    }
 
@@ -97,6 +101,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       buffer.readString(additional_constraints_);
       read_only_ = buffer.readBoolean();
       dynamic_typing_ = buffer.readBoolean();
+      floating_point_range_.deserialize(buffer);
+      integer_range_.deserialize(buffer);
 
    }
 
@@ -112,6 +118,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       additional_constraints_.insert(0, from.additional_constraints_);
       read_only_ = from.read_only_;
       dynamic_typing_ = from.dynamic_typing_;
+      floating_point_range_.set(from.floating_point_range_);
+      integer_range_.set(from.integer_range_);
 
    }
 

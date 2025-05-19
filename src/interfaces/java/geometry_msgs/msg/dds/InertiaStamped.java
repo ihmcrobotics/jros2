@@ -29,22 +29,34 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += inertia_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      inertia_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      inertia_.deserialize(buffer);
+
    }
 
    @Override
    public void set(InertiaStamped from)
    {
+      header_.set(from.header_);
+      inertia_.set(from.inertia_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

@@ -29,22 +29,34 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      pose_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      pose_.deserialize(buffer);
+
    }
 
    @Override
    public void set(PoseWithCovarianceStamped from)
    {
+      header_.set(from.header_);
+      pose_.set(from.pose_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

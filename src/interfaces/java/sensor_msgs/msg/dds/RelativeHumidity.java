@@ -31,6 +31,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // relative_humidity_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
 
@@ -40,6 +41,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeDouble(relative_humidity_);
       buffer.writeDouble(variance_);
 
@@ -48,6 +50,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       relative_humidity_ = buffer.readDouble();
       variance_ = buffer.readDouble();
 
@@ -56,6 +59,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    @Override
    public void set(RelativeHumidity from)
    {
+      header_.set(from.header_);
       relative_humidity_ = from.relative_humidity_;
       variance_ = from.variance_;
 

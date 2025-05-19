@@ -36,6 +36,7 @@ public class Image implements ROS2Message<Image>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // encoding_
@@ -49,6 +50,7 @@ public class Image implements ROS2Message<Image>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeInt(height_);
       buffer.writeInt(width_);
       buffer.writeString(encoding_);
@@ -61,6 +63,7 @@ public class Image implements ROS2Message<Image>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       height_ = buffer.readInt();
       width_ = buffer.readInt();
       buffer.readString(encoding_);
@@ -73,6 +76,7 @@ public class Image implements ROS2Message<Image>
    @Override
    public void set(Image from)
    {
+      header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
       encoding_.delete(0, encoding_.length());

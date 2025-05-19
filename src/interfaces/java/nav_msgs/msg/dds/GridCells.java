@@ -40,8 +40,10 @@ public class GridCells implements ROS2Message<GridCells>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // cell_width_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // cell_height_
+      currentAlignment += cells_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -49,24 +51,30 @@ public class GridCells implements ROS2Message<GridCells>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeFloat(cell_width_);
       buffer.writeFloat(cell_height_);
+      cells_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       cell_width_ = buffer.readFloat();
       cell_height_ = buffer.readFloat();
+      cells_.deserialize(buffer);
 
    }
 
    @Override
    public void set(GridCells from)
    {
+      header_.set(from.header_);
       cell_width_ = from.cell_width_;
       cell_height_ = from.cell_height_;
+      cells_.set(from.cells_);
 
    }
 

@@ -53,7 +53,11 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += joint_names_.calculateSizeBytes(currentAlignment);
+      currentAlignment += transforms_.calculateSizeBytes(currentAlignment);
+      currentAlignment += twist_.calculateSizeBytes(currentAlignment);
+      currentAlignment += wrench_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -61,21 +65,33 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       joint_names_.serialize(buffer);
+      transforms_.serialize(buffer);
+      twist_.serialize(buffer);
+      wrench_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       joint_names_.deserialize(buffer);
+      transforms_.deserialize(buffer);
+      twist_.deserialize(buffer);
+      wrench_.deserialize(buffer);
 
    }
 
    @Override
    public void set(MultiDOFJointState from)
    {
+      header_.set(from.header_);
       joint_names_.set(from.joint_names_);
+      transforms_.set(from.transforms_);
+      twist_.set(from.twist_);
+      wrench_.set(from.wrench_);
 
    }
 

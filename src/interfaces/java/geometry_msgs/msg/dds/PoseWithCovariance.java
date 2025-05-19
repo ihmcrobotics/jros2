@@ -35,6 +35,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += (36 * 8) + CDRBuffer.alignment(currentAlignment, (36 * 8)); // covariance_
 
       return currentAlignment - initialAlignment;
@@ -43,6 +44,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      pose_.serialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
          buffer.writeDouble(covariance_[i]);
@@ -53,6 +55,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      pose_.deserialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
       covariance_[i] = buffer.readDouble();
@@ -63,6 +66,7 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    @Override
    public void set(PoseWithCovariance from)
    {
+      pose_.set(from.pose_);
       for (int i = 0; i < covariance_.length; ++i)
       {
          covariance_[i] = from.covariance_[i];

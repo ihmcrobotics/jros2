@@ -30,22 +30,34 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += polygon_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      polygon_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      polygon_.deserialize(buffer);
+
    }
 
    @Override
    public void set(PolygonInstanceStamped from)
    {
+      header_.set(from.header_);
+      polygon_.set(from.polygon_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

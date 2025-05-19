@@ -40,6 +40,7 @@ public class Joy implements ROS2Message<Joy>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += axes_.calculateSizeBytes(currentAlignment);
       currentAlignment += buttons_.calculateSizeBytes(currentAlignment);
 
@@ -49,6 +50,7 @@ public class Joy implements ROS2Message<Joy>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       axes_.serialize(buffer);
       buttons_.serialize(buffer);
 
@@ -57,6 +59,7 @@ public class Joy implements ROS2Message<Joy>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       axes_.deserialize(buffer);
       buttons_.deserialize(buffer);
 
@@ -65,6 +68,7 @@ public class Joy implements ROS2Message<Joy>
    @Override
    public void set(Joy from)
    {
+      header_.set(from.header_);
       axes_.set(from.axes_);
       buttons_.set(from.buttons_);
 

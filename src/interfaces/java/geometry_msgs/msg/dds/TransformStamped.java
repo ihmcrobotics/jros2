@@ -49,7 +49,9 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // child_frame_id_
+      currentAlignment += transform_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -57,22 +59,28 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(child_frame_id_);
+      transform_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(child_frame_id_);
+      transform_.deserialize(buffer);
 
    }
 
    @Override
    public void set(TransformStamped from)
    {
+      header_.set(from.header_);
       child_frame_id_.delete(0, child_frame_id_.length());
       child_frame_id_.insert(0, from.child_frame_id_);
+      transform_.set(from.transform_);
 
    }
 

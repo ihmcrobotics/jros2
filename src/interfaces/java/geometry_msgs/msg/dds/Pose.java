@@ -29,22 +29,34 @@ public class Pose implements ROS2Message<Pose>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += position_.calculateSizeBytes(currentAlignment);
+      currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      position_.serialize(buffer);
+      orientation_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      position_.deserialize(buffer);
+      orientation_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Pose from)
    {
+      position_.set(from.position_);
+      orientation_.set(from.orientation_);
+
    }
 
    public geometry_msgs.msg.dds.Point getposition()

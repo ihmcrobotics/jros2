@@ -24,22 +24,30 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += markers_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      markers_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      markers_.deserialize(buffer);
+
    }
 
    @Override
    public void set(MarkerArray from)
    {
+      markers_.set(from.markers_);
+
    }
 
    public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getmarkers()

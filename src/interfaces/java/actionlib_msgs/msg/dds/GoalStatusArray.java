@@ -30,22 +30,34 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += status_list_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      status_list_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      status_list_.deserialize(buffer);
+
    }
 
    @Override
    public void set(GoalStatusArray from)
    {
+      header_.set(from.header_);
+      status_list_.set(from.status_list_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

@@ -41,6 +41,7 @@ public class Illuminance implements ROS2Message<Illuminance>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // illuminance_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
 
@@ -50,6 +51,7 @@ public class Illuminance implements ROS2Message<Illuminance>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeDouble(illuminance_);
       buffer.writeDouble(variance_);
 
@@ -58,6 +60,7 @@ public class Illuminance implements ROS2Message<Illuminance>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       illuminance_ = buffer.readDouble();
       variance_ = buffer.readDouble();
 
@@ -66,6 +69,7 @@ public class Illuminance implements ROS2Message<Illuminance>
    @Override
    public void set(Illuminance from)
    {
+      header_.set(from.header_);
       illuminance_ = from.illuminance_;
       variance_ = from.variance_;
 

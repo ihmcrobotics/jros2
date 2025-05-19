@@ -64,6 +64,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       currentAlignment += velocities_.calculateSizeBytes(currentAlignment);
       currentAlignment += accelerations_.calculateSizeBytes(currentAlignment);
       currentAlignment += effort_.calculateSizeBytes(currentAlignment);
+      currentAlignment += time_from_start_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -75,6 +76,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       velocities_.serialize(buffer);
       accelerations_.serialize(buffer);
       effort_.serialize(buffer);
+      time_from_start_.serialize(buffer);
 
    }
 
@@ -85,6 +87,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       velocities_.deserialize(buffer);
       accelerations_.deserialize(buffer);
       effort_.deserialize(buffer);
+      time_from_start_.deserialize(buffer);
 
    }
 
@@ -95,6 +98,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       velocities_.set(from.velocities_);
       accelerations_.set(from.accelerations_);
       effort_.set(from.effort_);
+      time_from_start_.set(from.time_from_start_);
 
    }
 

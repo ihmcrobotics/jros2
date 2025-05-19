@@ -35,22 +35,34 @@ public class Path implements ROS2Message<Path>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += poses_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      poses_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      poses_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Path from)
    {
+      header_.set(from.header_);
+      poses_.set(from.poses_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

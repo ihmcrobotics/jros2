@@ -37,6 +37,7 @@ public class Header implements ROS2Message<Header>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // frame_id_
 
       return currentAlignment - initialAlignment;
@@ -45,6 +46,7 @@ public class Header implements ROS2Message<Header>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      stamp_.serialize(buffer);
       buffer.writeString(frame_id_);
 
    }
@@ -52,6 +54,7 @@ public class Header implements ROS2Message<Header>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      stamp_.deserialize(buffer);
       buffer.readString(frame_id_);
 
    }
@@ -59,6 +62,7 @@ public class Header implements ROS2Message<Header>
    @Override
    public void set(Header from)
    {
+      stamp_.set(from.stamp_);
       frame_id_.delete(0, frame_id_.length());
       frame_id_.insert(0, from.frame_id_);
 

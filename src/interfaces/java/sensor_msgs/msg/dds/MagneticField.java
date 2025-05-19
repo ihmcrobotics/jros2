@@ -38,6 +38,8 @@ public class MagneticField implements ROS2Message<MagneticField>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += magnetic_field_.calculateSizeBytes(currentAlignment);
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // magnetic_field_covariance_
 
       return currentAlignment - initialAlignment;
@@ -46,6 +48,8 @@ public class MagneticField implements ROS2Message<MagneticField>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      magnetic_field_.serialize(buffer);
       for (int i = 0; i < magnetic_field_covariance_.length; ++i)
       {
          buffer.writeDouble(magnetic_field_covariance_[i]);
@@ -56,6 +60,8 @@ public class MagneticField implements ROS2Message<MagneticField>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      magnetic_field_.deserialize(buffer);
       for (int i = 0; i < magnetic_field_covariance_.length; ++i)
       {
       magnetic_field_covariance_[i] = buffer.readDouble();
@@ -66,6 +72,8 @@ public class MagneticField implements ROS2Message<MagneticField>
    @Override
    public void set(MagneticField from)
    {
+      header_.set(from.header_);
+      magnetic_field_.set(from.magnetic_field_);
       for (int i = 0; i < magnetic_field_covariance_.length; ++i)
       {
          magnetic_field_covariance_[i] = from.magnetic_field_covariance_[i];

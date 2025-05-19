@@ -42,6 +42,9 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // timestamp_
+      currentAlignment += transition_.calculateSizeBytes(currentAlignment);
+      currentAlignment += start_state_.calculateSizeBytes(currentAlignment);
+      currentAlignment += goal_state_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -50,6 +53,9 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeLong(timestamp_);
+      transition_.serialize(buffer);
+      start_state_.serialize(buffer);
+      goal_state_.serialize(buffer);
 
    }
 
@@ -57,6 +63,9 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    public void deserialize(CDRBuffer buffer)
    {
       timestamp_ = buffer.readLong();
+      transition_.deserialize(buffer);
+      start_state_.deserialize(buffer);
+      goal_state_.deserialize(buffer);
 
    }
 
@@ -64,6 +73,9 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    public void set(TransitionEvent from)
    {
       timestamp_ = from.timestamp_;
+      transition_.set(from.transition_);
+      start_state_.set(from.start_state_);
+      goal_state_.set(from.goal_state_);
 
    }
 

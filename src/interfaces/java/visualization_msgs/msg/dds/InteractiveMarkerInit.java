@@ -44,6 +44,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // server_id_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // seq_num_
+      currentAlignment += markers_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -53,6 +54,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
+      markers_.serialize(buffer);
 
    }
 
@@ -61,6 +63,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
+      markers_.deserialize(buffer);
 
    }
 
@@ -70,6 +73,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       server_id_.delete(0, server_id_.length());
       server_id_.insert(0, from.server_id_);
       seq_num_ = from.seq_num_;
+      markers_.set(from.markers_);
 
    }
 

@@ -35,22 +35,34 @@ public class Mesh implements ROS2Message<Mesh>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += triangles_.calculateSizeBytes(currentAlignment);
+      currentAlignment += vertices_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      triangles_.serialize(buffer);
+      vertices_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      triangles_.deserialize(buffer);
+      vertices_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Mesh from)
    {
+      triangles_.set(from.triangles_);
+      vertices_.set(from.vertices_);
+
    }
 
    public IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> gettriangles()

@@ -44,22 +44,38 @@ public class PointCloud implements ROS2Message<PointCloud>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += points_.calculateSizeBytes(currentAlignment);
+      currentAlignment += channels_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      points_.serialize(buffer);
+      channels_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      points_.deserialize(buffer);
+      channels_.deserialize(buffer);
+
    }
 
    @Override
    public void set(PointCloud from)
    {
+      header_.set(from.header_);
+      points_.set(from.points_);
+      channels_.set(from.channels_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

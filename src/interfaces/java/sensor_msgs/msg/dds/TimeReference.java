@@ -31,6 +31,8 @@ public class TimeReference implements ROS2Message<TimeReference>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += time_ref_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // source_
 
       return currentAlignment - initialAlignment;
@@ -39,6 +41,8 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      time_ref_.serialize(buffer);
       buffer.writeString(source_);
 
    }
@@ -46,6 +50,8 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      time_ref_.deserialize(buffer);
       buffer.readString(source_);
 
    }
@@ -53,6 +59,8 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void set(TimeReference from)
    {
+      header_.set(from.header_);
+      time_ref_.set(from.time_ref_);
       source_.delete(0, source_.length());
       source_.insert(0, from.source_);
 

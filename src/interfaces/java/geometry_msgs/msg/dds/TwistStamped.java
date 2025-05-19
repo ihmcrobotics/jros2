@@ -29,22 +29,34 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += twist_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      twist_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      twist_.deserialize(buffer);
+
    }
 
    @Override
    public void set(TwistStamped from)
    {
+      header_.set(from.header_);
+      twist_.set(from.twist_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

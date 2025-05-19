@@ -29,22 +29,34 @@ public class Transform implements ROS2Message<Transform>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += translation_.calculateSizeBytes(currentAlignment);
+      currentAlignment += rotation_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      translation_.serialize(buffer);
+      rotation_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      translation_.deserialize(buffer);
+      rotation_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Transform from)
    {
+      translation_.set(from.translation_);
+      rotation_.set(from.rotation_);
+
    }
 
    public geometry_msgs.msg.dds.Vector3 gettranslation()

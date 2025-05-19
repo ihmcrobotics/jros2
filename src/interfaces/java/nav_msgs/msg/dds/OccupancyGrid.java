@@ -42,6 +42,8 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += info_.calculateSizeBytes(currentAlignment);
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -50,6 +52,8 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      info_.serialize(buffer);
       data_.serialize(buffer);
 
    }
@@ -57,6 +61,8 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      info_.deserialize(buffer);
       data_.deserialize(buffer);
 
    }
@@ -64,6 +70,8 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    @Override
    public void set(OccupancyGrid from)
    {
+      header_.set(from.header_);
+      info_.set(from.info_);
       data_.set(from.data_);
 
    }

@@ -42,22 +42,42 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += transforms_.calculateSizeBytes(currentAlignment);
+      currentAlignment += velocities_.calculateSizeBytes(currentAlignment);
+      currentAlignment += accelerations_.calculateSizeBytes(currentAlignment);
+      currentAlignment += time_from_start_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      transforms_.serialize(buffer);
+      velocities_.serialize(buffer);
+      accelerations_.serialize(buffer);
+      time_from_start_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      transforms_.deserialize(buffer);
+      velocities_.deserialize(buffer);
+      accelerations_.deserialize(buffer);
+      time_from_start_.deserialize(buffer);
+
    }
 
    @Override
    public void set(MultiDOFJointTrajectoryPoint from)
    {
+      transforms_.set(from.transforms_);
+      velocities_.set(from.velocities_);
+      accelerations_.set(from.accelerations_);
+      time_from_start_.set(from.time_from_start_);
+
    }
 
    public IDLObjectSequence<geometry_msgs.msg.dds.Transform> gettransforms()
