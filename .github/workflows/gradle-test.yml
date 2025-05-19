@@ -13,11 +13,8 @@ jobs:
     strategy:
       matrix:
         ros_distro: [humble, jazzy]
-        ros_image:
-          - humble: osrf/ros:humble-desktop
-          - jazzy: osrf/ros:jazzy-desktop
     container:
-      image: ${{ matrix.ros_image[matrix.ros_distro] }}
+      image: osrf/ros:${{ matrix.ros_distro }}-desktop
     steps:
       - name: Install dependencies
         run: |
