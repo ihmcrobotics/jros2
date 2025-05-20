@@ -28,6 +28,15 @@ java {
     withSourcesJar()
 }
 
+tasks.jar {
+    manifest {
+        attributes(
+              "Implementation-Title" to "jros2",
+              "Implementation-Version" to project.version
+        )
+    }
+}
+
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
