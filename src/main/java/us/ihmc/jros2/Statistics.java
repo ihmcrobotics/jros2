@@ -17,7 +17,7 @@ public class Statistics
       // Extra types we find useful
       TOTAL, LATEST;
 
-      // Static set and array for garbage-free usage. Treat as read only.
+      // Static set and array for allocation-free usage. Treat as read only.
       public static final Set<StatisticDataType> set = EnumSet.allOf(StatisticDataType.class);
       public static final StatisticDataType[] values = values();
    }

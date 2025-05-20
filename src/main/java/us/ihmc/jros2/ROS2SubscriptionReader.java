@@ -22,6 +22,11 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    private final ROS2Topic<T> topic;
 
    private long lastMessageTimestamp;
+
+   /**
+    * A method reference to the getter for the first {@link Header} field within the ROS2Message topic type.
+    * Used for statistics.
+    */
    private Method getHeaderMethod;
 
    /**
@@ -37,7 +42,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    /**
-    * Read from the {@link CDRBuffer} into data (allocation free).
+    * Read from the {@link CDRBuffer} into data (allocation-free).
     *
     * @param data The message to pack
     */

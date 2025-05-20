@@ -44,6 +44,11 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       return null;
    }
 
+   /**
+    * Finds the first method in a ROS2Message which returns type {@link Header}. Used for statistics.
+    * @param topicType the ROS2Message topic type class.
+    * @return the method reference to the Header getter.
+    */
    static <T extends ROS2Message<T>> Method getHeaderMethod(Class<T> topicType)
    {
       Method[] methods = topicType.getDeclaredMethods();
