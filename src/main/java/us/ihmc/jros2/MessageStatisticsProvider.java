@@ -14,7 +14,7 @@ interface MessageStatisticsProvider
    {
       SIZE, PERIOD, AGE;
 
-      // Static set and array for garbage free usage. Treat as read only.
+      // Static set and array for garbage-free usage. Treat as read only.
       public static final Set<MessageMetadataType> set = EnumSet.allOf(MessageMetadataType.class);
       public static final MessageMetadataType[] values = values();
    }
@@ -27,7 +27,7 @@ interface MessageStatisticsProvider
    /**
     * Pack the desired {@link MessageMetadataType} into the provided {@link Statistics} object.
     * <p>
-    * This method is garbage free.
+    * This method does not generate garbage.
     *
     * @param messageMetadataType The desired message metadata.
     * @param statisticToPack     Object to pack statistics into.
@@ -37,7 +37,7 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the desired {@link MessageMetadataType} statistics.
     * <p>
-    * This method is not garbage free. For garbage free access to the message metadata statistics,
+    * This method will generate heap garbage. For garbage-free access to the message metadata statistics,
     * use {@link #readStatistics(MessageMetadataType, Statistics)}.
     *
     * @param messageMetadataType The desired message metadata.
@@ -54,7 +54,7 @@ interface MessageStatisticsProvider
    /**
     * Packs the message size statistics into the provided {@link Statistics} object.
     * <p>
-    * This method is garbage free.
+    * This method does not generate garbage.
     *
     * @param statisticsToPack Object to pack message size statistics into.
     */
@@ -66,7 +66,7 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the message size statistics.
     * <p>
-    * This method is not garbage free. For garbage free access to the message size statistics,
+    * This method will generate heap garbage. For garbage-free access to the message size statistics,
     * use {@link #readMessageSizeStatistics(Statistics)}.
     *
     * @param statisticType The desired statistic type.
@@ -80,7 +80,7 @@ interface MessageStatisticsProvider
    /**
     * Packs the message period statistics into the provided {@link Statistics} object.
     * <p>
-    * This method is garbage free.
+    * This method does not generate garbage.
     *
     * @param statisticsToPack Object to pack message period statistics into.
     */
@@ -92,7 +92,7 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the message size statistics.
     * <p>
-    * This method is not garbage free. For garbage free access to the message size statistics,
+    * This method will generate heap garbage. For garbage-free access to the message size statistics,
     * use {@link #readMessageSizeStatistics(Statistics)}.
     *
     * @param statisticType The desired statistic type.
@@ -106,7 +106,7 @@ interface MessageStatisticsProvider
    /**
     * Packs the message age statistics into the provided {@link Statistics} object.
     * <p>
-    * This method is garbage free.
+    * This method does not generate garbage.
     *
     * @param statisticsToPack Object to pack message age statistics into.
     */
@@ -118,7 +118,7 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the message size statistics.
     * <p>
-    * This method is not garbage free. For garbage free access to the message size statistics,
+    * This method will generate heap garbage. For garbage-free access to the message size statistics,
     * use {@link #readMessageSizeStatistics(Statistics)}.
     *
     * @param statisticType The desired statistic type.
