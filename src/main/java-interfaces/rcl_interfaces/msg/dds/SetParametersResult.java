@@ -34,7 +34,7 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // successful_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // reason_
+      currentAlignment += (1 * reason_.length()) + CDRBuffer.alignment(currentAlignment, (1 * reason_.length())); // reason_
 
       return currentAlignment - initialAlignment;
    }

@@ -88,7 +88,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
+      currentAlignment += (1 * ns_.length()) + CDRBuffer.alignment(currentAlignment, (1 * ns_.length())); // ns_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_

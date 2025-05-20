@@ -53,7 +53,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // node_
+      currentAlignment += (1 * node_.length()) + CDRBuffer.alignment(currentAlignment, (1 * node_.length())); // node_
       currentAlignment += new_parameters_.calculateSizeBytes(currentAlignment);
       currentAlignment += changed_parameters_.calculateSizeBytes(currentAlignment);
       currentAlignment += deleted_parameters_.calculateSizeBytes(currentAlignment);

@@ -118,7 +118,7 @@ public class Transition implements ROS2Message<Transition>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // label_
+      currentAlignment += (1 * label_.length()) + CDRBuffer.alignment(currentAlignment, (1 * label_.length())); // label_
 
       return currentAlignment - initialAlignment;
    }

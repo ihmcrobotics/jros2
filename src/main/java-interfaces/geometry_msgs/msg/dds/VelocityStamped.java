@@ -36,8 +36,8 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // body_frame_id_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // reference_frame_id_
+      currentAlignment += (1 * body_frame_id_.length()) + CDRBuffer.alignment(currentAlignment, (1 * body_frame_id_.length())); // body_frame_id_
+      currentAlignment += (1 * reference_frame_id_.length()) + CDRBuffer.alignment(currentAlignment, (1 * reference_frame_id_.length())); // reference_frame_id_
       currentAlignment += velocity_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

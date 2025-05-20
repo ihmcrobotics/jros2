@@ -53,6 +53,8 @@ public class <context.name> implements ROS2Message\<<context.name>>
 currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.javaName>
       <elseif(field.array&&!field.fixedSize)>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
+      <elseif(!field.array&&field.builtinStringType)>
+currentAlignment += (<field.builtinTypeSize> * <field.javaName>.length()) + CDRBuffer.alignment(currentAlignment, (<field.builtinTypeSize> * <field.javaName>.length())); // <field.javaName>
       <elseif(!field.array)>
 currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
       <endif>

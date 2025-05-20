@@ -87,8 +87,8 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // parent_id_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // title_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // command_
+      currentAlignment += (1 * title_.length()) + CDRBuffer.alignment(currentAlignment, (1 * title_.length())); // title_
+      currentAlignment += (1 * command_.length()) + CDRBuffer.alignment(currentAlignment, (1 * command_.length())); // command_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // command_type_
 
       return currentAlignment - initialAlignment;

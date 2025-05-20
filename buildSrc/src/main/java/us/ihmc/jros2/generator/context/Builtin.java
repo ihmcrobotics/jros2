@@ -67,8 +67,9 @@ public final class Builtin
          case "int64":
             return 8;
          case "string":
+            return 1;
          case "wstring":
-            return -1; // TODO:
+            return 4;
          default:
             return -1;
       }

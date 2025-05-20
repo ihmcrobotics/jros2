@@ -32,7 +32,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // format_
+      currentAlignment += (1 * format_.length()) + CDRBuffer.alignment(currentAlignment, (1 * format_.length())); // format_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

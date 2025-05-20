@@ -57,9 +57,9 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // level_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // message_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // hardware_id_
+      currentAlignment += (1 * name_.length()) + CDRBuffer.alignment(currentAlignment, (1 * name_.length())); // name_
+      currentAlignment += (1 * message_.length()) + CDRBuffer.alignment(currentAlignment, (1 * message_.length())); // message_
+      currentAlignment += (1 * hardware_id_.length()) + CDRBuffer.alignment(currentAlignment, (1 * hardware_id_.length())); // hardware_id_
       currentAlignment += values_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

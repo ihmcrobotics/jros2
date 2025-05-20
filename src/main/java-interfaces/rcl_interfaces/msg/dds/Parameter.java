@@ -37,7 +37,7 @@ public class Parameter implements ROS2Message<Parameter>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
+      currentAlignment += (1 * name_.length()) + CDRBuffer.alignment(currentAlignment, (1 * name_.length())); // name_
       currentAlignment += value_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

@@ -107,14 +107,14 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
+      currentAlignment += (1 * name_.length()) + CDRBuffer.alignment(currentAlignment, (1 * name_.length())); // name_
       currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // orientation_mode_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // interaction_mode_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // always_visible_
       currentAlignment += markers_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // independent_marker_orientation_
-      currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // description_
+      currentAlignment += (1 * description_.length()) + CDRBuffer.alignment(currentAlignment, (1 * description_.length())); // description_
 
       return currentAlignment - initialAlignment;
    }
