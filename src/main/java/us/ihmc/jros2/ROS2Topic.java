@@ -94,6 +94,10 @@ public class ROS2Topic<T extends ROS2Message<T>>
       }
       else
       {
+         if (!topicName.startsWith("/"))
+         {
+            LogTools.warn("Possible invalid topic name ({}). Topics must start with a leading forward slash (/).", topicName);
+         }
          this.topicName = topicName;
          numberOfTokens = topicName.split("/").length - 1;
       }
