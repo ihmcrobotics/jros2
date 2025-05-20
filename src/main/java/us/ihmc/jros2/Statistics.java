@@ -7,7 +7,7 @@ public class Statistics
 {
    /**
     * Includes data types defined in
-    * <a href="https://github.com/ros2/rcl_interfaces/blob/jazzy/statistics_msgs/msg/StatisticDataType.msg">StatisticDataType.msg</a>
+    * <a href="https://github.com/ros2/rcl_interfaces/blob/humble/statistics_msgs/msg/StatisticDataType.msg">StatisticDataType.msg</a>
     * and a few extra useful data types.
     */
    public enum StatisticDataType

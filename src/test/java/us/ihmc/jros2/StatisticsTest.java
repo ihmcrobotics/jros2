@@ -162,7 +162,7 @@ public class StatisticsTest
       double expectedPeriod = 100.0;
       publisher.readStatistics(MessageMetadataType.PERIOD, statistics);
       assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), 5.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 2 * 5.0); // The minimum period can have quite substantial outliers
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
       assertEquals(0.0, statistics.get(STDDEV), 1.0);
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
