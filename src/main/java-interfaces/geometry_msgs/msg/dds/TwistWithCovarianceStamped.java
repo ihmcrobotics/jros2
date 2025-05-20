@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/TwistWithCovarianceStamped.msg):
 ##################################################################################
-        # This represents an estimated twist with reference coordinate frame and timestamp.
+   # This represents an estimated twist with reference coordinate frame and timestamp.
 
-        std_msgs/Header header
-        TwistWithCovariance twist
+   std_msgs/Header header
+   TwistWithCovariance twist
 
 ##################################################################################
 

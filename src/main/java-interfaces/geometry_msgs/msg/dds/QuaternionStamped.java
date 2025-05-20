@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/QuaternionStamped.msg):
 ##################################################################################
-        # This represents an orientation with reference coordinate frame and timestamp.
+   # This represents an orientation with reference coordinate frame and timestamp.
 
-        std_msgs/Header header
-        Quaternion quaternion
+   std_msgs/Header header
+   Quaternion quaternion
 
 ##################################################################################
 

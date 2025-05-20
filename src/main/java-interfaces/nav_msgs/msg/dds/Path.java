@@ -5,13 +5,13 @@
 ##################################################################################
 (nav_msgs/Path.msg):
 ##################################################################################
-        # An array of poses that represents a Path for a robot to follow.
+   # An array of poses that represents a Path for a robot to follow.
 
-        # Indicates the frame_id of the path.
-        std_msgs/Header header
+   # Indicates the frame_id of the path.
+   std_msgs/Header header
 
-        # Array of poses to follow.
-        geometry_msgs/PoseStamped[] poses
+   # Array of poses to follow.
+   geometry_msgs/PoseStamped[] poses
 
 ##################################################################################
 

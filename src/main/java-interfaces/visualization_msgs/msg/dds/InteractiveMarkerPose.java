@@ -6,15 +6,15 @@
 (visualization_msgs/InteractiveMarkerPose.msg):
 ##################################################################################
 
-        # Time/frame info.
-        std_msgs/Header header
+   # Time/frame info.
+   std_msgs/Header header
 
-        # Initial pose. Also, defines the pivot point for rotations.
-        geometry_msgs/Pose pose
+   # Initial pose. Also, defines the pivot point for rotations.
+   geometry_msgs/Pose pose
 
-        # Identifying string. Must be globally unique in
-        # the topic that this message is sent through.
-        string name
+   # Identifying string. Must be globally unique in
+   # the topic that this message is sent through.
+   string name
 
 ##################################################################################
 

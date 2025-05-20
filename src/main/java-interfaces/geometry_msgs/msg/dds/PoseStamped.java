@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/PoseStamped.msg):
 ##################################################################################
-        # A Pose with reference coordinate frame and timestamp
+   # A Pose with reference coordinate frame and timestamp
 
-        std_msgs/Header header
-        Pose pose
+   std_msgs/Header header
+   Pose pose
 
 ##################################################################################
 

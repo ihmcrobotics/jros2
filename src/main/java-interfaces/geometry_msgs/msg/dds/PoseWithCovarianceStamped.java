@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/PoseWithCovarianceStamped.msg):
 ##################################################################################
-        # This expresses an estimated pose with a reference coordinate frame and timestamp
+   # This expresses an estimated pose with a reference coordinate frame and timestamp
 
-        std_msgs/Header header
-        PoseWithCovariance pose
+   std_msgs/Header header
+   PoseWithCovariance pose
 
 ##################################################################################
 

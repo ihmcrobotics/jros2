@@ -5,9 +5,9 @@
 ##################################################################################
 (geometry_msgs/AccelStamped.msg):
 ##################################################################################
-        # An accel with reference coordinate frame and timestamp
-        std_msgs/Header header
-        Accel accel
+   # An accel with reference coordinate frame and timestamp
+   std_msgs/Header header
+   Accel accel
 
 ##################################################################################
 

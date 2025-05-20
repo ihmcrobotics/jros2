@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/Twist.msg):
 ##################################################################################
-        # This expresses velocity in free space broken into its linear and angular parts.
+   # This expresses velocity in free space broken into its linear and angular parts.
 
-        Vector3  linear
-        Vector3  angular
+   Vector3  linear
+   Vector3  angular
 
 ##################################################################################
 

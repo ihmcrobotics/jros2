@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/InertiaStamped.msg):
 ##################################################################################
-        # An Inertia with a time stamp and reference frame.
+   # An Inertia with a time stamp and reference frame.
 
-        std_msgs/Header header
-        Inertia inertia
+   std_msgs/Header header
+   Inertia inertia
 
 ##################################################################################
 

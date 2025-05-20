@@ -5,9 +5,9 @@
 ##################################################################################
 (geometry_msgs/AccelWithCovarianceStamped.msg):
 ##################################################################################
-        # This represents an estimated accel with reference coordinate frame and timestamp.
-        std_msgs/Header header
-        AccelWithCovariance accel
+   # This represents an estimated accel with reference coordinate frame and timestamp.
+   std_msgs/Header header
+   AccelWithCovariance accel
 
 ##################################################################################
 

@@ -5,10 +5,10 @@
 ##################################################################################
 (geometry_msgs/Transform.msg):
 ##################################################################################
-        # This represents the transform between two coordinate frames in free space.
+   # This represents the transform between two coordinate frames in free space.
 
-        Vector3 translation
-        Quaternion rotation
+   Vector3 translation
+   Quaternion rotation
 
 ##################################################################################
 

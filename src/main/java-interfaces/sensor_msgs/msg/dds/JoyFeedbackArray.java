@@ -5,8 +5,8 @@
 ##################################################################################
 (sensor_msgs/JoyFeedbackArray.msg):
 ##################################################################################
-        # This message publishes values for multiple feedback at once.
-        JoyFeedback[] array
+   # This message publishes values for multiple feedback at once.
+   JoyFeedback[] array
 
 ##################################################################################
 
