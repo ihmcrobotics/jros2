@@ -5,6 +5,11 @@ import us.ihmc.jros2.Statistics.StatisticDataType;
 import java.util.EnumSet;
 import java.util.Set;
 
+/**
+ * Provides an interface for collecting, resetting, and retrieving statistical data about messages,
+ * such as their size, period, and age. Implementations of this interface are responsible for tracking
+ * various message metrics and exposing them in a garbage-free manner where possible.
+ */
 interface MessageStatisticsProvider
 {
    /**
