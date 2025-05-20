@@ -4,6 +4,11 @@ import org.bytedeco.javacpp.Pointer;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A ROS 2-compatible publisher for publishing {@link ROS2Message} types. This
+ * publisher is non-blocking, allocation-free, and realtime safe. In general,
+ * it will use more memory and CPU cycles than {@link ROS2Publisher}.
+ */
 public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<T>
 {
    private static final int CAPACITY = 32;
