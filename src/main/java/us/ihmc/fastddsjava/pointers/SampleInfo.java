@@ -10,7 +10,7 @@ import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 
 /**
- * \brief SampleInfo is the information that accompanies each sample that is ‘read’ or ‘taken.’
+ * \brief SampleInfo is the information that accompanies each sample that is ???read??? or ???taken.???
  */
 @Namespace("eprosima::fastdds::dds") @Properties(inherit = us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.class)
 public class SampleInfo extends Pointer {
