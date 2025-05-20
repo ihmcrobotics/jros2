@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.jros2.Statistics.StatisticDataType.*;
 
-public class StatisticsCalculator
+class StatisticsCalculator
 {
    private double average;
    private double min;
@@ -17,7 +17,7 @@ public class StatisticsCalculator
 
    private final ReadWriteLock lock;
 
-   public StatisticsCalculator()
+   StatisticsCalculator()
    {
       lock = new ReentrantReadWriteLock();
       reset();
@@ -29,7 +29,7 @@ public class StatisticsCalculator
     *
     * @param statisticsToPack The {@link Statistics} object to pack current values into.
     */
-   public void read(Statistics statisticsToPack)
+   void read(Statistics statisticsToPack)
    {
       if (statisticsToPack != null)
       {
@@ -53,7 +53,7 @@ public class StatisticsCalculator
    /**
     * Reset the statistics.
     */
-   public void reset()
+   void reset()
    {
       lock.writeLock().lock();
       average = 0.0;
