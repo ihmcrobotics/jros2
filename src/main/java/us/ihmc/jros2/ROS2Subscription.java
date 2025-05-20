@@ -26,27 +26,41 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       jros2.load();
    }
 
+   /*
+    * Debug
+    */
+   private final ROS2Topic<T> topic;
+
+   /*
+    * Fast-DDS pointers
+    */
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
-
    private final fastddsjava_DataReaderListener listener;
-
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
-
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
-   private final CDRBuffer cdrBuffer;
    private final SampleInfo sampleInfo;
+   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
 
+   private final CDRBuffer cdrBuffer;
+
+   /*
+    * Data reader
+    */
    private final ROS2SubscriptionCallback<T> callback;
    private final ROS2SubscriptionReader<T> subscriptionReader;
 
-   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
-
+   /*
+    * Locks
+    */
    private final ReadWriteLock closeLock;
    private boolean closed;
 
+   /*
+    * Statistics
+    */
    private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
    private long lastReceiveTime;
@@ -61,6 +75,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
                               TopicData topicData)
    {
       this.callback = callback;
+      this.topic = topic;
       this.topicData = topicData;
 
       closeLock = new ReentrantReadWriteLock(true);
@@ -208,5 +223,23 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
    {
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
+   }
+
+   /**
+    * Get the topic type class for which this subscription can consume.
+    * @return the type class held in the {@link ROS2Topic}
+    */
+   public Class<T> getTopicType()
+   {
+      return topic.getType();
+   }
+
+   /**
+    * Get the topic name for which this subscription will subscribe to.
+    * @return the topic name held in the {@link ROS2Topic}
+    */
+   public String getTopicName()
+   {
+      return topic.getName();
    }
 }

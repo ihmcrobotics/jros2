@@ -25,15 +25,30 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       jros2.load();
    }
 
+   /*
+    * Debug
+    */
+   private final ROS2Topic<T> topic;
+
+   /*
+    * Fast-DDS pointers
+    */
    private final Pointer fastddsPublisher;
    private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
+
    private final CDRBuffer cdrBuffer;
 
+   /*
+    * Locks
+    */
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
+   /*
+    * Statistics
+    */
    private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
    private long lastPublishTime;
@@ -45,6 +60,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
       this.topicData = topicData;
+      this.topic = topic;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
@@ -164,5 +180,23 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
    {
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
+   }
+
+   /**
+    * Get the topic type class for which this publisher can publish.
+    * @return the type class held in the {@link ROS2Topic}
+    */
+   public Class<T> getTopicType()
+   {
+      return topic.getType();
+   }
+
+   /**
+    * Get the topic name for which this publisher will use when publishing.
+    * @return the topic name held in the {@link ROS2Topic}
+    */
+   public String getTopicName()
+   {
+      return topic.getName();
    }
 }
