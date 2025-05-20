@@ -120,7 +120,9 @@ tasks.register<jros2GenTask>("generate_default_interfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("std_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("stereo_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
-        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
+
+        projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
     )
     outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }

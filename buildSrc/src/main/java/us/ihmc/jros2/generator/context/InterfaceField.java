@@ -190,6 +190,11 @@ public class InterfaceField
 
    public void constantValue(String constantValue)
    {
+      if (constantValue != null && isBuiltinStringType())
+      {
+         constantValue = Builtin.sanitizeStringValue(constantValue);
+      }
+
       this.constantValue = constantValue;
    }
 
@@ -200,6 +205,11 @@ public class InterfaceField
 
    public void defaultValue(String defaultValue)
    {
+      if (defaultValue != null && isBuiltinStringType())
+      {
+         defaultValue = Builtin.sanitizeStringValue(defaultValue);
+      }
+
       this.defaultValue = defaultValue;
    }
 
@@ -292,7 +302,14 @@ public class InterfaceField
          {
             if (getType().equals("string") || getType().equals("wstring"))
             {
-               return "StringBuilder";
+               if (getConstantValue() != null)
+               {
+                  return "String";
+               }
+               else
+               {
+                  return "StringBuilder";
+               }
             }
             else
             {

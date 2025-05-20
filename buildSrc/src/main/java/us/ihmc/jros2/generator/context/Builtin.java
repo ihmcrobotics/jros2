@@ -239,4 +239,33 @@ public final class Builtin
             return null;
       }
    }
+
+   public static String sanitizeStringValue(String value)
+   {
+      assert value != null;
+
+      String valueCopy = value.trim();
+
+      // The length should always be 2, there will always be a set of string delimiters (" or ') even if it's an empty string
+      if (valueCopy.length() < 2)
+      {
+         throw new RuntimeException("Unexpected or empty string value. Missing string delimiters?");
+      }
+
+      char firstChar = valueCopy.charAt(0);
+      char lastChar = valueCopy.charAt(valueCopy.length() - 1);
+
+      boolean validDelimiter = switch (firstChar)
+      {
+         case '"', '\'' -> true;
+         default -> false;
+      };
+
+      if (!validDelimiter || (firstChar != lastChar))
+      {
+         throw new RuntimeException("Invalid or mismatched string delimiters.");
+      }
+
+      return String.format("\"%s\"", valueCopy.substring(1, valueCopy.length() - 1));
+   }
 }
