@@ -15,22 +15,8 @@ java {
 }
 
 sourceSets {
-    create("interfaces") {
-        java.srcDir("src/interfaces/java")
-        resources.srcDir("src/interfaces/resources")
-
-        compileClasspath += sourceSets["main"].output
-        runtimeClasspath += sourceSets["main"].output
-    }
-
     named("main") {
-        compileClasspath += sourceSets["interfaces"].output
-        runtimeClasspath += sourceSets["interfaces"].output
-    }
-
-    named("test") {
-        compileClasspath += sourceSets["interfaces"].output
-        runtimeClasspath += sourceSets["interfaces"].output
+        java.srcDirs("src/main/java", "src/main/java-interfaces")
     }
 }
 
@@ -125,5 +111,5 @@ tasks.register<jros2GenTask>("generate_default_interfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath
     )
-    outputDir = sourceSets["interfaces"].java.srcDirs.first().toString()
+    outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }
