@@ -84,12 +84,15 @@ java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/po
 mkdir -p ../src/main/resources/fastddsjava/native/linux-x86_64
 if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
   cp install/lib/libfastcdr.so.2.3.0 ../src/main/resources/fastddsjava/native/linux-x86_64
+  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libfastcdr.so.2.3.0
 fi
 if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
   cp install/lib/libfastdds.so.3.2.2 ../src/main/resources/fastddsjava/native/linux-x86_64
+  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libfastdds.so.3.2.2
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64
+  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libjnifastddsjava.so
 fi
 
 popd
