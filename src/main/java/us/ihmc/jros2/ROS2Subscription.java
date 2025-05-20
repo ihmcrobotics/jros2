@@ -14,11 +14,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
  * A ROS 2-compatible subscription for ingesting {@link ROS2Message} types.
  */
-public class ROS2Subscription<T extends ROS2Message<T>>
+public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatisticsProvider
 {
    static
    {
@@ -46,6 +47,10 @@ public class ROS2Subscription<T extends ROS2Message<T>>
    private final ReadWriteLock closeLock;
    private boolean closed;
 
+   private final StatisticsCalculator[] statisticsCalculators;
+   private final int statisticsCalculatorCount;
+   private long lastReceiveTime;
+
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
@@ -64,6 +69,14 @@ public class ROS2Subscription<T extends ROS2Message<T>>
       cdrBuffer = new CDRBuffer();
       sampleInfo = new SampleInfo();
       subscriptionReader = new ROS2SubscriptionReader<>(cdrBuffer, topic);
+
+      statisticsCalculatorCount = MessageMetadataType.values.length;
+      statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
+      {
+         statisticsCalculators[i] = new StatisticsCalculator();
+      }
+      lastReceiveTime = Long.MIN_VALUE;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
 
@@ -109,18 +122,44 @@ public class ROS2Subscription<T extends ROS2Message<T>>
          {
             while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
             {
+               long receptionTime = System.currentTimeMillis();
                int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
-               cdrBuffer.getBufferUnsafe().rewind();
+               cdrBuffer.rewind();
                cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
                topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
                callback.onMessage(subscriptionReader);
+
+               long timestampMillis = subscriptionReader.getLastMessageTimestamp();
+               recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
             }
          }
       }
       finally
       {
          closeLock.readLock().unlock();
+      }
+   }
+
+   private void recordStatistics(long messageSizeBytes, long messageTimestampMillis, long receptionTimeMillis)
+   {
+      synchronized (statisticsCalculators)
+      {
+         // Record message size
+         statisticsCalculators[SIZE.ordinal()].record(messageSizeBytes);
+
+         // Record publish period if available
+         if (lastReceiveTime != Long.MIN_VALUE)
+         {
+            statisticsCalculators[PERIOD.ordinal()].record(receptionTimeMillis - lastReceiveTime);
+         }
+         lastReceiveTime = receptionTimeMillis;
+
+         // Record publish age
+         if (messageTimestampMillis != Long.MIN_VALUE)
+         {
+            statisticsCalculators[AGE.ordinal()].record(receptionTimeMillis - messageTimestampMillis);
+         }
       }
    }
 
@@ -154,5 +193,20 @@ public class ROS2Subscription<T extends ROS2Message<T>>
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
       }
+   }
+
+   @Override
+   public void resetStatistics()
+   {
+      for (int i = 0; i < statisticsCalculatorCount; ++i)
+      {
+         statisticsCalculators[i].reset();
+      }
+   }
+
+   @Override
+   public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
+   {
+      statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 }

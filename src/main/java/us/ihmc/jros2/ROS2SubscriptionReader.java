@@ -1,12 +1,17 @@
 package us.ihmc.jros2;
 
+import std_msgs.msg.dds.Header;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.log.LogTools;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * A way to read ROS2Message from a {@link CDRBuffer}, given a {@link ROS2Topic}.
  * Provides both an allocation-free and an allocation approach.
  */
-public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements MessageStatisticsProvider
+public class ROS2SubscriptionReader<T extends ROS2Message<T>>
 {
    static
    {
@@ -16,6 +21,14 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements Message
    private final CDRBuffer cdrBuffer;
    private final ROS2Topic<T> topic;
 
+   private long lastMessageTimestamp;
+
+   /**
+    * A method reference to the getter for the first {@link Header} field within the ROS2Message topic type.
+    * Used for statistics.
+    */
+   private Method getHeaderMethod;
+
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
@@ -23,10 +36,13 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements Message
    {
       this.cdrBuffer = cdrBuffer;
       this.topic = topic;
+
+      getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
+      lastMessageTimestamp = Long.MIN_VALUE;
    }
 
    /**
-    * Read from the {@link CDRBuffer} into data (allocation free).
+    * Read from the {@link CDRBuffer} into data (allocation-free).
     *
     * @param data The message to pack
     */
@@ -35,6 +51,26 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements Message
       cdrBuffer.readPayloadHeader();
 
       data.deserialize(cdrBuffer);
+
+      /*
+       * Generate age statistics for messages which have a Header field (https://github.com/ros2/common_interfaces/blob/humble/std_msgs/msg/Header.msg)
+       *
+       * Note:
+       * The age statistic value will only be calculated for messages which have a Header field and subscriptions which call the read method.
+       */
+      if (getHeaderMethod != null)
+      {
+         try
+         {
+            Header header = (Header) getHeaderMethod.invoke(data);
+            lastMessageTimestamp = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
+         }
+         catch (IllegalAccessException | InvocationTargetException e)
+         {
+            LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
+            getHeaderMethod = null;
+         }
+      }
    }
 
    /**
@@ -52,27 +88,8 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>> implements Message
       return data;
    }
 
-   @Override
-   public long getNumberOfReceivedMessages()
+   long getLastMessageTimestamp()
    {
-      return 0;
-   }
-
-   @Override
-   public long getCurrentMessageSize()
-   {
-      return 0;
-   }
-
-   @Override
-   public long getLargestMessageSize()
-   {
-      return 0;
-   }
-
-   @Override
-   public long getCumulativePayloadBytes()
-   {
-      return 0;
+      return lastMessageTimestamp;
    }
 }

@@ -14,7 +14,8 @@ import java.util.concurrent.BlockingQueue;
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
  * Uses Fast-DDS middleware via the {@link us.ihmc.fastddsjava} package. Fully thread-safe.
  * <p>
- * This type of node will create {@link AsyncROS2Publisher} publishers, which are non-blocking and realtime safe.
+ * This type of node will create {@link AsyncROS2Publisher} publishers, which are non-blocking, allocation-free, and realtime safe.
+ * In general, it will use more memory and CPU cycles than {@link ROS2Node}.
  */
 public class AsyncROS2Node extends ROS2Node
 {
