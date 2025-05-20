@@ -102,6 +102,8 @@ tasks.register<jros2GenTask>("generate_default_interfaces") {
     description = "Generate ROS 2 default interfaces source files"
     group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
     packagePaths = listOf(
+        projectDir.resolve("ros2_interfaces").resolve("example_interfaces").absolutePath,
+
         // rcl_interfaces used as dependency to common_interfaces; we include it here
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
