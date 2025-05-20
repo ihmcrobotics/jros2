@@ -56,7 +56,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
        * Generate age statistics for messages which have a Header field (https://github.com/ros2/common_interfaces/blob/humble/std_msgs/msg/Header.msg)
        *
        * Note:
-       * Statistics values will be inaccurate for subscriptions that don't call the read method (e.g. for Empty messages).
+       * The age statistic value will be inaccurate for subscriptions that don't call the read method (e.g. for Empty messages).
        * Fixing will require decoding the messages in the Subscription.
        */
       if (getHeaderMethod != null)
