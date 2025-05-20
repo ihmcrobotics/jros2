@@ -36,10 +36,10 @@ public class Quaternion implements ROS2Message<Quaternion>
 
    public Quaternion()
    {
-      x_ = 0;
-      y_ = 0;
-      z_ = 0;
-      w_ = 1;
+      x_ = (double) 0;
+      y_ = (double) 0;
+      z_ = (double) 0;
+      w_ = (double) 1;
 
    }
 

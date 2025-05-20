@@ -101,8 +101,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       name_ = new StringBuilder();
       description_ = new StringBuilder();
       additional_constraints_ = new StringBuilder();
-      read_only_ = false;
-      dynamic_typing_ = false;
+      read_only_ = (boolean) false;
+      dynamic_typing_ = (boolean) false;
       floating_point_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange>(1, rcl_interfaces.msg.dds.FloatingPointRange.class);
       integer_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange>(1, rcl_interfaces.msg.dds.IntegerRange.class);
 

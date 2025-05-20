@@ -48,7 +48,7 @@ public class <context.name> implements ROS2Message\<<context.name>>
       <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
 <field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif>);
       <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>
-<field.javaName> = <field.defaultValue>;
+<field.javaName> = (<field.javaType>) <field.defaultValue>;
       <endif>
       <endif>
       }>

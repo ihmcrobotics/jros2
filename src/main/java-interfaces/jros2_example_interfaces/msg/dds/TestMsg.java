@@ -73,8 +73,8 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_integers_array_ = new IDLIntSequence(5);
       string_of_unbounded_size_ = new StringBuilder();
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
-      x_ = 42;
-      y_ = -2000;
+      x_ = (byte) 42;
+      y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
 
