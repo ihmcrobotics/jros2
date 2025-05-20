@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/Float32.msg):
+This file was generated from the following content:
+(example_interfaces/Float32.msg)
 ##################################################################################
    # This is an example message of using a primitive datatype, float32.
    # If you want to test with this that's fine, but if you are deploying

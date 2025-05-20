@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/Path.msg):
+This file was generated from the following content:
+(nav_msgs/Path.msg)
 ##################################################################################
    # An array of poses that represents a Path for a robot to follow.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/MultiEchoLaserScan.msg):
+This file was generated from the following content:
+(sensor_msgs/MultiEchoLaserScan.msg)
 ##################################################################################
    # Single scan from a multi-echo planar laser range-finder
    #

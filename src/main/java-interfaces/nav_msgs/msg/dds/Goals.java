@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/Goals.msg):
+This file was generated from the following content:
+(nav_msgs/Goals.msg)
 ##################################################################################
    # An array of navigation goals
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Quaternion.msg):
+This file was generated from the following content:
+(geometry_msgs/Quaternion.msg)
 ##################################################################################
    # This represents an orientation in free space in quaternion form.
 

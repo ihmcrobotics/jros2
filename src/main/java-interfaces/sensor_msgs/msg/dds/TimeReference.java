@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/TimeReference.msg):
+This file was generated from the following content:
+(sensor_msgs/TimeReference.msg)
 ##################################################################################
    # Measurement from an external time source not actively synchronized with the system clock.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/PointField.msg):
+This file was generated from the following content:
+(sensor_msgs/PointField.msg)
 ##################################################################################
    # This message holds the description of one point entry in the
    # PointCloud2 message format.

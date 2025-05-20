@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/MultiArrayLayout.msg):
+This file was generated from the following content:
+(example_interfaces/MultiArrayLayout.msg)
 ##################################################################################
    # This is an example of using complex datatypes.
    # It is not recommended to use directly.

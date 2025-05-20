@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(statistics_msgs/MetricsMessage.msg):
+This file was generated from the following content:
+(statistics_msgs/MetricsMessage.msg)
 ##################################################################################
    #############################################
    # A generic metrics message providing statistics for measurements from different sources. For example,

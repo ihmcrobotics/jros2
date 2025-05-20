@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(diagnostic_msgs/KeyValue.msg):
+This file was generated from the following content:
+(diagnostic_msgs/KeyValue.msg)
 ##################################################################################
    # What to label this value when viewing.
    string key

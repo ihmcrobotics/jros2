@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/InteractiveMarkerUpdate.msg):
+This file was generated from the following content:
+(visualization_msgs/InteractiveMarkerUpdate.msg)
 ##################################################################################
 
    # Identifying string. Must be unique in the topic namespace

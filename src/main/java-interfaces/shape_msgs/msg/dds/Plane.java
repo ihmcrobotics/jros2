@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(shape_msgs/Plane.msg):
+This file was generated from the following content:
+(shape_msgs/Plane.msg)
 ##################################################################################
    # Representation of a plane, using the plane equation ax + by + cz + d = 0.
    #

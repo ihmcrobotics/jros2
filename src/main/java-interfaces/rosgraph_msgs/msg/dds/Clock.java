@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rosgraph_msgs/Clock.msg):
+This file was generated from the following content:
+(rosgraph_msgs/Clock.msg)
 ##################################################################################
    # This message communicates the current time.
    #

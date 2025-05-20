@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Polygon.msg):
+This file was generated from the following content:
+(geometry_msgs/Polygon.msg)
 ##################################################################################
    # A specification of a polygon where the first and last points are assumed to be connected
 

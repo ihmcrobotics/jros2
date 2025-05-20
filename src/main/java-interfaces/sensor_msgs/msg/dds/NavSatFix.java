@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/NavSatFix.msg):
+This file was generated from the following content:
+(sensor_msgs/NavSatFix.msg)
 ##################################################################################
    # Navigation Satellite fix for any Global Navigation Satellite System
    #

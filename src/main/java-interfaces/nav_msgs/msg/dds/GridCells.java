@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/GridCells.msg):
+This file was generated from the following content:
+(nav_msgs/GridCells.msg)
 ##################################################################################
    # An array of cells in a 2D grid
 

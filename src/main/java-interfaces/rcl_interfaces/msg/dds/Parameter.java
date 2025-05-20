@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/Parameter.msg):
+This file was generated from the following content:
+(rcl_interfaces/Parameter.msg)
 ##################################################################################
    # This is the message to communicate a parameter. It is an open struct with an enum in
    # the descriptor to select which value is active.

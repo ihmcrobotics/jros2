@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/JointState.msg):
+This file was generated from the following content:
+(sensor_msgs/JointState.msg)
 ##################################################################################
    # This is a message that holds data to describe the state of a set of torque controlled joints.
    #

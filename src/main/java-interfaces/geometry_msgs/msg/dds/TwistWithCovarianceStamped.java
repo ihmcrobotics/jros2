@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/TwistWithCovarianceStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/TwistWithCovarianceStamped.msg)
 ##################################################################################
    # This represents an estimated twist with reference coordinate frame and timestamp.
 

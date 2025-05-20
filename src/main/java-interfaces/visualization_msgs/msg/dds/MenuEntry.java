@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/MenuEntry.msg):
+This file was generated from the following content:
+(visualization_msgs/MenuEntry.msg)
 ##################################################################################
    # MenuEntry message.
    #

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/MagneticField.msg):
+This file was generated from the following content:
+(sensor_msgs/MagneticField.msg)
 ##################################################################################
    # Measurement of the Magnetic Field vector at a specific location.
    #

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ParameterEventDescriptors.msg):
+This file was generated from the following content:
+(rcl_interfaces/ParameterEventDescriptors.msg)
 ##################################################################################
    # This message contains descriptors of a parameter event.
    # It was an atomic update.

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Vector3Stamped.msg):
+This file was generated from the following content:
+(geometry_msgs/Vector3Stamped.msg)
 ##################################################################################
    # This represents a Vector3 with reference coordinate frame and timestamp
 

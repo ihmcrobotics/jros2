@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(std_msgs/ColorRGBA.msg):
+This file was generated from the following content:
+(std_msgs/ColorRGBA.msg)
 ##################################################################################
    float32 r
    float32 g

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Accel.msg):
+This file was generated from the following content:
+(geometry_msgs/Accel.msg)
 ##################################################################################
    # This expresses acceleration in free space broken into its linear and angular parts.
    Vector3  linear

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/TransformStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/TransformStamped.msg)
 ##################################################################################
    # This expresses a transform from coordinate frame header.frame_id
    # to the coordinate frame child_frame_id at the time of header.stamp

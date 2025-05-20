@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Pose2D.msg):
+This file was generated from the following content:
+(geometry_msgs/Pose2D.msg)
 ##################################################################################
    # Deprecated as of Foxy and will potentially be removed in any following release.
    # Please use the full 3D pose.

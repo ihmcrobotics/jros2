@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Range.msg):
+This file was generated from the following content:
+(sensor_msgs/Range.msg)
 ##################################################################################
    # Single range reading from an active ranger that emits energy and reports
    # one range reading that is valid along an arc at the distance measured.

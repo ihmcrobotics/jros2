@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Point.msg):
+This file was generated from the following content:
+(geometry_msgs/Point.msg)
 ##################################################################################
    # This contains the position of a point in free space
    float64 x

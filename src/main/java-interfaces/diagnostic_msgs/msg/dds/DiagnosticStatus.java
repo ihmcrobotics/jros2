@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(diagnostic_msgs/DiagnosticStatus.msg):
+This file was generated from the following content:
+(diagnostic_msgs/DiagnosticStatus.msg)
 ##################################################################################
    # This message holds the status of an individual component of the robot.
 

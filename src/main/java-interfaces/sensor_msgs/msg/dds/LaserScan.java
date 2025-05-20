@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/LaserScan.msg):
+This file was generated from the following content:
+(sensor_msgs/LaserScan.msg)
 ##################################################################################
    # Single scan from a planar laser range-finder
    #

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(statistics_msgs/StatisticDataType.msg):
+This file was generated from the following content:
+(statistics_msgs/StatisticDataType.msg)
 ##################################################################################
    #############################################
    # This file contains the commonly used constants for the statistics data type.

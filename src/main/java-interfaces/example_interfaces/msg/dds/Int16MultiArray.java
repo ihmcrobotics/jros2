@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/Int16MultiArray.msg):
+This file was generated from the following content:
+(example_interfaces/Int16MultiArray.msg)
 ##################################################################################
    # This is an example of using complex datatypes.
    # It is not recommended to use directly.

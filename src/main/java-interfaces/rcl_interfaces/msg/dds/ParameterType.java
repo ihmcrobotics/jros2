@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ParameterType.msg):
+This file was generated from the following content:
+(rcl_interfaces/ParameterType.msg)
 ##################################################################################
    # These types correspond to the value that is set in the ParameterValue message.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(lifecycle_msgs/TransitionEvent.msg):
+This file was generated from the following content:
+(lifecycle_msgs/TransitionEvent.msg)
 ##################################################################################
    # The time point at which this event occurred.
    uint64 timestamp

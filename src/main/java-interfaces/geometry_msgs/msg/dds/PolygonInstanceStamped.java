@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/PolygonInstanceStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/PolygonInstanceStamped.msg)
 ##################################################################################
    # This represents a Polygon with reference coordinate frame and timestamp
    # It includes a unique identification field for disambiguating multiple instances

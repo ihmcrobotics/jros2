@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(lifecycle_msgs/State.msg):
+This file was generated from the following content:
+(lifecycle_msgs/State.msg)
 ##################################################################################
    # Primary state definitions as depicted in:
    # http://design.ros2.org/articles/node_lifecycle.html

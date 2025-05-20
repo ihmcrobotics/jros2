@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(trajectory_msgs/JointTrajectoryPoint.msg):
+This file was generated from the following content:
+(trajectory_msgs/JointTrajectoryPoint.msg)
 ##################################################################################
    # Each trajectory point specifies either positions[, velocities[, accelerations]]
    # or positions[, effort] for the trajectory to be executed.

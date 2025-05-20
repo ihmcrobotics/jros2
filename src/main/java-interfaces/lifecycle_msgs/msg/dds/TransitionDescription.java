@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(lifecycle_msgs/TransitionDescription.msg):
+This file was generated from the following content:
+(lifecycle_msgs/TransitionDescription.msg)
 ##################################################################################
    # The transition id and label of this description.
    Transition transition

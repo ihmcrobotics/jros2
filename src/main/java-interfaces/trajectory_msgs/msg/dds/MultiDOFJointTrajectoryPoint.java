@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(trajectory_msgs/MultiDOFJointTrajectoryPoint.msg):
+This file was generated from the following content:
+(trajectory_msgs/MultiDOFJointTrajectoryPoint.msg)
 ##################################################################################
    # Each multi-dof joint can specify a transform (up to 6 DOF).
    geometry_msgs/Transform[] transforms

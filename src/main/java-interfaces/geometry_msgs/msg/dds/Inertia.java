@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Inertia.msg):
+This file was generated from the following content:
+(geometry_msgs/Inertia.msg)
 ##################################################################################
    # Mass [kg]
    float64 m

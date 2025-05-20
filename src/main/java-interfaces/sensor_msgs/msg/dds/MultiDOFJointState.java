@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/MultiDOFJointState.msg):
+This file was generated from the following content:
+(sensor_msgs/MultiDOFJointState.msg)
 ##################################################################################
    # Representation of state for joints with multiple degrees of freedom,
    # following the structure of JointState which can only represent a single degree of freedom.

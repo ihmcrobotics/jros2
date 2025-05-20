@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ParameterDescriptor.msg):
+This file was generated from the following content:
+(rcl_interfaces/ParameterDescriptor.msg)
 ##################################################################################
    # This is the message to communicate a parameter's descriptor.
 

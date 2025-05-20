@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ParameterValue.msg):
+This file was generated from the following content:
+(rcl_interfaces/ParameterValue.msg)
 ##################################################################################
    # Used to determine which of the next *_value fields are set.
    # ParameterType.PARAMETER_NOT_SET indicates that the parameter was not set

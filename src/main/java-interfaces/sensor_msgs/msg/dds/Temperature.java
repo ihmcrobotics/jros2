@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Temperature.msg):
+This file was generated from the following content:
+(sensor_msgs/Temperature.msg)
 ##################################################################################
    # Single temperature reading.
 

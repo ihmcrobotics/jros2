@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(statistics_msgs/StatisticDataPoint.msg):
+This file was generated from the following content:
+(statistics_msgs/StatisticDataPoint.msg)
 ##################################################################################
    #############################################
    # This holds the structure of a single data point of a StatisticDataType.

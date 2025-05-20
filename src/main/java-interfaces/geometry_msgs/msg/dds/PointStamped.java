@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/PointStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/PointStamped.msg)
 ##################################################################################
    # This represents a Point with reference coordinate frame and timestamp
 

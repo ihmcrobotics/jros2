@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/CameraInfo.msg):
+This file was generated from the following content:
+(sensor_msgs/CameraInfo.msg)
 ##################################################################################
    # This message defines meta information for a camera. It should be in a
    # camera namespace on topic "camera_info" and accompanied by up to five

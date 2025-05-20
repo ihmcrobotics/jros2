@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/LaserEcho.msg):
+This file was generated from the following content:
+(sensor_msgs/LaserEcho.msg)
 ##################################################################################
    # This message is a submessage of MultiEchoLaserScan and is not intended
    # to be used separately.

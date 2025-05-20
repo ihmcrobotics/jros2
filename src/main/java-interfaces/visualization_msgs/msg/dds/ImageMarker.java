@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/ImageMarker.msg):
+This file was generated from the following content:
+(visualization_msgs/ImageMarker.msg)
 ##################################################################################
    int32 CIRCLE=0
    int32 LINE_STRIP=1

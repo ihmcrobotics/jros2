@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Wrench.msg):
+This file was generated from the following content:
+(geometry_msgs/Wrench.msg)
 ##################################################################################
    # This represents force in free space, separated into its linear and angular parts.
 

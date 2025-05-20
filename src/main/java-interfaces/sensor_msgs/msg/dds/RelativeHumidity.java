@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/RelativeHumidity.msg):
+This file was generated from the following content:
+(sensor_msgs/RelativeHumidity.msg)
 ##################################################################################
    # Single reading from a relative humidity sensor.
    # Defines the ratio of partial pressure of water vapor to the saturated vapor

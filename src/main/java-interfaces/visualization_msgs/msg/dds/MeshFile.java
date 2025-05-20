@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/MeshFile.msg):
+This file was generated from the following content:
+(visualization_msgs/MeshFile.msg)
 ##################################################################################
    # Used to send raw mesh files.
 

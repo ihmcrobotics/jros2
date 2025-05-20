@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/ChannelFloat32.msg):
+This file was generated from the following content:
+(sensor_msgs/ChannelFloat32.msg)
 ##################################################################################
    # This message is used by the PointCloud message to hold optional data
    # associated with each point in the cloud. The length of the values

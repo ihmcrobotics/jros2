@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Vector3.msg):
+This file was generated from the following content:
+(geometry_msgs/Vector3.msg)
 ##################################################################################
    # This represents a vector in free space.
 

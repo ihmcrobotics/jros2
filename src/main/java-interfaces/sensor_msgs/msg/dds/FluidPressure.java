@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/FluidPressure.msg):
+This file was generated from the following content:
+(sensor_msgs/FluidPressure.msg)
 ##################################################################################
    # Single pressure reading.  This message is appropriate for measuring the
    # pressure inside of a fluid (air, water, etc).  This also includes

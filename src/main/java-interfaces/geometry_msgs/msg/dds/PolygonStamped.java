@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/PolygonStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/PolygonStamped.msg)
 ##################################################################################
    # This represents a Polygon with reference coordinate frame and timestamp
 

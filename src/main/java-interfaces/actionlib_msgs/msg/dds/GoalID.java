@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(actionlib_msgs/GoalID.msg):
+This file was generated from the following content:
+(actionlib_msgs/GoalID.msg)
 ##################################################################################
 
    # The stamp should store the time at which this goal was requested.

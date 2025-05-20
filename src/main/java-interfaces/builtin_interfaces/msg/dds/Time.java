@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(builtin_interfaces/Time.msg):
+This file was generated from the following content:
+(builtin_interfaces/Time.msg)
 ##################################################################################
    # This message communicates ROS Time defined here:
    # https://design.ros2.org/articles/clock_and_time.html

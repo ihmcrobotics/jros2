@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(stereo_msgs/DisparityImage.msg):
+This file was generated from the following content:
+(stereo_msgs/DisparityImage.msg)
 ##################################################################################
    # Separate header for compatibility with current TimeSynchronizer.
    # Likely to be removed in a later release, use image.header instead.

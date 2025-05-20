@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(trajectory_msgs/JointTrajectory.msg):
+This file was generated from the following content:
+(trajectory_msgs/JointTrajectory.msg)
 ##################################################################################
    # The header is used to specify the coordinate frame and the reference time for
    # the trajectory durations

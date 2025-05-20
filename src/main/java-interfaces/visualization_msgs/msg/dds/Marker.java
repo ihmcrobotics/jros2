@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/Marker.msg):
+This file was generated from the following content:
+(visualization_msgs/Marker.msg)
 ##################################################################################
    # See:
    #  - http://www.ros.org/wiki/rviz/DisplayTypes/Marker

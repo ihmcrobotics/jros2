@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/RegionOfInterest.msg):
+This file was generated from the following content:
+(sensor_msgs/RegionOfInterest.msg)
 ##################################################################################
    # This message is used to specify a region of interest within an image.
    #

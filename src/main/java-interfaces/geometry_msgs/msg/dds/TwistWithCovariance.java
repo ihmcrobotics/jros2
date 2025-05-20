@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/TwistWithCovariance.msg):
+This file was generated from the following content:
+(geometry_msgs/TwistWithCovariance.msg)
 ##################################################################################
    # This expresses velocity in free space with uncertainty.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(diagnostic_msgs/DiagnosticArray.msg):
+This file was generated from the following content:
+(diagnostic_msgs/DiagnosticArray.msg)
 ##################################################################################
    # This message is used to send diagnostic information about the state of the robot.
    std_msgs/Header header # for timestamp

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(shape_msgs/Mesh.msg):
+This file was generated from the following content:
+(shape_msgs/Mesh.msg)
 ##################################################################################
    # Definition of a mesh.
 

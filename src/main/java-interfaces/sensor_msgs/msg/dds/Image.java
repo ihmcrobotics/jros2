@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Image.msg):
+This file was generated from the following content:
+(sensor_msgs/Image.msg)
 ##################################################################################
    # This message contains an uncompressed image
    # (0, 0) is at top-left corner of image

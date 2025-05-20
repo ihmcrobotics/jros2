@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/FloatingPointRange.msg):
+This file was generated from the following content:
+(rcl_interfaces/FloatingPointRange.msg)
 ##################################################################################
    # Represents bounds and a step value for a floating point typed parameter.
 

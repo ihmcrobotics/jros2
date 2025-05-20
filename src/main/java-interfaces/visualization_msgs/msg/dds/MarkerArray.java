@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/MarkerArray.msg):
+This file was generated from the following content:
+(visualization_msgs/MarkerArray.msg)
 ##################################################################################
    Marker[] markers
 

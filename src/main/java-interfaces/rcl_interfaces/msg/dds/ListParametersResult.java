@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ListParametersResult.msg):
+This file was generated from the following content:
+(rcl_interfaces/ListParametersResult.msg)
 ##################################################################################
    # The resulting parameters under the given prefixes.
    string[] names

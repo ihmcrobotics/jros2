@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(actionlib_msgs/GoalStatus.msg):
+This file was generated from the following content:
+(actionlib_msgs/GoalStatus.msg)
 ##################################################################################
    GoalID goal_id
    uint8 status

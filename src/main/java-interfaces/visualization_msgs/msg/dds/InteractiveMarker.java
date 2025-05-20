@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/InteractiveMarker.msg):
+This file was generated from the following content:
+(visualization_msgs/InteractiveMarker.msg)
 ##################################################################################
    # Time/frame info.
    # If header.time is set to 0, the marker will be retransformed into

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(shape_msgs/SolidPrimitive.msg):
+This file was generated from the following content:
+(shape_msgs/SolidPrimitive.msg)
 ##################################################################################
    # Defines box, sphere, cylinder, cone and prism.
    # All shapes are defined to have their bounding boxes centered around 0,0,0.

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/Log.msg):
+This file was generated from the following content:
+(rcl_interfaces/Log.msg)
 ##################################################################################
    ##
    ## Severity level constants

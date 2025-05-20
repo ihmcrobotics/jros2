@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/JoyFeedback.msg):
+This file was generated from the following content:
+(sensor_msgs/JoyFeedback.msg)
 ##################################################################################
    # Declare of the type of feedback
    uint8 TYPE_LED    = 0

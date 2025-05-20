@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/Empty.msg):
+This file was generated from the following content:
+(example_interfaces/Empty.msg)
 ##################################################################################
    # If you want to test with this that's fine, but if you are deploying
    # it into a system you should create a semantically meaningful message type.

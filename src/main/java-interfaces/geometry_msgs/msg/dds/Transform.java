@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Transform.msg):
+This file was generated from the following content:
+(geometry_msgs/Transform.msg)
 ##################################################################################
    # This represents the transform between two coordinate frames in free space.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/IntegerRange.msg):
+This file was generated from the following content:
+(rcl_interfaces/IntegerRange.msg)
 ##################################################################################
    # Represents bounds and a step value for an integer typed parameter.
 

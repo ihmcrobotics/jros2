@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/TwistStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/TwistStamped.msg)
 ##################################################################################
    # A twist with reference coordinate frame and timestamp
 

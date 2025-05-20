@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(builtin_interfaces/Duration.msg):
+This file was generated from the following content:
+(builtin_interfaces/Duration.msg)
 ##################################################################################
    # Duration defines a period between two time points.
    # Messages of this datatype are of ROS Time following this design:

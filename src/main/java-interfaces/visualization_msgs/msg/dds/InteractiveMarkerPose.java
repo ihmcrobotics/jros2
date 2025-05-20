@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/InteractiveMarkerPose.msg):
+This file was generated from the following content:
+(visualization_msgs/InteractiveMarkerPose.msg)
 ##################################################################################
 
    # Time/frame info.

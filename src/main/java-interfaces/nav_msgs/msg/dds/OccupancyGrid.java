@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/OccupancyGrid.msg):
+This file was generated from the following content:
+(nav_msgs/OccupancyGrid.msg)
 ##################################################################################
    # This represents a 2-D grid map
    std_msgs/Header header

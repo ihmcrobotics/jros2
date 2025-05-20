@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Joy.msg):
+This file was generated from the following content:
+(sensor_msgs/Joy.msg)
 ##################################################################################
    # Reports the state of a joystick's axes and buttons.
 

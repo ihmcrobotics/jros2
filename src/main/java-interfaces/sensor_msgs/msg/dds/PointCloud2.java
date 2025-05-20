@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/PointCloud2.msg):
+This file was generated from the following content:
+(sensor_msgs/PointCloud2.msg)
 ##################################################################################
    # This message holds a collection of N-dimensional points, which may
    # contain additional information such as normals, intensity, etc. The

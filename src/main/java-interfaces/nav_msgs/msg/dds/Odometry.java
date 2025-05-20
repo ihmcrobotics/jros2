@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/Odometry.msg):
+This file was generated from the following content:
+(nav_msgs/Odometry.msg)
 ##################################################################################
    # This represents an estimate of a position and velocity in free space.
    # The pose in this message should be specified in the coordinate frame given by header.frame_id

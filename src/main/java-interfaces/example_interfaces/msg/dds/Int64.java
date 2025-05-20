@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/Int64.msg):
+This file was generated from the following content:
+(example_interfaces/Int64.msg)
 ##################################################################################
    # This is an example message of using a primitive datatype, int64.
    # If you want to test with this that's fine, but if you are deploying

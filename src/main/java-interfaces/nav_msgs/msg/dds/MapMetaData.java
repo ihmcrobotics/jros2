@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(nav_msgs/MapMetaData.msg):
+This file was generated from the following content:
+(nav_msgs/MapMetaData.msg)
 ##################################################################################
    # This hold basic information about the characteristics of the OccupancyGrid
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/PoseWithCovariance.msg):
+This file was generated from the following content:
+(geometry_msgs/PoseWithCovariance.msg)
 ##################################################################################
    # This represents a pose in free space with uncertainty.
 

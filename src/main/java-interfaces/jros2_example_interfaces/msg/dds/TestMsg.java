@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(jros2_example_interfaces/TestMsg.msg):
+This file was generated from the following content:
+(jros2_example_interfaces/TestMsg.msg)
 ##################################################################################
    int32 my_int
    string my_string

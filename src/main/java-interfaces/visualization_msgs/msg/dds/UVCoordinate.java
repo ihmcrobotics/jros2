@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/UVCoordinate.msg):
+This file was generated from the following content:
+(visualization_msgs/UVCoordinate.msg)
 ##################################################################################
    # Location of the pixel as a ratio of the width of a 2D texture.
    # Values should be in range: [0.0-1.0].

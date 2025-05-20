@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(example_interfaces/Bool.msg):
+This file was generated from the following content:
+(example_interfaces/Bool.msg)
 ##################################################################################
    # This is an example message of using a primitive datatype, bool.
    # If you want to test with this that's fine, but if you are deploying

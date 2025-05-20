@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(actionlib_msgs/GoalStatusArray.msg):
+This file was generated from the following content:
+(actionlib_msgs/GoalStatusArray.msg)
 ##################################################################################
    # Stores the statuses for goals that are currently being tracked
    # by an action server

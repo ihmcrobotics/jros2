@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(std_msgs/UInt32.msg):
+This file was generated from the following content:
+(std_msgs/UInt32.msg)
 ##################################################################################
    # This was originally provided as an example message.
    # It is deprecated as of Foxy

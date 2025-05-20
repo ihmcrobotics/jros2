@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Point32.msg):
+This file was generated from the following content:
+(geometry_msgs/Point32.msg)
 ##################################################################################
    # This contains the position of a point in free space(with 32 bits of precision).
    # It is recommended to use Point wherever possible instead of Point32.

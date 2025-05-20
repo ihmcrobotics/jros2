@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/QuaternionStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/QuaternionStamped.msg)
 ##################################################################################
    # This represents an orientation with reference coordinate frame and timestamp.
 

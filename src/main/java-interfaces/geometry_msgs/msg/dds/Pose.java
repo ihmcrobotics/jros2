@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/Pose.msg):
+This file was generated from the following content:
+(geometry_msgs/Pose.msg)
 ##################################################################################
    # A representation of pose in free space, composed of position and orientation.
 

@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Illuminance.msg):
+This file was generated from the following content:
+(sensor_msgs/Illuminance.msg)
 ##################################################################################
    # Single photometric illuminance measurement.  Light should be assumed to be
    # measured along the sensor's x-axis (the area of detection is the y-z plane).

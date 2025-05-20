@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(<context.packageName>/<context.fileName>):
+This file was generated from the following content:
+(<context.packageName>/<context.fileName>)
 ##################################################################################
    <context.fileContent>
 ##################################################################################

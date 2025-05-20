@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/BatteryState.msg):
+This file was generated from the following content:
+(sensor_msgs/BatteryState.msg)
 ##################################################################################
 
    # Constants are chosen to match the enums in the linux kernel

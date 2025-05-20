@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(shape_msgs/MeshTriangle.msg):
+This file was generated from the following content:
+(shape_msgs/MeshTriangle.msg)
 ##################################################################################
    # Definition of a triangle's vertices.
 

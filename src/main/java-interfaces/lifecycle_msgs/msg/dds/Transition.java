@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(lifecycle_msgs/Transition.msg):
+This file was generated from the following content:
+(lifecycle_msgs/Transition.msg)
 ##################################################################################
    # Default values for transitions as described in:
    # http://design.ros2.org/articles/node_lifecycle.html

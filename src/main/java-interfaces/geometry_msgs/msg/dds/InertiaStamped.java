@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/InertiaStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/InertiaStamped.msg)
 ##################################################################################
    # An Inertia with a time stamp and reference frame.
 

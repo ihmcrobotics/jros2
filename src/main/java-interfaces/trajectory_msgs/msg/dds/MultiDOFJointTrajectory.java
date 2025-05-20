@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(trajectory_msgs/MultiDOFJointTrajectory.msg):
+This file was generated from the following content:
+(trajectory_msgs/MultiDOFJointTrajectory.msg)
 ##################################################################################
    # The header is used to specify the coordinate frame and the reference time for the trajectory durations
    std_msgs/Header header

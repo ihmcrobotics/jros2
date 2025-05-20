@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/AccelWithCovariance.msg):
+This file was generated from the following content:
+(geometry_msgs/AccelWithCovariance.msg)
 ##################################################################################
    # This expresses acceleration in free space with uncertainty.
 

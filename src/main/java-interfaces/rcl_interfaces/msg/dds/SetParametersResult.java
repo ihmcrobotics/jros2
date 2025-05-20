@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/SetParametersResult.msg):
+This file was generated from the following content:
+(rcl_interfaces/SetParametersResult.msg)
 ##################################################################################
    # A true value of the same index indicates that the parameter was set
    # successfully. A false value indicates the change was rejected.

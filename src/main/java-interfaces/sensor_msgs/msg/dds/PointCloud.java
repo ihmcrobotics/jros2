@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/PointCloud.msg):
+This file was generated from the following content:
+(sensor_msgs/PointCloud.msg)
 ##################################################################################
    ## THIS MESSAGE IS DEPRECATED AS OF FOXY
    ## Please use sensor_msgs/PointCloud2

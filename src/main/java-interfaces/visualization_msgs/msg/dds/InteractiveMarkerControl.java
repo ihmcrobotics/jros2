@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/InteractiveMarkerControl.msg):
+This file was generated from the following content:
+(visualization_msgs/InteractiveMarkerControl.msg)
 ##################################################################################
    # Represents a control that is to be displayed together with an interactive marker
 

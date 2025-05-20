@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(std_msgs/Header.msg):
+This file was generated from the following content:
+(std_msgs/Header.msg)
 ##################################################################################
    # Standard metadata for higher-level stamped data types.
    # This is generally used to communicate timestamped data

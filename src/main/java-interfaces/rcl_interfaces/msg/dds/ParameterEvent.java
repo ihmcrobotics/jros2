@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(rcl_interfaces/ParameterEvent.msg):
+This file was generated from the following content:
+(rcl_interfaces/ParameterEvent.msg)
 ##################################################################################
    # This message contains a parameter event.
    # Because the parameter event was an atomic update, a specific parameter name

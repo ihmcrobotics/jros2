@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(sensor_msgs/Imu.msg):
+This file was generated from the following content:
+(sensor_msgs/Imu.msg)
 ##################################################################################
    # This is a message to hold data from an IMU (Inertial Measurement Unit)
    #

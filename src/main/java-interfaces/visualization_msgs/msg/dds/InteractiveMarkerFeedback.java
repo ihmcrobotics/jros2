@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(visualization_msgs/InteractiveMarkerFeedback.msg):
+This file was generated from the following content:
+(visualization_msgs/InteractiveMarkerFeedback.msg)
 ##################################################################################
    # Time/frame info.
    std_msgs/Header header

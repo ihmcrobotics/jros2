@@ -3,7 +3,8 @@
  * Do not modify this file directly.
 
 ##################################################################################
-(geometry_msgs/AccelWithCovarianceStamped.msg):
+This file was generated from the following content:
+(geometry_msgs/AccelWithCovarianceStamped.msg)
 ##################################################################################
    # This represents an estimated accel with reference coordinate frame and timestamp.
    std_msgs/Header header
