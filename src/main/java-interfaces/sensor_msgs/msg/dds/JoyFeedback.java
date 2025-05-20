@@ -95,32 +95,32 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
 
    }
 
-   public byte gettype()
+   public byte getType()
    {
       return type_;
    }
 
-   public void settype(byte type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }
 
-   public byte getid()
+   public byte getId()
    {
       return id_;
    }
 
-   public void setid(byte id_)
+   public void setId(byte id_)
    {
       this.id_ = id_;
    }
 
-   public float getintensity()
+   public float getIntensity()
    {
       return intensity_;
    }
 
-   public void setintensity(float intensity_)
+   public void setIntensity(float intensity_)
    {
       this.intensity_ = intensity_;
    }

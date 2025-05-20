@@ -86,7 +86,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    /**
       The dimensions of the shape
    */
-   private final IDLDoubleSequence dimensions_;
+   private final IDLDoubleSequence dimensions_; // At no point will dimensions have a length > 3.
    /**
       For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */
@@ -150,22 +150,22 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    }
 
-   public byte gettype()
+   public byte getType()
    {
       return type_;
    }
 
-   public void settype(byte type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }
 
-   public IDLDoubleSequence getdimensions()
+   public IDLDoubleSequence getDimensions()
    {
       return dimensions_;
    }
 
-   public geometry_msgs.msg.dds.Polygon getpolygon()
+   public geometry_msgs.msg.dds.Polygon getPolygon()
    {
       return polygon_;
    }

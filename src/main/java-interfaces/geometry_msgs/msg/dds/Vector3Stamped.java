@@ -76,12 +76,12 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getvector()
+   public geometry_msgs.msg.dds.Vector3 getVector()
    {
       return vector_;
    }

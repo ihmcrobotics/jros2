@@ -78,12 +78,12 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
 
    }
 
-   public IDLStringSequence getnames()
+   public IDLStringSequence getNames()
    {
       return names_;
    }
 
-   public IDLStringSequence getprefixes()
+   public IDLStringSequence getPrefixes()
    {
       return prefixes_;
    }

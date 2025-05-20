@@ -88,17 +88,17 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
 
    }
 
-   public lifecycle_msgs.msg.dds.Transition gettransition()
+   public lifecycle_msgs.msg.dds.Transition getTransition()
    {
       return transition_;
    }
 
-   public lifecycle_msgs.msg.dds.State getstart_state()
+   public lifecycle_msgs.msg.dds.State getStartState()
    {
       return start_state_;
    }
 
-   public lifecycle_msgs.msg.dds.State getgoal_state()
+   public lifecycle_msgs.msg.dds.State getGoalState()
    {
       return goal_state_;
    }

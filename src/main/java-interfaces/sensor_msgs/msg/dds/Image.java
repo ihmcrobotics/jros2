@@ -50,13 +50,13 @@ public class Image implements ROS2Message<Image>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private int height_;
-   private int width_;
-   private final StringBuilder encoding_;
-   private byte is_bigendian_;
-   private int step_;
-   private final IDLByteSequence data_;
+   private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
+   private int height_; // image height, that is, number of rows
+   private int width_; // image width, that is, number of columns
+   private final StringBuilder encoding_; // Encoding of pixels -- channel meaning, ordering, size
+   private byte is_bigendian_; // is this data bigendian?
+   private int step_; // Full row length in bytes
+   private final IDLByteSequence data_; // actual matrix data, size is (step * rows)
 
    public Image()
    {
@@ -122,57 +122,57 @@ public class Image implements ROS2Message<Image>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public int getheight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setheight(int height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public int getwidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setwidth(int width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public StringBuilder getencoding()
+   public StringBuilder getEncoding()
    {
       return encoding_;
    }
 
-   public byte getis_bigendian()
+   public byte getIsBigendian()
    {
       return is_bigendian_;
    }
 
-   public void setis_bigendian(byte is_bigendian_)
+   public void setIsBigendian(byte is_bigendian_)
    {
       this.is_bigendian_ = is_bigendian_;
    }
 
-   public int getstep()
+   public int getStep()
    {
       return step_;
    }
 
-   public void setstep(int step_)
+   public void setStep(int step_)
    {
       this.step_ = step_;
    }
 
-   public IDLByteSequence getdata()
+   public IDLByteSequence getData()
    {
       return data_;
    }

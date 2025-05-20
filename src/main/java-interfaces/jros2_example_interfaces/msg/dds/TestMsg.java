@@ -6,8 +6,11 @@
 This file was generated from the following content:
 (jros2_example_interfaces/TestMsg.msg)
 ##################################################################################
+   Header header
+   std_msgs/Header header2
+
    int32 my_int
-   string my_string
+   string my_string # Test comment
 
    int32[] unbounded_integer_array
    int32[5] five_integers_array
@@ -42,8 +45,10 @@ public class TestMsg implements ROS2Message<TestMsg>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::TestMsg_";
 
+   private final std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header2_;
    private int my_int_;
-   private final StringBuilder my_string_;
+   private final StringBuilder my_string_; // Test comment
    private final IDLIntSequence unbounded_integer_array_;
    private final int[] five_integers_array_;
    private final IDLIntSequence up_to_five_integers_array_;
@@ -60,13 +65,17 @@ public class TestMsg implements ROS2Message<TestMsg>
 
    public TestMsg()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      header2_ = new std_msgs.msg.dds.Header();
       my_string_ = new StringBuilder();
       unbounded_integer_array_ = new IDLIntSequence();
       five_integers_array_ = new int[5];
       up_to_five_integers_array_ = new IDLIntSequence(5);
       string_of_unbounded_size_ = new StringBuilder();
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
-      full_name_ = new StringBuilder();
+      x_ = 42;
+      y_ = -2000;
+      full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
 
    }
@@ -76,6 +85,8 @@ public class TestMsg implements ROS2Message<TestMsg>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += header2_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
       currentAlignment += (1 * my_string_.length()) + CDRBuffer.alignment(currentAlignment, (1 * my_string_.length())); // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
@@ -94,6 +105,8 @@ public class TestMsg implements ROS2Message<TestMsg>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      header2_.serialize(buffer);
       buffer.writeInt(my_int_);
       buffer.writeString(my_string_);
       unbounded_integer_array_.serialize(buffer);
@@ -114,6 +127,8 @@ public class TestMsg implements ROS2Message<TestMsg>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      header2_.deserialize(buffer);
       my_int_ = buffer.readInt();
       buffer.readString(my_string_);
       unbounded_integer_array_.deserialize(buffer);
@@ -134,6 +149,8 @@ public class TestMsg implements ROS2Message<TestMsg>
    @Override
    public void set(TestMsg from)
    {
+      header_.set(from.header_);
+      header2_.set(from.header2_);
       my_int_ = from.my_int_;
       my_string_.delete(0, my_string_.length());
       my_string_.insert(0, from.my_string_);
@@ -154,72 +171,82 @@ public class TestMsg implements ROS2Message<TestMsg>
 
    }
 
-   public int getmy_int()
+   public std_msgs.msg.dds.Header getHeader()
+   {
+      return header_;
+   }
+
+   public std_msgs.msg.dds.Header getHeader2()
+   {
+      return header2_;
+   }
+
+   public int getMyInt()
    {
       return my_int_;
    }
 
-   public void setmy_int(int my_int_)
+   public void setMyInt(int my_int_)
    {
       this.my_int_ = my_int_;
    }
 
-   public StringBuilder getmy_string()
+   public StringBuilder getMyString()
    {
       return my_string_;
    }
 
-   public IDLIntSequence getunbounded_integer_array()
+   public IDLIntSequence getUnboundedIntegerArray()
    {
       return unbounded_integer_array_;
    }
 
-   public int[] getfive_integers_array()
+   public int[] getFiveIntegersArray()
    {
       return five_integers_array_;
    }
 
-   public IDLIntSequence getup_to_five_integers_array()
+   public IDLIntSequence getUpToFiveIntegersArray()
    {
       return up_to_five_integers_array_;
    }
 
-   public StringBuilder getstring_of_unbounded_size()
+   public StringBuilder getStringOfUnboundedSize()
    {
       return string_of_unbounded_size_;
    }
 
-   public IDLStringSequence getup_to_five_unbounded_strings()
+   public IDLStringSequence getUpToFiveUnboundedStrings()
    {
       return up_to_five_unbounded_strings_;
    }
 
-   public byte getx()
+   public byte getX()
    {
       return x_;
    }
 
-   public void setx(byte x_)
+   public void setX(byte x_)
    {
       this.x_ = x_;
    }
 
-   public short gety()
+   public short getY()
    {
       return y_;
    }
 
-   public void sety(short y_)
+   public void setY(short y_)
    {
       this.y_ = y_;
    }
 
-   public StringBuilder getfull_name()
+   public StringBuilder getFullName()
    {
       return full_name_;
    }
 
-   public IDLIntSequence getsamples()
+   public IDLIntSequence getSamples()
    {
       return samples_;
    }

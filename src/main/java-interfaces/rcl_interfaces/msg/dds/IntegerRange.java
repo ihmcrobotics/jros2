@@ -117,32 +117,32 @@ public class IntegerRange implements ROS2Message<IntegerRange>
 
    }
 
-   public long getfrom_value()
+   public long getFromValue()
    {
       return from_value_;
    }
 
-   public void setfrom_value(long from_value_)
+   public void setFromValue(long from_value_)
    {
       this.from_value_ = from_value_;
    }
 
-   public long getto_value()
+   public long getToValue()
    {
       return to_value_;
    }
 
-   public void setto_value(long to_value_)
+   public void setToValue(long to_value_)
    {
       this.to_value_ = to_value_;
    }
 
-   public long getstep()
+   public long getStep()
    {
       return step_;
    }
 
-   public void setstep(long step_)
+   public void setStep(long step_)
    {
       this.step_ = step_;
    }

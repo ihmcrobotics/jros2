@@ -92,12 +92,12 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
    }
 
-   public geometry_msgs.msg.dds.Twist gettwist()
+   public geometry_msgs.msg.dds.Twist getTwist()
    {
       return twist_;
    }
 
-   public double[] getcovariance()
+   public double[] getCovariance()
    {
       return covariance_;
    }

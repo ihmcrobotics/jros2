@@ -39,9 +39,9 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::FluidPressure_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private double fluid_pressure_;
-   private double variance_;
+   private final std_msgs.msg.dds.Header header_; // timestamp of the measurement
+   private double fluid_pressure_; // Absolute pressure reading in Pascals.
+   private double variance_; // 0 is interpreted as variance unknown
 
    public FluidPressure()
    {
@@ -88,27 +88,27 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public double getfluid_pressure()
+   public double getFluidPressure()
    {
       return fluid_pressure_;
    }
 
-   public void setfluid_pressure(double fluid_pressure_)
+   public void setFluidPressure(double fluid_pressure_)
    {
       this.fluid_pressure_ = fluid_pressure_;
    }
 
-   public double getvariance()
+   public double getVariance()
    {
       return variance_;
    }
 
-   public void setvariance(double variance_)
+   public void setVariance(double variance_)
    {
       this.variance_ = variance_;
    }

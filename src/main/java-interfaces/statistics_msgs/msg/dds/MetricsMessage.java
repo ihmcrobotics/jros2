@@ -154,32 +154,32 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
 
    }
 
-   public StringBuilder getmeasurement_source_name()
+   public StringBuilder getMeasurementSourceName()
    {
       return measurement_source_name_;
    }
 
-   public StringBuilder getmetrics_source()
+   public StringBuilder getMetricsSource()
    {
       return metrics_source_;
    }
 
-   public StringBuilder getunit()
+   public StringBuilder getUnit()
    {
       return unit_;
    }
 
-   public builtin_interfaces.msg.dds.Time getwindow_start()
+   public builtin_interfaces.msg.dds.Time getWindowStart()
    {
       return window_start_;
    }
 
-   public builtin_interfaces.msg.dds.Time getwindow_stop()
+   public builtin_interfaces.msg.dds.Time getWindowStop()
    {
       return window_stop_;
    }
 
-   public IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> getstatistics()
+   public IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> getStatistics()
    {
       return statistics_;
    }

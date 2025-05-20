@@ -69,12 +69,12 @@ public class Char implements ROS2Message<Char>
 
    }
 
-   public char getdata()
+   public char getData()
    {
       return data_;
    }
 
-   public void setdata(char data_)
+   public void setData(char data_)
    {
       this.data_ = data_;
    }

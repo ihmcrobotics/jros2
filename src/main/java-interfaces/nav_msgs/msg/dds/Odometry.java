@@ -110,22 +110,22 @@ public class Odometry implements ROS2Message<Odometry>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getchild_frame_id()
+   public StringBuilder getChildFrameId()
    {
       return child_frame_id_;
    }
 
-   public geometry_msgs.msg.dds.PoseWithCovariance getpose()
+   public geometry_msgs.msg.dds.PoseWithCovariance getPose()
    {
       return pose_;
    }
 
-   public geometry_msgs.msg.dds.TwistWithCovariance gettwist()
+   public geometry_msgs.msg.dds.TwistWithCovariance getTwist()
    {
       return twist_;
    }

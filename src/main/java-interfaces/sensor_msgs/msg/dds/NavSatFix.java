@@ -184,57 +184,57 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.NavSatStatus getstatus()
+   public sensor_msgs.msg.dds.NavSatStatus getStatus()
    {
       return status_;
    }
 
-   public double getlatitude()
+   public double getLatitude()
    {
       return latitude_;
    }
 
-   public void setlatitude(double latitude_)
+   public void setLatitude(double latitude_)
    {
       this.latitude_ = latitude_;
    }
 
-   public double getlongitude()
+   public double getLongitude()
    {
       return longitude_;
    }
 
-   public void setlongitude(double longitude_)
+   public void setLongitude(double longitude_)
    {
       this.longitude_ = longitude_;
    }
 
-   public double getaltitude()
+   public double getAltitude()
    {
       return altitude_;
    }
 
-   public void setaltitude(double altitude_)
+   public void setAltitude(double altitude_)
    {
       this.altitude_ = altitude_;
    }
 
-   public double[] getposition_covariance()
+   public double[] getPositionCovariance()
    {
       return position_covariance_;
    }
 
-   public byte getposition_covariance_type()
+   public byte getPositionCovarianceType()
    {
       return position_covariance_type_;
    }
 
-   public void setposition_covariance_type(byte position_covariance_type_)
+   public void setPositionCovarianceType(byte position_covariance_type_)
    {
       this.position_covariance_type_ = position_covariance_type_;
    }

@@ -37,7 +37,7 @@ public class <context.name> implements ROS2Message\<<context.name>>
    <field.headerComment>
 */
 <endif>
-<if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;
+<if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;<if(field.trailingComment)> // <field.trailingComment><endif>
    }>
    public <context.name>()
    {
@@ -46,7 +46,9 @@ public class <context.name> implements ROS2Message\<<context.name>>
       <if(field.array)>
 <field.javaName> = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>(<if(field.upperBounded)><field.length><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
       <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
-<field.javaName> = new <field.javaType>();
+<field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif>);
+      <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>
+<field.javaName> = <field.defaultValue>;
       <endif>
       <endif>
       }>
@@ -163,13 +165,13 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 <! Getters and setters start !>
    <context.fields: { field |
 <if(!field.constantValue)>
-public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> get<field.name>()
+public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaGetterMethodName>()
 {
    return <field.javaName>;
 \}
 
 <if(field.builtinType&&!field.builtinStringType&&!field.array)>
-public void set<field.name>(<field.javaType> <field.javaName>)
+public void <field.javaSetterMethodName>(<field.javaType> <field.javaName>)
 {
    this.<field.javaName> = <field.javaName>;
 \}

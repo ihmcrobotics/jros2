@@ -129,32 +129,32 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 
    }
 
-   public byte getlevel()
+   public byte getLevel()
    {
       return level_;
    }
 
-   public void setlevel(byte level_)
+   public void setLevel(byte level_)
    {
       this.level_ = level_;
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public StringBuilder getmessage()
+   public StringBuilder getMessage()
    {
       return message_;
    }
 
-   public StringBuilder gethardware_id()
+   public StringBuilder getHardwareId()
    {
       return hardware_id_;
    }
 
-   public IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> getvalues()
+   public IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> getValues()
    {
       return values_;
    }

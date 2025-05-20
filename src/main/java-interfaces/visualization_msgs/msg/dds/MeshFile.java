@@ -84,12 +84,12 @@ public class MeshFile implements ROS2Message<MeshFile>
 
    }
 
-   public StringBuilder getfilename()
+   public StringBuilder getFilename()
    {
       return filename_;
    }
 
-   public IDLByteSequence getdata()
+   public IDLByteSequence getData()
    {
       return data_;
    }

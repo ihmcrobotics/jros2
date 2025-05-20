@@ -57,23 +57,23 @@ public class LaserScan implements ROS2Message<LaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private float angle_min_;
-   private float angle_max_;
-   private float angle_increment_;
-   private float time_increment_;
+   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the acquisition time of
+   private float angle_min_; // start angle of the scan [rad]
+   private float angle_max_; // end angle of the scan [rad]
+   private float angle_increment_; // angular distance between measurements [rad]
+   private float time_increment_; // time between measurements [seconds] - if your scanner
    /**
       is moving, this will be used in interpolating position
       of 3d points
    */
-   private float scan_time_;
-   private float range_min_;
-   private float range_max_;
-   private final IDLFloatSequence ranges_;
+   private float scan_time_; // time between scans [seconds]
+   private float range_min_; // minimum range value [m]
+   private float range_max_; // maximum range value [m]
+   private final IDLFloatSequence ranges_; // range data [m]
    /**
       (Note: values < range_min or > range_max should be discarded)
    */
-   private final IDLFloatSequence intensities_;
+   private final IDLFloatSequence intensities_; // intensity data [device-specific units].  If your
 
    public LaserScan()
    {
@@ -150,87 +150,87 @@ public class LaserScan implements ROS2Message<LaserScan>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public float getangle_min()
+   public float getAngleMin()
    {
       return angle_min_;
    }
 
-   public void setangle_min(float angle_min_)
+   public void setAngleMin(float angle_min_)
    {
       this.angle_min_ = angle_min_;
    }
 
-   public float getangle_max()
+   public float getAngleMax()
    {
       return angle_max_;
    }
 
-   public void setangle_max(float angle_max_)
+   public void setAngleMax(float angle_max_)
    {
       this.angle_max_ = angle_max_;
    }
 
-   public float getangle_increment()
+   public float getAngleIncrement()
    {
       return angle_increment_;
    }
 
-   public void setangle_increment(float angle_increment_)
+   public void setAngleIncrement(float angle_increment_)
    {
       this.angle_increment_ = angle_increment_;
    }
 
-   public float gettime_increment()
+   public float getTimeIncrement()
    {
       return time_increment_;
    }
 
-   public void settime_increment(float time_increment_)
+   public void setTimeIncrement(float time_increment_)
    {
       this.time_increment_ = time_increment_;
    }
 
-   public float getscan_time()
+   public float getScanTime()
    {
       return scan_time_;
    }
 
-   public void setscan_time(float scan_time_)
+   public void setScanTime(float scan_time_)
    {
       this.scan_time_ = scan_time_;
    }
 
-   public float getrange_min()
+   public float getRangeMin()
    {
       return range_min_;
    }
 
-   public void setrange_min(float range_min_)
+   public void setRangeMin(float range_min_)
    {
       this.range_min_ = range_min_;
    }
 
-   public float getrange_max()
+   public float getRangeMax()
    {
       return range_max_;
    }
 
-   public void setrange_max(float range_max_)
+   public void setRangeMax(float range_max_)
    {
       this.range_max_ = range_max_;
    }
 
-   public IDLFloatSequence getranges()
+   public IDLFloatSequence getRanges()
    {
       return ranges_;
    }
 
-   public IDLFloatSequence getintensities()
+   public IDLFloatSequence getIntensities()
    {
       return intensities_;
    }

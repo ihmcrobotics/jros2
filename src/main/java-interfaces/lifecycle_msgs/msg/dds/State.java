@@ -186,17 +186,17 @@ public class State implements ROS2Message<State>
 
    }
 
-   public byte getid()
+   public byte getId()
    {
       return id_;
    }
 
-   public void setid(byte id_)
+   public void setId(byte id_)
    {
       this.id_ = id_;
    }
 
-   public StringBuilder getlabel()
+   public StringBuilder getLabel()
    {
       return label_;
    }

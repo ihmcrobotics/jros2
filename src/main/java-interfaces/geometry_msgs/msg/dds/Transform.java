@@ -72,12 +72,12 @@ public class Transform implements ROS2Message<Transform>
 
    }
 
-   public geometry_msgs.msg.dds.Vector3 gettranslation()
+   public geometry_msgs.msg.dds.Vector3 getTranslation()
    {
       return translation_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getrotation()
+   public geometry_msgs.msg.dds.Quaternion getRotation()
    {
       return rotation_;
    }

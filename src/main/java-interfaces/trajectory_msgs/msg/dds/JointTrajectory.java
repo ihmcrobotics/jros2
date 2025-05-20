@@ -94,17 +94,17 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLStringSequence getjoint_names()
+   public IDLStringSequence getJointNames()
    {
       return joint_names_;
    }
 
-   public IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint> getpoints()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint> getPoints()
    {
       return points_;
    }

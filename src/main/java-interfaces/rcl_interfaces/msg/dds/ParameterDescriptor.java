@@ -101,6 +101,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       name_ = new StringBuilder();
       description_ = new StringBuilder();
       additional_constraints_ = new StringBuilder();
+      read_only_ = false;
+      dynamic_typing_ = false;
       floating_point_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange>(1, rcl_interfaces.msg.dds.FloatingPointRange.class);
       integer_range_ = new IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange>(1, rcl_interfaces.msg.dds.IntegerRange.class);
 
@@ -168,57 +170,57 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
 
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public byte gettype()
+   public byte getType()
    {
       return type_;
    }
 
-   public void settype(byte type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }
 
-   public StringBuilder getdescription()
+   public StringBuilder getDescription()
    {
       return description_;
    }
 
-   public StringBuilder getadditional_constraints()
+   public StringBuilder getAdditionalConstraints()
    {
       return additional_constraints_;
    }
 
-   public boolean getread_only()
+   public boolean getReadOnly()
    {
       return read_only_;
    }
 
-   public void setread_only(boolean read_only_)
+   public void setReadOnly(boolean read_only_)
    {
       this.read_only_ = read_only_;
    }
 
-   public boolean getdynamic_typing()
+   public boolean getDynamicTyping()
    {
       return dynamic_typing_;
    }
 
-   public void setdynamic_typing(boolean dynamic_typing_)
+   public void setDynamicTyping(boolean dynamic_typing_)
    {
       this.dynamic_typing_ = dynamic_typing_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange> getfloating_point_range()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange> getFloatingPointRange()
    {
       return floating_point_range_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange> getinteger_range()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange> getIntegerRange()
    {
       return integer_range_;
    }

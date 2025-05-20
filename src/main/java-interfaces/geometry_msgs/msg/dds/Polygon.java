@@ -65,7 +65,7 @@ public class Polygon implements ROS2Message<Polygon>
 
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getPoints()
    {
       return points_;
    }

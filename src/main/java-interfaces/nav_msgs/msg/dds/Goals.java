@@ -89,12 +89,12 @@ public class Goals implements ROS2Message<Goals>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getgoals()
+   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getGoals()
    {
       return goals_;
    }

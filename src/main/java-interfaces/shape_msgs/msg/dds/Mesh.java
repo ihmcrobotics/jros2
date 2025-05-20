@@ -81,12 +81,12 @@ public class Mesh implements ROS2Message<Mesh>
 
    }
 
-   public IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> gettriangles()
+   public IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> getTriangles()
    {
       return triangles_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getvertices()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getVertices()
    {
       return vertices_;
    }

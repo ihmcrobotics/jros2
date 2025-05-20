@@ -45,37 +45,37 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 
    private final actionlib_msgs.msg.dds.GoalID goal_id_;
    private byte status_;
-   public static final byte PENDING = 0;
-   public static final byte ACTIVE = 1;
-   public static final byte PREEMPTED = 2;
+   public static final byte PENDING = 0; // The goal has yet to be processed by the action server.
+   public static final byte ACTIVE = 1; // The goal is currently being processed by the action server.
+   public static final byte PREEMPTED = 2; // The goal received a cancel request after it started executing
    /**
       and has since completed its execution (Terminal State).
    */
-   public static final byte SUCCEEDED = 3;
+   public static final byte SUCCEEDED = 3; // The goal was achieved successfully by the action server
    /**
       (Terminal State).
    */
-   public static final byte ABORTED = 4;
+   public static final byte ABORTED = 4; // The goal was aborted during execution by the action server due
    /**
       to some failure (Terminal State).
    */
-   public static final byte REJECTED = 5;
+   public static final byte REJECTED = 5; // The goal was rejected by the action server without being processed,
    /**
       because the goal was unattainable or invalid (Terminal State).
    */
-   public static final byte PREEMPTING = 6;
+   public static final byte PREEMPTING = 6; // The goal received a cancel request after it started executing
    /**
       and has not yet completed execution.
    */
-   public static final byte RECALLING = 7;
+   public static final byte RECALLING = 7; // The goal received a cancel request before it started executing, but
    /**
       the action server has not yet confirmed that the goal is canceled.
    */
-   public static final byte RECALLED = 8;
+   public static final byte RECALLED = 8; // The goal received a cancel request before it started executing
    /**
       and was successfully cancelled (Terminal State).
    */
-   public static final byte LOST = 9;
+   public static final byte LOST = 9; // An action client can determine that a goal is LOST. This should not
    /**
       Allow for the user to associate a string with GoalStatus for debugging.
    */
@@ -128,22 +128,22 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 
    }
 
-   public actionlib_msgs.msg.dds.GoalID getgoal_id()
+   public actionlib_msgs.msg.dds.GoalID getGoalId()
    {
       return goal_id_;
    }
 
-   public byte getstatus()
+   public byte getStatus()
    {
       return status_;
    }
 
-   public void setstatus(byte status_)
+   public void setStatus(byte status_)
    {
       this.status_ = status_;
    }
 
-   public StringBuilder gettext()
+   public StringBuilder getText()
    {
       return text_;
    }

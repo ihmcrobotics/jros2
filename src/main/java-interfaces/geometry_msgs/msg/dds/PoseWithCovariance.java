@@ -92,12 +92,12 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
 
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public double[] getcovariance()
+   public double[] getCovariance()
    {
       return covariance_;
    }

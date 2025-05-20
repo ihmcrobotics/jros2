@@ -29,7 +29,7 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserEcho_";
 
-   private final IDLFloatSequence echoes_;
+   private final IDLFloatSequence echoes_; // Multiple values of ranges or intensities.
 
    public LaserEcho()
    {
@@ -68,7 +68,7 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 
    }
 
-   public IDLFloatSequence getechoes()
+   public IDLFloatSequence getEchoes()
    {
       return echoes_;
    }

@@ -130,27 +130,27 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLStringSequence getjoint_names()
+   public IDLStringSequence getJointNames()
    {
       return joint_names_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> gettransforms()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> getTransforms()
    {
       return transforms_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> gettwist()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getTwist()
    {
       return twist_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Wrench> getwrench()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Wrench> getWrench()
    {
       return wrench_;
    }

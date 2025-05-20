@@ -77,12 +77,12 @@ public class KeyValue implements ROS2Message<KeyValue>
 
    }
 
-   public StringBuilder getkey()
+   public StringBuilder getKey()
    {
       return key_;
    }
 
-   public StringBuilder getvalue()
+   public StringBuilder getValue()
    {
       return value_;
    }

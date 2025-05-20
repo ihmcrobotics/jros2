@@ -73,12 +73,12 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<actionlib_msgs.msg.dds.GoalStatus> getstatus_list()
+   public IDLObjectSequence<actionlib_msgs.msg.dds.GoalStatus> getStatusList()
    {
       return status_list_;
    }

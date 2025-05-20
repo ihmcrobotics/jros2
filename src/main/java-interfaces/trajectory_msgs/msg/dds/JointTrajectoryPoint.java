@@ -137,27 +137,27 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
 
    }
 
-   public IDLDoubleSequence getpositions()
+   public IDLDoubleSequence getPositions()
    {
       return positions_;
    }
 
-   public IDLDoubleSequence getvelocities()
+   public IDLDoubleSequence getVelocities()
    {
       return velocities_;
    }
 
-   public IDLDoubleSequence getaccelerations()
+   public IDLDoubleSequence getAccelerations()
    {
       return accelerations_;
    }
 
-   public IDLDoubleSequence geteffort()
+   public IDLDoubleSequence getEffort()
    {
       return effort_;
    }
 
-   public builtin_interfaces.msg.dds.Duration gettime_from_start()
+   public builtin_interfaces.msg.dds.Duration getTimeFromStart()
    {
       return time_from_start_;
    }

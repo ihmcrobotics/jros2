@@ -86,12 +86,12 @@ public class Header implements ROS2Message<Header>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getstamp()
+   public builtin_interfaces.msg.dds.Time getStamp()
    {
       return stamp_;
    }
 
-   public StringBuilder getframe_id()
+   public StringBuilder getFrameId()
    {
       return frame_id_;
    }

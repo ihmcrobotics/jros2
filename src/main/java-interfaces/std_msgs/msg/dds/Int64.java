@@ -69,12 +69,12 @@ public class Int64 implements ROS2Message<Int64>
 
    }
 
-   public long getdata()
+   public long getData()
    {
       return data_;
    }
 
-   public void setdata(long data_)
+   public void setData(long data_)
    {
       this.data_ = data_;
    }

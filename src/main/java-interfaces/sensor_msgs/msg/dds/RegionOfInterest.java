@@ -47,16 +47,16 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
 
-   private int x_offset_;
+   private int x_offset_; // Leftmost pixel of the ROI
    /**
       (0 if the ROI includes the left edge of the image)
    */
-   private int y_offset_;
+   private int y_offset_; // Topmost pixel of the ROI
    /**
       (0 if the ROI includes the top edge of the image)
    */
-   private int height_;
-   private int width_;
+   private int height_; // Height of ROI
+   private int width_; // Width of ROI
    /**
       True if a distinct rectified ROI should be calculated from the "raw"
       ROI in this message. Typically this should be False if the full image
@@ -116,52 +116,52 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    }
 
-   public int getx_offset()
+   public int getXOffset()
    {
       return x_offset_;
    }
 
-   public void setx_offset(int x_offset_)
+   public void setXOffset(int x_offset_)
    {
       this.x_offset_ = x_offset_;
    }
 
-   public int gety_offset()
+   public int getYOffset()
    {
       return y_offset_;
    }
 
-   public void sety_offset(int y_offset_)
+   public void setYOffset(int y_offset_)
    {
       this.y_offset_ = y_offset_;
    }
 
-   public int getheight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setheight(int height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public int getwidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setwidth(int width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public boolean getdo_rectify()
+   public boolean getDoRectify()
    {
       return do_rectify_;
    }
 
-   public void setdo_rectify(boolean do_rectify_)
+   public void setDoRectify(boolean do_rectify_)
    {
       this.do_rectify_ = do_rectify_;
    }

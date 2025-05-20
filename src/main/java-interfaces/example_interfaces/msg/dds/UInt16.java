@@ -68,12 +68,12 @@ public class UInt16 implements ROS2Message<UInt16>
 
    }
 
-   public short getdata()
+   public short getData()
    {
       return data_;
    }
 
-   public void setdata(short data_)
+   public void setData(short data_)
    {
       this.data_ = data_;
    }

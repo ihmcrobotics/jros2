@@ -83,17 +83,17 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
 
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getnew_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getNewParameters()
    {
       return new_parameters_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getchanged_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getChangedParameters()
    {
       return changed_parameters_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getdeleted_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getDeletedParameters()
    {
       return deleted_parameters_;
    }

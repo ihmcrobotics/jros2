@@ -70,22 +70,22 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
 
    }
 
-   public float getu()
+   public float getU()
    {
       return u_;
    }
 
-   public void setu(float u_)
+   public void setU(float u_)
    {
       this.u_ = u_;
    }
 
-   public float getv()
+   public float getV()
    {
       return v_;
    }
 
-   public void setv(float v_)
+   public void setV(float v_)
    {
       this.v_ = v_;
    }

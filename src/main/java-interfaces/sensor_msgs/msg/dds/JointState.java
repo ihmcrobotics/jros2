@@ -128,27 +128,27 @@ public class JointState implements ROS2Message<JointState>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLStringSequence getname()
+   public IDLStringSequence getName()
    {
       return name_;
    }
 
-   public IDLDoubleSequence getposition()
+   public IDLDoubleSequence getPosition()
    {
       return position_;
    }
 
-   public IDLDoubleSequence getvelocity()
+   public IDLDoubleSequence getVelocity()
    {
       return velocity_;
    }
 
-   public IDLDoubleSequence geteffort()
+   public IDLDoubleSequence getEffort()
    {
       return effort_;
    }

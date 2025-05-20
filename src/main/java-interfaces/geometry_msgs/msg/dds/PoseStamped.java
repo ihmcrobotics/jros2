@@ -72,12 +72,12 @@ public class PoseStamped implements ROS2Message<PoseStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }

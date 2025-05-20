@@ -72,7 +72,7 @@ public class String implements ROS2Message<String>
 
    }
 
-   public StringBuilder getdata()
+   public StringBuilder getData()
    {
       return data_;
    }

@@ -116,42 +116,42 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getmap_load_time()
+   public builtin_interfaces.msg.dds.Time getMapLoadTime()
    {
       return map_load_time_;
    }
 
-   public float getresolution()
+   public float getResolution()
    {
       return resolution_;
    }
 
-   public void setresolution(float resolution_)
+   public void setResolution(float resolution_)
    {
       this.resolution_ = resolution_;
    }
 
-   public int getwidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setwidth(int width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public int getheight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setheight(int height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public geometry_msgs.msg.dds.Pose getorigin()
+   public geometry_msgs.msg.dds.Pose getOrigin()
    {
       return origin_;
    }

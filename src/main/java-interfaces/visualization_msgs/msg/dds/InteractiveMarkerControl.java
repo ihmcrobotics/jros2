@@ -249,62 +249,62 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
 
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getorientation()
+   public geometry_msgs.msg.dds.Quaternion getOrientation()
    {
       return orientation_;
    }
 
-   public byte getorientation_mode()
+   public byte getOrientationMode()
    {
       return orientation_mode_;
    }
 
-   public void setorientation_mode(byte orientation_mode_)
+   public void setOrientationMode(byte orientation_mode_)
    {
       this.orientation_mode_ = orientation_mode_;
    }
 
-   public byte getinteraction_mode()
+   public byte getInteractionMode()
    {
       return interaction_mode_;
    }
 
-   public void setinteraction_mode(byte interaction_mode_)
+   public void setInteractionMode(byte interaction_mode_)
    {
       this.interaction_mode_ = interaction_mode_;
    }
 
-   public boolean getalways_visible()
+   public boolean getAlwaysVisible()
    {
       return always_visible_;
    }
 
-   public void setalways_visible(boolean always_visible_)
+   public void setAlwaysVisible(boolean always_visible_)
    {
       this.always_visible_ = always_visible_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getMarkers()
    {
       return markers_;
    }
 
-   public boolean getindependent_marker_orientation()
+   public boolean getIndependentMarkerOrientation()
    {
       return independent_marker_orientation_;
    }
 
-   public void setindependent_marker_orientation(boolean independent_marker_orientation_)
+   public void setIndependentMarkerOrientation(boolean independent_marker_orientation_)
    {
       this.independent_marker_orientation_ = independent_marker_orientation_;
    }
 
-   public StringBuilder getdescription()
+   public StringBuilder getDescription()
    {
       return description_;
    }

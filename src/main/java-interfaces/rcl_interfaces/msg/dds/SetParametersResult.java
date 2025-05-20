@@ -80,17 +80,17 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
 
    }
 
-   public boolean getsuccessful()
+   public boolean getSuccessful()
    {
       return successful_;
    }
 
-   public void setsuccessful(boolean successful_)
+   public void setSuccessful(boolean successful_)
    {
       this.successful_ = successful_;
    }
 
-   public StringBuilder getreason()
+   public StringBuilder getReason()
    {
       return reason_;
    }

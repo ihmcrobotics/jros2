@@ -68,12 +68,12 @@ public class Bool implements ROS2Message<Bool>
 
    }
 
-   public boolean getdata()
+   public boolean getData()
    {
       return data_;
    }
 
-   public void setdata(boolean data_)
+   public void setData(boolean data_)
    {
       this.data_ = data_;
    }

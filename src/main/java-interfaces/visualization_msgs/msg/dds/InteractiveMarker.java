@@ -149,42 +149,42 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public StringBuilder getdescription()
+   public StringBuilder getDescription()
    {
       return description_;
    }
 
-   public float getscale()
+   public float getScale()
    {
       return scale_;
    }
 
-   public void setscale(float scale_)
+   public void setScale(float scale_)
    {
       this.scale_ = scale_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry> getmenu_entries()
+   public IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry> getMenuEntries()
    {
       return menu_entries_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl> getcontrols()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl> getControls()
    {
       return controls_;
    }

@@ -192,42 +192,42 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
    }
 
-   public int getid()
+   public int getId()
    {
       return id_;
    }
 
-   public void setid(int id_)
+   public void setId(int id_)
    {
       this.id_ = id_;
    }
 
-   public int getparent_id()
+   public int getParentId()
    {
       return parent_id_;
    }
 
-   public void setparent_id(int parent_id_)
+   public void setParentId(int parent_id_)
    {
       this.parent_id_ = parent_id_;
    }
 
-   public StringBuilder gettitle()
+   public StringBuilder getTitle()
    {
       return title_;
    }
 
-   public StringBuilder getcommand()
+   public StringBuilder getCommand()
    {
       return command_;
    }
 
-   public byte getcommand_type()
+   public byte getCommandType()
    {
       return command_type_;
    }
 
-   public void setcommand_type(byte command_type_)
+   public void setCommandType(byte command_type_)
    {
       this.command_type_ = command_type_;
    }

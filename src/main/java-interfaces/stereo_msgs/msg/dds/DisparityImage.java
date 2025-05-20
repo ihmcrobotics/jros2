@@ -63,8 +63,8 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    /**
       Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
-   private float f_;
-   private float t_;
+   private float f_; // Focal length, pixels
+   private float t_; // Baseline, world units
    /**
       Subwindow of (potentially) valid disparity values.
    */
@@ -153,67 +153,67 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.Image getimage()
+   public sensor_msgs.msg.dds.Image getImage()
    {
       return image_;
    }
 
-   public float getf()
+   public float getF()
    {
       return f_;
    }
 
-   public void setf(float f_)
+   public void setF(float f_)
    {
       this.f_ = f_;
    }
 
-   public float gett()
+   public float getT()
    {
       return t_;
    }
 
-   public void sett(float t_)
+   public void setT(float t_)
    {
       this.t_ = t_;
    }
 
-   public sensor_msgs.msg.dds.RegionOfInterest getvalid_window()
+   public sensor_msgs.msg.dds.RegionOfInterest getValidWindow()
    {
       return valid_window_;
    }
 
-   public float getmin_disparity()
+   public float getMinDisparity()
    {
       return min_disparity_;
    }
 
-   public void setmin_disparity(float min_disparity_)
+   public void setMinDisparity(float min_disparity_)
    {
       this.min_disparity_ = min_disparity_;
    }
 
-   public float getmax_disparity()
+   public float getMaxDisparity()
    {
       return max_disparity_;
    }
 
-   public void setmax_disparity(float max_disparity_)
+   public void setMaxDisparity(float max_disparity_)
    {
       this.max_disparity_ = max_disparity_;
    }
 
-   public float getdelta_d()
+   public float getDeltaD()
    {
       return delta_d_;
    }
 
-   public void setdelta_d(float delta_d_)
+   public void setDeltaD(float delta_d_)
    {
       this.delta_d_ = delta_d_;
    }

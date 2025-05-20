@@ -104,17 +104,17 @@ public class PointCloud implements ROS2Message<PointCloud>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getPoints()
    {
       return points_;
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.ChannelFloat32> getchannels()
+   public IDLObjectSequence<sensor_msgs.msg.dds.ChannelFloat32> getChannels()
    {
       return channels_;
    }

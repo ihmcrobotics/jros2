@@ -55,9 +55,9 @@ public class Illuminance implements ROS2Message<Illuminance>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private double illuminance_;
-   private double variance_;
+   private final std_msgs.msg.dds.Header header_; // timestamp is the time the illuminance was measured
+   private double illuminance_; // Measurement of the Photometric Illuminance in Lux.
+   private double variance_; // 0 is interpreted as variance unknown
 
    public Illuminance()
    {
@@ -104,27 +104,27 @@ public class Illuminance implements ROS2Message<Illuminance>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public double getilluminance()
+   public double getIlluminance()
    {
       return illuminance_;
    }
 
-   public void setilluminance(double illuminance_)
+   public void setIlluminance(double illuminance_)
    {
       this.illuminance_ = illuminance_;
    }
 
-   public double getvariance()
+   public double getVariance()
    {
       return variance_;
    }
 
-   public void setvariance(double variance_)
+   public void setVariance(double variance_)
    {
       this.variance_ = variance_;
    }

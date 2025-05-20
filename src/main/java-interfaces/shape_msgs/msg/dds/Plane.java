@@ -83,7 +83,7 @@ public class Plane implements ROS2Message<Plane>
 
    }
 
-   public double[] getcoef()
+   public double[] getCoef()
    {
       return coef_;
    }

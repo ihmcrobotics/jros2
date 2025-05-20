@@ -72,12 +72,12 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Polygon getpolygon()
+   public geometry_msgs.msg.dds.Polygon getPolygon()
    {
       return polygon_;
    }

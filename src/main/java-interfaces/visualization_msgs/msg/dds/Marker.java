@@ -336,122 +336,122 @@ public class Marker implements ROS2Message<Marker>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getns()
+   public StringBuilder getNs()
    {
       return ns_;
    }
 
-   public int getid()
+   public int getId()
    {
       return id_;
    }
 
-   public void setid(int id_)
+   public void setId(int id_)
    {
       this.id_ = id_;
    }
 
-   public int gettype()
+   public int getType()
    {
       return type_;
    }
 
-   public void settype(int type_)
+   public void setType(int type_)
    {
       this.type_ = type_;
    }
 
-   public int getaction()
+   public int getAction()
    {
       return action_;
    }
 
-   public void setaction(int action_)
+   public void setAction(int action_)
    {
       this.action_ = action_;
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getscale()
+   public geometry_msgs.msg.dds.Vector3 getScale()
    {
       return scale_;
    }
 
-   public std_msgs.msg.dds.ColorRGBA getcolor()
+   public std_msgs.msg.dds.ColorRGBA getColor()
    {
       return color_;
    }
 
-   public builtin_interfaces.msg.dds.Duration getlifetime()
+   public builtin_interfaces.msg.dds.Duration getLifetime()
    {
       return lifetime_;
    }
 
-   public boolean getframe_locked()
+   public boolean getFrameLocked()
    {
       return frame_locked_;
    }
 
-   public void setframe_locked(boolean frame_locked_)
+   public void setFrameLocked(boolean frame_locked_)
    {
       this.frame_locked_ = frame_locked_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getPoints()
    {
       return points_;
    }
 
-   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getcolors()
+   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getColors()
    {
       return colors_;
    }
 
-   public StringBuilder gettexture_resource()
+   public StringBuilder getTextureResource()
    {
       return texture_resource_;
    }
 
-   public sensor_msgs.msg.dds.CompressedImage gettexture()
+   public sensor_msgs.msg.dds.CompressedImage getTexture()
    {
       return texture_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate> getuv_coordinates()
+   public IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate> getUvCoordinates()
    {
       return uv_coordinates_;
    }
 
-   public StringBuilder gettext()
+   public StringBuilder getText()
    {
       return text_;
    }
 
-   public StringBuilder getmesh_resource()
+   public StringBuilder getMeshResource()
    {
       return mesh_resource_;
    }
 
-   public visualization_msgs.msg.dds.MeshFile getmesh_file()
+   public visualization_msgs.msg.dds.MeshFile getMeshFile()
    {
       return mesh_file_;
    }
 
-   public boolean getmesh_use_embedded_materials()
+   public boolean getMeshUseEmbeddedMaterials()
    {
       return mesh_use_embedded_materials_;
    }
 
-   public void setmesh_use_embedded_materials(boolean mesh_use_embedded_materials_)
+   public void setMeshUseEmbeddedMaterials(boolean mesh_use_embedded_materials_)
    {
       this.mesh_use_embedded_materials_ = mesh_use_embedded_materials_;
    }

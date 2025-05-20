@@ -72,12 +72,12 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Wrench getwrench()
+   public geometry_msgs.msg.dds.Wrench getWrench()
    {
       return wrench_;
    }

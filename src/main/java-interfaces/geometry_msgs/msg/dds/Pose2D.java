@@ -80,32 +80,32 @@ public class Pose2D implements ROS2Message<Pose2D>
 
    }
 
-   public double getx()
+   public double getX()
    {
       return x_;
    }
 
-   public void setx(double x_)
+   public void setX(double x_)
    {
       this.x_ = x_;
    }
 
-   public double gety()
+   public double getY()
    {
       return y_;
    }
 
-   public void sety(double y_)
+   public void setY(double y_)
    {
       this.y_ = y_;
    }
 
-   public double gettheta()
+   public double getTheta()
    {
       return theta_;
    }
 
-   public void settheta(double theta_)
+   public void setTheta(double theta_)
    {
       this.theta_ = theta_;
    }

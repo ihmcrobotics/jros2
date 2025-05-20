@@ -207,92 +207,92 @@ public class ImageMarker implements ROS2Message<ImageMarker>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getns()
+   public StringBuilder getNs()
    {
       return ns_;
    }
 
-   public int getid()
+   public int getId()
    {
       return id_;
    }
 
-   public void setid(int id_)
+   public void setId(int id_)
    {
       this.id_ = id_;
    }
 
-   public int gettype()
+   public int getType()
    {
       return type_;
    }
 
-   public void settype(int type_)
+   public void setType(int type_)
    {
       this.type_ = type_;
    }
 
-   public int getaction()
+   public int getAction()
    {
       return action_;
    }
 
-   public void setaction(int action_)
+   public void setAction(int action_)
    {
       this.action_ = action_;
    }
 
-   public geometry_msgs.msg.dds.Point getposition()
+   public geometry_msgs.msg.dds.Point getPosition()
    {
       return position_;
    }
 
-   public float getscale()
+   public float getScale()
    {
       return scale_;
    }
 
-   public void setscale(float scale_)
+   public void setScale(float scale_)
    {
       this.scale_ = scale_;
    }
 
-   public std_msgs.msg.dds.ColorRGBA getoutline_color()
+   public std_msgs.msg.dds.ColorRGBA getOutlineColor()
    {
       return outline_color_;
    }
 
-   public byte getfilled()
+   public byte getFilled()
    {
       return filled_;
    }
 
-   public void setfilled(byte filled_)
+   public void setFilled(byte filled_)
    {
       this.filled_ = filled_;
    }
 
-   public std_msgs.msg.dds.ColorRGBA getfill_color()
+   public std_msgs.msg.dds.ColorRGBA getFillColor()
    {
       return fill_color_;
    }
 
-   public builtin_interfaces.msg.dds.Duration getlifetime()
+   public builtin_interfaces.msg.dds.Duration getLifetime()
    {
       return lifetime_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getpoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getPoints()
    {
       return points_;
    }
 
-   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getoutline_colors()
+   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getOutlineColors()
    {
       return outline_colors_;
    }

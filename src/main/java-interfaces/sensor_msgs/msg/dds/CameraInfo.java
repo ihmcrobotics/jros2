@@ -159,7 +159,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    /**
       Time of image acquisition, camera coordinate frame ID
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
    /**
       The image dimensions with which the camera was calibrated.
       Normally this will be the full camera resolution in pixels.
@@ -203,7 +203,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       y = v / w
       This holds for both images of a stereo pair.
    */
-   private final double[] p_;
+   private final double[] p_; // 3x4 row-major matrix
    /**
       Binning refers here to any camera setting which combines rectangular
       neighborhoods of pixels into larger "super-pixels." It reduces the
@@ -307,67 +307,67 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public int getheight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setheight(int height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public int getwidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setwidth(int width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public StringBuilder getdistortion_model()
+   public StringBuilder getDistortionModel()
    {
       return distortion_model_;
    }
 
-   public IDLDoubleSequence getd()
+   public IDLDoubleSequence getD()
    {
       return d_;
    }
 
-   public double[] getp()
+   public double[] getP()
    {
       return p_;
    }
 
-   public int getbinning_x()
+   public int getBinningX()
    {
       return binning_x_;
    }
 
-   public void setbinning_x(int binning_x_)
+   public void setBinningX(int binning_x_)
    {
       this.binning_x_ = binning_x_;
    }
 
-   public int getbinning_y()
+   public int getBinningY()
    {
       return binning_y_;
    }
 
-   public void setbinning_y(int binning_y_)
+   public void setBinningY(int binning_y_)
    {
       this.binning_y_ = binning_y_;
    }
 
-   public sensor_msgs.msg.dds.RegionOfInterest getroi()
+   public sensor_msgs.msg.dds.RegionOfInterest getRoi()
    {
       return roi_;
    }

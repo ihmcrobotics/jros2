@@ -60,7 +60,7 @@ public class MarkerArray implements ROS2Message<MarkerArray>
 
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.Marker> getMarkers()
    {
       return markers_;
    }

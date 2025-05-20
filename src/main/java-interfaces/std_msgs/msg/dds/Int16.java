@@ -69,12 +69,12 @@ public class Int16 implements ROS2Message<Int16>
 
    }
 
-   public short getdata()
+   public short getData()
    {
       return data_;
    }
 
-   public void setdata(short data_)
+   public void setData(short data_)
    {
       this.data_ = data_;
    }

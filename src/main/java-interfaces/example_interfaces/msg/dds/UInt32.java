@@ -68,12 +68,12 @@ public class UInt32 implements ROS2Message<UInt32>
 
    }
 
-   public int getdata()
+   public int getData()
    {
       return data_;
    }
 
-   public void setdata(int data_)
+   public void setData(int data_)
    {
       this.data_ = data_;
    }

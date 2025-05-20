@@ -100,22 +100,22 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
 
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> gettransforms()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> getTransforms()
    {
       return transforms_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getvelocities()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getVelocities()
    {
       return velocities_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getaccelerations()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getAccelerations()
    {
       return accelerations_;
    }
 
-   public builtin_interfaces.msg.dds.Duration gettime_from_start()
+   public builtin_interfaces.msg.dds.Duration getTimeFromStart()
    {
       return time_from_start_;
    }

@@ -94,17 +94,17 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }

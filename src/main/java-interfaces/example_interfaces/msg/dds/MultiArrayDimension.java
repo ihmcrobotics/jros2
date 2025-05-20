@@ -32,9 +32,9 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 {
    public static final java.lang.String name = "example_interfaces::msg::dds_::MultiArrayDimension_";
 
-   private final StringBuilder label_;
-   private int size_;
-   private int stride_;
+   private final StringBuilder label_; // label of given dimension
+   private int size_; // size of given dimension (in type units)
+   private int stride_; // stride of given dimension
 
    public MultiArrayDimension()
    {
@@ -82,27 +82,27 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 
    }
 
-   public StringBuilder getlabel()
+   public StringBuilder getLabel()
    {
       return label_;
    }
 
-   public int getsize()
+   public int getSize()
    {
       return size_;
    }
 
-   public void setsize(int size_)
+   public void setSize(int size_)
    {
       this.size_ = size_;
    }
 
-   public int getstride()
+   public int getStride()
    {
       return stride_;
    }
 
-   public void setstride(int stride_)
+   public void setStride(int stride_)
    {
       this.stride_ = stride_;
    }

@@ -208,47 +208,47 @@ public class Log implements ROS2Message<Log>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getstamp()
+   public builtin_interfaces.msg.dds.Time getStamp()
    {
       return stamp_;
    }
 
-   public byte getlevel()
+   public byte getLevel()
    {
       return level_;
    }
 
-   public void setlevel(byte level_)
+   public void setLevel(byte level_)
    {
       this.level_ = level_;
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public StringBuilder getmsg()
+   public StringBuilder getMsg()
    {
       return msg_;
    }
 
-   public StringBuilder getfile()
+   public StringBuilder getFile()
    {
       return file_;
    }
 
-   public StringBuilder getfunction()
+   public StringBuilder getFunction()
    {
       return function_;
    }
 
-   public int getline()
+   public int getLine()
    {
       return line_;
    }
 
-   public void setline(int line_)
+   public void setLine(int line_)
    {
       this.line_ = line_;
    }

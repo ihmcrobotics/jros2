@@ -122,27 +122,27 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getstamp()
+   public builtin_interfaces.msg.dds.Time getStamp()
    {
       return stamp_;
    }
 
-   public StringBuilder getnode()
+   public StringBuilder getNode()
    {
       return node_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getnew_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getNewParameters()
    {
       return new_parameters_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getchanged_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getChangedParameters()
    {
       return changed_parameters_;
    }
 
-   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getdeleted_parameters()
+   public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getDeletedParameters()
    {
       return deleted_parameters_;
    }

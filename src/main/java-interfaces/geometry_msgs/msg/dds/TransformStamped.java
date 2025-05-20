@@ -112,17 +112,17 @@ public class TransformStamped implements ROS2Message<TransformStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getchild_frame_id()
+   public StringBuilder getChildFrameId()
    {
       return child_frame_id_;
    }
 
-   public geometry_msgs.msg.dds.Transform gettransform()
+   public geometry_msgs.msg.dds.Transform getTransform()
    {
       return transform_;
    }

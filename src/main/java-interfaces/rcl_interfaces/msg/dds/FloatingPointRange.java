@@ -125,32 +125,32 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
 
    }
 
-   public double getfrom_value()
+   public double getFromValue()
    {
       return from_value_;
    }
 
-   public void setfrom_value(double from_value_)
+   public void setFromValue(double from_value_)
    {
       this.from_value_ = from_value_;
    }
 
-   public double getto_value()
+   public double getToValue()
    {
       return to_value_;
    }
 
-   public void setto_value(double to_value_)
+   public void setToValue(double to_value_)
    {
       this.to_value_ = to_value_;
    }
 
-   public double getstep()
+   public double getStep()
    {
       return step_;
    }
 
-   public void setstep(double step_)
+   public void setStep(double step_)
    {
       this.step_ = step_;
    }

@@ -70,8 +70,8 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
-   private final IDLByteSequence data_;
-   private boolean is_dense_;
+   private final IDLByteSequence data_; // Actual point data, size is (row_step*height)
+   private boolean is_dense_; // True if there are no invalid points
 
    public PointCloud2()
    {
@@ -132,47 +132,47 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public int getheight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setheight(int height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public int getwidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setwidth(int width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.PointField> getfields()
+   public IDLObjectSequence<sensor_msgs.msg.dds.PointField> getFields()
    {
       return fields_;
    }
 
-   public IDLByteSequence getdata()
+   public IDLByteSequence getData()
    {
       return data_;
    }
 
-   public boolean getis_dense()
+   public boolean getIsDense()
    {
       return is_dense_;
    }
 
-   public void setis_dense(boolean is_dense_)
+   public void setIsDense(boolean is_dense_)
    {
       this.is_dense_ = is_dense_;
    }

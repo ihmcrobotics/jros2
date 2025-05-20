@@ -72,12 +72,12 @@ public class Pose implements ROS2Message<Pose>
 
    }
 
-   public geometry_msgs.msg.dds.Point getposition()
+   public geometry_msgs.msg.dds.Point getPosition()
    {
       return position_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getorientation()
+   public geometry_msgs.msg.dds.Quaternion getOrientation()
    {
       return orientation_;
    }

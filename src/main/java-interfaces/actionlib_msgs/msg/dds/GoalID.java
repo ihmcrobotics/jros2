@@ -88,12 +88,12 @@ public class GoalID implements ROS2Message<GoalID>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getstamp()
+   public builtin_interfaces.msg.dds.Time getStamp()
    {
       return stamp_;
    }
 
-   public StringBuilder getid()
+   public StringBuilder getId()
    {
       return id_;
    }

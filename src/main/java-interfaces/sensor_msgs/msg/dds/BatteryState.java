@@ -108,23 +108,23 @@ public class BatteryState implements ROS2Message<BatteryState>
    public static final byte POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
    public static final byte POWER_SUPPLY_TECHNOLOGY_NICD = 5;
    public static final byte POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
-   private float voltage_;
-   private float temperature_;
-   private float current_;
-   private float charge_;
-   private float capacity_;
-   private float design_capacity_;
-   private float percentage_;
-   private final IDLFloatSequence cell_voltage_;
+   private float voltage_; // Voltage in Volts (Mandatory)
+   private float temperature_; // Temperature in Degrees Celsius (If unmeasured NaN)
+   private float current_; // Negative when discharging (A)  (If unmeasured NaN)
+   private float charge_; // Current charge in Ah  (If unmeasured NaN)
+   private float capacity_; // Capacity in Ah (last full capacity)  (If unmeasured NaN)
+   private float design_capacity_; // Capacity in Ah (design capacity)  (If unmeasured NaN)
+   private float percentage_; // Charge percentage on 0 to 1 range  (If unmeasured NaN)
+   private final IDLFloatSequence cell_voltage_; // An array of individual cell voltages for each cell in the pack
    /**
       If individual voltages unknown but number of cells known set each to NaN
    */
-   private final IDLFloatSequence cell_temperature_;
+   private final IDLFloatSequence cell_temperature_; // An array of individual cell temperatures for each cell in the pack
    /**
       If individual temperatures unknown but number of cells known set each to NaN
    */
-   private final StringBuilder location_;
-   private final StringBuilder serial_number_;
+   private final StringBuilder location_; // The location into which the battery is inserted. (slot number or plug)
+   private final StringBuilder serial_number_; // The best approximation of the battery serial number
 
    public BatteryState()
    {
@@ -208,92 +208,92 @@ public class BatteryState implements ROS2Message<BatteryState>
 
    }
 
-   public float getvoltage()
+   public float getVoltage()
    {
       return voltage_;
    }
 
-   public void setvoltage(float voltage_)
+   public void setVoltage(float voltage_)
    {
       this.voltage_ = voltage_;
    }
 
-   public float gettemperature()
+   public float getTemperature()
    {
       return temperature_;
    }
 
-   public void settemperature(float temperature_)
+   public void setTemperature(float temperature_)
    {
       this.temperature_ = temperature_;
    }
 
-   public float getcurrent()
+   public float getCurrent()
    {
       return current_;
    }
 
-   public void setcurrent(float current_)
+   public void setCurrent(float current_)
    {
       this.current_ = current_;
    }
 
-   public float getcharge()
+   public float getCharge()
    {
       return charge_;
    }
 
-   public void setcharge(float charge_)
+   public void setCharge(float charge_)
    {
       this.charge_ = charge_;
    }
 
-   public float getcapacity()
+   public float getCapacity()
    {
       return capacity_;
    }
 
-   public void setcapacity(float capacity_)
+   public void setCapacity(float capacity_)
    {
       this.capacity_ = capacity_;
    }
 
-   public float getdesign_capacity()
+   public float getDesignCapacity()
    {
       return design_capacity_;
    }
 
-   public void setdesign_capacity(float design_capacity_)
+   public void setDesignCapacity(float design_capacity_)
    {
       this.design_capacity_ = design_capacity_;
    }
 
-   public float getpercentage()
+   public float getPercentage()
    {
       return percentage_;
    }
 
-   public void setpercentage(float percentage_)
+   public void setPercentage(float percentage_)
    {
       this.percentage_ = percentage_;
    }
 
-   public IDLFloatSequence getcell_voltage()
+   public IDLFloatSequence getCellVoltage()
    {
       return cell_voltage_;
    }
 
-   public IDLFloatSequence getcell_temperature()
+   public IDLFloatSequence getCellTemperature()
    {
       return cell_temperature_;
    }
 
-   public StringBuilder getlocation()
+   public StringBuilder getLocation()
    {
       return location_;
    }
 
-   public StringBuilder getserial_number()
+   public StringBuilder getSerialNumber()
    {
       return serial_number_;
    }

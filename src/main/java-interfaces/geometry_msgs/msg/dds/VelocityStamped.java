@@ -92,22 +92,22 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getbody_frame_id()
+   public StringBuilder getBodyFrameId()
    {
       return body_frame_id_;
    }
 
-   public StringBuilder getreference_frame_id()
+   public StringBuilder getReferenceFrameId()
    {
       return reference_frame_id_;
    }
 
-   public geometry_msgs.msg.dds.Twist getvelocity()
+   public geometry_msgs.msg.dds.Twist getVelocity()
    {
       return velocity_;
    }

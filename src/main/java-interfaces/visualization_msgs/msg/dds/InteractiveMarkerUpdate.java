@@ -150,42 +150,42 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
 
    }
 
-   public StringBuilder getserver_id()
+   public StringBuilder getServerId()
    {
       return server_id_;
    }
 
-   public long getseq_num()
+   public long getSeqNum()
    {
       return seq_num_;
    }
 
-   public void setseq_num(long seq_num_)
+   public void setSeqNum(long seq_num_)
    {
       this.seq_num_ = seq_num_;
    }
 
-   public byte gettype()
+   public byte getType()
    {
       return type_;
    }
 
-   public void settype(byte type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getMarkers()
    {
       return markers_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> getposes()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> getPoses()
    {
       return poses_;
    }
 
-   public IDLStringSequence geterases()
+   public IDLStringSequence getErases()
    {
       return erases_;
    }

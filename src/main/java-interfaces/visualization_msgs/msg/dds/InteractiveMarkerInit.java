@@ -100,22 +100,22 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 
    }
 
-   public StringBuilder getserver_id()
+   public StringBuilder getServerId()
    {
       return server_id_;
    }
 
-   public long getseq_num()
+   public long getSeqNum()
    {
       return seq_num_;
    }
 
-   public void setseq_num(long seq_num_)
+   public void setSeqNum(long seq_num_)
    {
       this.seq_num_ = seq_num_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getmarkers()
+   public IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> getMarkers()
    {
       return markers_;
    }

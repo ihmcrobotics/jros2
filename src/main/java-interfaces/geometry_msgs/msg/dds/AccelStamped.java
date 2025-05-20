@@ -71,12 +71,12 @@ public class AccelStamped implements ROS2Message<AccelStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Accel getaccel()
+   public geometry_msgs.msg.dds.Accel getAccel()
    {
       return accel_;
    }

@@ -26,8 +26,8 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    /**
       This message is used to send diagnostic information about the state of the robot.
    */
-   private final std_msgs.msg.dds.Header header_;
-   private final IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> status_;
+   private final std_msgs.msg.dds.Header header_; // for timestamp
+   private final IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> status_; // an array of components being reported on
 
    public DiagnosticArray()
    {
@@ -71,12 +71,12 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> getstatus()
+   public IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> getStatus()
    {
       return status_;
    }

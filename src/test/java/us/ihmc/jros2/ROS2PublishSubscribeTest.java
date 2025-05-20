@@ -140,7 +140,7 @@ public class ROS2PublishSubscribeTest
 
       // Create a Bool message and publish it
       Bool bool = new Bool();
-      bool.setdata(expectedValue);
+      bool.setData(expectedValue);
       publisher.publish(bool);
 
       // Use ros2 topic echo --once to get the value of the published message
@@ -174,7 +174,7 @@ public class ROS2PublishSubscribeTest
 
          synchronized (valueReceived)
          {
-            valueReceived.set(msg.getdata());
+            valueReceived.set(msg.getData());
             valueReceived.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
@@ -225,7 +225,7 @@ public class ROS2PublishSubscribeTest
          Bool msg = reader.read();
          synchronized (valueReceived)
          {
-            valueReceived.set(msg.getdata());
+            valueReceived.set(msg.getData());
             valueReceived.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
@@ -320,7 +320,7 @@ public class ROS2PublishSubscribeTest
       destroyThread.start();
 
       Bool messageToPublish = new Bool();
-      messageToPublish.setdata(true);
+      messageToPublish.setData(true);
       Thread publishThread = new Thread(() ->
       {
          while (destroyThread.isAlive())
@@ -365,7 +365,7 @@ public class ROS2PublishSubscribeTest
 
       // Publisher will publish in a free loop until subscription is created and destroyed
       Bool messageToPublish = new Bool();
-      messageToPublish.setdata(true);
+      messageToPublish.setData(true);
       Thread publishThread = new Thread(() ->
       {
          while (!Thread.interrupted())

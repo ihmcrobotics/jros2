@@ -68,12 +68,12 @@ public class Float32 implements ROS2Message<Float32>
 
    }
 
-   public float getdata()
+   public float getData()
    {
       return data_;
    }
 
-   public void setdata(float data_)
+   public void setData(float data_)
    {
       this.data_ = data_;
    }

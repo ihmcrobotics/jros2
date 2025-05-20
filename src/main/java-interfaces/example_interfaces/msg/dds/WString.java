@@ -71,7 +71,7 @@ public class WString implements ROS2Message<WString>
 
    }
 
-   public StringBuilder getdata()
+   public StringBuilder getData()
    {
       return data_;
    }

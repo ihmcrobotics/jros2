@@ -68,12 +68,12 @@ public class UInt64 implements ROS2Message<UInt64>
 
    }
 
-   public long getdata()
+   public long getData()
    {
       return data_;
    }
 
-   public void setdata(long data_)
+   public void setData(long data_)
    {
       this.data_ = data_;
    }

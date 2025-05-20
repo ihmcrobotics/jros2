@@ -93,17 +93,17 @@ public class Joy implements ROS2Message<Joy>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLFloatSequence getaxes()
+   public IDLFloatSequence getAxes()
    {
       return axes_;
    }
 
-   public IDLIntSequence getbuttons()
+   public IDLIntSequence getButtons()
    {
       return buttons_;
    }

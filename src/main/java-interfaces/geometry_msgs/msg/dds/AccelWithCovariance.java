@@ -92,12 +92,12 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
 
    }
 
-   public geometry_msgs.msg.dds.Accel getaccel()
+   public geometry_msgs.msg.dds.Accel getAccel()
    {
       return accel_;
    }
 
-   public double[] getcovariance()
+   public double[] getCovariance()
    {
       return covariance_;
    }

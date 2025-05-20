@@ -1,5 +1,8 @@
+Header header
+std_msgs/Header header2
+
 int32 my_int
-string my_string
+string my_string # Test comment
 
 int32[] unbounded_integer_array
 int32[5] five_integers_array

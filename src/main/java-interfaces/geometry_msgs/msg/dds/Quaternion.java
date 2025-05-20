@@ -36,6 +36,11 @@ public class Quaternion implements ROS2Message<Quaternion>
 
    public Quaternion()
    {
+      x_ = 0;
+      y_ = 0;
+      z_ = 0;
+      w_ = 1;
+
    }
 
    @Override
@@ -81,42 +86,42 @@ public class Quaternion implements ROS2Message<Quaternion>
 
    }
 
-   public double getx()
+   public double getX()
    {
       return x_;
    }
 
-   public void setx(double x_)
+   public void setX(double x_)
    {
       this.x_ = x_;
    }
 
-   public double gety()
+   public double getY()
    {
       return y_;
    }
 
-   public void sety(double y_)
+   public void setY(double y_)
    {
       this.y_ = y_;
    }
 
-   public double getz()
+   public double getZ()
    {
       return z_;
    }
 
-   public void setz(double z_)
+   public void setZ(double z_)
    {
       this.z_ = z_;
    }
 
-   public double getw()
+   public double getW()
    {
       return w_;
    }
 
-   public void setw(double w_)
+   public void setW(double w_)
    {
       this.w_ = w_;
    }

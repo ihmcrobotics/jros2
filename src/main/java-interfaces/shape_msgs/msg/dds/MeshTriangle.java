@@ -74,7 +74,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 
    }
 
-   public int[] getvertex_indices()
+   public int[] getVertexIndices()
    {
       return vertex_indices_;
    }

@@ -64,7 +64,7 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
 
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback> getarray()
+   public IDLObjectSequence<sensor_msgs.msg.dds.JoyFeedback> getArray()
    {
       return array_;
    }

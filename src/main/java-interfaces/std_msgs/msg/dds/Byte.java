@@ -69,12 +69,12 @@ public class Byte implements ROS2Message<Byte>
 
    }
 
-   public byte getdata()
+   public byte getData()
    {
       return data_;
    }
 
-   public void setdata(byte data_)
+   public void setData(byte data_)
    {
       this.data_ = data_;
    }

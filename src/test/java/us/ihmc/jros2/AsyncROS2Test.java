@@ -36,7 +36,7 @@ public class AsyncROS2Test
       ROS2Publisher<Bool> publisher = asyncNode.createPublisher(topic, qosProfile);
 
       Bool bool = new Bool();
-      bool.setdata(expectedValue);
+      bool.setData(expectedValue);
       publisher.publish(bool);
 
       String result = ROS2TestTools.ros2EchoOnce(asyncNode.getDomainId(), topicName);
@@ -64,7 +64,7 @@ public class AsyncROS2Test
       ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
       {
          Bool value = reader.read();
-         assertEquals(expectedValue.get(), value.getdata());
+         assertEquals(expectedValue.get(), value.getData());
          expectedValue.set(!expectedValue.get());
 
          if (messagesReceived.incrementAndGet() >= messagesToPublish)
@@ -81,7 +81,7 @@ public class AsyncROS2Test
       Bool bool = new Bool();
       for (int i = 0; i < messagesToPublish; ++i)
       {
-         bool.setdata(publish);
+         bool.setData(publish);
          publisher.publish(bool);
          publish = !publish;
          LockSupport.parkNanos(100000); // park for 0.1ms
@@ -125,7 +125,7 @@ public class AsyncROS2Test
             for (int j = 0; j < messagesToPublish; j++)
             {
                Bool message = new Bool();
-               message.setdata(expected);
+               message.setData(expected);
                asyncPublisher.publish(message);
                LockSupport.parkNanos(500000); // park for 0.5ms
             }
@@ -136,7 +136,7 @@ public class AsyncROS2Test
       ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
       {
          Bool received = reader.read();
-         assertEquals(expected, received.getdata());
+         assertEquals(expected, received.getData());
          receivedMessageCount.incrementAndGet();
       });
 
@@ -185,12 +185,12 @@ public class AsyncROS2Test
       DoubleStatisticsHelper asyncPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       // Create subscribers
-      ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getdata());
+      ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getData());
       ROS2Subscription<Bool> standardSubscription = ros2Node.createSubscription(standardTopic, callback);
       ROS2Subscription<Bool> asyncSubscription = asyncROS2Node.createSubscription(asyncTopic, callback);
 
       Bool message = new Bool();
-      message.setdata(expected);
+      message.setData(expected);
 
       BiFunction<ROS2Publisher<Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
       {

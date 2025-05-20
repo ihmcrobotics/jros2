@@ -109,8 +109,49 @@ public class InterfaceField
             return name + "_";
          }
       }
+      else
+      {
+         return null;
+      }
+   }
 
-      return null;
+   public String getJavaGetterMethodName()
+   {
+      if (name != null)
+      {
+         return String.format("get%s", snakeToPascal(name));
+      }
+      else
+      {
+         return null;
+      }
+   }
+
+   public String getJavaSetterMethodName()
+   {
+      if (name != null)
+      {
+         return String.format("set%s", snakeToPascal(name));
+      }
+      else
+      {
+         return null;
+      }
+   }
+
+   private static String snakeToPascal(String snake)
+   {
+      String[] parts = snake.split("_");
+      StringBuilder pascal = new StringBuilder();
+      for (String part : parts)
+      {
+         if (!part.isEmpty())
+         {
+            pascal.append(Character.toUpperCase(part.charAt(0)));
+            pascal.append(part.substring(1).toLowerCase());
+         }
+      }
+      return pascal.toString();
    }
 
    public boolean isStringUpperBounded()

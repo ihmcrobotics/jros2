@@ -86,22 +86,22 @@ public class Time implements ROS2Message<Time>
 
    }
 
-   public int getsec()
+   public int getSec()
    {
       return sec_;
    }
 
-   public void setsec(int sec_)
+   public void setSec(int sec_)
    {
       this.sec_ = sec_;
    }
 
-   public int getnanosec()
+   public int getNanosec()
    {
       return nanosec_;
    }
 
-   public void setnanosec(int nanosec_)
+   public void setNanosec(int nanosec_)
    {
       this.nanosec_ = nanosec_;
    }

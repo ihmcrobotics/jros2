@@ -116,12 +116,12 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public IDLFloatSequence getvalues()
+   public IDLFloatSequence getValues()
    {
       return values_;
    }

@@ -99,32 +99,32 @@ public class GridCells implements ROS2Message<GridCells>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public float getcell_width()
+   public float getCellWidth()
    {
       return cell_width_;
    }
 
-   public void setcell_width(float cell_width_)
+   public void setCellWidth(float cell_width_)
    {
       this.cell_width_ = cell_width_;
    }
 
-   public float getcell_height()
+   public float getCellHeight()
    {
       return cell_height_;
    }
 
-   public void setcell_height(float cell_height_)
+   public void setCellHeight(float cell_height_)
    {
       this.cell_height_ = cell_height_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getcells()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getCells()
    {
       return cells_;
    }

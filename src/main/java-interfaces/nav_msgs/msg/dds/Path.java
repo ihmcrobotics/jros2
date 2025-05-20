@@ -81,12 +81,12 @@ public class Path implements ROS2Message<Path>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getposes()
+   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getPoses()
    {
       return poses_;
    }

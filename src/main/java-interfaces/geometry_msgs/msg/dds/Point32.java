@@ -87,32 +87,32 @@ public class Point32 implements ROS2Message<Point32>
 
    }
 
-   public float getx()
+   public float getX()
    {
       return x_;
    }
 
-   public void setx(float x_)
+   public void setX(float x_)
    {
       this.x_ = x_;
    }
 
-   public float gety()
+   public float getY()
    {
       return y_;
    }
 
-   public void sety(float y_)
+   public void setY(float y_)
    {
       this.y_ = y_;
    }
 
-   public float getz()
+   public float getZ()
    {
       return z_;
    }
 
-   public void setz(float z_)
+   public void setZ(float z_)
    {
       this.z_ = z_;
    }

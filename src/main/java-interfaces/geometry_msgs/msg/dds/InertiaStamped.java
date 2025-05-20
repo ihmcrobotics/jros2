@@ -72,12 +72,12 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Inertia getinertia()
+   public geometry_msgs.msg.dds.Inertia getInertia()
    {
       return inertia_;
    }

@@ -72,12 +72,12 @@ public class TwistStamped implements ROS2Message<TwistStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Twist gettwist()
+   public geometry_msgs.msg.dds.Twist getTwist()
    {
       return twist_;
    }

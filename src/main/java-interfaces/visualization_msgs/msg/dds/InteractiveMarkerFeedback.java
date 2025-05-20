@@ -185,62 +185,62 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public StringBuilder getclient_id()
+   public StringBuilder getClientId()
    {
       return client_id_;
    }
 
-   public StringBuilder getmarker_name()
+   public StringBuilder getMarkerName()
    {
       return marker_name_;
    }
 
-   public StringBuilder getcontrol_name()
+   public StringBuilder getControlName()
    {
       return control_name_;
    }
 
-   public byte getevent_type()
+   public byte getEventType()
    {
       return event_type_;
    }
 
-   public void setevent_type(byte event_type_)
+   public void setEventType(byte event_type_)
    {
       this.event_type_ = event_type_;
    }
 
-   public geometry_msgs.msg.dds.Pose getpose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public int getmenu_entry_id()
+   public int getMenuEntryId()
    {
       return menu_entry_id_;
    }
 
-   public void setmenu_entry_id(int menu_entry_id_)
+   public void setMenuEntryId(int menu_entry_id_)
    {
       this.menu_entry_id_ = menu_entry_id_;
    }
 
-   public geometry_msgs.msg.dds.Point getmouse_point()
+   public geometry_msgs.msg.dds.Point getMousePoint()
    {
       return mouse_point_;
    }
 
-   public boolean getmouse_point_valid()
+   public boolean getMousePointValid()
    {
       return mouse_point_valid_;
    }
 
-   public void setmouse_point_valid(boolean mouse_point_valid_)
+   public void setMousePointValid(boolean mouse_point_valid_)
    {
       this.mouse_point_valid_ = mouse_point_valid_;
    }

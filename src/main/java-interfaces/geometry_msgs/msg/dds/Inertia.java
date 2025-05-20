@@ -122,77 +122,77 @@ public class Inertia implements ROS2Message<Inertia>
 
    }
 
-   public double getm()
+   public double getM()
    {
       return m_;
    }
 
-   public void setm(double m_)
+   public void setM(double m_)
    {
       this.m_ = m_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getcom()
+   public geometry_msgs.msg.dds.Vector3 getCom()
    {
       return com_;
    }
 
-   public double getixx()
+   public double getIxx()
    {
       return ixx_;
    }
 
-   public void setixx(double ixx_)
+   public void setIxx(double ixx_)
    {
       this.ixx_ = ixx_;
    }
 
-   public double getixy()
+   public double getIxy()
    {
       return ixy_;
    }
 
-   public void setixy(double ixy_)
+   public void setIxy(double ixy_)
    {
       this.ixy_ = ixy_;
    }
 
-   public double getixz()
+   public double getIxz()
    {
       return ixz_;
    }
 
-   public void setixz(double ixz_)
+   public void setIxz(double ixz_)
    {
       this.ixz_ = ixz_;
    }
 
-   public double getiyy()
+   public double getIyy()
    {
       return iyy_;
    }
 
-   public void setiyy(double iyy_)
+   public void setIyy(double iyy_)
    {
       this.iyy_ = iyy_;
    }
 
-   public double getiyz()
+   public double getIyz()
    {
       return iyz_;
    }
 
-   public void setiyz(double iyz_)
+   public void setIyz(double iyz_)
    {
       this.iyz_ = iyz_;
    }
 
-   public double getizz()
+   public double getIzz()
    {
       return izz_;
    }
 
-   public void setizz(double izz_)
+   public void setIzz(double izz_)
    {
       this.izz_ = izz_;
    }

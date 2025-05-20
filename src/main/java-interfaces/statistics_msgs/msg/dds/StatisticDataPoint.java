@@ -110,22 +110,22 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
 
    }
 
-   public byte getdata_type()
+   public byte getDataType()
    {
       return data_type_;
    }
 
-   public void setdata_type(byte data_type_)
+   public void setDataType(byte data_type_)
    {
       this.data_type_ = data_type_;
    }
 
-   public double getdata()
+   public double getData()
    {
       return data_;
    }
 
-   public void setdata(double data_)
+   public void setData(double data_)
    {
       this.data_ = data_;
    }

@@ -72,12 +72,12 @@ public class PointStamped implements ROS2Message<PointStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Point getpoint()
+   public geometry_msgs.msg.dds.Point getPoint()
    {
       return point_;
    }

@@ -31,9 +31,9 @@ public class Temperature implements ROS2Message<Temperature>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private double temperature_;
-   private double variance_;
+   private final std_msgs.msg.dds.Header header_; // timestamp is the time the temperature was measured
+   private double temperature_; // Measurement of the Temperature in Degrees Celsius.
+   private double variance_; // 0 is interpreted as variance unknown.
 
    public Temperature()
    {
@@ -80,27 +80,27 @@ public class Temperature implements ROS2Message<Temperature>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public double gettemperature()
+   public double getTemperature()
    {
       return temperature_;
    }
 
-   public void settemperature(double temperature_)
+   public void setTemperature(double temperature_)
    {
       this.temperature_ = temperature_;
    }
 
-   public double getvariance()
+   public double getVariance()
    {
       return variance_;
    }
 
-   public void setvariance(double variance_)
+   public void setVariance(double variance_)
    {
       this.variance_ = variance_;
    }

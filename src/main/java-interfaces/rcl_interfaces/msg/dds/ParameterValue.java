@@ -185,72 +185,72 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    }
 
-   public byte gettype()
+   public byte getType()
    {
       return type_;
    }
 
-   public void settype(byte type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }
 
-   public boolean getbool_value()
+   public boolean getBoolValue()
    {
       return bool_value_;
    }
 
-   public void setbool_value(boolean bool_value_)
+   public void setBoolValue(boolean bool_value_)
    {
       this.bool_value_ = bool_value_;
    }
 
-   public long getinteger_value()
+   public long getIntegerValue()
    {
       return integer_value_;
    }
 
-   public void setinteger_value(long integer_value_)
+   public void setIntegerValue(long integer_value_)
    {
       this.integer_value_ = integer_value_;
    }
 
-   public double getdouble_value()
+   public double getDoubleValue()
    {
       return double_value_;
    }
 
-   public void setdouble_value(double double_value_)
+   public void setDoubleValue(double double_value_)
    {
       this.double_value_ = double_value_;
    }
 
-   public StringBuilder getstring_value()
+   public StringBuilder getStringValue()
    {
       return string_value_;
    }
 
-   public IDLByteSequence getbyte_array_value()
+   public IDLByteSequence getByteArrayValue()
    {
       return byte_array_value_;
    }
 
-   public IDLBoolSequence getbool_array_value()
+   public IDLBoolSequence getBoolArrayValue()
    {
       return bool_array_value_;
    }
 
-   public IDLLongSequence getinteger_array_value()
+   public IDLLongSequence getIntegerArrayValue()
    {
       return integer_array_value_;
    }
 
-   public IDLDoubleSequence getdouble_array_value()
+   public IDLDoubleSequence getDoubleArrayValue()
    {
       return double_array_value_;
    }
 
-   public IDLStringSequence getstring_array_value()
+   public IDLStringSequence getStringArrayValue()
    {
       return string_array_value_;
    }

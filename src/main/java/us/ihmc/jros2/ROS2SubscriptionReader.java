@@ -63,7 +63,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
          try
          {
             Header header = (Header) getHeaderMethod.invoke(data);
-            lastMessageTimestamp = (1000L * header.getstamp().getsec()) + (header.getstamp().getnanosec() / 1000000L);
+            lastMessageTimestamp = (1000L * header.getStamp().getSec()) + (header.getStamp().getNanosec() / 1000000L);
          }
          catch (IllegalAccessException | InvocationTargetException e)
          {

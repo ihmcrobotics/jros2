@@ -73,17 +73,17 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
    }
 
-   public geometry_msgs.msg.dds.Polygon getpolygon()
+   public geometry_msgs.msg.dds.Polygon getPolygon()
    {
       return polygon_;
    }
 
-   public long getid()
+   public long getId()
    {
       return id_;
    }
 
-   public void setid(long id_)
+   public void setId(long id_)
    {
       this.id_ = id_;
    }

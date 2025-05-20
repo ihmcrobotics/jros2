@@ -118,18 +118,18 @@ public class StatisticsTest
 
       // Create the message to publish
       Point message = new Point();
-      message.setx(1.0);
-      message.sety(2.0);
-      message.setz(3.0);
+      message.setX(1.0);
+      message.setY(2.0);
+      message.setZ(3.0);
 
       // Create subscription
       AtomicInteger receivedCount = new AtomicInteger(0);
       ROS2Subscription<Point> subscription = node.createSubscription(topic, reader ->
       {
          Point received = reader.read();
-         assertEquals(received.getx(), message.getx());
-         assertEquals(received.gety(), message.gety());
-         assertEquals(received.getz(), message.getz());
+         assertEquals(received.getX(), message.getX());
+         assertEquals(received.getY(), message.getY());
+         assertEquals(received.getZ(), message.getZ());
          receivedCount.incrementAndGet();
       });
 

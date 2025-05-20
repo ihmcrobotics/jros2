@@ -72,12 +72,12 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getquaternion()
+   public geometry_msgs.msg.dds.Quaternion getQuaternion()
    {
       return quaternion_;
    }

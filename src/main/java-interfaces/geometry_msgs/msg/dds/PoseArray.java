@@ -73,12 +73,12 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Pose> getposes()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Pose> getPoses()
    {
       return poses_;
    }

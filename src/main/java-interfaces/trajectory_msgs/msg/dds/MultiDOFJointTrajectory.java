@@ -84,17 +84,17 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLStringSequence getjoint_names()
+   public IDLStringSequence getJointNames()
    {
       return joint_names_;
    }
 
-   public IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint> getpoints()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint> getPoints()
    {
       return points_;
    }

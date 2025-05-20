@@ -70,18 +70,18 @@ public class Range implements ROS2Message<Range>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the time the ranger
    /**
       Radiation type enums
       If you want a value added to this list, send an email to the ros-users list
    */
    public static final byte ULTRASOUND = 0;
    public static final byte INFRARED = 1;
-   private byte radiation_type_;
-   private float field_of_view_;
-   private float min_range_;
-   private float max_range_;
-   private float range_;
+   private byte radiation_type_; // the type of radiation used by the sensor
+   private float field_of_view_; // the size of the arc that the distance reading is
+   private float min_range_; // minimum range value [m]
+   private float max_range_; // maximum range value [m]
+   private float range_; // range data [m]
 
    public Range()
    {
@@ -140,57 +140,57 @@ public class Range implements ROS2Message<Range>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public byte getradiation_type()
+   public byte getRadiationType()
    {
       return radiation_type_;
    }
 
-   public void setradiation_type(byte radiation_type_)
+   public void setRadiationType(byte radiation_type_)
    {
       this.radiation_type_ = radiation_type_;
    }
 
-   public float getfield_of_view()
+   public float getFieldOfView()
    {
       return field_of_view_;
    }
 
-   public void setfield_of_view(float field_of_view_)
+   public void setFieldOfView(float field_of_view_)
    {
       this.field_of_view_ = field_of_view_;
    }
 
-   public float getmin_range()
+   public float getMinRange()
    {
       return min_range_;
    }
 
-   public void setmin_range(float min_range_)
+   public void setMinRange(float min_range_)
    {
       this.min_range_ = min_range_;
    }
 
-   public float getmax_range()
+   public float getMaxRange()
    {
       return max_range_;
    }
 
-   public void setmax_range(float max_range_)
+   public void setMaxRange(float max_range_)
    {
       this.max_range_ = max_range_;
    }
 
-   public float getrange()
+   public float getRange()
    {
       return range_;
    }
 
-   public void setrange(float range_)
+   public void setRange(float range_)
    {
       this.range_ = range_;
    }

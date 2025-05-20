@@ -98,17 +98,17 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    }
 
-   public std_msgs.msg.dds.Header getheader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public nav_msgs.msg.dds.MapMetaData getinfo()
+   public nav_msgs.msg.dds.MapMetaData getInfo()
    {
       return info_;
    }
 
-   public IDLByteSequence getdata()
+   public IDLByteSequence getData()
    {
       return data_;
    }

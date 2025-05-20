@@ -86,12 +86,12 @@ public class Parameter implements ROS2Message<Parameter>
 
    }
 
-   public StringBuilder getname()
+   public StringBuilder getName()
    {
       return name_;
    }
 
-   public rcl_interfaces.msg.dds.ParameterValue getvalue()
+   public rcl_interfaces.msg.dds.ParameterValue getValue()
    {
       return value_;
    }

@@ -69,12 +69,12 @@ public class Int8 implements ROS2Message<Int8>
 
    }
 
-   public byte getdata()
+   public byte getData()
    {
       return data_;
    }
 
-   public void setdata(byte data_)
+   public void setData(byte data_)
    {
       this.data_ = data_;
    }

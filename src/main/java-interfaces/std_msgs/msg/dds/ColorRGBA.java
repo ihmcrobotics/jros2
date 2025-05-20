@@ -76,42 +76,42 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
 
    }
 
-   public float getr()
+   public float getR()
    {
       return r_;
    }
 
-   public void setr(float r_)
+   public void setR(float r_)
    {
       this.r_ = r_;
    }
 
-   public float getg()
+   public float getG()
    {
       return g_;
    }
 
-   public void setg(float g_)
+   public void setG(float g_)
    {
       this.g_ = g_;
    }
 
-   public float getb()
+   public float getB()
    {
       return b_;
    }
 
-   public void setb(float b_)
+   public void setB(float b_)
    {
       this.b_ = b_;
    }
 
-   public float geta()
+   public float getA()
    {
       return a_;
    }
 
-   public void seta(float a_)
+   public void setA(float a_)
    {
       this.a_ = a_;
    }

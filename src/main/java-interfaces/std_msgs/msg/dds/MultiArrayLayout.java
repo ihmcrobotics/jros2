@@ -76,8 +76,8 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayLayout_";
 
-   private final IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> dim_;
-   private int data_offset_;
+   private final IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> dim_; // Array of dimension properties
+   private int data_offset_; // padding bytes at front of data
 
    public MultiArrayLayout()
    {
@@ -120,17 +120,17 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 
    }
 
-   public IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> getdim()
+   public IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> getDim()
    {
       return dim_;
    }
 
-   public int getdata_offset()
+   public int getDataOffset()
    {
       return data_offset_;
    }
 
-   public void setdata_offset(int data_offset_)
+   public void setDataOffset(int data_offset_)
    {
       this.data_offset_ = data_offset_;
    }

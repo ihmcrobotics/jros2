@@ -68,7 +68,7 @@ public class Clock implements ROS2Message<Clock>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getclock()
+   public builtin_interfaces.msg.dds.Time getClock()
    {
       return clock_;
    }
