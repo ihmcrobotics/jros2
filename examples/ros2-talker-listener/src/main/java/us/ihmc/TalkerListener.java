@@ -26,11 +26,14 @@ public class TalkerListener
 {
    public static void main(String[] args) throws InterruptedException
    {
-      ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0);
-      Runtime.getRuntime().addShutdownHook(new Thread(publisherNode::close, "Shutdown"));
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>("/topic", std_msgs.msg.dds.String.class);
-      ROS2Publisher<std_msgs.msg.dds.String> publisher = publisherNode.createPublisher(topic);
 
+      /*
+       * Set up the publisher
+       */
+      ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0);
+      Runtime.getRuntime().addShutdownHook(new Thread(publisherNode::close, "PublisherShutdown"));
+      ROS2Publisher<std_msgs.msg.dds.String> publisher = publisherNode.createPublisher(topic);
       Thread publishThread = new Thread(new Runnable()
       {
          private int count;
@@ -50,6 +53,20 @@ public class TalkerListener
             }
          }
       }, "PublishThread");
+
+      /*
+       * Set up the subscription
+       */
+      ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0);
+      Runtime.getRuntime().addShutdownHook(new Thread(subscriptionNode::close, "SubscriptionShutdown"));
+      subscriptionNode.createSubscription(topic, reader ->
+      {
+         // Subscription callback
+         std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+         reader.read(msg);
+
+         System.out.printf("I heard: '%s'%n", msg.getData().toString());
+      });
 
       publishThread.start();
       publishThread.join();
