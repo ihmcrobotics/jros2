@@ -399,6 +399,11 @@ public class ROS2Node implements Closeable
       return Collections.unmodifiableList(subscriptions);
    }
 
+   public boolean isClosed()
+   {
+      return closed;
+   }
+
    @Override
    public void close()
    {

@@ -225,6 +225,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 
+   public boolean isClosed()
+   {
+      return closed;
+   }
+
    /**
     * Get the topic type class for which this subscription can consume.
     * @return the type class held in the {@link ROS2Topic}

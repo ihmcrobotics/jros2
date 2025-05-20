@@ -182,6 +182,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 
+   public boolean isClosed()
+   {
+      return closed;
+   }
+
    /**
     * Get the topic type class for which this publisher can publish.
     * @return the type class held in the {@link ROS2Topic}
