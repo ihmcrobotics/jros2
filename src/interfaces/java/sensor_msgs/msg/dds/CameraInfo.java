@@ -99,6 +99,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // distortion_model_
@@ -106,6 +107,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       currentAlignment += (12 * 8) + CDRBuffer.alignment(currentAlignment, (12 * 8)); // p_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_x_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_y_
+      currentAlignment += roi_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -113,6 +115,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeInt(height_);
       buffer.writeInt(width_);
       buffer.writeString(distortion_model_);
@@ -123,12 +126,14 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       }
       buffer.writeInt(binning_x_);
       buffer.writeInt(binning_y_);
+      roi_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       height_ = buffer.readInt();
       width_ = buffer.readInt();
       buffer.readString(distortion_model_);
@@ -139,12 +144,14 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       }
       binning_x_ = buffer.readInt();
       binning_y_ = buffer.readInt();
+      roi_.deserialize(buffer);
 
    }
 
    @Override
    public void set(CameraInfo from)
    {
+      header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
       distortion_model_.delete(0, distortion_model_.length());
@@ -156,6 +163,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       }
       binning_x_ = from.binning_x_;
       binning_y_ = from.binning_y_;
+      roi_.set(from.roi_);
 
    }
 

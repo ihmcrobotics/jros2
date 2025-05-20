@@ -30,22 +30,34 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += vector_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      vector_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      vector_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Vector3Stamped from)
    {
+      header_.set(from.header_);
+      vector_.set(from.vector_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

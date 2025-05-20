@@ -29,6 +29,7 @@ public class Temperature implements ROS2Message<Temperature>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // temperature_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
 
@@ -38,6 +39,7 @@ public class Temperature implements ROS2Message<Temperature>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeDouble(temperature_);
       buffer.writeDouble(variance_);
 
@@ -46,6 +48,7 @@ public class Temperature implements ROS2Message<Temperature>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       temperature_ = buffer.readDouble();
       variance_ = buffer.readDouble();
 
@@ -54,6 +57,7 @@ public class Temperature implements ROS2Message<Temperature>
    @Override
    public void set(Temperature from)
    {
+      header_.set(from.header_);
       temperature_ = from.temperature_;
       variance_ = from.variance_;
 

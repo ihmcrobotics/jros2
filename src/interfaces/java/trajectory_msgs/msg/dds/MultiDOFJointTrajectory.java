@@ -31,7 +31,9 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += joint_names_.calculateSizeBytes(currentAlignment);
+      currentAlignment += points_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -39,21 +41,27 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       joint_names_.serialize(buffer);
+      points_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       joint_names_.deserialize(buffer);
+      points_.deserialize(buffer);
 
    }
 
    @Override
    public void set(MultiDOFJointTrajectory from)
    {
+      header_.set(from.header_);
       joint_names_.set(from.joint_names_);
+      points_.set(from.points_);
 
    }
 

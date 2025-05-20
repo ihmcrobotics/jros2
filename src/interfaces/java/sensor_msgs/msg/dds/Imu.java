@@ -51,8 +51,12 @@ public class Imu implements ROS2Message<Imu>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // orientation_covariance_
+      currentAlignment += angular_velocity_.calculateSizeBytes(currentAlignment);
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // angular_velocity_covariance_
+      currentAlignment += linear_acceleration_.calculateSizeBytes(currentAlignment);
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // linear_acceleration_covariance_
 
       return currentAlignment - initialAlignment;
@@ -61,14 +65,18 @@ public class Imu implements ROS2Message<Imu>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      orientation_.serialize(buffer);
       for (int i = 0; i < orientation_covariance_.length; ++i)
       {
          buffer.writeDouble(orientation_covariance_[i]);
       }
+      angular_velocity_.serialize(buffer);
       for (int i = 0; i < angular_velocity_covariance_.length; ++i)
       {
          buffer.writeDouble(angular_velocity_covariance_[i]);
       }
+      linear_acceleration_.serialize(buffer);
       for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
       {
          buffer.writeDouble(linear_acceleration_covariance_[i]);
@@ -79,14 +87,18 @@ public class Imu implements ROS2Message<Imu>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      orientation_.deserialize(buffer);
       for (int i = 0; i < orientation_covariance_.length; ++i)
       {
       orientation_covariance_[i] = buffer.readDouble();
       }
+      angular_velocity_.deserialize(buffer);
       for (int i = 0; i < angular_velocity_covariance_.length; ++i)
       {
       angular_velocity_covariance_[i] = buffer.readDouble();
       }
+      linear_acceleration_.deserialize(buffer);
       for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
       {
       linear_acceleration_covariance_[i] = buffer.readDouble();
@@ -97,14 +109,18 @@ public class Imu implements ROS2Message<Imu>
    @Override
    public void set(Imu from)
    {
+      header_.set(from.header_);
+      orientation_.set(from.orientation_);
       for (int i = 0; i < orientation_covariance_.length; ++i)
       {
          orientation_covariance_[i] = from.orientation_covariance_[i];
       }
+      angular_velocity_.set(from.angular_velocity_);
       for (int i = 0; i < angular_velocity_covariance_.length; ++i)
       {
          angular_velocity_covariance_[i] = from.angular_velocity_covariance_[i];
       }
+      linear_acceleration_.set(from.linear_acceleration_);
       for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
       {
          linear_acceleration_covariance_[i] = from.linear_acceleration_covariance_[i];

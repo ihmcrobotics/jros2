@@ -48,9 +48,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += map_load_time_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // resolution_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
+      currentAlignment += origin_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -58,27 +60,33 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      map_load_time_.serialize(buffer);
       buffer.writeFloat(resolution_);
       buffer.writeInt(width_);
       buffer.writeInt(height_);
+      origin_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      map_load_time_.deserialize(buffer);
       resolution_ = buffer.readFloat();
       width_ = buffer.readInt();
       height_ = buffer.readInt();
+      origin_.deserialize(buffer);
 
    }
 
    @Override
    public void set(MapMetaData from)
    {
+      map_load_time_.set(from.map_load_time_);
       resolution_ = from.resolution_;
       width_ = from.width_;
       height_ = from.height_;
+      origin_.set(from.origin_);
 
    }
 

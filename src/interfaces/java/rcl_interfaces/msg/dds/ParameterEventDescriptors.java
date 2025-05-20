@@ -33,22 +33,38 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += new_parameters_.calculateSizeBytes(currentAlignment);
+      currentAlignment += changed_parameters_.calculateSizeBytes(currentAlignment);
+      currentAlignment += deleted_parameters_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      new_parameters_.serialize(buffer);
+      changed_parameters_.serialize(buffer);
+      deleted_parameters_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      new_parameters_.deserialize(buffer);
+      changed_parameters_.deserialize(buffer);
+      deleted_parameters_.deserialize(buffer);
+
    }
 
    @Override
    public void set(ParameterEventDescriptors from)
    {
+      new_parameters_.set(from.new_parameters_);
+      changed_parameters_.set(from.changed_parameters_);
+      deleted_parameters_.set(from.deleted_parameters_);
+
    }
 
    public IDLObjectSequence<rcl_interfaces.msg.dds.ParameterDescriptor> getnew_parameters()

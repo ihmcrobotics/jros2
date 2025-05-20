@@ -51,8 +51,10 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
+      currentAlignment += fields_.calculateSizeBytes(currentAlignment);
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_dense_
 
@@ -62,8 +64,10 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeInt(height_);
       buffer.writeInt(width_);
+      fields_.serialize(buffer);
       data_.serialize(buffer);
       buffer.writeBoolean(is_dense_);
 
@@ -72,8 +76,10 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       height_ = buffer.readInt();
       width_ = buffer.readInt();
+      fields_.deserialize(buffer);
       data_.deserialize(buffer);
       is_dense_ = buffer.readBoolean();
 
@@ -82,8 +88,10 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    @Override
    public void set(PointCloud2 from)
    {
+      header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
+      fields_.set(from.fields_);
       data_.set(from.data_);
       is_dense_ = from.is_dense_;
 

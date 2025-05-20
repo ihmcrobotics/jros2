@@ -29,22 +29,34 @@ public class PointStamped implements ROS2Message<PointStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += point_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      point_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      point_.deserialize(buffer);
+
    }
 
    @Override
    public void set(PointStamped from)
    {
+      header_.set(from.header_);
+      point_.set(from.point_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

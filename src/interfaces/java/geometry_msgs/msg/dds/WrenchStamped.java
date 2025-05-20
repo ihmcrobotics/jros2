@@ -29,22 +29,34 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += wrench_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      wrench_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      wrench_.deserialize(buffer);
+
    }
 
    @Override
    public void set(WrenchStamped from)
    {
+      header_.set(from.header_);
+      wrench_.set(from.wrench_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

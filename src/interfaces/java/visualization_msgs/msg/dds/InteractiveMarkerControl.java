@@ -108,9 +108,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       int initialAlignment = currentAlignment;
 
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
+      currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // orientation_mode_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // interaction_mode_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // always_visible_
+      currentAlignment += markers_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // independent_marker_orientation_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // description_
 
@@ -121,9 +123,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
+      orientation_.serialize(buffer);
       buffer.writeByte(orientation_mode_);
       buffer.writeByte(interaction_mode_);
       buffer.writeBoolean(always_visible_);
+      markers_.serialize(buffer);
       buffer.writeBoolean(independent_marker_orientation_);
       buffer.writeString(description_);
 
@@ -133,9 +137,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
+      orientation_.deserialize(buffer);
       orientation_mode_ = buffer.readByte();
       interaction_mode_ = buffer.readByte();
       always_visible_ = buffer.readBoolean();
+      markers_.deserialize(buffer);
       independent_marker_orientation_ = buffer.readBoolean();
       buffer.readString(description_);
 
@@ -146,9 +152,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);
+      orientation_.set(from.orientation_);
       orientation_mode_ = from.orientation_mode_;
       interaction_mode_ = from.interaction_mode_;
       always_visible_ = from.always_visible_;
+      markers_.set(from.markers_);
       independent_marker_orientation_ = from.independent_marker_orientation_;
       description_.delete(0, description_.length());
       description_.insert(0, from.description_);

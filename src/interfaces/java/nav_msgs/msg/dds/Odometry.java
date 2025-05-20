@@ -47,7 +47,10 @@ public class Odometry implements ROS2Message<Odometry>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // child_frame_id_
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
+      currentAlignment += twist_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -55,22 +58,31 @@ public class Odometry implements ROS2Message<Odometry>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(child_frame_id_);
+      pose_.serialize(buffer);
+      twist_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(child_frame_id_);
+      pose_.deserialize(buffer);
+      twist_.deserialize(buffer);
 
    }
 
    @Override
    public void set(Odometry from)
    {
+      header_.set(from.header_);
       child_frame_id_.delete(0, child_frame_id_.length());
       child_frame_id_.insert(0, from.child_frame_id_);
+      pose_.set(from.pose_);
+      twist_.set(from.twist_);
 
    }
 

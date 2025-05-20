@@ -69,6 +69,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // measurement_source_name_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // metrics_source_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // unit_
+      currentAlignment += window_start_.calculateSizeBytes(currentAlignment);
+      currentAlignment += window_stop_.calculateSizeBytes(currentAlignment);
+      currentAlignment += statistics_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -79,6 +82,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       buffer.writeString(measurement_source_name_);
       buffer.writeString(metrics_source_);
       buffer.writeString(unit_);
+      window_start_.serialize(buffer);
+      window_stop_.serialize(buffer);
+      statistics_.serialize(buffer);
 
    }
 
@@ -88,6 +94,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       buffer.readString(measurement_source_name_);
       buffer.readString(metrics_source_);
       buffer.readString(unit_);
+      window_start_.deserialize(buffer);
+      window_stop_.deserialize(buffer);
+      statistics_.deserialize(buffer);
 
    }
 
@@ -100,6 +109,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       metrics_source_.insert(0, from.metrics_source_);
       unit_.delete(0, unit_.length());
       unit_.insert(0, from.unit_);
+      window_start_.set(from.window_start_);
+      window_stop_.set(from.window_stop_);
+      statistics_.set(from.statistics_);
 
    }
 

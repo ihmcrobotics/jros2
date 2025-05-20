@@ -29,22 +29,30 @@ public class Clock implements ROS2Message<Clock>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += clock_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      clock_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      clock_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Clock from)
    {
+      clock_.set(from.clock_);
+
    }
 
    public builtin_interfaces.msg.dds.Time getclock()

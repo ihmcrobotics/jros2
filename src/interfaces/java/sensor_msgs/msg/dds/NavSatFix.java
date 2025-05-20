@@ -71,6 +71,8 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += status_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // latitude_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // longitude_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // altitude_
@@ -83,6 +85,8 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      status_.serialize(buffer);
       buffer.writeDouble(latitude_);
       buffer.writeDouble(longitude_);
       buffer.writeDouble(altitude_);
@@ -97,6 +101,8 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      status_.deserialize(buffer);
       latitude_ = buffer.readDouble();
       longitude_ = buffer.readDouble();
       altitude_ = buffer.readDouble();
@@ -111,6 +117,8 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    @Override
    public void set(NavSatFix from)
    {
+      header_.set(from.header_);
+      status_.set(from.status_);
       latitude_ = from.latitude_;
       longitude_ = from.longitude_;
       altitude_ = from.altitude_;

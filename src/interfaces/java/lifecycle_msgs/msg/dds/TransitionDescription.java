@@ -37,22 +37,38 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += transition_.calculateSizeBytes(currentAlignment);
+      currentAlignment += start_state_.calculateSizeBytes(currentAlignment);
+      currentAlignment += goal_state_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      transition_.serialize(buffer);
+      start_state_.serialize(buffer);
+      goal_state_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      transition_.deserialize(buffer);
+      start_state_.deserialize(buffer);
+      goal_state_.deserialize(buffer);
+
    }
 
    @Override
    public void set(TransitionDescription from)
    {
+      transition_.set(from.transition_);
+      start_state_.set(from.start_state_);
+      goal_state_.set(from.goal_state_);
+
    }
 
    public lifecycle_msgs.msg.dds.Transition gettransition()

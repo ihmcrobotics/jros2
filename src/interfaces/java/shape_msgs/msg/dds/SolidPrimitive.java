@@ -59,6 +59,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
       currentAlignment += dimensions_.calculateSizeBytes(currentAlignment);
+      currentAlignment += polygon_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -68,6 +69,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       buffer.writeByte(type_);
       dimensions_.serialize(buffer);
+      polygon_.serialize(buffer);
 
    }
 
@@ -76,6 +78,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       type_ = buffer.readByte();
       dimensions_.deserialize(buffer);
+      polygon_.deserialize(buffer);
 
    }
 
@@ -84,6 +87,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       type_ = from.type_;
       dimensions_.set(from.dimensions_);
+      polygon_.set(from.polygon_);
 
    }
 

@@ -29,22 +29,34 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += status_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      status_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      status_.deserialize(buffer);
+
    }
 
    @Override
    public void set(DiagnosticArray from)
    {
+      header_.set(from.header_);
+      status_.set(from.status_);
+
    }
 
    public std_msgs.msg.dds.Header getheader()

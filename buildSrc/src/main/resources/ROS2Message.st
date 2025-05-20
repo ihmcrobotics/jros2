@@ -56,6 +56,8 @@ currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
       <elseif(!field.array)>
 currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
       <endif>
+      <else>
+currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
       <endif>
       <endif>
       }>
@@ -79,6 +81,8 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
       <elseif(!field.array)>
 buffer.<field.builtinCDRBufferWriteMethod>(<field.javaName>);
       <endif>
+      <else>
+<field.javaName>.serialize(buffer);
       <endif>
       <endif>
       }>
@@ -109,6 +113,8 @@ buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>);
 <field.javaName> = buffer.<field.builtinCDRBufferReadMethod>();
       <endif>
       <endif>
+      <else>
+<field.javaName>.deserialize(buffer);
       <endif>
       <endif>
       }>
@@ -134,6 +140,8 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
       <elseif(!field.array)>
 <field.javaName> = from.<field.javaName>;
       <endif>
+      <else>
+<field.javaName>.set(from.<field.javaName>);
       <endif>
       <endif>
       }>

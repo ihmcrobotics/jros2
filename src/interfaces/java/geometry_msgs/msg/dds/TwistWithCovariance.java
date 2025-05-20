@@ -35,6 +35,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += twist_.calculateSizeBytes(currentAlignment);
       currentAlignment += (36 * 8) + CDRBuffer.alignment(currentAlignment, (36 * 8)); // covariance_
 
       return currentAlignment - initialAlignment;
@@ -43,6 +44,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      twist_.serialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
          buffer.writeDouble(covariance_[i]);
@@ -53,6 +55,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      twist_.deserialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
       covariance_[i] = buffer.readDouble();
@@ -63,6 +66,7 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    @Override
    public void set(TwistWithCovariance from)
    {
+      twist_.set(from.twist_);
       for (int i = 0; i < covariance_.length; ++i)
       {
          covariance_[i] = from.covariance_[i];

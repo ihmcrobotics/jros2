@@ -51,6 +51,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_min_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_max_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_increment_
@@ -58,6 +59,8 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scan_time_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_min_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_max_
+      currentAlignment += ranges_.calculateSizeBytes(currentAlignment);
+      currentAlignment += intensities_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -65,6 +68,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeFloat(angle_min_);
       buffer.writeFloat(angle_max_);
       buffer.writeFloat(angle_increment_);
@@ -72,12 +76,15 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
       buffer.writeFloat(scan_time_);
       buffer.writeFloat(range_min_);
       buffer.writeFloat(range_max_);
+      ranges_.serialize(buffer);
+      intensities_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       angle_min_ = buffer.readFloat();
       angle_max_ = buffer.readFloat();
       angle_increment_ = buffer.readFloat();
@@ -85,12 +92,15 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
       scan_time_ = buffer.readFloat();
       range_min_ = buffer.readFloat();
       range_max_ = buffer.readFloat();
+      ranges_.deserialize(buffer);
+      intensities_.deserialize(buffer);
 
    }
 
    @Override
    public void set(MultiEchoLaserScan from)
    {
+      header_.set(from.header_);
       angle_min_ = from.angle_min_;
       angle_max_ = from.angle_max_;
       angle_increment_ = from.angle_increment_;
@@ -98,6 +108,8 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
       scan_time_ = from.scan_time_;
       range_min_ = from.range_min_;
       range_max_ = from.range_max_;
+      ranges_.set(from.ranges_);
+      intensities_.set(from.intensities_);
 
    }
 

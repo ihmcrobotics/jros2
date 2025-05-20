@@ -33,6 +33,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // fluid_pressure_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
 
@@ -42,6 +43,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeDouble(fluid_pressure_);
       buffer.writeDouble(variance_);
 
@@ -50,6 +52,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       fluid_pressure_ = buffer.readDouble();
       variance_ = buffer.readDouble();
 
@@ -58,6 +61,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    @Override
    public void set(FluidPressure from)
    {
+      header_.set(from.header_);
       fluid_pressure_ = from.fluid_pressure_;
       variance_ = from.variance_;
 

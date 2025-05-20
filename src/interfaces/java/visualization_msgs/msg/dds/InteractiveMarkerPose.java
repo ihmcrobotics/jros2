@@ -40,6 +40,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
 
       return currentAlignment - initialAlignment;
@@ -48,6 +50,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
+      pose_.serialize(buffer);
       buffer.writeString(name_);
 
    }
@@ -55,6 +59,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
+      pose_.deserialize(buffer);
       buffer.readString(name_);
 
    }
@@ -62,6 +68,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void set(InteractiveMarkerPose from)
    {
+      header_.set(from.header_);
+      pose_.set(from.pose_);
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);
 

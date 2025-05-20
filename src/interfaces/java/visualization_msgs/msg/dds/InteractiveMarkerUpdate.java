@@ -65,6 +65,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // server_id_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // seq_num_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += markers_.calculateSizeBytes(currentAlignment);
+      currentAlignment += poses_.calculateSizeBytes(currentAlignment);
       currentAlignment += erases_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -76,6 +78,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
       buffer.writeByte(type_);
+      markers_.serialize(buffer);
+      poses_.serialize(buffer);
       erases_.serialize(buffer);
 
    }
@@ -86,6 +90,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
       type_ = buffer.readByte();
+      markers_.deserialize(buffer);
+      poses_.deserialize(buffer);
       erases_.deserialize(buffer);
 
    }
@@ -97,6 +103,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       server_id_.insert(0, from.server_id_);
       seq_num_ = from.seq_num_;
       type_ = from.type_;
+      markers_.set(from.markers_);
+      poses_.set(from.poses_);
       erases_.set(from.erases_);
 
    }

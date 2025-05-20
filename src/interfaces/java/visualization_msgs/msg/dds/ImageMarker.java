@@ -87,12 +87,19 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // ns_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += position_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
+      currentAlignment += outline_color_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // filled_
+      currentAlignment += fill_color_.calculateSizeBytes(currentAlignment);
+      currentAlignment += lifetime_.calculateSizeBytes(currentAlignment);
+      currentAlignment += points_.calculateSizeBytes(currentAlignment);
+      currentAlignment += outline_colors_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -100,37 +107,58 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(ns_);
       buffer.writeInt(id_);
       buffer.writeInt(type_);
       buffer.writeInt(action_);
+      position_.serialize(buffer);
       buffer.writeFloat(scale_);
+      outline_color_.serialize(buffer);
       buffer.writeByte(filled_);
+      fill_color_.serialize(buffer);
+      lifetime_.serialize(buffer);
+      points_.serialize(buffer);
+      outline_colors_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(ns_);
       id_ = buffer.readInt();
       type_ = buffer.readInt();
       action_ = buffer.readInt();
+      position_.deserialize(buffer);
       scale_ = buffer.readFloat();
+      outline_color_.deserialize(buffer);
       filled_ = buffer.readByte();
+      fill_color_.deserialize(buffer);
+      lifetime_.deserialize(buffer);
+      points_.deserialize(buffer);
+      outline_colors_.deserialize(buffer);
 
    }
 
    @Override
    public void set(ImageMarker from)
    {
+      header_.set(from.header_);
       ns_.delete(0, ns_.length());
       ns_.insert(0, from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
+      position_.set(from.position_);
       scale_ = from.scale_;
+      outline_color_.set(from.outline_color_);
       filled_ = from.filled_;
+      fill_color_.set(from.fill_color_);
+      lifetime_.set(from.lifetime_);
+      points_.set(from.points_);
+      outline_colors_.set(from.outline_colors_);
 
    }
 

@@ -73,11 +73,14 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // client_id_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // marker_name_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // control_name_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
+      currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
+      currentAlignment += mouse_point_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mouse_point_valid_
 
       return currentAlignment - initialAlignment;
@@ -86,11 +89,14 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(client_id_);
       buffer.writeString(marker_name_);
       buffer.writeString(control_name_);
       buffer.writeByte(event_type_);
+      pose_.serialize(buffer);
       buffer.writeInt(menu_entry_id_);
+      mouse_point_.serialize(buffer);
       buffer.writeBoolean(mouse_point_valid_);
 
    }
@@ -98,11 +104,14 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(client_id_);
       buffer.readString(marker_name_);
       buffer.readString(control_name_);
       event_type_ = buffer.readByte();
+      pose_.deserialize(buffer);
       menu_entry_id_ = buffer.readInt();
+      mouse_point_.deserialize(buffer);
       mouse_point_valid_ = buffer.readBoolean();
 
    }
@@ -110,6 +119,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void set(InteractiveMarkerFeedback from)
    {
+      header_.set(from.header_);
       client_id_.delete(0, client_id_.length());
       client_id_.insert(0, from.client_id_);
       marker_name_.delete(0, marker_name_.length());
@@ -117,7 +127,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       control_name_.delete(0, control_name_.length());
       control_name_.insert(0, from.control_name_);
       event_type_ = from.event_type_;
+      pose_.set(from.pose_);
       menu_entry_id_ = from.menu_entry_id_;
+      mouse_point_.set(from.mouse_point_);
       mouse_point_valid_ = from.mouse_point_valid_;
 
    }

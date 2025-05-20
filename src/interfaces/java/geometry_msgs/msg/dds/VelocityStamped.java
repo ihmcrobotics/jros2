@@ -35,8 +35,10 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // body_frame_id_
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // reference_frame_id_
+      currentAlignment += velocity_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -44,26 +46,32 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeString(body_frame_id_);
       buffer.writeString(reference_frame_id_);
+      velocity_.serialize(buffer);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       buffer.readString(body_frame_id_);
       buffer.readString(reference_frame_id_);
+      velocity_.deserialize(buffer);
 
    }
 
    @Override
    public void set(VelocityStamped from)
    {
+      header_.set(from.header_);
       body_frame_id_.delete(0, body_frame_id_.length());
       body_frame_id_.insert(0, from.body_frame_id_);
       reference_frame_id_.delete(0, reference_frame_id_.length());
       reference_frame_id_.insert(0, from.reference_frame_id_);
+      velocity_.set(from.velocity_);
 
    }
 

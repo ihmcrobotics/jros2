@@ -38,6 +38,7 @@ public class Parameter implements ROS2Message<Parameter>
       int initialAlignment = currentAlignment;
 
       currentAlignment += -1 + CDRBuffer.alignment(currentAlignment, -1); // name_
+      currentAlignment += value_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
    }
@@ -46,6 +47,7 @@ public class Parameter implements ROS2Message<Parameter>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
+      value_.serialize(buffer);
 
    }
 
@@ -53,6 +55,7 @@ public class Parameter implements ROS2Message<Parameter>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
+      value_.deserialize(buffer);
 
    }
 
@@ -61,6 +64,7 @@ public class Parameter implements ROS2Message<Parameter>
    {
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);
+      value_.set(from.value_);
 
    }
 

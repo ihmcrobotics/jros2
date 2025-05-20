@@ -27,22 +27,30 @@ public class Polygon implements ROS2Message<Polygon>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += points_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      points_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      points_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Polygon from)
    {
+      points_.set(from.points_);
+
    }
 
    public IDLObjectSequence<geometry_msgs.msg.dds.Point32> getpoints()
