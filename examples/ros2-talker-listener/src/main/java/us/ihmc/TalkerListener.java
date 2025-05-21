@@ -22,17 +22,23 @@ import us.ihmc.jros2.ROS2Topic;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
+/*
+ * A basic talker and listener example.
+ * See: https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Cpp-Publisher-And-Subscriber.html
+ */
 public class TalkerListener
 {
    public static void main(String[] args) throws InterruptedException
    {
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>("/chatter", std_msgs.msg.dds.String.class);
+      /*
+       * Create a topic with type example_interfaces/String
+       */
+      ROS2Topic<example_interfaces.msg.dds.String> topic = new ROS2Topic<>("/chatter", example_interfaces.msg.dds.String.class);
 
       /*
        * Set up the subscription
        */
-      ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0);
-      Runtime.getRuntime().addShutdownHook(new Thread(subscriptionNode::close, "SubscriptionShutdown"));
+      ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0); // Make sure to .close() the ROS2Node when done using it!
       subscriptionNode.createSubscription(topic, reader ->
       {
          // Subscription callback
@@ -42,9 +48,8 @@ public class TalkerListener
       /*
        * Set up the publisher
        */
-      ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0);
-      Runtime.getRuntime().addShutdownHook(new Thread(publisherNode::close, "PublisherShutdown"));
-      ROS2Publisher<std_msgs.msg.dds.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0); // Make sure to .close() the ROS2Node when done using it!
+      ROS2Publisher<example_interfaces.msg.dds.String> publisher = publisherNode.createPublisher(topic);
       Thread publishThread = new Thread(new Runnable()
       {
          private int count;
@@ -54,7 +59,7 @@ public class TalkerListener
          {
             while (!publisherNode.isClosed())
             {
-               std_msgs.msg.dds.String message = new std_msgs.msg.dds.String();
+               example_interfaces.msg.dds.String message = new example_interfaces.msg.dds.String();
                message.getData().append("Hello world: ").append(count++);
                System.out.printf("Publishing: '%s'%n", message.getData());
 
@@ -67,5 +72,8 @@ public class TalkerListener
 
       publishThread.start();
       publishThread.join();
+
+      subscriptionNode.close();
+      publisherNode.close();
    }
 }

@@ -57,7 +57,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    /**
-    * Read from the {@link CDRBuffer} into data (allocation-free).
+    * Read from the {@link CDRBuffer} into data (does not allocate any heap memory).
     *
     * @param data The message to pack
     */
@@ -89,7 +89,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    /**
-    * Read from the {@link CDRBuffer} and return a new message (allocates).
+    * Read from the {@link CDRBuffer} and return a new message (allocates a new instance of the message type).
     */
    public T read()
    {
