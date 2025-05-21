@@ -72,7 +72,7 @@ public class Odometry implements ROS2Message<Odometry>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + child_frame_id_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + child_frame_id_.length() + 1; // child_frame_id_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += twist_.calculateSizeBytes(currentAlignment);
 

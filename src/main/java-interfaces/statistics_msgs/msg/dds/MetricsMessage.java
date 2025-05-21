@@ -105,9 +105,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + measurement_source_name_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + metrics_source_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + unit_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + measurement_source_name_.length() + 1; // measurement_source_name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + metrics_source_.length() + 1; // metrics_source_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + unit_.length() + 1; // unit_
       currentAlignment += window_start_.calculateSizeBytes(currentAlignment);
       currentAlignment += window_stop_.calculateSizeBytes(currentAlignment);
       currentAlignment += statistics_.calculateSizeBytes(currentAlignment);

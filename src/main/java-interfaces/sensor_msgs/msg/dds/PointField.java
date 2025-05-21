@@ -66,7 +66,7 @@ public class PointField implements ROS2Message<PointField>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + name_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + name_.length() + 1; // name_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // offset_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // count_
 

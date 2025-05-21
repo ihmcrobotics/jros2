@@ -156,10 +156,10 @@ public class Log implements ROS2Message<Log>
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // level_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + name_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + msg_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + file_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + function_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + name_.length() + 1; // name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + msg_.length() + 1; // msg_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + file_.length() + 1; // file_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + function_.length() + 1; // function_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // line_
 
       return currentAlignment - initialAlignment;

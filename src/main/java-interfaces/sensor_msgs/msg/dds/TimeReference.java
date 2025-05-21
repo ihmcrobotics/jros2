@@ -49,7 +49,7 @@ public class TimeReference implements ROS2Message<TimeReference>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += time_ref_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + source_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + source_.length() + 1; // source_
 
       return currentAlignment - initialAlignment;
    }

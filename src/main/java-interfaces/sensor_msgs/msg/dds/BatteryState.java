@@ -149,8 +149,8 @@ public class BatteryState implements ROS2Message<BatteryState>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // percentage_
       currentAlignment += cell_voltage_.calculateSizeBytes(currentAlignment);
       currentAlignment += cell_temperature_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + location_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + serial_number_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + location_.length() + 1; // location_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + serial_number_.length() + 1; // serial_number_
 
       return currentAlignment - initialAlignment;
    }

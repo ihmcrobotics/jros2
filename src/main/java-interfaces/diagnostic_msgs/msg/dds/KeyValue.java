@@ -45,8 +45,8 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + key_.length() + 1;
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + value_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + key_.length() + 1; // key_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + value_.length() + 1; // value_
 
       return currentAlignment - initialAlignment;
    }
