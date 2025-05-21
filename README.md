@@ -1,4 +1,8 @@
-<p align="center"><img src="media/jros2.png" width="30%" /><br><br></p>
+<p align="center">
+  <img src="media/jros2.png" width="30%" /><br>
+  <a href="https://github.com/ihmcrobotics/jros2/wiki">Wiki</a>
+  <a href="https://github.com/ihmcrobotics/jros2/issues">Issues</a>
+</p>
 
 -----------------
 A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other supported ROS 2 middlewares.
