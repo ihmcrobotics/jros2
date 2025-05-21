@@ -228,7 +228,7 @@ public final class CDRBuffer
       for (int i = 0; i < charLength; ++i)
       {
          int wchar = readWchar();
-         destination.append((char) wchar); // This is safe - last 2 bytes are always unused
+         destination.setCharAt(i, (char) wchar); // This is safe - last 2 bytes are always unused
       }
 
       // wstring has no null terminator
