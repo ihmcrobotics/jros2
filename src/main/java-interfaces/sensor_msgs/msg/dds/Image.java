@@ -74,7 +74,7 @@ public class Image implements ROS2Message<Image>
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + encoding_.length() + 1; // encoding_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * encoding_.length()) + 1; // encoding_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_bigendian_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // step_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);

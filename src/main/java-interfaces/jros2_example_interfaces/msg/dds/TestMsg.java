@@ -88,15 +88,15 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += header2_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + my_string_.length() + 1; // my_string_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string_.length()) + 1; // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // five_integers_array_
       currentAlignment += up_to_five_integers_array_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + string_of_unbounded_size_.length() + 1; // string_of_unbounded_size_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * string_of_unbounded_size_.length()) + 1; // string_of_unbounded_size_
       currentAlignment += up_to_five_unbounded_strings_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // x_
       currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + full_name_.length() + 1; // full_name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

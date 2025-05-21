@@ -78,7 +78,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + child_frame_id_.length() + 1; // child_frame_id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * child_frame_id_.length()) + 1; // child_frame_id_
       currentAlignment += transform_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

@@ -154,21 +154,6 @@ public class InterfaceField
       }
    }
 
-   private static String snakeToPascal(String snake)
-   {
-      String[] parts = snake.split("_");
-      StringBuilder pascal = new StringBuilder();
-      for (String part : parts)
-      {
-         if (!part.isEmpty())
-         {
-            pascal.append(Character.toUpperCase(part.charAt(0)));
-            pascal.append(part.substring(1).toLowerCase());
-         }
-      }
-      return pascal.toString();
-   }
-
    public boolean isStringUpperBounded()
    {
       return stringUpperBounded;
@@ -309,6 +294,11 @@ public class InterfaceField
       return type != null && (type.equals("string") || type.equals("wstring"));
    }
 
+   public boolean isBuiltinWStringType()
+   {
+      return type != null && type.equals("wstring");
+   }
+
    public int getBuiltinTypeSize()
    {
       return Builtin.getBuiltinTypeSize(type);
@@ -377,5 +367,20 @@ public class InterfaceField
             return getType();
          }
       }
+   }
+
+   private static String snakeToPascal(String snake)
+   {
+      String[] parts = snake.split("_");
+      StringBuilder pascal = new StringBuilder();
+      for (String part : parts)
+      {
+         if (!part.isEmpty())
+         {
+            pascal.append(Character.toUpperCase(part.charAt(0)));
+            pascal.append(part.substring(1).toLowerCase());
+         }
+      }
+      return pascal.toString();
    }
 }

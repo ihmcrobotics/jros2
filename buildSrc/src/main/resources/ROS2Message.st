@@ -67,7 +67,7 @@ currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.align
       <elseif(field.array&&!field.fixedSize)>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
       <elseif(!field.array&&field.builtinStringType)>
-currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + <field.javaName>.length() + 1; // <field.javaName>
+currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.builtinTypeSize> * <field.javaName>.length())<if(!field.builtinWStringType)> + 1<endif>; // <field.javaName>
       <elseif(!field.array)>
 currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
       <endif>

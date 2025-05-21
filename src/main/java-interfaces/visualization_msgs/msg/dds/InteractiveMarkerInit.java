@@ -65,7 +65,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + server_id_.length() + 1; // server_id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * server_id_.length()) + 1; // server_id_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // seq_num_
       currentAlignment += markers_.calculateSizeBytes(currentAlignment);
 

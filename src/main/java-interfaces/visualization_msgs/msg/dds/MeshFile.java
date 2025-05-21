@@ -53,7 +53,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + filename_.length() + 1; // filename_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * filename_.length()) + 1; // filename_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
