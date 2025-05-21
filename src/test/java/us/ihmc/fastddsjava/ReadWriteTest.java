@@ -86,8 +86,6 @@ public class ReadWriteTest
       subscriberProfileType.setProfileName("unit_test_subscriber");
       profilesXML.addSubscriberProfile(subscriberProfileType);
 
-      System.out.println(profilesXML.marshall());
-
       return profilesXML;
    }
 
