@@ -53,7 +53,10 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
 
-   private final CDRBuffer cdrBuffer;
+   /*
+    * Write buffer
+    */
+   private final CDRBuffer writeBuffer;
 
    /*
     * Locks
@@ -83,7 +86,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
-      cdrBuffer = new CDRBuffer();
+      writeBuffer = new CDRBuffer();
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -104,21 +107,21 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          {
             int payloadSizeBytes;
 
-            synchronized (cdrBuffer)
+            synchronized (writeBuffer)
             {
                // Rewind buffer to ensure we're starting at position = 0
-               cdrBuffer.rewind();
+               writeBuffer.rewind();
 
                payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
-               cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
 
                // TODO: check if we can shrink the writeBuffer to save memory
 
-               cdrBuffer.writePayloadHeader();
-               message.serialize(cdrBuffer);
+               writeBuffer.writePayloadHeader();
+               message.serialize(writeBuffer);
 
                topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               topicDataWrapper.data_ptr().put(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
             }
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));

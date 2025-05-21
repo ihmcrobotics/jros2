@@ -59,11 +59,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final SampleInfo sampleInfo;
    private final SubscriptionMatchedStatus subscriptionMatchedStatus;
 
-   private final CDRBuffer cdrBuffer;
-
    /*
-    * Data reader
+    * Read buffer and readers
     */
+   private final CDRBuffer readBuffer;
    private final ROS2SubscriptionCallback<T> callback;
    private final ROS2SubscriptionReader<T> subscriptionReader;
 
@@ -96,9 +95,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
-      cdrBuffer = new CDRBuffer();
+      readBuffer = new CDRBuffer();
       sampleInfo = new SampleInfo();
-      subscriptionReader = new ROS2SubscriptionReader<>(cdrBuffer, topic);
+      subscriptionReader = new ROS2SubscriptionReader<>(readBuffer, topic);
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -154,9 +153,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
             {
                long receptionTime = System.currentTimeMillis();
                int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
-               cdrBuffer.rewind();
-               cdrBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               topicDataWrapper.data_ptr().get(cdrBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+               readBuffer.rewind();
+               readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
                callback.onMessage(subscriptionReader);
 
@@ -247,6 +246,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
    /**
     * Get the topic type class for which this subscription can consume.
+    *
     * @return the type class held in the {@link ROS2Topic}
     */
    public Class<T> getTopicType()
@@ -256,6 +256,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
    /**
     * Get the topic name for which this subscription will subscribe to.
+    *
     * @return the topic name held in the {@link ROS2Topic}
     */
    public String getTopicName()

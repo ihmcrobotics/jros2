@@ -33,7 +33,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       jros2.load();
    }
 
-   private final CDRBuffer cdrBuffer;
+   private final CDRBuffer readBuffer;
    private final ROS2Topic<T> topic;
 
    private long lastMessageTimestamp;
@@ -47,13 +47,13 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   protected ROS2SubscriptionReader(CDRBuffer cdrBuffer, ROS2Topic<T> topic)
+   protected ROS2SubscriptionReader(CDRBuffer readBuffer, ROS2Topic<T> topic)
    {
-      this.cdrBuffer = cdrBuffer;
+      this.readBuffer = readBuffer;
       this.topic = topic;
 
-      getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastMessageTimestamp = Long.MIN_VALUE;
+      getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
    }
 
    /**
@@ -63,9 +63,9 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
     */
    public void read(T data)
    {
-      cdrBuffer.readPayloadHeader();
+      readBuffer.readPayloadHeader();
 
-      data.deserialize(cdrBuffer);
+      data.deserialize(readBuffer);
 
       /*
        * Generate age statistics for messages which have a Header field (https://github.com/ros2/common_interfaces/blob/humble/std_msgs/msg/Header.msg)

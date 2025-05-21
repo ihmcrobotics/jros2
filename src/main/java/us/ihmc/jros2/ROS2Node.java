@@ -53,11 +53,13 @@ public class ROS2Node implements Closeable
       jros2.load();
    }
 
+   /*
+    * Node identification
+    */
    /**
     * A colloquial name for the node, not used internally.
     */
    private final String name;
-
    /**
     * The domain ID the node will use when writing and reading to the network transport. A valid domain ID must
     * be within the range [0, 232].
@@ -67,11 +69,13 @@ public class ROS2Node implements Closeable
     */
    private final int domainId;
 
+   /*
+    * Fast-DDS pointers
+    */
    /**
     * Pointer to a Fast-DDS participant used by this node in native memory. For internal use only.
     */
    protected final Pointer fastddsParticipant;
-
    /**
     * A helper map linking {@link ROS2Topic}\s to {@link TopicData}, where TopicData is a set of Fast-DDS pointers required
     * for creating and using a topic. For internal use only.
@@ -82,12 +86,14 @@ public class ROS2Node implements Closeable
     * A list of {@link ROS2Publisher}\s managed by this node.
     */
    protected final List<ROS2Publisher<?>> publishers;
-
    /**
     * A list of {@link ROS2Subscription}\s managed by this node.
     */
    private final List<ROS2Subscription<?>> subscriptions;
 
+   /*
+    * Locks
+    */
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
