@@ -60,7 +60,7 @@ public final class TransportDescriptorTypeTools
 
    public static void setInterfacesWhitelist(TransportDescriptorType transportDescriptorType, String... addressOrInterfaceNames)
    {
-      if (addressOrInterfaceNames == null)
+      if (addressOrInterfaceNames == null || addressOrInterfaceNames.length == 0)
       {
          transportDescriptorType.setInterfaceWhiteList(null);
       }
