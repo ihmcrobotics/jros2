@@ -26,7 +26,7 @@ public class TalkerListener
 {
    public static void main(String[] args) throws InterruptedException
    {
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>("/topic", std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>("/chatter", std_msgs.msg.dds.String.class);
 
       /*
        * Set up the publisher
@@ -44,7 +44,7 @@ public class TalkerListener
             while (!publisherNode.isClosed())
             {
                std_msgs.msg.dds.String message = new std_msgs.msg.dds.String();
-               message.getData().append("Hello, world! ").append(count++);
+               message.getData().append("Hello world: ").append(count++);
                System.out.printf("Publishing: '%s'%n", message.getData().toString());
 
                publisher.publish(message);

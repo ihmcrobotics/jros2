@@ -58,7 +58,7 @@ public class GoalID implements ROS2Message<GoalID>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (1 * id_.length()) + CDRBuffer.alignment(currentAlignment, (1 * id_.length())); // id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + id_.length() + 1;
 
       return currentAlignment - initialAlignment;
    }

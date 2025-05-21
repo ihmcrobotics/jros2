@@ -191,10 +191,11 @@ public final class CDRBuffer
       int length = readInt() - 1; // -1 to remove null terminator
 
       // Clear the destination and read all characters into it
-      destination.delete(0, destination.length());
+      destination.setLength(length);
       for (int i = 0; i < length; ++i)
       {
-         destination.append(readChar());
+         char c = readChar();
+         destination.setCharAt(i, c);
       }
 
       // Read the null terminator
@@ -210,7 +211,8 @@ public final class CDRBuffer
       // Write the string
       for (int i = 0; i < length; ++i)
       {
-         writeChar(value.charAt(i));
+         char c = value.charAt(i);
+         writeChar(c);
       }
 
       // Add null terminator
@@ -222,7 +224,7 @@ public final class CDRBuffer
       int charLength = readInt();
 
       // Clear the destination and read all characters into it
-      destination.delete(0, destination.length());
+      destination.setLength(charLength);
       for (int i = 0; i < charLength; ++i)
       {
          int wchar = readWchar();

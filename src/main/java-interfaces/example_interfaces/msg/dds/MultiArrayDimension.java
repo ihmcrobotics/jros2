@@ -47,7 +47,7 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (1 * label_.length()) + CDRBuffer.alignment(currentAlignment, (1 * label_.length())); // label_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + label_.length() + 1;
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // size_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // stride_
 

@@ -85,7 +85,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (1 * name_.length()) + CDRBuffer.alignment(currentAlignment, (1 * name_.length())); // name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + name_.length() + 1;
       currentAlignment += values_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;

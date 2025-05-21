@@ -235,7 +235,7 @@ public class Marker implements ROS2Message<Marker>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (1 * ns_.length()) + CDRBuffer.alignment(currentAlignment, (1 * ns_.length())); // ns_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + ns_.length() + 1;
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
@@ -246,11 +246,11 @@ public class Marker implements ROS2Message<Marker>
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // frame_locked_
       currentAlignment += points_.calculateSizeBytes(currentAlignment);
       currentAlignment += colors_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (1 * texture_resource_.length()) + CDRBuffer.alignment(currentAlignment, (1 * texture_resource_.length())); // texture_resource_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + texture_resource_.length() + 1;
       currentAlignment += texture_.calculateSizeBytes(currentAlignment);
       currentAlignment += uv_coordinates_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (1 * text_.length()) + CDRBuffer.alignment(currentAlignment, (1 * text_.length())); // text_
-      currentAlignment += (1 * mesh_resource_.length()) + CDRBuffer.alignment(currentAlignment, (1 * mesh_resource_.length())); // mesh_resource_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + text_.length() + 1;
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + mesh_resource_.length() + 1;
       currentAlignment += mesh_file_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mesh_use_embedded_materials_
 

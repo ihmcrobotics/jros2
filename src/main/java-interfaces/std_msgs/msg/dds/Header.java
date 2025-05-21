@@ -56,7 +56,7 @@ public class Header implements ROS2Message<Header>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (1 * frame_id_.length()) + CDRBuffer.alignment(currentAlignment, (1 * frame_id_.length())); // frame_id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + frame_id_.length() + 1;
 
       return currentAlignment - initialAlignment;
    }

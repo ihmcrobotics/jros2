@@ -44,7 +44,7 @@ public class WString implements ROS2Message<WString>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (4 * data_.length()) + CDRBuffer.alignment(currentAlignment, (4 * data_.length())); // data_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + data_.length() + 1;
 
       return currentAlignment - initialAlignment;
    }
