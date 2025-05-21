@@ -50,9 +50,10 @@ public class ReadWriteTest
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      // Add SHM transport
+      // Add UDPv4 transport
       TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
+      TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
       transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
       profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
