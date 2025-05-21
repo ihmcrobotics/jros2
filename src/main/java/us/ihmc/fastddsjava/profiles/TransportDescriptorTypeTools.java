@@ -58,6 +58,9 @@ public final class TransportDescriptorTypeTools
       return descriptorType;
    }
 
+   /**
+    * Set the whitelisted addresses or interface names for a transport descriptor.
+    */
    public static void setInterfacesWhitelist(TransportDescriptorType transportDescriptorType, String... addressOrInterfaceNames)
    {
       if (addressOrInterfaceNames == null || addressOrInterfaceNames.length == 0)
