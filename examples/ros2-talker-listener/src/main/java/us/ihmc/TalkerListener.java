@@ -36,10 +36,7 @@ public class TalkerListener
       subscriptionNode.createSubscription(topic, reader ->
       {
          // Subscription callback
-         std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
-         reader.read(msg);
-
-         System.out.printf("I heard: '%s'%n", msg.getData().toString());
+         System.out.printf("I heard: '%s'%n", reader.read().getData());
       });
 
       /*
@@ -59,7 +56,7 @@ public class TalkerListener
             {
                std_msgs.msg.dds.String message = new std_msgs.msg.dds.String();
                message.getData().append("Hello world: ").append(count++);
-               System.out.printf("Publishing: '%s'%n", message.getData().toString());
+               System.out.printf("Publishing: '%s'%n", message.getData());
 
                publisher.publish(message);
 
