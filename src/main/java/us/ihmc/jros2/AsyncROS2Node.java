@@ -52,9 +52,9 @@ public class AsyncROS2Node extends ROS2Node
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   protected AsyncROS2Node(String name, int domainId, TransportDescriptorType... transports)
+   public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
-      super(name, domainId, transports);
+      super(name, domainId, fastddsTransports);
 
       int capacity = 64;
 

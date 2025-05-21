@@ -97,7 +97,7 @@ public class ROS2Node implements Closeable
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
-   protected ROS2Node(String name, int domainId, TransportDescriptorType... transports)
+   public ROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
       if (name == null)
       {
@@ -120,22 +120,22 @@ public class ROS2Node implements Closeable
       Rtps rtps = new Rtps();
       rtps.setName(name);
 
-      boolean useCustomTransports = transports != null && transports.length != 0;
+      boolean useCustomTransports = fastddsTransports != null && fastddsTransports.length != 0;
       rtps.setUseBuiltinTransports(!useCustomTransports);
       if (useCustomTransports)
       {
          rtps.setUseBuiltinTransports(false);
          TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         for (int i = 0; i < transports.length; ++i)
+         for (int i = 0; i < fastddsTransports.length; ++i)
          {
-            transportDescriptorListType.getTransportDescriptor().add(transports[i]);
+            transportDescriptorListType.getTransportDescriptor().add(fastddsTransports[i]);
          }
          profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
          ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         for (int i = 0; i < transports.length; ++i)
+         for (int i = 0; i < fastddsTransports.length; ++i)
          {
-            userTransports.getTransportId().add(transports[i].getTransportId());
+            userTransports.getTransportId().add(fastddsTransports[i].getTransportId());
          }
          rtps.setUserTransports(userTransports);
       }

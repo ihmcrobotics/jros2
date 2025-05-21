@@ -9,6 +9,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
+import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
@@ -20,7 +21,6 @@ import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -50,21 +50,19 @@ public class ReadWriteTest
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      // Add transport
+      // Add SHM transport
       TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-      TransportDescriptorType udp4Transport = new TransportDescriptorType();
-      udp4Transport.setTransportId(UUID.randomUUID().toString());
-      udp4Transport.setType("UDPv4");
-      transportDescriptorListType.getTransportDescriptor().add(udp4Transport);
+      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+      transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
       profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
-      rtps.setUseBuiltinTransports(true);
+      rtps.setUseBuiltinTransports(false); // Only use custom created transport
       ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-      userTransports.getTransportId().add(udp4Transport.getTransportId());
+      userTransports.getTransportId().add(transportDescriptorType.getTransportId());
       rtps.setUserTransports(userTransports);
       participantProfileType.setRtps(rtps);
 
@@ -86,6 +84,8 @@ public class ReadWriteTest
       SubscriberProfileType subscriberProfileType = new SubscriberProfileType();
       subscriberProfileType.setProfileName("unit_test_subscriber");
       profilesXML.addSubscriberProfile(subscriberProfileType);
+
+      System.out.println(profilesXML.marshall());
 
       return profilesXML;
    }
