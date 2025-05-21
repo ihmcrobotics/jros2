@@ -39,6 +39,7 @@ public class TalkerListener
        * Set up the subscription
        */
       ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0); // Make sure to .close() the ROS2Node when done using it!
+      Runtime.getRuntime().addShutdownHook(new Thread(subscriptionNode::close, "SubscriptionShutdown"));
       subscriptionNode.createSubscription(topic, reader ->
       {
          // Subscription callback
@@ -49,6 +50,7 @@ public class TalkerListener
        * Set up the publisher
        */
       ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0); // Make sure to .close() the ROS2Node when done using it!
+      Runtime.getRuntime().addShutdownHook(new Thread(publisherNode::close, "PublisherShutdown"));
       ROS2Publisher<example_interfaces.msg.dds.String> publisher = publisherNode.createPublisher(topic);
       Thread publishThread = new Thread(new Runnable()
       {
@@ -72,8 +74,5 @@ public class TalkerListener
 
       publishThread.start();
       publishThread.join();
-
-      subscriptionNode.close();
-      publisherNode.close();
    }
 }
