@@ -60,3 +60,29 @@ ROS2Subscription<Int32> subscription = node.createSubscription(topic, reader -> 
   // Do something with the message!
 };
 ```
+
+### Talker and listener example
+Run a talker and listener example with `./run_talker_listener.sh`. If you have a local ROS 2 installation or use a ROS 2 container, you
+can verify that ROS 2 is able to communicate with jros2.
+
+```
+[New shell]
+jros2$ ./run_talker_listener.sh
+> Task :examples:ros2-ros2-talker-listener:run
+Publishing: 'Hello world: 0'
+Publishing: 'Hello world: 1'
+I heard: 'Hello world: 1'
+Publishing: 'Hello world: 2'
+I heard: 'Hello world: 2'
+[...]
+```
+```
+[New shell]
+jros2$ source /opt/ros/humble/setup.bash 
+jros2$ ros2 topic echo /chatter
+data: 'Hello world: 1'
+---
+data: 'Hello world: 2'
+---
+[...]
+```

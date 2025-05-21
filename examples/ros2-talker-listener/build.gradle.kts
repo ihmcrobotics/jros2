@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("application")
 }
 
 group = "us.ihmc"
@@ -11,4 +12,8 @@ repositories {
 
 dependencies {
     implementation(project(":"))
+}
+
+application {
+    mainClass.set("us.ihmc.TalkerListener")
 }

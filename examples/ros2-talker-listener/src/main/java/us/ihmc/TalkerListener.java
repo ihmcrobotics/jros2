@@ -29,6 +29,20 @@ public class TalkerListener
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>("/chatter", std_msgs.msg.dds.String.class);
 
       /*
+       * Set up the subscription
+       */
+      ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0);
+      Runtime.getRuntime().addShutdownHook(new Thread(subscriptionNode::close, "SubscriptionShutdown"));
+      subscriptionNode.createSubscription(topic, reader ->
+      {
+         // Subscription callback
+         std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+         reader.read(msg);
+
+         System.out.printf("I heard: '%s'%n", msg.getData().toString());
+      });
+
+      /*
        * Set up the publisher
        */
       ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0);
@@ -53,20 +67,6 @@ public class TalkerListener
             }
          }
       }, "PublishThread");
-
-      /*
-       * Set up the subscription
-       */
-      ROS2Node subscriptionNode = new ROS2Node("minimal_subscriber", 0);
-      Runtime.getRuntime().addShutdownHook(new Thread(subscriptionNode::close, "SubscriptionShutdown"));
-      subscriptionNode.createSubscription(topic, reader ->
-      {
-         // Subscription callback
-         std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
-         reader.read(msg);
-
-         System.out.printf("I heard: '%s'%n", msg.getData().toString());
-      });
 
       publishThread.start();
       publishThread.join();
