@@ -101,13 +101,13 @@ public class ROS2Node implements Closeable
    {
       if (name == null)
       {
-         throw new NullPointerException("name cannot be null when constructing a ROS2Node");
+         throw new IllegalArgumentException("name cannot be null when constructing a ROS2Node");
       }
       this.name = name;
 
       if (domainId < 0 || domainId > 232)
       {
-         throw new RuntimeException("Invalid domain ID used when constructing a ROS2Node (" + domainId + ")");
+         throw new IllegalArgumentException(String.format("Invalid domain ID used when constructing a ROS2Node (%d)", domainId));
       }
       this.domainId = domainId;
 
