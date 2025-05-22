@@ -281,6 +281,26 @@ public final class Builtin
          throw new RuntimeException("Invalid or mismatched string delimiters.");
       }
 
-      return String.format("\"%s\"", valueCopy.substring(1, valueCopy.length() - 1));
+      // Remove string delimiters
+      String valueWithoutDelimiters = valueCopy.substring(1, valueCopy.length() - 1);
+
+      // Escape unescaped double-quotes within the string value
+      valueWithoutDelimiters = valueWithoutDelimiters.replaceAll("(?<!\\\\)\"", "\\\\\"");
+
+      return String.format("\"%s\"", valueWithoutDelimiters);
+   }
+
+   public static boolean sanitizeBoolValue(String value)
+   {
+      assert value != null;
+
+      String valueCopy = value.trim();
+
+      return switch (valueCopy)
+      {
+         case "1", "true" -> true;
+         case "0", "false" -> false;
+         default -> throw new IllegalArgumentException(String.format("Unexpected bool value {%s}.", value));
+      };
    }
 }

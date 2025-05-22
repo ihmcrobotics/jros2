@@ -251,9 +251,18 @@ public class InterfaceField
 
    public void defaultValue(String defaultValue)
    {
+      // String sanitization
       if (defaultValue != null && isBuiltinStringType())
       {
          defaultValue = Builtin.sanitizeStringValue(defaultValue);
+      }
+
+      // Boolean sanitization
+      if (defaultValue != null && type.equals("bool"))
+      {
+         // Ensure it's either "true" or "false"
+         // interface definitions allow 1 or 0 as well
+         defaultValue = Boolean.toString(Builtin.sanitizeBoolValue(defaultValue));
       }
 
       this.defaultValue = defaultValue;
