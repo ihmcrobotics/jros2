@@ -148,7 +148,7 @@ public abstract class InterfaceContext
    }
 
    private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
-         "^(?<strtype>string|wstring)(?<strlen><=\\d+)?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])?$");
+         "^(?<strtype>string|wstring)(<=(?<strlen>\\d+))?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))$");
    private static final Pattern TYPE_PATTERN = Pattern.compile(
          "^(?<type>[a-zA-Z0-9/_]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
@@ -163,18 +163,21 @@ public abstract class InterfaceContext
       {
          // Example: wstring<=10[<=4]
          String stringTypeStr = string_wstring_matcher.group("strtype"); // e.g. wstring
-         String stringLengthStr = string_wstring_matcher.group("strlen"); // e.g. <=10
+         String stringLengthStr = string_wstring_matcher.group("strlen"); // e.g. 10
          String arrayStr = string_wstring_matcher.group("arr"); // e.g. [<=4]
          String sequenceBoundsStr = string_wstring_matcher.group("seqbounds"); // e.g. <=
          String lengthStr = string_wstring_matcher.group("len"); // e.g. 4
+         String fieldNameStr = string_wstring_matcher.group("fname"); // my_type
 
          // TODO
          field = new InterfaceField();
          field.type(stringTypeStr);
-         field.stringLength(lengthStr == null ? -1 : Integer.parseInt(stringLengthStr));
+         field.stringLength(stringLengthStr == null ? -1 : Integer.parseInt(stringLengthStr));
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
+         field.unbounded(arrayStr != null && sequenceBoundsStr == null && lengthStr == null);
          field.length(lengthStr == null ? -1 : Integer.parseInt(lengthStr));
+         field.name(fieldNameStr);
          field.headerComment(headerComment);
          field.trailingComment(trailingComment);
       }

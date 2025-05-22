@@ -37,6 +37,10 @@ public class <context.name> implements ROS2Message\<<context.name>>
    <field.headerComment>
 */
 <endif>
+<if(field.builtinStringType&&field.stringMaxLength)>
+// Note: The length of this string or each string in the sequence should not exceed <field.stringLength> characters.
+// This is not strictly enforced in Java / jros2.
+<endif>
 <if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;<if(field.trailingComment)> // <field.trailingComment><endif>
    }>
    public <context.name>()

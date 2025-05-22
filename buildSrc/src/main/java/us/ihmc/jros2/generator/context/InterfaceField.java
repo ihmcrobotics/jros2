@@ -169,6 +169,11 @@ public class InterfaceField
       return stringLength;
    }
 
+   public boolean hasStringMaxLength()
+   {
+      return stringLength > 0;
+   }
+
    public void stringLength(int stringLength)
    {
       this.stringLength = stringLength;
