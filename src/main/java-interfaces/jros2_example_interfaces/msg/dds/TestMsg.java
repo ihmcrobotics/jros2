@@ -20,7 +20,8 @@ This file was generated from the following content:
    string<=10 up_to_ten_characters_string
 
    string[<=5] up_to_five_unbounded_strings
-   string<=10[] unbounded_array_of_strings_up_to_ten_characters_each
+   # Test header comment
+   string<=10[] unbounded_array_of_strings_up_to_ten_characters_each # Test comment
    string<=10[<=5] up_to_five_strings_up_to_ten_characters_each
 
    uint8 x 42
@@ -53,14 +54,17 @@ public class TestMsg implements ROS2Message<TestMsg>
    private final int[] five_integers_array_;
    private final IDLIntSequence up_to_five_integers_array_;
    private final StringBuilder string_of_unbounded_size_;
-   // Note: The length of this string or each string in the sequence should not exceed 10 characters.
+   // Note: The length of this string should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
    private final StringBuilder up_to_ten_characters_string_;
    private final IDLStringSequence up_to_five_unbounded_strings_;
-   // Note: The length of this string or each string in the sequence should not exceed 10 characters.
+   /**
+      Test header comment
+   */
+   // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
-   private final IDLStringSequence unbounded_array_of_strings_up_to_ten_characters_each_;
-   // Note: The length of this string or each string in the sequence should not exceed 10 characters.
+   private final IDLStringSequence unbounded_array_of_strings_up_to_ten_characters_each_; // Test comment
+   // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
    private final IDLStringSequence up_to_five_strings_up_to_ten_characters_each_;
    private byte x_;
