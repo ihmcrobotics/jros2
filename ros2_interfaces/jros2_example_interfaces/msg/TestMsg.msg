@@ -20,6 +20,7 @@ uint8 x 42
 int16 y -2000
 string full_name "John Doe"
 int32[] samples [-200, -100, 0, 100, 200]
+int32[5] samples2 [-200, -100, 0, 100, 200]
 
 int32 X=123
 int32 Y=-123

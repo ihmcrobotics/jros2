@@ -48,7 +48,7 @@ public class <context.name> implements ROS2Message\<<context.name>>
       <context.fields:{ field |
       <if(!field.constantValue)>
       <if(field.array)>
-<field.javaName> = new <field.javaType><if(field.fixedSize)>[<field.length>]<else>(<if(field.upperBounded)><field.length><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
+<field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><field.length><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
       <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
 <field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif>);
       <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>

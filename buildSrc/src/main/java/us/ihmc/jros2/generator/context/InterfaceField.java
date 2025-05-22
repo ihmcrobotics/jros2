@@ -15,6 +15,8 @@
  */
 package us.ihmc.jros2.generator.context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class InterfaceField
@@ -266,6 +268,26 @@ public class InterfaceField
       }
 
       this.defaultValue = defaultValue;
+   }
+
+   public boolean isDefaultValueArray()
+   {
+      return defaultValue != null && (defaultValue.startsWith("[") && defaultValue.endsWith("]"));
+   }
+
+   public List<String> getDefaultValueArrayValues()
+   {
+      List<String> values = new ArrayList<>();
+
+      if (isDefaultValueArray())
+      {
+         for (String value : defaultValue.substring(1, defaultValue.length() - 1).split(","))
+         {
+            values.add(value.trim());
+         }
+      }
+
+      return values;
    }
 
    public String getHeaderComment()

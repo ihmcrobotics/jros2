@@ -28,6 +28,7 @@ This file was generated from the following content:
    int16 y -2000
    string full_name "John Doe"
    int32[] samples [-200, -100, 0, 100, 200]
+   int32[5] samples2 [-200, -100, 0, 100, 200]
 
    int32 X=123
    int32 Y=-123
@@ -71,6 +72,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    private short y_;
    private final StringBuilder full_name_;
    private final IDLIntSequence samples_;
+   private final int[] samples2_;
    public static final int X = 123;
    public static final int Y = -123;
    public static final String FOO = "foo";
@@ -93,6 +95,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
+      samples2_ = new int[] {-200, -100, 0, 100, 200};
 
    }
 
@@ -117,6 +120,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
+      currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
 
       return currentAlignment - initialAlignment;
    }
@@ -143,6 +147,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       buffer.writeShort(y_);
       buffer.writeString(full_name_);
       samples_.serialize(buffer);
+      for (int i = 0; i < samples2_.length; ++i)
+      {
+         buffer.writeInt(samples2_[i]);
+      }
 
    }
 
@@ -168,6 +176,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       y_ = buffer.readShort();
       buffer.readString(full_name_);
       samples_.deserialize(buffer);
+      for (int i = 0; i < samples2_.length; ++i)
+      {
+      samples2_[i] = buffer.readInt();
+      }
 
    }
 
@@ -197,6 +209,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       full_name_.delete(0, full_name_.length());
       full_name_.insert(0, from.full_name_);
       samples_.set(from.samples_);
+      for (int i = 0; i < samples2_.length; ++i)
+      {
+         samples2_[i] = from.samples2_[i];
+      }
 
    }
 
@@ -293,6 +309,11 @@ public class TestMsg implements ROS2Message<TestMsg>
    public IDLIntSequence getSamples()
    {
       return samples_;
+   }
+
+   public int[] getSamples2()
+   {
+      return samples2_;
    }
 
 
