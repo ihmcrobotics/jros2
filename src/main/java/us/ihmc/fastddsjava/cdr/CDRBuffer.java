@@ -41,7 +41,7 @@ public final class CDRBuffer
       return buffer;
    }
 
-   public void ensureRemainingCapacity(int capacity)
+   public boolean ensureRemainingCapacity(int capacity)
    {
       int remainingCapacity = buffer.capacity() - buffer.position();
 
@@ -54,7 +54,11 @@ public final class CDRBuffer
          buffer = newBuffer;
 
          buffer.rewind(); // TODO check
+
+         return true;
       }
+
+      return false;
    }
 
    public void rewind()

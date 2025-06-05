@@ -113,14 +113,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
                writeBuffer.rewind();
 
                payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
-               writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
 
                // TODO: check if we can shrink the writeBuffer to save memory
 
                writeBuffer.writePayloadHeader();
                message.serialize(writeBuffer);
 
-               topicDataWrapper.data_vector().resize(payloadSizeBytes);
+               if (resized)
+               {
+                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
+               }
+
                topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
             }
 
