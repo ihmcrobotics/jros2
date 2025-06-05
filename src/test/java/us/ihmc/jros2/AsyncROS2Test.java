@@ -16,8 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
 public class AsyncROS2Test
@@ -44,8 +43,6 @@ public class AsyncROS2Test
       // Ensure the value received by ros2 matches the value we published
       assertTrue(result.contains(String.valueOf(expectedValue)), result);
 
-      // Close stuff
-      asyncNode.destroyPublisher(publisher);
       asyncNode.close();
    }
 
@@ -97,9 +94,6 @@ public class AsyncROS2Test
 
       assertEquals(messagesToPublish, messagesReceived.get());
 
-      // Close stuff
-      asyncNode.destroySubscription(subscription);
-      asyncNode.destroyPublisher(publisher);
       asyncNode.close();
    }
 
@@ -133,7 +127,7 @@ public class AsyncROS2Test
       }
 
       AtomicInteger receivedMessageCount = new AtomicInteger(0);
-      ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
+      asyncNode.createSubscription(topic, reader ->
       {
          Bool received = reader.read();
          assertEquals(expected, received.getData());
@@ -152,11 +146,6 @@ public class AsyncROS2Test
 
       assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
 
-      for (int i = 0; i < publisherCount; ++i)
-      {
-         asyncNode.destroyPublisher(publishers[i]);
-      }
-      asyncNode.destroySubscription(subscription);
       asyncNode.close();
    }
 
@@ -186,8 +175,8 @@ public class AsyncROS2Test
 
       // Create subscribers
       ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getData());
-      ROS2Subscription<Bool> standardSubscription = ros2Node.createSubscription(standardTopic, callback);
-      ROS2Subscription<Bool> asyncSubscription = asyncROS2Node.createSubscription(asyncTopic, callback);
+      ros2Node.createSubscription(standardTopic, callback);
+      asyncROS2Node.createSubscription(asyncTopic, callback);
 
       Bool message = new Bool();
       message.setData(expected);
@@ -239,12 +228,7 @@ public class AsyncROS2Test
       assertTrue(asyncPublisherStatistics.getStandardDeviation() < standardPublisherStatistics.getStandardDeviation());
 
       // Cleanup
-      ros2Node.destroyPublisher(standardPublisher);
-      ros2Node.destroySubscription(standardSubscription);
       ros2Node.close();
-
-      asyncROS2Node.destroyPublisher(asyncPublisher);
-      asyncROS2Node.destroySubscription(asyncSubscription);
       asyncROS2Node.close();
 
       if (generateCSV)

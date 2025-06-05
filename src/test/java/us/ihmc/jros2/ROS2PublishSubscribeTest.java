@@ -149,8 +149,6 @@ public class ROS2PublishSubscribeTest
       // Ensure the value received by ros2 matches the value we published
       assertTrue(result.contains(String.valueOf(expectedValue)), result);
 
-      // Close stuff
-      ros2Node.destroyPublisher(publisher);
       ros2Node.close();
    }
 
@@ -202,8 +200,6 @@ public class ROS2PublishSubscribeTest
       // Ensure the ROS 2 publish process ends
       process.waitFor();
 
-      // Close stuff
-      ros2Node.destroySubscription(subscription);
       ros2Node.close();
    }
 
@@ -253,8 +249,6 @@ public class ROS2PublishSubscribeTest
       // Ensure the ROS 2 publish process ends
       process.waitFor();
 
-      // Close stuff
-      ros2Node.destroySubscription(subscription);
       ros2Node.close();
    }
 
@@ -342,7 +336,6 @@ public class ROS2PublishSubscribeTest
          throw new RuntimeException(interruptedException);
       }
 
-      publisherNode.destroyPublisher(publisher);
       publisherNode.close();
       subscriberNode.close();
 
@@ -389,7 +382,6 @@ public class ROS2PublishSubscribeTest
       publishThread.interrupt();
       publishThread.join();
 
-      ros2Node.destroyPublisher(publisher);
       ros2Node.close();
    }
 }
