@@ -58,7 +58,7 @@ public class AsyncROS2Test
       AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
-      ROS2Subscription<Bool> subscription = asyncNode.createSubscription(topic, reader ->
+      asyncNode.createSubscription(topic, reader ->
       {
          Bool value = reader.read();
          assertEquals(expectedValue.get(), value.getData());
