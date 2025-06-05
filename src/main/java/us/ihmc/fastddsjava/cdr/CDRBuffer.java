@@ -53,8 +53,6 @@ public final class CDRBuffer
 
          buffer = newBuffer;
 
-         buffer.rewind(); // TODO check
-
          return true;
       }
 

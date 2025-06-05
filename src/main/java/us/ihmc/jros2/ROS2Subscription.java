@@ -153,8 +153,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
             {
                long receptionTime = System.currentTimeMillis();
                int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
-               readBuffer.rewind();
+
                readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               // Rewind buffer to ensure we're starting at position = 0
+               readBuffer.rewind();
+
                topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
                callback.onMessage(subscriptionReader);
