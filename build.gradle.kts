@@ -31,7 +31,7 @@ java {
 
 sourceSets {
     named("main") {
-        java.srcDirs("src/main/java", "src/main/java-interfaces")
+        java.srcDirs("src/main/java-interfaces")
     }
 }
 
