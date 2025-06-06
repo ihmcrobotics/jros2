@@ -22,6 +22,8 @@ import java.util.Map;
  */
 class jros2SettingsEnv implements jros2Settings
 {
+   private static final String SOURCE_NAME = "Environment Variables";
+
    static final String DOMAIN_ID_KEY = "ROS_DOMAIN_ID";
    static final String INTERFACE_WHITELIST_KEY = "FASTDDS_INTERFACE_WHITELIST";
 
@@ -40,6 +42,12 @@ class jros2SettingsEnv implements jros2Settings
    jros2SettingsEnv(Map<String, String> env)
    {
       this.env = env;
+   }
+
+   @Override
+   public String getSourceName()
+   {
+      return SOURCE_NAME;
    }
 
    @Override

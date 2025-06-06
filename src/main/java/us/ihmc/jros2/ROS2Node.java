@@ -99,6 +99,8 @@ public class ROS2Node implements Closeable
 
    public ROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
+      System.out.println("Creating ROS2Node: " + name);
+
       if (name == null)
       {
          throw new IllegalArgumentException("name cannot be null when constructing a ROS2Node");
@@ -108,6 +110,24 @@ public class ROS2Node implements Closeable
       if (domainId < 0 || domainId > 232)
       {
          throw new IllegalArgumentException(String.format("Invalid domain ID used when constructing a ROS2Node (%d)", domainId));
+      }
+
+      System.out.println("Using Domain ID: " + domainId);
+      if (domainId == 0)
+         System.out.println("Using Default Domain ID: 0");
+      else
+      {
+         StringBuilder domainIdPrintout = new StringBuilder("Using Domain ID: ").append(domainId).append(" (Specified in ");
+         jros2Settings[] sources = jros2.get().getSettingsSources();
+         for (int i = 0; i < sources.length; ++i)
+         {
+            if (sources[i].hasROSDomainId() && sources[i].rosDomainId() == domainId)
+            {
+               domainIdPrintout.append(sources[i].getSourceName()).append(", ");
+            }
+         }
+         domainIdPrintout.replace(domainIdPrintout.length() - 3, domainIdPrintout.length() - 1, ")");
+         System.out.println(domainIdPrintout);
       }
       this.domainId = domainId;
 
@@ -124,6 +144,7 @@ public class ROS2Node implements Closeable
       rtps.setUseBuiltinTransports(!useCustomTransports);
       if (useCustomTransports)
       {
+         System.out.println("Using custom transports: " + fastddsTransports);
          rtps.setUseBuiltinTransports(false);
          TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
          for (int i = 0; i < fastddsTransports.length; ++i)

@@ -57,9 +57,11 @@ public class ProfilesXML
       librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
    }
 
-   public void load() throws fastddsjavaException
+   public String load() throws fastddsjavaException
    {
       String xml = marshall();
+
+      System.out.println(xml);
 
       // This synchronize seems to be required, DomainParticipantFactory#load_XML_profiles_string doesn't seem
       // to be fully thread-safe and can sometimes result in a native crash.
@@ -67,6 +69,8 @@ public class ProfilesXML
       {
          fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
       }
+
+      return xml;
    }
 
    public ProfilesType getProfilesType()

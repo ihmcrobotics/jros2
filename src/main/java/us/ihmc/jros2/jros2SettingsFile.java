@@ -30,6 +30,8 @@ import java.util.Properties;
  */
 class jros2SettingsFile implements jros2Settings
 {
+   private static final String SOURCE_NAME = "jros2.properties";
+
    static final String DOMAIN_ID_KEY = "jros2.ros.domain.id";
    static final String INTERFACE_WHITELIST_KEY = "jros2.fastdds.interface.whitelist";
 
@@ -147,6 +149,12 @@ class jros2SettingsFile implements jros2Settings
             LogTools.warn("Found RTPSDomainID in {}, but failed to parse the value ({}).", compatibilityFilePath.getFileName(), rtpsDomainId);
          }
       }
+   }
+
+   @Override
+   public String getSourceName()
+   {
+      return SOURCE_NAME;
    }
 
    @Override

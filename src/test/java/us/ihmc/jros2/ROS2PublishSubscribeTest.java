@@ -4,6 +4,9 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import std_msgs.msg.dds.Bool;
+import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.log.LogTools;
 
@@ -29,8 +32,11 @@ public class ROS2PublishSubscribeTest
    {
       String topicName = "/ihmc/test_bool";
 
+      TransportDescriptorType transportDescriptor = TransportDescriptorTypeTools.createTCPv4Descriptor();
+      TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptor, "127.0.0.1");
+
       // Create ROS 2 node and topic
-      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Node ros2Node = new ROS2Node("test_node", 219, transportDescriptor);
       ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
       assertDoesNotThrow(() ->
