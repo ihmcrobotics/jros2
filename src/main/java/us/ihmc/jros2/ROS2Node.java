@@ -143,6 +143,8 @@ public class ROS2Node implements Closeable
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
+      ROS2NodePrintout.print(participantProfile, fastddsTransports);
+
       try
       {
          profilesXML.load();

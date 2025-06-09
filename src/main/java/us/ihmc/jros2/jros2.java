@@ -19,6 +19,7 @@ import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 
 final class jros2 implements jros2Settings
 {
+   private static final String SOURCE_NAME = "jros2.java";
    private static jros2 instance;
 
    /**
@@ -73,6 +74,12 @@ final class jros2 implements jros2Settings
    boolean isLoaded()
    {
       return loaded;
+   }
+
+   @Override
+   public String getSourceName()
+   {
+      return SOURCE_NAME;
    }
 
    @Override
@@ -135,5 +142,10 @@ final class jros2 implements jros2Settings
       }
 
       return false;
+   }
+
+   public jros2Settings[] getSettingsSources()
+   {
+      return settingsSources;
    }
 }

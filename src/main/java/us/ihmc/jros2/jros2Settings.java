@@ -17,6 +17,8 @@ package us.ihmc.jros2;
 
 interface jros2Settings
 {
+   String getSourceName();
+
    /**
     * The default domain ID jros2 will use when constructing new {@link ROS2Node}.
     * See: <a href="https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html#the-ros-domain-id">ROS 2 Domain ID</a>.
