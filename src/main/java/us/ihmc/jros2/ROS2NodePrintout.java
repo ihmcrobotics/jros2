@@ -18,6 +18,7 @@ package us.ihmc.jros2;
 import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 import us.ihmc.log.LogTools;
 
 import java.util.List;
@@ -67,31 +68,32 @@ class ROS2NodePrintout
             {
                String type = transportDescriptors[i].getType();
 
-               List<JAXBElement<?>> whitelist = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
-               if (whitelist.isEmpty())
+               InterfaceWhiteList interfaceWhiteList = transportDescriptors[i].getInterfaceWhiteList();
+               if (interfaceWhiteList == null || interfaceWhiteList.getAddressOrInterface().isEmpty())
                {
                   printout.add("\t%s: on any interface".formatted(type));
                }
                else
                {
-                  StringJoiner interfaceWhitelist = new StringJoiner(", ");
-                  for (int j = 0; j < whitelist.size(); ++j)
+                  List<JAXBElement<?>> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
+                  StringJoiner whitelistString = new StringJoiner(", ");
+                  for (int j = 0; j < whitelistElements.size(); ++j)
                   {
-                     Object value = whitelist.get(i).getValue();
+                     Object value = whitelistElements.get(j).getValue();
                      if (value instanceof List<?> list)
                      {
                         for (int k = 0; k < list.size(); ++k)
                         {
-                           interfaceWhitelist.add(list.get(i).toString());
+                           whitelistString.add(list.get(k).toString());
                         }
                      }
                      else if (value instanceof String string)
                      {
-                        interfaceWhitelist.add(string);
+                        whitelistString.add(string);
                      }
                   }
 
-                  printout.add("\t%s: on %s".formatted(type, interfaceWhitelist));
+                  printout.add("\t%s: on %s".formatted(type, whitelistString));
                }
             }
          }
