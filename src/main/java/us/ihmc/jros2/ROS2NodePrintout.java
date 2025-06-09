@@ -53,48 +53,49 @@ class ROS2NodePrintout
       }
       printout.add("DomainID: %d (As Specified by: %s)".formatted(domainId, domainIdSource));
 
+      // Check if we're using builtin transports
       boolean usingBuiltinTransports = participantProfile.getRtps().isUseBuiltinTransports();
-      if (usingBuiltinTransports)
+      if (usingBuiltinTransports) // If so, default builtin transports are UDPv4 and SHM
       {
          printout.add("Using Builtin Transports: UDPv4, SHM");
       }
-      else
+      else if (transportDescriptors != null) // Otherwise we must be using custom transports specified by the descriptors
       {
          printout.add("Using Custom Transports:");
 
-         if (transportDescriptors != null)
+         for (int i = 0; i < transportDescriptors.length; ++i)
          {
-            for (int i = 0; i < transportDescriptors.length; ++i)
-            {
-               String type = transportDescriptors[i].getType();
+            // Get the transport type (e.g. UDPv4, TCPv6, SHM, etc.)
+            String type = transportDescriptors[i].getType();
 
-               InterfaceWhiteList interfaceWhiteList = transportDescriptors[i].getInterfaceWhiteList();
-               if (interfaceWhiteList == null || interfaceWhiteList.getAddressOrInterface().isEmpty())
+            // See if an interface whitelist is specified for this transport
+            InterfaceWhiteList interfaceWhiteList = transportDescriptors[i].getInterfaceWhiteList();
+            if (interfaceWhiteList == null || interfaceWhiteList.getAddressOrInterface().isEmpty())
+            {  // No whitelist. Transport is available on all interfaces
+               printout.add("\t%s: on all interfaces".formatted(type));
+            }
+            else // Whitelist specified
+            {
+               List<JAXBElement<?>> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
+               StringJoiner whitelistString = new StringJoiner(", ");
+               for (int j = 0; j < whitelistElements.size(); ++j)
                {
-                  printout.add("\t%s: on any interface".formatted(type));
-               }
-               else
-               {
-                  List<JAXBElement<?>> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
-                  StringJoiner whitelistString = new StringJoiner(", ");
-                  for (int j = 0; j < whitelistElements.size(); ++j)
+                  // The value can either be a List<String> or String
+                  Object value = whitelistElements.get(j).getValue();
+                  if (value instanceof List<?> list)
                   {
-                     Object value = whitelistElements.get(j).getValue();
-                     if (value instanceof List<?> list)
+                     for (int k = 0; k < list.size(); ++k)
                      {
-                        for (int k = 0; k < list.size(); ++k)
-                        {
-                           whitelistString.add(list.get(k).toString());
-                        }
-                     }
-                     else if (value instanceof String string)
-                     {
-                        whitelistString.add(string);
+                        whitelistString.add(list.get(k).toString());
                      }
                   }
-
-                  printout.add("\t%s: on %s".formatted(type, whitelistString));
+                  else if (value instanceof String string)
+                  {
+                     whitelistString.add(string);
+                  }
                }
+
+               printout.add("\t%s: on %s".formatted(type, whitelistString));
             }
          }
       }
