@@ -54,7 +54,7 @@ public class ProfilesXML
       logType = new LogType();
       typesType = new TypesType();
 
-      librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
+      librarySettingsType.setIntraprocessDelivery("OFF"); // Default to enable Intraprocess delivery
    }
 
    public void load() throws fastddsjavaException

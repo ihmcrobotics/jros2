@@ -4,7 +4,9 @@ import std_msgs.msg.dds.Bool;
 import us.ihmc.log.LogTools;
 import us.ihmc.ros2.ROS2Node;
 import us.ihmc.ros2.ROS2NodeBuilder;
+import us.ihmc.ros2.ROS2NodeBuilder.SpecialTransportMode;
 import us.ihmc.ros2.ROS2Publisher;
+import us.ihmc.ros2.ROS2QosProfile;
 import us.ihmc.ros2.ROS2Topic;
 
 import java.io.File;
@@ -13,6 +15,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
 
@@ -27,10 +30,10 @@ public class ihmcros2libraryBenchmark
       final boolean expected = true;
 
       // Create normal and async nodes
-      ROS2Node ros2Node = new ROS2NodeBuilder().build("standard_node");
+      ROS2Node ros2Node = new ROS2NodeBuilder().specialTransportMode(SpecialTransportMode.SHARED_MEMORY_ONLY).build("standard_node");
 
       // Create topics to publish on
-      ROS2Topic<Bool> standardTopic = new ROS2Topic<>().withType(Bool.class).withSuffix("standard_topic");
+      ROS2Topic<Bool> standardTopic = new ROS2Topic<>().withQoS(ROS2QosProfile.BEST_EFFORT()).withType(Bool.class).withSuffix("standard_topic");
 
       // Create normal and async publishers
       ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);

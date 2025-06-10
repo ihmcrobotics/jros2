@@ -3,6 +3,8 @@ package us.ihmc;
 import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2Node;
 import us.ihmc.jros2.ROS2Publisher;
+import us.ihmc.jros2.ROS2QoSProfile;
+import us.ihmc.jros2.ROS2QoSProfile.Reliability;
 import us.ihmc.jros2.ROS2Topic;
 import us.ihmc.log.LogTools;
 
@@ -32,7 +34,9 @@ public class jros2Benchmark
       ROS2Topic<Bool> standardTopic = new ROS2Topic<>().withType(Bool.class).appendedWith("standard_topic");
 
       // Create normal and async publishers
-      ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);
+      ROS2QoSProfile qoSProfile = new ROS2QoSProfile();
+      qoSProfile.reliability(Reliability.BEST_EFFORT);
+      ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic, qoSProfile);
       DoubleStatisticsHelper standardPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       // Create subscribers
@@ -42,7 +46,7 @@ public class jros2Benchmark
          {
             throw new RuntimeException("Data mismatch");
          }
-      });
+      }, qoSProfile);
 
       Bool message = new Bool();
       message.setData(expected);
