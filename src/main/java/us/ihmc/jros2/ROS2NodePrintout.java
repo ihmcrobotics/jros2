@@ -41,7 +41,7 @@ class ROS2NodePrintout
 
       // Get the domain id and its source
       int domainId = participantProfile.getDomainId();
-      String domainIdSource = "Constructor Parameter";
+      String domainIdSource = "constructor";
       jros2Settings[] sources = jros2.get().getSettingsSources();
       for (int i = 0; i < sources.length; ++i)
       {
@@ -51,17 +51,17 @@ class ROS2NodePrintout
             break;
          }
       }
-      printout.add("DomainID: %d (As Specified by: %s)".formatted(domainId, domainIdSource));
+      printout.add("DomainID: %d (Specified by: %s)".formatted(domainId, domainIdSource));
 
       // Check if we're using builtin transports
       boolean usingBuiltinTransports = participantProfile.getRtps().isUseBuiltinTransports();
       if (usingBuiltinTransports) // If so, default builtin transports are UDPv4 and SHM
       {
-         printout.add("Using Builtin Transports: UDPv4, SHM");
+         printout.add("Using builtin transports: UDPv4, SHM");
       }
       else if (transportDescriptors != null) // Otherwise we must be using custom transports specified by the descriptors
       {
-         printout.add("Using Custom Transports:");
+         printout.add("Using custom transports:");
 
          for (int i = 0; i < transportDescriptors.length; ++i)
          {
