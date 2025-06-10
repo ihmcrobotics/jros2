@@ -17,6 +17,14 @@ package us.ihmc.jros2;
 
 class jros2SettingsDefault implements jros2Settings
 {
+   private static final String NAME = "Default Values";
+
+   @Override
+   public String getSourceName()
+   {
+      return NAME;
+   }
+
    @Override
    public int rosDomainId()
    {

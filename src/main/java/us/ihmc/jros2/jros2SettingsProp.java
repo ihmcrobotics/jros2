@@ -20,8 +20,16 @@ package us.ihmc.jros2;
  */
 class jros2SettingsProp implements jros2Settings
 {
+   private static final String SOURCE_NAME = "System Properties";
+
    static final String DOMAIN_ID_KEY = "ros.domain.id";
    static final String INTERFACE_WHITELIST_KEY = "fastdds.interface.whitelist";
+
+   @Override
+   public String getSourceName()
+   {
+      return SOURCE_NAME;
+   }
 
    @Override
    public int rosDomainId()
