@@ -23,7 +23,7 @@ Supported platforms:
 - Ready-to-use Java library, just add to your Maven or Gradle dependencies!
 - Publish and subscribe to ROS 2 topics
 - Supports custom message types
-- Generate Java classes from .msg packages
+- Generate Java classes from ROS 2 .msg files
 - Fast-DDS backend
 - Minimal and fast implementation
 - Fully thread-safe
