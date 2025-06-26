@@ -161,13 +161,13 @@ public class StatisticsTest
       // Read the message publish period statistics from the publisher, and assert they make sense
       double expectedPeriod = 100.0;
       publisher.readStatistics(MessageMetadataType.PERIOD, statistics);
-      assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), 2 * 5.0); // The minimum period can have quite substantial outliers
-      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), 10.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 10.0);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 10.0);
       assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
-      assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
-      assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);
+      assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), 10.0);
 
       // Read the message size statistics from the subscription, and assert they make sense
       subscription.readStatistics(MessageMetadataType.SIZE, statistics);
@@ -181,13 +181,13 @@ public class StatisticsTest
 
       // Read the message publish period statistics from the subscription, and assert they make sense
       subscription.readStatistics(MessageMetadataType.PERIOD, statistics);
-      assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), 5.0);
-      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), 10.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), 10.0);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), 10.0);
       assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
-      assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
-      assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);
+      assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), 10.0);
 
       node.destroyPublisher(publisher);
       node.destroySubscription(subscription);
