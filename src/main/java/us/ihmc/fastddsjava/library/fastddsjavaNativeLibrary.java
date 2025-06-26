@@ -26,7 +26,8 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
       if (arch == Architecture.x64) {
          archPackage = switch (os) {
             case LINUX64 -> "linux-x86_64";
-            case WIN64, MACOSX64 -> throw new RuntimeException("Unsupported platform");
+            case WIN64 -> "windows-x86_64";
+            case MACOSX64 -> throw new RuntimeException("Unsupported platform");
          };
       } else if (arch == Architecture.arm64) {
          throw new RuntimeException("Unsupported platform");
@@ -41,7 +42,10 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
          case LINUX64 -> {
             return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.3.0", "libfastdds.so.3.2.2");
          }
-         case WIN64, MACOSX64 -> throw new RuntimeException("Unsupported platform");
+         case WIN64 -> {
+            return NativeLibraryWithDependencies.fromFilename("jnifastddsjava.dll", "fastcdr-2.3.dll", "fastdds-3.2.dll");
+         }
+         case MACOSX64 -> throw new RuntimeException("Unsupported platform");
       }
       return null;
    }

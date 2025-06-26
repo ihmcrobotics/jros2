@@ -42,9 +42,10 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastdds/dds/subscriber/SampleInfo.hpp",
             },
             linkpath = "install/lib",
-            link = {"fastcdr", "fastdds"},
             preload = "jnifastddsjava"
-      )
+      ),
+      @Platform(value = "linux", link = {"fastcdr", "fastdds"}),
+      @Platform(value = "windows", link = {"fastcdr-2.3", "fastdds-3.2"})
 },
       target = "us.ihmc.fastddsjava.pointers",
       global = "us.ihmc.fastddsjava.pointers.fastddsjava"

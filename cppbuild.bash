@@ -47,7 +47,7 @@ cd foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION
 mkdir -p build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
-cmake --build . --target install
+cmake --build . --config Release --target install
 popd
 
 # Build Fast-CDR
@@ -56,7 +56,7 @@ cd Fast-CDR-$FASTCDR_VERSION
 mkdir -p build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
-cmake --build . --target install
+cmake --build . --config Release --target install
 popd
 
 # Build Fast-DDS
@@ -66,11 +66,19 @@ git submodule update --init --recursive
 mkdir -p build
 cd build
 cmake .. -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
-cmake --build . --target install -j $(nproc)
+cmake --build . --config Release --target install -j $(nproc)
 popd
 
 rm -rf install/include/fastddsjava.h
 cp ../src/native/fastddsjava.h install/include/fastddsjava.h
+
+### Windows hack ###
+if [ -f "install/lib/fastcdr-2.3.lib" ]; then
+  cp install/lib/fastcdr-2.3.lib install/lib/libfastcdr-2.3.lib
+fi
+if [ -f "install/lib/fastdds-3.2.lib" ]; then
+  cp install/lib/fastdds-3.2.lib install/lib/libfastdds-3.2.lib
+fi
 
 popd
 
@@ -107,6 +115,17 @@ fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64
   strip ../src/main/resources/fastddsjava/native/linux-x86_64/libjnifastddsjava.so
+fi
+# Windows
+mkdir -p ../src/main/resources/fastddsjava/native/windows-x86_64
+if [ -f "install/bin/fastcdr-2.3.dll" ]; then
+  cp install/bin/fastcdr-2.3.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+fi
+if [ -f "install/bin/fastdds-3.2.dll" ]; then
+  cp install/bin/fastdds-3.2.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+fi
+if [ -f "javainstall/jnifastddsjava.dll" ]; then
+  cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 
 popd
