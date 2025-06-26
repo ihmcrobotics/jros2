@@ -184,7 +184,7 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 10.0);
-      assertEquals(0.0, statistics.get(STDDEV), expectedPeriod / 2.0); // Can vary a lot on Windows
+      assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 10.0);
