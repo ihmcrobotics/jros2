@@ -10,8 +10,8 @@ on:
     - cron: '0 */8 * * *'
 
 jobs:
-  gradle-test:
-    runs-on: self-hosted
+  gradle-test-linux:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         ros_distro: [humble, jazzy]
@@ -40,3 +40,20 @@ jobs:
 
       - name: Print any error report files
         run: find . -name 'hs_err*' -type f -exec cat {} +
+  gradle-test-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run JUnit tests
+        run: ./gradlew test
+
+      - name: Run JUnit tests (Gradle plugin)
+        run: ../gradlew test
