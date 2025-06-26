@@ -1,6 +1,8 @@
 package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.log.LogTools;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AsyncROS2Test
 {
    @Test
+   @EnabledOnOs(OS.LINUX)
    public void testAsyncROS2Publisher() throws IOException, InterruptedException
    {
       boolean expectedValue = true;
@@ -105,7 +108,7 @@ public class AsyncROS2Test
       final boolean expected = true;
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>("test_topic", Bool.class);
+      ROS2Topic<Bool> topic = new ROS2Topic<>("/test_topic", Bool.class);
 
       ROS2Publisher<?>[] publishers = new ROS2Publisher[publisherCount];
       Thread[] publisherThreads = new Thread[publisherCount];
@@ -163,8 +166,8 @@ public class AsyncROS2Test
       AsyncROS2Node asyncROS2Node = new AsyncROS2Node("async_node");
 
       // Create topics to publish on
-      ROS2Topic<Bool> standardTopic = new ROS2Topic<>("standard_topic", Bool.class);
-      ROS2Topic<Bool> asyncTopic = new ROS2Topic<>("async_topic", Bool.class);
+      ROS2Topic<Bool> standardTopic = new ROS2Topic<>("/standard_topic", Bool.class);
+      ROS2Topic<Bool> asyncTopic = new ROS2Topic<>("/async_topic", Bool.class);
 
       // Create normal and async publishers
       ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);

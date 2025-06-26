@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.StringJoiner;
 
+/**
+ * Tools for launching a local vanilla ROS 2 installation.
+ * Only works on Linux.
+ */
 public class ROS2TestTools
 {
    public static String ROS_DISTRO = System.getenv().getOrDefault("ROS_DISTRO", "humble");

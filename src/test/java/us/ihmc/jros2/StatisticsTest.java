@@ -113,7 +113,7 @@ public class StatisticsTest
    {
       // Create a publisher
       ROS2Node node = new ROS2Node("test_node");
-      ROS2Topic<Point> topic = new ROS2Topic<>("test_topic", Point.class);
+      ROS2Topic<Point> topic = new ROS2Topic<>("/test_topic", Point.class);
       ROS2Publisher<Point> publisher = node.createPublisher(topic);
 
       // Create the message to publish
@@ -164,7 +164,7 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), 2 * 5.0); // The minimum period can have quite substantial outliers
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
-      assertEquals(0.0, statistics.get(STDDEV), 1.0);
+      assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);
@@ -184,7 +184,7 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(AVERAGE), 5.0);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), 5.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), 5.0);
-      assertEquals(0.0, statistics.get(STDDEV), 1.0);
+      assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 5.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), 5.0);

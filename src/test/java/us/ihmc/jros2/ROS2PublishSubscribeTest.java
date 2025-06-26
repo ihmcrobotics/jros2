@@ -3,6 +3,8 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.log.LogTools;
@@ -84,6 +86,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    public void testROS2SubscriptionAPI()
    {
@@ -124,6 +127,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    public void testROS2Publisher() throws InterruptedException, IOException
    {
@@ -153,6 +157,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    // Allocation-free subscription
    public void testROS2Subscription1() throws InterruptedException, IOException
@@ -204,6 +209,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
+   @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    // Allocation subscription
    public void testROS2Subscription2() throws InterruptedException, IOException
