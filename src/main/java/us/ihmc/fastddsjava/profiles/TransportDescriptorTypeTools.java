@@ -6,6 +6,7 @@ import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteLi
 
 import javax.xml.namespace.QName;
 import java.io.File;
+import java.nio.file.Files;
 import java.util.UUID;
 
 /**
@@ -104,7 +105,7 @@ public final class TransportDescriptorTypeTools
          }
 
          // Check that the directory structure exists again and check that it's writable
-         SHM_TRANSPORT_AVAILABLE_ON_WINDOWS = shmDir.exists() && shmDir.canWrite();
+         SHM_TRANSPORT_AVAILABLE_ON_WINDOWS = Files.isDirectory(shmDir.toPath()) && Files.isWritable(shmDir.toPath());
       }
       else
       {

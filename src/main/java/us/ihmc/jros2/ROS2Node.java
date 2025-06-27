@@ -161,14 +161,15 @@ public class ROS2Node implements Closeable
                if (transportDescriptorType.getType().equals("SHM"))
                {
                   shmEnabled = true;
+                  break;
                }
             }
          }
 
          if (shmEnabled)
          {
-            LogTools.error("Shared Memory Transport (SHM) is not available, could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess\n"
-                           + "Try restarting the process after deleting the directory.");
+            LogTools.error("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
+            LogTools.error("Try restarting the process after deleting the directory.");
          }
       }
 
