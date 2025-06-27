@@ -19,6 +19,7 @@ import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
+import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
@@ -138,6 +139,37 @@ public class ROS2Node implements Closeable
             userTransports.getTransportId().add(fastddsTransports[i].getTransportId());
          }
          rtps.setUserTransports(userTransports);
+      }
+
+      /*
+       * Check if SHM is usable on Windows (sometimes the SHM directory can lose write permissions)
+       */
+      if (System.getProperty("os.name").startsWith("Windows") && !TransportDescriptorTypeTools.SHM_TRANSPORT_AVAILABLE_ON_WINDOWS)
+      {
+         boolean shmEnabled = false;
+
+         if (rtps.isUseBuiltinTransports())
+         {
+            shmEnabled = true;
+         }
+         else if (fastddsTransports != null)
+         {
+            for (int i = 0; i < fastddsTransports.length; ++i)
+            {
+               TransportDescriptorType transportDescriptorType = fastddsTransports[i];
+
+               if (transportDescriptorType.getType().equals("SHM"))
+               {
+                  shmEnabled = true;
+               }
+            }
+         }
+
+         if (shmEnabled)
+         {
+            LogTools.error("Shared Memory Transport (SHM) is not available, could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess\n"
+                           + "Try restarting the process after deleting the directory.");
+         }
       }
 
       participantProfile.setRtps(rtps);
