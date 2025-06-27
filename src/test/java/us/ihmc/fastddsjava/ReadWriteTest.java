@@ -1,6 +1,8 @@
 package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Timeout;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
@@ -19,7 +21,14 @@ import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -180,6 +189,170 @@ public class ReadWriteTest
       retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
       retcodeThrowOnError(fastddsjava_delete_participant(participant));
       assertTrue(topicDataWrapperType.releaseReference());
+   }
+
+   // Timing record class
+   public static class TimingRecord {
+      public double typeSupportMs;
+      public double participantMs;
+      public double registerTypeMs;
+      public double topicMs;
+      public double publisherWriterMs;
+      public double subscriberReaderMs;
+      public double listenerMs;
+      public double dataPrepMs;
+      public double dataWriteMs;
+      public double waitReceiveMs;
+      public double assertMs;
+      public double cleanupMs;
+   }
+
+   // Static list to store timing records
+   private static final List<TimingRecord> timingRecords = Collections.synchronizedList(new ArrayList<>());
+
+   // Dummy method for sample data generation
+   private byte[] generateRandomBytes(int length) {
+      byte[] arr = new byte[length];
+      new Random().nextBytes(arr);
+      return arr;
+   }
+
+   @RepeatedTest(5000)
+   @Timeout(30)
+   public void readWriteTest2() throws InterruptedException, fastddsjavaException
+   {
+      TimingRecord record = new TimingRecord();
+      long t0, t1;
+
+      final byte[] sampleData = generateRandomBytes(100000);
+
+      t0 = System.nanoTime();
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
+      Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+      t1 = System.nanoTime();
+      record.typeSupportMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Pointer participant = fastddsjava_create_participant("unit_test_participant");
+      t1 = System.nanoTime();
+      record.participantMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      int retCode = fastddsjava_register_type(participant, typeSupport);
+      retcodeThrowOnError(retCode);
+      t1 = System.nanoTime();
+      record.registerTypeMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
+      t1 = System.nanoTime();
+      record.topicMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
+      t1 = System.nanoTime();
+      record.publisherWriterMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "unit_test_subscriber");
+      t1 = System.nanoTime();
+      record.subscriberReaderMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
+      t1 = System.nanoTime();
+      record.listenerMs = (t1 - t0) / 1_000_000.0;
+
+      final AtomicBoolean received = new AtomicBoolean(false);
+      final AtomicBoolean dataCorrect = new AtomicBoolean(false);
+
+      // Add callback to listener
+      Pointer dataReceive = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+      SampleInfo sampleInfo = new SampleInfo();
+      fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
+      {
+         public void call()
+         {
+            synchronized (received)
+            {
+               fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+               dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
+
+               received.set(true);
+               received.notify();
+            }
+         }
+      };
+      listener.set_on_data_available_callback(onDataCallback);
+      fastddsjava_datareader_set_listener(dataReader, listener);
+
+      t0 = System.nanoTime();
+      Pointer data = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
+      topicDataWrapper.data_vector().resize(sampleData.length);
+      topicDataWrapper.data_ptr().put(sampleData);
+      t1 = System.nanoTime();
+      record.dataPrepMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+      retcodeThrowOnError(retCode);
+      t1 = System.nanoTime();
+      record.dataWriteMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      synchronized (received) {
+         if (!received.get()) {
+            received.wait();
+         }
+      }
+      t1 = System.nanoTime();
+      record.waitReceiveMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Assertions.assertTrue(dataCorrect.get());
+      t1 = System.nanoTime();
+      record.assertMs = (t1 - t0) / 1_000_000.0;
+
+      t0 = System.nanoTime();
+      Assertions.assertTrue(sampleInfo.releaseReference());
+      topicDataWrapperType.delete_data(dataReceive);
+      topicDataWrapperType.delete_data(data);
+      retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
+      Assertions.assertTrue(onDataCallback.releaseReference());
+      Assertions.assertTrue(listener.releaseReference());
+      retcodeThrowOnError(fastddsjava_delete_subscriber(participant, subscriber));
+      retcodeThrowOnError(fastddsjava_delete_datawriter(publisher, dataWriter));
+      retcodeThrowOnError(fastddsjava_delete_publisher(participant, publisher));
+      retcodeThrowOnError(fastddsjava_delete_topic(participant, topic));
+      retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
+      retcodeThrowOnError(fastddsjava_delete_participant(participant));
+      Assertions.assertTrue(topicDataWrapperType.releaseReference());
+      t1 = System.nanoTime();
+      record.cleanupMs = (t1 - t0) / 1_000_000.0;
+
+      // Add this record to the static list
+      timingRecords.add(record);
+   }
+
+   @AfterAll
+   public static void writeTimingsToCsv() throws IOException
+   {
+      try (PrintWriter pw = new PrintWriter(new FileWriter("timings.csv"))) {
+         // Write header
+         pw.println("typeSupportMs,participantMs,registerTypeMs,topicMs,publisherWriterMs,subscriberReaderMs,listenerMs,dataPrepMs,dataWriteMs,waitReceiveMs,assertMs,cleanupMs");
+         // Write data
+         for (TimingRecord r : timingRecords) {
+            pw.printf(Locale.US, "%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f,%.3f%n",
+                      r.typeSupportMs, r.participantMs, r.registerTypeMs, r.topicMs,
+                      r.publisherWriterMs, r.subscriberReaderMs, r.listenerMs, r.dataPrepMs,
+                      r.dataWriteMs, r.waitReceiveMs, r.assertMs, r.cleanupMs
+            );
+         }
+      }
    }
 
    @RepeatedTest(5000)
