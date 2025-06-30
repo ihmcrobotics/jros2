@@ -43,6 +43,10 @@ public class ProfilesXML
    private static final Object loadLock = new Object();
    private static String intraprocessDelivery = "OFF"; // Default to intraprocess delivery OFF
 
+   /**
+    * Set the intraprocess delivery mode for the entire library.
+    * Call this before creating a new {@link ProfilesXML}
+    */
    public static void setIntraprocessDelivery(String value)
    {
       switch (value)
