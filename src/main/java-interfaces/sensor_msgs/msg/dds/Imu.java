@@ -124,17 +124,17 @@ public class Imu implements ROS2Message<Imu>
       orientation_.deserialize(buffer);
       for (int i = 0; i < orientation_covariance_.length; ++i)
       {
-      orientation_covariance_[i] = buffer.readDouble();
+         orientation_covariance_[i] = buffer.readDouble();
       }
       angular_velocity_.deserialize(buffer);
       for (int i = 0; i < angular_velocity_covariance_.length; ++i)
       {
-      angular_velocity_covariance_[i] = buffer.readDouble();
+         angular_velocity_covariance_[i] = buffer.readDouble();
       }
       linear_acceleration_.deserialize(buffer);
       for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
       {
-      linear_acceleration_covariance_[i] = buffer.readDouble();
+         linear_acceleration_covariance_[i] = buffer.readDouble();
       }
 
    }

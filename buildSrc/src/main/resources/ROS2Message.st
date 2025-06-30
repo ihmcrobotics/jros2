@@ -139,9 +139,9 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
       <if(field.builtinStringType)>
-buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>[i]);
+   buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>[i]);
       <else>
-<field.javaName>[i] = buffer.<field.builtinCDRBufferReadMethod>();
+   <field.javaName>[i] = buffer.<field.builtinCDRBufferReadMethod>();
       <endif>
 \}
       <elseif(field.array&&!field.fixedSize)>

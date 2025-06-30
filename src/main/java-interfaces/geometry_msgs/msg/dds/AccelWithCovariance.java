@@ -76,7 +76,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
       accel_.deserialize(buffer);
       for (int i = 0; i < covariance_.length; ++i)
       {
-      covariance_[i] = buffer.readDouble();
+         covariance_[i] = buffer.readDouble();
       }
 
    }

@@ -189,7 +189,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       unbounded_integer_array_.deserialize(buffer);
       for (int i = 0; i < five_integers_array_.length; ++i)
       {
-      five_integers_array_[i] = buffer.readInt();
+         five_integers_array_[i] = buffer.readInt();
       }
       up_to_five_integers_array_.deserialize(buffer);
       buffer.readString(string_of_unbounded_size_);
@@ -203,11 +203,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       samples_.deserialize(buffer);
       for (int i = 0; i < samples2_.length; ++i)
       {
-      samples2_[i] = buffer.readInt();
+         samples2_[i] = buffer.readInt();
       }
       for (int i = 0; i < three_strings_.length; ++i)
       {
-      buffer.readString(three_strings_[i]);
+         buffer.readString(three_strings_[i]);
       }
       for (int i = 0; i < three_images_.length; ++i)
       {
