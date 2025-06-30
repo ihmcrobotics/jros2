@@ -114,6 +114,9 @@ tasks.test {
 }
 
 tasks.register<jros2GenTask>("generate_default_interfaces") {
+    // Make sure the git submodules are updated
+    ProcessBuilder("git", "submodule", "update", "--init", "--recursive").directory(projectDir).start().waitFor()
+
     description = "Generate ROS 2 default interfaces source files"
     group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
     packagePaths = listOf(

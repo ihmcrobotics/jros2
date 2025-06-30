@@ -49,6 +49,13 @@ public class <context.name> implements ROS2Message\<<context.name>>
       <if(!field.constantValue)>
       <if(field.array)>
 <field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><field.length><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
+      <if(field.fixedSize&&!field.builtinType)>
+// <field.name> is defined as a fixed-size array, so it is pre-allocated.
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   <field.javaName>[i] = new <field.javaType>();
+\}
+      <endif>
       <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
 <field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif>);
       <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>
@@ -76,7 +83,14 @@ currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.built
 currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
       <endif>
       <else>
+      <if(field.array&&field.fixedSize)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   currentAlignment += <field.javaName>[i].calculateSizeBytes(currentAlignment);
+\}
+      <else>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
+      <endif>
       <endif>
       <endif>
       }>
@@ -101,7 +115,14 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 buffer.<field.builtinCDRBufferWriteMethod>(<field.javaName>);
       <endif>
       <else>
+      <if(field.array&&field.fixedSize)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   <field.javaName>[i].serialize(buffer);
+\}
+      <else>
 <field.javaName>.serialize(buffer);
+      <endif>
       <endif>
       <endif>
       }>
@@ -133,7 +154,14 @@ buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>);
       <endif>
       <endif>
       <else>
+      <if(field.array&&field.fixedSize)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   <field.javaName>[i].deserialize(buffer);
+\}
+      <else>
 <field.javaName>.deserialize(buffer);
+      <endif>
       <endif>
       <endif>
       }>
@@ -160,7 +188,14 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 <field.javaName> = from.<field.javaName>;
       <endif>
       <else>
+      <if(field.array&&field.fixedSize)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   <field.javaName>[i].set(from.<field.javaName>[i]);
+\}
+      <else>
 <field.javaName>.set(from.<field.javaName>);
+      <endif>
       <endif>
       <endif>
       }>

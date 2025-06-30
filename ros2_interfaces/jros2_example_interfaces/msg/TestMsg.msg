@@ -26,3 +26,6 @@ int32 X=123
 int32 Y=-123
 string FOO="foo"
 string EXAMPLE='bar'
+
+string[3] three_strings
+sensor_msgs/Image[3] three_images

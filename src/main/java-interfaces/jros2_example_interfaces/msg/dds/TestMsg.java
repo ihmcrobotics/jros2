@@ -34,6 +34,9 @@ This file was generated from the following content:
    int32 Y=-123
    string FOO="foo"
    string EXAMPLE='bar'
+
+   string[3] three_strings
+   sensor_msgs/Image[3] three_images
 ##################################################################################
 
  */
@@ -77,6 +80,8 @@ public class TestMsg implements ROS2Message<TestMsg>
    public static final int Y = -123;
    public static final String FOO = "foo";
    public static final String EXAMPLE = "bar";
+   private final StringBuilder[] three_strings_;
+   private final sensor_msgs.msg.dds.Image[] three_images_;
 
    public TestMsg()
    {
@@ -96,6 +101,13 @@ public class TestMsg implements ROS2Message<TestMsg>
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
       samples2_ = new int[] {-200, -100, 0, 100, 200};
+      three_strings_ = new StringBuilder[3];
+      three_images_ = new sensor_msgs.msg.dds.Image[3];
+      // three_images is defined as a fixed-size array, so it is pre-allocated.
+      for (int i = 0; i < three_images_.length; ++i)
+      {
+         three_images_[i] = new sensor_msgs.msg.dds.Image();
+      }
 
    }
 
@@ -121,6 +133,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
+      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_
+      for (int i = 0; i < three_images_.length; ++i)
+      {
+         currentAlignment += three_images_[i].calculateSizeBytes(currentAlignment);
+      }
 
       return currentAlignment - initialAlignment;
    }
@@ -151,6 +168,14 @@ public class TestMsg implements ROS2Message<TestMsg>
       {
          buffer.writeInt(samples2_[i]);
       }
+      for (int i = 0; i < three_strings_.length; ++i)
+      {
+         buffer.writeString(three_strings_[i]);
+      }
+      for (int i = 0; i < three_images_.length; ++i)
+      {
+         three_images_[i].serialize(buffer);
+      }
 
    }
 
@@ -179,6 +204,14 @@ public class TestMsg implements ROS2Message<TestMsg>
       for (int i = 0; i < samples2_.length; ++i)
       {
       samples2_[i] = buffer.readInt();
+      }
+      for (int i = 0; i < three_strings_.length; ++i)
+      {
+      buffer.readString(three_strings_[i]);
+      }
+      for (int i = 0; i < three_images_.length; ++i)
+      {
+         three_images_[i].deserialize(buffer);
       }
 
    }
@@ -212,6 +245,14 @@ public class TestMsg implements ROS2Message<TestMsg>
       for (int i = 0; i < samples2_.length; ++i)
       {
          samples2_[i] = from.samples2_[i];
+      }
+      for (int i = 0; i < three_strings_.length; ++i)
+      {
+         three_strings_[i] = from.three_strings_[i];
+      }
+      for (int i = 0; i < three_images_.length; ++i)
+      {
+         three_images_[i].set(from.three_images_[i]);
       }
 
    }
@@ -314,6 +355,16 @@ public class TestMsg implements ROS2Message<TestMsg>
    public int[] getSamples2()
    {
       return samples2_;
+   }
+
+   public StringBuilder[] getThreeStrings()
+   {
+      return three_strings_;
+   }
+
+   public sensor_msgs.msg.dds.Image[] getThreeImages()
+   {
+      return three_images_;
    }
 
 
