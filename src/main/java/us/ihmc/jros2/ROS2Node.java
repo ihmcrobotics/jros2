@@ -98,6 +98,14 @@ public class ROS2Node implements Closeable
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
+   /**
+    * Create a new ROS 2 Node for managing ROS 2-compatible publishers, subscriptions.
+    *
+    * @param name              The colloquial name for the node, not used internally.
+    * @param domainId          The domain ID the node will use when writing and reading to the network transport.
+    * @param fastddsTransports An optional list of Transports to enable. These define what network protocol and network parameters to use when communicating
+    *                          over the network. See: {@link TransportDescriptorTypeTools}.
+    */
    public ROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
       if (name == null)
@@ -141,37 +149,7 @@ public class ROS2Node implements Closeable
          rtps.setUserTransports(userTransports);
       }
 
-      /*
-       * Check if SHM is usable on Windows (sometimes the SHM directory can lose write permissions)
-       */
-      if (System.getProperty("os.name").startsWith("Windows") && !TransportDescriptorTypeTools.SHM_TRANSPORT_AVAILABLE_ON_WINDOWS)
-      {
-         boolean shmEnabled = false;
-
-         if (rtps.isUseBuiltinTransports())
-         {
-            shmEnabled = true;
-         }
-         else if (fastddsTransports != null)
-         {
-            for (int i = 0; i < fastddsTransports.length; ++i)
-            {
-               TransportDescriptorType transportDescriptorType = fastddsTransports[i];
-
-               if (transportDescriptorType.getType().equals("SHM"))
-               {
-                  shmEnabled = true;
-                  break;
-               }
-            }
-         }
-
-         if (shmEnabled)
-         {
-            LogTools.error("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
-            LogTools.error("Try restarting the process after deleting the directory.");
-         }
-      }
+      checkSHMAvailabilityWindows(rtps, fastddsTransports);
 
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
@@ -509,6 +487,41 @@ public class ROS2Node implements Closeable
 
          // Delete participant
          retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
+      }
+   }
+
+   /**
+    * Check if SHM is usable on Windows (sometimes the SHM directory can lose write permissions)
+    */
+   private static void checkSHMAvailabilityWindows(Rtps rtps, TransportDescriptorType... fastddsTransports)
+   {
+      if (System.getProperty("os.name").startsWith("Windows") && !TransportDescriptorTypeTools.SHM_TRANSPORT_AVAILABLE_ON_WINDOWS)
+      {
+         boolean shmEnabled = false;
+
+         if (rtps.isUseBuiltinTransports())
+         {
+            shmEnabled = true;
+         }
+         else if (fastddsTransports != null)
+         {
+            for (int i = 0; i < fastddsTransports.length; ++i)
+            {
+               TransportDescriptorType transportDescriptorType = fastddsTransports[i];
+
+               if (transportDescriptorType.getType().equals("SHM"))
+               {
+                  shmEnabled = true;
+                  break;
+               }
+            }
+         }
+
+         if (shmEnabled)
+         {
+            LogTools.error("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
+            LogTools.error("Try restarting the process after deleting the directory.");
+         }
       }
    }
 }

@@ -42,16 +42,6 @@ public class AsyncROS2Node extends ROS2Node
    private final Thread publishThread;
    private final BlockingQueue<Runnable> tasks;
 
-   public AsyncROS2Node(String name)
-   {
-      this(name, jros2.get().rosDomainId());
-   }
-
-   public AsyncROS2Node(String name, int domainId)
-   {
-      this(name, domainId, (TransportDescriptorType[]) null);
-   }
-
    public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
       super(name, domainId, fastddsTransports);
@@ -62,6 +52,16 @@ public class AsyncROS2Node extends ROS2Node
       tasks = new ArrayBlockingQueue<>(capacity, true);
       publishThread = new Thread(this::publishLoop);
       publishThread.start();
+   }
+
+   public AsyncROS2Node(String name, int domainId)
+   {
+      this(name, domainId, (TransportDescriptorType[]) null);
+   }
+
+   public AsyncROS2Node(String name)
+   {
+      this(name, jros2.get().rosDomainId());
    }
 
    @Override
