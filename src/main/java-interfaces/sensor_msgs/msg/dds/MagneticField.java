@@ -93,7 +93,7 @@ public class MagneticField implements ROS2Message<MagneticField>
       magnetic_field_.deserialize(buffer);
       for (int i = 0; i < magnetic_field_covariance_.length; ++i)
       {
-      magnetic_field_covariance_[i] = buffer.readDouble();
+         magnetic_field_covariance_[i] = buffer.readDouble();
       }
 
    }

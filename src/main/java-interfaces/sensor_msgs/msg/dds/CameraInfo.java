@@ -280,7 +280,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       d_.deserialize(buffer);
       for (int i = 0; i < p_.length; ++i)
       {
-      p_[i] = buffer.readDouble();
+         p_[i] = buffer.readDouble();
       }
       binning_x_ = buffer.readInt();
       binning_y_ = buffer.readInt();

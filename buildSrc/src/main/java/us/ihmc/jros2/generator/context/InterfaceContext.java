@@ -169,7 +169,6 @@ public abstract class InterfaceContext
          String lengthStr = string_wstring_matcher.group("len"); // e.g. 4
          String fieldNameStr = string_wstring_matcher.group("fname"); // my_type
 
-         // TODO
          field = new InterfaceField();
          field.type(stringTypeStr);
          field.stringLength(stringLengthStr == null ? -1 : Integer.parseInt(stringLengthStr));
