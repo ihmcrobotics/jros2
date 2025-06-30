@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
+import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
 final class jros2 implements jros2Settings
 {
@@ -37,6 +38,21 @@ final class jros2 implements jros2Settings
    private jros2()
    {
       this(new jros2Settings[] {new jros2SettingsProp(), new jros2SettingsEnv(), new jros2SettingsFile(), new jros2SettingsDefault()});
+
+      /*
+       * Intraprocess delivery mode can only be set once per jros2 instance, not per-node. Consider the following scenario:
+       *
+       *   1. Create node A with intraprocess OFF
+       *   2. Create node B with intraprocess ON
+       *   3. Create publisher using node A
+       *
+       *   You may expect the publisher to not use intraprocess, but it's most likely that it will because node B has enabled intraprocess for the entire
+       *   Fast-DDS library instance.
+       *
+       * See: https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/library_settings.html#intra-process-delivery-xml-profile
+       * Notice how intraprocess delivery is a library setting, not a participant, data reader, or data writer setting.
+       */
+      ProfilesXML.setIntraprocessDelivery(intraprocessDelivery() ? "FULL" : "OFF");
    }
 
    /**
@@ -105,6 +121,37 @@ final class jros2 implements jros2Settings
       for (int i = 0; i < settingsSources.length; ++i)
       {
          if (settingsSources[i].hasROSDomainId())
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   @Override
+   public boolean intraprocessDelivery()
+   {
+      // Loop through setting sources in order of priority
+      for (int i = 0; i < settingsSources.length; ++i)
+      {
+         // If the source specifies intraprocess delivery, return the value
+         if (settingsSources[i].hasIntraprocessDelivery())
+         {
+            return settingsSources[i].intraprocessDelivery();
+         }
+      }
+
+      // Realistically should never reach here
+      return settingsSources[settingsSources.length - 1].intraprocessDelivery();
+   }
+
+   @Override
+   public boolean hasIntraprocessDelivery()
+   {
+      for (int i = 0; i < settingsSources.length; ++i)
+      {
+         if (settingsSources[i].hasIntraprocessDelivery())
          {
             return true;
          }

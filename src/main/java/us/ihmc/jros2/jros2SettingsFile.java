@@ -33,6 +33,7 @@ class jros2SettingsFile implements jros2Settings
    private static final String SOURCE_NAME = "jros2.properties";
 
    static final String DOMAIN_ID_KEY = "jros2.ros.domain.id";
+   static final String INTRAPROCESS_DELIVERY_KEY = "jros2.fastdds.intraprocess.delivery";
    static final String INTERFACE_WHITELIST_KEY = "jros2.fastdds.interface.whitelist";
 
    private static final Path DEFAULT_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
@@ -42,6 +43,7 @@ class jros2SettingsFile implements jros2Settings
    private final Path filePath;
    private final Path compatibilityFilePath;
    private int rosDomainId;
+   private boolean intraprocessDelivery;
    private String[] interfaceWhitelist;
 
    jros2SettingsFile()
@@ -55,6 +57,7 @@ class jros2SettingsFile implements jros2Settings
       this.compatibilityFilePath = compatibilityFilePath;
 
       rosDomainId = DEFAULTS.rosDomainId();
+      intraprocessDelivery = DEFAULTS.intraprocessDelivery();
       interfaceWhitelist = DEFAULTS.interfaceWhitelist();
 
       try
@@ -87,6 +90,7 @@ class jros2SettingsFile implements jros2Settings
 
       Properties properties = new Properties();
       properties.setProperty(DOMAIN_ID_KEY, String.valueOf(rosDomainId));
+      properties.setProperty(INTRAPROCESS_DELIVERY_KEY, String.valueOf(intraprocessDelivery));
       properties.setProperty(INTERFACE_WHITELIST_KEY, String.join(", ", interfaceWhitelist));
 
       try (FileOutputStream output = new FileOutputStream(file))
@@ -116,6 +120,7 @@ class jros2SettingsFile implements jros2Settings
       try
       {
          rosDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
+         intraprocessDelivery = Boolean.parseBoolean(properties.getProperty(INTRAPROCESS_DELIVERY_KEY));
          interfaceWhitelist = jros2Settings.splitInterfaceWhitelistFromCSV(properties.getProperty(INTERFACE_WHITELIST_KEY));
       }
       catch (Exception e)
@@ -167,6 +172,18 @@ class jros2SettingsFile implements jros2Settings
    public boolean hasROSDomainId()
    {
       return DEFAULTS.rosDomainId() != rosDomainId;
+   }
+
+   @Override
+   public boolean intraprocessDelivery()
+   {
+      return intraprocessDelivery;
+   }
+
+   @Override
+   public boolean hasIntraprocessDelivery()
+   {
+      return DEFAULTS.intraprocessDelivery() != intraprocessDelivery;
    }
 
    @Override

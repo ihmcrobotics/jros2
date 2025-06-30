@@ -23,6 +23,7 @@ class jros2SettingsProp implements jros2Settings
    private static final String SOURCE_NAME = "System Properties";
 
    static final String DOMAIN_ID_KEY = "ros.domain.id";
+   static final String INTRAPROCESS_DELIVERY_KEY = "fastdds.intraprocess.delivery";
    static final String INTERFACE_WHITELIST_KEY = "fastdds.interface.whitelist";
 
    @Override
@@ -48,6 +49,21 @@ class jros2SettingsProp implements jros2Settings
    public boolean hasROSDomainId()
    {
       return System.getProperties().containsKey(DOMAIN_ID_KEY);
+   }
+
+   @Override
+   public boolean intraprocessDelivery()
+   {
+      return System.getProperties()
+                   .getOrDefault(INTRAPROCESS_DELIVERY_KEY, Boolean.toString(new jros2SettingsDefault().intraprocessDelivery()))
+                   .toString()
+                   .equalsIgnoreCase("true");
+   }
+
+   @Override
+   public boolean hasIntraprocessDelivery()
+   {
+      return System.getProperties().containsKey(INTRAPROCESS_DELIVERY_KEY);
    }
 
    @Override

@@ -31,6 +31,20 @@ interface jros2Settings
    boolean hasROSDomainId();
 
    /**
+    * @return true if intraprocess delivery should be enabled. Using intraprocess delivery means publishers will directly
+    *       call the receive-method of subscriptions. Please note that any operations the subscriptions perform in
+    *       the {@link ROS2SubscriptionReader} will block the publish method of the {@link ROS2Publisher}. Do not enable
+    *       in performance critical loops without using {@link AsyncROS2Publisher}.
+    *       See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/intraprocess.html">Intra-process delivery</a>
+    */
+   boolean intraprocessDelivery();
+
+   /**
+    * @return Whether enabling Fast-DDS intraprocess delivery has been specified.
+    */
+   boolean hasIntraprocessDelivery();
+
+   /**
     * A list of addresses (IPv4 or IPv6) and/or interface names which correspond to network interfaces on the host system.
     * {@link ROS2Node} will only be able to communicate using whitelisted network interfaces.
     * Empty or null for no whitelist.
