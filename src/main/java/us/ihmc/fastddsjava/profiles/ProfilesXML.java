@@ -53,8 +53,6 @@ public class ProfilesXML
       librarySettingsType = new LibrarySettingsType();
       logType = new LogType();
       typesType = new TypesType();
-
-      librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
    }
 
    public void load() throws fastddsjavaException
@@ -87,6 +85,11 @@ public class ProfilesXML
    public TypesType getTypesType()
    {
       return typesType;
+   }
+
+   public void enableIntraprocess(boolean intraprocess)
+   {
+      librarySettingsType.setIntraprocessDelivery(intraprocess ? "FULL" : "OFF");
    }
 
    public void addParticipantProfile(ParticipantProfileType participantProfileType)
