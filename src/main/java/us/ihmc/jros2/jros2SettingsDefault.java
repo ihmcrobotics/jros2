@@ -38,6 +38,18 @@ class jros2SettingsDefault implements jros2Settings
    }
 
    @Override
+   public boolean intraprocessDelivery()
+   {
+      return false;
+   }
+
+   @Override
+   public boolean hasIntraprocessDelivery()
+   {
+      return true;
+   }
+
+   @Override
    public String[] interfaceWhitelist()
    {
       return new String[0];

@@ -34,6 +34,10 @@ public class jros2SettingsTest
       final int environmentDomainId = 112;
       final int fileDomainId = 113;
 
+      final boolean systemIntraprocessDelivery = false;
+      final boolean environmentIntraprocessDelivery = true;
+      final boolean fileIntraprocessDelivery = false;
+
       final String[] systemPropertyInterfaceWhitelist = {"192.0.2.1"};
       final String[] environmentInterfaceWhitelist = {"192.0.2.2", "127.0.0.1"};
       final String[] fileInterfaceWhitelist = {"192.0.2.3", "127.0.0.1", "0.0.0.0"};
@@ -76,11 +80,13 @@ public class jros2SettingsTest
                   if (systemPropertiesHaveValues)
                   {
                      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(systemPropertyDomainId));
+                     System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(systemIntraprocessDelivery));
                      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, systemPropertyInterfaceWhitelist[0]);
                   }
                   else // Otherwise ensure system does not have jros2 related properties
                   {
                      System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
+                     System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
                      System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
                   }
 
@@ -104,6 +110,7 @@ public class jros2SettingsTest
                   if ((hasValuesPermutation & environmentSettingsMask) != 0)
                   {
                      environment.put(jros2SettingsEnv.DOMAIN_ID_KEY, String.valueOf(environmentDomainId));
+                     environment.put(jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY, String.valueOf(environmentIntraprocessDelivery));
                      environment.put(jros2SettingsEnv.INTERFACE_WHITELIST_KEY, environmentInterfaceWhitelist[0]);
                   }
 
@@ -131,6 +138,7 @@ public class jros2SettingsTest
                      // Write the properties to the properties file
                      Properties properties = new Properties();
                      properties.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(fileDomainId));
+                     properties.setProperty(jros2SettingsFile.INTRAPROCESS_DELIVERY_KEY, String.valueOf(fileIntraprocessDelivery));
                      properties.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, fileInterfaceWhitelist[0]);
                      try (FileOutputStream output = new FileOutputStream(fakeFile))
                      {
@@ -155,15 +163,22 @@ public class jros2SettingsTest
 
                // The instance should always have values, since the default settings are always added
                assertTrue(instance.hasROSDomainId());
+               assertTrue(instance.hasIntraprocessDelivery());
                assertTrue(instance.hasInterfaceWhitelist());
 
                // Ensure the jros2 instance settings values match the highest priority settings that has values.
                for (jros2Settings settings : settingsList)
                {
-                  boolean hasValues = settings.hasROSDomainId() && settings.hasInterfaceWhitelist();
+                  if (settings instanceof jros2SettingsDefault)
+                  {
+                     continue;
+                  }
+
+                  boolean hasValues = settings.hasROSDomainId() && settings.hasIntraprocessDelivery() && settings.hasInterfaceWhitelist();
                   if (hasValues)
                   {
                      assertEquals(settings.rosDomainId(), instance.rosDomainId());
+                     assertEquals(settings.intraprocessDelivery(), instance.intraprocessDelivery());
                      assertEquals(settings.interfaceWhitelist().length, instance.interfaceWhitelist().length);
                      for (int i = 0; i < settings.interfaceWhitelist().length; ++i)
                      {
@@ -193,6 +208,7 @@ public class jros2SettingsTest
    {
       jros2Settings defaultSettings = new jros2SettingsDefault();
       assertTrue(defaultSettings.hasROSDomainId());
+      assertTrue(defaultSettings.hasIntraprocessDelivery());
       assertTrue(defaultSettings.hasInterfaceWhitelist());
       assertEquals(0, defaultSettings.rosDomainId());
       assertEquals(0, defaultSettings.interfaceWhitelist().length);
@@ -225,6 +241,7 @@ public class jros2SettingsTest
          // Values should match default values
          jros2Settings defaultSettings = new jros2SettingsDefault();
          assertEquals(defaultSettings.rosDomainId(), fileSettings.rosDomainId());
+         assertEquals(defaultSettings.intraprocessDelivery(), fileSettings.intraprocessDelivery());
          assertEquals(defaultSettings.interfaceWhitelist().length, fileSettings.interfaceWhitelist().length);
       }
       finally
@@ -255,6 +272,7 @@ public class jros2SettingsTest
 
          // Put property values
          int domainId = 113;
+         boolean intraprocessDelivery = true;
          String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
          StringJoiner csvWhitelist = new StringJoiner(", ");
@@ -263,6 +281,7 @@ public class jros2SettingsTest
 
          Properties properties = new Properties();
          properties.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(domainId));
+         properties.setProperty(jros2SettingsFile.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(intraprocessDelivery));
          properties.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
          try (FileOutputStream output = new FileOutputStream(fakeFile))
          {
@@ -272,6 +291,7 @@ public class jros2SettingsTest
          jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
 
          assertTrue(fileSettings.hasROSDomainId());
+         assertTrue(fileSettings.hasIntraprocessDelivery());
          assertTrue(fileSettings.hasInterfaceWhitelist());
 
          // Ensure values are correct
@@ -420,25 +440,34 @@ public class jros2SettingsTest
 
       // No environment variables defined. Should say it doesn't have values
       assertFalse(environmentSettings.hasROSDomainId());
+      assertFalse(environmentSettings.hasIntraprocessDelivery());
       assertFalse(environmentSettings.hasInterfaceWhitelist());
 
       // No environment variables defined. Should return default values
       assertEquals(defaultSettings.rosDomainId(), environmentSettings.rosDomainId());
+      assertEquals(defaultSettings.intraprocessDelivery(), environmentSettings.intraprocessDelivery());
       assertEquals(defaultSettings.interfaceWhitelist().length, environmentSettings.interfaceWhitelist().length);
 
       //// ENVIRONMENT WITH VALUES DEFINED ////
       int domainId = 113;
+      boolean intraprocessDelivery = false;
       String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
       StringJoiner csvWhitelist = new StringJoiner(", ");
       for (String intrface : interfaceWhitelist)
          csvWhitelist.add(intrface);
 
-      environment = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY, String.valueOf(domainId), jros2SettingsEnv.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
+      environment = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY,
+                           String.valueOf(domainId),
+                           jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY,
+                           String.valueOf(intraprocessDelivery),
+                           jros2SettingsEnv.INTERFACE_WHITELIST_KEY,
+                           csvWhitelist.toString());
       environmentSettings = new jros2SettingsEnv(environment);
 
       // Should report that it has values
       assertTrue(environmentSettings.hasROSDomainId());
+      assertTrue(environmentSettings.hasIntraprocessDelivery());
       assertTrue(environmentSettings.hasInterfaceWhitelist());
 
       // Now the values should reflect the newly defined system properties
@@ -454,6 +483,7 @@ public class jros2SettingsTest
    {
       // Ensure no properties have been set
       System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
+      System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
       System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
 
       jros2Settings defaultSettings = new jros2SettingsDefault();
@@ -461,13 +491,16 @@ public class jros2SettingsTest
 
       // Should say that it doesn't have values
       assertFalse(systemPropertySettings.hasROSDomainId());
+      assertFalse(systemPropertySettings.hasIntraprocessDelivery());
       assertFalse(systemPropertySettings.hasInterfaceWhitelist());
 
       // No system properties defined. Should return default values
       assertEquals(defaultSettings.rosDomainId(), systemPropertySettings.rosDomainId());
+      assertEquals(defaultSettings.intraprocessDelivery(), systemPropertySettings.intraprocessDelivery());
       assertEquals(defaultSettings.interfaceWhitelist().length, systemPropertySettings.interfaceWhitelist().length);
 
       int domainId = 113;
+      boolean intraprocessDelivery = false;
       String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
 
       StringJoiner csvWhitelist = new StringJoiner(", ");
@@ -476,10 +509,12 @@ public class jros2SettingsTest
 
       // Define system properties
       System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(domainId));
+      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(intraprocessDelivery));
       System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
 
       // Now it should have values
       assertTrue(systemPropertySettings.hasROSDomainId());
+      assertTrue(systemPropertySettings.hasIntraprocessDelivery());
       assertTrue(systemPropertySettings.hasInterfaceWhitelist());
 
       // The values should reflect the newly defined system properties
@@ -491,6 +526,7 @@ public class jros2SettingsTest
 
       // Change up the system properties
       int newDomainId = 219;
+      boolean newIntraprocessDelivery = false;
       String[] newInterfaceWhitelist = {"198.51.100.5"};
 
       StringJoiner newCSVWhitelist = new StringJoiner(", ");
@@ -499,10 +535,12 @@ public class jros2SettingsTest
 
       // Define system properties
       System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(newDomainId));
+      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(newIntraprocessDelivery));
       System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, newCSVWhitelist.toString());
 
       // Should still have values
       assertTrue(systemPropertySettings.hasROSDomainId());
+      assertTrue(systemPropertySettings.hasIntraprocessDelivery());
       assertTrue(systemPropertySettings.hasInterfaceWhitelist());
 
       // Now the values should reflect the newly defined system properties

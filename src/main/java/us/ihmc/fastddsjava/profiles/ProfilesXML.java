@@ -41,6 +41,22 @@ public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
    private static final Object loadLock = new Object();
+   private static String intraprocessDelivery;
+
+   public static void setIntraprocessDelivery(String value)
+   {
+      switch (value)
+      {
+         case "OFF":
+         case "USER_DATA_ONLY":
+         case "FULL":
+            break;
+         default:
+            throw new IllegalArgumentException("Invalid intraprocess delivery mode: " + value);
+      }
+
+      intraprocessDelivery = value;
+   }
 
    private final ProfilesType profilesType;
    private final LibrarySettingsType librarySettingsType;
@@ -54,7 +70,7 @@ public class ProfilesXML
       logType = new LogType();
       typesType = new TypesType();
 
-      librarySettingsType.setIntraprocessDelivery("FULL"); // Default to enable Intraprocess delivery
+      librarySettingsType.setIntraprocessDelivery(intraprocessDelivery);
    }
 
    public void load() throws fastddsjavaException
