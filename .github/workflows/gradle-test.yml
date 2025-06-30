@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ros_distro: [humble, jazzy]
+        ros_distro: [humble, jazzy, kilted]
     container:
       image: osrf/ros:${{ matrix.ros_distro }}-desktop
     steps:
