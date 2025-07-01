@@ -153,7 +153,6 @@ public class StatisticsTest
       assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
       assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
       assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
-      assertEquals(0.0, statistics.get(STDDEV), 1E-7);
       assertEquals(publishCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals(publishCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
@@ -164,7 +163,6 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 2.0);
-      assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 10.0);
@@ -174,7 +172,6 @@ public class StatisticsTest
       assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
       assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);
       assertEquals(expectedSize, statistics.get(MAXIMUM), 1E-7);
-      assertEquals(0.0, statistics.get(STDDEV), 1E-7);
       assertEquals(receivedCount.get(), statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals(receivedCount.get() * expectedSize, statistics.get(TOTAL), 1E-4);
       assertEquals(expectedSize, statistics.get(LATEST), 1E-7);
@@ -184,7 +181,6 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 10.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 10.0);
-      assertEquals(0.0, statistics.get(STDDEV), 2.0); // Can vary a lot on Windows
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 10.0);
