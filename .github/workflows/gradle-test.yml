@@ -39,6 +39,7 @@ jobs:
         run: cd buildSrc && ../gradlew test
 
       - name: Print any error report files
+        if: always()
         run: find . -name 'hs_err*' -type f -exec cat {} +
   gradle-test-windows:
     runs-on: windows-latest
