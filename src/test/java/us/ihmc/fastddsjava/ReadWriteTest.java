@@ -368,7 +368,7 @@ public class ReadWriteTest
 
       // Send the data
       Pointer dataWrite = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+      final fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
       Thread writerThread = new Thread(() ->
       {
          int currentDataLength = initialDataLength;
@@ -376,8 +376,12 @@ public class ReadWriteTest
          do
          {
             byte[] sampleData = generateRandomBytes(currentDataLength);
-            topicDataWrapperWrite.data_vector().resize(sampleData.length);
-            topicDataWrapperWrite.data_ptr().put(sampleData);
+
+            synchronized (topicDataWrapperWrite)
+            {
+               topicDataWrapperWrite.data_vector().resize(sampleData.length);
+               topicDataWrapperWrite.data_ptr().put(sampleData);
+            }
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
