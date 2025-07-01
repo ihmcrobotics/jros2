@@ -55,11 +55,25 @@ public class ReadWriteTest
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      // Add SHM transport
-      TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
-      transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-      profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+      final TransportDescriptorType transportDescriptorType;
+
+      if (System.getProperty("os.name").startsWith("Windows"))
+      {
+         // Add SHM transport
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+      }
+      else
+      {
+         // Add UDP transport
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
+         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+      }
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
