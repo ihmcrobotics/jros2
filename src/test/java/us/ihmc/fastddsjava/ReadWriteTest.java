@@ -57,8 +57,8 @@ public class ReadWriteTest
 
       final TransportDescriptorType transportDescriptorType;
 
-      // UDP-only on Linux
-      boolean udp4Only = System.getProperty("os.name").contains("Linux");
+      // UDP-only on Linux GitHub CI
+      boolean udp4Only = System.getProperty("os.name").contains("Linux") && System.getenv().containsKey("GITHUB_ACTIONS");
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
