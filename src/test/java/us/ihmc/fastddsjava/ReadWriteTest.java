@@ -59,14 +59,19 @@ public class ReadWriteTest
 
       // UDP-only on Linux GitHub CI
       boolean udp4Only = System.getProperty("os.name").contains("Linux") && System.getenv().containsKey("GITHUB_ACTIONS");
+      // SHM-only on Windows GitHub CI
+      boolean shmOnly = System.getProperty("os.name").contains("Windows") && System.getenv().containsKey("GITHUB_ACTIONS");
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
 
-      boolean builtinTransports = !udp4Only;
-      System.out.println("Using builtin transports: " + builtinTransports);
+      boolean builtinTransports = !(udp4Only || shmOnly);
+
+      System.out.println("Builtin transports: " + builtinTransports);
+      System.out.println("UDPv4 only: " + udp4Only);
+      System.out.println("SHM only: " + shmOnly);
       rtps.setUseBuiltinTransports(builtinTransports);
 
       if (udp4Only)
@@ -75,6 +80,16 @@ public class ReadWriteTest
          TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
          transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
          TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
+         rtps.setUserTransports(userTransports);
+      }
+      else if (shmOnly)
+      {
+         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
          transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
          profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
          userTransports.getTransportId().add(transportDescriptorType.getTransportId());
