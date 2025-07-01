@@ -196,6 +196,7 @@ public class ReadWriteTest
    }
 
    @Test
+   @Timeout(30)
    public void readWriteTestWriteNTimes() throws InterruptedException, fastddsjavaException
    {
       final int n = 5000;
