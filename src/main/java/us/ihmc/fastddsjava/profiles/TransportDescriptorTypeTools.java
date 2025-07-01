@@ -65,6 +65,11 @@ public final class TransportDescriptorTypeTools
     */
    public static void setInterfacesWhitelist(TransportDescriptorType transportDescriptorType, String... addressOrInterfaceNames)
    {
+      if (transportDescriptorType.getType().equals("SHM"))
+      {
+         throw new IllegalArgumentException("Cannot set interfaces whitelist for a SHM transport type");
+      }
+
       if (addressOrInterfaceNames == null || addressOrInterfaceNames.length == 0)
       {
          transportDescriptorType.setInterfaceWhiteList(null);

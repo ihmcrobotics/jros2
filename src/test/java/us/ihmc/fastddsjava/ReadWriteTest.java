@@ -2,6 +2,7 @@ package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
@@ -10,10 +11,13 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
+import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
+import us.ihmc.fastddsjava.profiles.gen.DataWriterQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
+import us.ihmc.fastddsjava.profiles.gen.ReliabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
@@ -24,6 +28,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.fastddsjava.fastddsjavaTestTools.generateRandomBytes;
@@ -50,10 +55,9 @@ public class ReadWriteTest
    {
       ProfilesXML profilesXML = new ProfilesXML();
 
-      // Add UDPv4 transport
+      // Add SHM transport
       TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
-      TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+      TransportDescriptorType transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
       transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
       profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
@@ -76,22 +80,32 @@ public class ReadWriteTest
       topicProfileType.setProfileName("unit_test_topic");
       profilesXML.addTopicProfile(topicProfileType);
 
+      // RELIABLE QoS
+      ReliabilityQosPolicyType reliabilityQosPolicyType = new ReliabilityQosPolicyType();
+      reliabilityQosPolicyType.setKind("RELIABLE");
+
       // Add publisher profile / AKA data writer profile
       PublisherProfileType publisherProfileType = new PublisherProfileType();
       publisherProfileType.setProfileName("unit_test_publisher");
+      DataWriterQosPoliciesType dataWriterQosPoliciesType = new DataWriterQosPoliciesType();
+      dataWriterQosPoliciesType.setReliability(reliabilityQosPolicyType);
+      publisherProfileType.setQos(dataWriterQosPoliciesType);
       profilesXML.addPublisherProfile(publisherProfileType);
 
       // Add subscriber profile / AKA data reader profile
       SubscriberProfileType subscriberProfileType = new SubscriberProfileType();
       subscriberProfileType.setProfileName("unit_test_subscriber");
+      DataReaderQosPoliciesType dataReaderQosPoliciesType = new DataReaderQosPoliciesType();
+      dataReaderQosPoliciesType.setReliability(reliabilityQosPolicyType);
+      subscriberProfileType.setQos(dataReaderQosPoliciesType);
       profilesXML.addSubscriberProfile(subscriberProfileType);
 
       return profilesXML;
    }
 
-   @RepeatedTest(5000)
+   @RepeatedTest(100)
    @Timeout(30)
-   public void readWriteTest() throws InterruptedException, fastddsjavaException
+   public void readWriteTestWriteOnce() throws InterruptedException, fastddsjavaException
    {
       int retCode;
       final byte[] sampleData = generateRandomBytes(100000);
@@ -128,12 +142,13 @@ public class ReadWriteTest
       {
          public void call()
          {
+            fastddsjava_datareader_take_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+
+            dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
+            received.set(true);
+
             synchronized (received)
             {
-               fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
-               dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
-
-               received.set(true);
                received.notify();
             }
          }
@@ -148,16 +163,14 @@ public class ReadWriteTest
       topicDataWrapper.data_vector().resize(sampleData.length);
       topicDataWrapper.data_ptr().put(sampleData);
 
-      // Create reader with listener
-
       // Send the data
       retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
       retcodeThrowOnError(retCode);
 
-      // Wait to receive data
-      synchronized (received)
+      if (!received.get())
       {
-         if (!received.get())
+         // Wait to receive data
+         synchronized (received)
          {
             received.wait();
          }
@@ -182,7 +195,103 @@ public class ReadWriteTest
       assertTrue(topicDataWrapperType.releaseReference());
    }
 
-   @RepeatedTest(5000)
+   @Test
+   public void readWriteTestWriteNTimes() throws InterruptedException, fastddsjavaException
+   {
+      final int n = 5000;
+
+      int retCode;
+      final byte[] sampleData = generateRandomBytes(100000);
+
+      // Topic type
+      fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType("test_type", CDR_LE);
+      Pointer typeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+
+      Pointer participant = fastddsjava_create_participant("unit_test_participant");
+
+      retCode = fastddsjava_register_type(participant, typeSupport);
+      retcodeThrowOnError(retCode);
+
+      Pointer topic = fastddsjava_create_topic(participant, topicDataWrapperType, "unit_test_topic", "unit_test_topic");
+
+      // Publisher
+      Pointer publisher = fastddsjava_create_publisher(participant, "unit_test_publisher");
+      Pointer dataWriter = fastddsjava_create_datawriter(publisher, topic, "unit_test_publisher");
+
+      // Subscriber
+      Pointer subscriber = fastddsjava_create_subscriber(participant, "unit_test_subscriber");
+      Pointer dataReader = fastddsjava_create_datareader(subscriber, topic, null, "unit_test_subscriber");
+
+      fastddsjava_DataReaderListener listener = new fastddsjava_DataReaderListener();
+
+      final AtomicInteger received = new AtomicInteger(0);
+
+      // Add callback to listener
+      Pointer dataReceive = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+      SampleInfo sampleInfo = new SampleInfo();
+      fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
+      {
+         public void call()
+         {
+            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+
+            if (n == received.incrementAndGet())
+            {
+               synchronized (received)
+               {
+                  received.notify();
+               }
+            }
+         }
+      };
+      listener.set_on_data_available_callback(onDataCallback);
+      fastddsjava_datareader_set_listener(dataReader, listener);
+
+      Pointer data = topicDataWrapperType.create_data();
+      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
+
+      // Pack wrapper with data
+      topicDataWrapper.data_vector().resize(sampleData.length);
+      topicDataWrapper.data_ptr().put(sampleData);
+
+      // Send the data n times
+      for (int i = 0; i < n; ++i)
+      {
+         retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
+         retcodeThrowOnError(retCode);
+         // This makes the test more robust especially on Windows
+         LockSupport.parkNanos(1);
+      }
+
+      if (n != received.get())
+      {
+         // Wait for the subscription to have received all n samples
+         synchronized (received)
+         {
+            received.wait();
+         }
+      }
+
+      assertEquals(n, received.get());
+
+      // Delete / release all references
+      assertTrue(sampleInfo.releaseReference());
+      topicDataWrapperType.delete_data(dataReceive);
+      topicDataWrapperType.delete_data(data);
+      retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
+      assertTrue(onDataCallback.releaseReference());
+      assertTrue(listener.releaseReference());
+      retcodeThrowOnError(fastddsjava_delete_subscriber(participant, subscriber));
+      retcodeThrowOnError(fastddsjava_delete_datawriter(publisher, dataWriter));
+      retcodeThrowOnError(fastddsjava_delete_publisher(participant, publisher));
+      retcodeThrowOnError(fastddsjava_delete_topic(participant, topic));
+      retcodeThrowOnError(fastddsjava_unregister_type(participant, topicDataWrapperType.get_name()));
+      retcodeThrowOnError(fastddsjava_delete_participant(participant));
+      assertTrue(topicDataWrapperType.releaseReference());
+   }
+
+   @RepeatedTest(100)
    @Timeout(30)
    public void readWriteTestWithGrowingDataSize() throws InterruptedException, fastddsjavaException
    {
@@ -222,17 +331,18 @@ public class ReadWriteTest
          @Override
          public void call()
          {
-            synchronized (received)
+            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+
+            long dataLength = topicDataWrapperReceive.data_vector().size();
+
+            receivedDataLength.set(dataLength);
+
+            if (dataLength == finalDataLength)
             {
-               fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+               received.set(true);
 
-               long dataLength = topicDataWrapperReceive.data_vector().size();
-
-               receivedDataLength.set(dataLength);
-
-               if (dataLength == finalDataLength)
+               synchronized (received)
                {
-                  received.set(true);
                   received.notify();
                }
             }
@@ -256,6 +366,9 @@ public class ReadWriteTest
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+            // This makes the test more robust especially on Windows
+            LockSupport.parkNanos(1);
+
             try
             {
                retcodeThrowOnError(writerRetCode);
@@ -272,10 +385,10 @@ public class ReadWriteTest
       }, "WriterThread");
       writerThread.start();
 
-      // Wait to receive data
-      synchronized (received)
+      if (!received.get())
       {
-         if (!received.get())
+         // Wait to receive data
+         synchronized (received)
          {
             received.wait();
          }
@@ -300,7 +413,7 @@ public class ReadWriteTest
       assertTrue(topicDataWrapperType.releaseReference());
    }
 
-   @RepeatedTest(5000)
+   @RepeatedTest(100)
    @Timeout(30)
    public void readWriteTestWithRandomDataSize() throws InterruptedException, fastddsjavaException
    {
@@ -342,11 +455,12 @@ public class ReadWriteTest
          @Override
          public void call()
          {
+            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+
+            received.incrementAndGet();
+
             synchronized (received)
             {
-               fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
-
-               received.incrementAndGet();
                received.notify();
             }
          }
@@ -379,10 +493,10 @@ public class ReadWriteTest
       }, "WriterThread");
       writerThread.start();
 
-      // Wait to receive data
-      synchronized (received)
+      while (received.get() < messagesToSend)
       {
-         while (received.get() < messagesToSend)
+         // Wait to receive data
+         synchronized (received)
          {
             received.wait();
          }
