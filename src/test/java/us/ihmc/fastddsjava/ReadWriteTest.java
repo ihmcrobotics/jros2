@@ -57,32 +57,32 @@ public class ReadWriteTest
 
       final TransportDescriptorType transportDescriptorType;
 
-//      if (System.getProperty("os.name").startsWith("Windows"))
-//      {
-//         // Add SHM transport
-//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-//         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
-//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-//      }
-//      else
-//      {
-//         // Add UDP transport
-//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-//         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
-//         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
-//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-//      }
+      if (System.getProperty("os.name").startsWith("Windows"))
+      {
+         // Add SHM transport
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+      }
+      else
+      {
+         // Add UDP transport
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
+         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+      }
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
       rtps.setUseBuiltinTransports(true); // Only use custom created transport
-//      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-//      userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-//      rtps.setUserTransports(userTransports);
+      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+      userTransports.getTransportId().add(transportDescriptorType.getTransportId());
+      rtps.setUserTransports(userTransports);
       participantProfileType.setRtps(rtps);
 
       participantProfileType.setProfileName("unit_test_participant");
