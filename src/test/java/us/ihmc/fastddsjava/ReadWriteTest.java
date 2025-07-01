@@ -64,7 +64,10 @@ public class ReadWriteTest
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
-      rtps.setUseBuiltinTransports(!udp4Only);
+
+      boolean builtinTransports = !udp4Only;
+      System.out.println("Using builtin transports: " + builtinTransports);
+      rtps.setUseBuiltinTransports(builtinTransports);
 
       if (udp4Only)
       {
