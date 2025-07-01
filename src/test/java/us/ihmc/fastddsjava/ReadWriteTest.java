@@ -380,19 +380,20 @@ public class ReadWriteTest
       fastddsjava_datareader_set_listener(dataReader, listener);
 
       // Send the data
-      Pointer dataWrite = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+
       Thread writerThread = new Thread(() ->
       {
          int currentDataLength = initialDataLength;
 
          do
          {
+            Pointer dataWrite = topicDataWrapperType.create_data();
+            fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+
             byte[] sampleData = generateRandomBytes(currentDataLength);
 
             topicDataWrapperWrite.data_vector().resize(sampleData.length);
-            topicDataWrapperWrite.data_vector().put(sampleData);
-//            topicDataWrapperWrite.data_ptr().put(sampleData);
+            topicDataWrapperWrite.data_ptr().put(sampleData);
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
@@ -408,6 +409,8 @@ public class ReadWriteTest
 
             // Grow the data length
             currentDataLength = currentDataLength * 2;
+
+            topicDataWrapperType.delete_data(dataWrite);
 
             // This makes the test more robust especially on Windows
             LockSupport.parkNanos(1);
@@ -431,7 +434,7 @@ public class ReadWriteTest
       // Delete / release all references
       assertTrue(sampleInfo.releaseReference());
       topicDataWrapperType.delete_data(dataReceive);
-      topicDataWrapperType.delete_data(dataWrite);
+
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
