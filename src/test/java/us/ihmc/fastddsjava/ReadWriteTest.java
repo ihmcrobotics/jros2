@@ -391,12 +391,11 @@ public class ReadWriteTest
             byte[] sampleData = generateRandomBytes(currentDataLength);
 
             topicDataWrapperWrite.data_vector().resize(sampleData.length);
-            topicDataWrapperWrite.data_ptr().put(sampleData);
+            topicDataWrapperWrite.data_vector().put(sampleData);
+//            topicDataWrapperWrite.data_ptr().put(sampleData);
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-            // This makes the test more robust especially on Windows
-            LockSupport.parkNanos(1);
 
             try
             {
@@ -409,6 +408,9 @@ public class ReadWriteTest
 
             // Grow the data length
             currentDataLength = currentDataLength * 2;
+
+            // This makes the test more robust especially on Windows
+            LockSupport.parkNanos(1);
          }
          while (receivedDataLength.get() < finalDataLength);
       }, "WriterThread");
