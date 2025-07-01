@@ -57,32 +57,32 @@ public class ReadWriteTest
 
       final TransportDescriptorType transportDescriptorType;
 
-      if (System.getProperty("os.name").startsWith("Windows"))
-      {
-         // Add SHM transport
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
-         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-      }
-      else
-      {
-         // Add UDP transport
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
-         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
-         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-      }
+//      if (System.getProperty("os.name").startsWith("Windows"))
+//      {
+//         // Add SHM transport
+//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+//         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+//      }
+//      else
+//      {
+//         // Add UDP transport
+//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+//         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
+//         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+//      }
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
-      rtps.setUseBuiltinTransports(false); // Only use custom created transport
-      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-      userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-      rtps.setUserTransports(userTransports);
+      rtps.setUseBuiltinTransports(true); // Only use custom created transport
+//      ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+//      userTransports.getTransportId().add(transportDescriptorType.getTransportId());
+//      rtps.setUserTransports(userTransports);
       participantProfileType.setRtps(rtps);
 
       participantProfileType.setProfileName("unit_test_participant");
@@ -368,7 +368,7 @@ public class ReadWriteTest
 
       // Send the data
       Pointer dataWrite = topicDataWrapperType.create_data();
-      final fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+      fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
       Thread writerThread = new Thread(() ->
       {
          int currentDataLength = initialDataLength;
@@ -377,11 +377,8 @@ public class ReadWriteTest
          {
             byte[] sampleData = generateRandomBytes(currentDataLength);
 
-            synchronized (topicDataWrapperWrite)
-            {
-               topicDataWrapperWrite.data_vector().resize(sampleData.length);
-               topicDataWrapperWrite.data_ptr().put(sampleData);
-            }
+            topicDataWrapperWrite.data_vector().resize(sampleData.length);
+            topicDataWrapperWrite.data_ptr().put(sampleData);
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
