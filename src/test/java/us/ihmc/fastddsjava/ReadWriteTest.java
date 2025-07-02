@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava;
 
 import org.bytedeco.javacpp.Pointer;
+import org.bytedeco.javacpp.PointerScope;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -391,39 +392,42 @@ public class ReadWriteTest
 
       Thread writerThread = new Thread(() ->
       {
-         int currentDataLength = initialDataLength;
-
-         do
+         try (PointerScope pointerScope = new PointerScope())
          {
-            Pointer dataWrite = topicDataWrapperType.create_data();
-            fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+            int currentDataLength = initialDataLength;
 
-            byte[] sampleData = generateRandomBytes(currentDataLength);
-
-            topicDataWrapperWrite.data_vector().resize(sampleData.length);
-            topicDataWrapperWrite.data_ptr().put(sampleData);
-
-            int writerRetCode;
-            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-
-            try
+            do
             {
-               retcodeThrowOnError(writerRetCode);
+               Pointer dataWrite = topicDataWrapperType.create_data();
+               fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
+
+               byte[] sampleData = generateRandomBytes(currentDataLength);
+
+               topicDataWrapperWrite.data_vector().resize(sampleData.length);
+               topicDataWrapperWrite.data_ptr().put(sampleData);
+
+               int writerRetCode;
+               writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+
+               try
+               {
+                  retcodeThrowOnError(writerRetCode);
+               }
+               catch (fastddsjavaException e)
+               {
+                  throw new RuntimeException(e);
+               }
+
+               // Grow the data length
+               currentDataLength = currentDataLength * 2;
+
+               topicDataWrapperType.delete_data(dataWrite);
+
+               // This makes the test more robust especially on Windows
+               LockSupport.parkNanos(1);
             }
-            catch (fastddsjavaException e)
-            {
-               throw new RuntimeException(e);
-            }
-
-            // Grow the data length
-            currentDataLength = currentDataLength * 2;
-
-            topicDataWrapperType.delete_data(dataWrite);
-
-            // This makes the test more robust especially on Windows
-            LockSupport.parkNanos(1);
+            while (receivedDataLength.get() < finalDataLength);
          }
-         while (receivedDataLength.get() < finalDataLength);
       }, "WriterThread");
       writerThread.start();
 
