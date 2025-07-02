@@ -72,32 +72,32 @@ public class ReadWriteTest
 
       boolean builtinTransports = !(udp4Only || shmOnly);
 
-      System.out.println("Builtin transports: " + builtinTransports);
-      System.out.println("UDPv4 only: " + udp4Only);
-      System.out.println("SHM only: " + shmOnly);
-      rtps.setUseBuiltinTransports(builtinTransports);
+//      System.out.println("Builtin transports: " + builtinTransports);
+//      System.out.println("UDPv4 only: " + udp4Only);
+//      System.out.println("SHM only: " + shmOnly);
+      rtps.setUseBuiltinTransports(true);
 
-      if (udp4Only)
-      {
-         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
-         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
-         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-         rtps.setUserTransports(userTransports);
-      }
-      else if (shmOnly)
-      {
-         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
-         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-         rtps.setUserTransports(userTransports);
-      }
+//      if (udp4Only)
+//      {
+//         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+//         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
+//         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
+//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+//         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
+//         rtps.setUserTransports(userTransports);
+//      }
+//      else if (shmOnly)
+//      {
+//         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+//         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
+//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
+//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+//         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
+//         rtps.setUserTransports(userTransports);
+//      }
 
       participantProfileType.setRtps(rtps);
 
