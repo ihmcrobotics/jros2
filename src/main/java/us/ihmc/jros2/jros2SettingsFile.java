@@ -183,7 +183,8 @@ class jros2SettingsFile implements jros2Settings
    @Override
    public boolean hasIntraprocessDelivery()
    {
-      return DEFAULTS.intraprocessDelivery() != intraprocessDelivery;
+      // Not sure how to handle this...
+      return true;
    }
 
    @Override
