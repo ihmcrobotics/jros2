@@ -232,8 +232,12 @@ public class ReadWriteTest
 
             fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
 
-            if (n == received.incrementAndGet())
+            int i = received.incrementAndGet();
+
+            if (n == i)
             {
+               System.out.println("Received #: " + i);
+
                synchronized (received)
                {
                   received.notify();
@@ -259,6 +263,7 @@ public class ReadWriteTest
       {
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
          retcodeThrowOnError(retCode);
+         System.out.println("Sent #: " + i);
          // This makes the test more robust especially on Windows
          LockSupport.parkNanos(1);
       }
@@ -268,6 +273,7 @@ public class ReadWriteTest
          // Wait for the subscription to have received all n samples
          synchronized (received)
          {
+            System.out.println("Waiting...");
             received.wait();
          }
       }
