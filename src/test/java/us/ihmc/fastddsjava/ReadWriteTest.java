@@ -267,22 +267,13 @@ public class ReadWriteTest
          System.out.println("Sent #: " + i);
       }
 
-      System.out.println("CHECKING RECEIVED " + received.get());
-
       if (n != received.get())
       {
-         System.out.println("n != received");
-
          // Wait for the subscription to have received all n samples
          synchronized (received)
          {
-            System.out.println("Waiting...");
             received.wait();
          }
-      }
-      else
-      {
-         System.out.println("n == received");
       }
 
       assertEquals(n, received.get());

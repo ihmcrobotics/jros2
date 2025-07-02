@@ -57,6 +57,3 @@ jobs:
 
       - name: Run JUnit tests
         run: ./gradlew test
-
-      - name: Run JUnit tests (Gradle plugin)
-        run: ../gradlew test
