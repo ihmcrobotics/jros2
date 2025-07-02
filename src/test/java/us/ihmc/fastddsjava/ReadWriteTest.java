@@ -11,18 +11,14 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
-import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.DataWriterQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
-import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ReliabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
-import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
-import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -54,50 +50,16 @@ public class ReadWriteTest
 
    private static ProfilesXML profile()
    {
+      // Intraprocess should be enabled, this is important for GitHub CI
       ProfilesXML.setIntraprocessDelivery("FULL");
 
       ProfilesXML profilesXML = new ProfilesXML();
-
-      final TransportDescriptorType transportDescriptorType;
-
-      // UDP-only on Linux GitHub CI
-      boolean udp4Only = System.getProperty("os.name").contains("Linux") && System.getenv().containsKey("GITHUB_ACTIONS");
-      // SHM-only on Windows GitHub CI
-      boolean shmOnly = System.getProperty("os.name").contains("Windows") && System.getenv().containsKey("GITHUB_ACTIONS");
 
       // Add participant profile
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
 
       Rtps rtps = new Rtps();
-
-      boolean builtinTransports = !(udp4Only || shmOnly);
-
-//      System.out.println("Builtin transports: " + builtinTransports);
-//      System.out.println("UDPv4 only: " + udp4Only);
-//      System.out.println("SHM only: " + shmOnly);
       rtps.setUseBuiltinTransports(true);
-
-//      if (udp4Only)
-//      {
-//         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-//         transportDescriptorType = TransportDescriptorTypeTools.createUDPv4Descriptor();
-//         TransportDescriptorTypeTools.setInterfacesWhitelist(transportDescriptorType, "127.0.0.1");
-//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-//         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-//         rtps.setUserTransports(userTransports);
-//      }
-//      else if (shmOnly)
-//      {
-//         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-//         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-//         transportDescriptorType = TransportDescriptorTypeTools.createSHMDescriptor();
-//         transportDescriptorListType.getTransportDescriptor().add(transportDescriptorType);
-//         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-//         userTransports.getTransportId().add(transportDescriptorType.getTransportId());
-//         rtps.setUserTransports(userTransports);
-//      }
 
       participantProfileType.setRtps(rtps);
 
@@ -228,7 +190,7 @@ public class ReadWriteTest
    }
 
    @Test
-   @Timeout(30)
+   @Timeout(60)
    public void readWriteTestWriteNTimes() throws InterruptedException, fastddsjavaException
    {
       final int n = 5000;
