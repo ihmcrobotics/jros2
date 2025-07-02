@@ -234,10 +234,10 @@ public class ReadWriteTest
 
             int i = received.incrementAndGet();
 
+            System.out.println("Received #: " + i);
+
             if (n == i)
             {
-               System.out.println("Received #: " + i);
-
                synchronized (received)
                {
                   received.notify();
