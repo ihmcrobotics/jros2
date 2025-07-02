@@ -54,6 +54,8 @@ public class ReadWriteTest
 
    private static ProfilesXML profile()
    {
+      ProfilesXML.setIntraprocessDelivery("FULL");
+
       ProfilesXML profilesXML = new ProfilesXML();
 
       final TransportDescriptorType transportDescriptorType;
