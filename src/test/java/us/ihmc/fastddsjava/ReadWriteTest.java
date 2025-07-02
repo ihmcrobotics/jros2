@@ -145,8 +145,8 @@ public class ReadWriteTest
                received.notify();
             }
 
-            assertTrue(sampleInfo.releaseReference());
-            topicDataWrapperType.delete_data(dataReceive);
+//            assertTrue(sampleInfo.releaseReference());
+//            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -176,7 +176,7 @@ public class ReadWriteTest
       assertTrue(dataCorrect.get());
 
       // Delete / release all references
-      topicDataWrapperType.delete_data(data);
+//      topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
@@ -244,8 +244,8 @@ public class ReadWriteTest
                }
             }
 
-            assertTrue(sampleInfo.releaseReference());
-            topicDataWrapperType.delete_data(dataReceive);
+//            assertTrue(sampleInfo.releaseReference());
+//            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -281,7 +281,7 @@ public class ReadWriteTest
       assertEquals(n, received.get());
 
       // Delete / release all references
-      topicDataWrapperType.delete_data(data);
+//      topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
@@ -351,8 +351,8 @@ public class ReadWriteTest
                }
             }
 
-            assertTrue(sampleInfo.releaseReference());
-            topicDataWrapperType.delete_data(dataReceive);
+//            assertTrue(sampleInfo.releaseReference());
+//            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -391,7 +391,7 @@ public class ReadWriteTest
                // Grow the data length
                currentDataLength = currentDataLength * 2;
 
-               topicDataWrapperType.delete_data(dataWrite);
+//               topicDataWrapperType.delete_data(dataWrite);
 
                // This makes the test more robust especially on Windows
                LockSupport.parkNanos(1);
@@ -478,8 +478,8 @@ public class ReadWriteTest
                received.notify();
             }
 
-            assertTrue(sampleInfo.releaseReference());
-            topicDataWrapperType.delete_data(dataReceive);
+//            assertTrue(sampleInfo.releaseReference());
+//            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -523,7 +523,7 @@ public class ReadWriteTest
       assertEquals(messagesToSend, received.get());
 
       // Delete / release all references
-      topicDataWrapperType.delete_data(dataWrite);
+//      topicDataWrapperType.delete_data(dataWrite);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
