@@ -22,7 +22,6 @@ import java.util.function.BiFunction;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
-@Disabled
 public class AsyncROS2Test
 {
    @Test
