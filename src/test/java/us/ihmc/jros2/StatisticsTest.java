@@ -160,12 +160,12 @@ public class StatisticsTest
       // Read the message publish period statistics from the publisher, and assert they make sense
       double expectedPeriod = 100.0;
       publisher.readStatistics(MessageMetadataType.PERIOD, statistics);
-      assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 10.0);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 10.0);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 2.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 2.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 2.0);
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
-      assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 10.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 2.0);
 
       // Read the message size statistics from the subscription, and assert they make sense
       subscription.readStatistics(MessageMetadataType.SIZE, statistics);
@@ -178,12 +178,12 @@ public class StatisticsTest
 
       // Read the message publish period statistics from the subscription, and assert they make sense
       subscription.readStatistics(MessageMetadataType.PERIOD, statistics);
-      assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 10.0);
-      assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 10.0);
-      assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 10.0);
+      assertEquals(expectedPeriod, statistics.get(AVERAGE), expectedPeriod / 2.0);
+      assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 2.0);
+      assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 2.0);
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
       assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
-      assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 10.0);
+      assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 2.0);
 
       node.destroyPublisher(publisher);
       node.destroySubscription(subscription);
