@@ -132,26 +132,18 @@ final class jros2 implements jros2Settings
    @Override
    public boolean intraprocessDelivery()
    {
-      // Always enable intraprocess in GitHub CI
-      if (System.getenv().containsKey("GITHUB_ACTIONS"))
+      // Loop through setting sources in order of priority
+      for (int i = 0; i < settingsSources.length; ++i)
       {
-         return true;
-      }
-      else
-      {
-         // Loop through setting sources in order of priority
-         for (int i = 0; i < settingsSources.length; ++i)
+         // If the source specifies intraprocess delivery, return the value
+         if (settingsSources[i].hasIntraprocessDelivery())
          {
-            // If the source specifies intraprocess delivery, return the value
-            if (settingsSources[i].hasIntraprocessDelivery())
-            {
-               return settingsSources[i].intraprocessDelivery();
-            }
+            return settingsSources[i].intraprocessDelivery();
          }
-
-         // Realistically should never reach here
-         return settingsSources[settingsSources.length - 1].intraprocessDelivery();
       }
+
+      // Realistically should never reach here
+      return settingsSources[settingsSources.length - 1].intraprocessDelivery();
    }
 
    @Override
