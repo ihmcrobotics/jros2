@@ -240,6 +240,7 @@ public class ReadWriteTest
             {
                synchronized (received)
                {
+                  System.out.println("NOTIFIED");
                   received.notify();
                }
             }
@@ -264,18 +265,24 @@ public class ReadWriteTest
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
          retcodeThrowOnError(retCode);
          System.out.println("Sent #: " + i);
-         // This makes the test more robust especially on Windows
-         LockSupport.parkNanos(1);
       }
+
+      System.out.println("CHECKING RECEIVED " + received.get());
 
       if (n != received.get())
       {
+         System.out.println("n != received");
+
          // Wait for the subscription to have received all n samples
          synchronized (received)
          {
             System.out.println("Waiting...");
             received.wait();
          }
+      }
+      else
+      {
+         System.out.println("n == received");
       }
 
       assertEquals(n, received.get());
