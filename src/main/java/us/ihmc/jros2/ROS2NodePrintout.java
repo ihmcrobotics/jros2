@@ -31,13 +31,13 @@ class ROS2NodePrintout
       jros2.load();
    }
 
-   public static void print(ParticipantProfileType participantProfile, TransportDescriptorType... transportDescriptors)
+   public static void print(Class<? extends ROS2Node> nodeClass, ParticipantProfileType participantProfile, TransportDescriptorType... transportDescriptors)
    {
       StringJoiner printout = new StringJoiner("\n\t", "\n\t", "");
 
       // Get the name
       String nodeName = participantProfile.getRtps().getName();
-      printout.add("Created ROS2Node: %s".formatted(nodeName));
+      printout.add("Created %s: %s".formatted(nodeClass.getSimpleName(), nodeName));
 
       // Get the domain id and its source
       int domainId = participantProfile.getDomainId();
