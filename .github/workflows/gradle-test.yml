@@ -12,6 +12,7 @@ on:
 jobs:
   gradle-test-linux:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         ros_distro: [humble, jazzy, kilted]
@@ -43,6 +44,7 @@ jobs:
         run: find . -name 'hs_err*' -type f -exec cat {} +
   gradle-test-windows:
     runs-on: windows-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
