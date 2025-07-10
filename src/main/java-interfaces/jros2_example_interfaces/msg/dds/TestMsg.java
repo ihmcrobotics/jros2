@@ -99,7 +99,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_ten_characters_string_ = new StringBuilder(10);
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
-      up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5);
+      up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5, 5, 10);
       x_ = (byte) 42;
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
