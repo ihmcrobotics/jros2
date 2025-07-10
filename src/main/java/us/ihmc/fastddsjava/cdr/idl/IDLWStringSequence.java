@@ -19,21 +19,18 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 public class IDLWStringSequence extends IDLStringSequence
 {
-   public IDLWStringSequence(int capacity, int maxSize)
+   public IDLWStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
-      super(capacity, maxSize);
-      position = 0;
+      super(capacity, maxSize, defaultStringLength);
    }
 
    public IDLWStringSequence(int maxSize)
    {
       super(maxSize);
-      position = 0;
    }
 
    public IDLWStringSequence()
    {
-      position = 0;
    }
 
    @Override

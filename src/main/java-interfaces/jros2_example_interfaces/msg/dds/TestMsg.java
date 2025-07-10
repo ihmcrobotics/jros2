@@ -36,6 +36,7 @@ This file was generated from the following content:
    string EXAMPLE='bar'
 
    string[3] three_strings
+   string<=5[3] three_strings_each_max_length_of_five_chars
    sensor_msgs/Image[3] three_images
 ##################################################################################
 
@@ -81,6 +82,9 @@ public class TestMsg implements ROS2Message<TestMsg>
    public static final String FOO = "foo";
    public static final String EXAMPLE = "bar";
    private final StringBuilder[] three_strings_;
+   // Note: The length of each string in this sequence should not exceed 5 characters.
+   // This is not strictly enforced in Java / jros2.
+   private final StringBuilder[] three_strings_each_max_length_of_five_chars_;
    private final sensor_msgs.msg.dds.Image[] three_images_;
 
    public TestMsg()
@@ -92,7 +96,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       five_integers_array_ = new int[5];
       up_to_five_integers_array_ = new IDLIntSequence(5);
       string_of_unbounded_size_ = new StringBuilder();
-      up_to_ten_characters_string_ = new StringBuilder();
+      up_to_ten_characters_string_ = new StringBuilder(10);
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
       up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5);
@@ -102,6 +106,17 @@ public class TestMsg implements ROS2Message<TestMsg>
       samples_ = new IDLIntSequence();
       samples2_ = new int[] {-200, -100, 0, 100, 200};
       three_strings_ = new StringBuilder[3];
+      // three_strings is defined as a fixed-size array, so it is pre-allocated.
+      for (int i = 0; i < three_strings_.length; ++i)
+      {
+         three_strings_[i] = new StringBuilder();
+      }
+      three_strings_each_max_length_of_five_chars_ = new StringBuilder[3];
+      // three_strings_each_max_length_of_five_chars is defined as a fixed-size array, so it is pre-allocated.
+      for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
+      {
+         three_strings_each_max_length_of_five_chars_[i] = new StringBuilder(5);
+      }
       three_images_ = new sensor_msgs.msg.dds.Image[3];
       // three_images is defined as a fixed-size array, so it is pre-allocated.
       for (int i = 0; i < three_images_.length; ++i)
@@ -134,6 +149,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
       currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_
+      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_each_max_length_of_five_chars_
       for (int i = 0; i < three_images_.length; ++i)
       {
          currentAlignment += three_images_[i].calculateSizeBytes(currentAlignment);
@@ -172,6 +188,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       {
          buffer.writeString(three_strings_[i]);
       }
+      for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
+      {
+         buffer.writeString(three_strings_each_max_length_of_five_chars_[i]);
+      }
       for (int i = 0; i < three_images_.length; ++i)
       {
          three_images_[i].serialize(buffer);
@@ -208,6 +228,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       for (int i = 0; i < three_strings_.length; ++i)
       {
          buffer.readString(three_strings_[i]);
+      }
+      for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
+      {
+         buffer.readString(three_strings_each_max_length_of_five_chars_[i]);
       }
       for (int i = 0; i < three_images_.length; ++i)
       {
@@ -249,6 +273,10 @@ public class TestMsg implements ROS2Message<TestMsg>
       for (int i = 0; i < three_strings_.length; ++i)
       {
          three_strings_[i] = from.three_strings_[i];
+      }
+      for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
+      {
+         three_strings_each_max_length_of_five_chars_[i] = from.three_strings_each_max_length_of_five_chars_[i];
       }
       for (int i = 0; i < three_images_.length; ++i)
       {
@@ -360,6 +388,11 @@ public class TestMsg implements ROS2Message<TestMsg>
    public StringBuilder[] getThreeStrings()
    {
       return three_strings_;
+   }
+
+   public StringBuilder[] getThreeStringsEachMaxLengthOfFiveChars()
+   {
+      return three_strings_each_max_length_of_five_chars_;
    }
 
    public sensor_msgs.msg.dds.Image[] getThreeImages()

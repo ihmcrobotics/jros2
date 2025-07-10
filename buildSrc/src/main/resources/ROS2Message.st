@@ -49,15 +49,15 @@ public class <context.name> implements ROS2Message\<<context.name>>
       <if(!field.constantValue)>
       <if(field.array)>
 <field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><field.length><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
-      <if(field.fixedSize&&!field.builtinType)>
+      <if(field.fixedSize&&(!field.builtinType||field.builtinStringType))>
 // <field.name> is defined as a fixed-size array, so it is pre-allocated.
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   <field.javaName>[i] = new <field.javaType>();
+   <field.javaName>[i] = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif><if(field.builtinStringType&&field.stringMaxLength)><field.stringLength><endif>);
 \}
       <endif>
       <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
-<field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif>);
+<field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif><if(field.builtinStringType&&field.stringMaxLength)><field.stringLength><endif>);
       <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>
 <field.javaName> = (<field.javaType>) <field.defaultValue>;
       <endif>
