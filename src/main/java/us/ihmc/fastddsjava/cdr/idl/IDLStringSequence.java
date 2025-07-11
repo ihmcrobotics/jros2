@@ -25,22 +25,23 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    protected StringBuilder[] elements;
    protected int position;
+   private final int defaultStringLength;
 
-   public IDLStringSequence(int capacity, int maxSize)
+   public IDLStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
       super(capacity, maxSize);
-      position = 0;
+      this.defaultStringLength = defaultStringLength;
    }
 
    public IDLStringSequence(int maxSize)
    {
       super(maxSize);
-      position = 0;
+      defaultStringLength = -1;
    }
 
    public IDLStringSequence()
    {
-      position = 0;
+      defaultStringLength = -1;
    }
 
    @Override
@@ -91,7 +92,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    public StringBuilder add()
    {
-      return add(-1);
+      return add(defaultStringLength);
    }
 
    public StringBuilder add(int stringLength)

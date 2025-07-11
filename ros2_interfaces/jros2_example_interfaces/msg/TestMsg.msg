@@ -28,4 +28,5 @@ string FOO="foo"
 string EXAMPLE='bar'
 
 string[3] three_strings
+string<=5[3] three_strings_each_max_length_of_five_chars
 sensor_msgs/Image[3] three_images
