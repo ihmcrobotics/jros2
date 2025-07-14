@@ -181,7 +181,10 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       if (!wasClosed)
       {
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         synchronized (writeBuffer)
+         {
+            topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         }
 
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
          retcodePrintOnError(fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher));
