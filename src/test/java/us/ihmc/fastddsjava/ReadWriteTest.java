@@ -222,7 +222,6 @@ public class ReadWriteTest
       final AtomicInteger received = new AtomicInteger(0);
 
       // Add callback to listener
-
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          public void call()
@@ -237,6 +236,7 @@ public class ReadWriteTest
             {
                synchronized (received)
                {
+                  System.out.println("NOTIFIED");
                   received.notify();
                }
             }
@@ -250,22 +250,22 @@ public class ReadWriteTest
       listener.set_on_data_available_callback(onDataCallback);
       fastddsjava_datareader_set_listener(dataReader, listener);
 
-      Pointer data = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
-
-      // Pack wrapper with data
-      topicDataWrapper.data_vector().resize(sampleData.length);
-      topicDataWrapper.data_ptr().put(sampleData);
-
       // Send the data n times
       for (int i = 0; i < n; ++i)
       {
+         Pointer data = topicDataWrapperType.create_data();
+         fastddsjava_TopicDataWrapper topicDataWrapper = new fastddsjava_TopicDataWrapper(data);
+
+         // Pack wrapper with data
+         topicDataWrapper.data_vector().resize(sampleData.length);
+         topicDataWrapper.data_ptr().put(sampleData);
+
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
          retcodeThrowOnError(retCode);
-         // This makes the test more robust especially on Windows
-         LockSupport.parkNanos(1);
 
          System.out.println("Wrote " + i);
+
+         topicDataWrapperType.delete_data(data);
       }
 
       if (n != received.get())
@@ -280,7 +280,6 @@ public class ReadWriteTest
       assertEquals(n, received.get());
 
       // Delete / release all references
-      topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
       assertTrue(listener.releaseReference());
