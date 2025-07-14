@@ -3,7 +3,7 @@ name: Gradle test
 on:
   workflow_dispatch:
   push:
-    branches: [ main, ci-stability ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
   schedule:
