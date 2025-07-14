@@ -51,7 +51,7 @@ ROS2Topic<Int32> intTopic = new ROS2Topic("/int_topic", Int32.class);
 
 Create a ROS2Publisher and publish a message on the intTopic:
 ```
-ROS2Publisher<Int32> intPublisher = node.createPublisher(topic);
+ROS2Publisher<Int32> intPublisher = node.createPublisher(intTopic);
 Int32 message = new Int32();
 message.setData(123);
 intPublisher.publish(message);
@@ -59,7 +59,7 @@ intPublisher.publish(message);
 
 Create a subscription to the intTopic:
 ```
-ROS2Subscription<Int32> subscription = node.createSubscription(topic, reader -> {
+ROS2Subscription<Int32> subscription = node.createSubscription(intTopic, reader -> {
   Int32 message = reader.read();
   // Do something with the message!
 };
