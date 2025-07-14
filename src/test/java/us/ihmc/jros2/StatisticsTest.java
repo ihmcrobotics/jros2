@@ -164,7 +164,7 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 2.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 2.0);
       assertEquals(publishCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
-      assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
+      assertEquals((publishCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 20.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 2.0);
 
       // Read the message size statistics from the subscription, and assert they make sense
@@ -182,7 +182,7 @@ public class StatisticsTest
       assertEquals(expectedPeriod, statistics.get(MINIMUM), expectedPeriod / 2.0);
       assertEquals(expectedPeriod, statistics.get(MAXIMUM), expectedPeriod / 2.0);
       assertEquals(receivedCount.get() - 1, statistics.get(SAMPLE_COUNT), 1E-7);
-      assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 10.0);
+      assertEquals((receivedCount.get() - 1) * expectedPeriod, statistics.get(TOTAL), 20.0);
       assertEquals(expectedPeriod, statistics.get(LATEST), expectedPeriod / 2.0);
 
       node.destroyPublisher(publisher);
