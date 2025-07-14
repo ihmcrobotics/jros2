@@ -24,7 +24,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.fastddsjava.fastddsjavaTestTools.generateRandomBytes;
@@ -370,8 +369,6 @@ public class ReadWriteTest
 
             int writerRetCode;
             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-            // This makes the test more robust especially on Windows
-            LockSupport.parkNanos(1);
 
             try
             {
