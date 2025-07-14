@@ -370,6 +370,27 @@ public class ROS2Node implements Closeable
       return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
    }
 
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionSampler<T> sampler, ROS2QoSProfile qosProfile)
+   {
+      ROS2SubscriptionCallback<T> callback = new ROS2SubscriptionCallback<T>()
+      {
+         final T sample = T.createInstance(topic.getType());
+
+         @Override
+         public void onMessage(ROS2SubscriptionReader<T> reader)
+         {
+            sampler.consume(sample);
+         }
+      };
+
+      return createSubscription(topic, callback, qosProfile);
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionSampler<T> sampler)
+   {
+      return createSubscriptionSampler(topic, sampler, ROS2QoSProfile.DEFAULT);
+   }
+
    public boolean destroySubscription(ROS2Subscription<?> subscription)
    {
       boolean removed = false;

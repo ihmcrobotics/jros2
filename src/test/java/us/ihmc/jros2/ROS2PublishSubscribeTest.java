@@ -258,6 +258,55 @@ public class ROS2PublishSubscribeTest
       ros2Node.close();
    }
 
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Subscription sampler
+   public void testROS2Subscription3() throws InterruptedException, IOException
+   {
+      final boolean expectedValue = true;
+      final String topicName = "/ihmc/test_bool";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+
+      final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
+      ROS2Subscription<Bool> subscription = ros2Node.createSubscriptionSampler(topic, sample ->
+      {
+         synchronized (valueReceived)
+         {
+            valueReceived.set(sample.getData());
+            valueReceived.notify();
+         }
+      });
+
+      // Launch a ROS 2 process to publish a Bool message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--once",
+                                                               topicName,
+                                                               "std_msgs/msg/Bool",
+                                                               "{data: " + expectedValue + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+      // Wait for subscription to receive the Bool message
+      synchronized (valueReceived)
+      {
+         if (valueReceived.get() != expectedValue)
+         {
+            valueReceived.wait();
+         }
+      }
+
+      // Assert the received value is correct
+      assertEquals(expectedValue, valueReceived.get());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
    @RepeatedTest(25)
    @Timeout(30)
    /*
