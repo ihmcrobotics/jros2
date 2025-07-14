@@ -243,6 +243,8 @@ public class ReadWriteTest
 
             assertTrue(sampleInfo.releaseReference());
             topicDataWrapperType.delete_data(dataReceive);
+
+            System.out.println("Recv");
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -262,6 +264,8 @@ public class ReadWriteTest
          retcodeThrowOnError(retCode);
          // This makes the test more robust especially on Windows
          LockSupport.parkNanos(1);
+
+         System.out.println("Wrote " + i);
       }
 
       if (n != received.get())
