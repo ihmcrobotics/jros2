@@ -522,7 +522,7 @@ public class IDLSequenceTest
       final int initialCapacity = 8;
       final int maxSize = -1;
 
-      IDLStringSequence sequence = new IDLStringSequence(initialCapacity, maxSize);
+      IDLStringSequence sequence = new IDLStringSequence(initialCapacity, maxSize, -1);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
@@ -604,9 +604,10 @@ public class IDLSequenceTest
    {
       final int initialCapacity = 8;
       final int maxSize = -1;
+      final int defaultStringLength = -1;
       final int codepointStart = 78419; // Starting at U+13253 (codepoint 78419)
 
-      IDLWStringSequence sequence = new IDLWStringSequence(initialCapacity, maxSize);
+      IDLWStringSequence sequence = new IDLWStringSequence(initialCapacity, maxSize, defaultStringLength);
 
       // The sequence should have no elements
       assertEquals(0, sequence.elements());
