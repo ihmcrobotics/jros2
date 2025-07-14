@@ -149,21 +149,24 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       {
          if (callback != null && !closed)
          {
-            while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+            synchronized (readBuffer)
             {
-               long receptionTime = System.currentTimeMillis();
-               int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
+               while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+               {
+                  long receptionTime = System.currentTimeMillis();
+                  int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
 
-               readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               readBuffer.rewind();
+                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+                  // Rewind buffer to ensure we're starting at position = 0
+                  readBuffer.rewind();
 
-               topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+                  topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
-               callback.onMessage(subscriptionReader);
+                  callback.onMessage(subscriptionReader);
 
-               long timestampMillis = subscriptionReader.getLastMessageTimestamp();
-               recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
+                  long timestampMillis = subscriptionReader.getLastMessageTimestamp();
+                  recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
+               }
             }
          }
       }
@@ -219,9 +222,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
          fastddsDataCallback.close();
          fastddsSubscriptionCallback.close();
 
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
-         sampleInfo.close();
-         topicDataWrapper.close();
+         synchronized (readBuffer)
+         {
+            topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+            topicDataWrapper.close();
+            sampleInfo.close();
+         }
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
       }
