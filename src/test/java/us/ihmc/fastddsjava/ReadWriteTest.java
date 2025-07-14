@@ -126,13 +126,15 @@ public class ReadWriteTest
       final AtomicBoolean dataCorrect = new AtomicBoolean(false);
 
       // Add callback to listener
-      Pointer dataReceive = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
-      SampleInfo sampleInfo = new SampleInfo();
+
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          public void call()
          {
+            Pointer dataReceive = topicDataWrapperType.create_data();
+            fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+            SampleInfo sampleInfo = new SampleInfo();
+
             fastddsjava_datareader_take_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
 
             dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
@@ -142,6 +144,9 @@ public class ReadWriteTest
             {
                received.notify();
             }
+
+            assertTrue(sampleInfo.releaseReference());
+            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -171,8 +176,6 @@ public class ReadWriteTest
       assertTrue(dataCorrect.get());
 
       // Delete / release all references
-      assertTrue(sampleInfo.releaseReference());
-      topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -219,13 +222,15 @@ public class ReadWriteTest
       final AtomicInteger received = new AtomicInteger(0);
 
       // Add callback to listener
-      Pointer dataReceive = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
-      SampleInfo sampleInfo = new SampleInfo();
+
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          public void call()
          {
+            Pointer dataReceive = topicDataWrapperType.create_data();
+            fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+            SampleInfo sampleInfo = new SampleInfo();
+
             fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
 
             if (n == received.incrementAndGet())
@@ -235,6 +240,9 @@ public class ReadWriteTest
                   received.notify();
                }
             }
+
+            assertTrue(sampleInfo.releaseReference());
+            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -268,8 +276,6 @@ public class ReadWriteTest
       assertEquals(n, received.get());
 
       // Delete / release all references
-      assertTrue(sampleInfo.releaseReference());
-      topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(data);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -315,14 +321,15 @@ public class ReadWriteTest
       final AtomicLong receivedDataLength = new AtomicLong(0L);
 
       // Add callback to listener
-      Pointer dataReceive = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
-      SampleInfo sampleInfo = new SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
          public void call()
          {
+            Pointer dataReceive = topicDataWrapperType.create_data();
+            fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+            SampleInfo sampleInfo = new SampleInfo();
+
             fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
 
             long dataLength = topicDataWrapperReceive.data_vector().size();
@@ -338,6 +345,9 @@ public class ReadWriteTest
                   received.notify();
                }
             }
+
+            assertTrue(sampleInfo.releaseReference());
+            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -347,38 +357,38 @@ public class ReadWriteTest
       Pointer dataWrite = topicDataWrapperType.create_data();
       final fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
       Thread writerThread = new Thread(() ->
-                                       {
-                                          int currentDataLength = initialDataLength;
+      {
+         int currentDataLength = initialDataLength;
 
-                                          do
-                                          {
-                                             byte[] sampleData = generateRandomBytes(currentDataLength);
+         do
+         {
+            byte[] sampleData = generateRandomBytes(currentDataLength);
 
-                                             synchronized (topicDataWrapperWrite)
-                                             {
-                                                topicDataWrapperWrite.data_vector().resize(sampleData.length);
-                                                topicDataWrapperWrite.data_ptr().put(sampleData);
-                                             }
+            synchronized (topicDataWrapperWrite)
+            {
+               topicDataWrapperWrite.data_vector().resize(sampleData.length);
+               topicDataWrapperWrite.data_ptr().put(sampleData);
+            }
 
-                                             int writerRetCode;
-                                             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-                                             // This makes the test more robust especially on Windows
-                                             LockSupport.parkNanos(1);
+            int writerRetCode;
+            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+            // This makes the test more robust especially on Windows
+            LockSupport.parkNanos(1);
 
-                                             try
-                                             {
-                                                retcodeThrowOnError(writerRetCode);
-                                             }
-                                             catch (fastddsjavaException e)
-                                             {
-                                                throw new RuntimeException(e);
-                                             }
+            try
+            {
+               retcodeThrowOnError(writerRetCode);
+            }
+            catch (fastddsjavaException e)
+            {
+               throw new RuntimeException(e);
+            }
 
-                                             // Grow the data length
-                                             currentDataLength = currentDataLength * 2;
-                                          }
-                                          while (receivedDataLength.get() < finalDataLength);
-                                       }, "WriterThread");
+            // Grow the data length
+            currentDataLength = currentDataLength * 2;
+         }
+         while (receivedDataLength.get() < finalDataLength);
+      }, "WriterThread");
       writerThread.start();
 
       if (!received.get())
@@ -394,8 +404,6 @@ public class ReadWriteTest
       assertEquals(finalDataLength, receivedDataLength.get());
 
       // Delete / release all references
-      assertTrue(sampleInfo.releaseReference());
-      topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(dataWrite);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -443,14 +451,15 @@ public class ReadWriteTest
       final AtomicInteger received = new AtomicInteger(0);
 
       // Add callback to listener
-      Pointer dataReceive = topicDataWrapperType.create_data();
-      fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
-      SampleInfo sampleInfo = new SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
          public void call()
          {
+            Pointer dataReceive = topicDataWrapperType.create_data();
+            fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(dataReceive);
+            SampleInfo sampleInfo = new SampleInfo();
+
             fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
 
             received.incrementAndGet();
@@ -459,6 +468,9 @@ public class ReadWriteTest
             {
                received.notify();
             }
+
+            assertTrue(sampleInfo.releaseReference());
+            topicDataWrapperType.delete_data(dataReceive);
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -468,25 +480,25 @@ public class ReadWriteTest
       Pointer dataWrite = topicDataWrapperType.create_data();
       fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(dataWrite);
       Thread writerThread = new Thread(() ->
-                                       {
-                                          for (int i = 0; i < messagesToSend; ++i)
-                                          {
-                                             byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
-                                             topicDataWrapperWrite.data_vector().resize(sampleData.length);
-                                             topicDataWrapperWrite.data_ptr().put(sampleData);
+      {
+         for (int i = 0; i < messagesToSend; ++i)
+         {
+            byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
+            topicDataWrapperWrite.data_vector().resize(sampleData.length);
+            topicDataWrapperWrite.data_ptr().put(sampleData);
 
-                                             int writerRetCode;
-                                             writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-                                             try
-                                             {
-                                                retcodeThrowOnError(writerRetCode);
-                                             }
-                                             catch (fastddsjavaException e)
-                                             {
-                                                throw new RuntimeException(e);
-                                             }
-                                          }
-                                       }, "WriterThread");
+            int writerRetCode;
+            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+            try
+            {
+               retcodeThrowOnError(writerRetCode);
+            }
+            catch (fastddsjavaException e)
+            {
+               throw new RuntimeException(e);
+            }
+         }
+      }, "WriterThread");
       writerThread.start();
 
       while (received.get() < messagesToSend)
@@ -502,8 +514,6 @@ public class ReadWriteTest
       assertEquals(messagesToSend, received.get());
 
       // Delete / release all references
-      assertTrue(sampleInfo.releaseReference());
-      topicDataWrapperType.delete_data(dataReceive);
       topicDataWrapperType.delete_data(dataWrite);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
