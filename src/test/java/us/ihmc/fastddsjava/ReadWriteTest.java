@@ -236,15 +236,12 @@ public class ReadWriteTest
             {
                synchronized (received)
                {
-                  System.out.println("NOTIFIED");
                   received.notify();
                }
             }
 
             assertTrue(sampleInfo.releaseReference());
             topicDataWrapperType.delete_data(dataReceive);
-
-            System.out.println("Recv");
          }
       };
       listener.set_on_data_available_callback(onDataCallback);
@@ -262,8 +259,6 @@ public class ReadWriteTest
 
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapper);
          retcodeThrowOnError(retCode);
-
-         System.out.println("Wrote " + i);
 
          topicDataWrapperType.delete_data(data);
       }
