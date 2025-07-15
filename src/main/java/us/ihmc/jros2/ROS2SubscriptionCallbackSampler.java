@@ -15,7 +15,14 @@
  */
 package us.ihmc.jros2;
 
-public interface ROS2SubscriptionSampler<T extends ROS2Message<T>>
+/**
+ * A way to consume a {@link ROS2Message} from a {@link ROS2Subscription}.
+ * This callback gives you direct access to the message sample.
+ *
+ * @param <T> the message type
+ */
+@FunctionalInterface
+public interface ROS2SubscriptionCallbackSampler<T extends ROS2Message<T>>
 {
    void consume(T sample);
 }
