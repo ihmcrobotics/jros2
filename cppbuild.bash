@@ -66,7 +66,7 @@ git submodule update --init --recursive
 mkdir -p build
 cd build
 cmake .. -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
-cmake --build . --config Release --target install -j $(nproc)
+cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
 rm -rf install/include/fastddsjava.h
@@ -127,13 +127,24 @@ fi
 if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
+# macOS
+mkdir -p ../src/main/resources/fastddsjava/native/macos-x86_64
+if [ -f "install/lib/libfastcdr.2.3.0.dylib" ]; then
+  cp install/lib/libfastcdr.2.3.0.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+fi
+if [ -f "install/lib/libfastdds.3.2.2.dylib" ]; then
+  cp install/lib/libfastdds.3.2.2.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+fi
+if [ -f "javainstall/libjnifastddsjava.dylib" ]; then
+  cp javainstall/libjnifastddsjava.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+fi
 
 popd
 
 # xjc generation ###
 pushd cppbuild
 
-if command -v xjc &> /dev/null; then
+if command -v xjc >/dev/null 2>&1 && xjc; then
   xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java Fast-DDS-$FASTDDS_VERSION/resources/xsd/fastdds_profiles.xsd
 
   find "../src/main/java/us/ihmc/fastddsjava/profiles/gen" -type f -name "*.java" -print0 | while IFS= read -r -d '' file; do
