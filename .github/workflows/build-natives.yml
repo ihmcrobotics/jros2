@@ -65,3 +65,27 @@ jobs:
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for Windows'
           push: true
+  build-natives-macos:
+    runs-on: macos-13
+    needs: build-natives-windows
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull repo
+        run: |
+          git reset --hard
+          git pull
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Compile native library
+        run: |
+          bash cppbuild.bash
+      - name: Commit native libraries
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '*.dylib' # Only commit generated java from Linux
+          author_name: ihmc-rosie
+          author_email: rosie@ihmc.us
+          message: 'Rebuild natives for macOS (x86_64)'
+          push: true
