@@ -1,7 +1,6 @@
 package us.ihmc.jros2;
 
 import geometry_msgs.msg.dds.Point;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType;
@@ -14,7 +13,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.jros2.Statistics.StatisticDataType.*;
 
-@Disabled
 public class StatisticsTest
 {
    @Test

@@ -1,6 +1,5 @@
 package us.ihmc.jros2;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import us.ihmc.log.LogTools;
 
@@ -21,7 +20,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
-@Disabled
 public class jros2SettingsTest
 {
    @Test

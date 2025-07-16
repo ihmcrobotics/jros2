@@ -1,12 +1,10 @@
 package us.ihmc.jros2;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import std_msgs.msg.dds.Bool;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Disabled
 public class ROS2TopicTest
 {
    @Test
