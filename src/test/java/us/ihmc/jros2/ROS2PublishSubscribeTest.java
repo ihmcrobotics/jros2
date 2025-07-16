@@ -169,15 +169,16 @@ public class ROS2PublishSubscribeTest
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
-      // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
-      std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+      AtomicReference<String> receivedString = new AtomicReference<>("");
+
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
+         std_msgs.msg.dds.String msg = reader.read();
+
          synchronized (sync)
          {
-            reader.read(msg);
-
+            receivedString.set(msg.getData().toString());
             sync.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
@@ -193,19 +194,17 @@ public class ROS2PublishSubscribeTest
       // Wait for subscription to receive the String message
       synchronized (sync)
       {
-         if (msg.getData().isEmpty())
+         if (receivedString.get().isEmpty())
          {
             sync.wait();
          }
       }
 
       // Assert the received value is correct
-      assertEquals(data, msg.getData().toString());
+      assertEquals(data, receivedString.get());
 
       // Ensure the ROS 2 publish process ends
-      System.out.println("WAITING FOR PROCESS");
       process.waitFor();
-      System.out.println("AFTER WAITING FOR PROCESS");
 
       ros2Node.close();
    }
