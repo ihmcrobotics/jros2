@@ -174,10 +174,10 @@ public class ROS2PublishSubscribeTest
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
-         reader.read(msg);
-
          synchronized (sync)
          {
+            reader.read(msg);
+
             sync.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
