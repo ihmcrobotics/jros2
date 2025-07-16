@@ -16,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -162,45 +162,45 @@ public class ROS2PublishSubscribeTest
    // Allocation-free subscription
    public void testROS2Subscription1() throws InterruptedException, IOException
    {
-      final boolean expectedValue = true;
-      final String topicName = "/ihmc/test_bool";
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
-      final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
-      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
+      // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
+      std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+      final Object sync = new Object();
+      ros2Node.createSubscription(topic, reader ->
       {
-         Bool msg = new Bool();
          reader.read(msg);
 
-         synchronized (valueReceived)
+         synchronized (sync)
          {
-            valueReceived.set(msg.getData());
-            valueReceived.notify();
+            sync.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
 
-      // Launch a ROS 2 process to publish a Bool message
+      // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
-                                                               "std_msgs/msg/Bool",
-                                                               "{data: " + expectedValue + "}",
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the Bool message
-      synchronized (valueReceived)
+      // Wait for subscription to receive the String message
+      synchronized (sync)
       {
-         if (valueReceived.get() != expectedValue)
+         if (msg.getData().isEmpty())
          {
-            valueReceived.wait();
+            sync.wait();
          }
       }
 
       // Assert the received value is correct
-      assertEquals(expectedValue, valueReceived.get());
+      assertEquals(data, msg.getData().toString());
 
       // Ensure the ROS 2 publish process ends
       process.waitFor();
@@ -214,43 +214,97 @@ public class ROS2PublishSubscribeTest
    // Allocation subscription
    public void testROS2Subscription2() throws InterruptedException, IOException
    {
-      final boolean expectedValue = true;
-      final String topicName = "/ihmc/test_bool";
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
-      final AtomicBoolean valueReceived = new AtomicBoolean(!expectedValue); // Initialize to opposite of expected value to make sure it's received correctly
-      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, reader ->
+      AtomicReference<String> receivedString = new AtomicReference<>("");
+
+      final Object sync = new Object();
+      ros2Node.createSubscription(topic, reader ->
       {
-         Bool msg = reader.read();
-         synchronized (valueReceived)
+         std_msgs.msg.dds.String msg = reader.read();
+
+         synchronized (sync)
          {
-            valueReceived.set(msg.getData());
-            valueReceived.notify();
+            receivedString.set(msg.getData().toString());
+            sync.notify();
          }
       }, ROS2QoSProfile.DEFAULT);
 
-      // Launch a ROS 2 process to publish a Bool message
+      // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
-                                                               "std_msgs/msg/Bool",
-                                                               "{data: " + expectedValue + "}",
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the Bool message
-      synchronized (valueReceived)
+      // Wait for subscription to receive the String message
+      synchronized (sync)
       {
-         if (valueReceived.get() != expectedValue)
+         if (receivedString.get().isEmpty())
          {
-            valueReceived.wait();
+            sync.wait();
          }
       }
 
       // Assert the received value is correct
-      assertEquals(expectedValue, valueReceived.get());
+      assertEquals(data, receivedString.get());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Subscription sampler
+   public void testROS2Subscription3() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      AtomicReference<String> receivedString = new AtomicReference<>("");
+
+      final Object sync = new Object();
+      ros2Node.createSubscriptionSampler(topic, msg ->
+      {
+         synchronized (sync)
+         {
+            receivedString.set(msg.getData().toString());
+            sync.notify();
+         }
+      }, ROS2QoSProfile.DEFAULT);
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--once",
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+      // Wait for subscription to receive the String message
+      synchronized (sync)
+      {
+         if (receivedString.get().isEmpty())
+         {
+            sync.wait();
+         }
+      }
+
+      // Assert the received value is correct
+      assertEquals(data, receivedString.get());
 
       // Ensure the ROS 2 publish process ends
       process.waitFor();
