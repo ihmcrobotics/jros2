@@ -18,9 +18,7 @@ package us.ihmc.jros2;
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
-import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
-import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
@@ -53,11 +51,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final Pointer fastddsDataReader;
    private final fastddsjava_DataReaderListener listener;
    private final fastddsjava_OnDataCallback fastddsDataCallback;
-   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final SampleInfo sampleInfo;
-   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
 
    /*
     * Read buffer and readers
@@ -117,18 +113,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
             onDataCallback();
          }
       };
-      fastddsSubscriptionCallback = new fastddsjava_OnSubscriptionCallback()
-      {
-         @Override
-         public void call()
-         {
-            onSubscriptionCallback();
-         }
-      };
+
       listener = new fastddsjava_DataReaderListener();
       listener.set_on_data_available_callback(fastddsDataCallback);
-      listener.set_on_subscription_callback(fastddsSubscriptionCallback);
-      subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
@@ -195,12 +182,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       }
    }
 
-   private void onSubscriptionCallback()
-   {
-      // TODO:
-      //      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
-   }
-
    /**
     * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
     */
@@ -217,7 +198,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
          listener.close();
          fastddsDataCallback.close();
-         fastddsSubscriptionCallback.close();
 
          topicData.topicDataWrapperType.delete_data(topicDataWrapper);
          sampleInfo.close();
