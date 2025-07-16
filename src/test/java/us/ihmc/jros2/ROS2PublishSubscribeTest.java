@@ -182,7 +182,7 @@ public class ROS2PublishSubscribeTest
          }
       }, ROS2QoSProfile.DEFAULT);
 
-      // Launch a ROS 2 process to publish a Bool message
+      // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -190,7 +190,7 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the Bool message
+      // Wait for subscription to receive the String message
       synchronized (sync)
       {
          if (msg.getData().isEmpty())
@@ -235,7 +235,7 @@ public class ROS2PublishSubscribeTest
          }
       }, ROS2QoSProfile.DEFAULT);
 
-      // Launch a ROS 2 process to publish a Bool message
+      // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -243,7 +243,7 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the Bool message
+      // Wait for subscription to receive the String message
       synchronized (sync)
       {
          if (receivedString.get().isEmpty())
@@ -286,7 +286,7 @@ public class ROS2PublishSubscribeTest
          }
       }, ROS2QoSProfile.DEFAULT);
 
-      // Launch a ROS 2 process to publish a Bool message
+      // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -294,7 +294,7 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the Bool message
+      // Wait for subscription to receive the String message
       synchronized (sync)
       {
          if (receivedString.get().isEmpty())
