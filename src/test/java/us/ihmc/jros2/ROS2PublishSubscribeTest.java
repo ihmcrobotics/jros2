@@ -203,7 +203,9 @@ public class ROS2PublishSubscribeTest
       assertEquals(data, msg.getData().toString());
 
       // Ensure the ROS 2 publish process ends
+      System.out.println("WAITING FOR PROCESS");
       process.waitFor();
+      System.out.println("AFTER WAITING FOR PROCESS");
 
       ros2Node.close();
    }
