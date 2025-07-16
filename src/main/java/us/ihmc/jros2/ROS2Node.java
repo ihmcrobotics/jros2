@@ -174,16 +174,30 @@ public class ROS2Node implements Closeable
       closed = false;
    }
 
+   /**
+    * Create a new ROS 2 Node for managing ROS 2-compatible publishers, subscriptions.
+    *
+    * @param name The colloquial name for the node, not used internally.
+    */
    public ROS2Node(String name)
    {
       this(name, jros2.get().rosDomainId());
    }
 
+   /**
+    * Create a new ROS 2 Node for managing ROS 2-compatible publishers, subscriptions.
+    *
+    * @param name     The colloquial name for the node, not used internally.
+    * @param domainId The domain ID the node will use when writing and reading to the network transport.
+    */
    public ROS2Node(String name, int domainId)
    {
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
+   /*
+    * For managing native Fast-DDS topic memory. For internal-use only.
+    */
    protected <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       closeLock.readLock().lock();
@@ -244,6 +258,14 @@ public class ROS2Node implements Closeable
       return null;
    }
 
+   /**
+    * Create a publisher to publish {@param T} message type for subscriptions to receive.
+    *
+    * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
+    * @param qosProfile specify what quality-of-service settings you want for this publisher. Note: publisher and subscription QoS must match if you want them
+    *                   to communicate.
+    * @return the publisher instance, you do not have to store this as a field or manage it in any way if you don't need to.
+    */
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
       closeLock.readLock().lock();
@@ -293,6 +315,15 @@ public class ROS2Node implements Closeable
       return createPublisher(topic, ROS2QoSProfile.DEFAULT);
    }
 
+   /**
+    * Destroy a {@link ROS2Publisher}. Do not use on publishers which were created with another instance of {@link ROS2Node}.
+    * This will remove the publisher from the list of publishers within this node and call {@link ROS2Publisher#close(Pointer)} to release the native Fast-DDS
+    * publisher.
+    * You do not have to call this if you call {@link ROS2Node#close()}, it will destroy all publishers created by this node for you.
+    *
+    * @param publisher the publisher to destroy.
+    * @return true if the node contained the publisher, and it has been removed.
+    */
    public boolean destroyPublisher(ROS2Publisher<?> publisher)
    {
       boolean removed = false;
@@ -324,13 +355,15 @@ public class ROS2Node implements Closeable
    /**
     * Create a subscription using a {@link ROS2SubscriptionCallback}.
     * In the callback, you are given a {@link ROS2SubscriptionReader} to read a sample of the {@param T} message type.
-    * If you want a callback which gives you a sample of the message type directly, use {@link #createSubscriptionSampler(ROS2Topic, ROS2SubscriptionCallbackSampler, ROS2QoSProfile)}.
+    * If you want a callback which gives you a sample of the message type directly, use
+    * {@link #createSubscriptionSampler(ROS2Topic, ROS2SubscriptionCallbackSampler, ROS2QoSProfile)}.
     *
     * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
     * @param callback   a {@link ROS2SubscriptionCallback} callback which provides access to a {@link ROS2SubscriptionReader} for deserializing the message
     *                   sample.
     *                   Has an allocation-free method, letting you reuse an instance of a {@link ROS2Message}.
-    * @param qosProfile specify what quality-of-service settings you want for this subscription.
+    * @param qosProfile specify what quality-of-service settings you want for this subscription. Note: subscription and publisher QoS must match if you want
+    *                   them to communicate.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
@@ -401,7 +434,8 @@ public class ROS2Node implements Closeable
     * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
     * @param sampler    a {@link ROS2SubscriptionCallbackSampler} callback which gives you the sample of a message upon receiving it from a subscription.
     *                   This does not allocate a new Java object for each sample, the same one is reused.
-    * @param qosProfile specify what quality-of-service settings you want for this subscription.
+    * @param qosProfile specify what quality-of-service settings you want for this subscription. Note: subscription and publisher QoS must match if you want
+    *                   them to communicate.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionCallbackSampler<T> sampler, ROS2QoSProfile qosProfile)
@@ -439,6 +473,15 @@ public class ROS2Node implements Closeable
       return createSubscriptionSampler(topic, sampler, ROS2QoSProfile.DEFAULT);
    }
 
+   /**
+    * Destroy a {@link ROS2Subscription}. Do not use on subscriptions which were created with another instance of {@link ROS2Node}.
+    * This will remove the subscription from the list of subscriptions within this node and call {@link ROS2Subscription#close(Pointer)} to release the native
+    * Fast-DDS subscriber.
+    * You do not have to call this if you call {@link ROS2Node#close()}, it will destroy all subscriptions created by this node for you.
+    *
+    * @param subscription the publisher to destroy.
+    * @return true if the node contained the subscription, and it has been removed.
+    */
    public boolean destroySubscription(ROS2Subscription<?> subscription)
    {
       boolean removed = false;
@@ -482,31 +525,65 @@ public class ROS2Node implements Closeable
       throw new RuntimeException("Not yet implemented");
    }
 
+   /**
+    * Get the colloquial (user-friendly) name of the node.
+    * This name is intended for display or user reference only and is not used internally.
+    *
+    * @return the colloquial name of the node
+    */
    public String getName()
    {
       return name;
    }
 
+   /**
+    * Get the domain ID the node uses for communication. Valid domain ID range: [0, 232]. The default domain ID is 0.
+    *
+    * @return the domain ID
+    */
    public int getDomainId()
    {
       return domainId;
    }
 
+   /**
+    * Get all active publishers created by this node.
+    *
+    * @return an unmodifiable copy of the list of publishers.
+    */
    public List<ROS2Publisher<?>> getPublishers()
    {
       return Collections.unmodifiableList(publishers);
    }
 
+   /**
+    * Get all active subscriptions created by this node.
+    *
+    * @return an unmodifiable copy of the list of subscriptions.
+    */
    public List<ROS2Subscription<?>> getSubscriptions()
    {
       return Collections.unmodifiableList(subscriptions);
    }
 
+   /**
+    * Check if this node has been closed and is now inoperable.
+    *
+    * @return true if {@link #close()} has been called.
+    */
    public boolean isClosed()
    {
       return closed;
    }
 
+   /**
+    * Release resources and mark this node as inoperable. After close() has been called, this node will be unable to create new publishers or subscriptions.
+    * This method will block and wait for:
+    * 1. any currently executing {@link ROS2Publisher#publish(ROS2Message)}
+    * 2. any currently executing {@link ROS2Subscription} callback
+    * This is to ensure memory safety and guaranteed order of close operations.
+    * All publishers and subscriptions will be destroyed if close() has not been called already.
+    */
    @Override
    public void close()
    {
