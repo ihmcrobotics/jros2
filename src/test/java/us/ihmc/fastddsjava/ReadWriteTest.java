@@ -335,38 +335,34 @@ public class ReadWriteTest
 
       // Send the data
       final fastddsjava_TopicDataWrapper topicDataWrapperPublish = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Thread writerThread = new Thread(() ->
+      int currentDataLength = initialDataLength;
+
+      do
       {
-         int currentDataLength = initialDataLength;
+         byte[] sampleData = generateRandomBytes(currentDataLength);
 
-         do
+         synchronized (topicDataWrapperPublish)
          {
-            byte[] sampleData = generateRandomBytes(currentDataLength);
-
-            synchronized (topicDataWrapperPublish)
-            {
-               topicDataWrapperPublish.data_vector().resize(sampleData.length);
-               topicDataWrapperPublish.data_ptr().put(sampleData);
-            }
-
-            int writerRetCode;
-            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperPublish);
-
-            try
-            {
-               retcodeThrowOnError(writerRetCode);
-            }
-            catch (fastddsjavaException e)
-            {
-               throw new RuntimeException(e);
-            }
-
-            // Grow the data length
-            currentDataLength = currentDataLength * 2;
+            topicDataWrapperPublish.data_vector().resize(sampleData.length);
+            topicDataWrapperPublish.data_ptr().put(sampleData);
          }
-         while (receivedDataLength.get() < finalDataLength);
-      }, "WriterThread");
-      writerThread.start();
+
+         int writerRetCode;
+         writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperPublish);
+
+         try
+         {
+            retcodeThrowOnError(writerRetCode);
+         }
+         catch (fastddsjavaException e)
+         {
+            throw new RuntimeException(e);
+         }
+
+         // Grow the data length
+         currentDataLength = currentDataLength * 2;
+      }
+      while (receivedDataLength.get() < finalDataLength);
 
       if (!received.get())
       {
@@ -400,7 +396,7 @@ public class ReadWriteTest
    @Timeout(30)
    public void readWriteTestWithRandomDataSize() throws InterruptedException, fastddsjavaException
    {
-      Random random = new Random();
+      Random random = new Random(1881108);
 
       int retCode;
       final int minDataLength = 1;
@@ -452,27 +448,23 @@ public class ReadWriteTest
 
       // Send the data
       fastddsjava_TopicDataWrapper topicDataWrapperWrite = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Thread writerThread = new Thread(() ->
+      for (int i = 0; i < messagesToSend; ++i)
       {
-         for (int i = 0; i < messagesToSend; ++i)
-         {
-            byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
-            topicDataWrapperWrite.data_vector().resize(sampleData.length);
-            topicDataWrapperWrite.data_ptr().put(sampleData);
+         byte[] sampleData = generateRandomBytes(random.nextInt(minDataLength, maxDataLength));
+         topicDataWrapperWrite.data_vector().resize(sampleData.length);
+         topicDataWrapperWrite.data_ptr().put(sampleData);
 
-            int writerRetCode;
-            writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
-            try
-            {
-               retcodeThrowOnError(writerRetCode);
-            }
-            catch (fastddsjavaException e)
-            {
-               throw new RuntimeException(e);
-            }
+         int writerRetCode;
+         writerRetCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperWrite);
+         try
+         {
+            retcodeThrowOnError(writerRetCode);
          }
-      }, "WriterThread");
-      writerThread.start();
+         catch (fastddsjavaException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
 
       while (received.get() < messagesToSend)
       {
