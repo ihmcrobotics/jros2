@@ -46,6 +46,8 @@ class jros2SettingsFile implements jros2Settings
    private boolean intraprocessDelivery;
    private String[] interfaceWhitelist;
 
+   private final boolean fileExists;
+
    jros2SettingsFile()
    {
       this(DEFAULT_FILE_PATH, COMPATIBILITY_FILE_PATH);
@@ -68,9 +70,15 @@ class jros2SettingsFile implements jros2Settings
       {
       }
 
-      if (!filePath.toFile().exists())
+      if (filePath.toFile().exists())
+      {
+         fileExists = true;
+      }
+      else
       {
          LogTools.error("There was an issue creating the jros2 settings file: {}", filePath.toFile().getAbsolutePath());
+
+         fileExists = false;
       }
    }
 
@@ -171,7 +179,7 @@ class jros2SettingsFile implements jros2Settings
    @Override
    public boolean hasROSDomainId()
    {
-      return DEFAULTS.rosDomainId() != rosDomainId;
+      return fileExists;
    }
 
    @Override
@@ -183,7 +191,7 @@ class jros2SettingsFile implements jros2Settings
    @Override
    public boolean hasIntraprocessDelivery()
    {
-      return DEFAULTS.intraprocessDelivery() != intraprocessDelivery;
+      return fileExists;
    }
 
    @Override
@@ -195,6 +203,6 @@ class jros2SettingsFile implements jros2Settings
    @Override
    public boolean hasInterfaceWhitelist()
    {
-      return !Arrays.equals(DEFAULTS.interfaceWhitelist(), interfaceWhitelist);
+      return fileExists && !Arrays.equals(DEFAULTS.interfaceWhitelist(), interfaceWhitelist);
    }
 }

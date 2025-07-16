@@ -40,7 +40,8 @@ class jros2SettingsDefault implements jros2Settings
    @Override
    public boolean intraprocessDelivery()
    {
-      return false;
+      // Always enable intraprocess in GitHub CI, otherwise false
+      return System.getenv().containsKey("GITHUB_ACTIONS");
    }
 
    @Override
