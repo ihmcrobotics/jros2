@@ -39,7 +39,7 @@ jobs:
           message: 'Rebuild natives for Linux (x86_64)'
           push: true
   build-natives-windows:
-    runs-on: windows-2019
+    runs-on: windows-2022
     needs: build-natives-linux
     steps:
       - uses: actions/checkout@v4
