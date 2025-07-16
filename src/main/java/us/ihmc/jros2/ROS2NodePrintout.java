@@ -100,6 +100,11 @@ class ROS2NodePrintout
          }
       }
 
+      if (jros2.get().intraprocessDelivery())
+      {
+         printout.add("Intraprocess delivery enabled - https://github.com/ihmcrobotics/jros2/wiki/Intraprocess-Delivery");
+      }
+
       LogTools.info(printout);
    }
 }
