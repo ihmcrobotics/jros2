@@ -126,7 +126,6 @@ public class StatisticsTest
       AtomicInteger receivedCount = new AtomicInteger(0);
       ROS2Subscription<Point> subscription = node.createSubscription(topic, reader ->
       {
-         System.out.println("testPublisherSubscriptionStatistics READ");
          Point received = reader.read();
          assertEquals(received.getX(), message.getX());
          assertEquals(received.getY(), message.getY());
