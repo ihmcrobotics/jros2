@@ -220,8 +220,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
          fastddsSubscriptionCallback.close();
 
          topicData.topicDataWrapperType.delete_data(topicDataWrapper);
-         topicDataWrapper.close();
          sampleInfo.close();
+         topicDataWrapper.close();
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
       }
