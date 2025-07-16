@@ -236,14 +236,13 @@ public class ReadWriteTest
       listener.set_on_data_available_callback(onDataCallback);
       fastddsjava_datareader_set_listener(dataReader, listener);
 
-      // Send the data n times
       fastddsjava_TopicDataWrapper topicDataWrapperPublish = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
+      // Pack wrapper with data
+      topicDataWrapperPublish.data_vector().resize(sampleData.length);
+      topicDataWrapperPublish.data_ptr().put(sampleData);
+      // Send the data n times
       for (int i = 0; i < n; ++i)
       {
-         // Pack wrapper with data
-         topicDataWrapperPublish.data_vector().resize(sampleData.length);
-         topicDataWrapperPublish.data_ptr().put(sampleData);
-
          retCode = fastddsjava_datawriter_write(dataWriter, topicDataWrapperPublish);
          retcodeThrowOnError(retCode);
       }
