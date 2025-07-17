@@ -42,7 +42,8 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastdds/dds/subscriber/SampleInfo.hpp",
             },
             linkpath = "install/lib",
-            preload = "jnifastddsjava"
+            preload = "jnifastddsjava",
+            compiler = "cpp11"
       ),
       @Platform(value = "linux", link = {"fastcdr", "fastdds"}),
       @Platform(value = "windows", link = {"fastcdr-2.3", "fastdds-3.2"})
