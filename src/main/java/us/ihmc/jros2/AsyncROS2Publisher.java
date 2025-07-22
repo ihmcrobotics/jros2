@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.log.LogTools;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -26,33 +27,47 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<T>
 {
-   private static final int CAPACITY = 32;
+   static
+   {
+      jros2.load();
+   }
 
    private final AsyncROS2Node node;
 
-   private final T[] messagesToPublish;
+   /*
+    * Message publish queue
+    */
+   private final int queueCapacity;
+   private final AtomicInteger queueSize;
    private int insertPosition;
    private int publishPosition;
-   private final AtomicInteger queueSize;
+   private final T[] messagesToPublish;
 
+   /*
+    * Pre-allocated message publish method lambda
+    */
    private final Runnable publishTask;
 
    /**
     * Use {@link AsyncROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
     */
-   protected AsyncROS2Publisher(AsyncROS2Node node, Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
+   protected AsyncROS2Publisher(AsyncROS2Node node,
+                                Pointer fastddsParticipant,
+                                String publisherProfileName,
+                                ROS2Topic<T> topic,
+                                TopicData topicData,
+                                int queueCapacity)
    {
       super(fastddsParticipant, publisherProfileName, topic, topicData);
 
       this.node = node;
+      this.queueCapacity = queueCapacity;
 
-      // TODO: how should we set the capacity?
-      insertPosition = 0;
-      publishPosition = 0;
-      queueSize = new AtomicInteger(0);
+      queueSize = new AtomicInteger();
+
       //noinspection unchecked
-      messagesToPublish = (T[]) new ROS2Message[CAPACITY];
-      for (int i = 0; i < CAPACITY; ++i)
+      messagesToPublish = (T[]) new ROS2Message[queueCapacity];
+      for (int i = 0; i < queueCapacity; ++i)
       {
          messagesToPublish[i] = ROS2Message.createInstance(topic.getType());
       }
@@ -60,16 +75,29 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       publishTask = this::publishTask;
    }
 
+   private long lastQueueOverflowWarnTimeNs;
+
    @Override
    public void publish(T message)
    {
       if (!closed)
       {
-         if (queueSize.getAndIncrement() >= CAPACITY)
+         if (queueSize.getAndIncrement() >= queueCapacity)
          {
-            // TODO: Better behavior/message
+            long now = System.nanoTime();
+
+            // Print a warning every 1 second
+            if (now - lastQueueOverflowWarnTimeNs > 1e9)
+            {
+               LogTools.warn(
+                     "AsyncROS2Publisher ($1) has exceeded the queue capacity of $2. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
+                     node.getName(),
+                     queueCapacity);
+
+               lastQueueOverflowWarnTimeNs = now;
+            }
+
             queueSize.decrementAndGet();
-            throw new RuntimeException("Exceeded queue size :(");
          }
 
          T messageToPublish = messagesToPublish[insertPosition];
@@ -77,16 +105,20 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
          if (node.addTask(publishTask))
          {
-            insertPosition = (insertPosition + 1) % CAPACITY;
+            insertPosition = (insertPosition + 1) % queueCapacity;
          }
          else
          {
             queueSize.decrementAndGet();
+
             throw new RuntimeException("AsyncROS2Node did not accept the task");
          }
       }
    }
 
+   /**
+    * Called from parent publish thread in {@link AsyncROS2Node}
+    */
    private void publishTask()
    {
       closeLock.readLock().lock();
@@ -95,7 +127,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
          if (!closed)
          {
             super.publish(messagesToPublish[publishPosition]);
-            publishPosition = (publishPosition + 1) % CAPACITY;
+            publishPosition = (publishPosition + 1) % queueCapacity;
          }
       }
       finally

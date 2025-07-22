@@ -108,9 +108,9 @@ public class ROS2Node implements Closeable
     */
    public ROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
-      if (name == null)
+      if (name == null || name.isEmpty())
       {
-         throw new IllegalArgumentException("name cannot be null when constructing a ROS2Node");
+         throw new IllegalArgumentException("name cannot be null or empty when constructing a ROS2Node");
       }
       this.name = name;
 

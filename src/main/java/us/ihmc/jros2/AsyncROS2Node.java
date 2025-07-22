@@ -39,6 +39,11 @@ public class AsyncROS2Node extends ROS2Node
       jros2.load();
    }
 
+   private static final int QUEUE_CAPACITY = 128;
+
+   /*
+    * Publish thread
+    */
    private final Thread publishThread;
    private final BlockingQueue<Runnable> tasks;
 
@@ -46,11 +51,9 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, fastddsTransports);
 
-      int capacity = 64;
+      tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
 
-      // TODO: Name, daemon, etc
-      tasks = new ArrayBlockingQueue<>(capacity, true);
-      publishThread = new Thread(this::publishLoop);
+      publishThread = new Thread(this::publishLoop, String.format("AsyncROS2NodePublishThread-%s", name));
       publishThread.start();
    }
 
@@ -64,8 +67,7 @@ public class AsyncROS2Node extends ROS2Node
       this(name, jros2.get().rosDomainId());
    }
 
-   @Override
-   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
    {
       closeLock.readLock().lock();
       try
@@ -91,7 +93,7 @@ public class AsyncROS2Node extends ROS2Node
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
-            AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData);
+            AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
 
             synchronized (publishers)
             {
@@ -110,12 +112,20 @@ public class AsyncROS2Node extends ROS2Node
    }
 
    @Override
+   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   {
+      int defaultQueueCapacity = 32;
+
+      return createPublisher(topic, qosProfile, defaultQueueCapacity);
+   }
+
+   @Override
    public void close()
    {
       publishThread.interrupt();
       try
       {
-         publishThread.join(1000);
+         publishThread.join(100);
       }
       catch (InterruptedException interruptedException)
       {
@@ -127,7 +137,14 @@ public class AsyncROS2Node extends ROS2Node
 
    protected boolean addTask(Runnable task)
    {
-      return tasks.offer(task);
+      if (tasks.remainingCapacity() > 0)
+      {
+         return tasks.add(task);
+      }
+      else
+      {
+         return false;
+      }
    }
 
    private void publishLoop()
