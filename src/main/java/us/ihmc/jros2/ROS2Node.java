@@ -427,11 +427,30 @@ public class ROS2Node implements Closeable
       return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
    }
 
+   /**
+    * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
+    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#hasNewData()} to strategically control
+    * when you use the subscription reader.
+    *
+    * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
+    * @param qosProfile specify what quality-of-service settings you want for this subscription. Note: subscription and publisher QoS must match if you want
+    *                   them to communicate.
+    * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
+    */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
       return createSubscription(topic, null, qosProfile);
    }
 
+   /**
+    * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
+    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#hasNewData()} to strategically control
+    * when you use the subscription reader.
+    * This method will create a subscription using the default quality-of-service settings. See {@link ROS2QoSProfile#DEFAULT}.
+    *
+    * @param topic the ROS 2 topic, (see {@link ROS2Topic} for how to use.
+    * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
+    */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic)
    {
       return createSubscription(topic, null, ROS2QoSProfile.DEFAULT);
