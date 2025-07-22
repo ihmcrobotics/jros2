@@ -33,7 +33,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       jros2.load();
    }
 
-   private final ROS2Subscription<T> parent;
+   private final ROS2Subscription<T> subscription;
 
    /*
     * Statistics
@@ -48,12 +48,12 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   protected ROS2SubscriptionReader(ROS2Subscription<T> parent)
+   protected ROS2SubscriptionReader(ROS2Subscription<T> subscription)
    {
-      this.parent = parent;
+      this.subscription = subscription;
 
       lastMessageTimestamp = Long.MIN_VALUE;
-      getHeaderMethod = ROS2Message.getHeaderMethod(parent.getTopicType());
+      getHeaderMethod = ROS2Message.getHeaderMethod(subscription.getTopicType());
    }
 
    /**
@@ -66,13 +66,13 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
     */
    public boolean read(T data, boolean reread)
    {
-      synchronized (parent.readBuffer)
+      synchronized (subscription.readBuffer)
       {
          /*
           * If there was no data ever received by the native callback, don't bother reading from the buffer because there
           * will be nothing in it.
           */
-         if (!parent.flagHadData)
+         if (!subscription.flagHadData)
          {
             return false;
          }
@@ -80,13 +80,13 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
          /*
           * If the buffer has already been read from. The buffer only stores 1 message at a time.
           */
-         boolean alreadyRead = parent.readBuffer.getBufferUnsafe().position() > 0;
+         boolean alreadyRead = subscription.readBuffer.getBufferUnsafe().position() > 0;
 
          if (alreadyRead)
          {
             if (reread)
             {
-               parent.readBuffer.rewind();
+               subscription.readBuffer.rewind();
             }
             else
             {
@@ -94,11 +94,11 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
             }
          }
 
-         parent.readBuffer.readPayloadHeader();
+         subscription.readBuffer.readPayloadHeader();
 
-         data.deserialize(parent.readBuffer);
+         data.deserialize(subscription.readBuffer);
 
-         parent.flagNewData = false;
+         subscription.flagNewData = false;
       }
 
       /*
@@ -145,7 +145,7 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
     */
    public T read(boolean reread)
    {
-      T data = ROS2Message.createInstance(parent.getTopicType());
+      T data = ROS2Message.createInstance(subscription.getTopicType());
 
       if (data != null)
       {
