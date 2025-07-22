@@ -68,7 +68,6 @@ public final class CDRBuffer
    {
       buffer.put(PAYLOAD_HEADER);
 
-      // TODO:
       buffer.order(ByteOrder.LITTLE_ENDIAN);
    }
 

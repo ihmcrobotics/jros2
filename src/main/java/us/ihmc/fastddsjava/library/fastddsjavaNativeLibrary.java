@@ -19,17 +19,23 @@ import us.ihmc.tools.nativelibraries.NativeLibraryDescription;
 import us.ihmc.tools.nativelibraries.NativeLibraryLoader;
 import us.ihmc.tools.nativelibraries.NativeLibraryWithDependencies;
 
-public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
+public class fastddsjavaNativeLibrary implements NativeLibraryDescription
+{
    @Override
-   public String getPackage(OperatingSystem os, Architecture arch) {
+   public String getPackage(OperatingSystem os, Architecture arch)
+   {
       String archPackage = "";
-      if (arch == Architecture.x64) {
-         archPackage = switch (os) {
+      if (arch == Architecture.x64)
+      {
+         archPackage = switch (os)
+         {
             case LINUX64 -> "linux-x86_64";
             case WIN64 -> "windows-x86_64";
             case MACOSX64 -> "macos-x86_64";
          };
-      } else if (arch == Architecture.arm64) {
+      }
+      else if (arch == Architecture.arm64)
+      {
          throw new RuntimeException("Unsupported platform");
       }
 
@@ -37,15 +43,20 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
    }
 
    @Override
-   public NativeLibraryWithDependencies getLibraryWithDependencies(OperatingSystem os, Architecture arch) {
-      switch (os) {
-         case LINUX64 -> {
+   public NativeLibraryWithDependencies getLibraryWithDependencies(OperatingSystem os, Architecture arch)
+   {
+      switch (os)
+      {
+         case LINUX64 ->
+         {
             return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.3.0", "libfastdds.so.3.2.2");
          }
-         case WIN64 -> {
+         case WIN64 ->
+         {
             return NativeLibraryWithDependencies.fromFilename("jnifastddsjava.dll", "fastcdr-2.3.dll", "fastdds-3.2.dll");
          }
-         case MACOSX64 -> {
+         case MACOSX64 ->
+         {
             return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.dylib", "libfastcdr.2.3.0.dylib", "libfastdds.3.2.2.dylib");
          }
       }
@@ -54,8 +65,10 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription {
 
    private static boolean loaded = false;
 
-   public static synchronized boolean load() {
-      if (!loaded) {
+   public static synchronized boolean load()
+   {
+      if (!loaded)
+      {
          fastddsjavaNativeLibrary lib = new fastddsjavaNativeLibrary();
          loaded = NativeLibraryLoader.loadLibrary(lib);
       }
