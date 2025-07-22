@@ -427,6 +427,16 @@ public class ROS2Node implements Closeable
       return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
    }
 
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   {
+      return createSubscription(topic, null, qosProfile);
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic)
+   {
+      return createSubscription(topic, null, ROS2QoSProfile.DEFAULT);
+   }
+
    /**
     * Create a subscription using a {@link ROS2SubscriptionCallbackSampler}.
     * In the callback, you are given a sample of {@param T} message type.

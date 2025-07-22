@@ -33,11 +33,12 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       jros2.load();
    }
 
-   private final CDRBuffer readBuffer;
-   private final ROS2Topic<T> topic;
+   private final ROS2Subscription<T> parent;
 
+   /*
+    * Statistics
+    */
    private long lastMessageTimestamp;
-
    /**
     * A method reference to the getter for the first {@link Header} field within the ROS2Message topic type.
     * Used for statistics.
@@ -47,25 +48,58 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   protected ROS2SubscriptionReader(CDRBuffer readBuffer, ROS2Topic<T> topic)
+   protected ROS2SubscriptionReader(ROS2Subscription<T> parent)
    {
-      this.readBuffer = readBuffer;
-      this.topic = topic;
+      this.parent = parent;
 
       lastMessageTimestamp = Long.MIN_VALUE;
-      getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
+      getHeaderMethod = ROS2Message.getHeaderMethod(parent.getTopicType());
    }
 
    /**
-    * Read from the {@link CDRBuffer} into data (does not allocate any heap memory).
+    * Reads data from the {@link CDRBuffer} into the given message instance without allocating heap memory.
     *
-    * @param data The message to pack
+    * @param data   the message object to populate with deserialized data
+    * @param reread if true, allows re-reading the last message even if no new data has been received;
+    *               if false, returns immediately when data has already been read
+    * @return true if data was read into {@param data}; false otherwise
     */
-   public void read(T data)
+   public boolean read(T data, boolean reread)
    {
-      readBuffer.readPayloadHeader();
+      synchronized (parent.readBuffer)
+      {
+         /*
+          * If there was no data ever received by the native callback, don't bother reading from the buffer because there
+          * will be nothing in it.
+          */
+         if (!parent.flagHadData)
+         {
+            return false;
+         }
 
-      data.deserialize(readBuffer);
+         /*
+          * If the buffer has already been read from. The buffer only stores 1 message at a time.
+          */
+         boolean alreadyRead = parent.readBuffer.getBufferUnsafe().position() > 0;
+
+         if (alreadyRead)
+         {
+            if (reread)
+            {
+               parent.readBuffer.rewind();
+            }
+            else
+            {
+               return false;
+            }
+         }
+
+         parent.readBuffer.readPayloadHeader();
+
+         data.deserialize(parent.readBuffer);
+
+         parent.flagNewData = false;
+      }
 
       /*
        * Generate age statistics for messages which have a Header field (https://github.com/ros2/common_interfaces/blob/humble/std_msgs/msg/Header.msg)
@@ -86,21 +120,53 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
             getHeaderMethod = null;
          }
       }
+
+      return true;
    }
 
    /**
-    * Read from the {@link CDRBuffer} and return a new message (allocates a new instance of the message type).
+    * Reads data from the {@link CDRBuffer} into the given message instance without allocating heap memory.
+    * If the buffer has already been read from, it will reset the buffer's position and reread the same message.
+    *
+    * @param data the message object to populate with deserialized data
+    * @return true if data was read into {@param data}; false otherwise
     */
-   public T read()
+   public boolean read(T data)
    {
-      T data = ROS2Message.createInstance(topic.getType());
+      return read(data, true);
+   }
+
+   /**
+    * Reads data from the {@link CDRBuffer} into a newly created instance of the message type.
+    *
+    * @param reread if true, allows re-reading the last message even if no new data has been received;
+    *               if false, returns immediately when data has already been read
+    * @return the instance of the message, null if the reader was unable to read any data from the buffer
+    */
+   public T read(boolean reread)
+   {
+      T data = ROS2Message.createInstance(parent.getTopicType());
 
       if (data != null)
       {
-         read(data);
+         if (!read(data, reread))
+         {
+            data = null;
+         }
       }
 
       return data;
+   }
+
+   /**
+    * Reads data from the {@link CDRBuffer} into a newly created instance of the message type.
+    * If the buffer has already been read from, it will reset the buffer's position and reread the same message.
+    *
+    * @return the instance of the message, null if the reader was unable to read any data from the buffer
+    */
+   public T read()
+   {
+      return read(true);
    }
 
    long getLastMessageTimestamp()

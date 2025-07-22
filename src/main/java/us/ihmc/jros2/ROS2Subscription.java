@@ -62,8 +62,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    /*
     * Read buffer and readers
     */
-   private final CDRBuffer readBuffer;
-   private final ROS2SubscriptionCallback<T> callback;
+   protected final CDRBuffer readBuffer;
+   private final ROS2SubscriptionCallback<T> callback; // The callback may be null
    private final ROS2SubscriptionReader<T> subscriptionReader;
 
    /*
@@ -79,12 +79,18 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final int statisticsCalculatorCount;
    private long lastReceiveTime;
 
+   /*
+    * Flags relating to received data from the native callback
+    */
+   protected boolean flagHadData;
+   protected boolean flagNewData;
+
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
    protected ROS2Subscription(Pointer fastddsParticipant,
                               String subscriberProfileName,
-                              ROS2SubscriptionCallback<T> callback,
+                              ROS2SubscriptionCallback<T> callback /* Can be null */,
                               ROS2Topic<T> topic,
                               TopicData topicData)
    {
@@ -97,7 +103,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
       readBuffer = new CDRBuffer();
       sampleInfo = new SampleInfo();
-      subscriptionReader = new ROS2SubscriptionReader<>(readBuffer, topic);
+      subscriptionReader = new ROS2SubscriptionReader<>(this);
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -135,11 +141,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
    }
 
-   public int getUnreadCount()
-   {
-      return fastddsjava_datareader_get_unread_count(fastddsDataReader);
-   }
-
    private static final int OK = RETCODE_OK();
 
    private void onDataCallback()
@@ -147,20 +148,29 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       closeLock.readLock().lock();
       try
       {
-         if (callback != null && !closed)
+         if (!closed)
          {
             while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
             {
                long receptionTime = System.currentTimeMillis();
                int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
 
-               readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               readBuffer.rewind();
+               synchronized (readBuffer)
+               {
+                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+                  // Rewind buffer to ensure we're starting at position = 0
+                  readBuffer.rewind();
 
-               topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+                  topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
 
-               callback.onMessage(subscriptionReader);
+                  flagHadData = true;
+                  flagNewData = true;
+               }
+
+               if (callback != null)
+               {
+                  callback.onMessage(subscriptionReader);
+               }
 
                long timestampMillis = subscriptionReader.getLastMessageTimestamp();
                recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
@@ -242,9 +252,45 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
    }
 
+   /**
+    * If this subscription has been closed. A closed subscription will not receive any new data from publishers. Once closed, a subscription cannot be reused.
+    * Subscriptions are closed automatically when the parent {@link ROS2Node} is destroyed. To manually close this subscription, use
+    * {@link ROS2Node#destroySubscription(ROS2Subscription)}.
+    *
+    * @return true if closed, false if not closed
+    */
    public boolean isClosed()
    {
       return closed;
+   }
+
+   /**
+    * If this subscription has received data at least one time.
+    * @return true if received data at least once, false if never received data
+    */
+   public boolean hasHadData()
+   {
+      return flagHadData;
+   }
+
+   /**
+    * If this subscription has received data that has not been read by the subscription reader,
+    * @return true if there exists unread data, false if not
+    */
+   public boolean hasNewData()
+   {
+      return flagNewData;
+   }
+
+   /**
+    * Get the reader responsible for packing the CDR read buffer into {@link ROS2Message} type classes.
+    * Allows you to read messages received by this subscription.
+    *
+    * @return the subscription reader
+    */
+   public ROS2SubscriptionReader<T> getReader()
+   {
+      return subscriptionReader;
    }
 
    /**

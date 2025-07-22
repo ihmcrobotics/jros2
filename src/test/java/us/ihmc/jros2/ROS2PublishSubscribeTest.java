@@ -16,6 +16,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
@@ -264,8 +265,141 @@ public class ROS2PublishSubscribeTest
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Subscription sampler
+   // Callback-less subscription
    public void testROS2Subscription3() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic);
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--once",
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+
+      while (!subscription.hasNewData())
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(50));
+      }
+
+      std_msgs.msg.dds.String msg = subscription.getReader().read();
+
+      // Assert the received value is correct
+      assertEquals(data, msg.getData().toString());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Standard subscription with a couple threads that access the subscription's reader directly repeatedly
+   public void testROS2Subscription4() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
+      std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+      std_msgs.msg.dds.String msgThread1 = new std_msgs.msg.dds.String();
+      std_msgs.msg.dds.String msgThread2 = new std_msgs.msg.dds.String();
+      final Object sync = new Object();
+      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, reader ->
+      {
+         reader.read(msg);
+
+         synchronized (sync)
+         {
+            sync.notify();
+         }
+      }, ROS2QoSProfile.DEFAULT);
+
+      Thread thread1 = new Thread(() ->
+      {
+         // Random read in another thread in a loop
+         while (!subscription.hasHadData())
+         {
+            // Try to read even though the subscription hasn't had any data yet
+            if (subscription.getReader().read() != null)
+            {
+               throw new RuntimeException("Unexpected read state");
+            }
+
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+         }
+
+         subscription.getReader().read(msgThread1);
+      }, "ExtraReadThread1");
+      thread1.start();
+      Thread thread2 = new Thread(() ->
+      {
+         // Random read in another thread in a loop
+         while (!subscription.hasHadData())
+         {
+            // Try to read even though the subscription hasn't had any data yet
+            if (subscription.getReader().read() != null)
+            {
+               throw new RuntimeException("Unexpected read state");
+            }
+
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+         }
+         subscription.getReader().read(msgThread2);
+      }, "ExtraReadThread2");
+      thread2.start();
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--once",
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+      // Wait for subscription to receive the String message
+      synchronized (sync)
+      {
+         if (msg.getData().isEmpty())
+         {
+            sync.wait();
+         }
+      }
+
+      thread1.join();
+      thread2.join();
+
+      // Assert the received value is correct from the callback and the 2 threads
+      assertEquals(data, msg.getData().toString());
+      assertEquals(data, msgThread1.getData().toString());
+      assertEquals(data, msgThread2.getData().toString());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Subscription sampler
+   public void testROS2Subscription5() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
       final String topicName = "/ihmc/test_string";
