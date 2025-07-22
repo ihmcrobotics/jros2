@@ -275,7 +275,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    }
 
    /**
-    * If this subscription has received data that has not been read by the subscription reader,
+    * If this subscription has received data that has not been read by the subscription reader.
     *
     * @return true if there exists unread data, false if not
     */
