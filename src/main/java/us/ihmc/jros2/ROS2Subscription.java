@@ -162,7 +162,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       return flagHadData;
    }
 
-   protected int nextSample()
+   protected int nextSample(CDRBuffer readBuffer)
    {
       int retCode = fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
 
@@ -170,13 +170,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       {
          int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
 
-         synchronized (readBuffer)
-         {
-            readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-            readBuffer.rewind();
+         readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         readBuffer.rewind();
 
-            topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-         }
+         topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
       }
 
       return retCode;

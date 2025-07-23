@@ -64,16 +64,16 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    {
       boolean read = false;
 
-      if (OK == subscription.nextSample())
+      synchronized (subscription.readBuffer)
       {
-         synchronized (subscription.readBuffer)
+         if (OK == subscription.nextSample(subscription.readBuffer))
          {
             subscription.readBuffer.readPayloadHeader();
 
             data.deserialize(subscription.readBuffer);
-         }
 
-         read = true;
+            read = true;
+         }
       }
 
       recordStatistics(data);
