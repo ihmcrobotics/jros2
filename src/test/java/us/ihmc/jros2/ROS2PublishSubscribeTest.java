@@ -444,7 +444,7 @@ public class ROS2PublishSubscribeTest
       }
 
       assertNull(subscription.getReader().read());
-      assertNotNull(subscription.getReader().readLatest());
+      assertEquals(data, subscription.getReader().readLatest().getData().toString());
 
       // Ensure the ROS 2 publish process ends
       process.waitFor();
