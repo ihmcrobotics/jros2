@@ -18,9 +18,7 @@ package us.ihmc.jros2;
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.SampleInfo;
-import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
-import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
@@ -53,11 +51,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final Pointer fastddsDataReader;
    private final fastddsjava_DataReaderListener listener;
    private final fastddsjava_OnDataCallback fastddsDataCallback;
-   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionCallback;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final SampleInfo sampleInfo;
-   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
 
    /*
     * Read buffer and readers
@@ -80,10 +76,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private long lastReceiveTime;
 
    /*
-    * Flags relating to received data from the native callback
+    * Flags
     */
-   protected boolean flagHadData;
-   protected boolean flagNewData;
+   private boolean flagHadData;
 
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
@@ -123,63 +118,92 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
             onDataCallback();
          }
       };
-      fastddsSubscriptionCallback = new fastddsjava_OnSubscriptionCallback()
-      {
-         @Override
-         public void call()
-         {
-            onSubscriptionCallback();
-         }
-      };
       listener = new fastddsjava_DataReaderListener();
       listener.set_on_data_available_callback(fastddsDataCallback);
-      listener.set_on_subscription_callback(fastddsSubscriptionCallback);
-      subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
    }
 
-   private static final int OK = RETCODE_OK();
-
    private void onDataCallback()
    {
       closeLock.readLock().lock();
       try
       {
-         if (!closed)
+         long receptionTime = System.currentTimeMillis();
+         int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
+
+         if (callback != null && !closed)
          {
-            while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
-            {
-               long receptionTime = System.currentTimeMillis();
-               int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
-
-               synchronized (readBuffer)
-               {
-                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-                  // Rewind buffer to ensure we're starting at position = 0
-                  readBuffer.rewind();
-
-                  topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-
-                  flagHadData = true;
-                  flagNewData = true;
-               }
-
-               if (callback != null)
-               {
-                  callback.onMessage(subscriptionReader);
-               }
-
-               long timestampMillis = subscriptionReader.getLastMessageTimestamp();
-               recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
-            }
+            callback.onMessage(subscriptionReader);
          }
+
+         long timestampMillis = subscriptionReader.getLastMessageTimestamp();
+         recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
+
+         flagHadData = true;
       }
       finally
       {
          closeLock.readLock().unlock();
+      }
+   }
+
+   private static final int OK = RETCODE_OK();
+
+   public int getUnreadCount()
+   {
+      return fastddsjava_datareader_get_unread_count(fastddsDataReader);
+   }
+
+   public boolean hasHadData()
+   {
+      return flagHadData;
+   }
+
+   protected int nextSample()
+   {
+      int retCode = fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
+
+      if (OK == retCode)
+      {
+         int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
+
+         synchronized (readBuffer)
+         {
+            readBuffer.ensureRemainingCapacity(payloadSizeBytes);
+            readBuffer.rewind();
+
+            topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+         }
+      }
+
+      return retCode;
+   }
+
+   /**
+    * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
+    */
+   protected void close(Pointer fastddsParticipant)
+   {
+      closeLock.writeLock().lock();
+      boolean wasClosed = closed;
+      closed = true;
+      closeLock.writeLock().unlock();
+
+      if (!wasClosed)
+      {
+         retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
+
+         listener.close();
+         fastddsDataCallback.close();
+
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         sampleInfo.close();
+         topicDataWrapper.close();
+
+         retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
       }
    }
 
@@ -202,38 +226,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
          {
             statisticsCalculators[AGE.ordinal()].record(receptionTimeMillis - messageTimestampMillis);
          }
-      }
-   }
-
-   private void onSubscriptionCallback()
-   {
-      // TODO:
-      //      retcodePrintOnError(fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus));
-   }
-
-   /**
-    * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
-    */
-   protected void close(Pointer fastddsParticipant)
-   {
-      closeLock.writeLock().lock();
-      boolean wasClosed = closed;
-      closed = true;
-      closeLock.writeLock().unlock();
-
-      if (!wasClosed)
-      {
-         retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
-
-         listener.close();
-         fastddsDataCallback.close();
-         fastddsSubscriptionCallback.close();
-
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
-         sampleInfo.close();
-         topicDataWrapper.close();
-
-         retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
       }
    }
 
@@ -262,26 +254,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    public boolean isClosed()
    {
       return closed;
-   }
-
-   /**
-    * If this subscription has received data at least one time.
-    *
-    * @return true if received data at least once, false if never received data
-    */
-   public boolean hasHadData()
-   {
-      return flagHadData;
-   }
-
-   /**
-    * If this subscription has received data that has not been read by the subscription reader.
-    *
-    * @return true if there exists unread data, false if not
-    */
-   public boolean hasNewData()
-   {
-      return flagNewData;
    }
 
    /**

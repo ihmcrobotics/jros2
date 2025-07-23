@@ -429,7 +429,7 @@ public class ROS2Node implements Closeable
 
    /**
     * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
-    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#hasNewData()} to strategically control
+    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#getUnreadCount()} to strategically control
     * when you use the subscription reader.
     *
     * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
@@ -444,7 +444,7 @@ public class ROS2Node implements Closeable
 
    /**
     * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
-    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#hasNewData()} to strategically control
+    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#getUnreadCount()} ()} to strategically control
     * when you use the subscription reader.
     * This method will create a subscription using the default quality-of-service settings. See {@link ROS2QoSProfile#DEFAULT}.
     *

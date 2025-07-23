@@ -286,7 +286,7 @@ public class ROS2PublishSubscribeTest
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
 
-      while (!subscription.hasNewData())
+      while (subscription.getUnreadCount() == 0)
       {
          LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(50));
       }
@@ -311,15 +311,15 @@ public class ROS2PublishSubscribeTest
       final String data = "This is a test. This is only a test.";
       final String topicName = "/ihmc/test_string";
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
-      // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
       std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
       std_msgs.msg.dds.String msgThread1 = new std_msgs.msg.dds.String();
       std_msgs.msg.dds.String msgThread2 = new std_msgs.msg.dds.String();
+
       final Object sync = new Object();
+
       ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, reader ->
       {
          reader.read(msg);
@@ -335,7 +335,7 @@ public class ROS2PublishSubscribeTest
          // Random read in another thread in a loop
          while (!subscription.hasHadData())
          {
-            // Try to read even though the subscription hasn't had any data yet
+            // Try to read even though the subscription has no new data
             if (subscription.getReader().read() != null)
             {
                throw new RuntimeException("Unexpected read state");
@@ -344,7 +344,7 @@ public class ROS2PublishSubscribeTest
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
          }
 
-         subscription.getReader().read(msgThread1);
+         subscription.getReader().readLatest(msgThread1);
       }, "ExtraReadThread1");
       thread1.start();
       Thread thread2 = new Thread(() ->
@@ -352,7 +352,7 @@ public class ROS2PublishSubscribeTest
          // Random read in another thread in a loop
          while (!subscription.hasHadData())
          {
-            // Try to read even though the subscription hasn't had any data yet
+            // Try to read even though the subscription has no new data
             if (subscription.getReader().read() != null)
             {
                throw new RuntimeException("Unexpected read state");
@@ -360,7 +360,7 @@ public class ROS2PublishSubscribeTest
 
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
          }
-         subscription.getReader().read(msgThread2);
+         subscription.getReader().readLatest(msgThread2);
       }, "ExtraReadThread2");
       thread2.start();
 
@@ -398,8 +398,101 @@ public class ROS2PublishSubscribeTest
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Subscription sampler
+   // Callback-less subscription which reads a number of messages from the history
    public void testROS2Subscription5() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+      final int publishCount = 20;
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.depth(publishCount);
+
+      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--times " + publishCount + " -r 100000",
+                                                               // -r sets the publish frequency, just set to some very high number to get all the messages at once
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+
+      while (!subscription.hasHadData())
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
+      }
+
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+
+      int unreadCount = subscription.getUnreadCount();
+
+      assertEquals(publishCount, unreadCount);
+
+      // By this point, the subscription should have received all the messages, let's read them all
+      for (int i = 0; i < unreadCount; i++)
+      {
+         std_msgs.msg.dds.String msg = subscription.getReader().read();
+
+         assertEquals(data, msg.getData().toString());
+      }
+
+      assertNull(subscription.getReader().read());
+      assertNotNull(subscription.getReader().readLatest());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Using "readLatest()" in a callback, unexpected use case
+   public void testROS2Subscription6() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+      final int publishCount = 20;
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.depth(publishCount);
+
+      ros2Node.createSubscription(topic, ROS2SubscriptionReader::readLatest, subscriptionQos);
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--times " + publishCount + " -r 100000",
+                                                               // -r sets the publish frequency, just set to some very high number to get all the messages at once
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Subscription sampler
+   public void testROS2Subscription7() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
       final String topicName = "/ihmc/test_string";
