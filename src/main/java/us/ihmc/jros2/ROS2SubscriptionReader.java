@@ -36,6 +36,8 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    }
 
    private final ROS2Subscription<T> subscription;
+   private final CDRBuffer readBuffer;
+   private T latest;
 
    /*
     * Statistics
@@ -54,6 +56,8 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    {
       this.subscription = subscription;
 
+      readBuffer = new CDRBuffer();
+
       lastMessageTimestamp = Long.MIN_VALUE;
       getHeaderMethod = ROS2Message.getHeaderMethod(subscription.getTopicType());
    }
@@ -64,19 +68,21 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
    {
       boolean read = false;
 
-      synchronized (subscription.readBuffer)
+      synchronized (readBuffer)
       {
-         if (OK == subscription.nextSample(subscription.readBuffer))
+         if (OK == subscription.nextSample(readBuffer))
          {
-            subscription.readBuffer.readPayloadHeader();
+            readBuffer.readPayloadHeader();
 
-            data.deserialize(subscription.readBuffer);
+            data.deserialize(readBuffer);
+
+            recordStatistics(data);
+
+            latest = data;
 
             read = true;
          }
       }
-
-      recordStatistics(data);
 
       return read;
    }
@@ -96,58 +102,60 @@ public class ROS2SubscriptionReader<T extends ROS2Message<T>>
       return data;
    }
 
-   public boolean readLatest(T data)
+   public boolean readFully(T data)
    {
       boolean read = false;
 
-      if (subscription.hasHadData())
+      synchronized (readBuffer)
       {
-         synchronized (subscription.readBuffer)
+         while (OK == subscription.nextSample(readBuffer))
          {
-            /*
-             * Check if the subscription callback has received data but hasn't copied it from the native side yet
-             */
-            if (subscription.readBuffer.getBufferUnsafe().capacity() == 1)
-            {
-               read(data);
-            }
-            else
-            {
-               /*
-                * Check if the buffer has already been read from, if so rewind it
-                */
-               if (subscription.readBuffer.getBufferUnsafe().position() != 0)
-               {
-                  subscription.readBuffer.rewind();
-               }
+            readBuffer.readPayloadHeader();
 
-               subscription.readBuffer.readPayloadHeader();
+            data.deserialize(readBuffer);
 
-               data.deserialize(subscription.readBuffer);
-            }
+            recordStatistics(data);
+
+            latest = data;
+
+            read = true;
          }
-
-         read = true;
       }
-
-      recordStatistics(data);
 
       return read;
    }
 
-   public T readLatest()
+   public T readFully()
    {
       T data = ROS2Message.createInstance(subscription.getTopicType());
 
       if (data != null)
       {
-         if (!readLatest(data))
+         if (!readFully(data))
          {
             data = null;
          }
       }
 
       return data;
+   }
+
+   public T getLatest()
+   {
+      return latest;
+   }
+
+   public boolean getLatest(T data)
+   {
+      if (latest == null)
+      {
+         return false;
+      }
+      else
+      {
+         data.set(latest);
+         return true;
+      }
    }
 
    private void recordStatistics(T data)

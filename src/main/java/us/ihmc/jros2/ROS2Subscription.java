@@ -56,9 +56,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final SampleInfo sampleInfo;
 
    /*
-    * Read buffer and readers
+    * Callback and reader
     */
-   protected final CDRBuffer readBuffer;
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
    private final ROS2SubscriptionReader<T> subscriptionReader;
 
@@ -96,7 +95,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
-      readBuffer = new CDRBuffer();
       sampleInfo = new SampleInfo();
       subscriptionReader = new ROS2SubscriptionReader<>(this);
 

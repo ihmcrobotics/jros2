@@ -296,6 +296,13 @@ public class ROS2PublishSubscribeTest
       // Assert the received value is correct
       assertEquals(data, msg.getData().toString());
 
+      // Assert that there is no more data to be read
+      assertNull(subscription.getReader().read());
+      assertNull(subscription.getReader().readFully());
+
+      // Assert that getting the latest works
+      assertEquals(data, subscription.getReader().getLatest().getData().toString());
+
       // Ensure the ROS 2 publish process ends
       process.waitFor();
 
@@ -344,7 +351,7 @@ public class ROS2PublishSubscribeTest
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
          }
 
-         subscription.getReader().readLatest(msgThread1);
+         subscription.getReader().getLatest(msgThread1);
       }, "ExtraReadThread1");
       thread1.start();
       Thread thread2 = new Thread(() ->
@@ -360,7 +367,7 @@ public class ROS2PublishSubscribeTest
 
             LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
          }
-         subscription.getReader().readLatest(msgThread2);
+         subscription.getReader().getLatest(msgThread2);
       }, "ExtraReadThread2");
       thread2.start();
 
@@ -444,7 +451,7 @@ public class ROS2PublishSubscribeTest
       }
 
       assertNull(subscription.getReader().read());
-      assertEquals(data, subscription.getReader().readLatest().getData().toString());
+      assertEquals(data, subscription.getReader().getLatest().getData().toString());
 
       // Ensure the ROS 2 publish process ends
       process.waitFor();
@@ -469,7 +476,7 @@ public class ROS2PublishSubscribeTest
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.depth(publishCount);
 
-      ros2Node.createSubscription(topic, ROS2SubscriptionReader::readLatest, subscriptionQos);
+      ros2Node.createSubscription(topic, ROS2SubscriptionReader::readFully, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
