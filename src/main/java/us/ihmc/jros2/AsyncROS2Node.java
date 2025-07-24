@@ -122,7 +122,8 @@ public class AsyncROS2Node extends ROS2Node
    @Override
    public void close()
    {
-      publishThread.interrupt();
+      super.close();
+
       try
       {
          publishThread.join(100);
@@ -131,8 +132,6 @@ public class AsyncROS2Node extends ROS2Node
       {
          LogTools.error("Publish thread did not join.");
       }
-
-      super.close();
    }
 
    protected boolean addTask(Runnable task)
@@ -151,7 +150,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       try
       {
-         while (!publishThread.isInterrupted())
+         while (!isClosed())
          {
             tasks.take().run();
          }
