@@ -127,7 +127,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return CDRBuffer.alignment(currentAlignment, 1);
+      return 1 + CDRBuffer.alignment(currentAlignment, 1);
    }
 
    @Override
