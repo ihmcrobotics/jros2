@@ -73,7 +73,14 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    {
       if (buffer == null)
       {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+         if (getMaxSize() == INFINITE_MAX_SIZE)
+         {
+            ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         }
+         else
+         {
+            ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+         }
       }
       else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
       {

@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +34,16 @@ public class ROS2MessageGenerator
 {
    private final Path packagePath;
    private final Path outputPath;
+   private final Map<String, String> typeToClass;
    private final List<MsgContext> msgs;
-   private final Map<String, Class<?>> fieldTypeJavaClass;
 
-   public ROS2MessageGenerator(Path packagePath, Path outputPath, List<String> ros2pkgPathsToInclude)
+   public ROS2MessageGenerator(Path packagePath, Path outputPath, Map<String, String> typeToClass, List<String> ros2pkgPathsToInclude)
    {
       this.packagePath = packagePath;
       this.outputPath = outputPath;
+      this.typeToClass = typeToClass;
+
       msgs = new LinkedList<>();
-      fieldTypeJavaClass = new HashMap<>();
 
       for (String ros2pkgPathStr : ros2pkgPathsToInclude)
       {
@@ -95,26 +95,22 @@ public class ROS2MessageGenerator
       return msgs;
    }
 
-   /**
-    * When generating Java code, the generator will use the fully qualified path of the class
-    * provided instead of inferring the class.
-    * // TODO: Add a wiki page on github for how to use this
-    *
-    * @param fieldType the field type to associate
-    * @param clazz     the class to be used in the generated Java for the field type
-    */
-   public void registerJavaClass(String fieldType, Class<?> clazz)
-   {
-      fieldTypeJavaClass.put(fieldType, clazz);
-   }
-
    public void generate()
    {
       List<MsgContext> msgs = findMsgsInPkg(packagePath);
 
       for (MsgContext context : msgs)
       {
-         generate(context);
+         if (typeToClass.containsKey(context.getFullName()))
+         {
+            String className = typeToClass.get(context.getFullName());
+
+            System.out.println("[Custom class]\n" + context.getFullName() + " is mapped to " + className + " (not generating for it)");
+         }
+         else
+         {
+            generate(context);
+         }
       }
    }
 
@@ -141,14 +137,13 @@ public class ROS2MessageGenerator
          return;
       }
 
-      // Handle custom Java classes for fields
-      for (String fieldType : fieldTypeJavaClass.keySet())
+      for (String type : typeToClass.keySet())
       {
          for (InterfaceField field : context.getFields())
          {
-            if (field.getType().equals(fieldType))
+            if (field.getType().equals(type))
             {
-               field.javaType(fieldTypeJavaClass.get(fieldType).getCanonicalName());
+               field.javaType(typeToClass.get(type));
             }
          }
       }

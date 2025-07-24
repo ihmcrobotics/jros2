@@ -87,7 +87,14 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    {
       if (elements == null)
       {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+         if (getMaxSize() == INFINITE_MAX_SIZE)
+         {
+            ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
+         }
+         else
+         {
+            ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
+         }
       }
       else if (!isUnbounded() && (position >= getMaxSize()))
       {
