@@ -150,7 +150,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       try
       {
-         while (!isClosed())
+         while (!closed)
          {
             tasks.take().run();
          }
