@@ -156,13 +156,13 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
       assert elements != null;
       assert i < elements();
 
       // We treat each character as 1 byte (8 bits) in a standard string
-      return elements[i].length();
+      return elements[i].length() + CDRBuffer.alignment(currentAlignment, elements[i].length());
    }
 
    @Override

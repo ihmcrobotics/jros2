@@ -43,7 +43,7 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(Byte.BYTES, sequence.elementSizeBytes(0));
+      assertEquals(Byte.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
       sequence.add((byte) initialCapacity);
@@ -126,7 +126,7 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(Byte.BYTES, sequence.elementSizeBytes(0));
+      assertEquals(Byte.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
       sequence.add((char) initialCapacity);
@@ -209,7 +209,7 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(Double.BYTES, sequence.elementSizeBytes(0));
+      assertEquals(Double.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
       sequence.add(initialCapacity);
@@ -292,7 +292,7 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(Float.BYTES, sequence.elementSizeBytes(0));
+      assertEquals(Float.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
       sequence.add(initialCapacity);
@@ -375,7 +375,7 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Make sure elementSizeBytes is correct
-      assertEquals(new TestIDLMsg().calculateSizeBytes(), sequence.elementSizeBytes(0));
+      assertEquals(new TestIDLMsg().calculateSizeBytes(0), sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
       TestIDLMsg newElement = new TestIDLMsg();
@@ -463,7 +463,7 @@ public class IDLSequenceTest
       sequence.add((short) initialCapacity);
 
       // Make sure elementSizeBytes is correct
-      assertEquals(Short.BYTES, sequence.elementSizeBytes(0));
+      assertEquals(Short.BYTES, sequence.elementSizeBytes(0, 0));
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -546,7 +546,7 @@ public class IDLSequenceTest
       sequence.add(String.valueOf(initialCapacity));
 
       // Make sure elementSizeBytes is correct
-      assertEquals(1, sequence.elementSizeBytes(0));
+      assertEquals(1, sequence.elementSizeBytes(0, 0));
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -635,7 +635,7 @@ public class IDLSequenceTest
       sequence.add(new String(Character.toChars(codepoint)));
 
       // Make sure elementSizeBytes is correct
-      assertEquals(8, sequence.elementSizeBytes(0));
+      assertEquals(8, sequence.elementSizeBytes(0, 0));
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());

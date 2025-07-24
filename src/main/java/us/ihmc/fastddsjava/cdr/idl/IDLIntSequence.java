@@ -125,9 +125,9 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 4;
+      return CDRBuffer.alignment(currentAlignment, 4);
    }
 
    @Override

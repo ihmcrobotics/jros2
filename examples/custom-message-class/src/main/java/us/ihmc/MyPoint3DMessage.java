@@ -14,6 +14,11 @@ public class MyPoint3DMessage implements ROS2Message<MyPoint3DMessage>
       src = new MyPoint3D();
    }
 
+   public MyPoint3DMessage(MyPoint3D src)
+   {
+      this.src = src;
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
@@ -48,7 +53,12 @@ public class MyPoint3DMessage implements ROS2Message<MyPoint3DMessage>
       src.set(from.src);
    }
 
-   public MyPoint3D getData()
+   public void set(MyPoint3D from)
+   {
+      src.set(from);
+   }
+
+   public MyPoint3D getSrc()
    {
       return src;
    }

@@ -109,7 +109,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
             synchronized (writeBuffer)
             {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
                boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
                // Rewind buffer to ensure we're starting at position = 0
                writeBuffer.rewind();

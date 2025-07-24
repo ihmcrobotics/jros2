@@ -150,7 +150,7 @@ public class StatisticsTest
       Statistics statistics = new Statistics();
 
       // Read the message size statistics from the publisher, and assert they make sense
-      double expectedSize = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes();
+      double expectedSize = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
       publisher.readStatistics(MessageMetadataType.SIZE, statistics);
       assertEquals(expectedSize, statistics.get(AVERAGE), 1E-7);
       assertEquals(expectedSize, statistics.get(MINIMUM), 1E-7);

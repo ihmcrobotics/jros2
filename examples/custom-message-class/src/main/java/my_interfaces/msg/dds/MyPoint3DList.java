@@ -42,7 +42,6 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
    public void serialize(CDRBuffer buffer)
    {
       point_list_.serialize(buffer);
-
    }
 
    @Override
