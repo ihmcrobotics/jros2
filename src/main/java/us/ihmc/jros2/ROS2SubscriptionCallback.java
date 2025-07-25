@@ -15,15 +15,8 @@
  */
 package us.ihmc.jros2;
 
-/**
- * A way to consume a {@link ROS2Message} sample from a {@link ROS2Subscription}.
- * Use the {@link ROS2SubscriptionReader} to deserialize the message using the {@link ROS2SubscriptionReader#read()} method. Or use
- * {@link ROS2SubscriptionReader#read(ROS2Message)} for an allocation free approach.
- *
- * @param <T> the message type
- */
 @FunctionalInterface
 public interface ROS2SubscriptionCallback<T extends ROS2Message<T>>
 {
-   void onMessage(ROS2SubscriptionReader<T> reader);
+   void onMessage(ROS2MessageReader<T> ROS2MessageReader);
 }

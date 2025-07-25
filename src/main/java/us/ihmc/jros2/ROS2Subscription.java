@@ -21,7 +21,9 @@ import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.fastddsjava.pointers.rtps_Time_t;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -59,7 +61,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
     * Callback and reader
     */
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
-   private final ROS2SubscriptionReader<T> subscriptionReader;
+   protected final CDRBuffer readBuffer;
+   protected T latest; // Will be null if the message reader has never been used on a sample
+   private final ROS2MessageReader<T> messageReader;
 
    /*
     * Locks
@@ -68,23 +72,23 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private boolean closed;
 
    /*
+    * Flags
+    */
+   private boolean flagHadData;
+
+   /*
     * Statistics
     */
    private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
    private long lastReceiveTime;
 
-   /*
-    * Flags
-    */
-   private boolean flagHadData;
-
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
    protected ROS2Subscription(Pointer fastddsParticipant,
                               String subscriberProfileName,
-                              ROS2SubscriptionCallback<T> callback /* Can be null */,
+                              ROS2SubscriptionCallback<T> callback /* May be null */,
                               ROS2Topic<T> topic,
                               TopicData topicData)
    {
@@ -92,11 +96,20 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       this.topic = topic;
       this.topicData = topicData;
 
+      readBuffer = new CDRBuffer();
+      messageReader = new ROS2MessageReader<>(this);
+
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
       sampleInfo = new SampleInfo();
-      subscriptionReader = new ROS2SubscriptionReader<>(this);
+      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
+      listener = new fastddsjava_DataReaderListener();
+      listener.set_on_data_available_callback(fastddsDataCallback);
+      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
+      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
+      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -105,54 +118,58 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
          statisticsCalculators[i] = new StatisticsCalculator();
       }
       lastReceiveTime = Long.MIN_VALUE;
-
-      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-
-      fastddsDataCallback = new fastddsjava_OnDataCallback()
-      {
-         @Override
-         public void call()
-         {
-            onDataCallback();
-         }
-      };
-      listener = new fastddsjava_DataReaderListener();
-      listener.set_on_data_available_callback(fastddsDataCallback);
-
-      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
-      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
    }
 
-   private void onDataCallback()
+   /**
+    * Callback which is invoked by Fast-DDS when there is new data available. There may be multiple samples available to read upon invocation.
+    * <p>
+    * on_data_available(): There is new data available for the application on the DataReader. There is no queuing of invocations to this callback, meaning that
+    * if several new data changes are received at once, only one callback invocation may be issued for all of them, instead of one per change. If the
+    * application is retrieving the received data on this callback, it must keep reading data until no new changes are left.
+    * </p>
+    * Refer to documentation here:
+    * <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/dds_layer/subscriber/dataReaderListener/dataReaderListener.html">DataReaderListener</a>
+    */
+   private class fastddsjava_OnDataCallbackImpl extends fastddsjava_OnDataCallback
    {
-      closeLock.readLock().lock();
-      try
+      @Override
+      public void call()
       {
-         long receptionTime = System.currentTimeMillis();
-         int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
+         // Time when the sample was published
+         rtps_Time_t sourceTimestamp = sampleInfo.source_timestamp();
+         // Time when the sample was received
+         rtps_Time_t receptionTimestamp = sampleInfo.reception_timestamp();
 
-         if (callback != null && !closed)
+         closeLock.readLock().lock();
+         try
          {
-            callback.onMessage(subscriptionReader);
+            long payloadSizeBytes = topicDataWrapper.data_vector().size();
+
+            if (callback != null && !closed)
+            {
+               /*
+                * The Java callback will be called for every new sample
+                */
+               synchronized (readBuffer)
+               {
+                  while (OK == nextSample(readBuffer))
+                  {
+                     callback.onMessage(messageReader);
+                  }
+               }
+            }
+
+            recordStatistics(payloadSizeBytes,
+                             TimeUnit.NANOSECONDS.toMillis(sourceTimestamp.to_ns()),
+                             TimeUnit.NANOSECONDS.toMillis(receptionTimestamp.to_ns()));
+
+            flagHadData = true;
          }
-
-         long timestampMillis = subscriptionReader.getLastMessageTimestamp();
-         recordStatistics(payloadSizeBytes, timestampMillis, receptionTime);
-
-         flagHadData = true;
+         finally
+         {
+            closeLock.readLock().unlock();
+         }
       }
-      finally
-      {
-         closeLock.readLock().unlock();
-      }
-   }
-
-   private static final int OK = RETCODE_OK();
-
-   public int getUnreadCount()
-   {
-      return fastddsjava_datareader_get_unread_count(fastddsDataReader);
    }
 
    public boolean hasHadData()
@@ -160,7 +177,86 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       return flagHadData;
    }
 
-   protected int nextSample(CDRBuffer readBuffer)
+   public boolean read(T data)
+   {
+      if (callback != null)
+      {
+         throw new RuntimeException("Cannot use ROS2Subscription.read() if the subscription was created with a callback.");
+      }
+
+      synchronized (readBuffer)
+      {
+         if (OK == nextSample(readBuffer))
+         {
+            messageReader.read(data);
+
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   public T read()
+   {
+      T data = ROS2Message.createInstance(topic.getType());
+
+      return read(data) ? data : null;
+   }
+
+   public int readFully(T data)
+   {
+      if (callback != null)
+      {
+         throw new RuntimeException("Cannot use ROS2Subscription.readFully() if the subscription was created with a callback.");
+      }
+
+      int totalRead = 0;
+
+      synchronized (readBuffer)
+      {
+         while (OK == nextSample(readBuffer))
+         {
+            totalRead++;
+         }
+
+         if (totalRead > 0)
+         {
+            // Read the last one from the buffer into the data
+            messageReader.read(data);
+         }
+      }
+
+      return totalRead;
+   }
+
+   public T readFully()
+   {
+      T data = ROS2Message.createInstance(topic.getType());
+
+      return (readFully(data) > 0) ? data : null;
+   }
+
+   public T getLatest()
+   {
+      return latest;
+   }
+
+   public boolean getLatest(T data)
+   {
+      if (latest != null)
+      {
+         data.set(latest);
+
+         return true;
+      }
+
+      return false;
+   }
+
+   private static final int OK = RETCODE_OK();
+
+   private int nextSample(CDRBuffer readBuffer)
    {
       int retCode = fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo);
 
@@ -249,17 +345,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    public boolean isClosed()
    {
       return closed;
-   }
-
-   /**
-    * Get the reader responsible for packing the CDR read buffer into {@link ROS2Message} type classes.
-    * Allows you to read messages received by this subscription.
-    *
-    * @return the subscription reader
-    */
-   public ROS2SubscriptionReader<T> getReader()
-   {
-      return subscriptionReader;
    }
 
    /**

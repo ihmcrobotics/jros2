@@ -53,6 +53,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
+         LogTools.error("Unable to create a new instance of {}. Does it have a static 'name' field and a default no-args constructor?", topicType.getName());
          LogTools.error(e);
       }
 
@@ -61,6 +62,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
 
    /**
     * Finds the first method in a ROS2Message which returns type {@link Header}. Used for statistics.
+    *
     * @param topicType the ROS2Message topic type class.
     * @return the method reference to the Header getter.
     */

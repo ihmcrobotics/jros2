@@ -474,7 +474,7 @@ public class ROS2Node implements Closeable
          final T sample = T.createInstance(topic.getType());
 
          @Override
-         public void onMessage(ROS2SubscriptionReader<T> reader)
+         public void onMessage(ROS2MessageReader<T> reader)
          {
             if (sample != null)
             {
