@@ -3,12 +3,21 @@ package us.ihmc;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.jros2.ROS2Message;
 
+/**
+ * This is a custom handwritten ROS2Message meant to adapt to {@link MyPoint3D} objects.
+ */
 public class MyPoint3DMessage implements ROS2Message<MyPoint3DMessage>
 {
+   /*
+    * Please note this static name field is REQUIRED!
+    */
    public static final java.lang.String name = "my_interfaces::msg::dds_::MyPoint3D_";
 
    private final MyPoint3D src;
 
+   /*
+    * Please note that an argument-less constructor is REQUIRED!
+    */
    public MyPoint3DMessage()
    {
       src = new MyPoint3D();
