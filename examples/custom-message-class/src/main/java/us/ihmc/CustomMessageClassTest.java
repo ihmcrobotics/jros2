@@ -15,10 +15,10 @@ public class CustomMessageClassTest
 
       final MyPoint3D[] points = points();
 
-      ROS2Node asyncNode = new ROS2Node("test_node");
+      ROS2Node node = new ROS2Node("test_node");
       ROS2Topic<MyPoint3DList> pointListTopic = new ROS2Topic<>("/point_list", MyPoint3DList.class);
 
-      asyncNode.createSubscription(pointListTopic, reader ->
+      node.createSubscription(pointListTopic, reader ->
       {
          MyPoint3DList pointList = reader.read();
 
@@ -34,7 +34,7 @@ public class CustomMessageClassTest
 
          System.out.println("All data received by the subscription matched what was published.");
       });
-      ROS2Publisher<MyPoint3DList> publisher = asyncNode.createPublisher(pointListTopic);
+      ROS2Publisher<MyPoint3DList> publisher = node.createPublisher(pointListTopic);
 
       MyPoint3DList pointList = new MyPoint3DList();
       // Add all points to the point list
@@ -47,7 +47,7 @@ public class CustomMessageClassTest
 
       publisher.publish(pointList);
 
-      asyncNode.close();
+      node.close();
    }
 
    private static MyPoint3D[] points()
