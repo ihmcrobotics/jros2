@@ -354,12 +354,12 @@ public class ROS2Node implements Closeable
 
    /**
     * Create a subscription using a {@link ROS2SubscriptionCallback}.
-    * In the callback, you are given a {@link ROS2SubscriptionReader} to read a sample of the {@param T} message type.
+    * In the callback, you are given a {@link ROS2MessageReader} to read a sample of the {@param T} message type.
     * If you want a callback which gives you a sample of the message type directly, use
     * {@link #createSubscriptionSampler(ROS2Topic, ROS2SubscriptionCallbackSampler, ROS2QoSProfile)}.
     *
     * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
-    * @param callback   a {@link ROS2SubscriptionCallback} callback which provides access to a {@link ROS2SubscriptionReader} for deserializing the message
+    * @param callback   a {@link ROS2SubscriptionCallback} callback which provides access to a {@link ROS2MessageReader} for deserializing the message
     *                   sample.
     *                   Has an allocation-free method, letting you reuse an instance of a {@link ROS2Message}.
     * @param qosProfile specify what quality-of-service settings you want for this subscription. Note: subscription and publisher QoS must match if you want
@@ -412,14 +412,15 @@ public class ROS2Node implements Closeable
 
    /**
     * Create a subscription using a {@link ROS2SubscriptionCallback}.
-    * In the callback, you are given a {@link ROS2SubscriptionReader} to read a sample of the {@param T} message type.
-    * If you want a callback which gives you a sample of the message type directly, use {@link #createSubscriptionSampler(ROS2Topic, ROS2SubscriptionCallbackSampler, ROS2QoSProfile)}.
+    * In the callback, you are given a {@link ROS2MessageReader} to read a sample of the {@param T} message type.
+    * If you want a callback which gives you a sample of the message type directly, use
+    * {@link #createSubscriptionSampler(ROS2Topic, ROS2SubscriptionCallbackSampler, ROS2QoSProfile)}.
     * This method will create a subscription using the default quality-of-service settings. See {@link ROS2QoSProfile#DEFAULT}.
     *
-    * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
-    * @param callback   a {@link ROS2SubscriptionCallback} callback which provides access to a {@link ROS2SubscriptionReader} for deserializing the message
-    *                   sample.
-    *                   Has an allocation-free method, letting you reuse an instance of a {@link ROS2Message}.
+    * @param topic    the ROS 2 topic, (see {@link ROS2Topic} for how to use.
+    * @param callback a {@link ROS2SubscriptionCallback} callback which provides access to a {@link ROS2MessageReader} for deserializing the message
+    *                 sample.
+    *                 Has an allocation-free method, letting you reuse an instance of a {@link ROS2Message}.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback)
@@ -428,9 +429,8 @@ public class ROS2Node implements Closeable
    }
 
    /**
-    * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
-    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#getUnreadCount()} to strategically control
-    * when you use the subscription reader.
+    * Create a subscription without any callback for when new data is received. You can use {@link ROS2Subscription#read()} and
+    * {@link ROS2Subscription#readFully()} to manually read messages.
     *
     * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
     * @param qosProfile specify what quality-of-service settings you want for this subscription. Note: subscription and publisher QoS must match if you want
@@ -443,9 +443,8 @@ public class ROS2Node implements Closeable
    }
 
    /**
-    * Create a subscription without any callback for when new data is received. At any time, you can use {@link ROS2Subscription#getReader()} to access
-    * received messages. Use this in conjunction with {@link ROS2Subscription#hasHadData()} and {@link ROS2Subscription#getUnreadCount()} ()} to strategically control
-    * when you use the subscription reader.
+    * Create a subscription without any callback for when new data is received. You can use {@link ROS2Subscription#read()} and
+    * {@link ROS2Subscription#readFully()} to manually read messages.
     * This method will create a subscription using the default quality-of-service settings. See {@link ROS2QoSProfile#DEFAULT}.
     *
     * @param topic the ROS 2 topic, (see {@link ROS2Topic} for how to use.
@@ -467,7 +466,9 @@ public class ROS2Node implements Closeable
     *                   them to communicate.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
-   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionCallbackSampler<T> sampler, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic,
+                                                                                   ROS2SubscriptionCallbackSampler<T> sampler,
+                                                                                   ROS2QoSProfile qosProfile)
    {
       ROS2SubscriptionCallback<T> callback = new ROS2SubscriptionCallback<>()
       {
@@ -492,9 +493,9 @@ public class ROS2Node implements Closeable
     * In the callback, you are given a sample of {@param T} message type.
     * This method will create a subscription using the default quality-of-service settings. See {@link ROS2QoSProfile#DEFAULT}.
     *
-    * @param topic      the ROS 2 topic, (see {@link ROS2Topic} for how to use.
-    * @param sampler    a {@link ROS2SubscriptionCallbackSampler} callback which gives you the sample of a message upon receiving it from a subscription.
-    *                   This does not allocate a new Java object for each sample, the same one is reused.
+    * @param topic   the ROS 2 topic, (see {@link ROS2Topic} for how to use.
+    * @param sampler a {@link ROS2SubscriptionCallbackSampler} callback which gives you the sample of a message upon receiving it from a subscription.
+    *                This does not allocate a new Java object for each sample, the same one is reused.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionCallbackSampler<T> sampler)
