@@ -75,7 +75,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
     */
-   protected ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
+   ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
       this.topicData = topicData;
       this.topic = topic;

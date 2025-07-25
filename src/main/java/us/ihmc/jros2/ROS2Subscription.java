@@ -86,11 +86,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   protected ROS2Subscription(Pointer fastddsParticipant,
-                              String subscriberProfileName,
-                              ROS2SubscriptionCallback<T> callback /* May be null */,
-                              ROS2Topic<T> topic,
-                              TopicData topicData)
+   ROS2Subscription(Pointer fastddsParticipant,
+                    String subscriberProfileName,
+                    ROS2SubscriptionCallback<T> callback /* May be null */,
+                    ROS2Topic<T> topic,
+                    TopicData topicData)
    {
       this.callback = callback;
       this.topic = topic;
@@ -135,16 +135,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       @Override
       public void call()
       {
-         // Time when the sample was published
-         rtps_Time_t sourceTimestamp = sampleInfo.source_timestamp();
-         // Time when the sample was received
-         rtps_Time_t receptionTimestamp = sampleInfo.reception_timestamp();
 
          closeLock.readLock().lock();
          try
          {
-            long payloadSizeBytes = topicDataWrapper.data_vector().size();
-
             if (callback != null && !closed)
             {
                /*
@@ -158,10 +152,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
                   }
                }
             }
-
-            recordStatistics(payloadSizeBytes,
-                             TimeUnit.NANOSECONDS.toMillis(sourceTimestamp.to_ns()),
-                             TimeUnit.NANOSECONDS.toMillis(receptionTimestamp.to_ns()));
 
             flagHadData = true;
          }
@@ -181,7 +171,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    {
       if (callback != null)
       {
-         throw new RuntimeException("Cannot use ROS2Subscription.read() if the subscription was created with a callback.");
+         throw new IllegalStateException("Cannot use ROS2Subscription.read() if the subscription was created with a callback.");
       }
 
       synchronized (readBuffer)
@@ -208,7 +198,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    {
       if (callback != null)
       {
-         throw new RuntimeException("Cannot use ROS2Subscription.readFully() if the subscription was created with a callback.");
+         throw new IllegalStateException("Cannot use ROS2Subscription.readFully() if the subscription was created with a callback.");
       }
 
       int totalRead = 0;
@@ -262,12 +252,19 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
       if (OK == retCode)
       {
+         // Time when the sample was published
+         rtps_Time_t sourceTimestamp = sampleInfo.source_timestamp();
+         // Time when the sample was received
+         rtps_Time_t receptionTimestamp = sampleInfo.reception_timestamp();
+         // The size of the entire payload (including the header) in bytes
          int payloadSizeBytes = (int) topicDataWrapper.data_vector().size();
 
          readBuffer.ensureRemainingCapacity(payloadSizeBytes);
          readBuffer.rewind();
 
          topicDataWrapper.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+
+         recordStatistics(payloadSizeBytes, TimeUnit.NANOSECONDS.toMillis(sourceTimestamp.to_ns()), TimeUnit.NANOSECONDS.toMillis(receptionTimestamp.to_ns()));
       }
 
       return retCode;

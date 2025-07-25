@@ -22,7 +22,7 @@ public class ROS2MessageReader<T extends ROS2Message<T>>
 {
    private final ROS2Subscription<T> subscription;
 
-   public ROS2MessageReader(ROS2Subscription<T> subscription)
+   ROS2MessageReader(ROS2Subscription<T> subscription)
    {
       this.subscription = subscription;
    }
