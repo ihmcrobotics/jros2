@@ -137,14 +137,8 @@ public class AsyncROS2Node extends ROS2Node
 
    protected boolean addTask(Runnable task)
    {
-      if (tasks.remainingCapacity() > 0)
-      {
-         return tasks.add(task);
-      }
-      else
-      {
-         return false;
-      }
+      // TODO: Double check behavior
+      return tasks.offer(task);
    }
 
    private void publishLoop()
