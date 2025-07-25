@@ -36,6 +36,8 @@ import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
  */
 public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatisticsProvider
 {
+   private static final int OK = RETCODE_OK();
+
    static
    {
       jros2.load();
@@ -135,7 +137,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       @Override
       public void call()
       {
-
          closeLock.readLock().lock();
          try
          {
@@ -243,8 +244,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
       return false;
    }
-
-   private static final int OK = RETCODE_OK();
 
    private int nextSample(CDRBuffer readBuffer)
    {
