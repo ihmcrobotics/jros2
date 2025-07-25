@@ -33,9 +33,9 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       this.defaultStringLength = defaultStringLength;
    }
 
-   public IDLStringSequence(int maxSize)
+   public IDLStringSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
       defaultStringLength = -1;
    }
 
@@ -76,14 +76,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    {
       if (elements == null)
       {
-         if (getMaxSize() == INFINITE_MAX_SIZE)
-         {
-            ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
-         }
-         else
-         {
-            ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-         }
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
       }
       else if (!isUnbounded() && (position >= getMaxSize()))
       {

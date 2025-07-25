@@ -28,9 +28,9 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
       super(capacity, maxSize);
    }
 
-   public IDLLongSequence(int maxSize)
+   public IDLLongSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
    }
 
    public IDLLongSequence()
@@ -73,14 +73,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    {
       if (buffer == null)
       {
-         if (getMaxSize() == INFINITE_MAX_SIZE)
-         {
-            ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
-         }
-         else
-         {
-            ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-         }
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
       }
       else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
       {

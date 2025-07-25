@@ -28,9 +28,9 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       super(capacity, maxSize);
    }
 
-   public IDLBoolSequence(int maxSize)
+   public IDLBoolSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
    }
 
    public IDLBoolSequence()
@@ -73,14 +73,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
    {
       if (buffer == null)
       {
-         if (getMaxSize() == INFINITE_MAX_SIZE)
-         {
-            ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
-         }
-         else
-         {
-            ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-         }
+         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
       }
       else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
       {
