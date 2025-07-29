@@ -28,9 +28,9 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
       super(capacity, maxSize);
    }
 
-   public IDLShortSequence(int maxSize)
+   public IDLShortSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
    }
 
    public IDLShortSequence()
@@ -118,9 +118,9 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 2;
+      return 2 + CDRBuffer.alignment(currentAlignment, 2);
    }
 
    @Override

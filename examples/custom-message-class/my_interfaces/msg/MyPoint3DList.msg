@@ -1,0 +1,1 @@
+my_interfaces/MyPoint3D[] point_list

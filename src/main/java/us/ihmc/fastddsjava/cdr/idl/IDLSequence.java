@@ -20,7 +20,7 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   protected static final int INFINITE_MAX_SIZE = -1;
+   protected static final int INFINITE_MAX_SIZE = Integer.MAX_VALUE;
    protected static final int DEFAULT_INITIAL_CAPACITY = 1;
 
    /**
@@ -38,11 +38,6 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
       }
 
       ensureMinCapacity(capacity);
-   }
-
-   public IDLSequence(int maxSize)
-   {
-      this.maxSize = maxSize;
    }
 
    public IDLSequence()
@@ -94,7 +89,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     */
    protected abstract void ensureMinCapacity(int capacity);
 
-   public abstract int elementSizeBytes(int i);
+   public abstract int elementSizeBytes(int currentAlignment, int i);
 
    /**
     * Read the next element out of the buffer using CDR
@@ -123,7 +118,9 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       for (int i = 0; i < elements(); i++)
       {
-         currentAlignment += elementSizeBytes(i);
+         int elementSizeBytes = elementSizeBytes(currentAlignment, i);
+
+         currentAlignment += elementSizeBytes + CDRBuffer.alignment(currentAlignment, elementSizeBytes);
       }
 
       return currentAlignment - initialAlignment;
@@ -146,6 +143,8 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    public void deserialize(CDRBuffer buffer)
    {
       int elements = buffer.readInt();
+
+      ensureMinCapacity(elements);
 
       for (int i = 0; i < elements; i++)
       {

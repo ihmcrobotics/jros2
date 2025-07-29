@@ -28,9 +28,9 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
       super(capacity, maxSize);
    }
 
-   public IDLFloatSequence(int maxSize)
+   public IDLFloatSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
    }
 
    public IDLFloatSequence()
@@ -118,9 +118,9 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 4;
+      return 4 + CDRBuffer.alignment(currentAlignment, 4);
    }
 
    @Override

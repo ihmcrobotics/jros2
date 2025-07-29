@@ -35,9 +35,9 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       position = 0;
    }
 
-   public IDLObjectSequence(int maxSize, Class<T> clazz)
+   public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
       this.clazz = clazz;
       position = 0;
    }
@@ -147,12 +147,12 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
       assert elements != null;
       assert i < elements();
 
-      return elements[i].calculateSizeBytes();
+      return elements[i].calculateSizeBytes(currentAlignment);
    }
 
    @Override
@@ -161,9 +161,14 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       assert elements != null;
       assert position < elements.length;
 
-      T element = elements[position++];
+      if (elements[position] == null)
+      {
+         elements[position] = newInstance();
+      }
 
-      element.deserialize(buffer);
+      elements[position].deserialize(buffer);
+
+      position++;
    }
 
    @Override
@@ -171,6 +176,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    {
       assert elements != null;
       assert i < elements();
+
+      if (elements[i] == null)
+      {
+         elements[i] = newInstance();
+      }
 
       elements[i].serialize(buffer);
    }

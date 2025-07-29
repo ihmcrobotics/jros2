@@ -28,9 +28,9 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
       super(capacity, maxSize);
    }
 
-   public IDLCharSequence(int maxSize)
+   public IDLCharSequence(int capacity)
    {
-      super(maxSize);
+      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
    }
 
    public IDLCharSequence()
@@ -118,9 +118,9 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    }
 
    @Override
-   public int elementSizeBytes(int i)
+   public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 1;
+      return 1 + CDRBuffer.alignment(currentAlignment, 1);
    }
 
    @Override

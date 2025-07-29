@@ -23,6 +23,7 @@ import org.gradle.api.tasks.options.Option;
 import us.ihmc.jros2.generator.ROS2MessageGenerator;
 
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,11 @@ public class jros2GenTask extends DefaultTask
    private List<String> packagePaths;
    private String outputDir;
    private Map<String, String> typeToClass;
+
+   public jros2GenTask()
+   {
+      typeToClass = new HashMap<>();
+   }
 
    @Input
    public List<String> getPackagePaths()
@@ -78,7 +84,7 @@ public class jros2GenTask extends DefaultTask
       {
          Path packagePath = Path.of(packagePathStr);
 
-         ROS2MessageGenerator generator = new ROS2MessageGenerator(packagePath, outputDir, packagePaths);
+         ROS2MessageGenerator generator = new ROS2MessageGenerator(packagePath, outputDir, typeToClass, packagePaths);
 
          generator.generate();
       }
