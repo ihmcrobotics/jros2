@@ -33,30 +33,16 @@ public final class CDRBuffer
 
    public CDRBuffer()
    {
-      buffer = ByteBuffer.allocate(1);
+   }
+
+   public void setBuffer(ByteBuffer buffer)
+   {
+      this.buffer = buffer;
    }
 
    public ByteBuffer getBufferUnsafe()
    {
       return buffer;
-   }
-
-   public boolean ensureRemainingCapacity(int capacity)
-   {
-      int remainingCapacity = buffer.capacity() - buffer.position();
-
-      if (remainingCapacity < capacity)
-      {
-         ByteBuffer newBuffer = ByteBuffer.allocate(buffer.position() + capacity);
-
-         newBuffer.put(buffer);
-
-         buffer = newBuffer;
-
-         return true;
-      }
-
-      return false;
    }
 
    public void rewind()

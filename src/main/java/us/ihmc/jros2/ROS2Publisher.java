@@ -105,27 +105,17 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          if (!closed)
          {
-            int payloadSizeBytes;
+            int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
 
-            synchronized (writeBuffer)
+            if (topicDataWrapper.data_vector().size() < payloadSizeBytes)
             {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
-               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               writeBuffer.rewind();
-
-               // TODO: check if we can shrink the writeBuffer to save memory
-
-               writeBuffer.writePayloadHeader();
-               message.serialize(writeBuffer);
-
-               if (resized)
-               {
-                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               }
-
-               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+               topicDataWrapper.data_vector().resize(payloadSizeBytes);
+               writeBuffer.setBuffer(topicDataWrapper.data_ptr().position(0).limit(payloadSizeBytes).asByteBuffer());
             }
+
+            writeBuffer.rewind();
+            writeBuffer.writePayloadHeader();
+            message.serialize(writeBuffer);
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
             recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
