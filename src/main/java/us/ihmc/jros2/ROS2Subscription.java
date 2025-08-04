@@ -22,6 +22,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCall
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.fastddsjava.pointers.rtps_Time_t;
+import us.ihmc.log.LogTools;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -94,7 +95,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    ROS2Subscription(Pointer fastddsParticipant,
                     String subscriberProfileName,
-                    ROS2SubscriptionCallback<T> callback /* May be null */,
+                    ROS2SubscriptionCallback<T> callback, // May be null
                     ROS2Topic<T> topic,
                     TopicData topicData)
    {
@@ -109,12 +110,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       callbackSampleInfo = new SampleInfo();
       userSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       userSampleInfo = new SampleInfo();
-      fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
-      listener = new fastddsjava_DataReaderListener();
-      listener.set_on_data_available_callback(fastddsDataCallback);
-      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
-      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
 
       readBuffer = new CDRBuffer();
 
@@ -125,6 +120,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          statisticsCalculators[i] = new StatisticsCalculator();
       }
       lastReceiveTime = Long.MIN_VALUE;
+
+      // Initialize callbacks last to ensure the rest of the state of this class exists before they run
+      fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
+      listener = new fastddsjava_DataReaderListener();
+      listener.set_on_data_available_callback(fastddsDataCallback);
+      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
+      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
+      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
    }
 
    /**
@@ -147,7 +150,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          {
             synchronized (callbackSampleData)
             {
-               while (!closed && OK == fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, callbackSampleInfo))
+               int ret;
+               while (!closed && OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo)))
                {
                   flagHadData = true;
 
@@ -161,7 +165,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      }
                      catch (Exception e)
                      {
-                        e.printStackTrace();
+                        LogTools.error(e);
                      }
                   }
                }
@@ -218,13 +222,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                }
             }
          }
-
-         return read;
       }
       finally
       {
          closeLock.readLock().unlock();
       }
+
+      return read;
    }
 
    /**
@@ -261,7 +265,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
                if (totalRead > 0)
                {
-
                   long payloadSizeBytes = userSampleData.data_vector().size();
 
                   // Resize Java heap buffer (if necessary) and rewind
@@ -277,13 +280,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                }
             }
          }
-
-         return totalRead;
       }
       finally
       {
          closeLock.readLock().unlock();
       }
+
+      return totalRead;
    }
 
    /**
