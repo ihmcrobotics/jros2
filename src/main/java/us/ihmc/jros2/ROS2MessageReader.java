@@ -15,22 +15,41 @@
  */
 package us.ihmc.jros2;
 
-public class ROS2MessageReader<T extends ROS2Message<T>>
+public interface ROS2MessageReader<T extends ROS2Message<T>>
 {
-   private final ROS2Subscription<T> subscription;
+   /**
+    * Indicates whether the subscription has received at least one sample of data.
+    *
+    * @return true if at least one data sample has been received; false otherwise.
+    */
+   boolean hasHadData();
 
-   ROS2MessageReader(ROS2Subscription<T> subscription)
-   {
-      this.subscription = subscription;
-   }
+   /**
+    * Reads the oldest unread sample, if available, and deserializes into {@param data}.
+    *
+    * @param data the {@link ROS2Message} to pack the data into
+    * @return true if data was available and read; false otherwise.
+    */
+   boolean read(T data);
 
-   public boolean read(T data)
-   {
-      return subscription.read(data);
-   }
+   /**
+    * Reads the oldest unread sample, if available, and deserializes into a new instance of the {@link ROS2Message} type.
+    *
+    * @return a new instance of the message if data was available and read; null otherwise.
+    */
+   T read();
 
-   public T read()
-   {
-      return subscription.read();
-   }
+   /**
+    * Reads all unread samples, if any, and deserializes the latest one info {@param data}.
+    *
+    * @return the number of samples that were read.
+    */
+   int readLatest(T data);
+
+   /**
+    * Reads all unread samples, if any, and deserializes the latest one into a new instance of the {@link ROS2Message} type.
+    *
+    * @return a new instance of the message if data was available and read; null otherwise.
+    */
+   T readLatest();
 }

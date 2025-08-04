@@ -34,7 +34,7 @@ import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 /**
  * A ROS 2-compatible subscription for ingesting {@link ROS2Message} types.
  */
-public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatisticsProvider
+public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageReader<T>, MessageStatisticsProvider
 {
    private static final int OK = RETCODE_OK();
 
@@ -62,10 +62,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    private final TopicData topicData;
 
    /*
-    * Callback and reader
+    * Callback
     */
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
-   private final ROS2MessageReader<T> messageReader;
 
    /*
     * Read buffer
@@ -117,8 +116,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
 
-      messageReader = new ROS2MessageReader<>(this);
-
       readBuffer = new CDRBuffer();
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
@@ -160,7 +157,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
                   {
                      try
                      {
-                        callback.onMessage(messageReader);
+                        callback.onMessage(ROS2Subscription.this);
                      }
                      catch (Exception e)
                      {
@@ -178,21 +175,18 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    }
 
    /**
-    * Indicates whether the subscription has received at least one sample of data.
-    *
-    * @return true if at least one data sample has been received; false otherwise.
+    * {@inheritDoc}
     */
+   @Override
    public boolean hasHadData()
    {
       return flagHadData;
    }
 
    /**
-    * Reads the oldest unread sample, if available, and deserializes into {@param data}.
-    *
-    * @param data the {@link ROS2Message} to pack the data into
-    * @return true if data was available and read; false otherwise.
+    * {@inheritDoc}
     */
+   @Override
    public boolean read(T data)
    {
       boolean read = false;
@@ -234,10 +228,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    }
 
    /**
-    * Reads the oldest unread sample, if available, and deserializes into a new instance of the {@link ROS2Message} type.
-    *
-    * @return a new instance of the message if data was available and read; null otherwise.
+    * {@inheritDoc}
     */
+   @Override
    public T read()
    {
       T data = ROS2Message.createInstance(topic.getType());
@@ -246,10 +239,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    }
 
    /**
-    * Reads all unread samples, if any, and deserializes the latest one info {@param data}.
-    *
-    * @return the number of samples that were read.
+    * {@inheritDoc}
     */
+   @Override
    public int readLatest(T data)
    {
       int totalRead = 0;
@@ -295,10 +287,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    }
 
    /**
-    * Reads all unread samples, if any, and deserializes the latest one into a new instance of the {@link ROS2Message} type.
-    *
-    * @return a new instance of the message if data was available and read; null otherwise.
+    * {@inheritDoc}
     */
+   @Override
    public T readLatest()
    {
       T data = ROS2Message.createInstance(topic.getType());

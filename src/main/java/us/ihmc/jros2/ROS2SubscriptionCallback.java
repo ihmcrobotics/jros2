@@ -15,6 +15,13 @@
  */
 package us.ihmc.jros2;
 
+/**
+ * A callback interface for reading message from a {@link ROS2Subscription}.
+ * Usages:
+ *
+ *
+ * @param <T> the message type
+ */
 @FunctionalInterface
 public interface ROS2SubscriptionCallback<T extends ROS2Message<T>>
 {
