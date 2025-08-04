@@ -313,7 +313,7 @@ public class ReadWriteTest
          @Override
          public void call()
          {
-            fastddsjava_datareader_read_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
+            fastddsjava_datareader_take_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
 
             long dataLength = topicDataWrapperReceive.data_vector().size();
 

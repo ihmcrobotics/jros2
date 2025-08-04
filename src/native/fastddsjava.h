@@ -271,8 +271,8 @@ uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, epro
     eprosima::fastdds::dds::ReturnCode_t ret = reader->read(data_values,
                                                             sample_infos,
                                                             1,
-                                                            eprosima::fastdds::dds::ANY_SAMPLE_STATE,
-                                                            eprosima::fastdds::dds::NEW_VIEW_STATE,
+                                                            eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE,
+                                                            eprosima::fastdds::dds::ANY_VIEW_STATE,
                                                             eprosima::fastdds::dds::ANY_INSTANCE_STATE);
 
     if (eprosima::fastdds::dds::RETCODE_OK == ret) {
