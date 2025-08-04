@@ -3,8 +3,10 @@
   <a href="https://github.com/ihmcrobotics/jros2/wiki">Wiki</a>
   <a href="https://github.com/ihmcrobotics/jros2/issues">Issues</a>
 </p>
+<p align="center"><b>PRE-RELEASE</b></p>
 
 -----------------
+
 A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other supported ROS 2 middlewares.
 
 Fast-DDS version: `3.2.2`
