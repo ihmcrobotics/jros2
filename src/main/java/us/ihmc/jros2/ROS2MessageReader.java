@@ -26,30 +26,11 @@ public class ROS2MessageReader<T extends ROS2Message<T>>
 
    public boolean read(T data)
    {
-      if (subscription.hasHadData())
-      {
-         long payloadSizeBytes = subscription.topicDataWrapper.data_vector().size();
-
-         if (subscription.readBuffer.getBufferUnsafe() == null || subscription.readBuffer.getBufferUnsafe().limit() != payloadSizeBytes)
-         {
-            subscription.readBuffer.setBuffer(subscription.topicDataWrapper.data_ptr().position(0).limit(payloadSizeBytes).asByteBuffer());
-         }
-
-         subscription.readBuffer.rewind();
-
-         subscription.readBuffer.readPayloadHeader();
-         data.deserialize(subscription.readBuffer);
-
-         return true;
-      }
-
-      return false;
+      return subscription.read(data);
    }
 
    public T read()
    {
-      T data = ROS2Message.createInstance(subscription.getTopicType());
-
-      return read(data) ? data : null;
+      return subscription.read();
    }
 }

@@ -131,7 +131,7 @@ public class ReadWriteTest
       {
          public void call()
          {
-            fastddsjava_datareader_take_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+            fastddsjava_datareader_read_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
 
             dataCorrect.set(Arrays.equals(sampleData, topicDataWrapperReceive.data_vector().get()));
             received.set(true);
@@ -222,7 +222,7 @@ public class ReadWriteTest
       {
          public void call()
          {
-            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+            fastddsjava_datareader_read_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
 
             if (n == received.incrementAndGet())
             {
@@ -313,7 +313,7 @@ public class ReadWriteTest
          @Override
          public void call()
          {
-            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+            fastddsjava_datareader_read_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
 
             long dataLength = topicDataWrapperReceive.data_vector().size();
 
@@ -433,7 +433,7 @@ public class ReadWriteTest
          @Override
          public void call()
          {
-            fastddsjava_datareader_read_next_sample(dataReader, topicDataWrapperReceive, sampleInfo);
+            fastddsjava_datareader_read_next_custom(dataReader, topicDataWrapperReceive, sampleInfo);
 
             received.incrementAndGet();
 
