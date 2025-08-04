@@ -40,7 +40,7 @@ public interface ROS2MessageReader<T extends ROS2Message<T>>
    T read();
 
    /**
-    * Reads all unread samples, if any, and deserializes the latest one info {@param data}.
+    * Reads all unread samples, if any, and deserializes the latest one into {@param data}.
     *
     * @return the number of samples that were read.
     */
