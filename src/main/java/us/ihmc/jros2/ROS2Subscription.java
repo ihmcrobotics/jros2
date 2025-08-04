@@ -144,16 +144,16 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
          closeLock.readLock().lock();
          try
          {
-            if (!closed && callback != null)
+            synchronized (topicDataWrapper)
             {
-               synchronized (topicDataWrapper)
+               while (!closed && OK == fastddsjava_datareader_read_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
                {
-                  while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+                  flagHadData = true;
+
+                  recordStatistics();
+
+                  if (callback != null)
                   {
-                     flagHadData = true;
-
-                     recordStatistics();
-
                      try
                      {
                         callback.onMessage(messageReader);
@@ -182,12 +182,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
    {
       synchronized (topicDataWrapper)
       {
-         if (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+         if (OK == fastddsjava_datareader_take(fastddsDataReader, topicDataWrapper, sampleInfo))
          {
-            flagHadData = true;
-
-            recordStatistics();
-
             messageReader.read(data);
          }
       }
@@ -208,12 +204,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements MessageStatis
 
       synchronized (topicDataWrapper)
       {
-         while (OK == fastddsjava_datareader_take_next_sample(fastddsDataReader, topicDataWrapper, sampleInfo))
+         while (OK == fastddsjava_datareader_take(fastddsDataReader, topicDataWrapper, sampleInfo))
          {
-            flagHadData = true;
-
-            recordStatistics();
-
             totalRead++;
          }
 

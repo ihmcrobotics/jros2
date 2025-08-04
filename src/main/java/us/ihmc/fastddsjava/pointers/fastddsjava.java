@@ -109,6 +109,8 @@ public static native @Cast("bool") boolean fastddsjava_datareader_wait_for_unrea
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, SampleInfo info);
 
+public static native @Cast("uint32_t") int fastddsjava_datareader_take(Pointer reader_, Pointer data, SampleInfo info);
+
 public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_sample(Pointer reader_, Pointer data, SampleInfo info);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_, fastddsjava_DataReaderListener listener/*=nullptr*/);

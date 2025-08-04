@@ -266,6 +266,22 @@ uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, epro
     return reader->read_next_sample(data, info);
 }
 
+uint32_t fastddsjava_datareader_take(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+
+    eprosima::fastdds::dds::LoanableSequence<void*> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    eprosima::fastdds::dds::LoanableSequence<eprosima::fastdds::dds::SampleInfo> sample_infos;
+
+    eprosima::fastdds::dds::ReturnCode_t ret = reader->take(data_values, sample_infos, 1);
+
+    if (eprosima::fastdds::dds::RETCODE_OK == ret) {
+        *info = sample_infos[0];
+    }
+
+    return ret;
+}
+
 uint32_t fastddsjava_datareader_take_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
