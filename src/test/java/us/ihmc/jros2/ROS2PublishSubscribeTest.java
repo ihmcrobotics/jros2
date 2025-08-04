@@ -330,7 +330,7 @@ public class ROS2PublishSubscribeTest
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
-      subscriptionQos.history(History.KEEP_ALL);
+      subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
 
       ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
@@ -387,7 +387,7 @@ public class ROS2PublishSubscribeTest
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
-      subscriptionQos.history(History.KEEP_ALL);
+      subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
 
       AtomicInteger callbackRun = new AtomicInteger();
