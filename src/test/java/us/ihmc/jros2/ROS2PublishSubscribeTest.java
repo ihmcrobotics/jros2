@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.LockSupport;
 
@@ -361,6 +362,74 @@ public class ROS2PublishSubscribeTest
          msg = subscription.read();
       }
       assertEquals(publishCount, totalRead);
+
+      assertNull(subscription.read());
+      assertNull(subscription.readLatest());
+
+      // Ensure the ROS 2 publish process ends
+      process.waitFor();
+
+      ros2Node.close();
+   }
+
+   @Test
+   @EnabledOnOs(OS.LINUX)
+   @Timeout(30)
+   // Callback-less AND callback subscription
+   public void testROS2Subscription5() throws InterruptedException, IOException
+   {
+      final String data = "This is a test. This is only a test.";
+      final String topicName = "/ihmc/test_string";
+      final int publishCount = 20;
+
+      // Create the ROS 2 node, topic, and subscription
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.history(History.KEEP_ALL);
+      subscriptionQos.depth(publishCount);
+
+      AtomicInteger callbackRun = new AtomicInteger();
+      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, reader ->
+      {
+         // Only read in half of the callbacks
+         if (callbackRun.get() % 2 == 0)
+         {
+            reader.read();
+         }
+
+         callbackRun.getAndIncrement();
+      }, subscriptionQos);
+
+      // Launch a ROS 2 process to publish a String message
+      Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
+                                                               "--times " + publishCount + " -r 100000",
+                                                               // -r sets the publish frequency, just set to some very high number to get all the messages at once
+                                                               topicName,
+                                                               "std_msgs/msg/String",
+                                                               "{data: " + data + "}",
+                                                               Redirect.INHERIT,
+                                                               Redirect.INHERIT);
+
+      while (!subscription.hasHadData())
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
+      }
+
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+
+      // By this point, the subscription should have received all the messages, let's read them all
+      int totalRead = 0;
+      std_msgs.msg.dds.String msg = subscription.read();
+      while (msg != null)
+      {
+         assertEquals(data, msg.getData().toString());
+         totalRead++;
+         msg = subscription.read();
+      }
+      // Non callback reads should total half of the publish count
+      assertEquals(publishCount / 2, totalRead);
 
       assertNull(subscription.read());
       assertNull(subscription.readLatest());
