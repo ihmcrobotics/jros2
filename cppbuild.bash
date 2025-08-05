@@ -104,12 +104,12 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java -cp $JAVACPP_ARGS "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
+java $JAVACPP_ARGS -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
 
 cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
 #### JNI compilation ####
-java -cp $JAVACPP_ARGS "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/*.java -d javainstall
+java $JAVACPP_ARGS -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/*.java -d javainstall
 
 ##### Copy shared libs to resources ####
 # Linux
