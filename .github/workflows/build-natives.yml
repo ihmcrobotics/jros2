@@ -8,7 +8,7 @@ jobs:
     runs-on: self-hosted
     strategy:
       matrix:
-        platform: [arm64, x86_64]
+        platform: [arm64, armhf, x86_64]
       max-parallel: 1
     container:
       image: ubuntu:20.04
@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           apt-get update
-          apt-get -y install build-essential crossbuild-essential-arm64 git curl wget unzip openjdk-17-jdk jaxb
+          apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk jaxb
           # Install newer version of cmake
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
@@ -38,11 +38,15 @@ jobs:
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM=1 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM64=1 bash cppbuild.bash
+      - name: Compile native library (armhf)
+        if: matrix.platform == 'armhf'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARMHF=1 bash cppbuild.bash
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM=0 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
 
       - name: Commit generated Java and native libraries
         uses: EndBug/add-and-commit@v9

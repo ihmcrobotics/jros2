@@ -46,9 +46,12 @@ JAVACPP_COMP_ARGS=""
 if [ "$MAC_COMPILE_ARM" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
   JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
-elif [ "$LINUX_COMPILE_ARM" == "1" ]; then
+elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
+elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
+  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
+  JAVACPP_COMP_ARGS="-properties linux-armhf -Dplatform.compiler=arm-linux-gnueabihf-g++ -Dplatform.c.compiler=arm-linux-gnueabihf-gcc -Dplatform=linux-armhf"
 fi
 
 # Build foonathan_memory_vendor
@@ -113,8 +116,10 @@ java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d 
 
 ##### Copy shared libs to resources ####
 # Linux
-if [ "$LINUX_COMPILE_ARM" == "1" ]; then
+if [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-arm64"
+elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
+  LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-armhf"
 else
   LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-x86_64"
 fi
