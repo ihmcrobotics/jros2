@@ -16,6 +16,10 @@ jobs:
         TZ: "America/Chicago"
         DEBIAN_FRONTEND: noninteractive
     steps:
+      - name: Pull repo
+        run: |
+          git reset --hard
+          git pull
       - name: Install dependencies
         run: |
           apt-get update
