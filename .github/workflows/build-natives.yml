@@ -36,11 +36,11 @@ jobs:
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash LINUX_COMPILE_ARM=1 cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM=1 bash cppbuild.bash
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash LINUX_COMPILE_ARM=0 cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM=0 bash cppbuild.bash
 
       - name: Commit generated Java and native libraries
         uses: EndBug/add-and-commit@v9
