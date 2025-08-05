@@ -16,10 +16,6 @@ jobs:
         TZ: "America/Chicago"
         DEBIAN_FRONTEND: noninteractive
     steps:
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - name: Install dependencies
         run: |
           apt-get update
@@ -30,6 +26,11 @@ jobs:
           mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
           apt-get -y purge libssl-dev -y
+
+      - name: Pull repo
+        run: |
+          git reset --hard
+          git pull
 
       - name: Checkout repository
         uses: actions/checkout@v4
