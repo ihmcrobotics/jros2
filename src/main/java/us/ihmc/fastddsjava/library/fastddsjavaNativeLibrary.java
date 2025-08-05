@@ -96,16 +96,7 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
       if (!loaded)
       {
          fastddsjavaNativeLibrary lib = new fastddsjavaNativeLibrary();
-
-         try
-         {
-            loaded = NativeLibraryLoader.loadLibrary(lib);
-         }
-         catch (UnsatisfiedLinkError e)
-         {
-
-         }
-
+         loaded = NativeLibraryLoader.loadLibrary(lib);
       }
       return loaded;
    }
