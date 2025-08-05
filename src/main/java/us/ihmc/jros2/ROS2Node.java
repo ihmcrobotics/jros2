@@ -477,9 +477,8 @@ public class ROS2Node implements Closeable
          @Override
          public void onMessage(ROS2MessageReader<T> reader)
          {
-            if (sample != null)
+            if (sample != null && reader.read(sample))
             {
-               reader.read(sample);
                sampler.consume(sample);
             }
          }
