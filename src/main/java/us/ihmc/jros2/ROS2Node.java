@@ -610,6 +610,7 @@ public class ROS2Node implements Closeable
     * This method will block and wait for:
     * 1. any currently executing {@link ROS2Publisher#publish(ROS2Message)}
     * 2. any currently executing {@link ROS2Subscription} callback
+    * 3. any currently executing {@link ROS2Subscription#read()} (or other read(T), readLatest(), readLatest(T))
     * This is to ensure memory safety and guaranteed order of close operations.
     * All publishers and subscriptions will be destroyed if close() has not been called already.
     */
