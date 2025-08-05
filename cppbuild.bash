@@ -50,7 +50,7 @@ elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
 elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
-  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
+  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-armhf-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-armhf -Dplatform.compiler=arm-linux-gnueabihf-g++ -Dplatform.c.compiler=arm-linux-gnueabihf-gcc -Dplatform=linux-armhf"
 fi
 
