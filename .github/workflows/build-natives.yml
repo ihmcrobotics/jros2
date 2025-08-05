@@ -48,7 +48,7 @@ jobs:
           add: '*.java *.so *.so.*' # Only commit generated java from Linux
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Linux (x86_64)'
+          message: 'Rebuild natives for Linux'
           push: true
   build-natives-windows:
     runs-on: windows-2022
