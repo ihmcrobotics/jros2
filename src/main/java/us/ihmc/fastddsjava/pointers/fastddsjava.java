@@ -32,6 +32,7 @@ public static final short PL_CDR_LE = (short) 0x0003; // SerializedPayload.hpp
 // #include <fastdds/dds/subscriber/Subscriber.hpp>
 // #include <fastdds/dds/subscriber/SampleInfo.hpp>
 // #include <fastdds/dds/subscriber/DataReader.hpp>
+// #include <fastdds/dds/core/StackAllocatedSequence.hpp>
 
 // #define JAVACPP_SKIP
 // Targeting fastddsjava_TopicDataWrapper.java
@@ -107,9 +108,9 @@ public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, 
 
 public static native @Cast("bool") boolean fastddsjava_datareader_wait_for_unread_message(Pointer reader_, @Const @ByRef dds_Time_t timeout);
 
-public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, SampleInfo info);
+public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_custom(Pointer reader_, Pointer data, SampleInfo info);
 
-public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_sample(Pointer reader_, Pointer data, SampleInfo info);
+public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_custom(Pointer reader_, Pointer data, SampleInfo info);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_, fastddsjava_DataReaderListener listener/*=nullptr*/);
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_);

@@ -128,6 +128,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             }
 
             retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+
             recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
          }
       }
@@ -210,6 +211,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    /**
     * Get the topic type class for which this publisher can publish.
+    *
     * @return the type class held in the {@link ROS2Topic}
     */
    public Class<T> getTopicType()
@@ -219,6 +221,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    /**
     * Get the topic name for which this publisher will use when publishing.
+    *
     * @return the topic name held in the {@link ROS2Topic}
     */
    public String getTopicName()

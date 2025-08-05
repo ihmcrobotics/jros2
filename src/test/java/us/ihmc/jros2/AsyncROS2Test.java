@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -110,13 +111,11 @@ public class AsyncROS2Test
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>("/test_topic", Bool.class);
 
-      ROS2Publisher<?>[] publishers = new ROS2Publisher[publisherCount];
       Thread[] publisherThreads = new Thread[publisherCount];
 
       for (int i = 0; i < publisherCount; ++i)
       {
          ROS2Publisher<Bool> asyncPublisher = asyncNode.createPublisher(topic);
-         publishers[i] = asyncPublisher;
          publisherThreads[i] = new Thread(() ->
          {
             for (int j = 0; j < messagesToPublish; j++)

@@ -12,6 +12,7 @@
 #include <fastdds/dds/subscriber/Subscriber.hpp>
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
+#include <fastdds/dds/core/StackAllocatedSequence.hpp>
 
 #define JAVACPP_SKIP
 
@@ -260,16 +261,46 @@ bool fastddsjava_datareader_wait_for_unread_message(void* reader_, const eprosim
     return reader->wait_for_unread_message(timeout);
 }
 
-uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
-    return reader->read_next_sample(data, info);
+    eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    eprosima::fastdds::dds::LoanableSequence<eprosima::fastdds::dds::SampleInfo> sample_infos(1);
+
+    eprosima::fastdds::dds::ReturnCode_t ret = reader->read(data_values,
+                                                            sample_infos,
+                                                            1,
+                                                            eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE,
+                                                            eprosima::fastdds::dds::ANY_VIEW_STATE,
+                                                            eprosima::fastdds::dds::ANY_INSTANCE_STATE);
+
+    if (eprosima::fastdds::dds::RETCODE_OK == ret) {
+        *info = sample_infos[0];
+    }
+
+    return ret;
 }
 
-uint32_t fastddsjava_datareader_take_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+uint32_t fastddsjava_datareader_take_next_custom(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
-    return reader->take_next_sample(data, info);
+    eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
+    const_cast<void**>(data_values.buffer())[0] = data;
+    eprosima::fastdds::dds::LoanableSequence<eprosima::fastdds::dds::SampleInfo> sample_infos(1);
+
+    eprosima::fastdds::dds::ReturnCode_t ret = reader->take(data_values,
+                                                            sample_infos,
+                                                            1,
+                                                            eprosima::fastdds::dds::ANY_SAMPLE_STATE,
+                                                            eprosima::fastdds::dds::ANY_VIEW_STATE,
+                                                            eprosima::fastdds::dds::ANY_INSTANCE_STATE);
+
+    if (eprosima::fastdds::dds::RETCODE_OK == ret) {
+        *info = sample_infos[0];
+    }
+
+    return ret;
 }
 
 uint32_t fastddsjava_datareader_set_listener(void* reader_, fastddsjava_DataReaderListener* listener = nullptr) {
