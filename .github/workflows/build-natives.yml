@@ -27,17 +27,14 @@ jobs:
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
           apt-get -y purge libssl-dev -y
 
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Pull repo
         run: |
           git reset --hard
           git pull
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Compile
-        run: |
-
+          
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
