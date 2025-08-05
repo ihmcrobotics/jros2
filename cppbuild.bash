@@ -42,13 +42,13 @@ git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS
 INSTALL_DIR=$(pwd)
 
 COMPILER_ARGS=""
-JAVACPP_ARGS=""
+JAVACPP_COMP_ARGS=""
 if [ "$MAC_COMPILE_ARM" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
-  JAVACPP_ARGS="-Djavacpp.platform=macosx-arm64"
+  JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
 elif [ "$LINUX_COMPILE_ARM" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
-  JAVACPP_ARGS="-Djavacpp.platform.compiler=aarch64-linux-gnu-g++ -Djavacpp.platform.c.compiler=aarch64-linux-gnu-gcc -Djavacpp.platform=linux-arm64"
+  JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
 fi
 
 # Build foonathan_memory_vendor
@@ -104,12 +104,12 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java $JAVACPP_ARGS -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
+java -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
 
 cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
 #### JNI compilation ####
-java $JAVACPP_ARGS -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java -d javainstall
+java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d javainstall
 
 ##### Copy shared libs to resources ####
 # Linux
