@@ -35,7 +35,7 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
 
             switch (archProp)
             {
-               case "arm", "armv7l" -> archPackage = "linux-armhf";
+               case "arm", "armhf", "armv7l" -> archPackage = "linux-armhf";
                case "arm64", "aarch64" -> archPackage = "linux-arm64";
                case "amd64", "x86_64" -> archPackage = "linux-x86_64";
             }
@@ -96,7 +96,16 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
       if (!loaded)
       {
          fastddsjavaNativeLibrary lib = new fastddsjavaNativeLibrary();
-         loaded = NativeLibraryLoader.loadLibrary(lib);
+
+         try
+         {
+            loaded = NativeLibraryLoader.loadLibrary(lib);
+         }
+         catch (UnsatisfiedLinkError e)
+         {
+
+         }
+
       }
       return loaded;
    }

@@ -82,7 +82,7 @@ dependencies {
     api("us.ihmc:javacpp:1.5.11-ihmc-2") {
         isTransitive = true
     }
-    api("us.ihmc:ihmc-native-library-loader:2.0.4") {
+    api("us.ihmc:ihmc-native-library-loader:2.0.5") {
         isTransitive = true
     }
     api("us.ihmc:log-tools:0.6.5") {
