@@ -41,12 +41,25 @@ git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS
 
 INSTALL_DIR=$(pwd)
 
+COMPILER_ARGS=""
+JAVACPP_COMP_ARGS=""
+if [ "$MAC_COMPILE_ARM" == "1" ]; then
+  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
+  JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
+elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
+  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
+  JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
+elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
+  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-armhf-toolchain.cmake"
+  JAVACPP_COMP_ARGS="-properties linux-armhf -Dplatform.compiler=arm-linux-gnueabihf-g++ -Dplatform.c.compiler=arm-linux-gnueabihf-gcc -Dplatform=linux-armhf"
+fi
+
 # Build foonathan_memory_vendor
 pushd .
 cd foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install
 popd
 
@@ -55,7 +68,7 @@ pushd .
 cd Fast-CDR-$FASTCDR_VERSION
 mkdir -p build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install
 popd
 
@@ -65,7 +78,7 @@ cd Fast-DDS-$FASTDDS_VERSION
 git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
@@ -94,27 +107,34 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
+java -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
 
 cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
 #### JNI compilation ####
-java -cp "javacpp.jar" org.bytedeco.javacpp.tools.Builder us/ihmc/fastddsjava/pointers/*.java -d javainstall
+java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d javainstall
 
 ##### Copy shared libs to resources ####
 # Linux
-mkdir -p ../src/main/resources/fastddsjava/native/linux-x86_64
+if [ "$LINUX_COMPILE_ARM64" == "1" ]; then
+  LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-arm64"
+elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
+  LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-armhf"
+else
+  LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-x86_64"
+fi
+mkdir -p "$LINUX_GEN_PATH"
 if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
-  cp install/lib/libfastcdr.so.2.3.0 ../src/main/resources/fastddsjava/native/linux-x86_64
-  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libfastcdr.so.2.3.0
+  cp install/lib/libfastcdr.so.2.3.0 "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastcdr.so.2.3.0"
 fi
 if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
-  cp install/lib/libfastdds.so.3.2.2 ../src/main/resources/fastddsjava/native/linux-x86_64
-  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libfastdds.so.3.2.2
+  cp install/lib/libfastdds.so.3.2.2 "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastdds.so.3.2.2"
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
-  cp javainstall/libjnifastddsjava.so ../src/main/resources/fastddsjava/native/linux-x86_64
-  strip ../src/main/resources/fastddsjava/native/linux-x86_64/libjnifastddsjava.so
+  cp javainstall/libjnifastddsjava.so "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libjnifastddsjava.so"
 fi
 # Windows
 mkdir -p ../src/main/resources/fastddsjava/native/windows-x86_64
@@ -128,17 +148,21 @@ if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 # macOS
-mkdir -p ../src/main/resources/fastddsjava/native/macos-x86_64
+if [ "$MAC_COMPILE_ARM" == "1" ]; then
+  MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-arm64"
+else
+  MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-x86_64"
+fi
+mkdir -p "$MACOS_GEN_PATH"
 if [ -f "install/lib/libfastcdr.2.3.0.dylib" ]; then
-  cp install/lib/libfastcdr.2.3.0.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+  cp install/lib/libfastcdr.2.3.0.dylib "$MACOS_GEN_PATH"
 fi
 if [ -f "install/lib/libfastdds.3.2.2.dylib" ]; then
-  cp install/lib/libfastdds.3.2.2.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+  cp install/lib/libfastdds.3.2.2.dylib "$MACOS_GEN_PATH"
 fi
 if [ -f "javainstall/libjnifastddsjava.dylib" ]; then
-  cp javainstall/libjnifastddsjava.dylib ../src/main/resources/fastddsjava/native/macos-x86_64
+  cp javainstall/libjnifastddsjava.dylib "$MACOS_GEN_PATH"
 fi
-
 popd
 
 # xjc generation ###

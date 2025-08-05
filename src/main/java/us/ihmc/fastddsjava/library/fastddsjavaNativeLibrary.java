@@ -25,18 +25,44 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
    public String getPackage(OperatingSystem os, Architecture arch)
    {
       String archPackage = "";
-      if (arch == Architecture.x64)
+
+      switch (os)
       {
-         archPackage = switch (os)
+         case LINUX64 ->
          {
-            case LINUX64 -> "linux-x86_64";
-            case WIN64 -> "windows-x86_64";
-            case MACOSX64 -> "macos-x86_64";
-         };
+            // Manually parse the architecture, IHMC Native Library Loader doesn't handle all cases for Linux
+            String archProp = System.getProperty("os.arch");
+
+            switch (archProp)
+            {
+               case "arm", "armhf", "armv7l" -> archPackage = "linux-armhf";
+               case "arm64", "aarch64" -> archPackage = "linux-arm64";
+               case "amd64", "x86_64" -> archPackage = "linux-x86_64";
+            }
+         }
+         case WIN64 ->
+         {
+            if (arch == Architecture.x64)
+            {
+               archPackage = "windows-x86_64";
+            }
+         }
+         case MACOSX64 ->
+         {
+            if (arch == Architecture.arm64)
+            {
+               archPackage = "macos-arm64";
+            }
+            else if (arch == Architecture.x64)
+            {
+               archPackage = "macos-x86_64";
+            }
+         }
       }
-      else if (arch == Architecture.arm64)
+
+      if (archPackage.isEmpty())
       {
-         throw new RuntimeException("Unsupported platform");
+         throw new RuntimeException("Unsupported architecture or operating system.");
       }
 
       return "fastddsjava.native." + archPackage;

@@ -14,10 +14,12 @@ Fast-DDS version: `3.2.2`
 ROS 2 compatible and tested distros: `[humble, jazzy]`
 
 Supported platforms:
-- Linux (Ubuntu 20.04+ or similar x86_64, arm64)
+- Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
 - Windows (Windows 10+ x86_64)
 - (soon) macOS (macOS 13+ Intel, Apple Silicon)
 - (soon) Android
+
+Works on NVIDIA Jetson and all versions of Raspberry Pi!
 
 ## Features
 - Fully compatible with ROS 2 humble or newer (may also work with older ROS 2 distros)
