@@ -78,7 +78,7 @@ cd Fast-DDS-$FASTDDS_VERSION
 git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DOPENSSL_FOUND=0 -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
