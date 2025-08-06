@@ -43,8 +43,7 @@ INSTALL_DIR=$(pwd)
 
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
-if [ "$MAC_COMPILE_ARM64" == "1" ]; then
-elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
+if [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
 elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
