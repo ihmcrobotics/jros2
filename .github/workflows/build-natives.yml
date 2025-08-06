@@ -4,88 +4,88 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-natives-linux:
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        platform: [arm64, armhf, x86_64]
-      max-parallel: 1
-    container:
-      image: ubuntu:20.04
-      env:
-        TZ: "America/Chicago"
-        DEBIAN_FRONTEND: noninteractive
-    steps:
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk jaxb
-          # Install newer version of cmake
-          wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
-          tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
-          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
-          rm -rf cmake-4.0.2-linux-x86_64.tar.gz
-          apt-get -y purge libssl-dev -y
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
-          
-      - name: Compile native library (arm64)
-        if: matrix.platform == 'arm64'
-        run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM64=1 bash cppbuild.bash
-      - name: Compile native library (armhf)
-        if: matrix.platform == 'armhf'
-        run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARMHF=1 bash cppbuild.bash
-      - name: Compile native library (x86_64)
-        if: matrix.platform == 'x86_64'
-        run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
-
-      - name: Commit generated Java and native libraries
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: '*.java *.so *.so.*' # Only commit generated java from Linux
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Linux'
-          push: true
-  build-natives-windows:
-    runs-on: windows-2022
-    needs: build-natives-linux
-    steps:
-      - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
-      - uses: ilammy/msvc-dev-cmd@v1
-        with:
-          vsversion: 2022
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-      - name: Compile native library
-        run: |
-          bash.exe cppbuild.bash
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: '*.dll' # Only commit generated java from Linux
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Windows'
-          push: true
+#  build-natives-linux:
+#    runs-on: self-hosted
+#    strategy:
+#      matrix:
+#        platform: [arm64, armhf, x86_64]
+#      max-parallel: 1
+#    container:
+#      image: ubuntu:20.04
+#      env:
+#        TZ: "America/Chicago"
+#        DEBIAN_FRONTEND: noninteractive
+#    steps:
+#      - name: Install dependencies
+#        run: |
+#          apt-get update
+#          apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk jaxb
+#          # Install newer version of cmake
+#          wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
+#          tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
+#          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+#          rm -rf cmake-4.0.2-linux-x86_64.tar.gz
+#          apt-get -y purge libssl-dev -y
+#
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
+#
+#      - name: Pull repo
+#        run: |
+#          git reset --hard
+#          git pull
+#
+#      - name: Compile native library (arm64)
+#        if: matrix.platform == 'arm64'
+#        run: |
+#          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM64=1 bash cppbuild.bash
+#      - name: Compile native library (armhf)
+#        if: matrix.platform == 'armhf'
+#        run: |
+#          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARMHF=1 bash cppbuild.bash
+#      - name: Compile native library (x86_64)
+#        if: matrix.platform == 'x86_64'
+#        run: |
+#          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
+#
+#      - name: Commit generated Java and native libraries
+#        uses: EndBug/add-and-commit@v9
+#        with:
+#          add: '*.java *.so *.so.*' # Only commit generated java from Linux
+#          author_name: ihmc-rosie
+#          author_email: rosie@ihmc.us
+#          message: 'Rebuild natives for Linux'
+#          push: true
+#  build-natives-windows:
+#    runs-on: windows-2022
+#    needs: build-natives-linux
+#    steps:
+#      - uses: actions/checkout@v4
+#      - name: Pull repo
+#        run: |
+#          git reset --hard
+#          git pull
+#      - uses: ilammy/msvc-dev-cmd@v1
+#        with:
+#          vsversion: 2022
+#      - uses: actions/setup-java@v4
+#        with:
+#          distribution: 'temurin'
+#          java-version: '17'
+#      - name: Compile native library
+#        run: |
+#          bash.exe cppbuild.bash
+#      - name: Commit native libraries
+#        uses: EndBug/add-and-commit@v9
+#        with:
+#          add: '*.dll' # Only commit generated java from Linux
+#          author_name: ihmc-rosie
+#          author_email: rosie@ihmc.us
+#          message: 'Rebuild natives for Windows'
+#          push: true
   build-natives-macos:
     runs-on: macos-13
-    needs: build-natives-windows
+#    needs: build-natives-windows
     strategy:
       matrix:
         platform: [arm64, x86_64]
