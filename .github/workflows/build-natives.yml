@@ -106,10 +106,9 @@ jobs:
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for macOS'
           push: true
-
   build-natives-macos-intel:
     runs-on: macos-13
-    needs: build-natives-macos-intel
+    needs: build-natives-macos-arm
     steps:
       - uses: actions/checkout@v4
       - name: Pull repo
