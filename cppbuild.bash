@@ -44,7 +44,7 @@ INSTALL_DIR=$(pwd)
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
 if [ "$MAC_COMPILE_ARM64" == "1" ]; then
-  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
+  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64"
   JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
