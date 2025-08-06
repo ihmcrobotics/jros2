@@ -84,7 +84,7 @@ jobs:
 #          message: 'Rebuild natives for Windows'
 #          push: true
   build-natives-macos-arm:
-    runs-on: macos-13-xlarge
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Pull repo
