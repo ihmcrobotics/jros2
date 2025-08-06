@@ -43,7 +43,7 @@ INSTALL_DIR=$(pwd)
 
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
-if [ "$MAC_COMPILE_ARM" == "1" ]; then
+if [ "$MAC_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
   JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
