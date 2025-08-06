@@ -44,7 +44,7 @@ INSTALL_DIR=$(pwd)
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
 if [ "$MAC_COMPILE_ARM64" == "1" ]; then
-  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64"
+  COMPILER_ARGS="-DCMAKE_SYSTEM_NAME=Darwin -DCMAKE_SYSTEM_PROCESSOR=arm64 -DCMAKE_OSX_ARCHITECTURES=arm64"
   JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
@@ -78,7 +78,7 @@ cd Fast-DDS-$FASTDDS_VERSION
 git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DOPENSSL_FOUND=0 -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
