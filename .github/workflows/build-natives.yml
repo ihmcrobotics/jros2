@@ -114,5 +114,5 @@ jobs:
           add: '*.dylib' # Only commit generated java from Linux
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS (x86_64)'
+          message: 'Rebuild natives for macOS'
           push: true

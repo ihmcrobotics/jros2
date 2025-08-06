@@ -148,7 +148,7 @@ if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 # macOS
-if [ "$MAC_COMPILE_ARM" == "1" ]; then
+if [ "$MAC_COMPILE_ARM64" == "1" ]; then
   MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-arm64"
 else
   MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-x86_64"
