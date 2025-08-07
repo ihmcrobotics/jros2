@@ -66,11 +66,11 @@ public class Statistics
 
    /**
     * Getter for statistic values.
+    * Note: The switch statement is used so that future additions of statistic types
+    * are guaranteed to have a getter, as a missing case will cause compilation errors.
     *
     * @param statisticType The statistic type to get.
     * @return The value of the desired statistic type.
-    * @implNote The switch statement is used so that future additions of statistic types
-    *       are guaranteed to have a getter, as a missing case will cause compilation errors.
     */
    public double get(StatisticDataType statisticType)
    {
@@ -88,11 +88,11 @@ public class Statistics
 
    /**
     * Setter for statistic values.
+    * Note: The switch statement is used so that future additions of statistic types
+    * are guaranteed to have a setter, as a missing case will cause compilation errors.
     *
     * @param statisticType The statistic type to set.
     * @param value         The value to set the statistic type.
-    * @implNote The switch statement is used so that future additions of statistic types
-    *       are guaranteed to have a setter, as a missing case will cause compilation errors.
     */
    void set(StatisticDataType statisticType, double value)
    {
