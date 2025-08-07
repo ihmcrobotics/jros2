@@ -16,15 +16,22 @@
 plugins {
    id("java")
    id("java-gradle-plugin")
+
+   id("com.gradle.plugin-publish") version "1.3.1"
 }
 
 group = "us.ihmc"
 version = "1.0.0"
 
 gradlePlugin {
+   website.set("https://github.com/ihmcrobotics/jros2")
+   vcsUrl.set("https://github.com/ihmcrobotics/jros2")
    plugins {
       create("jros2Generator") {
          id = "us.ihmc.jros2.generator"
+         displayName = "jros2 Interface Generator"
+         description = "Gradle plugin to generate Java ROS 2 interface classes from .msg, .srv, .action files"
+         tags.set(listOf("jros2", "ros2"))
          implementationClass = "us.ihmc.jros2.generator.jros2GeneratorPlugin"
       }
    }
