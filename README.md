@@ -3,7 +3,6 @@
   <a href="https://github.com/ihmcrobotics/jros2/wiki">Wiki</a>
   <a href="https://github.com/ihmcrobotics/jros2/issues">Issues</a>
 </p>
-<p align="center"><b>PRE-RELEASE</b></p>
 
 -----------------
 
