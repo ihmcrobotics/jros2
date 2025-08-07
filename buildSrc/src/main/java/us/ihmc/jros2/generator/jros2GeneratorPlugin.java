@@ -25,10 +25,6 @@ public class jros2GeneratorPlugin implements Plugin<Project>
    @Override
    public void apply(Project plugin)
    {
-      plugin.getTasks().register("jros2ls", task ->
-      {
-         task.setGroup(TASK_GROUP_NAME);
-         task.setDescription("desc");
-      });
+
    }
 }
