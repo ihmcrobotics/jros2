@@ -21,7 +21,7 @@ plugins {
 }
 
 group = "us.ihmc"
-version = "1.0.0"
+version = "1.0.1"
 
 gradlePlugin {
    website.set("https://github.com/ihmcrobotics/jros2")
@@ -40,6 +40,30 @@ gradlePlugin {
 java {
    sourceCompatibility = JavaVersion.VERSION_17
    targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.jar {
+   archiveBaseName.set("jros2Generator")
+   archiveVersion.set(version.toString())
+}
+
+val javadocJar by tasks.registering(Jar::class) {
+   from(tasks.javadoc)
+   archiveBaseName.set("jros2Generator")
+   archiveVersion.set(version.toString())
+   archiveClassifier.set("javadoc")
+}
+
+val sourcesJar by tasks.registering(Jar::class) {
+   from(sourceSets.main.get().allSource)
+   archiveBaseName.set("jros2Generator")
+   archiveVersion.set(version.toString())
+   archiveClassifier.set("sources")
+}
+
+artifacts {
+   archives(javadocJar.get())
+   archives(sourcesJar.get())
 }
 
 repositories {
