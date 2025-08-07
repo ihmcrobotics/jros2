@@ -90,7 +90,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
             if (now - lastQueueOverflowWarnTimeNs > 1e9)
             {
                LogTools.warn(
-                     "AsyncROS2Publisher ($1) has exceeded the queue capacity of $2. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
+                     "AsyncROS2Publisher ({}) has exceeded the queue capacity of {}. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
                      node.getName(),
                      queueCapacity);
 

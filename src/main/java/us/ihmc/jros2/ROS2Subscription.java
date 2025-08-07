@@ -17,11 +17,9 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.pointers.SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
-import us.ihmc.fastddsjava.pointers.rtps_Time_t;
 import us.ihmc.log.LogTools;
 
 import java.util.concurrent.TimeUnit;
@@ -55,9 +53,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
    private final fastddsjava_TopicDataWrapper callbackSampleData;
-   private final SampleInfo callbackSampleInfo;
+   private final Pointer fastddsCallbackSampleInfo;
    protected final fastddsjava_TopicDataWrapper userSampleData;
-   protected final SampleInfo userSampleInfo;
+   protected final Pointer fastddsUserSampleInfo;
    private final fastddsjava_DataReaderListener listener;
    private final fastddsjava_OnDataCallback fastddsDataCallback;
    private final TopicData topicData;
@@ -107,9 +105,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       closed = false;
 
       callbackSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-      callbackSampleInfo = new SampleInfo();
+      fastddsCallbackSampleInfo = fastddsjava_create_sampleinfo();
       userSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-      userSampleInfo = new SampleInfo();
+      fastddsUserSampleInfo = fastddsjava_create_sampleinfo();
 
       readBuffer = new CDRBuffer();
 
@@ -151,7 +149,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (callbackSampleData)
             {
                int ret;
-               while (!closed && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader, userSampleData, userSampleInfo)))
+               while (!closed && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo)))
                {
                   flagHadData = true;
 
@@ -202,7 +200,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          {
             synchronized (userSampleData)
             {
-               int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo);
+               int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo);
                if (OK == ret)
                {
                   long payloadSizeBytes = userSampleData.data_vector().size();
@@ -258,7 +256,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (userSampleData)
             {
                int ret;
-               while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo)))
+               while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo)))
                {
                   totalRead++;
                }
@@ -318,10 +316,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          fastddsDataCallback.close();
 
          topicData.topicDataWrapperType.delete_data(callbackSampleData);
-         callbackSampleInfo.close();
+         fastddsjava_delete_sampleinfo(fastddsCallbackSampleInfo);
          callbackSampleData.close();
          topicData.topicDataWrapperType.delete_data(userSampleData);
-         userSampleInfo.close();
+         fastddsjava_delete_sampleinfo(fastddsUserSampleInfo);
          userSampleData.close();
 
          retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
@@ -331,12 +329,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private void recordStatistics()
    {
       // Time when the sample was published
-      rtps_Time_t sourceTimestamp = callbackSampleInfo.source_timestamp();
-      long sourceTimestampMillis = TimeUnit.NANOSECONDS.toMillis(sourceTimestamp.to_ns());
+      long sourceTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_source_timestamp_to_ns(fastddsCallbackSampleInfo));
 
       // Time when the sample was received
-      rtps_Time_t receptionTimestamp = callbackSampleInfo.reception_timestamp();
-      long receptionTimestampMillis = TimeUnit.NANOSECONDS.toMillis(receptionTimestamp.to_ns());
+      long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_reception_timestamp_to_ns(fastddsCallbackSampleInfo));
 
       // The size of the entire payload (including the header) in bytes
       int payloadSizeBytes = (int) callbackSampleData.data_vector().size();
@@ -349,14 +345,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          // Record publish period if available
          if (lastReceiveTime != Long.MIN_VALUE)
          {
-            statisticsCalculators[PERIOD.ordinal()].record(receptionTimestampMillis - lastReceiveTime);
+            statisticsCalculators[PERIOD.ordinal()].record(receptionTimestampMs - lastReceiveTime);
          }
-         lastReceiveTime = receptionTimestampMillis;
+         lastReceiveTime = receptionTimestampMs;
 
          // Record publish age
-         if (sourceTimestampMillis != Long.MIN_VALUE)
+         if (sourceTimestampMs != Long.MIN_VALUE)
          {
-            statisticsCalculators[AGE.ordinal()].record(receptionTimestampMillis - sourceTimestampMillis);
+            statisticsCalculators[AGE.ordinal()].record(receptionTimestampMs - sourceTimestampMs);
          }
       }
    }
