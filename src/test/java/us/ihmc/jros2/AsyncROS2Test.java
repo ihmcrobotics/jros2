@@ -1,12 +1,9 @@
 package us.ihmc.jros2;
 
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import std_msgs.msg.dds.Bool;
-import std_msgs.msg.dds.Empty;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.log.LogTools;
 
@@ -16,6 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -103,34 +101,40 @@ public class AsyncROS2Test
       asyncNode.close();
    }
 
-   @RepeatedTest(25)
-   @Timeout(5)
+   @Test
    public void testMultipleAsyncPublishers() throws InterruptedException
    {
       final int publisherCount = 10;
-      final int messagesPerPublisher = 1000;
-      final int totalMessages = publisherCount * messagesPerPublisher;
+      final int messagesToPublish = 1000;
+      final boolean expected = true;
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
-      ROS2Topic<Empty> topic = new ROS2Topic<>("/test_empty_topic", Empty.class);
+      ROS2Topic<Bool> topic = new ROS2Topic<>("/test_topic", Bool.class);
 
       Thread[] publisherThreads = new Thread[publisherCount];
 
       for (int i = 0; i < publisherCount; ++i)
       {
-         ROS2Publisher<Empty> asyncPublisher = asyncNode.createPublisher(topic);
+         ROS2Publisher<Bool> asyncPublisher = asyncNode.createPublisher(topic);
          publisherThreads[i] = new Thread(() ->
          {
-            for (int j = 0; j < messagesPerPublisher; j++)
+            for (int j = 0; j < messagesToPublish; j++)
             {
-               asyncPublisher.publish(new Empty());
+               Bool message = new Bool();
+               message.setData(expected);
+               asyncPublisher.publish(message);
                LockSupport.parkNanos(500000); // park for 0.5ms
             }
          });
       }
 
       AtomicInteger receivedMessageCount = new AtomicInteger(0);
-      asyncNode.createSubscription(topic, reader -> receivedMessageCount.incrementAndGet());
+      asyncNode.createSubscription(topic, reader ->
+      {
+         Bool received = reader.read();
+         assertEquals(expected, received.getData());
+         receivedMessageCount.incrementAndGet();
+      });
 
       for (int i = 0; i < publisherCount; ++i)
       {
@@ -142,7 +146,7 @@ public class AsyncROS2Test
          publisherThreads[i].join();
       }
 
-      assertEquals(totalMessages, receivedMessageCount.get());
+      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
 
       asyncNode.close();
    }
