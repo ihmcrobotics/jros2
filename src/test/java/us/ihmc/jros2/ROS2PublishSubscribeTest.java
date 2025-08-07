@@ -8,6 +8,7 @@ import org.junit.jupiter.api.condition.OS;
 import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.ROS2QoSProfile.History;
+import us.ihmc.jros2.ROS2QoSProfile.Reliability;
 import us.ihmc.log.LogTools;
 
 import java.io.IOException;
@@ -101,13 +102,16 @@ public class ROS2PublishSubscribeTest
 
       assertDoesNotThrow(() ->
       {
+         ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+         subscriptionQos.reliability(Reliability.RELIABLE);
+
          // Create subscriptions
          ROS2Subscription<Bool> subscription1 = ros2Node.createSubscription(topic, reader ->
          {
             Bool message = new Bool();
             reader.read(message);
             assert false; // Should never reach here since we don't publish anything
-         }, ROS2QoSProfile.DEFAULT);
+         }, subscriptionQos);
 
          // Ensure we can destroy subscriptions
          ros2Node.destroySubscription(subscription1);
@@ -141,9 +145,9 @@ public class ROS2PublishSubscribeTest
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
 
-      ROS2QoSProfile qosProfile = new ROS2QoSProfile();
-      qosProfile.durability(Durability.TRANSIENT_LOCAL);
-      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, qosProfile);
+      ROS2QoSProfile publisherQos = new ROS2QoSProfile();
+      publisherQos.durability(Durability.TRANSIENT_LOCAL);
+      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, publisherQos);
 
       // Create a Bool message and publish it
       Bool bool = new Bool();
@@ -172,6 +176,9 @@ public class ROS2PublishSubscribeTest
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
 
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.reliability(Reliability.RELIABLE);
+
       // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
       std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
       final Object sync = new Object();
@@ -183,7 +190,7 @@ public class ROS2PublishSubscribeTest
          {
             sync.notify();
          }
-      }, ROS2QoSProfile.DEFAULT);
+      }, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
@@ -226,6 +233,9 @@ public class ROS2PublishSubscribeTest
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.reliability(Reliability.RELIABLE);
+
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
@@ -236,7 +246,7 @@ public class ROS2PublishSubscribeTest
             receivedString.set(msg.getData().toString());
             sync.notify();
          }
-      }, ROS2QoSProfile.DEFAULT);
+      }, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
@@ -279,6 +289,9 @@ public class ROS2PublishSubscribeTest
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
+      ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
+      subscriptionQos.reliability(Reliability.RELIABLE);
+
       final Object sync = new Object();
       ros2Node.createSubscriptionSampler(topic, msg ->
       {
@@ -287,7 +300,7 @@ public class ROS2PublishSubscribeTest
             receivedString.set(msg.getData().toString());
             sync.notify();
          }
-      }, ROS2QoSProfile.DEFAULT);
+      }, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
@@ -332,6 +345,7 @@ public class ROS2PublishSubscribeTest
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
+      subscriptionQos.reliability(Reliability.RELIABLE);
 
       ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
@@ -389,6 +403,7 @@ public class ROS2PublishSubscribeTest
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
+      subscriptionQos.reliability(Reliability.RELIABLE);
 
       AtomicInteger callbackRun = new AtomicInteger();
       ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, reader ->
