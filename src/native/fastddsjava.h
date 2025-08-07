@@ -153,6 +153,34 @@ uint32_t fastddsjava_delete_participant(void* participant_) {
 }
 
 /*
+ *  Returns eprosima::fastdds::dds::SampleInfo*
+ *  Must free manually with fastddsjava_delete_sampleinfo(void*)
+ */
+void* fastddsjava_create_sampleinfo() {
+    eprosima::fastdds::dds::SampleInfo* info = new eprosima::fastdds::dds::SampleInfo();
+
+    return info;
+}
+
+void fastddsjava_delete_sampleinfo(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    delete info;
+}
+
+int64_t fastddsjava_sampleinfo_source_timestamp_to_ns(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->source_timestamp.to_ns();
+}
+
+int64_t fastddsjava_sampleinfo_reception_timestamp_to_ns(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->reception_timestamp.to_ns();
+}
+
+/*
  *  Returns eprosima::fastdds::dds::Publisher*
  */
 void* fastddsjava_create_publisher(void* participant_, const std::string profile_name) {
@@ -255,14 +283,9 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
 }
 
-bool fastddsjava_datareader_wait_for_unread_message(void* reader_, const eprosima::fastdds::dds::Duration_t& timeout) {
+uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, void* info_) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
-
-    return reader->wait_for_unread_message(timeout);
-}
-
-uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
-    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
     eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
     const_cast<void**>(data_values.buffer())[0] = data;
@@ -282,8 +305,9 @@ uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, epro
     return ret;
 }
 
-uint32_t fastddsjava_datareader_take_next_custom(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
+uint32_t fastddsjava_datareader_take_next_custom(void* reader_, void* data, void* info_) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
     eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
     const_cast<void**>(data_values.buffer())[0] = data;

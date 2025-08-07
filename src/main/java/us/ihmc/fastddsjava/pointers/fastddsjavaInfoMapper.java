@@ -29,17 +29,13 @@ import org.bytedeco.javacpp.tools.InfoMapper;
             include = {
                   "fastddsjava.h",
 
-                  "fastdds/rtps/common/Time_t.hpp",
-                  "fastdds/dds/core/Time_t.hpp",
-
                   "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",
                   "fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
 
                   "fastdds/dds/subscriber/SampleState.hpp",
                   "fastdds/dds/subscriber/ViewState.hpp",
-                  "fastdds/dds/subscriber/InstanceState.hpp",
-                  "fastdds/dds/subscriber/SampleInfo.hpp",
+                  "fastdds/dds/subscriber/InstanceState.hpp"
             },
             linkpath = "install/lib",
             preload = "jnifastddsjava",
