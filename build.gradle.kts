@@ -17,12 +17,20 @@ import us.ihmc.jros2.generator.task.jros2GenTask
 
 plugins {
     id("java-library")
-    id("maven-publish")
+
+    id("us.ihmc.ihmc-build")
     id("us.ihmc.jros2.generator")
 }
 
-group = "us.ihmc"
-version = "1.0.0"
+ihmc {
+    group = "us.ihmc"
+    version = "1.0.0"
+    vcsUrl = "https://github.com/ihmcrobotics/jros2"
+    openSource = true
+
+    configureDependencyResolution()
+    configurePublications()
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -35,49 +43,7 @@ sourceSets {
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-java {
-    withSourcesJar()
-}
-
-tasks.jar {
-    manifest {
-        attributes(
-              "Implementation-Title" to "jros2",
-              "Implementation-Version" to project.version
-        )
-    }
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-
-            groupId = project.group.toString()
-            artifactId = "jros2"
-            version = project.version.toString()
-        }
-    }
-
-    repositories {
-        maven {
-            val releasesRepo = uri("https://s01.oss.sonatype.org/content/repositories/releases")
-            val snapshotsRepo = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
-            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepo else releasesRepo
-
-            credentials {
-                username = project.findProperty("publishUsername").toString()
-                password = project.findProperty("publishPassword").toString()
-            }
-        }
-    }
-}
-
-dependencies {
+mainDependencies {
     // Transitive dependencies
     api("us.ihmc:javacpp:1.5.11-ihmc-2") {
         isTransitive = true
@@ -95,22 +61,9 @@ dependencies {
     api("org.antlr:ST4:4.3.4") {
         isTransitive = true
     }
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-    testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
 }
 
-tasks.test {
-    useJUnitPlatform()
-
-    testLogging {
-        events("passed", "failed", "skipped", "standard_out", "standard_error")
-        exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-        showExceptions = true
-        showCauses = true
-        showStackTraces = true
-    }
+testDependencies {
 }
 
 tasks.register<jros2GenTask>("generate_default_interfaces") {

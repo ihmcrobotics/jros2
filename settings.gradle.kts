@@ -1,10 +1,19 @@
-rootProject.name = "jros2"
+pluginManagement {
+   plugins {
+      id("us.ihmc.ihmc-build") version "1.2.1"
+   }
+}
 
-include("examples:ros2-opencv-webcam")
-findProject(":examples:ros2-opencv-webcam")?.name = "ros2-opencv-webcam"
+buildscript {
+   repositories {
+      maven { url = uri("https://plugins.gradle.org/m2/") }
+   }
+   dependencies {
+      classpath("us.ihmc:ihmc-build:1.2.1")
+   }
+}
 
-include("examples:ros2-talker-listener")
-findProject(":examples:ros2-talker-listener")?.name = "ros2-talker-listener"
-
-include("examples:custom-message-class")
-findProject(":examples:custom-message-class")?.name = "custom-message-class"
+val ihmcSettingsConfigurator = us.ihmc.build.IHMCSettingsConfigurator(settings, logger, extra)
+ihmcSettingsConfigurator.checkRequiredPropertiesAreSet()
+ihmcSettingsConfigurator.configureExtraSourceSets()
+ihmcSettingsConfigurator.findAndIncludeCompositeBuilds()

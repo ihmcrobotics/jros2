@@ -45,3 +45,6 @@ bin/
 cppbuild/
 
 hs_err*
+
+**/build
+**/out
