@@ -38,6 +38,23 @@ Works on NVIDIA Jetson and all versions of Raspberry Pi!
 ## Usage
 Read in-depth documentation on the [Wiki](https://github.com/ihmcrobotics/jros2/wiki)!
 
+### Gradle
+```
+dependencies {
+  implementation("us.ihmc:jros2:1.0.0")
+}
+```
+### Maven
+```
+<dependencies>
+  <dependency>
+    <groupId>us.ihmc</groupId>
+    <artifactId>jros2</artifactId>
+    <version>1.0.0</version>
+  </dependency>
+</dependencies>
+```
+
 ### Here's the basics:
 
 Create a ROS2Node:
