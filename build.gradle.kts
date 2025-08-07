@@ -19,7 +19,7 @@ plugins {
     id("java-library")
 
     id("us.ihmc.ihmc-build")
-    id("us.ihmc.jros2.generator")
+    id("us.ihmc.jros2.generator") version "1.0.2"
 }
 
 ihmc {
