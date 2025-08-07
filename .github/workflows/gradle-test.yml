@@ -3,9 +3,9 @@ name: Gradle test
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   pull_request:
-    branches: [ main ]
+    branches: [ develop ]
   schedule:
     - cron: '0 */8 * * *'
 
