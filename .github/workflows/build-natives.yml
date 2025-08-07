@@ -34,7 +34,7 @@ jobs:
         run: |
           git reset --hard
           git pull
-          
+
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
@@ -83,8 +83,8 @@ jobs:
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for Windows'
           push: true
-  build-natives-macos:
-    runs-on: macos-13
+  build-natives-macos-arm:
+    runs-on: macos-14
     needs: build-natives-windows
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +96,31 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Compile native library
+      - name: Compile native library (arm64)
+        run: |
+          MAC_COMPILE_ARM64=1 bash cppbuild.bash
+      - name: Commit native libraries
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '*.dylib' # Only commit generated java from Linux
+          author_name: ihmc-rosie
+          author_email: rosie@ihmc.us
+          message: 'Rebuild natives for macOS'
+          push: true
+  build-natives-macos-intel:
+    runs-on: macos-13
+    needs: build-natives-macos-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull repo
+        run: |
+          git reset --hard
+          git pull
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Compile native library (x86_64)
         run: |
           bash cppbuild.bash
       - name: Commit native libraries
@@ -105,5 +129,5 @@ jobs:
           add: '*.dylib' # Only commit generated java from Linux
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS (x86_64)'
+          message: 'Rebuild natives for macOS'
           push: true

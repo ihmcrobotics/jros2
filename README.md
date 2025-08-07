@@ -16,7 +16,7 @@ ROS 2 compatible and tested distros: `[humble, jazzy]`
 Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
 - Windows (Windows 10+ x86_64)
-- (soon) macOS (macOS 13+ Intel, Apple Silicon)
+- macOS (macOS 13+ Intel, Apple Silicon)
 - (soon) Android
 
 Works on NVIDIA Jetson and all versions of Raspberry Pi!

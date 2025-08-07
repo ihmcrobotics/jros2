@@ -43,10 +43,7 @@ INSTALL_DIR=$(pwd)
 
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
-if [ "$MAC_COMPILE_ARM" == "1" ]; then
-  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=\"arm64\""
-  JAVACPP_COMP_ARGS="-properties macosx-arm64 -Djavacpp.platform=macosx-arm64"
-elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
+if [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
 elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
@@ -78,7 +75,7 @@ cd Fast-DDS-$FASTDDS_VERSION
 git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
 cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
@@ -148,7 +145,7 @@ if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 # macOS
-if [ "$MAC_COMPILE_ARM" == "1" ]; then
+if [ "$MAC_COMPILE_ARM64" == "1" ]; then
   MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-arm64"
 else
   MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-x86_64"
