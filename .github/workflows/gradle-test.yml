@@ -37,7 +37,7 @@ jobs:
         run: ROS_DISTRO=${{ matrix.ros_distro }} ./gradlew test
 
       - name: Run JUnit tests (Gradle plugin)
-        run: cd buildSrc && ../gradlew test
+        run: cd jros2Generator && ../gradlew test
 
       - name: Print any error report files
         if: always()
