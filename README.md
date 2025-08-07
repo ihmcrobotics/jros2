@@ -11,7 +11,7 @@ A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other 
 
 Fast-DDS version: `3.2.2`
 
-ROS 2 compatible and tested distros: `[humble, jazzy]`
+ROS 2 compatible and tested distros: `[humble, jazzy, kilted]`
 
 Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
