@@ -19,7 +19,6 @@ import org.stringtemplate.v4.ST;
 import us.ihmc.jros2.generator.context.InterfaceField;
 import us.ihmc.jros2.generator.context.MsgContext;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,18 +27,18 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
+import static us.ihmc.jros2.generator.ROS2InterfaceUtil.findMsgsInPkg;
+import static us.ihmc.jros2.generator.ROS2InterfaceUtil.findMsgsInResources;
 
 public class ROS2MessageGenerator
 {
-   private final Path packagePath;
    private final Path outputPath;
    private final Map<String, String> typeToClass;
    private final List<MsgContext> msgs;
 
    public ROS2MessageGenerator(Path packagePath, Path outputPath, Map<String, String> typeToClass, List<String> ros2pkgPathsToInclude)
    {
-      this.packagePath = packagePath;
       this.outputPath = outputPath;
       this.typeToClass = typeToClass;
 
@@ -52,53 +51,20 @@ public class ROS2MessageGenerator
          msgs.addAll(findMsgsInPkg(ros2pkgPath));
       }
 
+      List<MsgContext> commonMsgs = new LinkedList<>(findMsgsInResources());
+
+      List<MsgContext> allMsgs = new LinkedList<>();
+      allMsgs.addAll(msgs);
+      allMsgs.addAll(commonMsgs);
+
       for (MsgContext context : msgs)
       {
-         context.parse(msgs);
+         context.parse(allMsgs);
       }
-   }
-
-   private List<MsgContext> findMsgsInPkg(Path ros2pkgPath)
-   {
-      List<MsgContext> msgs = new LinkedList<>();
-
-      if (!ros2pkgPath.resolve("package.xml").toFile().exists())
-      {
-         throw new RuntimeException(ros2pkgPath + " is not a ROS 2 package path");
-      }
-
-      File msgDir = ros2pkgPath.resolve("msg").toFile();
-
-      if (!msgDir.exists() || !msgDir.isDirectory())
-      {
-         throw new RuntimeException(ros2pkgPath + " does not contain a msg directory");
-      }
-
-      for (File file : Objects.requireNonNull(msgDir.listFiles((f, name) -> name.endsWith(".msg"))))
-      {
-         String fileContent;
-
-         try
-         {
-            fileContent = Files.readString(file.toPath(), StandardCharsets.UTF_8);
-         }
-         catch (IOException e)
-         {
-            throw new RuntimeException("Could not read .msg file:  " + file.getName());
-         }
-
-         MsgContext context = new MsgContext(ros2pkgPath.toFile().getName(), file.getName(), fileContent);
-
-         msgs.add(context);
-      }
-
-      return msgs;
    }
 
    public void generate()
    {
-      List<MsgContext> msgs = findMsgsInPkg(packagePath);
-
       for (MsgContext context : msgs)
       {
          if (typeToClass.containsKey(context.getFullName()))
@@ -116,8 +82,6 @@ public class ROS2MessageGenerator
 
    public void generate(MsgContext context)
    {
-      context.parse(msgs);
-
       String template = null;
 
       try (InputStream stream = ROS2MessageGenerator.class.getClassLoader().getResourceAsStream("ROS2Message.st"))

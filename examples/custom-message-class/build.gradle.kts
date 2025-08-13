@@ -1,33 +1,34 @@
 import us.ihmc.jros2.generator.task.jros2GenTask
 
 plugins {
-    id("java")
-    id("application")
-    id("us.ihmc.jros2.generator")
+   id("java")
+   id("application")
+   id("us.ihmc.jros2.generator") version "1.0.999"
 }
 
 group = "us.ihmc"
 version = "1.0.0"
 
 repositories {
-    mavenCentral()
+   mavenCentral()
+   mavenLocal()
 }
 
 dependencies {
-    implementation(project(":"))
+   implementation("us.ihmc:jros2:1.0.0")
 }
 
 application {
-    mainClass.set("us.ihmc.CustomMessageClassTest")
+   mainClass.set("us.ihmc.CustomMessageClassTest")
 }
 
 tasks.register<jros2GenTask>("generateMessages") {
-    packagePaths = listOf(
-        projectDir.resolve("my_interfaces").absolutePath
-    )
+   packagePaths = listOf(
+      projectDir.resolve("my_interfaces").absolutePath
+   )
 
-    // Generated files will go in the src/main/java source set
-    outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java" }.toString()
+   // Generated files will go in the src/main/java source set
+   outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java" }.toString()
 
-    typeToClass = mapOf("my_interfaces/MyPoint3D" to "us.ihmc.MyPoint3DMessage")
+   typeToClass = mapOf("my_interfaces/MyPoint3D" to "us.ihmc.MyPoint3DMessage")
 }
