@@ -1,16 +1,21 @@
 plugins {
-    id("java")
+   id("java")
+   id("application")
 }
 
 group = "us.ihmc"
 version = "1.0.0"
 
 repositories {
-    mavenCentral()
+   mavenCentral()
 }
 
 dependencies {
-    implementation(project(":"))
+   implementation("us.ihmc:jros2:1.0.0")
 
-    implementation("org.bytedeco:javacv-platform:1.5.11")
+   implementation("org.bytedeco:javacv-platform:1.5.11")
+}
+
+application {
+   mainClass.set("us.ihmc.WebcamPublisher")
 }
