@@ -94,13 +94,20 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
       return buffer.get(index);
    }
 
+   /**
+    * Get the backing heap {@link ShortBuffer} holding all short values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of short values, may be null
+    */
    public ShortBuffer getBufferUnsafe()
    {
       return buffer;
    }
 
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public void ensureMinCapacity(int desiredCapacity)
    {
       if (capacity() < desiredCapacity)
       {

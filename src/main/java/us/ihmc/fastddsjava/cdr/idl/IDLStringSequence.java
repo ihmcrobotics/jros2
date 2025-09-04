@@ -136,7 +136,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    }
 
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public void ensureMinCapacity(int desiredCapacity)
    {
       if (elements == null)
       {

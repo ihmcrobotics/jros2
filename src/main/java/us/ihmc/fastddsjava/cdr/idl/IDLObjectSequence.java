@@ -134,7 +134,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
    @Override
    @SuppressWarnings("unchecked")
-   protected void ensureMinCapacity(int desiredCapacity)
+   public void ensureMinCapacity(int desiredCapacity)
    {
       if (elements == null)
       {

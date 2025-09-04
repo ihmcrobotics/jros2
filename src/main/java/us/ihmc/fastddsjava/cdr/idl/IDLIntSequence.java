@@ -94,13 +94,20 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       return buffer.get(index);
    }
 
+   /**
+    * Get the backing heap {@link IntBuffer} holding all int values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of int values, may be null
+    */
    public IntBuffer getBufferUnsafe()
    {
       return buffer;
    }
 
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public void ensureMinCapacity(int desiredCapacity)
    {
       if (capacity() < desiredCapacity)
       {

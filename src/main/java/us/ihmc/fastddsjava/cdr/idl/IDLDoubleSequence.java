@@ -94,13 +94,20 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
       return buffer.get(index);
    }
 
+   /**
+    * Get the backing heap {@link DoubleBuffer} holding all double values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of double values, may be null
+    */
    public DoubleBuffer getBufferUnsafe()
    {
       return buffer;
    }
 
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public void ensureMinCapacity(int desiredCapacity)
    {
       if (capacity() < desiredCapacity)
       {
