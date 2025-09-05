@@ -77,7 +77,7 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
     *
     * @return the buffer of char values, may be null
     */
-   public CharBuffer getBufferUnsafe()
+   public CharBuffer getBuffer()
    {
       return buffer;
    }

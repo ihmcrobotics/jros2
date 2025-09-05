@@ -77,7 +77,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
     *
     * @return the buffer of boolean values (as bytes), may be null
     */
-   public ByteBuffer getBufferUnsafe()
+   public ByteBuffer getBuffer()
    {
       return buffer;
    }

@@ -77,7 +77,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
     *
     * @return the buffer of double values, may be null
     */
-   public DoubleBuffer getBufferUnsafe()
+   public DoubleBuffer getBuffer()
    {
       return buffer;
    }

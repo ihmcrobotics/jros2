@@ -77,7 +77,7 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
     *
     * @return the buffer of short values, may be null
     */
-   public ShortBuffer getBufferUnsafe()
+   public ShortBuffer getBuffer()
    {
       return buffer;
    }

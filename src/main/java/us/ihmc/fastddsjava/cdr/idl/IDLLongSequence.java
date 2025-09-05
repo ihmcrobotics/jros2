@@ -77,7 +77,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
     *
     * @return the buffer of long values, may be null
     */
-   public LongBuffer getBufferUnsafe()
+   public LongBuffer getBuffer()
    {
       return buffer;
    }

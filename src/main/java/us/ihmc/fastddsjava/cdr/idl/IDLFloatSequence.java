@@ -77,7 +77,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
     *
     * @return the buffer of float values, may be null
     */
-   public FloatBuffer getBufferUnsafe()
+   public FloatBuffer getBuffer()
    {
       return buffer;
    }

@@ -77,7 +77,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
     *
     * @return the buffer of int values, may be null
     */
-   public IntBuffer getBufferUnsafe()
+   public IntBuffer getBuffer()
    {
       return buffer;
    }

@@ -77,7 +77,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
     *
     * @return the buffer of byte values, may be null
     */
-   public ByteBuffer getBufferUnsafe()
+   public ByteBuffer getBuffer()
    {
       return buffer;
    }
