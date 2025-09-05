@@ -32,12 +32,12 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    {
       if (maxSize < 0)
       {
-         throw new RuntimeException("IDLSequence maxSize cannot be negative");
+         throw new IllegalArgumentException("IDLSequence maxSize cannot be negative");
       }
 
-      if (!isUnbounded() && (capacity > maxSize))
+      if (capacity > maxSize)
       {
-         throw new RuntimeException("IDLSequence capacity cannot be larger than maxSize");
+         throw new IllegalArgumentException("IDLSequence capacity cannot be larger than maxSize");
       }
 
       this.maxSize = maxSize;

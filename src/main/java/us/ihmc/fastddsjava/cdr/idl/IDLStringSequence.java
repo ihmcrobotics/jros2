@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 {
-   private static final int DEFAULT_STRING_LENGTH = 16;
+   private static final int DEFAULT_MAX_STRING_LENGTH = 16;
 
    protected StringBuilder[] elements;
    protected int position;
@@ -91,7 +91,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
       if (elements[position] == null)
       {
-         elements[position] = new StringBuilder(stringLength > 0 ? stringLength : DEFAULT_STRING_LENGTH);
+         elements[position] = new StringBuilder(stringLength > 0 ? stringLength : DEFAULT_MAX_STRING_LENGTH);
       }
       else if (stringLength > 0)
       {
