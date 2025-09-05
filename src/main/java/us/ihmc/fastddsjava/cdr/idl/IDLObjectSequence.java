@@ -17,6 +17,7 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
+import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -37,7 +38,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
    public IDLObjectSequence(int capacity, Class<T> clazz)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
       this.clazz = clazz;
       position = 0;
    }
@@ -56,8 +57,10 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-         throw new RuntimeException(e);
+         LogTools.error("Unable to create an instance of CDRSerializable class: " + clazz.getName());
       }
+
+      return null;
    }
 
    @Override
@@ -85,32 +88,14 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
    public void add(T element)
    {
-      if (elements == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (position >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (position == elements.length)
-      {
-         ensureMinCapacity(2 * elements.length);
-      }
+      ensureMinCapacity(position + 1);
 
       elements[position++] = element;
    }
 
    public T add()
    {
-      if (elements == null)
-      {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
-      }
-      else if (position == elements.length)
-      {
-         ensureMinCapacity(2 * elements.length);
-      }
+      ensureMinCapacity(position + 1);
 
       if (elements[position] == null)
       {
@@ -118,6 +103,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
 
       return elements[position++];
+   }
+
+   public void remove()
+   {
+      position--;
    }
 
    public T get(int index)
@@ -136,13 +126,22 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @SuppressWarnings("unchecked")
    public void ensureMinCapacity(int desiredCapacity)
    {
-      if (elements == null)
+      if (capacity() < desiredCapacity)
       {
-         elements = (T[]) new CDRSerializable[desiredCapacity];
-      }
-      else if (elements.length < desiredCapacity)
-      {
-         elements = Arrays.copyOf(elements, desiredCapacity);
+         if (desiredCapacity > getMaxSize())
+         {
+            LogTools.error("Cannot add element to the sequence, reached upper bound");
+         }
+
+         if (elements == null)
+         {
+            elements = (T[]) new CDRSerializable[desiredCapacity];
+         }
+         else
+         {
+            desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * 2), getMaxSize());
+            elements = Arrays.copyOf(elements, desiredCapacity);
+         }
       }
    }
 

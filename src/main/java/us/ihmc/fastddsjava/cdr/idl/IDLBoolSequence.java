@@ -16,6 +16,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.log.LogTools;
 
 import java.nio.ByteBuffer;
 
@@ -30,7 +31,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
 
    public IDLBoolSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
    public IDLBoolSequence()
@@ -69,37 +70,12 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       }
    }
 
-   public void add(boolean element)
-   {
-      if (buffer == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (buffer.position() == buffer.capacity())
-      {
-         ensureMinCapacity(2 * buffer.capacity());
-      }
-
-      buffer.put((byte) (element ? 1 : 0));
-   }
-
-   public boolean get(int index)
-   {
-      assert index < elements();
-
-      return buffer.get(index) == 1;
-   }
-
    /**
     * Get the backing heap {@link ByteBuffer} holding all boolean values in the sequence.
     * Use this for efficient copy operations, however ensure the buffer is initialized and
     * of the correct capacity first with {@link #ensureMinCapacity(int)}!
     *
-    * @return the buffer of boolean values, may be null
+    * @return the buffer of boolean values (as bytes), may be null
     */
    public ByteBuffer getBufferUnsafe()
    {
@@ -111,13 +87,24 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
    {
       if (capacity() < desiredCapacity)
       {
+         if (desiredCapacity > getMaxSize())
+         {
+            LogTools.error("Cannot add element to the sequence, reached upper bound");
+
+            return;
+         }
+
+         if (buffer != null)
+         {
+            desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * 2), getMaxSize());
+         }
+
          ByteBuffer newBuffer = ByteBuffer.allocate(desiredCapacity);
 
-         int currentElements = elements();
-         if (currentElements != 0)
+         if (buffer != null)
          {
-            newBuffer.put(0, buffer, 0, currentElements);
-            newBuffer.position(currentElements);
+            newBuffer.put(0, buffer, 0, buffer.position());
+            newBuffer.position(buffer.position());
          }
 
          buffer = newBuffer;

@@ -16,12 +16,13 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.log.LogTools;
 
 import java.util.Arrays;
 
 public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 {
-   private static final int DEFAULT_STRING_CAPACITY = 16;
+   private static final int DEFAULT_STRING_LENGTH = 16;
 
    protected StringBuilder[] elements;
    protected int position;
@@ -35,7 +36,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    public IDLStringSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
       defaultStringLength = -1;
    }
 
@@ -74,18 +75,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    public void add(StringBuilder element)
    {
-      if (elements == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (position >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (position == elements.length)
-      {
-         ensureMinCapacity(2 * elements.length);
-      }
+      ensureMinCapacity(position + 1);
 
       elements[position++] = element;
    }
@@ -97,18 +87,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    public StringBuilder add(int stringLength)
    {
-      if (elements == null)
-      {
-         ensureMinCapacity(DEFAULT_INITIAL_CAPACITY);
-      }
-      else if (position == elements.length)
-      {
-         ensureMinCapacity(2 * elements.length);
-      }
+      ensureMinCapacity(position + 1);
 
       if (elements[position] == null)
       {
-         elements[position] = new StringBuilder(stringLength > 0 ? stringLength : DEFAULT_STRING_CAPACITY);
+         elements[position] = new StringBuilder(stringLength > 0 ? stringLength : DEFAULT_STRING_LENGTH);
       }
       else if (stringLength > 0)
       {
@@ -116,6 +99,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       }
 
       return elements[position++];
+   }
+
+   public void remove()
+   {
+      position--;
    }
 
    public StringBuilder get(int index)
@@ -136,15 +124,27 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    }
 
    @Override
+   @SuppressWarnings("unchecked")
    public void ensureMinCapacity(int desiredCapacity)
    {
-      if (elements == null)
+      if (capacity() < desiredCapacity)
       {
-         elements = new StringBuilder[desiredCapacity];
-      }
-      else if (elements.length < desiredCapacity)
-      {
-         elements = Arrays.copyOf(elements, desiredCapacity);
+         if (desiredCapacity > getMaxSize())
+         {
+            LogTools.error("Cannot add element to the sequence, reached upper bound");
+
+            return;
+         }
+
+         if (elements == null)
+         {
+            elements = new StringBuilder[desiredCapacity];
+         }
+         else
+         {
+            desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * 2), getMaxSize());
+            elements = Arrays.copyOf(elements, desiredCapacity);
+         }
       }
    }
 

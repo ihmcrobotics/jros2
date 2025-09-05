@@ -16,6 +16,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.log.LogTools;
 
 import java.nio.CharBuffer;
 
@@ -30,7 +31,7 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 
    public IDLCharSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
    public IDLCharSequence()
@@ -69,31 +70,6 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
       }
    }
 
-   public void add(char element)
-   {
-      if (buffer == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (buffer.position() == buffer.capacity())
-      {
-         ensureMinCapacity(2 * buffer.capacity());
-      }
-
-      buffer.put(element);
-   }
-
-   public char get(int index)
-   {
-      assert index < elements();
-
-      return buffer.get(index);
-   }
-
    /**
     * Get the backing heap {@link CharBuffer} holding all char values in the sequence.
     * Use this for efficient copy operations, however ensure the buffer is initialized and
@@ -111,13 +87,24 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    {
       if (capacity() < desiredCapacity)
       {
+         if (desiredCapacity > getMaxSize())
+         {
+            LogTools.error("Cannot add element to the sequence, reached upper bound");
+
+            return;
+         }
+
+         if (buffer != null)
+         {
+            desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * 2), getMaxSize());
+         }
+
          CharBuffer newBuffer = CharBuffer.allocate(desiredCapacity);
 
-         int currentElements = elements();
-         if (currentElements != 0)
+         if (buffer != null)
          {
-            newBuffer.put(0, buffer, 0, currentElements);
-            newBuffer.position(currentElements);
+            newBuffer.put(0, buffer, 0, buffer.position());
+            newBuffer.position(buffer.position());
          }
 
          buffer = newBuffer;

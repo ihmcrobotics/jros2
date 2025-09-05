@@ -20,34 +20,39 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   protected static final int INFINITE_MAX_SIZE = Integer.MAX_VALUE;
-   protected static final int DEFAULT_INITIAL_CAPACITY = 1;
+   public static final int UNBOUNDED_MAX_SIZE = Integer.MAX_VALUE;
+   public static final int DEFAULT_INITIAL_CAPACITY = 1;
 
    /**
-    * The maximum size of the sequence. -1 indicates no maximum size.
+    * The maximum size of the sequence. {@link #UNBOUNDED_MAX_SIZE} indicates the maximum maxSize.
     */
    private final int maxSize;
 
    public IDLSequence(int capacity, int maxSize)
    {
-      this.maxSize = maxSize;
+      if (maxSize < 0)
+      {
+         throw new RuntimeException("IDLSequence maxSize cannot be negative");
+      }
 
       if (!isUnbounded() && (capacity > maxSize))
       {
-         throw new RuntimeException("capacity cannot be larger than maxSize for an IDLSequence");
+         throw new RuntimeException("IDLSequence capacity cannot be larger than maxSize");
       }
+
+      this.maxSize = maxSize;
 
       ensureMinCapacity(capacity);
    }
 
    public IDLSequence()
    {
-      this.maxSize = INFINITE_MAX_SIZE;
+      this.maxSize = UNBOUNDED_MAX_SIZE;
    }
 
    public boolean isUnbounded()
    {
-      return maxSize == INFINITE_MAX_SIZE;
+      return maxSize == UNBOUNDED_MAX_SIZE;
    }
 
    public int getMaxSize()

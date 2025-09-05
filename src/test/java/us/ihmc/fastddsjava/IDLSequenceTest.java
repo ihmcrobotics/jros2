@@ -32,7 +32,7 @@ public class IDLSequenceTest
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
-         sequence.add((byte) i);
+         sequence.getBufferUnsafe().put((byte) i);
       }
 
       // It should have initialCapacity elements
@@ -45,7 +45,8 @@ public class IDLSequenceTest
       assertEquals(Byte.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
-      sequence.add((byte) initialCapacity);
+      sequence.ensureMinCapacity(initialCapacity + 1);
+      sequence.getBufferUnsafe().put((byte) initialCapacity);
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -56,7 +57,7 @@ public class IDLSequenceTest
       // Make sure the elements we added are stored correctly
       for (int i = 0; i < sequence.elements(); ++i)
       {
-         assertEquals((byte) i, sequence.get(i));
+         assertEquals((byte) i, sequence.getBufferUnsafe().get(i));
       }
 
       int originalCapacity = sequence.capacity();
@@ -76,7 +77,7 @@ public class IDLSequenceTest
       // Make sure elements are equal in the copy
       for (int i = 0; i < copySequence.elements(); ++i)
       {
-         assertEquals(copySequence.get(i), sequence.get(i));
+         assertEquals(copySequence.getBufferUnsafe().get(i), sequence.getBufferUnsafe().get(i));
       }
 
       // Clear the original sequence
@@ -114,7 +115,7 @@ public class IDLSequenceTest
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
-         sequence.add((char) i);
+         sequence.getBufferUnsafe().put((char) i);
       }
 
       // It should have initialCapacity elements
@@ -127,7 +128,8 @@ public class IDLSequenceTest
       assertEquals(Byte.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
-      sequence.add((char) initialCapacity);
+      sequence.ensureMinCapacity(initialCapacity + 1);
+      sequence.getBufferUnsafe().put((char) initialCapacity);
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -138,7 +140,7 @@ public class IDLSequenceTest
       // Make sure the elements we added are stored correctly
       for (int i = 0; i < sequence.elements(); ++i)
       {
-         assertEquals((byte) i, sequence.get(i));
+         assertEquals((byte) i, sequence.getBufferUnsafe().get(i));
       }
 
       int originalCapacity = sequence.capacity();
@@ -158,7 +160,7 @@ public class IDLSequenceTest
       // Make sure elements are equal in the copy
       for (int i = 0; i < copySequence.elements(); ++i)
       {
-         assertEquals(copySequence.get(i), sequence.get(i));
+         assertEquals(copySequence.getBufferUnsafe().get(i), sequence.getBufferUnsafe().get(i));
       }
 
       // Clear the original sequence
@@ -196,7 +198,7 @@ public class IDLSequenceTest
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
-         sequence.add(i);
+         sequence.getBufferUnsafe().put(i);
       }
 
       // It should have initialCapacity elements
@@ -209,7 +211,8 @@ public class IDLSequenceTest
       assertEquals(Double.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
-      sequence.add(initialCapacity);
+      sequence.ensureMinCapacity(initialCapacity + 1);
+      sequence.getBufferUnsafe().put(initialCapacity);
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -220,7 +223,7 @@ public class IDLSequenceTest
       // Make sure the elements we added are stored correctly
       for (int i = 0; i < sequence.elements(); ++i)
       {
-         assertEquals(i, sequence.get(i));
+         assertEquals(i, sequence.getBufferUnsafe().get(i));
       }
 
       int originalCapacity = sequence.capacity();
@@ -240,7 +243,7 @@ public class IDLSequenceTest
       // Make sure elements are equal in the copy
       for (int i = 0; i < copySequence.elements(); ++i)
       {
-         assertEquals(copySequence.get(i), sequence.get(i));
+         assertEquals(copySequence.getBufferUnsafe().get(i), sequence.getBufferUnsafe().get(i));
       }
 
       // Clear the original sequence
@@ -278,7 +281,7 @@ public class IDLSequenceTest
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
-         sequence.add(i);
+         sequence.getBufferUnsafe().put(i);
       }
 
       // It should have initialCapacity elements
@@ -291,7 +294,8 @@ public class IDLSequenceTest
       assertEquals(Float.BYTES, sequence.elementSizeBytes(0, 0));
 
       // Add one more element (going past the initial capacity)
-      sequence.add(initialCapacity);
+      sequence.ensureMinCapacity(initialCapacity + 1);
+      sequence.getBufferUnsafe().put(initialCapacity);
 
       // The element should have been added
       assertEquals(initialCapacity + 1, sequence.elements());
@@ -302,7 +306,7 @@ public class IDLSequenceTest
       // Make sure the elements we added are stored correctly
       for (int i = 0; i < sequence.elements(); ++i)
       {
-         assertEquals((float) i, sequence.get(i));
+         assertEquals((float) i, sequence.getBufferUnsafe().get(i));
       }
 
       int originalCapacity = sequence.capacity();
@@ -322,7 +326,7 @@ public class IDLSequenceTest
       // Make sure elements are equal in the copy
       for (int i = 0; i < copySequence.elements(); ++i)
       {
-         assertEquals(copySequence.get(i), sequence.get(i));
+         assertEquals(copySequence.getBufferUnsafe().get(i), sequence.getBufferUnsafe().get(i));
       }
 
       // Clear the original sequence
@@ -444,7 +448,7 @@ public class IDLSequenceTest
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
-         sequence.add((short) i);
+         sequence.getBufferUnsafe().put((short) i);
       }
 
       // It should have initialCapacity elements
@@ -454,7 +458,8 @@ public class IDLSequenceTest
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add one more element (going past the initial capacity)
-      sequence.add((short) initialCapacity);
+      sequence.ensureMinCapacity(initialCapacity + 1);
+      sequence.getBufferUnsafe().put((short) initialCapacity);
 
       // Make sure elementSizeBytes is correct
       assertEquals(Short.BYTES, sequence.elementSizeBytes(0, 0));
@@ -468,7 +473,7 @@ public class IDLSequenceTest
       // Make sure the elements we added are stored correctly
       for (int i = 0; i < sequence.elements(); ++i)
       {
-         assertEquals((short) i, sequence.get(i));
+         assertEquals((short) i, sequence.getBufferUnsafe().get(i));
       }
 
       int originalCapacity = sequence.capacity();
@@ -488,7 +493,7 @@ public class IDLSequenceTest
       // Make sure elements are equal in the copy
       for (int i = 0; i < copySequence.elements(); ++i)
       {
-         assertEquals(copySequence.get(i), sequence.get(i));
+         assertEquals(copySequence.getBufferUnsafe().get(i), sequence.getBufferUnsafe().get(i));
       }
 
       // Clear the original sequence
