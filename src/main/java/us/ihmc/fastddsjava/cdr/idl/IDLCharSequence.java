@@ -16,66 +16,40 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.log.LogTools;
 
 import java.nio.CharBuffer;
 
 public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 {
+   private static final CharBuffer EMPTY_BUFFER = CharBuffer.allocate(0);
+
    private CharBuffer buffer;
 
-   public IDLCharSequence(int capacity, int maxSize)
+   public IDLCharSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLCharSequence(int capacity)
    {
-      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLCharSequence()
+   public IDLCharSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
-   }
+      buffer = EMPTY_BUFFER;
 
-   @Override
-   public int elements()
-   {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
-      return buffer.position();
-   }
-
-   @Override
-   public int capacity()
-   {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
-      return buffer.capacity();
-   }
-
-   @Override
-   public void clear()
-   {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      ensureMinCapacity(capacity);
    }
 
    /**
     * Get the backing heap {@link CharBuffer} holding all char values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is initialized and
-    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    * Use this for efficient copy operations, however ensure the buffer is the correct
+    * capacity first with {@link #ensureMinCapacity(int)}!
     *
-    * @return the buffer of char values, may be null
+    * @return the buffer of char values
     */
    public CharBuffer getBuffer()
    {
@@ -83,32 +57,48 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    }
 
    @Override
-   public void ensureMinCapacity(int desiredCapacity)
+   public int elements()
    {
-      if (capacity() < desiredCapacity)
+      return buffer.position();
+   }
+
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
+   @Override
+   public void clear()
+   {
+      buffer.clear();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean ensureMinCapacity(int desiredCapacity)
+   {
+      if (buffer.capacity() < desiredCapacity)
       {
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
+
          if (desiredCapacity > getMaxSize())
          {
-            LogTools.error("Cannot add element to the sequence, reached upper bound");
-
-            return;
+            return false;
          }
-
-         if (buffer != null)
+         else
          {
-            desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * 2), getMaxSize());
-         }
-
-         CharBuffer newBuffer = CharBuffer.allocate(desiredCapacity);
-
-         if (buffer != null)
-         {
+            CharBuffer newBuffer = CharBuffer.allocate(desiredCapacity);
             newBuffer.put(0, buffer, 0, buffer.position());
             newBuffer.position(buffer.position());
-         }
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override
@@ -120,16 +110,12 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readChar());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeChar(buffer.get(i));
    }
 

@@ -22,30 +22,41 @@ import us.ihmc.log.LogTools;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+@SuppressWarnings("unchecked")
 public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
 {
-   private final Class<T> clazz;
+   private static final CDRSerializable[] EMPTY_ARRAY = new CDRSerializable[0];
 
+   private final Class<T> clazz;
    private T[] elements;
    private int position;
 
    public IDLObjectSequence(int capacity, int maxSize, Class<T> clazz)
    {
       super(capacity, maxSize);
+
       this.clazz = clazz;
+      elements = (T[]) EMPTY_ARRAY;
       position = 0;
+
+      ensureMinCapacity(capacity);
    }
 
    public IDLObjectSequence(int capacity, Class<T> clazz)
    {
       super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
+
       this.clazz = clazz;
+      elements = (T[]) EMPTY_ARRAY;
       position = 0;
+
+      ensureMinCapacity(capacity);
    }
 
    public IDLObjectSequence(Class<T> clazz)
    {
       this.clazz = clazz;
+      elements = (T[]) EMPTY_ARRAY;
       position = 0;
    }
 
@@ -72,11 +83,6 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public int capacity()
    {
-      if (elements == null)
-      {
-         return 0;
-      }
-
       return elements.length;
    }
 
@@ -117,49 +123,38 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[index];
    }
 
-   public T[] getArrayUnsafe()
-   {
-      return elements;
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   @SuppressWarnings("unchecked")
-   public void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (elements.length < desiredCapacity)
       {
+         desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * CAPACITY_GROW_SCALAR), getMaxSize());
+
          if (desiredCapacity > getMaxSize())
          {
-            LogTools.error("Cannot add element to the sequence, reached upper bound");
-         }
-
-         if (elements == null)
-         {
-            elements = (T[]) new CDRSerializable[desiredCapacity];
+            return false;
          }
          else
          {
-            desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * 2), getMaxSize());
             elements = Arrays.copyOf(elements, desiredCapacity);
          }
       }
+
+      return true;
    }
 
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      assert elements != null;
-      assert i < elements();
-
       return elements[i].calculateSizeBytes(currentAlignment);
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      assert elements != null;
-      assert position < elements.length;
-
       if (elements[position] == null)
       {
          elements[position] = newInstance();
@@ -173,9 +168,6 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public void writeElement(int i, CDRBuffer buffer)
    {
-      assert elements != null;
-      assert i < elements();
-
       if (elements[i] == null)
       {
          elements[i] = newInstance();
@@ -187,9 +179,6 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    @Override
    public void set(IDLObjectSequence<T> other)
    {
-      assert clazz == other.clazz;
-      assert other.elements != null;
-
       clear();
 
       int othersElements = other.elements();

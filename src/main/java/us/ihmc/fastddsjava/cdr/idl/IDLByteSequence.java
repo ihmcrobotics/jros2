@@ -22,52 +22,45 @@ import java.nio.ByteBuffer;
 
 public class IDLByteSequence extends IDLSequence<IDLByteSequence>
 {
+   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
+
    private ByteBuffer buffer;
 
-   public IDLByteSequence(int capacity, int maxSize)
+   public IDLByteSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLByteSequence(int capacity)
    {
-      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLByteSequence()
+   public IDLByteSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
+      buffer = EMPTY_BUFFER;
+
+      ensureMinCapacity(capacity);
    }
 
    @Override
    public int elements()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.position();
    }
 
    @Override
    public int capacity()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.capacity();
    }
 
    @Override
    public void clear()
    {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      buffer.clear();
    }
 
    /**
@@ -82,33 +75,31 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       return buffer;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   public void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (buffer.capacity() < desiredCapacity)
       {
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
+
          if (desiredCapacity > getMaxSize())
          {
-            LogTools.error("Cannot add element to the sequence, reached upper bound");
-
-            return;
+            return false;
          }
-
-         if (buffer != null)
+         else
          {
-            desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * 2), getMaxSize());
-         }
-
-         ByteBuffer newBuffer = ByteBuffer.allocate(desiredCapacity);
-
-         if (buffer != null)
-         {
+            ByteBuffer newBuffer = ByteBuffer.allocate(desiredCapacity);
             newBuffer.put(0, buffer, 0, buffer.position());
             newBuffer.position(buffer.position());
-         }
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override

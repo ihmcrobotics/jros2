@@ -16,66 +16,40 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.log.LogTools;
 
 import java.nio.IntBuffer;
 
 public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 {
+   private static final IntBuffer EMPTY_BUFFER = IntBuffer.allocate(0);
+
    private IntBuffer buffer;
 
-   public IDLIntSequence(int capacity, int maxSize)
+   public IDLIntSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLIntSequence(int capacity)
    {
-      super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLIntSequence()
+   public IDLIntSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
-   }
+      buffer = EMPTY_BUFFER;
 
-   @Override
-   public int elements()
-   {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
-      return buffer.position();
-   }
-
-   @Override
-   public int capacity()
-   {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
-      return buffer.capacity();
-   }
-
-   @Override
-   public void clear()
-   {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      ensureMinCapacity(capacity);
    }
 
    /**
     * Get the backing heap {@link IntBuffer} holding all int values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is initialized and
-    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * first with {@link #ensureMinCapacity(int)}!
     *
-    * @return the buffer of int values, may be null
+    * @return the buffer of int values
     */
    public IntBuffer getBuffer()
    {
@@ -83,32 +57,48 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    }
 
    @Override
-   public void ensureMinCapacity(int desiredCapacity)
+   public int elements()
    {
-      if (capacity() < desiredCapacity)
+      return buffer.position();
+   }
+
+   @Override
+   public int capacity()
+   {
+      return buffer.capacity();
+   }
+
+   @Override
+   public void clear()
+   {
+      buffer.clear();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean ensureMinCapacity(int desiredCapacity)
+   {
+      if (buffer.capacity() < desiredCapacity)
       {
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
+
          if (desiredCapacity > getMaxSize())
          {
-            LogTools.error("Cannot add element to the sequence, reached upper bound");
-
-            return;
+            return false;
          }
-
-         if (buffer != null)
+         else
          {
-            desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * 2), getMaxSize());
-         }
-
-         IntBuffer newBuffer = IntBuffer.allocate(desiredCapacity);
-
-         if (buffer != null)
-         {
+            IntBuffer newBuffer = IntBuffer.allocate(desiredCapacity);
             newBuffer.put(0, buffer, 0, buffer.position());
             newBuffer.position(buffer.position());
-         }
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override
@@ -120,16 +110,12 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readInt());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeInt(buffer.get(i));
    }
 

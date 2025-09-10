@@ -21,7 +21,7 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
    public static final int UNBOUNDED_MAX_SIZE = Integer.MAX_VALUE;
-   public static final int DEFAULT_INITIAL_CAPACITY = 1;
+   public static final int CAPACITY_GROW_SCALAR = 2;
 
    /**
     * The maximum size of the sequence. {@link #UNBOUNDED_MAX_SIZE} indicates the maximum maxSize.
@@ -41,8 +41,6 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
       }
 
       this.maxSize = maxSize;
-
-      ensureMinCapacity(capacity);
    }
 
    public IDLSequence()
@@ -91,8 +89,10 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     *       Otherwise, the capacity should be increased to be grater than or equal to {@code capacity}.
     *       <p>
     *       Elements should not be added or removed by this method.
+    * @return true if the capacity was not needed to be changed or was changed successfully,
+    *          false if the new capacity would exceed {@link #getMaxSize()}
     */
-   public abstract void ensureMinCapacity(int capacity);
+   public abstract boolean ensureMinCapacity(int capacity);
 
    public abstract int elementSizeBytes(int currentAlignment, int i);
 

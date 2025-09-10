@@ -16,33 +16,42 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.log.LogTools;
 
 import java.util.Arrays;
 
 public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 {
+   private static final StringBuilder[] EMPTY_ARRAY = new StringBuilder[0];
    private static final int DEFAULT_MAX_STRING_LENGTH = 16;
 
    protected StringBuilder[] elements;
    protected int position;
    private final int defaultStringLength;
 
-   public IDLStringSequence(int capacity, int maxSize, int defaultStringLength)
+   public IDLStringSequence()
    {
-      super(capacity, maxSize);
-      this.defaultStringLength = defaultStringLength;
+      elements = EMPTY_ARRAY;
+      defaultStringLength = -1;
    }
 
    public IDLStringSequence(int capacity)
    {
       super(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
+
+      elements = EMPTY_ARRAY;
       defaultStringLength = -1;
+
+      ensureMinCapacity(capacity);
    }
 
-   public IDLStringSequence()
+   public IDLStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
-      defaultStringLength = -1;
+      super(capacity, maxSize);
+
+      elements = EMPTY_ARRAY;
+      this.defaultStringLength = defaultStringLength;
+
+      ensureMinCapacity(capacity);
    }
 
    @Override
@@ -54,11 +63,6 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    @Override
    public int capacity()
    {
-      if (elements == null)
-      {
-         return 0;
-      }
-
       return elements.length;
    }
 
@@ -108,8 +112,6 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
 
    public StringBuilder get(int index)
    {
-      assert index < elements();
-
       return elements[index];
    }
 
@@ -118,42 +120,32 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       return get(index).toString();
    }
 
-   public StringBuilder[] getArrayUnsafe()
-   {
-      return elements;
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   @SuppressWarnings("unchecked")
-   public void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (elements.length < desiredCapacity)
       {
+         desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * CAPACITY_GROW_SCALAR), getMaxSize());
+
          if (desiredCapacity > getMaxSize())
          {
-            LogTools.error("Cannot add element to the sequence, reached upper bound");
-
-            return;
-         }
-
-         if (elements == null)
-         {
-            elements = new StringBuilder[desiredCapacity];
+            return false;
          }
          else
          {
-            desiredCapacity = Math.min(Math.max(desiredCapacity, elements.length * 2), getMaxSize());
             elements = Arrays.copyOf(elements, desiredCapacity);
          }
       }
+
+      return true;
    }
 
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      assert elements != null;
-      assert i < elements();
-
       // We treat each character as 1 byte (8 bits) in a standard string
       return elements[i].length() + CDRBuffer.alignment(currentAlignment, elements[i].length());
    }
@@ -161,9 +153,6 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      assert elements != null;
-      assert position < elements.length;
-
       StringBuilder element = elements[position++];
       buffer.readString(element);
    }
@@ -171,17 +160,12 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    @Override
    public void writeElement(int i, CDRBuffer buffer)
    {
-      assert elements != null;
-      assert i < elements();
-
       buffer.writeString(elements[i]);
    }
 
    @Override
    public void set(IDLStringSequence other)
    {
-      assert other.elements != null;
-
       clear();
 
       int othersElements = other.elements();
