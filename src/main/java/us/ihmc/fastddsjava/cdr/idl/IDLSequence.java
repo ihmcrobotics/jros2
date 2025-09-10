@@ -85,8 +85,8 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     * Ensures the capacity is at least {@code desiredCapacity}.
     *
     * @param desiredCapacity The minimum required capacity.
-    * @implSpec If the current capacity is greater than or equal to {@code capacity}, the capacity need not be changed.
-    *       Otherwise, the capacity should be increased to be grater than or equal to {@code capacity}.
+    * @implSpec If the current capacity is greater than or equal to {@code desiredCapacity}, the capacity need not be changed.
+    *       Otherwise, the capacity should be increased to be grater than or equal to {@code desiredCapacity}.
     *       <p>
     *       Elements should not be added or removed by this method.
     * @return true if the capacity was not needed to be changed or was changed successfully,
