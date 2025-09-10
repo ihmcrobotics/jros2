@@ -75,7 +75,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return position;
    }
@@ -118,7 +118,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
    public T get(int index)
    {
-      assert index < elements();
+      assert index < size();
 
       return elements[index];
    }
@@ -181,11 +181,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       // TODO: This could be done better if this has existing elements
       System.arraycopy(other.elements, 0, elements, 0, othersElements);
-      position = other.elements();
+      position = other.size();
    }
 }

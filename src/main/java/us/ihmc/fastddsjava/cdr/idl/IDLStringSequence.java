@@ -55,7 +55,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return position;
    }
@@ -168,7 +168,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       for (int i = 0; i < othersElements; ++i)

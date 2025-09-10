@@ -57,7 +57,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return buffer.position();
    }
@@ -124,7 +124,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);

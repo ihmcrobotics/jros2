@@ -57,7 +57,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return buffer.position();
    }
@@ -124,7 +124,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);

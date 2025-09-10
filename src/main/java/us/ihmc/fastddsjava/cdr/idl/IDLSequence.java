@@ -61,7 +61,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    /**
     * @return The number of elements in the sequence.
     */
-   public abstract int elements();
+   public abstract int size();
 
    /**
     * @return The capacity of the sequence.
@@ -73,7 +73,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     */
    public int remainingCapacity()
    {
-      return capacity() - elements();
+      return capacity() - size();
    }
 
    /**
@@ -110,7 +110,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     * Sets this sequence to {@code other}.
     *
     * @param other The sequence to set from.
-    * @implSpec {@link #elements()} of this sequence will return the same values as {@code other} after calling this method.
+    * @implSpec {@link #size()} of this sequence will return the same values as {@code other} after calling this method.
     */
    public abstract void set(T other);
 
@@ -121,7 +121,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // Length header
 
-      for (int i = 0; i < elements(); i++)
+      for (int i = 0; i < size(); i++)
       {
          int elementSizeBytes = elementSizeBytes(currentAlignment, i);
 
@@ -134,7 +134,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      int elements = elements();
+      int elements = size();
 
       buffer.writeInt(elements);
 

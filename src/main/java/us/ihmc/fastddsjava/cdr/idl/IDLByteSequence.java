@@ -16,7 +16,6 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.log.LogTools;
 
 import java.nio.ByteBuffer;
 
@@ -46,7 +45,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return buffer.position();
    }
@@ -129,7 +128,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);

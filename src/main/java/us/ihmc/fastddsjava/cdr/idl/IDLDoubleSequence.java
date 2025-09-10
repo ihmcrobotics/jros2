@@ -57,7 +57,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    }
 
    @Override
-   public int elements()
+   public int size()
    {
       return buffer.position();
    }
@@ -124,7 +124,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);
