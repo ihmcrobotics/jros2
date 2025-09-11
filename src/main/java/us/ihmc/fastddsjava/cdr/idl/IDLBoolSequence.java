@@ -195,10 +195,6 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       public BooleanBufferWrapper clear()
       {
          byteBuffer.clear();
-         for (int i = 0; i < capacity; i++)
-         {
-            byteBuffer.put(i, (byte) 0);
-         }
          return this;
       }
    }
