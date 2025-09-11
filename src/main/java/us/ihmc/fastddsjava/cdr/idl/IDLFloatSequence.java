@@ -21,100 +21,84 @@ import java.nio.FloatBuffer;
 
 public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 {
+   private static final FloatBuffer EMPTY_BUFFER = FloatBuffer.allocate(0);
+
    private FloatBuffer buffer;
 
-   public IDLFloatSequence(int capacity, int maxSize)
+   public IDLFloatSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLFloatSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLFloatSequence()
+   public IDLFloatSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
+      buffer = EMPTY_BUFFER;
+
+      ensureMinCapacity(capacity);
+   }
+
+   /**
+    * Get the backing heap {@link FloatBuffer} holding all float values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of float values
+    */
+   public FloatBuffer getBuffer()
+   {
+      return buffer;
    }
 
    @Override
-   public int elements()
+   public int size()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.position();
    }
 
    @Override
    public int capacity()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.capacity();
    }
 
    @Override
    public void clear()
    {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      buffer.clear();
    }
 
-   public void add(float element)
-   {
-      if (buffer == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (buffer.position() == buffer.capacity())
-      {
-         ensureMinCapacity(2 * buffer.capacity());
-      }
-
-      buffer.put(element);
-   }
-
-   public float get(int index)
-   {
-      assert index < elements();
-
-      return buffer.get(index);
-   }
-
-   public FloatBuffer getBufferUnsafe()
-   {
-      return buffer;
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (buffer.capacity() < desiredCapacity)
       {
-         FloatBuffer newBuffer = FloatBuffer.allocate(desiredCapacity);
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
 
-         int currentElements = elements();
-         if (currentElements != 0)
+         if (desiredCapacity > getMaxSize())
          {
-            newBuffer.put(0, buffer, 0, currentElements);
-            newBuffer.position(currentElements);
+            return false;
          }
+         else
+         {
+            FloatBuffer newBuffer = FloatBuffer.allocate(desiredCapacity);
+            newBuffer.put(0, buffer, 0, buffer.position());
+            newBuffer.position(buffer.position());
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override
@@ -126,16 +110,12 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readFloat());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeFloat(buffer.get(i));
    }
 
@@ -144,7 +124,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);

@@ -21,100 +21,84 @@ import java.nio.ByteBuffer;
 
 public class IDLByteSequence extends IDLSequence<IDLByteSequence>
 {
+   private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
+
    private ByteBuffer buffer;
 
-   public IDLByteSequence(int capacity, int maxSize)
+   public IDLByteSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLByteSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLByteSequence()
+   public IDLByteSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
+      buffer = EMPTY_BUFFER;
+
+      ensureMinCapacity(capacity);
    }
 
    @Override
-   public int elements()
+   public int size()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.position();
    }
 
    @Override
    public int capacity()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.capacity();
    }
 
    @Override
    public void clear()
    {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      buffer.clear();
    }
 
-   public void add(byte element)
-   {
-      if (buffer == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (buffer.position() == buffer.capacity())
-      {
-         ensureMinCapacity(2 * buffer.capacity());
-      }
-
-      buffer.put(element);
-   }
-
-   public byte get(int index)
-   {
-      assert index < elements();
-
-      return buffer.get(index);
-   }
-
-   public ByteBuffer getBufferUnsafe()
+   /**
+    * Get the backing heap {@link ByteBuffer} holding all byte values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * of the correct capacity first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of byte values, may be null
+    */
+   public ByteBuffer getBuffer()
    {
       return buffer;
    }
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (buffer.capacity() < desiredCapacity)
       {
-         ByteBuffer newBuffer = ByteBuffer.allocate(desiredCapacity);
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
 
-         int currentElements = elements();
-         if (currentElements != 0)
+         if (desiredCapacity > getMaxSize())
          {
-            newBuffer.put(0, buffer, 0, currentElements);
-            newBuffer.position(currentElements);
+            return false;
          }
+         else
+         {
+            ByteBuffer newBuffer = ByteBuffer.allocate(desiredCapacity);
+            newBuffer.put(0, buffer, 0, buffer.position());
+            newBuffer.position(buffer.position());
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override
@@ -144,7 +128,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);

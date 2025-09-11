@@ -21,100 +21,84 @@ import java.nio.LongBuffer;
 
 public class IDLLongSequence extends IDLSequence<IDLLongSequence>
 {
+   private static final LongBuffer EMPTY_BUFFER = LongBuffer.allocate(0);
+
    private LongBuffer buffer;
 
-   public IDLLongSequence(int capacity, int maxSize)
+   public IDLLongSequence()
    {
-      super(capacity, maxSize);
+      buffer = EMPTY_BUFFER;
    }
 
    public IDLLongSequence(int capacity)
    {
-      super(capacity, IDLSequence.INFINITE_MAX_SIZE);
+      this(capacity, IDLSequence.UNBOUNDED_MAX_SIZE);
    }
 
-   public IDLLongSequence()
+   public IDLLongSequence(int capacity, int maxSize)
    {
+      super(capacity, maxSize);
 
+      buffer = EMPTY_BUFFER;
+
+      ensureMinCapacity(capacity);
+   }
+
+   /**
+    * Get the backing heap {@link LongBuffer} holding all long values in the sequence.
+    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * first with {@link #ensureMinCapacity(int)}!
+    *
+    * @return the buffer of long values
+    */
+   public LongBuffer getBuffer()
+   {
+      return buffer;
    }
 
    @Override
-   public int elements()
+   public int size()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.position();
    }
 
    @Override
    public int capacity()
    {
-      if (buffer == null)
-      {
-         return 0;
-      }
-
       return buffer.capacity();
    }
 
    @Override
    public void clear()
    {
-      if (buffer != null)
-      {
-         buffer.clear();
-      }
+      buffer.clear();
    }
 
-   public void add(long element)
-   {
-      if (buffer == null)
-      {
-         ensureMinCapacity(Math.min(getMaxSize(), DEFAULT_INITIAL_CAPACITY));
-      }
-      else if (!isUnbounded() && (buffer.position() >= getMaxSize()))
-      {
-         throw new RuntimeException("Cannot add element to the sequence, reached upper bound");
-      }
-      else if (buffer.position() == buffer.capacity())
-      {
-         ensureMinCapacity(2 * buffer.capacity());
-      }
-
-      buffer.put(element);
-   }
-
-   public long get(int index)
-   {
-      assert index < elements();
-
-      return buffer.get(index);
-   }
-
-   public LongBuffer getBufferUnsafe()
-   {
-      return buffer;
-   }
-
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   protected void ensureMinCapacity(int desiredCapacity)
+   public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (capacity() < desiredCapacity)
+      if (buffer.capacity() < desiredCapacity)
       {
-         LongBuffer newBuffer = LongBuffer.allocate(desiredCapacity);
+         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
 
-         int currentElements = elements();
-         if (currentElements != 0)
+         if (desiredCapacity > getMaxSize())
          {
-            newBuffer.put(0, buffer, 0, currentElements);
-            newBuffer.position(currentElements);
+            return false;
          }
+         else
+         {
+            LongBuffer newBuffer = LongBuffer.allocate(desiredCapacity);
+            newBuffer.put(0, buffer, 0, buffer.position());
+            newBuffer.position(buffer.position());
 
-         buffer = newBuffer;
+            buffer = newBuffer;
+         }
       }
+
+      return true;
    }
 
    @Override
@@ -126,16 +110,12 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readLong());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeLong(buffer.get(i));
    }
 
@@ -144,7 +124,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    {
       clear();
 
-      int othersElements = other.elements();
+      int othersElements = other.size();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);
