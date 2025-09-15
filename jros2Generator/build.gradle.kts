@@ -46,22 +46,56 @@ repositories {
    mavenCentral()
 }
 
+/*
+ * Copy all default ROS 2 packages into the jar and write a ros2_interfaces.manifest
+ */
+tasks.named<Jar>("jar") {
+   val srcDir = file("ros2_interfaces")
+   val manifestFile = File(buildDir, "ros2_interfaces.manifest")
+   manifestFile.parentFile.mkdirs()
+
+   // Relative order of dependence
+   val packagePaths = listOf(
+      projectDir.resolve("ros2_interfaces/example_interfaces"),
+      projectDir.resolve("ros2_interfaces/rcl_interfaces/builtin_interfaces"),
+      projectDir.resolve("ros2_interfaces/rcl_interfaces/lifecycle_msgs"),
+      projectDir.resolve("ros2_interfaces/rcl_interfaces/rcl_interfaces"),
+      projectDir.resolve("ros2_interfaces/rcl_interfaces/rosgraph_msgs"),
+      projectDir.resolve("ros2_interfaces/rcl_interfaces/statistics_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/actionlib_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/diagnostic_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/geometry_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/nav_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/sensor_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/shape_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/std_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/stereo_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/trajectory_msgs"),
+      projectDir.resolve("ros2_interfaces/common_interfaces/visualization_msgs"),
+      projectDir.resolve("ros2_interfaces/jros2_example_interfaces")
+   )
+
+   doFirst {
+      val fileList = packagePaths.flatMap { dir ->
+         dir.walkTopDown()
+            .filter { it.isFile }
+            // Relativize path to srcDir for consistency
+            .map { srcDir.toPath().relativize(it.toPath()).toString() }
+            .toList()
+      }
+      manifestFile.writeText(fileList.joinToString(System.lineSeparator()))
+   }
+
+   from(srcDir)
+   from(manifestFile)
+}
+
 dependencies {
    api("org.antlr:ST4:4.3.4")
 
-   testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.2")
-   testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.2")
-   testImplementation("org.junit.platform:junit-platform-commons:1.9.2")
+   testImplementation("org.junit.jupiter:junit-jupiter:5.8.0")
 }
 
 tasks.test {
    useJUnitPlatform()
-
-   testLogging {
-      events("passed", "failed", "skipped", "standard_out", "standard_error")
-      exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
-      showExceptions = true
-      showCauses = true
-      showStackTraces = true
-   }
 }

@@ -33,7 +33,8 @@ public abstract class InterfaceContext
    {
       this.fileName = fileName;
       this.fileContent = fileContent;
-      this.name = fileName.substring(0, fileName.indexOf("."));
+      // Get the file name from the path and remove the file extension
+      name = fileName.substring(0, fileName.lastIndexOf('.')).substring(fileName.lastIndexOf("/") + 1);
       this.packageName = packageName;
    }
 

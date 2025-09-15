@@ -10,7 +10,8 @@ group = "us.ihmc"
 version = "1.0.0"
 
 repositories {
-    mavenCentral()
+   mavenCentral()
+   mavenLocal()
 }
 
 dependencies {
@@ -18,16 +19,16 @@ dependencies {
 }
 
 application {
-    mainClass.set("us.ihmc.CustomMessageClassTest")
+   mainClass.set("us.ihmc.CustomMessageClassTest")
 }
 
 tasks.register<jros2GenTask>("generateMessages") {
-    packagePaths = listOf(
-        projectDir.resolve("my_interfaces").absolutePath
-    )
+   packagePaths = listOf(
+      projectDir.resolve("my_interfaces").absolutePath
+   )
 
-    // Generated files will go in the src/main/java source set
-    outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java" }.toString()
+   // Generated files will go in the src/main/java source set
+   outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java" }.toString()
 
-    typeToClass = mapOf("my_interfaces/MyPoint3D" to "us.ihmc.MyPoint3DMessage")
+   typeToClass = mapOf("my_interfaces/MyPoint3D" to "us.ihmc.MyPoint3DMessage")
 }

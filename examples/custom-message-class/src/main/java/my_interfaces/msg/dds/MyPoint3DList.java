@@ -6,6 +6,7 @@
 This file was generated from the following content:
 (my_interfaces/MyPoint3DList.msg)
 ##################################################################################
+   sensor_msgs/Image s
    my_interfaces/MyPoint3D[] point_list
 ##################################################################################
 
@@ -20,10 +21,12 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
 {
    public static final java.lang.String name = "my_interfaces::msg::dds_::MyPoint3DList_";
 
+   private final sensor_msgs.msg.dds.Image s_;
    private final IDLObjectSequence<us.ihmc.MyPoint3DMessage> point_list_;
 
    public MyPoint3DList()
    {
+      s_ = new sensor_msgs.msg.dds.Image();
       point_list_ = new IDLObjectSequence<us.ihmc.MyPoint3DMessage>(us.ihmc.MyPoint3DMessage.class);
 
    }
@@ -33,6 +36,7 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += s_.calculateSizeBytes(currentAlignment);
       currentAlignment += point_list_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -41,12 +45,15 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      s_.serialize(buffer);
       point_list_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      s_.deserialize(buffer);
       point_list_.deserialize(buffer);
 
    }
@@ -54,8 +61,14 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
    @Override
    public void set(MyPoint3DList from)
    {
+      s_.set(from.s_);
       point_list_.set(from.point_list_);
 
+   }
+
+   public sensor_msgs.msg.dds.Image getS()
+   {
+      return s_;
    }
 
    public IDLObjectSequence<us.ihmc.MyPoint3DMessage> getPointList()
