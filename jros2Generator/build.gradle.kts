@@ -21,7 +21,7 @@ plugins {
 }
 
 group = "us.ihmc"
-version = "1.0.999"
+version = "1.0.2"
 
 gradlePlugin {
    website.set("https://github.com/ihmcrobotics/jros2")
