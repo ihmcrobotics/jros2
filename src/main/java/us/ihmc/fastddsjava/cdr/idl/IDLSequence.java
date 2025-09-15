@@ -20,34 +20,37 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
-   protected static final int INFINITE_MAX_SIZE = Integer.MAX_VALUE;
-   protected static final int DEFAULT_INITIAL_CAPACITY = 1;
+   public static final int UNBOUNDED_MAX_SIZE = Integer.MAX_VALUE;
+   public static final int CAPACITY_GROW_SCALAR = 2;
 
    /**
-    * The maximum size of the sequence. -1 indicates no maximum size.
+    * The maximum size of the sequence. {@link #UNBOUNDED_MAX_SIZE} indicates the maximum maxSize.
     */
    private final int maxSize;
 
    public IDLSequence(int capacity, int maxSize)
    {
-      this.maxSize = maxSize;
-
-      if (!isUnbounded() && (capacity > maxSize))
+      if (maxSize < 0)
       {
-         throw new RuntimeException("capacity cannot be larger than maxSize for an IDLSequence");
+         throw new IllegalArgumentException("IDLSequence maxSize cannot be negative");
       }
 
-      ensureMinCapacity(capacity);
+      if (capacity > maxSize)
+      {
+         throw new IllegalArgumentException("IDLSequence capacity cannot be larger than maxSize");
+      }
+
+      this.maxSize = maxSize;
    }
 
    public IDLSequence()
    {
-      this.maxSize = INFINITE_MAX_SIZE;
+      this.maxSize = UNBOUNDED_MAX_SIZE;
    }
 
    public boolean isUnbounded()
    {
-      return maxSize == INFINITE_MAX_SIZE;
+      return maxSize == UNBOUNDED_MAX_SIZE;
    }
 
    public int getMaxSize()
@@ -58,7 +61,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    /**
     * @return The number of elements in the sequence.
     */
-   public abstract int elements();
+   public abstract int size();
 
    /**
     * @return The capacity of the sequence.
@@ -70,7 +73,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     */
    public int remainingCapacity()
    {
-      return capacity() - elements();
+      return capacity() - size();
    }
 
    /**
@@ -79,15 +82,17 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    public abstract void clear();
 
    /**
-    * Ensures the capacity is at least {@code capacity}.
+    * Ensures the capacity is at least {@code desiredCapacity}.
     *
-    * @param capacity The minimum required capacity.
-    * @implSpec If the current capacity is greater than or equal to {@code capacity}, the capacity need not be changed.
-    *       Otherwise, the capacity should be increased to be grater than or equal to {@code capacity}.
+    * @param desiredCapacity The minimum required capacity.
+    * @implSpec If the current capacity is greater than or equal to {@code desiredCapacity}, the capacity need not be changed.
+    *       Otherwise, the capacity should be increased to be grater than or equal to {@code desiredCapacity}.
     *       <p>
     *       Elements should not be added or removed by this method.
+    * @return true if the capacity was not needed to be changed or was changed successfully,
+    *          false if the new capacity would exceed {@link #getMaxSize()}
     */
-   protected abstract void ensureMinCapacity(int capacity);
+   public abstract boolean ensureMinCapacity(int desiredCapacity);
 
    public abstract int elementSizeBytes(int currentAlignment, int i);
 
@@ -105,7 +110,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     * Sets this sequence to {@code other}.
     *
     * @param other The sequence to set from.
-    * @implSpec {@link #elements()} of this sequence will return the same values as {@code other} after calling this method.
+    * @implSpec {@link #size()} of this sequence will return the same values as {@code other} after calling this method.
     */
    public abstract void set(T other);
 
@@ -116,7 +121,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // Length header
 
-      for (int i = 0; i < elements(); i++)
+      for (int i = 0; i < size(); i++)
       {
          int elementSizeBytes = elementSizeBytes(currentAlignment, i);
 
@@ -129,7 +134,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      int elements = elements();
+      int elements = size();
 
       buffer.writeInt(elements);
 

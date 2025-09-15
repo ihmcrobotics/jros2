@@ -146,9 +146,9 @@ public class AsyncROS2Test
          publisherThreads[i].join();
       }
 
-      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
-
       asyncNode.close();
+
+      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
    }
 
    @Test

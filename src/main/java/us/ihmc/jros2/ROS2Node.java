@@ -198,7 +198,7 @@ public class ROS2Node implements Closeable
    /*
     * For managing native Fast-DDS topic memory. For internal-use only.
     */
-   protected <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
+   <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       closeLock.readLock().lock();
       try

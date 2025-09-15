@@ -24,7 +24,7 @@ plugins {
 
 ihmc {
     group = "us.ihmc"
-    version = "1.0.0"
+    version = "1.0.1"
     vcsUrl = "https://github.com/ihmcrobotics/jros2"
     openSource = true
 

@@ -19,9 +19,9 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 public class IDLWStringSequence extends IDLStringSequence
 {
-   public IDLWStringSequence(int capacity, int maxSize, int defaultStringLength)
+   public IDLWStringSequence()
    {
-      super(capacity, maxSize, defaultStringLength);
+      super();
    }
 
    public IDLWStringSequence(int maxSize)
@@ -29,25 +29,20 @@ public class IDLWStringSequence extends IDLStringSequence
       super(maxSize);
    }
 
-   public IDLWStringSequence()
+   public IDLWStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
+      super(capacity, maxSize, defaultStringLength);
    }
 
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      assert elements != null;
-      assert i < elements();
-
       return (elements[i].length() * 4) + CDRBuffer.alignment(currentAlignment, elements[i].length() * 4); // 4 bytes per character
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      assert elements != null;
-      assert position < elements.length;
-
       StringBuilder element = elements[position++];
       buffer.readWString(element);
    }
@@ -55,9 +50,6 @@ public class IDLWStringSequence extends IDLStringSequence
    @Override
    public void writeElement(int i, CDRBuffer buffer)
    {
-      assert elements != null;
-      assert i < elements();
-
       buffer.writeWString(elements[i]);
    }
 }
