@@ -22,7 +22,7 @@ public class CustomMessageClassTest
       {
          MyPoint3DList pointList = reader.read();
 
-         for (int i = 0; i < pointList.getPointList().elements(); i++)
+         for (int i = 0; i < pointList.getPointList().size(); i++)
          {
             MyPoint3D point = pointList.getPointList().get(i).getSrc();
 

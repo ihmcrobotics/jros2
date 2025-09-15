@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation("us.ihmc:jros2:1.0.0")
+    implementation("us.ihmc:jros2:1.0.1")
 }
 
 application {

@@ -35,16 +35,12 @@ public class WebcamPublisher
                msg.getEncoding().append("bgr8");
                msg.setWidth(frame.imageWidth);
                msg.setHeight(frame.imageHeight);
-
-               for (int i = 0; i < frameBuffer.capacity(); i++)
-               {
-                  msg.getData().add(frameBuffer.get(i));
-               }
+               msg.getData().ensureMinCapacity(frame.imageChannels * (frame.imageWidth * frame.imageHeight));
             }
             else
             {
-               msg.getData().getBufferUnsafe().rewind();
-               msg.getData().getBufferUnsafe().put(frameBuffer);
+               msg.getData().getBuffer().rewind();
+               msg.getData().getBuffer().put(frameBuffer);
             }
 
             imagePublisher.publish(msg);
