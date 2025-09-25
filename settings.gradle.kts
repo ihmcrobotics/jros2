@@ -1,6 +1,6 @@
 pluginManagement {
    plugins {
-      id("us.ihmc.ihmc-build") version "1.2.1"
+      id("us.ihmc.ihmc-build") version "1.3.0"
    }
 }
 
@@ -9,7 +9,7 @@ buildscript {
       maven { url = uri("https://plugins.gradle.org/m2/") }
    }
    dependencies {
-      classpath("us.ihmc:ihmc-build:1.2.1")
+      classpath("us.ihmc:ihmc-build:1.3.0")
    }
 }
 
