@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2025 Florida Institute for Human and Machine Cognition (IHMC)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package us.ihmc.jros2.parser.msgdeps;
 
 import us.ihmc.jros2.parser.MsgContext;
@@ -28,30 +43,45 @@ public final class MsgDepsParser
       msgDepsContext.getMeta().setPackageResourceName(packageResourceName);
 
       String[] lines = schema.split("\\R");
-      for (int i = 0; i < lines.length; ++i)
+      int i = 0;
+
+      while (i < lines.length)
       {
-         String line = lines[i];
+         String line = lines[i].trim();
 
          if (line.matches(DEPENDENCY_DELIMITER_PATTERN))
          {
-            String msgDelimiter = (i + 1 < lines.length) ? lines[i + 1] : null;
-
-            if (msgDelimiter != null && msgDelimiter.startsWith("MSG: "))
+            if (i + 1 >= lines.length)
             {
-               i += 2; // Seek past the 2-line delimiter
-
-               String dependencyPackageResourceName = msgDelimiter.substring(5);
-               StringJoiner dependencySchema = new StringJoiner("\n");
-
-               while ((i + 1) < lines.length && !lines[i + 1].matches(DEPENDENCY_DELIMITER_PATTERN))
-               {
-                  dependencySchema.add(lines[i++]);
-               }
-
-               MsgContext dependency = MsgParser.parseMsg(dependencySchema.toString(), dependencyPackageResourceName);
-
-               msgDepsContext.getDependencies().put(dependencyPackageResourceName, dependency);
+               break;
             }
+
+            String msgLine = lines[i + 1];
+            if (!msgLine.startsWith("MSG: "))
+            {
+               // We were expecting a second line of the delimiter, but it wasn't there
+               i++;
+               continue;
+            }
+
+            String dependencyPackageResourceName = msgLine.substring(5).trim();
+            StringJoiner dependencySchema = new StringJoiner("\n");
+
+            i += 2; // Skip 2-line delimiter
+
+            // Collect until next delimiter or EOF
+            while (i < lines.length && !lines[i].matches(DEPENDENCY_DELIMITER_PATTERN))
+            {
+               dependencySchema.add(lines[i]);
+               i++;
+            }
+
+            MsgContext dependency = MsgParser.parseMsg(dependencySchema.toString(), dependencyPackageResourceName);
+            msgDepsContext.getDependencies().put(dependencyPackageResourceName, dependency);
+         }
+         else
+         {
+            i++;
          }
       }
 
