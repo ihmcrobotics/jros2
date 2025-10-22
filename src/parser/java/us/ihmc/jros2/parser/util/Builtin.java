@@ -13,7 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package us.ihmc.jros2.generator.context;
+package us.ihmc.jros2.parser.util;
+
+import java.util.Objects;
 
 public final class Builtin
 {
@@ -26,27 +28,26 @@ public final class Builtin
     */
    public static boolean isBuiltinType(String type)
    {
-      if (type != null)
+      Objects.requireNonNull(type);
+
+      switch (type)
       {
-         switch (type)
-         {
-            case "bool":
-            case "byte":
-            case "char":
-            case "float32":
-            case "float64":
-            case "int8":
-            case "uint8":
-            case "int16":
-            case "uint16":
-            case "int32":
-            case "uint32":
-            case "int64":
-            case "uint64":
-            case "string":
-            case "wstring":
-               return true;
-         }
+         case "bool":
+         case "byte":
+         case "char":
+         case "float32":
+         case "float64":
+         case "int8":
+         case "uint8":
+         case "int16":
+         case "uint16":
+         case "int32":
+         case "uint32":
+         case "int64":
+         case "uint64":
+         case "string":
+         case "wstring":
+            return true;
       }
 
       return false;
@@ -60,24 +61,27 @@ public final class Builtin
     */
    public static int getBuiltinTypeSize(String builtinType)
    {
-      assert isBuiltinType(builtinType);
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
 
       switch (builtinType)
       {
          case "bool":
          case "byte":
          case "char":
-         case "uint8":
          case "int8":
             return 1;
+         case "uint8":
          case "int16":
-         case "uint16":
             return 2;
          case "float32":
-         case "uint32":
+         case "uint16":
          case "int32":
             return 4;
          case "float64":
+         case "uint32":
          case "uint64":
          case "int64":
             return 8;
@@ -98,28 +102,31 @@ public final class Builtin
     */
    public static String getBuiltinTypeJavaType(String builtinType)
    {
-      assert isBuiltinType(builtinType);
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
 
       switch (builtinType)
       {
          case "bool":
             return "boolean";
          case "byte":
-         case "uint8":
          case "int8":
             return "byte";
          case "char":
             return "char";
+         case "uint8":
          case "int16":
-         case "uint16":
             return "short";
          case "float32":
             return "float";
-         case "uint32":
+         case "uint16":
          case "int32":
             return "int";
          case "float64":
             return "double";
+         case "uint32":
          case "uint64":
          case "int64":
             return "long";
@@ -139,26 +146,31 @@ public final class Builtin
     */
    public static String getBuiltinTypeIDLSequenceType(String builtinType)
    {
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
+
       switch (builtinType)
       {
          case "bool":
             return "IDLBoolSequence";
          case "byte":
-         case "uint8":
          case "int8":
             return "IDLByteSequence";
          case "char":
             return "IDLCharSequence";
+         case "uint8":
          case "int16":
-         case "uint16":
             return "IDLShortSequence";
          case "float32":
             return "IDLFloatSequence";
-         case "uint32":
+         case "uint16":
          case "int32":
             return "IDLIntSequence";
          case "float64":
             return "IDLDoubleSequence";
+         case "uint32":
          case "uint64":
          case "int64":
             return "IDLLongSequence";
@@ -179,28 +191,31 @@ public final class Builtin
     */
    public static String getBuiltinCDRBufferWriteMethod(String builtinType)
    {
-      assert isBuiltinType(builtinType);
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
 
       switch (builtinType)
       {
          case "bool":
             return "writeBoolean";
          case "byte":
-         case "uint8":
          case "int8":
             return "writeByte";
          case "char":
             return "writeChar";
+         case "uint8":
          case "int16":
-         case "uint16":
             return "writeShort";
          case "float32":
             return "writeFloat";
-         case "uint32":
          case "int32":
+         case "uint16":
             return "writeInt";
          case "float64":
             return "writeDouble";
+         case "uint32":
          case "uint64":
          case "int64":
             return "writeLong";
@@ -221,28 +236,31 @@ public final class Builtin
     */
    public static String getBuiltinCDRBufferReadMethod(String builtinType)
    {
-      assert isBuiltinType(builtinType);
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
 
       switch (builtinType)
       {
          case "bool":
             return "readBoolean";
          case "byte":
-         case "uint8":
          case "int8":
             return "readByte";
          case "char":
             return "readChar";
+         case "uint8":
          case "int16":
-         case "uint16":
             return "readShort";
          case "float32":
             return "readFloat";
-         case "uint32":
+         case "uint16":
          case "int32":
             return "readInt";
          case "float64":
             return "readDouble";
+         case "uint32":
          case "uint64":
          case "int64":
             return "readLong";
@@ -257,7 +275,7 @@ public final class Builtin
 
    public static String sanitizeStringValue(String value)
    {
-      assert value != null;
+      Objects.requireNonNull(value);
 
       String valueCopy = value.trim();
 
@@ -292,7 +310,7 @@ public final class Builtin
 
    public static boolean sanitizeBoolValue(String value)
    {
-      assert value != null;
+      Objects.requireNonNull(value);
 
       String valueCopy = value.trim();
 
