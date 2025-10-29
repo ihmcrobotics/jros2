@@ -107,7 +107,7 @@ public class MsgDepsParserTest
          Assertions.assertTrue(Time_nanosec_field.isBuiltinType());
          Assertions.assertFalse(Time_nanosec_field.isBuiltinStringType());
          Assertions.assertFalse(Time_nanosec_field.isBuiltinWStringType());
-         Assertions.assertEquals(8, Time_nanosec_field.getBuiltinTypeSize());
+         Assertions.assertEquals(4, Time_nanosec_field.getBuiltinTypeSize());
          Assertions.assertEquals("long", Time_nanosec_field.getBuiltinTypeJavaType());
          Assertions.assertEquals("IDLLongSequence", Time_nanosec_field.getBuiltinTypeIDLSequenceType());
          Assertions.assertEquals("writeLong", Time_nanosec_field.getBuiltinCDRBufferWriteMethod());

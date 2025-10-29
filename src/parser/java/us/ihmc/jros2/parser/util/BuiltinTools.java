@@ -72,19 +72,20 @@ public final class BuiltinTools
          case "byte":
          case "char":
          case "int8":
-            return 1;
          case "uint8":
+            return 1;
          case "int16":
+         case "uint16":
             return 2;
          case "float32":
-         case "uint16":
          case "int32":
+         case "uint32":
             return 4;
          case "float64":
-         case "uint32":
-         case "uint64":
          case "int64":
+         case "uint64":
             return 8;
+         // For strings, return the character size. See https://design.ros2.org/articles/wide_strings.html
          case "string":
             return 1;
          case "wstring":
