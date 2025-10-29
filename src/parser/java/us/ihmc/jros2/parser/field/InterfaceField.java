@@ -15,7 +15,7 @@
  */
 package us.ihmc.jros2.parser.field;
 
-import us.ihmc.jros2.parser.util.Builtin;
+import us.ihmc.jros2.parser.util.BuiltinTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -242,7 +242,7 @@ public class InterfaceField
    {
       if (constantValue != null && isBuiltinStringType())
       {
-         constantValue = Builtin.sanitizeStringValue(constantValue);
+         constantValue = BuiltinTools.sanitizeStringAsJavaFieldValue(constantValue);
       }
 
       this.constantValue = constantValue;
@@ -258,15 +258,15 @@ public class InterfaceField
       // String sanitization
       if (defaultValue != null && isBuiltinStringType())
       {
-         defaultValue = Builtin.sanitizeStringValue(defaultValue);
+         defaultValue = BuiltinTools.sanitizeStringAsJavaFieldValue(defaultValue);
       }
 
       // Boolean sanitization
-      if (defaultValue != null && type.equals("bool"))
+      if (type.equals("bool"))
       {
          // Ensure it's either "true" or "false"
          // interface definitions allow 1 or 0 as well
-         defaultValue = Boolean.toString(Builtin.sanitizeBoolValue(defaultValue));
+         defaultValue = BuiltinTools.sanitizeBoolAsJavaFieldValue(defaultValue);
       }
 
       this.defaultValue = defaultValue;
@@ -324,7 +324,7 @@ public class InterfaceField
 
    public boolean isBuiltinType()
    {
-      return Builtin.isBuiltinType(type);
+      return BuiltinTools.isBuiltinType(type);
    }
 
    public boolean isBuiltinStringType()
@@ -339,27 +339,27 @@ public class InterfaceField
 
    public int getBuiltinTypeSize()
    {
-      return Builtin.getBuiltinTypeSize(type);
+      return BuiltinTools.getBuiltinTypeSize(type);
    }
 
    public String getBuiltinTypeJavaType()
    {
-      return Builtin.getBuiltinTypeJavaType(type);
+      return BuiltinTools.getBuiltinTypeJavaType(type);
    }
 
    public String getBuiltinTypeIDLSequenceType()
    {
-      return Builtin.getBuiltinTypeIDLSequenceType(type);
+      return BuiltinTools.getBuiltinTypeIDLSequenceType(type);
    }
 
    public String getBuiltinCDRBufferWriteMethod()
    {
-      return Builtin.getBuiltinCDRBufferWriteMethod(type);
+      return BuiltinTools.getBuiltinCDRBufferWriteMethod(type);
    }
 
    public String getBuiltinCDRBufferReadMethod()
    {
-      return Builtin.getBuiltinCDRBufferReadMethod(type);
+      return BuiltinTools.getBuiltinCDRBufferReadMethod(type);
    }
 
    private String inferJavaType()

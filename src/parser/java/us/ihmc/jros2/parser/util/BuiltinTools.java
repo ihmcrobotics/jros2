@@ -17,7 +17,7 @@ package us.ihmc.jros2.parser.util;
 
 import java.util.Objects;
 
-public final class Builtin
+public final class BuiltinTools
 {
    /**
     * If the type is a ROS 2 built-in type
@@ -273,51 +273,45 @@ public final class Builtin
       }
    }
 
-   public static String sanitizeStringValue(String value)
+   public static String sanitizeStringAsJavaFieldValue(String value)
    {
-      Objects.requireNonNull(value);
+      if (value == null || value.isEmpty())
+         return "\"\"";
 
-      String valueCopy = value.trim();
+      // Trim for good measure
+      String sanitized = value.trim();
 
-      // The length should always be 2, there will always be a set of string delimiters (" or ') even if it's an empty string
-      if (valueCopy.length() < 2)
+      // Check if string is quoted; if so, remove quotes
+      char firstChar = sanitized.charAt(0);
+      char lastChar = sanitized.charAt(sanitized.length() - 1);
+
+      if ((firstChar == '\"' || firstChar == '\'') && firstChar == lastChar)
       {
-         throw new RuntimeException("Unexpected or empty string value. Missing string delimiters?");
+         sanitized = sanitized.substring(1, sanitized.length() - 1);
+         if (sanitized.indexOf(firstChar) != -1)
+         {
+            throw new IllegalArgumentException("Illegal character contained in string: " + firstChar);
+         }
       }
 
-      char firstChar = valueCopy.charAt(0);
-      char lastChar = valueCopy.charAt(valueCopy.length() - 1);
+      // Escape any double quotes
+      sanitized = sanitized.replaceAll("(?<!\\\\)\"", "\\\\\"");
 
-      boolean validDelimiter = switch (firstChar)
-      {
-         case '"', '\'' -> true;
-         default -> false;
-      };
-
-      if (!validDelimiter || (firstChar != lastChar))
-      {
-         throw new RuntimeException("Invalid or mismatched string delimiters.");
-      }
-
-      // Remove string delimiters
-      String valueWithoutDelimiters = valueCopy.substring(1, valueCopy.length() - 1);
-
-      // Escape unescaped double-quotes within the string value
-      valueWithoutDelimiters = valueWithoutDelimiters.replaceAll("(?<!\\\\)\"", "\\\\\"");
-
-      return String.format("\"%s\"", valueWithoutDelimiters);
+      // Return the sanitized value wrapped in double quotes
+      return String.format("\"%s\"", sanitized);
    }
 
-   public static boolean sanitizeBoolValue(String value)
+   public static String sanitizeBoolAsJavaFieldValue(String value)
    {
-      Objects.requireNonNull(value);
+      if (value == null || value.isEmpty())
+         return "false";
 
       String valueCopy = value.trim();
 
       return switch (valueCopy)
       {
-         case "1", "true" -> true;
-         case "0", "false" -> false;
+         case "1", "true" -> "true";
+         case "0", "false" -> "false";
          default -> throw new IllegalArgumentException(String.format("Unexpected bool value {%s}.", value));
       };
    }

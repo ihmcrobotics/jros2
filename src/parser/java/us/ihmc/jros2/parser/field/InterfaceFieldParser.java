@@ -16,7 +16,7 @@
 package us.ihmc.jros2.parser.field;
 
 import us.ihmc.jros2.parser.InterfaceContext;
-import us.ihmc.jros2.parser.util.Builtin;
+import us.ihmc.jros2.parser.util.BuiltinTools;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,7 +88,7 @@ public final class InterfaceFieldParser
 
          field = new InterfaceField();
          field.type(typeStr);
-         if (!Builtin.isBuiltinType(typeStr))
+         if (!BuiltinTools.isBuiltinType(typeStr))
          {
             field.javaType(context.getMeta().getJavaPackageName() + "." + typeStr);
          }
