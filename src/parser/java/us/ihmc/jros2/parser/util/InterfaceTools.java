@@ -33,9 +33,12 @@ public final class InterfaceTools
          throw new IllegalArgumentException("packageResourceName must contain a package and a resource name delimited with a forward slash (/)");
       }
 
-      String[] package0Resource1 = new String[2];
-      package0Resource1[0] = packageResourceName.split("/")[0];
-      package0Resource1[1] = packageResourceName.split("/")[1];
+      String[] package0Resource1 = packageResourceName.split("/");
+
+      if (package0Resource1.length != 2)
+      {
+         throw new IllegalArgumentException("More than one forward slash (/) found in packageResourceName");
+      }
 
       if (package0Resource1[0].isEmpty())
       {
@@ -58,31 +61,5 @@ public final class InterfaceTools
       {
          throw new IllegalArgumentException("schema cannot be empty");
       }
-   }
-
-   public static String parseJavaClassNameFromResourceName(String resourceName)
-   {
-      StringBuilder javaClassNameBuilder = new StringBuilder();
-      for (int i = 0; i < resourceName.length(); i++)
-      {
-         char c = resourceName.charAt(i);
-
-         if (javaClassNameBuilder.isEmpty())
-         {
-            if (Character.isJavaIdentifierStart(c))
-            {
-               javaClassNameBuilder.append(c);
-            }
-         }
-         else
-         {
-            if (Character.isJavaIdentifierPart(c))
-            {
-               javaClassNameBuilder.append(c);
-            }
-         }
-      }
-
-      return javaClassNameBuilder.toString();
    }
 }
