@@ -34,7 +34,30 @@ public class BuiltinToolsTest
       assertThrows(RuntimeException.class, () -> BuiltinTools.isBuiltinType(null));
    }
 
-   // TODO: add getBuiltinTypeSize test
+   @Test
+   public void testGetBuiltinTypeSize()
+   {
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("bool"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("byte"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("char"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("int8"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("uint8"));
+      assertEquals(2, BuiltinTools.getBuiltinTypeSize("int16"));
+      assertEquals(2, BuiltinTools.getBuiltinTypeSize("uint16"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("float32"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("int32"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("uint32"));
+      assertEquals(8, BuiltinTools.getBuiltinTypeSize("float64"));
+      assertEquals(8, BuiltinTools.getBuiltinTypeSize("int64"));
+      assertEquals(8, BuiltinTools.getBuiltinTypeSize("uint64"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("string"));
+      assertEquals(2, BuiltinTools.getBuiltinTypeSize("wstring"));
+
+      assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("Hello"));
+      assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("World"));
+      assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("123"));
+      assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("0xFF"));
+   }
 
    @Test
    public void testGetBuiltinTypeJavaType()
