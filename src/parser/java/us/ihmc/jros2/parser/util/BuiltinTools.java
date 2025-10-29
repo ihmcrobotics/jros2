@@ -89,7 +89,7 @@ public final class BuiltinTools
          case "string":
             return 1;
          case "wstring":
-            return 2;
+            return 4;
          default:
             return -1;
       }

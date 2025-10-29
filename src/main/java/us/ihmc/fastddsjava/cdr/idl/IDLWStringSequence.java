@@ -37,7 +37,7 @@ public class IDLWStringSequence extends IDLStringSequence
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return (elements[i].length() * 2) + CDRBuffer.alignment(currentAlignment, elements[i].length() * 2); // 2 bytes per character
+      return (elements[i].length() * 4) + CDRBuffer.alignment(currentAlignment, elements[i].length() * 4); // 4 bytes per character
    }
 
    @Override
