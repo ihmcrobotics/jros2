@@ -15,16 +15,7 @@
  */
 package us.ihmc.jros2.generator;
 
-import org.gradle.api.Plugin;
-import org.gradle.api.Project;
-
-public class jros2GeneratorPlugin implements Plugin<Project>
+public class ROS2ServiceGenerator
 {
-   private static final String TASK_GROUP_NAME = "\0jros2";
-
-   @Override
-   public void apply(Project plugin)
-   {
-
-   }
+   // TODO:
 }

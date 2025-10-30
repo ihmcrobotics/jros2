@@ -18,6 +18,8 @@ plugins {
     id("java-library")
 
     id("us.ihmc.ihmc-build")
+
+    id("java-gradle-plugin")
 }
 
 ihmc {
@@ -29,6 +31,21 @@ ihmc {
     configureDependencyResolution()
     configurePublications()
 }
+
+gradlePlugin {
+   website.set("https://github.com/ihmcrobotics/jros2")
+   vcsUrl.set("https://github.com/ihmcrobotics/jros2")
+   plugins {
+      create("jros2Generator") {
+         id = "us.ihmc.jros2.generator"
+         displayName = "jros2 Interface Generator"
+         description = "Gradle plugin to generate Java ROS 2 interface classes from .msg, .srv, .action files"
+         tags.set(listOf("jros2", "ros2"))
+         implementationClass = "us.ihmc.jros2.generator.jros2GeneratorPlugin"
+      }
+   }
+}
+
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -74,6 +91,7 @@ generatorDependencies {
 
 testDependencies {
    api(ihmc.sourceSetProject("parser"))
+   api(ihmc.sourceSetProject("generator"))
 }
 
 //tasks.register<jros2GenTask>("generate_default_interfaces") {
