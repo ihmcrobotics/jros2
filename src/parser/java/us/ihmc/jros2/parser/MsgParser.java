@@ -25,7 +25,7 @@ public final class MsgParser
    public static MsgContext parseMsg(String schema, String packageResourceName)
    {
       MsgContext msgContext = new MsgContext(schema);
-      msgContext.getMeta().setPackageResourceName(packageResourceName);
+      msgContext.setPackageResourceName(packageResourceName);
 
       StringJoiner commentLines = new StringJoiner("\n");
       String[] lines = schema.split("\\R");
@@ -41,7 +41,7 @@ public final class MsgParser
 
          if (line.isEmpty() && msgContext.getFields().isEmpty())
          {
-            msgContext.getMeta().setHeaderComment(commentLines.toString());
+            msgContext.setHeaderComment(commentLines.toString());
             commentLines = new StringJoiner("\n");
             continue;
          }

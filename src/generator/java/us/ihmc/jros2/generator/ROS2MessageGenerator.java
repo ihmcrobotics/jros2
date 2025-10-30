@@ -134,4 +134,40 @@ public class ROS2MessageGenerator
 
       System.out.println("Generated " + outputFilePath.toFile().getAbsolutePath());
    }
+
+   public static String generateJavaClassContents(us.ihmc.jros2.parser.MsgContext context, Map<String, String> typeToClass)
+   {
+      String template = null;
+      try (InputStream stream = ROS2MessageGenerator.class.getClassLoader().getResourceAsStream("ROS2Message.st"))
+      {
+         if (stream != null)
+         {
+            template = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+         }
+      }
+      catch (IOException e)
+      {
+         e.printStackTrace();
+      }
+
+      if (template == null)
+      {
+         return "";
+      }
+
+      for (String type : typeToClass.keySet())
+      {
+         for (us.ihmc.jros2.parser.field.InterfaceField field : context.getFields().values())
+         {
+            if (field.getType().equals(type))
+            {
+               field.javaType(typeToClass.get(type));
+            }
+         }
+      }
+
+      ST st = new ST(template);
+      st.add("context", context);
+      return st.render();
+   }
 }

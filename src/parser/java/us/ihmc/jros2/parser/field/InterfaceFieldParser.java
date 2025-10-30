@@ -90,7 +90,7 @@ public final class InterfaceFieldParser
          field.type(typeStr);
          if (!BuiltinTools.isBuiltinType(typeStr))
          {
-            field.javaType(context.getMeta().getJavaPackageName() + "." + typeStr);
+            field.javaType(context.getJavaPackageName() + "." + typeStr);
          }
          field.array(arrayStr != null);
          field.upperBounded(sequenceBoundsStr != null);
