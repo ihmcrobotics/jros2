@@ -1,4 +1,18 @@
 <!
+Copyright 2025 Florida Institute for Human and Machine Cognition (IHMC)
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 Template for generating ROS2Message types
 
 Template inputs:
@@ -12,7 +26,7 @@ Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheats
 
 ##################################################################################
 This file was generated from the following content:
-(<context.packageName>/<context.fileName>)
+(<context.packageName>/<context.resourceName>)
 ##################################################################################
    <context.fileContent>
 ##################################################################################
@@ -28,11 +42,11 @@ import us.ihmc.jros2.ROS2Message;
    <context.headerComment>
 */
 <endif>
-public class <context.name> implements ROS2Message\<<context.name>>
+public class <context.javaClassName> implements ROS2Message\<<context.javaClassName>>
 {
-   public static final java.lang.String name = "<context.packageName>::msg::dds_::<context.name>_";
+   public static final java.lang.String name = "<context.packageName>::msg::dds_::<context.javaClassName>_";
 
-   <context.fields:{ field |
+   <context.fieldList:{ field |
 <if(field.headerComment)>/**
    <field.headerComment>
 */
@@ -43,9 +57,9 @@ public class <context.name> implements ROS2Message\<<context.name>>
 <endif>
 <if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;<if(field.trailingComment)> // <field.trailingComment><endif>
    }>
-   public <context.name>()
+   public <context.javaClassName>()
    {
-      <context.fields:{ field |
+      <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.array)>
 <field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><field.length><if(field.builtinStringType&&field.stringMaxLength)>, <field.length>, <field.stringLength><endif><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
@@ -70,7 +84,7 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    {
       int initialAlignment = currentAlignment;
 
-      <context.fields:{ field |
+      <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
@@ -100,7 +114,7 @@ currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      <context.fields:{ field |
+      <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
@@ -131,7 +145,7 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      <context.fields:{ field |
+      <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
@@ -168,9 +182,9 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    }
 
    @Override
-   public void set(<context.name> from)
+   public void set(<context.javaClassName> from)
    {
-      <context.fields:{ field |
+      <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize)>
@@ -202,7 +216,7 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    }
 
 <! Getters and setters start !>
-   <context.fields: { field |
+   <context.fieldList: { field |
 <if(!field.constantValue)>
 public <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaGetterMethodName>()
 {

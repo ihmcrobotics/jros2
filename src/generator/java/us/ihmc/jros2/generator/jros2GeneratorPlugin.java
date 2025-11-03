@@ -25,6 +25,5 @@ public class jros2GeneratorPlugin implements Plugin<Project>
    @Override
    public void apply(Project plugin)
    {
-
    }
 }

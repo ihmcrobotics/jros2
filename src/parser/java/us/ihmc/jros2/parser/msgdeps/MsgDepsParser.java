@@ -40,7 +40,7 @@ public final class MsgDepsParser
    public static MsgDepsContext parseMsgDeps(String schema, String packageResourceName)
    {
       MsgDepsContext msgDepsContext = new MsgDepsContext(schema);
-      msgDepsContext.getMeta().setPackageResourceName(packageResourceName);
+      msgDepsContext.setPackageResourceName(packageResourceName);
 
       String[] lines = schema.split("\\R");
       int i = 0;

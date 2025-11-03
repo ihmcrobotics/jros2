@@ -3,6 +3,7 @@ pluginManagement {
       id("us.ihmc.ihmc-build") version "1.3.0"
    }
    repositories {
+      mavenCentral()
       mavenLocal()
    }
 }
@@ -10,6 +11,7 @@ pluginManagement {
 buildscript {
    repositories {
       maven { url = uri("https://plugins.gradle.org/m2/") }
+      mavenCentral()
       mavenLocal()
    }
    dependencies {
