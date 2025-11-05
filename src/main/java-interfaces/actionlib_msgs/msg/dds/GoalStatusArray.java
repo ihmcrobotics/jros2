@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(actionlib_msgs/GoalStatusArray.msg)
+(actionlib_msgs/GoalStatusArray)
 ##################################################################################
-   # Stores the statuses for goals that are currently being tracked
-   # by an action server
-   std_msgs/Header header
-   GoalStatus[] status_list
-
 ##################################################################################
 
  */
@@ -25,15 +20,15 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatusArray_";
 
    /**
-      Stores the statuses for goals that are currently being tracked
-      by an action server
+      # Stores the statuses for goals that are currently being tracked
+      # by an action server
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final actionlib_msgs.msg.dds.std_msgs/Header header_;
    private final IDLObjectSequence<actionlib_msgs.msg.dds.GoalStatus> status_list_;
 
    public GoalStatusArray()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new actionlib_msgs.msg.dds.std_msgs/Header();
       status_list_ = new IDLObjectSequence<actionlib_msgs.msg.dds.GoalStatus>(actionlib_msgs.msg.dds.GoalStatus.class);
 
    }
@@ -73,7 +68,7 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public actionlib_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

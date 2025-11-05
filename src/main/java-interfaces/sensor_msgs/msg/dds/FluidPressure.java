@@ -4,21 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/FluidPressure.msg)
+(sensor_msgs/FluidPressure)
 ##################################################################################
-   # Single pressure reading.  This message is appropriate for measuring the
-   # pressure inside of a fluid (air, water, etc).  This also includes
-   # atmospheric or barometric pressure.
-   #
-   # This message is not appropriate for force/pressure contact sensors.
-
-   std_msgs/Header header # timestamp of the measurement
-                                # frame_id is the location of the pressure sensor
-
-   float64 fluid_pressure       # Absolute pressure reading in Pascals.
-
-   float64 variance             # 0 is interpreted as variance unknown
-
 ##################################################################################
 
  */
@@ -29,23 +16,23 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Single pressure reading.  This message is appropriate for measuring the
-   pressure inside of a fluid (air, water, etc).  This also includes
-   atmospheric or barometric pressure.
-
-   This message is not appropriate for force/pressure contact sensors.
+   # Single pressure reading.  This message is appropriate for measuring the
+   # pressure inside of a fluid (air, water, etc).  This also includes
+   # atmospheric or barometric pressure.
+   #
+   # This message is not appropriate for force/pressure contact sensors.
 */
 public class FluidPressure implements ROS2Message<FluidPressure>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::FluidPressure_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp of the measurement
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp of the measurement
    private double fluid_pressure_; // Absolute pressure reading in Pascals.
    private double variance_; // 0 is interpreted as variance unknown
 
    public FluidPressure()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
 
    }
 
@@ -88,7 +75,7 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

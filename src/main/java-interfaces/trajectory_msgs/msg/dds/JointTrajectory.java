@@ -4,20 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(trajectory_msgs/JointTrajectory.msg)
+(trajectory_msgs/JointTrajectory)
 ##################################################################################
-   # The header is used to specify the coordinate frame and the reference time for
-   # the trajectory durations
-   std_msgs/Header header
-
-   # The names of the active joints in each trajectory point. These names are
-   # ordered and must correspond to the values in each trajectory point.
-   string[] joint_names
-
-   # Array of trajectory points, which describe the positions, velocities,
-   # accelerations and/or efforts of the joints at each time point.
-   JointTrajectoryPoint[] points
-
 ##################################################################################
 
  */
@@ -32,24 +20,24 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::JointTrajectory_";
 
    /**
-      The header is used to specify the coordinate frame and the reference time for
-      the trajectory durations
+      # The header is used to specify the coordinate frame and the reference time for
+      # the trajectory durations
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final trajectory_msgs.msg.dds.std_msgs/Header header_;
    /**
-      The names of the active joints in each trajectory point. These names are
-      ordered and must correspond to the values in each trajectory point.
+      # The names of the active joints in each trajectory point. These names are
+      # ordered and must correspond to the values in each trajectory point.
    */
    private final IDLStringSequence joint_names_;
    /**
-      Array of trajectory points, which describe the positions, velocities,
-      accelerations and/or efforts of the joints at each time point.
+      # Array of trajectory points, which describe the positions, velocities,
+      # accelerations and/or efforts of the joints at each time point.
    */
    private final IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint> points_;
 
    public JointTrajectory()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new trajectory_msgs.msg.dds.std_msgs/Header();
       joint_names_ = new IDLStringSequence();
       points_ = new IDLObjectSequence<trajectory_msgs.msg.dds.JointTrajectoryPoint>(trajectory_msgs.msg.dds.JointTrajectoryPoint.class);
 
@@ -94,7 +82,7 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public trajectory_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

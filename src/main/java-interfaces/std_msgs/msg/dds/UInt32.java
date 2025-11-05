@@ -4,15 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/UInt32.msg)
+(std_msgs/UInt32)
 ##################################################################################
-   # This was originally provided as an example message.
-   # It is deprecated as of Foxy
-   # It is recommended to create your own semantically meaningful message.
-   # However if you would like to continue using this please use the equivalent in example_msgs.
-
-   uint32 data
-
 ##################################################################################
 
  */
@@ -23,16 +16,16 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This was originally provided as an example message.
-   It is deprecated as of Foxy
-   It is recommended to create your own semantically meaningful message.
-   However if you would like to continue using this please use the equivalent in example_msgs.
+   # This was originally provided as an example message.
+   # It is deprecated as of Foxy
+   # It is recommended to create your own semantically meaningful message.
+   # However if you would like to continue using this please use the equivalent in example_msgs.
 */
 public class UInt32 implements ROS2Message<UInt32>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt32_";
 
-   private int data_;
+   private long data_;
 
    public UInt32()
    {
@@ -51,14 +44,14 @@ public class UInt32 implements ROS2Message<UInt32>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeInt(data_);
+      buffer.writeLong(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readInt();
+      data_ = buffer.readLong();
 
    }
 
@@ -69,12 +62,12 @@ public class UInt32 implements ROS2Message<UInt32>
 
    }
 
-   public int getData()
+   public long getData()
    {
       return data_;
    }
 
-   public void setData(int data_)
+   public void setData(long data_)
    {
       this.data_ = data_;
    }

@@ -2,11 +2,12 @@ package us.ihmc.jros2.parser;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 public class MsgParserTest
 {
    @Test
-   public void testMsgParse()
+   public void testMsgParse() throws InterfaceFieldParsingException
    {
       MsgContext testMsg = MsgParser.parseMsg("""
                                                     # Header comment for the entire message

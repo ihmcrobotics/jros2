@@ -4,25 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/PointField.msg)
+(sensor_msgs/PointField)
 ##################################################################################
-   # This message holds the description of one point entry in the
-   # PointCloud2 message format.
-   uint8 INT8    = 1
-   uint8 UINT8   = 2
-   uint8 INT16   = 3
-   uint8 UINT16  = 4
-   uint8 INT32   = 5
-   uint8 UINT32  = 6
-   uint8 FLOAT32 = 7
-   uint8 FLOAT64 = 8
-
-   # Common PointField names are x, y, z, intensity, rgb, rgba
-   string name      # Name of field
-   uint32 offset    # Offset from start of point struct
-   uint8  datatype  # Datatype enumeration, see above
-   uint32 count     # How many elements in the field
-
 ##################################################################################
 
  */
@@ -37,23 +20,23 @@ public class PointField implements ROS2Message<PointField>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
    /**
-      This message holds the description of one point entry in the
-      PointCloud2 message format.
+      # This message holds the description of one point entry in the
+      # PointCloud2 message format.
    */
-   public static final byte INT8 = 1;
-   public static final byte UINT8 = 2;
-   public static final byte INT16 = 3;
-   public static final byte UINT16 = 4;
-   public static final byte INT32 = 5;
-   public static final byte UINT32 = 6;
-   public static final byte FLOAT32 = 7;
-   public static final byte FLOAT64 = 8;
+   public static final short INT8 = 1;
+   public static final short UINT8 = 2;
+   public static final short INT16 = 3;
+   public static final short UINT16 = 4;
+   public static final short INT32 = 5;
+   public static final short UINT32 = 6;
+   public static final short FLOAT32 = 7;
+   public static final short FLOAT64 = 8;
    /**
-      Common PointField names are x, y, z, intensity, rgb, rgba
+      # Common PointField names are x, y, z, intensity, rgb, rgba
    */
    private final StringBuilder name_; // Name of field
-   private int offset_; // Offset from start of point struct
-   private int count_; // How many elements in the field
+   private long offset_; // Offset from start of point struct
+   private long count_; // How many elements in the field
 
    public PointField()
    {
@@ -77,8 +60,8 @@ public class PointField implements ROS2Message<PointField>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
-      buffer.writeInt(offset_);
-      buffer.writeInt(count_);
+      buffer.writeLong(offset_);
+      buffer.writeLong(count_);
 
    }
 
@@ -86,8 +69,8 @@ public class PointField implements ROS2Message<PointField>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
-      offset_ = buffer.readInt();
-      count_ = buffer.readInt();
+      offset_ = buffer.readLong();
+      count_ = buffer.readLong();
 
    }
 
@@ -106,22 +89,22 @@ public class PointField implements ROS2Message<PointField>
       return name_;
    }
 
-   public int getOffset()
+   public long getOffset()
    {
       return offset_;
    }
 
-   public void setOffset(int offset_)
+   public void setOffset(long offset_)
    {
       this.offset_ = offset_;
    }
 
-   public int getCount()
+   public long getCount()
    {
       return count_;
    }
 
-   public void setCount(int count_)
+   public void setCount(long count_)
    {
       this.count_ = count_;
    }

@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Transform.msg)
+(geometry_msgs/Transform)
 ##################################################################################
-   # This represents the transform between two coordinate frames in free space.
-
-   Vector3 translation
-   Quaternion rotation
-
 ##################################################################################
 
  */
@@ -21,7 +16,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents the transform between two coordinate frames in free space.
+   # This represents the transform between two coordinate frames in free space.
 */
 public class Transform implements ROS2Message<Transform>
 {

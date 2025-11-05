@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(example_interfaces/WString.msg)
+(example_interfaces/WString)
 ##################################################################################
-   # This is an example message of using a primitive datatype, wstring.
-   # If you want to test with this that's fine, but if you are deploying
-   # it into a system you should create a semantically meaningful message type.
-   # If you want to embed it in another message, use the primitive data type instead.
-   wstring data
-
 ##################################################################################
 
  */
@@ -26,10 +20,10 @@ public class WString implements ROS2Message<WString>
    public static final java.lang.String name = "example_interfaces::msg::dds_::WString_";
 
    /**
-      This is an example message of using a primitive datatype, wstring.
-      If you want to test with this that's fine, but if you are deploying
-      it into a system you should create a semantically meaningful message type.
-      If you want to embed it in another message, use the primitive data type instead.
+      # This is an example message of using a primitive datatype, wstring.
+      # If you want to test with this that's fine, but if you are deploying
+      # it into a system you should create a semantically meaningful message type.
+      # If you want to embed it in another message, use the primitive data type instead.
    */
    private final StringBuilder data_;
 

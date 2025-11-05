@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Vector3Stamped.msg)
+(geometry_msgs/Vector3Stamped)
 ##################################################################################
-   # This represents a Vector3 with reference coordinate frame and timestamp
-
-   # Note that this follows vector semantics with it always anchored at the origin,
-   # so the rotational elements of a transform are the only parts applied when transforming.
-
-   std_msgs/Header header
-   Vector3 vector
-
 ##################################################################################
 
  */
@@ -24,19 +16,19 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Note that this follows vector semantics with it always anchored at the origin,
-   so the rotational elements of a transform are the only parts applied when transforming.
+   # Note that this follows vector semantics with it always anchored at the origin,
+   # so the rotational elements of a transform are the only parts applied when transforming.
 */
 public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Vector3Stamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Vector3 vector_;
 
    public Vector3Stamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       vector_ = new geometry_msgs.msg.dds.Vector3();
 
    }
@@ -76,7 +68,7 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

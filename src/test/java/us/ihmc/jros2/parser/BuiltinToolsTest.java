@@ -51,7 +51,7 @@ public class BuiltinToolsTest
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("int64"));
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("uint64"));
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("string"));
-      assertEquals(2, BuiltinTools.getBuiltinTypeSize("wstring"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("wstring"));
 
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("Hello"));
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.getBuiltinTypeSize("World"));
@@ -180,7 +180,7 @@ public class BuiltinToolsTest
       assertEquals("\"'Hello' \\\"World\\\"\"", BuiltinTools.sanitizeStringAsJavaFieldValue("'Hello' \"World\""));
       assertEquals("\"Hello World\"", BuiltinTools.sanitizeStringAsJavaFieldValue("  Hello World  "));
       assertEquals("\"  Hello World  \"", BuiltinTools.sanitizeStringAsJavaFieldValue("\"  Hello World  \""));
-      assertEquals("\"  Hello World  \"", BuiltinTools.sanitizeStringAsJavaFieldValue("'  Hello World  '"));
+      assertEquals("\"  Goodbye World  \"", BuiltinTools.sanitizeStringAsJavaFieldValue("'  Goodbye World  '"));
 
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.sanitizeStringAsJavaFieldValue("\" \" \""));
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.sanitizeStringAsJavaFieldValue("' ' '"));

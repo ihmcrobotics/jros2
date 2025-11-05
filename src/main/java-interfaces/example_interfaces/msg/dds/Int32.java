@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(example_interfaces/Int32.msg)
+(example_interfaces/Int32)
 ##################################################################################
-   # This is an example message of using a primitive datatype, int32.
-   # If you want to test with this that's fine, but if you are deploying
-   # it into a system you should create a semantically meaningful message type.
-   # If you want to embed it in another message, use the primitive data type instead.
-   int32 data
-
 ##################################################################################
 
  */
@@ -26,10 +20,10 @@ public class Int32 implements ROS2Message<Int32>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Int32_";
 
    /**
-      This is an example message of using a primitive datatype, int32.
-      If you want to test with this that's fine, but if you are deploying
-      it into a system you should create a semantically meaningful message type.
-      If you want to embed it in another message, use the primitive data type instead.
+      # This is an example message of using a primitive datatype, int32.
+      # If you want to test with this that's fine, but if you are deploying
+      # it into a system you should create a semantically meaningful message type.
+      # If you want to embed it in another message, use the primitive data type instead.
    */
    private int data_;
 

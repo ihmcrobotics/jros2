@@ -4,15 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/UInt64.msg)
+(std_msgs/UInt64)
 ##################################################################################
-   # This was originally provided as an example message.
-   # It is deprecated as of Foxy
-   # It is recommended to create your own semantically meaningful message.
-   # However if you would like to continue using this please use the equivalent in example_msgs.
-
-   uint64 data
-
 ##################################################################################
 
  */
@@ -23,10 +16,10 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This was originally provided as an example message.
-   It is deprecated as of Foxy
-   It is recommended to create your own semantically meaningful message.
-   However if you would like to continue using this please use the equivalent in example_msgs.
+   # This was originally provided as an example message.
+   # It is deprecated as of Foxy
+   # It is recommended to create your own semantically meaningful message.
+   # However if you would like to continue using this please use the equivalent in example_msgs.
 */
 public class UInt64 implements ROS2Message<UInt64>
 {

@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/Imu.msg)
+(sensor_msgs/Imu)
 ##################################################################################
+##################################################################################
+
+ */
+package sensor_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # This is a message to hold data from an IMU (Inertial Measurement Unit)
    #
    # Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec
@@ -19,62 +29,27 @@ This file was generated from the following content:
    # orientation estimate), please set element 0 of the associated covariance matrix to -1
    # If you are interpreting this message, please check for a value of -1 in the first element of each
    # covariance matrix, and disregard the associated estimate.
-
-   std_msgs/Header header
-
-   geometry_msgs/Quaternion orientation
-   float64[9] orientation_covariance # Row major about x, y, z axes
-
-   geometry_msgs/Vector3 angular_velocity
-   float64[9] angular_velocity_covariance # Row major about x, y, z axes
-
-   geometry_msgs/Vector3 linear_acceleration
-   float64[9] linear_acceleration_covariance # Row major x, y z
-
-##################################################################################
-
- */
-package sensor_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   This is a message to hold data from an IMU (Inertial Measurement Unit)
-
-   Accelerations should be in m/s^2 (not in g's), and rotational velocity should be in rad/sec
-
-   If the covariance of the measurement is known, it should be filled in (if all you know is the
-   variance of each measurement, e.g. from the datasheet, just put those along the diagonal)
-   A covariance matrix of all zeros will be interpreted as "covariance unknown", and to use the
-   data a covariance will have to be assumed or gotten from some other source
-
-   If you have no estimate for one of the data elements (e.g. your IMU doesn't produce an
-   orientation estimate), please set element 0 of the associated covariance matrix to -1
-   If you are interpreting this message, please check for a value of -1 in the first element of each
-   covariance matrix, and disregard the associated estimate.
 */
 public class Imu implements ROS2Message<Imu>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private final geometry_msgs.msg.dds.Quaternion orientation_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
+   private final sensor_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
    private final double[] orientation_covariance_; // Row major about x, y, z axes
-   private final geometry_msgs.msg.dds.Vector3 angular_velocity_;
+   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 angular_velocity_;
    private final double[] angular_velocity_covariance_; // Row major about x, y, z axes
-   private final geometry_msgs.msg.dds.Vector3 linear_acceleration_;
+   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 linear_acceleration_;
    private final double[] linear_acceleration_covariance_; // Row major x, y z
 
    public Imu()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      orientation_ = new geometry_msgs.msg.dds.Quaternion();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      orientation_ = new sensor_msgs.msg.dds.geometry_msgs/Quaternion();
       orientation_covariance_ = new double[9];
-      angular_velocity_ = new geometry_msgs.msg.dds.Vector3();
+      angular_velocity_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
       angular_velocity_covariance_ = new double[9];
-      linear_acceleration_ = new geometry_msgs.msg.dds.Vector3();
+      linear_acceleration_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
       linear_acceleration_covariance_ = new double[9];
 
    }
@@ -161,12 +136,12 @@ public class Imu implements ROS2Message<Imu>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getOrientation()
+   public sensor_msgs.msg.dds.geometry_msgs/Quaternion getOrientation()
    {
       return orientation_;
    }
@@ -176,7 +151,7 @@ public class Imu implements ROS2Message<Imu>
       return orientation_covariance_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getAngularVelocity()
+   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getAngularVelocity()
    {
       return angular_velocity_;
    }
@@ -186,7 +161,7 @@ public class Imu implements ROS2Message<Imu>
       return angular_velocity_covariance_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getLinearAcceleration()
+   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getLinearAcceleration()
    {
       return linear_acceleration_;
    }

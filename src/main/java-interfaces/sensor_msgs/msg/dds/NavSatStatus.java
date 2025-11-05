@@ -4,31 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/NavSatStatus.msg)
+(sensor_msgs/NavSatStatus)
 ##################################################################################
-   # Navigation Satellite fix status for any Global Navigation Satellite System.
-   #
-   # Whether to output an augmented fix is determined by both the fix
-   # type and the last time differential corrections were received.  A
-   # fix is valid when status >= STATUS_FIX.
-
-   int8 STATUS_NO_FIX =  -1        # unable to fix position
-   int8 STATUS_FIX =      0        # unaugmented fix
-   int8 STATUS_SBAS_FIX = 1        # with satellite-based augmentation
-   int8 STATUS_GBAS_FIX = 2        # with ground-based augmentation
-
-   int8 status
-
-   # Bits defining which Global Navigation Satellite System signals were
-   # used by the receiver.
-
-   uint16 SERVICE_GPS =     1
-   uint16 SERVICE_GLONASS = 2
-   uint16 SERVICE_COMPASS = 4      # includes BeiDou.
-   uint16 SERVICE_GALILEO = 8
-
-   uint16 service
-
 ##################################################################################
 
  */
@@ -39,11 +16,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Navigation Satellite fix status for any Global Navigation Satellite System.
-
-   Whether to output an augmented fix is determined by both the fix
-   type and the last time differential corrections were received.  A
-   fix is valid when status >= STATUS_FIX.
+   # Navigation Satellite fix status for any Global Navigation Satellite System.
+   #
+   # Whether to output an augmented fix is determined by both the fix
+   # type and the last time differential corrections were received.  A
+   # fix is valid when status >= STATUS_FIX.
 */
 public class NavSatStatus implements ROS2Message<NavSatStatus>
 {
@@ -54,11 +31,11 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public static final byte STATUS_SBAS_FIX = 1; // with satellite-based augmentation
    public static final byte STATUS_GBAS_FIX = 2; // with ground-based augmentation
    private byte status_;
-   public static final short SERVICE_GPS = 1;
-   public static final short SERVICE_GLONASS = 2;
-   public static final short SERVICE_COMPASS = 4; // includes BeiDou.
-   public static final short SERVICE_GALILEO = 8;
-   private short service_;
+   public static final int SERVICE_GPS = 1;
+   public static final int SERVICE_GLONASS = 2;
+   public static final int SERVICE_COMPASS = 4; // includes BeiDou.
+   public static final int SERVICE_GALILEO = 8;
+   private int service_;
 
    public NavSatStatus()
    {
@@ -79,7 +56,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(status_);
-      buffer.writeShort(service_);
+      buffer.writeInt(service_);
 
    }
 
@@ -87,7 +64,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public void deserialize(CDRBuffer buffer)
    {
       status_ = buffer.readByte();
-      service_ = buffer.readShort();
+      service_ = buffer.readInt();
 
    }
 
@@ -109,12 +86,12 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
       this.status_ = status_;
    }
 
-   public short getService()
+   public int getService()
    {
       return service_;
    }
 
-   public void setService(short service_)
+   public void setService(int service_)
    {
       this.service_ = service_;
    }

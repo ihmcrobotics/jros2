@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(statistics_msgs/MetricsMessage.msg)
+(statistics_msgs/MetricsMessage)
 ##################################################################################
+##################################################################################
+
+ */
+package statistics_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    #############################################
    # A generic metrics message providing statistics for measurements from different sources. For example,
    # measure a system's CPU % for a given window yields the following data points over a window of time:
@@ -18,74 +28,33 @@ This file was generated from the following content:
    #
    # These are all represented as different 'StatisticDataPoint's.
    #############################################
-
-   # Name metric measurement source, e.g., node, topic, or process name
-   string measurement_source_name
-
-   # Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
-   string metrics_source
-
-   # Unit of measure of the metric, e.g. percent, mb, seconds, etc.
-   string unit
-
-   # Measurement window start time
-   builtin_interfaces/Time window_start
-
-   # Measurement window end time
-   builtin_interfaces/Time window_stop
-
-   # A list of statistics data point, defined in StatisticDataPoint.msg
-   StatisticDataPoint[] statistics
-
-##################################################################################
-
- */
-package statistics_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   ############################################
-   A generic metrics message providing statistics for measurements from different sources. For example,
-   measure a system's CPU % for a given window yields the following data points over a window of time:
-
-   - average cpu %
-   - std deviation
-   - min
-   - max
-   - sample count
-
-   These are all represented as different 'StatisticDataPoint's.
-   ############################################
 */
 public class MetricsMessage implements ROS2Message<MetricsMessage>
 {
    public static final java.lang.String name = "statistics_msgs::msg::dds_::MetricsMessage_";
 
    /**
-      Name metric measurement source, e.g., node, topic, or process name
+      # Name metric measurement source, e.g., node, topic, or process name
    */
    private final StringBuilder measurement_source_name_;
    /**
-      Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
+      # Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
    */
    private final StringBuilder metrics_source_;
    /**
-      Unit of measure of the metric, e.g. percent, mb, seconds, etc.
+      # Unit of measure of the metric, e.g. percent, mb, seconds, etc.
    */
    private final StringBuilder unit_;
    /**
-      Measurement window start time
+      # Measurement window start time
    */
-   private final builtin_interfaces.msg.dds.Time window_start_;
+   private final statistics_msgs.msg.dds.builtin_interfaces/Time window_start_;
    /**
-      Measurement window end time
+      # Measurement window end time
    */
-   private final builtin_interfaces.msg.dds.Time window_stop_;
+   private final statistics_msgs.msg.dds.builtin_interfaces/Time window_stop_;
    /**
-      A list of statistics data point, defined in StatisticDataPoint.msg
+      # A list of statistics data point, defined in StatisticDataPoint.msg
    */
    private final IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> statistics_;
 
@@ -94,8 +63,8 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       measurement_source_name_ = new StringBuilder();
       metrics_source_ = new StringBuilder();
       unit_ = new StringBuilder();
-      window_start_ = new builtin_interfaces.msg.dds.Time();
-      window_stop_ = new builtin_interfaces.msg.dds.Time();
+      window_start_ = new statistics_msgs.msg.dds.builtin_interfaces/Time();
+      window_stop_ = new statistics_msgs.msg.dds.builtin_interfaces/Time();
       statistics_ = new IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint>(statistics_msgs.msg.dds.StatisticDataPoint.class);
 
    }
@@ -169,12 +138,12 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return unit_;
    }
 
-   public builtin_interfaces.msg.dds.Time getWindowStart()
+   public statistics_msgs.msg.dds.builtin_interfaces/Time getWindowStart()
    {
       return window_start_;
    }
 
-   public builtin_interfaces.msg.dds.Time getWindowStop()
+   public statistics_msgs.msg.dds.builtin_interfaces/Time getWindowStop()
    {
       return window_stop_;
    }

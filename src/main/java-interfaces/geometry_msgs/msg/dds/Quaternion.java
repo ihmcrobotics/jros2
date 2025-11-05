@@ -4,15 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Quaternion.msg)
+(geometry_msgs/Quaternion)
 ##################################################################################
-   # This represents an orientation in free space in quaternion form.
-
-   float64 x 0
-   float64 y 0
-   float64 z 0
-   float64 w 1
-
 ##################################################################################
 
  */
@@ -23,7 +16,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents an orientation in free space in quaternion form.
+   # This represents an orientation in free space in quaternion form.
 */
 public class Quaternion implements ROS2Message<Quaternion>
 {

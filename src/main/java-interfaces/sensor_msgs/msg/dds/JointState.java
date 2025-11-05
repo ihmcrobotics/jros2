@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/JointState.msg)
+(sensor_msgs/JointState)
 ##################################################################################
+##################################################################################
+
+ */
+package sensor_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # This is a message that holds data to describe the state of a set of torque controlled joints.
    #
    # The state of each joint (revolute or prismatic) is defined by:
@@ -24,48 +34,12 @@ This file was generated from the following content:
    # All arrays in this message should have the same size, or be empty.
    # This is the only way to uniquely associate the joint name with the correct
    # states.
-
-   std_msgs/Header header
-
-   string[] name
-   float64[] position
-   float64[] velocity
-   float64[] effort
-
-##################################################################################
-
- */
-package sensor_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   This is a message that holds data to describe the state of a set of torque controlled joints.
-
-   The state of each joint (revolute or prismatic) is defined by:
-   * the position of the joint (rad or m),
-   * the velocity of the joint (rad/s or m/s) and
-   * the effort that is applied in the joint (Nm or N).
-
-   Each joint is uniquely identified by its name
-   The header specifies the time at which the joint states were recorded. All the joint states
-   in one message have to be recorded at the same time.
-
-   This message consists of a multiple arrays, one for each part of the joint state.
-   The goal is to make each of the fields optional. When e.g. your joints have no
-   effort associated with them, you can leave the effort array empty.
-
-   All arrays in this message should have the same size, or be empty.
-   This is the only way to uniquely associate the joint name with the correct
-   states.
 */
 public class JointState implements ROS2Message<JointState>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JointState_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
    private final IDLStringSequence name_;
    private final IDLDoubleSequence position_;
    private final IDLDoubleSequence velocity_;
@@ -73,7 +47,7 @@ public class JointState implements ROS2Message<JointState>
 
    public JointState()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       name_ = new IDLStringSequence();
       position_ = new IDLDoubleSequence();
       velocity_ = new IDLDoubleSequence();
@@ -128,7 +102,7 @@ public class JointState implements ROS2Message<JointState>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

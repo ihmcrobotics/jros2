@@ -4,19 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(trajectory_msgs/MultiDOFJointTrajectory.msg)
+(trajectory_msgs/MultiDOFJointTrajectory)
 ##################################################################################
-   # The header is used to specify the coordinate frame and the reference time for the trajectory durations
-   std_msgs/Header header
-
-   # A representation of a multi-dof joint trajectory (each point is a transformation)
-   # Each point along the trajectory will include an array of positions/velocities/accelerations
-   # that has the same length as the array of joint names, and has the same order of joints as 
-   # the joint names array.
-
-   string[] joint_names
-   MultiDOFJointTrajectoryPoint[] points
-
 ##################################################################################
 
  */
@@ -31,15 +20,15 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectory_";
 
    /**
-      The header is used to specify the coordinate frame and the reference time for the trajectory durations
+      # The header is used to specify the coordinate frame and the reference time for the trajectory durations
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final trajectory_msgs.msg.dds.std_msgs/Header header_;
    private final IDLStringSequence joint_names_;
    private final IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint> points_;
 
    public MultiDOFJointTrajectory()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new trajectory_msgs.msg.dds.std_msgs/Header();
       joint_names_ = new IDLStringSequence();
       points_ = new IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint>(trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint.class);
 
@@ -84,7 +73,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public trajectory_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

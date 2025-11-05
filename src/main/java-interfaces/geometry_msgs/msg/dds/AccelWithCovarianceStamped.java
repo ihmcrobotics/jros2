@@ -4,12 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/AccelWithCovarianceStamped.msg)
+(geometry_msgs/AccelWithCovarianceStamped)
 ##################################################################################
-   # This represents an estimated accel with reference coordinate frame and timestamp.
-   std_msgs/Header header
-   AccelWithCovariance accel
-
 ##################################################################################
 
  */
@@ -24,14 +20,14 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovarianceStamped_";
 
    /**
-      This represents an estimated accel with reference coordinate frame and timestamp.
+      # This represents an estimated accel with reference coordinate frame and timestamp.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.AccelWithCovariance accel_;
 
    public AccelWithCovarianceStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       accel_ = new geometry_msgs.msg.dds.AccelWithCovariance();
 
    }
@@ -71,7 +67,7 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

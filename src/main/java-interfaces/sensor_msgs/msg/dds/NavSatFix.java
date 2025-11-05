@@ -4,54 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/NavSatFix.msg)
+(sensor_msgs/NavSatFix)
 ##################################################################################
-   # Navigation Satellite fix for any Global Navigation Satellite System
-   #
-   # Specified using the WGS 84 reference ellipsoid
-
-   # header.stamp specifies the ROS time for this measurement (the
-   #        corresponding satellite time may be reported using the
-   #        sensor_msgs/TimeReference message).
-   #
-   # header.frame_id is the frame of reference reported by the satellite
-   #        receiver, usually the location of the antenna.  This is a
-   #        Euclidean frame relative to the vehicle, not a reference
-   #        ellipsoid.
-   std_msgs/Header header
-
-   # Satellite fix status information.
-   NavSatStatus status
-
-   # Latitude [degrees]. Positive is north of equator; negative is south.
-   float64 latitude
-
-   # Longitude [degrees]. Positive is east of prime meridian; negative is west.
-   float64 longitude
-
-   # Altitude [m]. Positive is above the WGS 84 ellipsoid
-   # (quiet NaN if no altitude is available).
-   float64 altitude
-
-   # Position covariance [m^2] defined relative to a tangential plane
-   # through the reported position. The components are East, North, and
-   # Up (ENU), in row-major order.
-   #
-   # Beware: this coordinate system exhibits singularities at the poles.
-   float64[9] position_covariance
-
-   # If the covariance of the fix is known, fill it in completely. If the
-   # GPS receiver provides the variance of each measurement, put them
-   # along the diagonal. If only Dilution of Precision is available,
-   # estimate an approximate covariance from that.
-
-   uint8 COVARIANCE_TYPE_UNKNOWN = 0
-   uint8 COVARIANCE_TYPE_APPROXIMATED = 1
-   uint8 COVARIANCE_TYPE_DIAGONAL_KNOWN = 2
-   uint8 COVARIANCE_TYPE_KNOWN = 3
-
-   uint8 position_covariance_type
-
 ##################################################################################
 
  */
@@ -62,59 +16,59 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Navigation Satellite fix for any Global Navigation Satellite System
-
-   Specified using the WGS 84 reference ellipsoid
+   # Navigation Satellite fix for any Global Navigation Satellite System
+   #
+   # Specified using the WGS 84 reference ellipsoid
 */
 public class NavSatFix implements ROS2Message<NavSatFix>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
 
    /**
-      header.stamp specifies the ROS time for this measurement (the
-      corresponding satellite time may be reported using the
-      sensor_msgs/TimeReference message).
-
-      header.frame_id is the frame of reference reported by the satellite
-      receiver, usually the location of the antenna.  This is a
-      Euclidean frame relative to the vehicle, not a reference
-      ellipsoid.
+      # header.stamp specifies the ROS time for this measurement (the
+      #        corresponding satellite time may be reported using the
+      #        sensor_msgs/TimeReference message).
+      #
+      # header.frame_id is the frame of reference reported by the satellite
+      #        receiver, usually the location of the antenna.  This is a
+      #        Euclidean frame relative to the vehicle, not a reference
+      #        ellipsoid.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Satellite fix status information.
+      # Satellite fix status information.
    */
    private final sensor_msgs.msg.dds.NavSatStatus status_;
    /**
-      Latitude [degrees]. Positive is north of equator; negative is south.
+      # Latitude [degrees]. Positive is north of equator; negative is south.
    */
    private double latitude_;
    /**
-      Longitude [degrees]. Positive is east of prime meridian; negative is west.
+      # Longitude [degrees]. Positive is east of prime meridian; negative is west.
    */
    private double longitude_;
    /**
-      Altitude [m]. Positive is above the WGS 84 ellipsoid
-      (quiet NaN if no altitude is available).
+      # Altitude [m]. Positive is above the WGS 84 ellipsoid
+      # (quiet NaN if no altitude is available).
    */
    private double altitude_;
    /**
-      Position covariance [m^2] defined relative to a tangential plane
-      through the reported position. The components are East, North, and
-      Up (ENU), in row-major order.
-
-      Beware: this coordinate system exhibits singularities at the poles.
+      # Position covariance [m^2] defined relative to a tangential plane
+      # through the reported position. The components are East, North, and
+      # Up (ENU), in row-major order.
+      #
+      # Beware: this coordinate system exhibits singularities at the poles.
    */
    private final double[] position_covariance_;
-   public static final byte COVARIANCE_TYPE_UNKNOWN = 0;
-   public static final byte COVARIANCE_TYPE_APPROXIMATED = 1;
-   public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
-   public static final byte COVARIANCE_TYPE_KNOWN = 3;
-   private byte position_covariance_type_;
+   public static final short COVARIANCE_TYPE_UNKNOWN = 0;
+   public static final short COVARIANCE_TYPE_APPROXIMATED = 1;
+   public static final short COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
+   public static final short COVARIANCE_TYPE_KNOWN = 3;
+   private short position_covariance_type_;
 
    public NavSatFix()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       status_ = new sensor_msgs.msg.dds.NavSatStatus();
       position_covariance_ = new double[9];
 
@@ -148,7 +102,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       {
          buffer.writeDouble(position_covariance_[i]);
       }
-      buffer.writeByte(position_covariance_type_);
+      buffer.writeShort(position_covariance_type_);
 
    }
 
@@ -164,7 +118,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       {
          position_covariance_[i] = buffer.readDouble();
       }
-      position_covariance_type_ = buffer.readByte();
+      position_covariance_type_ = buffer.readShort();
 
    }
 
@@ -184,7 +138,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
@@ -229,12 +183,12 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       return position_covariance_;
    }
 
-   public byte getPositionCovarianceType()
+   public short getPositionCovarianceType()
    {
       return position_covariance_type_;
    }
 
-   public void setPositionCovarianceType(byte position_covariance_type_)
+   public void setPositionCovarianceType(short position_covariance_type_)
    {
       this.position_covariance_type_ = position_covariance_type_;
    }

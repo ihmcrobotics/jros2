@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(statistics_msgs/StatisticDataPoint.msg)
+(statistics_msgs/StatisticDataPoint)
 ##################################################################################
+##################################################################################
+
+ */
+package statistics_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    #############################################
    # This holds the structure of a single data point of a StatisticDataType.
    #
@@ -22,52 +32,18 @@ This file was generated from the following content:
    # +inf and -inf are not allowed.
    #
    #############################################
-
-   # The statistic type of this data point, defined in StatisticDataType.msg
-   # Default value should be StatisticDataType.STATISTICS_DATA_TYPE_UNINITIALIZED (0).
-   uint8 data_type
-
-   # The value of the data point
-   float64 data
-
-##################################################################################
-
- */
-package statistics_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   ############################################
-   This holds the structure of a single data point of a StatisticDataType.
-
-   This message is used in MetricsStatisticsMessage, defined in MetricsStatisticsMessage.msg.
-
-   Examples of the value of data point are
-   - average size of messages received
-   - standard deviation of the period of messages published
-   - maximum age of messages published
-
-   A value of nan represents no data is available.
-   One example is that standard deviation is only available when there are two or more data points but there is only one,
-   and in this case the value would be nan.
-   +inf and -inf are not allowed.
-
-   ############################################
 */
 public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
 {
    public static final java.lang.String name = "statistics_msgs::msg::dds_::StatisticDataPoint_";
 
    /**
-      The statistic type of this data point, defined in StatisticDataType.msg
-      Default value should be StatisticDataType.STATISTICS_DATA_TYPE_UNINITIALIZED (0).
+      # The statistic type of this data point, defined in StatisticDataType.msg
+      # Default value should be StatisticDataType.STATISTICS_DATA_TYPE_UNINITIALIZED (0).
    */
-   private byte data_type_;
+   private short data_type_;
    /**
-      The value of the data point
+      # The value of the data point
    */
    private double data_;
 
@@ -89,7 +65,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(data_type_);
+      buffer.writeShort(data_type_);
       buffer.writeDouble(data_);
 
    }
@@ -97,7 +73,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_type_ = buffer.readByte();
+      data_type_ = buffer.readShort();
       data_ = buffer.readDouble();
 
    }
@@ -110,12 +86,12 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
 
    }
 
-   public byte getDataType()
+   public short getDataType()
    {
       return data_type_;
    }
 
-   public void setDataType(byte data_type_)
+   public void setDataType(short data_type_)
    {
       this.data_type_ = data_type_;
    }

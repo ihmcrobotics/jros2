@@ -4,18 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Vector3.msg)
+(geometry_msgs/Vector3)
 ##################################################################################
-   # This represents a vector in free space.
-
-   # This is semantically different than a point.
-   # A vector is always anchored at the origin.
-   # When a transform is applied to a vector, only the rotational component is applied.
-
-   float64 x
-   float64 y
-   float64 z
-
 ##################################################################################
 
  */
@@ -26,9 +16,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This is semantically different than a point.
-   A vector is always anchored at the origin.
-   When a transform is applied to a vector, only the rotational component is applied.
+   # This is semantically different than a point.
+   # A vector is always anchored at the origin.
+   # When a transform is applied to a vector, only the rotational component is applied.
 */
 public class Vector3 implements ROS2Message<Vector3>
 {

@@ -4,19 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/Joy.msg)
+(sensor_msgs/Joy)
 ##################################################################################
-   # Reports the state of a joystick's axes and buttons.
-
-   # The timestamp is the time at which data is received from the joystick.
-   std_msgs/Header header
-
-   # The axes measurements from a joystick.
-   float32[] axes
-
-   # The buttons measurements from a joystick.
-   int32[] buttons
-
 ##################################################################################
 
  */
@@ -27,28 +16,28 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Reports the state of a joystick's axes and buttons.
+   # Reports the state of a joystick's axes and buttons.
 */
 public class Joy implements ROS2Message<Joy>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Joy_";
 
    /**
-      The timestamp is the time at which data is received from the joystick.
+      # The timestamp is the time at which data is received from the joystick.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
-      The axes measurements from a joystick.
+      # The axes measurements from a joystick.
    */
    private final IDLFloatSequence axes_;
    /**
-      The buttons measurements from a joystick.
+      # The buttons measurements from a joystick.
    */
    private final IDLIntSequence buttons_;
 
    public Joy()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       axes_ = new IDLFloatSequence();
       buttons_ = new IDLIntSequence();
 
@@ -93,7 +82,7 @@ public class Joy implements ROS2Message<Joy>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

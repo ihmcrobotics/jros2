@@ -3,6 +3,7 @@ package us.ihmc.jros2.parser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import us.ihmc.jros2.parser.field.InterfaceField;
+import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 import us.ihmc.jros2.parser.msgdeps.MsgDepsContext;
 import us.ihmc.jros2.parser.msgdeps.MsgDepsParser;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class MsgDepsParserTest
 {
    @Test
-   public void testMsgDepsParse() throws URISyntaxException, IOException
+   public void testMsgDepsParse() throws URISyntaxException, IOException, InterfaceFieldParsingException
    {
       String schema = new String(Files.readAllBytes(Paths.get(Objects.requireNonNull(MsgDepsParserTest.class.getClassLoader().getResource("test.msgdeps"))
                                                                      .toURI())));

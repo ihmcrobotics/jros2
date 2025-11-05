@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/UVCoordinate.msg)
+(visualization_msgs/UVCoordinate)
 ##################################################################################
-   # Location of the pixel as a ratio of the width of a 2D texture.
-   # Values should be in range: [0.0-1.0].
-   float32 u
-   float32 v
-
 ##################################################################################
 
  */
@@ -25,8 +20,8 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::UVCoordinate_";
 
    /**
-      Location of the pixel as a ratio of the width of a 2D texture.
-      Values should be in range: [0.0-1.0].
+      # Location of the pixel as a ratio of the width of a 2D texture.
+      # Values should be in range: [0.0-1.0].
    */
    private float u_;
    private float v_;

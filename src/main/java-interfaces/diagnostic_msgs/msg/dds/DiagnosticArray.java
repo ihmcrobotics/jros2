@@ -4,12 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(diagnostic_msgs/DiagnosticArray.msg)
+(diagnostic_msgs/DiagnosticArray)
 ##################################################################################
-   # This message is used to send diagnostic information about the state of the robot.
-   std_msgs/Header header # for timestamp
-   DiagnosticStatus[] status # an array of components being reported on
-
 ##################################################################################
 
  */
@@ -24,14 +20,14 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticArray_";
 
    /**
-      This message is used to send diagnostic information about the state of the robot.
+      # This message is used to send diagnostic information about the state of the robot.
    */
-   private final std_msgs.msg.dds.Header header_; // for timestamp
+   private final diagnostic_msgs.msg.dds.std_msgs/Header header_; // for timestamp
    private final IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> status_; // an array of components being reported on
 
    public DiagnosticArray()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new diagnostic_msgs.msg.dds.std_msgs/Header();
       status_ = new IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus>(diagnostic_msgs.msg.dds.DiagnosticStatus.class);
 
    }
@@ -71,7 +67,7 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public diagnostic_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

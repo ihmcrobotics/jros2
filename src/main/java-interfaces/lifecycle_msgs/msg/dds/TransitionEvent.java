@@ -4,20 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(lifecycle_msgs/TransitionEvent.msg)
+(lifecycle_msgs/TransitionEvent)
 ##################################################################################
-   # The time point at which this event occurred.
-   uint64 timestamp
-
-   # The id and label of this transition event.
-   Transition transition
-
-   # The starting state from which this event transitioned.
-   State start_state
-
-   # The end state of this transition event.
-   State goal_state
-
 ##################################################################################
 
  */
@@ -32,19 +20,19 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::TransitionEvent_";
 
    /**
-      The time point at which this event occurred.
+      # The time point at which this event occurred.
    */
    private long timestamp_;
    /**
-      The id and label of this transition event.
+      # The id and label of this transition event.
    */
    private final lifecycle_msgs.msg.dds.Transition transition_;
    /**
-      The starting state from which this event transitioned.
+      # The starting state from which this event transitioned.
    */
    private final lifecycle_msgs.msg.dds.State start_state_;
    /**
-      The end state of this transition event.
+      # The end state of this transition event.
    */
    private final lifecycle_msgs.msg.dds.State goal_state_;
 

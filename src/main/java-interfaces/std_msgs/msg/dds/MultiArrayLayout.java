@@ -4,13 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/MultiArrayLayout.msg)
+(std_msgs/MultiArrayLayout)
 ##################################################################################
-   # This was originally provided as an example message.
-   # It is deprecated as of Foxy
-   # It is recommended to create your own semantically meaningful message.
-   # However if you would like to continue using this please use the equivalent in example_msgs.
+##################################################################################
 
+ */
+package std_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # The multiarray declares a generic multi-dimensional array of a
    # particular data type.  Dimensions are ordered from outer most
    # to inner most.
@@ -34,54 +39,17 @@ This file was generated from the following content:
    # dim[2].stride = 3
    #
    # multiarray(i,j,k) refers to the ith row, jth column, and kth channel.
-
-   MultiArrayDimension[] dim # Array of dimension properties
-   uint32 data_offset        # padding bytes at front of data
-
-##################################################################################
-
- */
-package std_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   The multiarray declares a generic multi-dimensional array of a
-   particular data type.  Dimensions are ordered from outer most
-   to inner most.
-
-   Accessors should ALWAYS be written in terms of dimension stride
-   and specified outer-most dimension first.
-
-   multiarray(i,j,k) = data[data_offset + dim_stride[1]*i + dim_stride[2]*j + k]
-
-   A standard, 3-channel 640x480 image with interleaved color channels
-   would be specified as:
-
-   dim[0].label  = "height"
-   dim[0].size   = 480
-   dim[0].stride = 3*640*480 = 921600  (note dim[0] stride is just size of image)
-   dim[1].label  = "width"
-   dim[1].size   = 640
-   dim[1].stride = 3*640 = 1920
-   dim[2].label  = "channel"
-   dim[2].size   = 3
-   dim[2].stride = 3
-
-   multiarray(i,j,k) refers to the ith row, jth column, and kth channel.
 */
 public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayLayout_";
 
-   private final IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> dim_; // Array of dimension properties
-   private int data_offset_; // padding bytes at front of data
+   private final IDLObjectSequence<std_msgs.msg.dds.MultiArrayDimension> dim_; // Array of dimension properties
+   private long data_offset_; // padding bytes at front of data
 
    public MultiArrayLayout()
    {
-      dim_ = new IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension>(example_interfaces.msg.dds.MultiArrayDimension.class);
+      dim_ = new IDLObjectSequence<std_msgs.msg.dds.MultiArrayDimension>(std_msgs.msg.dds.MultiArrayDimension.class);
 
    }
 
@@ -100,7 +68,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    public void serialize(CDRBuffer buffer)
    {
       dim_.serialize(buffer);
-      buffer.writeInt(data_offset_);
+      buffer.writeLong(data_offset_);
 
    }
 
@@ -108,7 +76,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    public void deserialize(CDRBuffer buffer)
    {
       dim_.deserialize(buffer);
-      data_offset_ = buffer.readInt();
+      data_offset_ = buffer.readLong();
 
    }
 
@@ -120,17 +88,17 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 
    }
 
-   public IDLObjectSequence<example_interfaces.msg.dds.MultiArrayDimension> getDim()
+   public IDLObjectSequence<std_msgs.msg.dds.MultiArrayDimension> getDim()
    {
       return dim_;
    }
 
-   public int getDataOffset()
+   public long getDataOffset()
    {
       return data_offset_;
    }
 
-   public void setDataOffset(int data_offset_)
+   public void setDataOffset(long data_offset_)
    {
       this.data_offset_ = data_offset_;
    }

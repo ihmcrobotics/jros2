@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(nav_msgs/Path.msg)
+(nav_msgs/Path)
 ##################################################################################
-   # An array of poses that represents a Path for a robot to follow.
-
-   # Indicates the frame_id of the path.
-   std_msgs/Header header
-
-   # Array of poses to follow.
-   geometry_msgs/PoseStamped[] poses
-
 ##################################################################################
 
  */
@@ -24,25 +16,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   An array of poses that represents a Path for a robot to follow.
+   # An array of poses that represents a Path for a robot to follow.
 */
 public class Path implements ROS2Message<Path>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Path_";
 
    /**
-      Indicates the frame_id of the path.
+      # Indicates the frame_id of the path.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final nav_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Array of poses to follow.
+      # Array of poses to follow.
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> poses_;
+   private final IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped> poses_;
 
    public Path()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      poses_ = new IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped>(geometry_msgs.msg.dds.PoseStamped.class);
+      header_ = new nav_msgs.msg.dds.std_msgs/Header();
+      poses_ = new IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped>(nav_msgs.msg.dds.geometry_msgs/PoseStamped.class);
 
    }
 
@@ -81,12 +73,12 @@ public class Path implements ROS2Message<Path>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public nav_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getPoses()
+   public IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped> getPoses()
    {
       return poses_;
    }

@@ -4,19 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/Int8MultiArray.msg)
+(std_msgs/Int8MultiArray)
 ##################################################################################
-   # This was originally provided as an example message.
-   # It is deprecated as of Foxy
-   # It is recommended to create your own semantically meaningful message.
-   # However if you would like to continue using this please use the equivalent in example_msgs.
-
-   # Please look at the MultiArrayLayout message definition for
-   # documentation on all multiarrays.
-
-   MultiArrayLayout  layout        # specification of data layout
-   int8[]            data          # array of data
-
 ##################################################################################
 
  */
@@ -27,8 +16,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Please look at the MultiArrayLayout message definition for
-   documentation on all multiarrays.
+   # Please look at the MultiArrayLayout message definition for
+   # documentation on all multiarrays.
 */
 public class Int8MultiArray implements ROS2Message<Int8MultiArray>
 {

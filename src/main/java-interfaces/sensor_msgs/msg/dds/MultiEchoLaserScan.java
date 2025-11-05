@@ -4,41 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/MultiEchoLaserScan.msg)
+(sensor_msgs/MultiEchoLaserScan)
 ##################################################################################
-   # Single scan from a multi-echo planar laser range-finder
-   #
-   # If you have another ranging device with different behavior (e.g. a sonar
-   # array), please find or create a different message, since applications
-   # will make fairly laser-specific assumptions about this data
-
-   std_msgs/Header header # timestamp in the header is the acquisition time of
-                                # the first ray in the scan.
-                                #
-                                # in frame frame_id, angles are measured around
-                                # the positive Z axis (counterclockwise, if Z is up)
-                                # with zero angle being forward along the x axis
-
-   float32 angle_min            # start angle of the scan [rad]
-   float32 angle_max            # end angle of the scan [rad]
-   float32 angle_increment      # angular distance between measurements [rad]
-
-   float32 time_increment       # time between measurements [seconds] - if your scanner
-                                # is moving, this will be used in interpolating position
-                                # of 3d points
-   float32 scan_time            # time between scans [seconds]
-
-   float32 range_min            # minimum range value [m]
-   float32 range_max            # maximum range value [m]
-
-   LaserEcho[] ranges           # range data [m]
-                                # (Note: NaNs, values < range_min or > range_max should be discarded)
-                                # +Inf measurements are out of range
-                                # -Inf measurements are too close to determine exact distance.
-   LaserEcho[] intensities      # intensity data [device-specific units].  If your
-                                # device does not provide intensities, please leave
-                                # the array empty.
-
 ##################################################################################
 
  */
@@ -49,39 +16,39 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Single scan from a multi-echo planar laser range-finder
-
-   If you have another ranging device with different behavior (e.g. a sonar
-   array), please find or create a different message, since applications
-   will make fairly laser-specific assumptions about this data
+   # Single scan from a multi-echo planar laser range-finder
+   #
+   # If you have another ranging device with different behavior (e.g. a sonar
+   # array), please find or create a different message, since applications
+   # will make fairly laser-specific assumptions about this data
 */
 public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiEchoLaserScan_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the acquisition time of
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp in the header is the acquisition time of
    private float angle_min_; // start angle of the scan [rad]
    private float angle_max_; // end angle of the scan [rad]
    private float angle_increment_; // angular distance between measurements [rad]
    private float time_increment_; // time between measurements [seconds] - if your scanner
    /**
-      is moving, this will be used in interpolating position
-      of 3d points
+      # is moving, this will be used in interpolating position
+      # of 3d points
    */
    private float scan_time_; // time between scans [seconds]
    private float range_min_; // minimum range value [m]
    private float range_max_; // maximum range value [m]
    private final IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> ranges_; // range data [m]
    /**
-      (Note: NaNs, values < range_min or > range_max should be discarded)
-      +Inf measurements are out of range
-      -Inf measurements are too close to determine exact distance.
+      # (Note: NaNs, values < range_min or > range_max should be discarded)
+      # +Inf measurements are out of range
+      # -Inf measurements are too close to determine exact distance.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho> intensities_; // intensity data [device-specific units].  If your
 
    public MultiEchoLaserScan()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       ranges_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
       intensities_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
 
@@ -154,7 +121,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

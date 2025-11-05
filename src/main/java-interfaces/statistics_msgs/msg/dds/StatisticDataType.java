@@ -4,27 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(statistics_msgs/StatisticDataType.msg)
+(statistics_msgs/StatisticDataType)
 ##################################################################################
-   #############################################
-   # This file contains the commonly used constants for the statistics data type.
-   #
-   # The value 0 is reserved for unitialized statistic message data type.
-   # Range of values: [0, 255].
-   # Unallowed values: any value that is not specified in this file.
-   #
-   #############################################
-
-   # Constant for uninitialized
-   uint8 STATISTICS_DATA_TYPE_UNINITIALIZED = 0
-
-   # Allowed values
-   uint8 STATISTICS_DATA_TYPE_AVERAGE = 1
-   uint8 STATISTICS_DATA_TYPE_MINIMUM = 2
-   uint8 STATISTICS_DATA_TYPE_MAXIMUM = 3
-   uint8 STATISTICS_DATA_TYPE_STDDEV = 4
-   uint8 STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5
-
 ##################################################################################
 
  */
@@ -35,31 +16,31 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   ############################################
-   This file contains the commonly used constants for the statistics data type.
-
-   The value 0 is reserved for unitialized statistic message data type.
-   Range of values: [0, 255].
-   Unallowed values: any value that is not specified in this file.
-
-   ############################################
+   #############################################
+   # This file contains the commonly used constants for the statistics data type.
+   #
+   # The value 0 is reserved for unitialized statistic message data type.
+   # Range of values: [0, 255].
+   # Unallowed values: any value that is not specified in this file.
+   #
+   #############################################
 */
 public class StatisticDataType implements ROS2Message<StatisticDataType>
 {
    public static final java.lang.String name = "statistics_msgs::msg::dds_::StatisticDataType_";
 
    /**
-      Constant for uninitialized
+      # Constant for uninitialized
    */
-   public static final byte STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
+   public static final short STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
    /**
-      Allowed values
+      # Allowed values
    */
-   public static final byte STATISTICS_DATA_TYPE_AVERAGE = 1;
-   public static final byte STATISTICS_DATA_TYPE_MINIMUM = 2;
-   public static final byte STATISTICS_DATA_TYPE_MAXIMUM = 3;
-   public static final byte STATISTICS_DATA_TYPE_STDDEV = 4;
-   public static final byte STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5;
+   public static final short STATISTICS_DATA_TYPE_AVERAGE = 1;
+   public static final short STATISTICS_DATA_TYPE_MINIMUM = 2;
+   public static final short STATISTICS_DATA_TYPE_MAXIMUM = 3;
+   public static final short STATISTICS_DATA_TYPE_STDDEV = 4;
+   public static final short STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5;
 
    public StatisticDataType()
    {

@@ -4,21 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(nav_msgs/GridCells.msg)
+(nav_msgs/GridCells)
 ##################################################################################
-   # An array of cells in a 2D grid
-
-   std_msgs/Header header
-
-   # Width of each cell
-   float32 cell_width
-
-   # Height of each cell
-   float32 cell_height
-
-   # Each cell is represented by the Point at the center of the cell
-   geometry_msgs/Point[] cells
-
 ##################################################################################
 
  */
@@ -29,30 +16,30 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   An array of cells in a 2D grid
+   # An array of cells in a 2D grid
 */
 public class GridCells implements ROS2Message<GridCells>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final nav_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Width of each cell
+      # Width of each cell
    */
    private float cell_width_;
    /**
-      Height of each cell
+      # Height of each cell
    */
    private float cell_height_;
    /**
-      Each cell is represented by the Point at the center of the cell
+      # Each cell is represented by the Point at the center of the cell
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> cells_;
+   private final IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/Point> cells_;
 
    public GridCells()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      cells_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
+      header_ = new nav_msgs.msg.dds.std_msgs/Header();
+      cells_ = new IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/Point>(nav_msgs.msg.dds.geometry_msgs/Point.class);
 
    }
 
@@ -99,7 +86,7 @@ public class GridCells implements ROS2Message<GridCells>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public nav_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
@@ -124,7 +111,7 @@ public class GridCells implements ROS2Message<GridCells>
       this.cell_height_ = cell_height_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getCells()
+   public IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/Point> getCells()
    {
       return cells_;
    }

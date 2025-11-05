@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PointStamped.msg)
+(geometry_msgs/PointStamped)
 ##################################################################################
-   # This represents a Point with reference coordinate frame and timestamp
-
-   std_msgs/Header header
-   Point point
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents a Point with reference coordinate frame and timestamp
+   # This represents a Point with reference coordinate frame and timestamp
 */
 public class PointStamped implements ROS2Message<PointStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PointStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Point point_;
 
    public PointStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       point_ = new geometry_msgs.msg.dds.Point();
 
    }
@@ -72,7 +67,7 @@ public class PointStamped implements ROS2Message<PointStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

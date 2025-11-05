@@ -4,19 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/InteractiveMarkerPose.msg)
+(visualization_msgs/InteractiveMarkerPose)
 ##################################################################################
-
-   # Time/frame info.
-   std_msgs/Header header
-
-   # Initial pose. Also, defines the pivot point for rotations.
-   geometry_msgs/Pose pose
-
-   # Identifying string. Must be globally unique in
-   # the topic that this message is sent through.
-   string name
-
 ##################################################################################
 
  */
@@ -33,23 +22,23 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
 
    /**
-      Time/frame info.
+      # Time/frame info.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final visualization_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Initial pose. Also, defines the pivot point for rotations.
+      # Initial pose. Also, defines the pivot point for rotations.
    */
-   private final geometry_msgs.msg.dds.Pose pose_;
+   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
    /**
-      Identifying string. Must be globally unique in
-      the topic that this message is sent through.
+      # Identifying string. Must be globally unique in
+      # the topic that this message is sent through.
    */
    private final StringBuilder name_;
 
    public InteractiveMarkerPose()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      pose_ = new geometry_msgs.msg.dds.Pose();
+      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
+      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
       name_ = new StringBuilder();
 
    }
@@ -94,12 +83,12 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Pose getPose()
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
    {
       return pose_;
    }

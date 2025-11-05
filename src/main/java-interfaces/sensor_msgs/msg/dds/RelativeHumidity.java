@@ -4,22 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/RelativeHumidity.msg)
+(sensor_msgs/RelativeHumidity)
 ##################################################################################
-   # Single reading from a relative humidity sensor.
-   # Defines the ratio of partial pressure of water vapor to the saturated vapor
-   # pressure at a temperature.
-
-   std_msgs/Header header # timestamp of the measurement
-                                # frame_id is the location of the humidity sensor
-
-   float64 relative_humidity    # Expression of the relative humidity
-                                # from 0.0 to 1.0.
-                                # 0.0 is no partial pressure of water vapor
-                                # 1.0 represents partial pressure of saturation
-
-   float64 variance             # 0 is interpreted as variance unknown
-
 ##################################################################################
 
  */
@@ -30,21 +16,21 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Single reading from a relative humidity sensor.
-   Defines the ratio of partial pressure of water vapor to the saturated vapor
-   pressure at a temperature.
+   # Single reading from a relative humidity sensor.
+   # Defines the ratio of partial pressure of water vapor to the saturated vapor
+   # pressure at a temperature.
 */
 public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp of the measurement
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp of the measurement
    private double relative_humidity_; // Expression of the relative humidity
    private double variance_; // 0 is interpreted as variance unknown
 
    public RelativeHumidity()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
 
    }
 
@@ -87,7 +73,7 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

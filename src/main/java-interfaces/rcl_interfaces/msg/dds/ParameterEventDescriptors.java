@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(rcl_interfaces/ParameterEventDescriptors.msg)
+(rcl_interfaces/ParameterEventDescriptors)
 ##################################################################################
-   # This message contains descriptors of a parameter event.
-   # It was an atomic update.
-   # A specific parameter name can only be in one of the three sets.
-
-   ParameterDescriptor[] new_parameters
-   ParameterDescriptor[] changed_parameters
-   ParameterDescriptor[] deleted_parameters
-
 ##################################################################################
 
  */
@@ -24,9 +16,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This message contains descriptors of a parameter event.
-   It was an atomic update.
-   A specific parameter name can only be in one of the three sets.
+   # This message contains descriptors of a parameter event.
+   # It was an atomic update.
+   # A specific parameter name can only be in one of the three sets.
 */
 public class ParameterEventDescriptors implements ROS2Message<ParameterEventDescriptors>
 {

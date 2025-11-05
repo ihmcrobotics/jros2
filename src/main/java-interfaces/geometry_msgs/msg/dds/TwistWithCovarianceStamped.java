@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/TwistWithCovarianceStamped.msg)
+(geometry_msgs/TwistWithCovarianceStamped)
 ##################################################################################
-   # This represents an estimated twist with reference coordinate frame and timestamp.
-
-   std_msgs/Header header
-   TwistWithCovariance twist
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents an estimated twist with reference coordinate frame and timestamp.
+   # This represents an estimated twist with reference coordinate frame and timestamp.
 */
 public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarianceStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistWithCovarianceStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.TwistWithCovariance twist_;
 
    public TwistWithCovarianceStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       twist_ = new geometry_msgs.msg.dds.TwistWithCovariance();
 
    }
@@ -72,7 +67,7 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

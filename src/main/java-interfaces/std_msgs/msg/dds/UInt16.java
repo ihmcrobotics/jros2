@@ -4,15 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/UInt16.msg)
+(std_msgs/UInt16)
 ##################################################################################
-   # This was originally provided as an example message.
-   # It is deprecated as of Foxy
-   # It is recommended to create your own semantically meaningful message.
-   # However if you would like to continue using this please use the equivalent in example_msgs.
-
-   uint16 data
-
 ##################################################################################
 
  */
@@ -23,16 +16,16 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This was originally provided as an example message.
-   It is deprecated as of Foxy
-   It is recommended to create your own semantically meaningful message.
-   However if you would like to continue using this please use the equivalent in example_msgs.
+   # This was originally provided as an example message.
+   # It is deprecated as of Foxy
+   # It is recommended to create your own semantically meaningful message.
+   # However if you would like to continue using this please use the equivalent in example_msgs.
 */
 public class UInt16 implements ROS2Message<UInt16>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt16_";
 
-   private short data_;
+   private int data_;
 
    public UInt16()
    {
@@ -51,14 +44,14 @@ public class UInt16 implements ROS2Message<UInt16>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(data_);
+      buffer.writeInt(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readShort();
+      data_ = buffer.readInt();
 
    }
 
@@ -69,12 +62,12 @@ public class UInt16 implements ROS2Message<UInt16>
 
    }
 
-   public short getData()
+   public int getData()
    {
       return data_;
    }
 
-   public void setData(short data_)
+   public void setData(int data_)
    {
       this.data_ = data_;
    }

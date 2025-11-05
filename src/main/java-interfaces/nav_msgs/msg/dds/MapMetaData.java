@@ -4,26 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(nav_msgs/MapMetaData.msg)
+(nav_msgs/MapMetaData)
 ##################################################################################
-   # This hold basic information about the characteristics of the OccupancyGrid
-
-   # The time at which the map was loaded
-   builtin_interfaces/Time map_load_time
-
-   # The map resolution [m/cell]
-   float32 resolution
-
-   # Map width [cells]
-   uint32 width
-
-   # Map height [cells]
-   uint32 height
-
-   # The origin of the map [m, m, rad].  This is the real-world pose of the
-   # bottom left corner of cell (0,0) in the map.
-   geometry_msgs/Pose origin
-
 ##################################################################################
 
  */
@@ -34,38 +16,38 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This hold basic information about the characteristics of the OccupancyGrid
+   # This hold basic information about the characteristics of the OccupancyGrid
 */
 public class MapMetaData implements ROS2Message<MapMetaData>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
    /**
-      The time at which the map was loaded
+      # The time at which the map was loaded
    */
-   private final builtin_interfaces.msg.dds.Time map_load_time_;
+   private final nav_msgs.msg.dds.builtin_interfaces/Time map_load_time_;
    /**
-      The map resolution [m/cell]
+      # The map resolution [m/cell]
    */
    private float resolution_;
    /**
-      Map width [cells]
+      # Map width [cells]
    */
-   private int width_;
+   private long width_;
    /**
-      Map height [cells]
+      # Map height [cells]
    */
-   private int height_;
+   private long height_;
    /**
-      The origin of the map [m, m, rad].  This is the real-world pose of the
-      bottom left corner of cell (0,0) in the map.
+      # The origin of the map [m, m, rad].  This is the real-world pose of the
+      # bottom left corner of cell (0,0) in the map.
    */
-   private final geometry_msgs.msg.dds.Pose origin_;
+   private final nav_msgs.msg.dds.geometry_msgs/Pose origin_;
 
    public MapMetaData()
    {
-      map_load_time_ = new builtin_interfaces.msg.dds.Time();
-      origin_ = new geometry_msgs.msg.dds.Pose();
+      map_load_time_ = new nav_msgs.msg.dds.builtin_interfaces/Time();
+      origin_ = new nav_msgs.msg.dds.geometry_msgs/Pose();
 
    }
 
@@ -88,8 +70,8 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       map_load_time_.serialize(buffer);
       buffer.writeFloat(resolution_);
-      buffer.writeInt(width_);
-      buffer.writeInt(height_);
+      buffer.writeLong(width_);
+      buffer.writeLong(height_);
       origin_.serialize(buffer);
 
    }
@@ -99,8 +81,8 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       map_load_time_.deserialize(buffer);
       resolution_ = buffer.readFloat();
-      width_ = buffer.readInt();
-      height_ = buffer.readInt();
+      width_ = buffer.readLong();
+      height_ = buffer.readLong();
       origin_.deserialize(buffer);
 
    }
@@ -116,7 +98,7 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getMapLoadTime()
+   public nav_msgs.msg.dds.builtin_interfaces/Time getMapLoadTime()
    {
       return map_load_time_;
    }
@@ -131,27 +113,27 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       this.resolution_ = resolution_;
    }
 
-   public int getWidth()
+   public long getWidth()
    {
       return width_;
    }
 
-   public void setWidth(int width_)
+   public void setWidth(long width_)
    {
       this.width_ = width_;
    }
 
-   public int getHeight()
+   public long getHeight()
    {
       return height_;
    }
 
-   public void setHeight(int height_)
+   public void setHeight(long height_)
    {
       this.height_ = height_;
    }
 
-   public geometry_msgs.msg.dds.Pose getOrigin()
+   public nav_msgs.msg.dds.geometry_msgs/Pose getOrigin()
    {
       return origin_;
    }

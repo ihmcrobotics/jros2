@@ -4,18 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(std_msgs/Header.msg)
+(std_msgs/Header)
 ##################################################################################
-   # Standard metadata for higher-level stamped data types.
-   # This is generally used to communicate timestamped data
-   # in a particular coordinate frame.
-
-   # Two-integer timestamp that is expressed as seconds and nanoseconds.
-   builtin_interfaces/Time stamp
-
-   # Transform frame with which this data is associated.
-   string frame_id
-
 ##################################################################################
 
  */
@@ -26,26 +16,26 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Standard metadata for higher-level stamped data types.
-   This is generally used to communicate timestamped data
-   in a particular coordinate frame.
+   # Standard metadata for higher-level stamped data types.
+   # This is generally used to communicate timestamped data
+   # in a particular coordinate frame.
 */
 public class Header implements ROS2Message<Header>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Header_";
 
    /**
-      Two-integer timestamp that is expressed as seconds and nanoseconds.
+      # Two-integer timestamp that is expressed as seconds and nanoseconds.
    */
-   private final builtin_interfaces.msg.dds.Time stamp_;
+   private final std_msgs.msg.dds.builtin_interfaces/Time stamp_;
    /**
-      Transform frame with which this data is associated.
+      # Transform frame with which this data is associated.
    */
    private final StringBuilder frame_id_;
 
    public Header()
    {
-      stamp_ = new builtin_interfaces.msg.dds.Time();
+      stamp_ = new std_msgs.msg.dds.builtin_interfaces/Time();
       frame_id_ = new StringBuilder();
 
    }
@@ -86,7 +76,7 @@ public class Header implements ROS2Message<Header>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getStamp()
+   public std_msgs.msg.dds.builtin_interfaces/Time getStamp()
    {
       return stamp_;
    }

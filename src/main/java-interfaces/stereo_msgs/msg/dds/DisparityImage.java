@@ -4,38 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(stereo_msgs/DisparityImage.msg)
+(stereo_msgs/DisparityImage)
 ##################################################################################
-   # Separate header for compatibility with current TimeSynchronizer.
-   # Likely to be removed in a later release, use image.header instead.
-   std_msgs/Header header
-
-   # Floating point disparity image. The disparities are pre-adjusted for any
-   # x-offset between the principal points of the two cameras (in the case
-   # that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
-   sensor_msgs/Image image
-
-   # Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
-   float32 f # Focal length, pixels
-   float32 t # Baseline, world units
-
-   # Subwindow of (potentially) valid disparity values.
-   sensor_msgs/RegionOfInterest valid_window
-
-   # The range of disparities searched.
-   # In the disparity image, any disparity less than min_disparity is invalid.
-   # The disparity search range defines the horopter, or 3D volume that the
-   # stereo algorithm can "see". Points with Z outside of:
-   #     Z_min = fT / max_disparity
-   #     Z_max = fT / min_disparity
-   # could not be found.
-   float32 min_disparity
-   float32 max_disparity
-
-   # Smallest allowed disparity increment. The smallest achievable depth range
-   # resolution is delta_Z = (Z^2/fT)*delta_d.
-   float32 delta_d
-
 ##################################################################################
 
  */
@@ -50,47 +20,47 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    public static final java.lang.String name = "stereo_msgs::msg::dds_::DisparityImage_";
 
    /**
-      Separate header for compatibility with current TimeSynchronizer.
-      Likely to be removed in a later release, use image.header instead.
+      # Separate header for compatibility with current TimeSynchronizer.
+      # Likely to be removed in a later release, use image.header instead.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final stereo_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Floating point disparity image. The disparities are pre-adjusted for any
-      x-offset between the principal points of the two cameras (in the case
-      that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
+      # Floating point disparity image. The disparities are pre-adjusted for any
+      # x-offset between the principal points of the two cameras (in the case
+      # that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
    */
-   private final sensor_msgs.msg.dds.Image image_;
+   private final stereo_msgs.msg.dds.sensor_msgs/Image image_;
    /**
-      Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
+      # Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
    private float f_; // Focal length, pixels
    private float t_; // Baseline, world units
    /**
-      Subwindow of (potentially) valid disparity values.
+      # Subwindow of (potentially) valid disparity values.
    */
-   private final sensor_msgs.msg.dds.RegionOfInterest valid_window_;
+   private final stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest valid_window_;
    /**
-      The range of disparities searched.
-      In the disparity image, any disparity less than min_disparity is invalid.
-      The disparity search range defines the horopter, or 3D volume that the
-      stereo algorithm can "see". Points with Z outside of:
-      Z_min = fT / max_disparity
-      Z_max = fT / min_disparity
-      could not be found.
+      # The range of disparities searched.
+      # In the disparity image, any disparity less than min_disparity is invalid.
+      # The disparity search range defines the horopter, or 3D volume that the
+      # stereo algorithm can "see". Points with Z outside of:
+      #     Z_min = fT / max_disparity
+      #     Z_max = fT / min_disparity
+      # could not be found.
    */
    private float min_disparity_;
    private float max_disparity_;
    /**
-      Smallest allowed disparity increment. The smallest achievable depth range
-      resolution is delta_Z = (Z^2/fT)*delta_d.
+      # Smallest allowed disparity increment. The smallest achievable depth range
+      # resolution is delta_Z = (Z^2/fT)*delta_d.
    */
    private float delta_d_;
 
    public DisparityImage()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      image_ = new sensor_msgs.msg.dds.Image();
-      valid_window_ = new sensor_msgs.msg.dds.RegionOfInterest();
+      header_ = new stereo_msgs.msg.dds.std_msgs/Header();
+      image_ = new stereo_msgs.msg.dds.sensor_msgs/Image();
+      valid_window_ = new stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest();
 
    }
 
@@ -153,12 +123,12 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public stereo_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.Image getImage()
+   public stereo_msgs.msg.dds.sensor_msgs/Image getImage()
    {
       return image_;
    }
@@ -183,7 +153,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       this.t_ = t_;
    }
 
-   public sensor_msgs.msg.dds.RegionOfInterest getValidWindow()
+   public stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest getValidWindow()
    {
       return valid_window_;
    }

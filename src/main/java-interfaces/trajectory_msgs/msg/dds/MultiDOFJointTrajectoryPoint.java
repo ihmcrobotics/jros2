@@ -4,20 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(trajectory_msgs/MultiDOFJointTrajectoryPoint.msg)
+(trajectory_msgs/MultiDOFJointTrajectoryPoint)
 ##################################################################################
-   # Each multi-dof joint can specify a transform (up to 6 DOF).
-   geometry_msgs/Transform[] transforms
-
-   # There can be a velocity specified for the origin of the joint.
-   geometry_msgs/Twist[] velocities
-
-   # There can be an acceleration specified for the origin of the joint.
-   geometry_msgs/Twist[] accelerations
-
-   # Desired time from the trajectory start to arrive at this trajectory point.
-   builtin_interfaces/Duration time_from_start
-
 ##################################################################################
 
  */
@@ -32,28 +20,28 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectoryPoint_";
 
    /**
-      Each multi-dof joint can specify a transform (up to 6 DOF).
+      # Each multi-dof joint can specify a transform (up to 6 DOF).
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Transform> transforms_;
+   private final IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Transform> transforms_;
    /**
-      There can be a velocity specified for the origin of the joint.
+      # There can be a velocity specified for the origin of the joint.
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> velocities_;
+   private final IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist> velocities_;
    /**
-      There can be an acceleration specified for the origin of the joint.
+      # There can be an acceleration specified for the origin of the joint.
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> accelerations_;
+   private final IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist> accelerations_;
    /**
-      Desired time from the trajectory start to arrive at this trajectory point.
+      # Desired time from the trajectory start to arrive at this trajectory point.
    */
-   private final builtin_interfaces.msg.dds.Duration time_from_start_;
+   private final trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
 
    public MultiDOFJointTrajectoryPoint()
    {
-      transforms_ = new IDLObjectSequence<geometry_msgs.msg.dds.Transform>(geometry_msgs.msg.dds.Transform.class);
-      velocities_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
-      accelerations_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
-      time_from_start_ = new builtin_interfaces.msg.dds.Duration();
+      transforms_ = new IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Transform>(trajectory_msgs.msg.dds.geometry_msgs/Transform.class);
+      velocities_ = new IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist>(trajectory_msgs.msg.dds.geometry_msgs/Twist.class);
+      accelerations_ = new IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist>(trajectory_msgs.msg.dds.geometry_msgs/Twist.class);
+      time_from_start_ = new trajectory_msgs.msg.dds.builtin_interfaces/Duration();
 
    }
 
@@ -100,22 +88,22 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
 
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> getTransforms()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Transform> getTransforms()
    {
       return transforms_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getVelocities()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist> getVelocities()
    {
       return velocities_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getAccelerations()
+   public IDLObjectSequence<trajectory_msgs.msg.dds.geometry_msgs/Twist> getAccelerations()
    {
       return accelerations_;
    }
 
-   public builtin_interfaces.msg.dds.Duration getTimeFromStart()
+   public trajectory_msgs.msg.dds.builtin_interfaces/Duration getTimeFromStart()
    {
       return time_from_start_;
    }

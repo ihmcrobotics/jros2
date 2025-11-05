@@ -4,18 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(example_interfaces/UInt64MultiArray.msg)
+(example_interfaces/UInt64MultiArray)
 ##################################################################################
-   # This is an example of using complex datatypes.
-   # It is not recommended to use directly.
-   # To use a similar datastruct please define a custom message with appropriate semantic meaning.
-
-   # Please look at the MultiArrayLayout message definition for
-   # documentation on all multiarrays.
-
-   MultiArrayLayout  layout        # specification of data layout
-   uint64[]          data          # array of data
-
 ##################################################################################
 
  */
@@ -26,8 +16,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Please look at the MultiArrayLayout message definition for
-   documentation on all multiarrays.
+   # Please look at the MultiArrayLayout message definition for
+   # documentation on all multiarrays.
 */
 public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
 {

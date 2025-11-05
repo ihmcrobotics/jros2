@@ -4,17 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/VelocityStamped.msg)
+(geometry_msgs/VelocityStamped)
 ##################################################################################
-   # This expresses the timestamped velocity vector of a frame 'body_frame_id' in the reference frame 'reference_frame_id' expressed from arbitrary observation frame 'header.frame_id'.
-   # - If the 'body_frame_id' and 'header.frame_id' are identical, the velocity is observed and defined in the local coordinates system of the body
-   #   which is the usual use-case in mobile robotics and is also known as a body twist.
-
-   std_msgs/Header header
-   string body_frame_id
-   string reference_frame_id
-   Twist velocity
-
 ##################################################################################
 
  */
@@ -25,22 +16,22 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This expresses the timestamped velocity vector of a frame 'body_frame_id' in the reference frame 'reference_frame_id' expressed from arbitrary observation frame 'header.frame_id'.
-   - If the 'body_frame_id' and 'header.frame_id' are identical, the velocity is observed and defined in the local coordinates system of the body
-   which is the usual use-case in mobile robotics and is also known as a body twist.
+   # This expresses the timestamped velocity vector of a frame 'body_frame_id' in the reference frame 'reference_frame_id' expressed from arbitrary observation frame 'header.frame_id'.
+   # - If the 'body_frame_id' and 'header.frame_id' are identical, the velocity is observed and defined in the local coordinates system of the body
+   #   which is the usual use-case in mobile robotics and is also known as a body twist.
 */
 public class VelocityStamped implements ROS2Message<VelocityStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::VelocityStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final StringBuilder body_frame_id_;
    private final StringBuilder reference_frame_id_;
    private final geometry_msgs.msg.dds.Twist velocity_;
 
    public VelocityStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       body_frame_id_ = new StringBuilder();
       reference_frame_id_ = new StringBuilder();
       velocity_ = new geometry_msgs.msg.dds.Twist();
@@ -92,7 +83,7 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

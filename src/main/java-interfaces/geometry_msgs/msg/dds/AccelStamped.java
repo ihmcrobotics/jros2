@@ -4,12 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/AccelStamped.msg)
+(geometry_msgs/AccelStamped)
 ##################################################################################
-   # An accel with reference coordinate frame and timestamp
-   std_msgs/Header header
-   Accel accel
-
 ##################################################################################
 
  */
@@ -24,14 +20,14 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelStamped_";
 
    /**
-      An accel with reference coordinate frame and timestamp
+      # An accel with reference coordinate frame and timestamp
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Accel accel_;
 
    public AccelStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       accel_ = new geometry_msgs.msg.dds.Accel();
 
    }
@@ -71,7 +67,7 @@ public class AccelStamped implements ROS2Message<AccelStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

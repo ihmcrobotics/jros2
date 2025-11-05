@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(shape_msgs/Plane.msg)
+(shape_msgs/Plane)
 ##################################################################################
-   # Representation of a plane, using the plane equation ax + by + cz + d = 0.
-   #
-   # a := coef[0]
-   # b := coef[1]
-   # c := coef[2]
-   # d := coef[3]
-   float64[4] coef
-
 ##################################################################################
 
  */
@@ -28,12 +20,12 @@ public class Plane implements ROS2Message<Plane>
    public static final java.lang.String name = "shape_msgs::msg::dds_::Plane_";
 
    /**
-      Representation of a plane, using the plane equation ax + by + cz + d = 0.
-
-      a := coef[0]
-      b := coef[1]
-      c := coef[2]
-      d := coef[3]
+      # Representation of a plane, using the plane equation ax + by + cz + d = 0.
+      #
+      # a := coef[0]
+      # b := coef[1]
+      # c := coef[2]
+      # d := coef[3]
    */
    private final double[] coef_;
 

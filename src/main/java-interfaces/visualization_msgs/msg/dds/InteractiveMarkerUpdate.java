@@ -4,41 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/InteractiveMarkerUpdate.msg)
+(visualization_msgs/InteractiveMarkerUpdate)
 ##################################################################################
-
-   # Identifying string. Must be unique in the topic namespace
-   # that this server works on.
-   string server_id
-
-   # Sequence number.
-   # The client will use this to detect if it has missed an update.
-   uint64 seq_num
-
-   # Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
-   # UPDATE: Incremental update to previous state.
-   #         The sequence number must be 1 higher than for
-   #         the previous update.
-   # KEEP_ALIVE: Indicates the that the server is still living.
-   #             The sequence number does not increase.
-   #             No payload data should be filled out (markers, poses, or erases).
-   uint8 KEEP_ALIVE = 0
-   uint8 UPDATE = 1
-
-   uint8 type
-
-   # Note: No guarantees on the order of processing.
-   #       Contents must be kept consistent by sender.
-
-   # Markers to be added or updated
-   InteractiveMarker[] markers
-
-   # Poses of markers that should be moved
-   InteractiveMarkerPose[] poses
-
-   # Names of markers to be erased
-   string[] erases
-
 ##################################################################################
 
  */
@@ -55,37 +22,37 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerUpdate_";
 
    /**
-      Identifying string. Must be unique in the topic namespace
-      that this server works on.
+      # Identifying string. Must be unique in the topic namespace
+      # that this server works on.
    */
    private final StringBuilder server_id_;
    /**
-      Sequence number.
-      The client will use this to detect if it has missed an update.
+      # Sequence number.
+      # The client will use this to detect if it has missed an update.
    */
    private long seq_num_;
    /**
-      Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
-      UPDATE: Incremental update to previous state.
-      The sequence number must be 1 higher than for
-      the previous update.
-      KEEP_ALIVE: Indicates the that the server is still living.
-      The sequence number does not increase.
-      No payload data should be filled out (markers, poses, or erases).
+      # Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
+      # UPDATE: Incremental update to previous state.
+      #         The sequence number must be 1 higher than for
+      #         the previous update.
+      # KEEP_ALIVE: Indicates the that the server is still living.
+      #             The sequence number does not increase.
+      #             No payload data should be filled out (markers, poses, or erases).
    */
-   public static final byte KEEP_ALIVE = 0;
-   public static final byte UPDATE = 1;
-   private byte type_;
+   public static final short KEEP_ALIVE = 0;
+   public static final short UPDATE = 1;
+   private short type_;
    /**
-      Markers to be added or updated
+      # Markers to be added or updated
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> markers_;
    /**
-      Poses of markers that should be moved
+      # Poses of markers that should be moved
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> poses_;
    /**
-      Names of markers to be erased
+      # Names of markers to be erased
    */
    private final IDLStringSequence erases_;
 
@@ -118,7 +85,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
-      buffer.writeByte(type_);
+      buffer.writeShort(type_);
       markers_.serialize(buffer);
       poses_.serialize(buffer);
       erases_.serialize(buffer);
@@ -130,7 +97,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
-      type_ = buffer.readByte();
+      type_ = buffer.readShort();
       markers_.deserialize(buffer);
       poses_.deserialize(buffer);
       erases_.deserialize(buffer);
@@ -165,12 +132,12 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       this.seq_num_ = seq_num_;
    }
 
-   public byte getType()
+   public short getType()
    {
       return type_;
    }
 
-   public void setType(byte type_)
+   public void setType(short type_)
    {
       this.type_ = type_;
    }

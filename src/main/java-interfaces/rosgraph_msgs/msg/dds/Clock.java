@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(rosgraph_msgs/Clock.msg)
+(rosgraph_msgs/Clock)
 ##################################################################################
-   # This message communicates the current time.
-   #
-   # For more information, see https://design.ros2.org/articles/clock_and_time.html.
-   builtin_interfaces/Time clock
-
 ##################################################################################
 
  */
@@ -25,15 +20,15 @@ public class Clock implements ROS2Message<Clock>
    public static final java.lang.String name = "rosgraph_msgs::msg::dds_::Clock_";
 
    /**
-      This message communicates the current time.
-
-      For more information, see https://design.ros2.org/articles/clock_and_time.html.
+      # This message communicates the current time.
+      #
+      # For more information, see https://design.ros2.org/articles/clock_and_time.html.
    */
-   private final builtin_interfaces.msg.dds.Time clock_;
+   private final rosgraph_msgs.msg.dds.builtin_interfaces/Time clock_;
 
    public Clock()
    {
-      clock_ = new builtin_interfaces.msg.dds.Time();
+      clock_ = new rosgraph_msgs.msg.dds.builtin_interfaces/Time();
 
    }
 
@@ -68,7 +63,7 @@ public class Clock implements ROS2Message<Clock>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getClock()
+   public rosgraph_msgs.msg.dds.builtin_interfaces/Time getClock()
    {
       return clock_;
    }

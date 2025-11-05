@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/TimeReference.msg)
+(sensor_msgs/TimeReference)
 ##################################################################################
-   # Measurement from an external time source not actively synchronized with the system clock.
-
-   std_msgs/Header header      # stamp is system time for which measurement was valid
-                                     # frame_id is not used
-
-   builtin_interfaces/Time time_ref  # corresponding time from this external source
-   string source                     # (optional) name of time source
-
 ##################################################################################
 
  */
@@ -24,20 +16,20 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Measurement from an external time source not actively synchronized with the system clock.
+   # Measurement from an external time source not actively synchronized with the system clock.
 */
 public class TimeReference implements ROS2Message<TimeReference>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
 
-   private final std_msgs.msg.dds.Header header_; // stamp is system time for which measurement was valid
-   private final builtin_interfaces.msg.dds.Time time_ref_; // corresponding time from this external source
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // stamp is system time for which measurement was valid
+   private final sensor_msgs.msg.dds.builtin_interfaces/Time time_ref_; // corresponding time from this external source
    private final StringBuilder source_; // (optional) name of time source
 
    public TimeReference()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      time_ref_ = new builtin_interfaces.msg.dds.Time();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      time_ref_ = new sensor_msgs.msg.dds.builtin_interfaces/Time();
       source_ = new StringBuilder();
 
    }
@@ -82,12 +74,12 @@ public class TimeReference implements ROS2Message<TimeReference>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public builtin_interfaces.msg.dds.Time getTimeRef()
+   public sensor_msgs.msg.dds.builtin_interfaces/Time getTimeRef()
    {
       return time_ref_;
    }

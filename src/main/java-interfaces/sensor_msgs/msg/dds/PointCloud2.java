@@ -4,35 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/PointCloud2.msg)
+(sensor_msgs/PointCloud2)
 ##################################################################################
-   # This message holds a collection of N-dimensional points, which may
-   # contain additional information such as normals, intensity, etc. The
-   # point data is stored as a binary blob, its layout described by the
-   # contents of the "fields" array.
-   #
-   # The point cloud data may be organized 2d (image-like) or 1d (unordered).
-   # Point clouds organized as 2d images may be produced by camera depth sensors
-   # such as stereo or time-of-flight.
-
-   # Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
-   std_msgs/Header header
-
-   # 2D structure of the point cloud. If the cloud is unordered, height is
-   # 1 and width is the length of the point cloud.
-   uint32 height
-   uint32 width
-
-   # Describes the channels and their layout in the binary data blob.
-   PointField[] fields
-
-   bool    is_bigendian # Is this data bigendian?
-   uint32  point_step   # Length of a point in bytes
-   uint32  row_step     # Length of a row in bytes
-   uint8[] data         # Actual point data, size is (row_step*height)
-
-   bool is_dense        # True if there are no invalid points
-
 ##################################################################################
 
  */
@@ -43,41 +16,42 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This message holds a collection of N-dimensional points, which may
-   contain additional information such as normals, intensity, etc. The
-   point data is stored as a binary blob, its layout described by the
-   contents of the "fields" array.
-
-   The point cloud data may be organized 2d (image-like) or 1d (unordered).
-   Point clouds organized as 2d images may be produced by camera depth sensors
-   such as stereo or time-of-flight.
+   # This message holds a collection of N-dimensional points, which may
+   # contain additional information such as normals, intensity, etc. The
+   # point data is stored as a binary blob, its layout described by the
+   # contents of the "fields" array.
+   #
+   # The point cloud data may be organized 2d (image-like) or 1d (unordered).
+   # Point clouds organized as 2d images may be produced by camera depth sensors
+   # such as stereo or time-of-flight.
 */
 public class PointCloud2 implements ROS2Message<PointCloud2>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
 
    /**
-      Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
+      # Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
    /**
-      2D structure of the point cloud. If the cloud is unordered, height is
-      1 and width is the length of the point cloud.
+      # 2D structure of the point cloud. If the cloud is unordered, height is
+      # 1 and width is the length of the point cloud.
    */
-   private int height_;
-   private int width_;
+   private long height_;
+   private long width_;
    /**
-      Describes the channels and their layout in the binary data blob.
+      # Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
-   private final IDLByteSequence data_; // Actual point data, size is (row_step*height)
+   private final IDLShortSequence data_; // Actual point data, size is (row_step*height)
    private boolean is_dense_; // True if there are no invalid points
 
    public PointCloud2()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       fields_ = new IDLObjectSequence<sensor_msgs.msg.dds.PointField>(sensor_msgs.msg.dds.PointField.class);
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
+      is_dense_ = (boolean) false;
 
    }
 
@@ -100,8 +74,8 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeInt(height_);
-      buffer.writeInt(width_);
+      buffer.writeLong(height_);
+      buffer.writeLong(width_);
       fields_.serialize(buffer);
       data_.serialize(buffer);
       buffer.writeBoolean(is_dense_);
@@ -112,8 +86,8 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      height_ = buffer.readInt();
-      width_ = buffer.readInt();
+      height_ = buffer.readLong();
+      width_ = buffer.readLong();
       fields_.deserialize(buffer);
       data_.deserialize(buffer);
       is_dense_ = buffer.readBoolean();
@@ -132,27 +106,27 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public int getHeight()
+   public long getHeight()
    {
       return height_;
    }
 
-   public void setHeight(int height_)
+   public void setHeight(long height_)
    {
       this.height_ = height_;
    }
 
-   public int getWidth()
+   public long getWidth()
    {
       return width_;
    }
 
-   public void setWidth(int width_)
+   public void setWidth(long width_)
    {
       this.width_ = width_;
    }
@@ -162,7 +136,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       return fields_;
    }
 
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

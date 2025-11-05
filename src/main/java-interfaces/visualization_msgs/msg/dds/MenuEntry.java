@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/MenuEntry.msg)
+(visualization_msgs/MenuEntry)
 ##################################################################################
+##################################################################################
+
+ */
+package visualization_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # MenuEntry message.
    #
    # Each InteractiveMarker message has an array of MenuEntry messages.
@@ -36,105 +46,40 @@ This file was generated from the following content:
    #  - robot
    #    - pr2
    #    - turtle
-
-   # ID is a number for each menu entry.  Must be unique within the
-   # control, and should never be 0.
-   uint32 id
-
-   # ID of the parent of this menu entry, if it is a submenu.  If this
-   # menu entry is a top-level entry, set parent_id to 0.
-   uint32 parent_id
-
-   # menu / entry title
-   string title
-
-   # Arguments to command indicated by command_type (below)
-   string command
-
-   # Command_type stores the type of response desired when this menu
-   # entry is clicked.
-   # FEEDBACK: send an InteractiveMarkerFeedback message with menu_entry_id set to this entry's id.
-   # ROSRUN: execute "rosrun" with arguments given in the command field (above).
-   # ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
-   uint8 FEEDBACK=0
-   uint8 ROSRUN=1
-   uint8 ROSLAUNCH=2
-   uint8 command_type
-
-##################################################################################
-
- */
-package visualization_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   MenuEntry message.
-
-   Each InteractiveMarker message has an array of MenuEntry messages.
-   A collection of MenuEntries together describe a
-   menu/submenu/subsubmenu/etc tree, though they are stored in a flat
-   array.  The tree structure is represented by giving each menu entry
-   an ID number and a "parent_id" field.  Top-level entries are the
-   ones with parent_id = 0.  Menu entries are ordered within their
-   level the same way they are ordered in the containing array.  Parent
-   entries must appear before their children.
-
-   Example:
-   - id = 3
-   parent_id = 0
-   title = "fun"
-   - id = 2
-   parent_id = 0
-   title = "robot"
-   - id = 4
-   parent_id = 2
-   title = "pr2"
-   - id = 5
-   parent_id = 2
-   title = "turtle"
-
-   Gives a menu tree like this:
-   - fun
-   - robot
-   - pr2
-   - turtle
 */
 public class MenuEntry implements ROS2Message<MenuEntry>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MenuEntry_";
 
    /**
-      ID is a number for each menu entry.  Must be unique within the
-      control, and should never be 0.
+      # ID is a number for each menu entry.  Must be unique within the
+      # control, and should never be 0.
    */
-   private int id_;
+   private long id_;
    /**
-      ID of the parent of this menu entry, if it is a submenu.  If this
-      menu entry is a top-level entry, set parent_id to 0.
+      # ID of the parent of this menu entry, if it is a submenu.  If this
+      # menu entry is a top-level entry, set parent_id to 0.
    */
-   private int parent_id_;
+   private long parent_id_;
    /**
-      menu / entry title
+      # menu / entry title
    */
    private final StringBuilder title_;
    /**
-      Arguments to command indicated by command_type (below)
+      # Arguments to command indicated by command_type (below)
    */
    private final StringBuilder command_;
    /**
-      Command_type stores the type of response desired when this menu
-      entry is clicked.
-      FEEDBACK: send an InteractiveMarkerFeedback message with menu_entry_id set to this entry's id.
-      ROSRUN: execute "rosrun" with arguments given in the command field (above).
-      ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
+      # Command_type stores the type of response desired when this menu
+      # entry is clicked.
+      # FEEDBACK: send an InteractiveMarkerFeedback message with menu_entry_id set to this entry's id.
+      # ROSRUN: execute "rosrun" with arguments given in the command field (above).
+      # ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
    */
-   public static final byte FEEDBACK = 0;
-   public static final byte ROSRUN = 1;
-   public static final byte ROSLAUNCH = 2;
-   private byte command_type_;
+   public static final short FEEDBACK = 0;
+   public static final short ROSRUN = 1;
+   public static final short ROSLAUNCH = 2;
+   private short command_type_;
 
    public MenuEntry()
    {
@@ -160,22 +105,22 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeInt(id_);
-      buffer.writeInt(parent_id_);
+      buffer.writeLong(id_);
+      buffer.writeLong(parent_id_);
       buffer.writeString(title_);
       buffer.writeString(command_);
-      buffer.writeByte(command_type_);
+      buffer.writeShort(command_type_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      id_ = buffer.readInt();
-      parent_id_ = buffer.readInt();
+      id_ = buffer.readLong();
+      parent_id_ = buffer.readLong();
       buffer.readString(title_);
       buffer.readString(command_);
-      command_type_ = buffer.readByte();
+      command_type_ = buffer.readShort();
 
    }
 
@@ -192,22 +137,22 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
    }
 
-   public int getId()
+   public long getId()
    {
       return id_;
    }
 
-   public void setId(int id_)
+   public void setId(long id_)
    {
       this.id_ = id_;
    }
 
-   public int getParentId()
+   public long getParentId()
    {
       return parent_id_;
    }
 
-   public void setParentId(int parent_id_)
+   public void setParentId(long parent_id_)
    {
       this.parent_id_ = parent_id_;
    }
@@ -222,12 +167,12 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return command_;
    }
 
-   public byte getCommandType()
+   public short getCommandType()
    {
       return command_type_;
    }
 
-   public void setCommandType(byte command_type_)
+   public void setCommandType(short command_type_)
    {
       this.command_type_ = command_type_;
    }

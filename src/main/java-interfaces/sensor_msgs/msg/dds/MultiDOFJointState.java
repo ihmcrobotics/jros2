@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/MultiDOFJointState.msg)
+(sensor_msgs/MultiDOFJointState)
 ##################################################################################
+##################################################################################
+
+ */
+package sensor_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # Representation of state for joints with multiple degrees of freedom,
    # following the structure of JointState which can only represent a single degree of freedom.
    #
@@ -25,61 +35,24 @@ This file was generated from the following content:
    # All arrays in this message should have the same size, or be empty.
    # This is the only way to uniquely associate the joint name with the correct
    # states.
-
-   std_msgs/Header header
-
-   string[] joint_names
-   geometry_msgs/Transform[] transforms
-   geometry_msgs/Twist[] twist
-   geometry_msgs/Wrench[] wrench
-
-##################################################################################
-
- */
-package sensor_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   Representation of state for joints with multiple degrees of freedom,
-   following the structure of JointState which can only represent a single degree of freedom.
-
-   It is assumed that a joint in a system corresponds to a transform that gets applied
-   along the kinematic chain. For example, a planar joint (as in URDF) is 3DOF (x, y, yaw)
-   and those 3DOF can be expressed as a transformation matrix, and that transformation
-   matrix can be converted back to (x, y, yaw)
-
-   Each joint is uniquely identified by its name
-   The header specifies the time at which the joint states were recorded. All the joint states
-   in one message have to be recorded at the same time.
-
-   This message consists of a multiple arrays, one for each part of the joint state.
-   The goal is to make each of the fields optional. When e.g. your joints have no
-   wrench associated with them, you can leave the wrench array empty.
-
-   All arrays in this message should have the same size, or be empty.
-   This is the only way to uniquely associate the joint name with the correct
-   states.
 */
 public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final sensor_msgs.msg.dds.std_msgs/Header header_;
    private final IDLStringSequence joint_names_;
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Transform> transforms_;
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> twist_;
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Wrench> wrench_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform> transforms_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist> twist_;
+   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench> wrench_;
 
    public MultiDOFJointState()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
       joint_names_ = new IDLStringSequence();
-      transforms_ = new IDLObjectSequence<geometry_msgs.msg.dds.Transform>(geometry_msgs.msg.dds.Transform.class);
-      twist_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
-      wrench_ = new IDLObjectSequence<geometry_msgs.msg.dds.Wrench>(geometry_msgs.msg.dds.Wrench.class);
+      transforms_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform>(sensor_msgs.msg.dds.geometry_msgs/Transform.class);
+      twist_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist>(sensor_msgs.msg.dds.geometry_msgs/Twist.class);
+      wrench_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench>(sensor_msgs.msg.dds.geometry_msgs/Wrench.class);
 
    }
 
@@ -130,7 +103,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
@@ -140,17 +113,17 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
       return joint_names_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> getTransforms()
+   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform> getTransforms()
    {
       return transforms_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getTwist()
+   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist> getTwist()
    {
       return twist_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Wrench> getWrench()
+   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench> getWrench()
    {
       return wrench_;
    }

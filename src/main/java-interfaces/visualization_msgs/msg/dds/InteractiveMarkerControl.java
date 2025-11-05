@@ -4,86 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/InteractiveMarkerControl.msg)
+(visualization_msgs/InteractiveMarkerControl)
 ##################################################################################
-   # Represents a control that is to be displayed together with an interactive marker
-
-   # Identifying string for this control.
-   # You need to assign a unique value to this to receive feedback from the GUI
-   # on what actions the user performs on this control (e.g. a button click).
-   string name
-
-
-   # Defines the local coordinate frame (relative to the pose of the parent
-   # interactive marker) in which is being rotated and translated.
-   # Default: Identity
-   geometry_msgs/Quaternion orientation
-
-
-   # Orientation mode: controls how orientation changes.
-   # INHERIT: Follow orientation of interactive marker
-   # FIXED: Keep orientation fixed at initial state
-   # VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
-   uint8 INHERIT = 0
-   uint8 FIXED = 1
-   uint8 VIEW_FACING = 2
-
-   uint8 orientation_mode
-
-   # Interaction mode for this control
-   #
-   # NONE: This control is only meant for visualization; no context menu.
-   # MENU: Like NONE, but right-click menu is active.
-   # BUTTON: Element can be left-clicked.
-   # MOVE_AXIS: Translate along local x-axis.
-   # MOVE_PLANE: Translate in local y-z plane.
-   # ROTATE_AXIS: Rotate around local x-axis.
-   # MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
-   uint8 NONE = 0
-   uint8 MENU = 1
-   uint8 BUTTON = 2
-   uint8 MOVE_AXIS = 3
-   uint8 MOVE_PLANE = 4
-   uint8 ROTATE_AXIS = 5
-   uint8 MOVE_ROTATE = 6
-   # "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
-   # MOVE_3D: Translate freely in 3D space.
-   # ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
-   # MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
-   uint8 MOVE_3D = 7
-   uint8 ROTATE_3D = 8
-   uint8 MOVE_ROTATE_3D = 9
-
-   uint8 interaction_mode
-
-
-   # If true, the contained markers will also be visible
-   # when the gui is not in interactive mode.
-   bool always_visible
-
-
-   # Markers to be displayed as custom visual representation.
-   # Leave this empty to use the default control handles.
-   #
-   # Note:
-   # - The markers can be defined in an arbitrary coordinate frame,
-   #   but will be transformed into the local frame of the interactive marker.
-   # - If the header of a marker is empty, its pose will be interpreted as
-   #   relative to the pose of the parent interactive marker.
-   Marker[] markers
-
-
-   # In VIEW_FACING mode, set this to true if you don't want the markers
-   # to be aligned with the camera view point. The markers will show up
-   # as in INHERIT mode.
-   bool independent_marker_orientation
-
-
-   # Short description (< 40 characters) of what this control does,
-   # e.g. "Move the robot".
-   # Default: A generic description based on the interaction mode
-   string description
-
 ##################################################################################
 
  */
@@ -94,96 +16,98 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Represents a control that is to be displayed together with an interactive marker
+   # Represents a control that is to be displayed together with an interactive marker
 */
 public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerControl>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
 
    /**
-      Identifying string for this control.
-      You need to assign a unique value to this to receive feedback from the GUI
-      on what actions the user performs on this control (e.g. a button click).
+      # Identifying string for this control.
+      # You need to assign a unique value to this to receive feedback from the GUI
+      # on what actions the user performs on this control (e.g. a button click).
    */
    private final StringBuilder name_;
    /**
-      Defines the local coordinate frame (relative to the pose of the parent
-      interactive marker) in which is being rotated and translated.
-      Default: Identity
+      # Defines the local coordinate frame (relative to the pose of the parent
+      # interactive marker) in which is being rotated and translated.
+      # Default: Identity
    */
-   private final geometry_msgs.msg.dds.Quaternion orientation_;
+   private final visualization_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
    /**
-      Orientation mode: controls how orientation changes.
-      INHERIT: Follow orientation of interactive marker
-      FIXED: Keep orientation fixed at initial state
-      VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
+      # Orientation mode: controls how orientation changes.
+      # INHERIT: Follow orientation of interactive marker
+      # FIXED: Keep orientation fixed at initial state
+      # VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
    */
-   public static final byte INHERIT = 0;
-   public static final byte FIXED = 1;
-   public static final byte VIEW_FACING = 2;
-   private byte orientation_mode_;
+   public static final short INHERIT = 0;
+   public static final short FIXED = 1;
+   public static final short VIEW_FACING = 2;
+   private short orientation_mode_;
    /**
-      Interaction mode for this control
-
-      NONE: This control is only meant for visualization; no context menu.
-      MENU: Like NONE, but right-click menu is active.
-      BUTTON: Element can be left-clicked.
-      MOVE_AXIS: Translate along local x-axis.
-      MOVE_PLANE: Translate in local y-z plane.
-      ROTATE_AXIS: Rotate around local x-axis.
-      MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
+      # Interaction mode for this control
+      #
+      # NONE: This control is only meant for visualization; no context menu.
+      # MENU: Like NONE, but right-click menu is active.
+      # BUTTON: Element can be left-clicked.
+      # MOVE_AXIS: Translate along local x-axis.
+      # MOVE_PLANE: Translate in local y-z plane.
+      # ROTATE_AXIS: Rotate around local x-axis.
+      # MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
    */
-   public static final byte NONE = 0;
-   public static final byte MENU = 1;
-   public static final byte BUTTON = 2;
-   public static final byte MOVE_AXIS = 3;
-   public static final byte MOVE_PLANE = 4;
-   public static final byte ROTATE_AXIS = 5;
-   public static final byte MOVE_ROTATE = 6;
+   public static final short NONE = 0;
+   public static final short MENU = 1;
+   public static final short BUTTON = 2;
+   public static final short MOVE_AXIS = 3;
+   public static final short MOVE_PLANE = 4;
+   public static final short ROTATE_AXIS = 5;
+   public static final short MOVE_ROTATE = 6;
    /**
-      "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
-      MOVE_3D: Translate freely in 3D space.
-      ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
-      MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
+      # "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
+      # MOVE_3D: Translate freely in 3D space.
+      # ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
+      # MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
    */
-   public static final byte MOVE_3D = 7;
-   public static final byte ROTATE_3D = 8;
-   public static final byte MOVE_ROTATE_3D = 9;
-   private byte interaction_mode_;
+   public static final short MOVE_3D = 7;
+   public static final short ROTATE_3D = 8;
+   public static final short MOVE_ROTATE_3D = 9;
+   private short interaction_mode_;
    /**
-      If true, the contained markers will also be visible
-      when the gui is not in interactive mode.
+      # If true, the contained markers will also be visible
+      # when the gui is not in interactive mode.
    */
    private boolean always_visible_;
    /**
-      Markers to be displayed as custom visual representation.
-      Leave this empty to use the default control handles.
-
-      Note:
-      - The markers can be defined in an arbitrary coordinate frame,
-      but will be transformed into the local frame of the interactive marker.
-      - If the header of a marker is empty, its pose will be interpreted as
-      relative to the pose of the parent interactive marker.
+      # Markers to be displayed as custom visual representation.
+      # Leave this empty to use the default control handles.
+      #
+      # Note:
+      # - The markers can be defined in an arbitrary coordinate frame,
+      #   but will be transformed into the local frame of the interactive marker.
+      # - If the header of a marker is empty, its pose will be interpreted as
+      #   relative to the pose of the parent interactive marker.
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.Marker> markers_;
    /**
-      In VIEW_FACING mode, set this to true if you don't want the markers
-      to be aligned with the camera view point. The markers will show up
-      as in INHERIT mode.
+      # In VIEW_FACING mode, set this to true if you don't want the markers
+      # to be aligned with the camera view point. The markers will show up
+      # as in INHERIT mode.
    */
    private boolean independent_marker_orientation_;
    /**
-      Short description (< 40 characters) of what this control does,
-      e.g. "Move the robot".
-      Default: A generic description based on the interaction mode
+      # Short description (< 40 characters) of what this control does,
+      # e.g. "Move the robot".
+      # Default: A generic description based on the interaction mode
    */
    private final StringBuilder description_;
 
    public InteractiveMarkerControl()
    {
       name_ = new StringBuilder();
-      orientation_ = new geometry_msgs.msg.dds.Quaternion();
+      orientation_ = new visualization_msgs.msg.dds.geometry_msgs/Quaternion();
+      always_visible_ = (boolean) false;
       markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.Marker>(visualization_msgs.msg.dds.Marker.class);
+      independent_marker_orientation_ = (boolean) false;
       description_ = new StringBuilder();
 
    }
@@ -210,8 +134,8 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       buffer.writeString(name_);
       orientation_.serialize(buffer);
-      buffer.writeByte(orientation_mode_);
-      buffer.writeByte(interaction_mode_);
+      buffer.writeShort(orientation_mode_);
+      buffer.writeShort(interaction_mode_);
       buffer.writeBoolean(always_visible_);
       markers_.serialize(buffer);
       buffer.writeBoolean(independent_marker_orientation_);
@@ -224,8 +148,8 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       buffer.readString(name_);
       orientation_.deserialize(buffer);
-      orientation_mode_ = buffer.readByte();
-      interaction_mode_ = buffer.readByte();
+      orientation_mode_ = buffer.readShort();
+      interaction_mode_ = buffer.readShort();
       always_visible_ = buffer.readBoolean();
       markers_.deserialize(buffer);
       independent_marker_orientation_ = buffer.readBoolean();
@@ -254,27 +178,27 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return name_;
    }
 
-   public geometry_msgs.msg.dds.Quaternion getOrientation()
+   public visualization_msgs.msg.dds.geometry_msgs/Quaternion getOrientation()
    {
       return orientation_;
    }
 
-   public byte getOrientationMode()
+   public short getOrientationMode()
    {
       return orientation_mode_;
    }
 
-   public void setOrientationMode(byte orientation_mode_)
+   public void setOrientationMode(short orientation_mode_)
    {
       this.orientation_mode_ = orientation_mode_;
    }
 
-   public byte getInteractionMode()
+   public short getInteractionMode()
    {
       return interaction_mode_;
    }
 
-   public void setInteractionMode(byte interaction_mode_)
+   public void setInteractionMode(short interaction_mode_)
    {
       this.interaction_mode_ = interaction_mode_;
    }

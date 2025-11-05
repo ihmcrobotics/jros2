@@ -4,51 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(visualization_msgs/InteractiveMarkerFeedback.msg)
+(visualization_msgs/InteractiveMarkerFeedback)
 ##################################################################################
-   # Time/frame info.
-   std_msgs/Header header
-
-   # Identifying string. Must be unique in the topic namespace.
-   string client_id
-
-   # Feedback message sent back from the GUI, e.g.
-   # when the status of an interactive marker was modified by the user.
-
-   # Specifies which interactive marker and control this message refers to
-   string marker_name
-   string control_name
-
-   # Type of the event
-   # KEEP_ALIVE: sent while dragging to keep up control of the marker
-   # MENU_SELECT: a menu entry has been selected
-   # BUTTON_CLICK: a button control has been clicked
-   # POSE_UPDATE: the pose has been changed using one of the controls
-   uint8 KEEP_ALIVE = 0
-   uint8 POSE_UPDATE = 1
-   uint8 MENU_SELECT = 2
-   uint8 BUTTON_CLICK = 3
-
-   uint8 MOUSE_DOWN = 4
-   uint8 MOUSE_UP = 5
-
-   uint8 event_type
-
-   # Current pose of the marker
-   # Note: Has to be valid for all feedback types.
-   geometry_msgs/Pose pose
-
-   # Contains the ID of the selected menu entry
-   # Only valid for MENU_SELECT events.
-   uint32 menu_entry_id
-
-   # If event_type is BUTTON_CLICK, MOUSE_DOWN, or MOUSE_UP, mouse_point
-   # may contain the 3 dimensional position of the event on the
-   # control.  If it does, mouse_point_valid will be true.  mouse_point
-   # will be relative to the frame listed in the header.
-   geometry_msgs/Point mouse_point
-   bool mouse_point_valid
-
 ##################################################################################
 
  */
@@ -63,59 +20,60 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerFeedback_";
 
    /**
-      Time/frame info.
+      # Time/frame info.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final visualization_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Identifying string. Must be unique in the topic namespace.
+      # Identifying string. Must be unique in the topic namespace.
    */
    private final StringBuilder client_id_;
    /**
-      Specifies which interactive marker and control this message refers to
+      # Specifies which interactive marker and control this message refers to
    */
    private final StringBuilder marker_name_;
    private final StringBuilder control_name_;
    /**
-      Type of the event
-      KEEP_ALIVE: sent while dragging to keep up control of the marker
-      MENU_SELECT: a menu entry has been selected
-      BUTTON_CLICK: a button control has been clicked
-      POSE_UPDATE: the pose has been changed using one of the controls
+      # Type of the event
+      # KEEP_ALIVE: sent while dragging to keep up control of the marker
+      # MENU_SELECT: a menu entry has been selected
+      # BUTTON_CLICK: a button control has been clicked
+      # POSE_UPDATE: the pose has been changed using one of the controls
    */
-   public static final byte KEEP_ALIVE = 0;
-   public static final byte POSE_UPDATE = 1;
-   public static final byte MENU_SELECT = 2;
-   public static final byte BUTTON_CLICK = 3;
-   public static final byte MOUSE_DOWN = 4;
-   public static final byte MOUSE_UP = 5;
-   private byte event_type_;
+   public static final short KEEP_ALIVE = 0;
+   public static final short POSE_UPDATE = 1;
+   public static final short MENU_SELECT = 2;
+   public static final short BUTTON_CLICK = 3;
+   public static final short MOUSE_DOWN = 4;
+   public static final short MOUSE_UP = 5;
+   private short event_type_;
    /**
-      Current pose of the marker
-      Note: Has to be valid for all feedback types.
+      # Current pose of the marker
+      # Note: Has to be valid for all feedback types.
    */
-   private final geometry_msgs.msg.dds.Pose pose_;
+   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
    /**
-      Contains the ID of the selected menu entry
-      Only valid for MENU_SELECT events.
+      # Contains the ID of the selected menu entry
+      # Only valid for MENU_SELECT events.
    */
-   private int menu_entry_id_;
+   private long menu_entry_id_;
    /**
-      If event_type is BUTTON_CLICK, MOUSE_DOWN, or MOUSE_UP, mouse_point
-      may contain the 3 dimensional position of the event on the
-      control.  If it does, mouse_point_valid will be true.  mouse_point
-      will be relative to the frame listed in the header.
+      # If event_type is BUTTON_CLICK, MOUSE_DOWN, or MOUSE_UP, mouse_point
+      # may contain the 3 dimensional position of the event on the
+      # control.  If it does, mouse_point_valid will be true.  mouse_point
+      # will be relative to the frame listed in the header.
    */
-   private final geometry_msgs.msg.dds.Point mouse_point_;
+   private final visualization_msgs.msg.dds.geometry_msgs/Point mouse_point_;
    private boolean mouse_point_valid_;
 
    public InteractiveMarkerFeedback()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
       client_id_ = new StringBuilder();
       marker_name_ = new StringBuilder();
       control_name_ = new StringBuilder();
-      pose_ = new geometry_msgs.msg.dds.Pose();
-      mouse_point_ = new geometry_msgs.msg.dds.Point();
+      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
+      mouse_point_ = new visualization_msgs.msg.dds.geometry_msgs/Point();
+      mouse_point_valid_ = (boolean) false;
 
    }
 
@@ -144,9 +102,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.writeString(client_id_);
       buffer.writeString(marker_name_);
       buffer.writeString(control_name_);
-      buffer.writeByte(event_type_);
+      buffer.writeShort(event_type_);
       pose_.serialize(buffer);
-      buffer.writeInt(menu_entry_id_);
+      buffer.writeLong(menu_entry_id_);
       mouse_point_.serialize(buffer);
       buffer.writeBoolean(mouse_point_valid_);
 
@@ -159,9 +117,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.readString(client_id_);
       buffer.readString(marker_name_);
       buffer.readString(control_name_);
-      event_type_ = buffer.readByte();
+      event_type_ = buffer.readShort();
       pose_.deserialize(buffer);
-      menu_entry_id_ = buffer.readInt();
+      menu_entry_id_ = buffer.readLong();
       mouse_point_.deserialize(buffer);
       mouse_point_valid_ = buffer.readBoolean();
 
@@ -185,7 +143,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
@@ -205,32 +163,32 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return control_name_;
    }
 
-   public byte getEventType()
+   public short getEventType()
    {
       return event_type_;
    }
 
-   public void setEventType(byte event_type_)
+   public void setEventType(short event_type_)
    {
       this.event_type_ = event_type_;
    }
 
-   public geometry_msgs.msg.dds.Pose getPose()
+   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
    {
       return pose_;
    }
 
-   public int getMenuEntryId()
+   public long getMenuEntryId()
    {
       return menu_entry_id_;
    }
 
-   public void setMenuEntryId(int menu_entry_id_)
+   public void setMenuEntryId(long menu_entry_id_)
    {
       this.menu_entry_id_ = menu_entry_id_;
    }
 
-   public geometry_msgs.msg.dds.Point getMousePoint()
+   public visualization_msgs.msg.dds.geometry_msgs/Point getMousePoint()
    {
       return mouse_point_;
    }

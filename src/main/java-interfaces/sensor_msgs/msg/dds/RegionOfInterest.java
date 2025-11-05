@@ -4,28 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/RegionOfInterest.msg)
+(sensor_msgs/RegionOfInterest)
 ##################################################################################
-   # This message is used to specify a region of interest within an image.
-   #
-   # When used to specify the ROI setting of the camera when the image was
-   # taken, the height and width fields should either match the height and
-   # width fields for the associated image; or height = width = 0
-   # indicates that the full resolution image was captured.
-
-   uint32 x_offset  # Leftmost pixel of the ROI
-                    # (0 if the ROI includes the left edge of the image)
-   uint32 y_offset  # Topmost pixel of the ROI
-                    # (0 if the ROI includes the top edge of the image)
-   uint32 height    # Height of ROI
-   uint32 width     # Width of ROI
-
-   # True if a distinct rectified ROI should be calculated from the "raw"
-   # ROI in this message. Typically this should be False if the full image
-   # is captured (ROI not used), and True if a subwindow is captured (ROI
-   # used).
-   bool do_rectify
-
 ##################################################################################
 
  */
@@ -36,37 +16,39 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This message is used to specify a region of interest within an image.
-
-   When used to specify the ROI setting of the camera when the image was
-   taken, the height and width fields should either match the height and
-   width fields for the associated image; or height = width = 0
-   indicates that the full resolution image was captured.
+   # This message is used to specify a region of interest within an image.
+   #
+   # When used to specify the ROI setting of the camera when the image was
+   # taken, the height and width fields should either match the height and
+   # width fields for the associated image; or height = width = 0
+   # indicates that the full resolution image was captured.
 */
 public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
 
-   private int x_offset_; // Leftmost pixel of the ROI
+   private long x_offset_; // Leftmost pixel of the ROI
    /**
-      (0 if the ROI includes the left edge of the image)
+      # (0 if the ROI includes the left edge of the image)
    */
-   private int y_offset_; // Topmost pixel of the ROI
+   private long y_offset_; // Topmost pixel of the ROI
    /**
-      (0 if the ROI includes the top edge of the image)
+      # (0 if the ROI includes the top edge of the image)
    */
-   private int height_; // Height of ROI
-   private int width_; // Width of ROI
+   private long height_; // Height of ROI
+   private long width_; // Width of ROI
    /**
-      True if a distinct rectified ROI should be calculated from the "raw"
-      ROI in this message. Typically this should be False if the full image
-      is captured (ROI not used), and True if a subwindow is captured (ROI
-      used).
+      # True if a distinct rectified ROI should be calculated from the "raw"
+      # ROI in this message. Typically this should be False if the full image
+      # is captured (ROI not used), and True if a subwindow is captured (ROI
+      # used).
    */
    private boolean do_rectify_;
 
    public RegionOfInterest()
    {
+      do_rectify_ = (boolean) false;
+
    }
 
    @Override
@@ -86,10 +68,10 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeInt(x_offset_);
-      buffer.writeInt(y_offset_);
-      buffer.writeInt(height_);
-      buffer.writeInt(width_);
+      buffer.writeLong(x_offset_);
+      buffer.writeLong(y_offset_);
+      buffer.writeLong(height_);
+      buffer.writeLong(width_);
       buffer.writeBoolean(do_rectify_);
 
    }
@@ -97,10 +79,10 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      x_offset_ = buffer.readInt();
-      y_offset_ = buffer.readInt();
-      height_ = buffer.readInt();
-      width_ = buffer.readInt();
+      x_offset_ = buffer.readLong();
+      y_offset_ = buffer.readLong();
+      height_ = buffer.readLong();
+      width_ = buffer.readLong();
       do_rectify_ = buffer.readBoolean();
 
    }
@@ -116,42 +98,42 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    }
 
-   public int getXOffset()
+   public long getXOffset()
    {
       return x_offset_;
    }
 
-   public void setXOffset(int x_offset_)
+   public void setXOffset(long x_offset_)
    {
       this.x_offset_ = x_offset_;
    }
 
-   public int getYOffset()
+   public long getYOffset()
    {
       return y_offset_;
    }
 
-   public void setYOffset(int y_offset_)
+   public void setYOffset(long y_offset_)
    {
       this.y_offset_ = y_offset_;
    }
 
-   public int getHeight()
+   public long getHeight()
    {
       return height_;
    }
 
-   public void setHeight(int height_)
+   public void setHeight(long height_)
    {
       this.height_ = height_;
    }
 
-   public int getWidth()
+   public long getWidth()
    {
       return width_;
    }
 
-   public void setWidth(int width_)
+   public void setWidth(long width_)
    {
       this.width_ = width_;
    }

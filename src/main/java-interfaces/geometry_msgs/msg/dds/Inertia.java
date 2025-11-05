@@ -4,25 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Inertia.msg)
+(geometry_msgs/Inertia)
 ##################################################################################
-   # Mass [kg]
-   float64 m
-
-   # Center of mass [m]
-   geometry_msgs/Vector3 com
-
-   # Inertia Tensor [kg-m^2]
-   #     | ixx ixy ixz |
-   # I = | ixy iyy iyz |
-   #     | ixz iyz izz |
-   float64 ixx
-   float64 ixy
-   float64 ixz
-   float64 iyy
-   float64 iyz
-   float64 izz
-
 ##################################################################################
 
  */
@@ -37,18 +20,18 @@ public class Inertia implements ROS2Message<Inertia>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Inertia_";
 
    /**
-      Mass [kg]
+      # Mass [kg]
    */
    private double m_;
    /**
-      Center of mass [m]
+      # Center of mass [m]
    */
-   private final geometry_msgs.msg.dds.Vector3 com_;
+   private final geometry_msgs.msg.dds.geometry_msgs/Vector3 com_;
    /**
-      Inertia Tensor [kg-m^2]
-      | ixx ixy ixz |
-      I = | ixy iyy iyz |
-      | ixz iyz izz |
+      # Inertia Tensor [kg-m^2]
+      #     | ixx ixy ixz |
+      # I = | ixy iyy iyz |
+      #     | ixz iyz izz |
    */
    private double ixx_;
    private double ixy_;
@@ -59,7 +42,7 @@ public class Inertia implements ROS2Message<Inertia>
 
    public Inertia()
    {
-      com_ = new geometry_msgs.msg.dds.Vector3();
+      com_ = new geometry_msgs.msg.dds.geometry_msgs/Vector3();
 
    }
 
@@ -132,7 +115,7 @@ public class Inertia implements ROS2Message<Inertia>
       this.m_ = m_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getCom()
+   public geometry_msgs.msg.dds.geometry_msgs/Vector3 getCom()
    {
       return com_;
    }

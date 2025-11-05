@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/InertiaStamped.msg)
+(geometry_msgs/InertiaStamped)
 ##################################################################################
-   # An Inertia with a time stamp and reference frame.
-
-   std_msgs/Header header
-   Inertia inertia
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   An Inertia with a time stamp and reference frame.
+   # An Inertia with a time stamp and reference frame.
 */
 public class InertiaStamped implements ROS2Message<InertiaStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::InertiaStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Inertia inertia_;
 
    public InertiaStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       inertia_ = new geometry_msgs.msg.dds.Inertia();
 
    }
@@ -72,7 +67,7 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

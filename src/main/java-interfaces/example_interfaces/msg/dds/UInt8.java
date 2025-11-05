@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(example_interfaces/UInt8.msg)
+(example_interfaces/UInt8)
 ##################################################################################
-   # This is an example message of using a primitive datatype, uint8.
-   # If you want to test with this that's fine, but if you are deploying
-   # it into a system you should create a semantically meaningful message type.
-   # If you want to embed it in another message, use the primitive data type instead.
-   uint8 data
-
 ##################################################################################
 
  */
@@ -26,12 +20,12 @@ public class UInt8 implements ROS2Message<UInt8>
    public static final java.lang.String name = "example_interfaces::msg::dds_::UInt8_";
 
    /**
-      This is an example message of using a primitive datatype, uint8.
-      If you want to test with this that's fine, but if you are deploying
-      it into a system you should create a semantically meaningful message type.
-      If you want to embed it in another message, use the primitive data type instead.
+      # This is an example message of using a primitive datatype, uint8.
+      # If you want to test with this that's fine, but if you are deploying
+      # it into a system you should create a semantically meaningful message type.
+      # If you want to embed it in another message, use the primitive data type instead.
    */
-   private byte data_;
+   private short data_;
 
    public UInt8()
    {
@@ -50,14 +44,14 @@ public class UInt8 implements ROS2Message<UInt8>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(data_);
+      buffer.writeShort(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readByte();
+      data_ = buffer.readShort();
 
    }
 
@@ -68,12 +62,12 @@ public class UInt8 implements ROS2Message<UInt8>
 
    }
 
-   public byte getData()
+   public short getData()
    {
       return data_;
    }
 
-   public void setData(byte data_)
+   public void setData(short data_)
    {
       this.data_ = data_;
    }

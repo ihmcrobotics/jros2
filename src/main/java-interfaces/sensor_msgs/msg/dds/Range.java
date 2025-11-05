@@ -4,48 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/Range.msg)
+(sensor_msgs/Range)
 ##################################################################################
-   # Single range reading from an active ranger that emits energy and reports
-   # one range reading that is valid along an arc at the distance measured.
-   # This message is  not appropriate for laser scanners. See the LaserScan
-   # message if you are working with a laser scanner.
-   #
-   # This message also can represent a fixed-distance (binary) ranger.  This
-   # sensor will have min_range===max_range===distance of detection.
-   # These sensors follow REP 117 and will output -Inf if the object is detected
-   # and +Inf if the object is outside of the detection range.
-
-   std_msgs/Header header # timestamp in the header is the time the ranger
-                                # returned the distance reading
-
-   # Radiation type enums
-   # If you want a value added to this list, send an email to the ros-users list
-   uint8 ULTRASOUND=0
-   uint8 INFRARED=1
-
-   uint8 radiation_type    # the type of radiation used by the sensor
-                           # (sound, IR, etc) [enum]
-
-   float32 field_of_view   # the size of the arc that the distance reading is
-                           # valid for [rad]
-                           # the object causing the range reading may have
-                           # been anywhere within -field_of_view/2 and
-                           # field_of_view/2 at the measured range.
-                           # 0 angle corresponds to the x-axis of the sensor.
-
-   float32 min_range       # minimum range value [m]
-   float32 max_range       # maximum range value [m]
-                           # Fixed distance rangers require min_range==max_range
-
-   float32 range           # range data [m]
-                           # (Note: values < range_min or > range_max should be discarded)
-                           # Fixed distance rangers only output -Inf or +Inf.
-                           # -Inf represents a detection within fixed distance.
-                           # (Detection too close to the sensor to quantify)
-                           # +Inf represents no detection within the fixed distance.
-                           # (Object out of range)
-
 ##################################################################################
 
  */
@@ -56,28 +16,28 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Single range reading from an active ranger that emits energy and reports
-   one range reading that is valid along an arc at the distance measured.
-   This message is  not appropriate for laser scanners. See the LaserScan
-   message if you are working with a laser scanner.
-
-   This message also can represent a fixed-distance (binary) ranger.  This
-   sensor will have min_range===max_range===distance of detection.
-   These sensors follow REP 117 and will output -Inf if the object is detected
-   and +Inf if the object is outside of the detection range.
+   # Single range reading from an active ranger that emits energy and reports
+   # one range reading that is valid along an arc at the distance measured.
+   # This message is  not appropriate for laser scanners. See the LaserScan
+   # message if you are working with a laser scanner.
+   #
+   # This message also can represent a fixed-distance (binary) ranger.  This
+   # sensor will have min_range===max_range===distance of detection.
+   # These sensors follow REP 117 and will output -Inf if the object is detected
+   # and +Inf if the object is outside of the detection range.
 */
 public class Range implements ROS2Message<Range>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the time the ranger
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp in the header is the time the ranger
    /**
-      Radiation type enums
-      If you want a value added to this list, send an email to the ros-users list
+      # Radiation type enums
+      # If you want a value added to this list, send an email to the ros-users list
    */
-   public static final byte ULTRASOUND = 0;
-   public static final byte INFRARED = 1;
-   private byte radiation_type_; // the type of radiation used by the sensor
+   public static final short ULTRASOUND = 0;
+   public static final short INFRARED = 1;
+   private short radiation_type_; // the type of radiation used by the sensor
    private float field_of_view_; // the size of the arc that the distance reading is
    private float min_range_; // minimum range value [m]
    private float max_range_; // maximum range value [m]
@@ -85,7 +45,7 @@ public class Range implements ROS2Message<Range>
 
    public Range()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
 
    }
 
@@ -108,7 +68,7 @@ public class Range implements ROS2Message<Range>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeByte(radiation_type_);
+      buffer.writeShort(radiation_type_);
       buffer.writeFloat(field_of_view_);
       buffer.writeFloat(min_range_);
       buffer.writeFloat(max_range_);
@@ -120,7 +80,7 @@ public class Range implements ROS2Message<Range>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      radiation_type_ = buffer.readByte();
+      radiation_type_ = buffer.readShort();
       field_of_view_ = buffer.readFloat();
       min_range_ = buffer.readFloat();
       max_range_ = buffer.readFloat();
@@ -140,17 +100,17 @@ public class Range implements ROS2Message<Range>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public byte getRadiationType()
+   public short getRadiationType()
    {
       return radiation_type_;
    }
 
-   public void setRadiationType(byte radiation_type_)
+   public void setRadiationType(short radiation_type_)
    {
       this.radiation_type_ = radiation_type_;
    }

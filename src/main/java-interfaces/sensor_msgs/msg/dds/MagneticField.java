@@ -4,29 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/MagneticField.msg)
+(sensor_msgs/MagneticField)
 ##################################################################################
-   # Measurement of the Magnetic Field vector at a specific location.
-   #
-   # If the covariance of the measurement is known, it should be filled in.
-   # If all you know is the variance of each measurement, e.g. from the datasheet,
-   # just put those along the diagonal.
-   # A covariance matrix of all zeros will be interpreted as "covariance unknown",
-   # and to use the data a covariance will have to be assumed or gotten from some
-   # other source.
-
-   std_msgs/Header header               # timestamp is the time the
-                                              # field was measured
-                                              # frame_id is the location and orientation
-                                              # of the field measurement
-
-   geometry_msgs/Vector3 magnetic_field # x, y, and z components of the
-                                              # field vector in Tesla
-                                              # If your sensor does not output 3 axes,
-                                              # put NaNs in the components not reported.
-
-   float64[9] magnetic_field_covariance       # Row major about x, y, z axes
-                                              # 0 is interpreted as variance unknown
 ##################################################################################
 
  */
@@ -37,27 +16,27 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Measurement of the Magnetic Field vector at a specific location.
-
-   If the covariance of the measurement is known, it should be filled in.
-   If all you know is the variance of each measurement, e.g. from the datasheet,
-   just put those along the diagonal.
-   A covariance matrix of all zeros will be interpreted as "covariance unknown",
-   and to use the data a covariance will have to be assumed or gotten from some
-   other source.
+   # Measurement of the Magnetic Field vector at a specific location.
+   #
+   # If the covariance of the measurement is known, it should be filled in.
+   # If all you know is the variance of each measurement, e.g. from the datasheet,
+   # just put those along the diagonal.
+   # A covariance matrix of all zeros will be interpreted as "covariance unknown",
+   # and to use the data a covariance will have to be assumed or gotten from some
+   # other source.
 */
 public class MagneticField implements ROS2Message<MagneticField>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MagneticField_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp is the time the
-   private final geometry_msgs.msg.dds.Vector3 magnetic_field_; // x, y, and z components of the
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp is the time the
+   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 magnetic_field_; // x, y, and z components of the
    private final double[] magnetic_field_covariance_; // Row major about x, y, z axes
 
    public MagneticField()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      magnetic_field_ = new geometry_msgs.msg.dds.Vector3();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      magnetic_field_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
       magnetic_field_covariance_ = new double[9];
 
    }
@@ -110,12 +89,12 @@ public class MagneticField implements ROS2Message<MagneticField>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.Vector3 getMagneticField()
+   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getMagneticField()
    {
       return magnetic_field_;
    }

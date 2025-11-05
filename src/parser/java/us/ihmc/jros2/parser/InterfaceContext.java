@@ -43,7 +43,7 @@ public abstract class InterfaceContext
    private String javaClassName;
    private String javaPackageName;
 
-   public InterfaceContext(String schema)
+   protected InterfaceContext(String schema)
    {
       this.schema = schema;
       fields = new LinkedHashMap<>();

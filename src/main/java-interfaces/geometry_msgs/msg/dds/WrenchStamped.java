@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/WrenchStamped.msg)
+(geometry_msgs/WrenchStamped)
 ##################################################################################
-   # A wrench with reference coordinate frame and timestamp
-
-   std_msgs/Header header
-   Wrench wrench
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A wrench with reference coordinate frame and timestamp
+   # A wrench with reference coordinate frame and timestamp
 */
 public class WrenchStamped implements ROS2Message<WrenchStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::WrenchStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Wrench wrench_;
 
    public WrenchStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       wrench_ = new geometry_msgs.msg.dds.Wrench();
 
    }
@@ -72,7 +67,7 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

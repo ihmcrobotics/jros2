@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/LaserEcho.msg)
+(sensor_msgs/LaserEcho)
 ##################################################################################
-   # This message is a submessage of MultiEchoLaserScan and is not intended
-   # to be used separately.
-
-   float32[] echoes  # Multiple values of ranges or intensities.
-                     # Each array represents data from the same angle increment.
-
 ##################################################################################
 
  */
@@ -22,8 +16,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This message is a submessage of MultiEchoLaserScan and is not intended
-   to be used separately.
+   # This message is a submessage of MultiEchoLaserScan and is not intended
+   # to be used separately.
 */
 public class LaserEcho implements ROS2Message<LaserEcho>
 {

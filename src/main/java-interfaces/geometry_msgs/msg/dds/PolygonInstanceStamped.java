@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PolygonInstanceStamped.msg)
+(geometry_msgs/PolygonInstanceStamped)
 ##################################################################################
-   # This represents a Polygon with reference coordinate frame and timestamp
-   # It includes a unique identification field for disambiguating multiple instances
-
-   std_msgs/Header header
-   geometry_msgs/PolygonInstance polygon
-
 ##################################################################################
 
  */
@@ -22,20 +16,20 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents a Polygon with reference coordinate frame and timestamp
-   It includes a unique identification field for disambiguating multiple instances
+   # This represents a Polygon with reference coordinate frame and timestamp
+   # It includes a unique identification field for disambiguating multiple instances
 */
 public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private final geometry_msgs.msg.dds.PolygonInstance polygon_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final geometry_msgs.msg.dds.geometry_msgs/PolygonInstance polygon_;
 
    public PolygonInstanceStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      polygon_ = new geometry_msgs.msg.dds.PolygonInstance();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      polygon_ = new geometry_msgs.msg.dds.geometry_msgs/PolygonInstance();
 
    }
 
@@ -74,12 +68,12 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.PolygonInstance getPolygon()
+   public geometry_msgs.msg.dds.geometry_msgs/PolygonInstance getPolygon()
    {
       return polygon_;
    }

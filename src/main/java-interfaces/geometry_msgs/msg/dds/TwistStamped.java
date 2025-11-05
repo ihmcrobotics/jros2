@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/TwistStamped.msg)
+(geometry_msgs/TwistStamped)
 ##################################################################################
-   # A twist with reference coordinate frame and timestamp
-
-   std_msgs/Header header
-   Twist twist
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A twist with reference coordinate frame and timestamp
+   # A twist with reference coordinate frame and timestamp
 */
 public class TwistStamped implements ROS2Message<TwistStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Twist twist_;
 
    public TwistStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       twist_ = new geometry_msgs.msg.dds.Twist();
 
    }
@@ -72,7 +67,7 @@ public class TwistStamped implements ROS2Message<TwistStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

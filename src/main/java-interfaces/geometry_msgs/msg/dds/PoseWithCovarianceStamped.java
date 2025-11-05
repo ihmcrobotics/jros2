@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PoseWithCovarianceStamped.msg)
+(geometry_msgs/PoseWithCovarianceStamped)
 ##################################################################################
-   # This expresses an estimated pose with a reference coordinate frame and timestamp
-
-   std_msgs/Header header
-   PoseWithCovariance pose
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This expresses an estimated pose with a reference coordinate frame and timestamp
+   # This expresses an estimated pose with a reference coordinate frame and timestamp
 */
 public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovarianceStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseWithCovarianceStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.PoseWithCovariance pose_;
 
    public PoseWithCovarianceStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       pose_ = new geometry_msgs.msg.dds.PoseWithCovariance();
 
    }
@@ -72,7 +67,7 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

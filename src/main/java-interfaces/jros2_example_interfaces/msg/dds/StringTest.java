@@ -4,17 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(jros2_example_interfaces/StringTest.msg)
+(jros2_example_interfaces/StringTest)
 ##################################################################################
-   # https://design.ros2.org/articles/interface_definition.html
-
-   string my_string1 "I heard \"Hello\""   # valid
-   string my_string2 "I heard "Hello""     # not valid
-   string my_string3 "I heard 'Hello'"     # valid
-   string my_string4 'I heard \'Hello\''   # valid
-   string my_string5 'I heard 'Hello''     # not valid
-   string my_string6 'I heard "Hello"'     # valid
-
 ##################################################################################
 
  */
@@ -25,27 +16,57 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   https://design.ros2.org/articles/interface_definition.html
+   # https://design.ros2.org/articles/interface_definition.html
 */
 public class StringTest implements ROS2Message<StringTest>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::StringTest_";
 
-   private final StringBuilder my_string1_; // valid
-   private final StringBuilder my_string2_; // not valid
-   private final StringBuilder my_string3_; // valid
-   private final StringBuilder my_string4_; // valid
-   private final StringBuilder my_string5_; // not valid
-   private final StringBuilder my_string6_; // valid
+   private final StringBuilder str1_;
+   private final StringBuilder str2_;
+   private final StringBuilder str3_;
+   private final StringBuilder str4_;
+   private final StringBuilder str5_;
+   private final StringBuilder str6_;
+   private final StringBuilder str7_;
+   private final StringBuilder str8_;
+   private final StringBuilder str9_;
+   private final StringBuilder stra_;
+   private final StringBuilder strb_;
+   private final StringBuilder strc_;
+   private final StringBuilder strd_;
+   private final StringBuilder stre_;
+   private final StringBuilder strf_;
+   private final StringBuilder strg_;
+   private final StringBuilder strh_;
+   private final StringBuilder stri_;
+   private final StringBuilder strj_;
+   private final StringBuilder strk_;
+   private final StringBuilder strl_;
 
    public StringTest()
    {
-      my_string1_ = new StringBuilder("I heard \"Hello\"");
-      my_string2_ = new StringBuilder("I heard \"Hello\"");
-      my_string3_ = new StringBuilder("I heard 'Hello'");
-      my_string4_ = new StringBuilder("I heard \'Hello\'");
-      my_string5_ = new StringBuilder("I heard 'Hello'");
-      my_string6_ = new StringBuilder("I heard \"Hello\"");
+      str1_ = new StringBuilder("");
+      str2_ = new StringBuilder("");
+      str3_ = new StringBuilder("");
+      str4_ = new StringBuilder("");
+      str5_ = new StringBuilder("''");
+      str6_ = new StringBuilder("\"\"\"");
+      str7_ = new StringBuilder("\"\"");
+      str8_ = new StringBuilder("Hello World");
+      str9_ = new StringBuilder("Hello World");
+      stra_ = new StringBuilder("Hello World");
+      strb_ = new StringBuilder("Hello \"World\"");
+      strc_ = new StringBuilder("Hello 'World'");
+      strd_ = new StringBuilder("\"Hello\" World");
+      stre_ = new StringBuilder("'Hello' World");
+      strf_ = new StringBuilder("Hello 'World'");
+      strg_ = new StringBuilder("Hello \"World\"");
+      strh_ = new StringBuilder("\"Hello\" 'World'");
+      stri_ = new StringBuilder("'Hello' \"World\"");
+      strj_ = new StringBuilder("Hello World");
+      strk_ = new StringBuilder("  Hello World  ");
+      strl_ = new StringBuilder("  Goodbye World  ");
 
    }
 
@@ -54,12 +75,27 @@ public class StringTest implements ROS2Message<StringTest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string1_.length()) + 1; // my_string1_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string2_.length()) + 1; // my_string2_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string3_.length()) + 1; // my_string3_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string4_.length()) + 1; // my_string4_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string5_.length()) + 1; // my_string5_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string6_.length()) + 1; // my_string6_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str1_.length()) + 1; // str1_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str2_.length()) + 1; // str2_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str3_.length()) + 1; // str3_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str4_.length()) + 1; // str4_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str5_.length()) + 1; // str5_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str6_.length()) + 1; // str6_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str7_.length()) + 1; // str7_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str8_.length()) + 1; // str8_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str9_.length()) + 1; // str9_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stra_.length()) + 1; // stra_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strb_.length()) + 1; // strb_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strc_.length()) + 1; // strc_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strd_.length()) + 1; // strd_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stre_.length()) + 1; // stre_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strf_.length()) + 1; // strf_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strg_.length()) + 1; // strg_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strh_.length()) + 1; // strh_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stri_.length()) + 1; // stri_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strj_.length()) + 1; // strj_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strk_.length()) + 1; // strk_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strl_.length()) + 1; // strl_
 
       return currentAlignment - initialAlignment;
    }
@@ -67,73 +103,208 @@ public class StringTest implements ROS2Message<StringTest>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeString(my_string1_);
-      buffer.writeString(my_string2_);
-      buffer.writeString(my_string3_);
-      buffer.writeString(my_string4_);
-      buffer.writeString(my_string5_);
-      buffer.writeString(my_string6_);
+      buffer.writeString(str1_);
+      buffer.writeString(str2_);
+      buffer.writeString(str3_);
+      buffer.writeString(str4_);
+      buffer.writeString(str5_);
+      buffer.writeString(str6_);
+      buffer.writeString(str7_);
+      buffer.writeString(str8_);
+      buffer.writeString(str9_);
+      buffer.writeString(stra_);
+      buffer.writeString(strb_);
+      buffer.writeString(strc_);
+      buffer.writeString(strd_);
+      buffer.writeString(stre_);
+      buffer.writeString(strf_);
+      buffer.writeString(strg_);
+      buffer.writeString(strh_);
+      buffer.writeString(stri_);
+      buffer.writeString(strj_);
+      buffer.writeString(strk_);
+      buffer.writeString(strl_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      buffer.readString(my_string1_);
-      buffer.readString(my_string2_);
-      buffer.readString(my_string3_);
-      buffer.readString(my_string4_);
-      buffer.readString(my_string5_);
-      buffer.readString(my_string6_);
+      buffer.readString(str1_);
+      buffer.readString(str2_);
+      buffer.readString(str3_);
+      buffer.readString(str4_);
+      buffer.readString(str5_);
+      buffer.readString(str6_);
+      buffer.readString(str7_);
+      buffer.readString(str8_);
+      buffer.readString(str9_);
+      buffer.readString(stra_);
+      buffer.readString(strb_);
+      buffer.readString(strc_);
+      buffer.readString(strd_);
+      buffer.readString(stre_);
+      buffer.readString(strf_);
+      buffer.readString(strg_);
+      buffer.readString(strh_);
+      buffer.readString(stri_);
+      buffer.readString(strj_);
+      buffer.readString(strk_);
+      buffer.readString(strl_);
 
    }
 
    @Override
    public void set(StringTest from)
    {
-      my_string1_.delete(0, my_string1_.length());
-      my_string1_.insert(0, from.my_string1_);
-      my_string2_.delete(0, my_string2_.length());
-      my_string2_.insert(0, from.my_string2_);
-      my_string3_.delete(0, my_string3_.length());
-      my_string3_.insert(0, from.my_string3_);
-      my_string4_.delete(0, my_string4_.length());
-      my_string4_.insert(0, from.my_string4_);
-      my_string5_.delete(0, my_string5_.length());
-      my_string5_.insert(0, from.my_string5_);
-      my_string6_.delete(0, my_string6_.length());
-      my_string6_.insert(0, from.my_string6_);
+      str1_.delete(0, str1_.length());
+      str1_.insert(0, from.str1_);
+      str2_.delete(0, str2_.length());
+      str2_.insert(0, from.str2_);
+      str3_.delete(0, str3_.length());
+      str3_.insert(0, from.str3_);
+      str4_.delete(0, str4_.length());
+      str4_.insert(0, from.str4_);
+      str5_.delete(0, str5_.length());
+      str5_.insert(0, from.str5_);
+      str6_.delete(0, str6_.length());
+      str6_.insert(0, from.str6_);
+      str7_.delete(0, str7_.length());
+      str7_.insert(0, from.str7_);
+      str8_.delete(0, str8_.length());
+      str8_.insert(0, from.str8_);
+      str9_.delete(0, str9_.length());
+      str9_.insert(0, from.str9_);
+      stra_.delete(0, stra_.length());
+      stra_.insert(0, from.stra_);
+      strb_.delete(0, strb_.length());
+      strb_.insert(0, from.strb_);
+      strc_.delete(0, strc_.length());
+      strc_.insert(0, from.strc_);
+      strd_.delete(0, strd_.length());
+      strd_.insert(0, from.strd_);
+      stre_.delete(0, stre_.length());
+      stre_.insert(0, from.stre_);
+      strf_.delete(0, strf_.length());
+      strf_.insert(0, from.strf_);
+      strg_.delete(0, strg_.length());
+      strg_.insert(0, from.strg_);
+      strh_.delete(0, strh_.length());
+      strh_.insert(0, from.strh_);
+      stri_.delete(0, stri_.length());
+      stri_.insert(0, from.stri_);
+      strj_.delete(0, strj_.length());
+      strj_.insert(0, from.strj_);
+      strk_.delete(0, strk_.length());
+      strk_.insert(0, from.strk_);
+      strl_.delete(0, strl_.length());
+      strl_.insert(0, from.strl_);
 
    }
 
-   public StringBuilder getMyString1()
+   public StringBuilder getStr1()
    {
-      return my_string1_;
+      return str1_;
    }
 
-   public StringBuilder getMyString2()
+   public StringBuilder getStr2()
    {
-      return my_string2_;
+      return str2_;
    }
 
-   public StringBuilder getMyString3()
+   public StringBuilder getStr3()
    {
-      return my_string3_;
+      return str3_;
    }
 
-   public StringBuilder getMyString4()
+   public StringBuilder getStr4()
    {
-      return my_string4_;
+      return str4_;
    }
 
-   public StringBuilder getMyString5()
+   public StringBuilder getStr5()
    {
-      return my_string5_;
+      return str5_;
    }
 
-   public StringBuilder getMyString6()
+   public StringBuilder getStr6()
    {
-      return my_string6_;
+      return str6_;
+   }
+
+   public StringBuilder getStr7()
+   {
+      return str7_;
+   }
+
+   public StringBuilder getStr8()
+   {
+      return str8_;
+   }
+
+   public StringBuilder getStr9()
+   {
+      return str9_;
+   }
+
+   public StringBuilder getStra()
+   {
+      return stra_;
+   }
+
+   public StringBuilder getStrb()
+   {
+      return strb_;
+   }
+
+   public StringBuilder getStrc()
+   {
+      return strc_;
+   }
+
+   public StringBuilder getStrd()
+   {
+      return strd_;
+   }
+
+   public StringBuilder getStre()
+   {
+      return stre_;
+   }
+
+   public StringBuilder getStrf()
+   {
+      return strf_;
+   }
+
+   public StringBuilder getStrg()
+   {
+      return strg_;
+   }
+
+   public StringBuilder getStrh()
+   {
+      return strh_;
+   }
+
+   public StringBuilder getStri()
+   {
+      return stri_;
+   }
+
+   public StringBuilder getStrj()
+   {
+      return strj_;
+   }
+
+   public StringBuilder getStrk()
+   {
+      return strk_;
+   }
+
+   public StringBuilder getStrl()
+   {
+      return strl_;
    }
 
 

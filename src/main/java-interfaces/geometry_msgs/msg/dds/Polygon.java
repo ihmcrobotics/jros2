@@ -4,12 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Polygon.msg)
+(geometry_msgs/Polygon)
 ##################################################################################
-   # A specification of a polygon where the first and last points are assumed to be connected
-
-   Point32[] points
-
 ##################################################################################
 
  */
@@ -20,7 +16,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A specification of a polygon where the first and last points are assumed to be connected
+   # A specification of a polygon where the first and last points are assumed to be connected
 */
 public class Polygon implements ROS2Message<Polygon>
 {

@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PoseStamped.msg)
+(geometry_msgs/PoseStamped)
 ##################################################################################
-   # A Pose with reference coordinate frame and timestamp
-
-   std_msgs/Header header
-   Pose pose
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A Pose with reference coordinate frame and timestamp
+   # A Pose with reference coordinate frame and timestamp
 */
 public class PoseStamped implements ROS2Message<PoseStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Pose pose_;
 
    public PoseStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       pose_ = new geometry_msgs.msg.dds.Pose();
 
    }
@@ -72,7 +67,7 @@ public class PoseStamped implements ROS2Message<PoseStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

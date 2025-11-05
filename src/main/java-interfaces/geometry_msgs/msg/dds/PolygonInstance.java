@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PolygonInstance.msg)
+(geometry_msgs/PolygonInstance)
 ##################################################################################
-   # A specification of a polygon where the first and last points are assumed to be connected
-   # It includes a unique identification field for disambiguating multiple instances
-
-   geometry_msgs/Polygon polygon
-   int64 id
-
 ##################################################################################
 
  */
@@ -22,19 +16,19 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A specification of a polygon where the first and last points are assumed to be connected
-   It includes a unique identification field for disambiguating multiple instances
+   # A specification of a polygon where the first and last points are assumed to be connected
+   # It includes a unique identification field for disambiguating multiple instances
 */
 public class PolygonInstance implements ROS2Message<PolygonInstance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstance_";
 
-   private final geometry_msgs.msg.dds.Polygon polygon_;
+   private final geometry_msgs.msg.dds.geometry_msgs/Polygon polygon_;
    private long id_;
 
    public PolygonInstance()
    {
-      polygon_ = new geometry_msgs.msg.dds.Polygon();
+      polygon_ = new geometry_msgs.msg.dds.geometry_msgs/Polygon();
 
    }
 
@@ -73,7 +67,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
    }
 
-   public geometry_msgs.msg.dds.Polygon getPolygon()
+   public geometry_msgs.msg.dds.geometry_msgs/Polygon getPolygon()
    {
       return polygon_;
    }

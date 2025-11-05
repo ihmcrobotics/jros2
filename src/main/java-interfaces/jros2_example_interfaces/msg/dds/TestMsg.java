@@ -4,40 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(jros2_example_interfaces/TestMsg.msg)
+(jros2_example_interfaces/TestMsg)
 ##################################################################################
-   Header header
-   std_msgs/Header header2
-
-   int32 my_int
-   string my_string # Test comment
-
-   int32[] unbounded_integer_array
-   int32[5] five_integers_array
-   int32[<=5] up_to_five_integers_array
-
-   string string_of_unbounded_size
-   string<=10 up_to_ten_characters_string
-
-   string[<=5] up_to_five_unbounded_strings
-   # Test header comment
-   string<=10[] unbounded_array_of_strings_up_to_ten_characters_each # Test comment
-   string<=10[<=5] up_to_five_strings_up_to_ten_characters_each
-
-   uint8 x 42
-   int16 y -2000
-   string full_name "John Doe"
-   int32[] samples [-200, -100, 0, 100, 200]
-   int32[5] samples2 [-200, -100, 0, 100, 200]
-
-   int32 X=123
-   int32 Y=-123
-   string FOO="foo"
-   string EXAMPLE='bar'
-
-   string[3] three_strings
-   string<=5[3] three_strings_each_max_length_of_five_chars
-   sensor_msgs/Image[3] three_images
 ##################################################################################
 
  */
@@ -51,8 +19,8 @@ public class TestMsg implements ROS2Message<TestMsg>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::TestMsg_";
 
-   private final std_msgs.msg.dds.Header header_;
-   private final std_msgs.msg.dds.Header header2_;
+   private final jros2_example_interfaces.msg.dds.Header header_;
+   private final jros2_example_interfaces.msg.dds.std_msgs/Header header2_;
    private int my_int_;
    private final StringBuilder my_string_; // Test comment
    private final IDLIntSequence unbounded_integer_array_;
@@ -64,7 +32,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    private final StringBuilder up_to_ten_characters_string_;
    private final IDLStringSequence up_to_five_unbounded_strings_;
    /**
-      Test header comment
+      # Test header comment
    */
    // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
@@ -72,7 +40,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
    private final IDLStringSequence up_to_five_strings_up_to_ten_characters_each_;
-   private byte x_;
+   private short x_;
    private short y_;
    private final StringBuilder full_name_;
    private final IDLIntSequence samples_;
@@ -85,12 +53,12 @@ public class TestMsg implements ROS2Message<TestMsg>
    // Note: The length of each string in this sequence should not exceed 5 characters.
    // This is not strictly enforced in Java / jros2.
    private final StringBuilder[] three_strings_each_max_length_of_five_chars_;
-   private final sensor_msgs.msg.dds.Image[] three_images_;
+   private final jros2_example_interfaces.msg.dds.sensor_msgs/Image[] three_images_;
 
    public TestMsg()
    {
-      header_ = new std_msgs.msg.dds.Header();
-      header2_ = new std_msgs.msg.dds.Header();
+      header_ = new jros2_example_interfaces.msg.dds.Header();
+      header2_ = new jros2_example_interfaces.msg.dds.std_msgs/Header();
       my_string_ = new StringBuilder();
       unbounded_integer_array_ = new IDLIntSequence();
       five_integers_array_ = new int[5];
@@ -100,7 +68,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
       up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5, 5, 10);
-      x_ = (byte) 42;
+      x_ = (short) 42;
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
@@ -117,11 +85,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       {
          three_strings_each_max_length_of_five_chars_[i] = new StringBuilder(5);
       }
-      three_images_ = new sensor_msgs.msg.dds.Image[3];
+      three_images_ = new jros2_example_interfaces.msg.dds.sensor_msgs/Image[3];
       // three_images is defined as a fixed-size array, so it is pre-allocated.
       for (int i = 0; i < three_images_.length; ++i)
       {
-         three_images_[i] = new sensor_msgs.msg.dds.Image();
+         three_images_[i] = new jros2_example_interfaces.msg.dds.sensor_msgs/Image();
       }
 
    }
@@ -176,7 +144,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.serialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.serialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.serialize(buffer);
-      buffer.writeByte(x_);
+      buffer.writeShort(x_);
       buffer.writeShort(y_);
       buffer.writeString(full_name_);
       samples_.serialize(buffer);
@@ -217,7 +185,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.deserialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.deserialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.deserialize(buffer);
-      x_ = buffer.readByte();
+      x_ = buffer.readShort();
       y_ = buffer.readShort();
       buffer.readString(full_name_);
       samples_.deserialize(buffer);
@@ -285,12 +253,12 @@ public class TestMsg implements ROS2Message<TestMsg>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public jros2_example_interfaces.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public std_msgs.msg.dds.Header getHeader2()
+   public jros2_example_interfaces.msg.dds.std_msgs/Header getHeader2()
    {
       return header2_;
    }
@@ -350,12 +318,12 @@ public class TestMsg implements ROS2Message<TestMsg>
       return up_to_five_strings_up_to_ten_characters_each_;
    }
 
-   public byte getX()
+   public short getX()
    {
       return x_;
    }
 
-   public void setX(byte x_)
+   public void setX(short x_)
    {
       this.x_ = x_;
    }
@@ -395,7 +363,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       return three_strings_each_max_length_of_five_chars_;
    }
 
-   public sensor_msgs.msg.dds.Image[] getThreeImages()
+   public jros2_example_interfaces.msg.dds.sensor_msgs/Image[] getThreeImages()
    {
       return three_images_;
    }

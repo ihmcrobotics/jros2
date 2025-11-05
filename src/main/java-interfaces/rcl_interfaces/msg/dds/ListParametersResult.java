@@ -4,15 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(rcl_interfaces/ListParametersResult.msg)
+(rcl_interfaces/ListParametersResult)
 ##################################################################################
-   # The resulting parameters under the given prefixes.
-   string[] names
-
-   # The resulting prefixes under the given prefixes.
-   # TODO(wjwwood): link to prefix definition and rules.
-   string[] prefixes
-
 ##################################################################################
 
  */
@@ -27,12 +20,12 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ListParametersResult_";
 
    /**
-      The resulting parameters under the given prefixes.
+      # The resulting parameters under the given prefixes.
    */
    private final IDLStringSequence names_;
    /**
-      The resulting prefixes under the given prefixes.
-      TODO(wjwwood): link to prefix definition and rules.
+      # The resulting prefixes under the given prefixes.
+      # TODO(wjwwood): link to prefix definition and rules.
    */
    private final IDLStringSequence prefixes_;
 

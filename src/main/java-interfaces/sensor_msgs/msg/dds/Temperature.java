@@ -4,17 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/Temperature.msg)
+(sensor_msgs/Temperature)
 ##################################################################################
-   # Single temperature reading.
-
-   std_msgs/Header header # timestamp is the time the temperature was measured
-                                # frame_id is the location of the temperature reading
-
-   float64 temperature          # Measurement of the Temperature in Degrees Celsius.
-
-   float64 variance             # 0 is interpreted as variance unknown.
-
 ##################################################################################
 
  */
@@ -25,19 +16,19 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Single temperature reading.
+   # Single temperature reading.
 */
 public class Temperature implements ROS2Message<Temperature>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp is the time the temperature was measured
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp is the time the temperature was measured
    private double temperature_; // Measurement of the Temperature in Degrees Celsius.
    private double variance_; // 0 is interpreted as variance unknown.
 
    public Temperature()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
 
    }
 
@@ -80,7 +71,7 @@ public class Temperature implements ROS2Message<Temperature>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

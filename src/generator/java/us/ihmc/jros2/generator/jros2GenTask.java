@@ -20,9 +20,17 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
+import us.ihmc.jros2.parser.MsgContext;
+import us.ihmc.jros2.parser.MsgParser;
+import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,17 +83,52 @@ public class jros2GenTask extends DefaultTask
    }
 
    @TaskAction
-   public void run()
+   public void run() throws IOException
    {
-      Path outputDir = Path.of(this.outputDir);
+      Path outputDirPath = Path.of(outputDir);
 
       for (String packagePathStr : packagePaths)
       {
          Path packagePath = Path.of(packagePathStr);
+         Path packageXmlPath = packagePath.resolve("package.xml");
+         Path msgDirPath = packagePath.resolve("msg");
 
-         System.out.println("GENERATING FOR " + packagePath);
+         if (!Files.exists(packageXmlPath))
+         {
+            System.err.println("No package.xml found in package path: " + packagePathStr);
+            continue;
+         }
 
-         // TODO:
+         if (Files.exists(msgDirPath) && Files.isDirectory(msgDirPath))
+         {
+            DirectoryStream.Filter<Path> msgFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".msg");
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(msgDirPath, msgFileFilter))
+            {
+               for (Path msgFile : stream)
+               {
+                  try
+                  {
+                     String packageResourceName = packagePath.getFileName().toString() + "/" + msgFile.getFileName().toString().replace(".msg", "");
+                     MsgContext context = MsgParser.parseMsg(Files.readString(msgFile), packageResourceName);
+                     String classContent = ROS2MessageGenerator.generateJavaClassContents(context, new LinkedHashMap<>());
+                     Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
+                     if (outputFilePath.toFile().exists())
+                     {
+                        outputFilePath.toFile().delete();
+                     }
+                     outputFilePath.toFile().getParentFile().mkdirs();
+                     Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
+                     System.out.println("Generated " + outputFilePath.toFile().getAbsolutePath());
+                  }
+                  catch (InterfaceFieldParsingException e)
+                  {
+                     System.err.println(e.getMessage());
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
       }
    }
 }

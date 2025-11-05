@@ -4,24 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(nav_msgs/Odometry.msg)
+(nav_msgs/Odometry)
 ##################################################################################
-   # This represents an estimate of a position and velocity in free space.
-   # The pose in this message should be specified in the coordinate frame given by header.frame_id
-   # The twist in this message should be specified in the coordinate frame given by the child_frame_id
-
-   # Includes the frame id of the pose parent.
-   std_msgs/Header header
-
-   # Frame id the pose points to. The twist is in this coordinate frame.
-   string child_frame_id
-
-   # Estimated pose that is typically relative to a fixed world frame.
-   geometry_msgs/PoseWithCovariance pose
-
-   # Estimated linear and angular velocity relative to child_frame_id.
-   geometry_msgs/TwistWithCovariance twist
-
 ##################################################################################
 
  */
@@ -32,37 +16,37 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents an estimate of a position and velocity in free space.
-   The pose in this message should be specified in the coordinate frame given by header.frame_id
-   The twist in this message should be specified in the coordinate frame given by the child_frame_id
+   # This represents an estimate of a position and velocity in free space.
+   # The pose in this message should be specified in the coordinate frame given by header.frame_id
+   # The twist in this message should be specified in the coordinate frame given by the child_frame_id
 */
 public class Odometry implements ROS2Message<Odometry>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Odometry_";
 
    /**
-      Includes the frame id of the pose parent.
+      # Includes the frame id of the pose parent.
    */
-   private final std_msgs.msg.dds.Header header_;
+   private final nav_msgs.msg.dds.std_msgs/Header header_;
    /**
-      Frame id the pose points to. The twist is in this coordinate frame.
+      # Frame id the pose points to. The twist is in this coordinate frame.
    */
    private final StringBuilder child_frame_id_;
    /**
-      Estimated pose that is typically relative to a fixed world frame.
+      # Estimated pose that is typically relative to a fixed world frame.
    */
-   private final geometry_msgs.msg.dds.PoseWithCovariance pose_;
+   private final nav_msgs.msg.dds.geometry_msgs/PoseWithCovariance pose_;
    /**
-      Estimated linear and angular velocity relative to child_frame_id.
+      # Estimated linear and angular velocity relative to child_frame_id.
    */
-   private final geometry_msgs.msg.dds.TwistWithCovariance twist_;
+   private final nav_msgs.msg.dds.geometry_msgs/TwistWithCovariance twist_;
 
    public Odometry()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new nav_msgs.msg.dds.std_msgs/Header();
       child_frame_id_ = new StringBuilder();
-      pose_ = new geometry_msgs.msg.dds.PoseWithCovariance();
-      twist_ = new geometry_msgs.msg.dds.TwistWithCovariance();
+      pose_ = new nav_msgs.msg.dds.geometry_msgs/PoseWithCovariance();
+      twist_ = new nav_msgs.msg.dds.geometry_msgs/TwistWithCovariance();
 
    }
 
@@ -110,7 +94,7 @@ public class Odometry implements ROS2Message<Odometry>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public nav_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
@@ -120,12 +104,12 @@ public class Odometry implements ROS2Message<Odometry>
       return child_frame_id_;
    }
 
-   public geometry_msgs.msg.dds.PoseWithCovariance getPose()
+   public nav_msgs.msg.dds.geometry_msgs/PoseWithCovariance getPose()
    {
       return pose_;
    }
 
-   public geometry_msgs.msg.dds.TwistWithCovariance getTwist()
+   public nav_msgs.msg.dds.geometry_msgs/TwistWithCovariance getTwist()
    {
       return twist_;
    }

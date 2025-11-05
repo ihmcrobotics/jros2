@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/QuaternionStamped.msg)
+(geometry_msgs/QuaternionStamped)
 ##################################################################################
-   # This represents an orientation with reference coordinate frame and timestamp.
-
-   std_msgs/Header header
-   Quaternion quaternion
-
 ##################################################################################
 
  */
@@ -21,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This represents an orientation with reference coordinate frame and timestamp.
+   # This represents an orientation with reference coordinate frame and timestamp.
 */
 public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::QuaternionStamped_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final geometry_msgs.msg.dds.Quaternion quaternion_;
 
    public QuaternionStamped()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       quaternion_ = new geometry_msgs.msg.dds.Quaternion();
 
    }
@@ -72,7 +67,7 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

@@ -4,59 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(shape_msgs/SolidPrimitive.msg)
+(shape_msgs/SolidPrimitive)
 ##################################################################################
-   # Defines box, sphere, cylinder, cone and prism.
-   # All shapes are defined to have their bounding boxes centered around 0,0,0.
-
-   uint8 BOX=1
-   uint8 SPHERE=2
-   uint8 CYLINDER=3
-   uint8 CONE=4
-   uint8 PRISM=5
-
-   # The type of the shape
-   uint8 type
-
-   # The dimensions of the shape
-   float64[<=3] dimensions  # At no point will dimensions have a length > 3.
-
-   # The meaning of the shape dimensions: each constant defines the index in the 'dimensions' array.
-
-   # For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
-   uint8 BOX_X=0
-   uint8 BOX_Y=1
-   uint8 BOX_Z=2
-
-   # For the SPHERE type, only one component is used, and it gives the radius of the sphere.
-   uint8 SPHERE_RADIUS=0
-
-   # For the CYLINDER and CONE types, the center line is oriented along the Z axis.
-   # Therefore the CYLINDER_HEIGHT (CONE_HEIGHT) component of dimensions gives the
-   # height of the cylinder (cone).
-   # The CYLINDER_RADIUS (CONE_RADIUS) component of dimensions gives the radius of
-   # the base of the cylinder (cone).
-   # Cone and cylinder primitives are defined to be circular. The tip of the cone
-   # is pointing up, along +Z axis.
-
-   uint8 CYLINDER_HEIGHT=0
-   uint8 CYLINDER_RADIUS=1
-
-   uint8 CONE_HEIGHT=0
-   uint8 CONE_RADIUS=1
-
-   # For the type PRISM, the center line is oriented along Z axis.
-   # The PRISM_HEIGHT component of dimensions gives the
-   # height of the prism.
-   # The polygon defines the Z axis centered base of the prism.
-   # The prism is constructed by extruding the base in +Z and -Z
-   # directions by half of the PRISM_HEIGHT
-   # Only x and y fields of the points are used in the polygon.
-   # Points of the polygon are ordered counter-clockwise.
-
-   uint8 PRISM_HEIGHT=0
-   geometry_msgs/Polygon polygon
-
 ##################################################################################
 
  */
@@ -67,47 +16,47 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Defines box, sphere, cylinder, cone and prism.
-   All shapes are defined to have their bounding boxes centered around 0,0,0.
+   # Defines box, sphere, cylinder, cone and prism.
+   # All shapes are defined to have their bounding boxes centered around 0,0,0.
 */
 public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
-   public static final byte BOX = 1;
-   public static final byte SPHERE = 2;
-   public static final byte CYLINDER = 3;
-   public static final byte CONE = 4;
-   public static final byte PRISM = 5;
+   public static final short BOX = 1;
+   public static final short SPHERE = 2;
+   public static final short CYLINDER = 3;
+   public static final short CONE = 4;
+   public static final short PRISM = 5;
    /**
-      The type of the shape
+      # The type of the shape
    */
-   private byte type_;
+   private short type_;
    /**
-      The dimensions of the shape
+      # The dimensions of the shape
    */
    private final IDLDoubleSequence dimensions_; // At no point will dimensions have a length > 3.
    /**
-      For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
+      # For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */
-   public static final byte BOX_X = 0;
-   public static final byte BOX_Y = 1;
-   public static final byte BOX_Z = 2;
+   public static final short BOX_X = 0;
+   public static final short BOX_Y = 1;
+   public static final short BOX_Z = 2;
    /**
-      For the SPHERE type, only one component is used, and it gives the radius of the sphere.
+      # For the SPHERE type, only one component is used, and it gives the radius of the sphere.
    */
-   public static final byte SPHERE_RADIUS = 0;
-   public static final byte CYLINDER_HEIGHT = 0;
-   public static final byte CYLINDER_RADIUS = 1;
-   public static final byte CONE_HEIGHT = 0;
-   public static final byte CONE_RADIUS = 1;
-   public static final byte PRISM_HEIGHT = 0;
-   private final geometry_msgs.msg.dds.Polygon polygon_;
+   public static final short SPHERE_RADIUS = 0;
+   public static final short CYLINDER_HEIGHT = 0;
+   public static final short CYLINDER_RADIUS = 1;
+   public static final short CONE_HEIGHT = 0;
+   public static final short CONE_RADIUS = 1;
+   public static final short PRISM_HEIGHT = 0;
+   private final shape_msgs.msg.dds.geometry_msgs/Polygon polygon_;
 
    public SolidPrimitive()
    {
       dimensions_ = new IDLDoubleSequence(3);
-      polygon_ = new geometry_msgs.msg.dds.Polygon();
+      polygon_ = new shape_msgs.msg.dds.geometry_msgs/Polygon();
 
    }
 
@@ -126,7 +75,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(type_);
+      buffer.writeShort(type_);
       dimensions_.serialize(buffer);
       polygon_.serialize(buffer);
 
@@ -135,7 +84,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      type_ = buffer.readByte();
+      type_ = buffer.readShort();
       dimensions_.deserialize(buffer);
       polygon_.deserialize(buffer);
 
@@ -150,12 +99,12 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    }
 
-   public byte getType()
+   public short getType()
    {
       return type_;
    }
 
-   public void setType(byte type_)
+   public void setType(short type_)
    {
       this.type_ = type_;
    }
@@ -165,7 +114,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       return dimensions_;
    }
 
-   public geometry_msgs.msg.dds.Polygon getPolygon()
+   public shape_msgs.msg.dds.geometry_msgs/Polygon getPolygon()
    {
       return polygon_;
    }

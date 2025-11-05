@@ -4,13 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/Pose.msg)
+(geometry_msgs/Pose)
 ##################################################################################
-   # A representation of pose in free space, composed of position and orientation.
-
-   Point position
-   Quaternion orientation
-
 ##################################################################################
 
  */
@@ -21,7 +16,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   A representation of pose in free space, composed of position and orientation.
+   # A representation of pose in free space, composed of position and orientation.
 */
 public class Pose implements ROS2Message<Pose>
 {

@@ -4,8 +4,18 @@
 
 ##################################################################################
 This file was generated from the following content:
-(sensor_msgs/Illuminance.msg)
+(sensor_msgs/Illuminance)
 ##################################################################################
+##################################################################################
+
+ */
+package sensor_msgs.msg.dds;
+
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.idl.*;
+import us.ihmc.jros2.ROS2Message;
+
+/**
    # Single photometric illuminance measurement.  Light should be assumed to be
    # measured along the sensor's x-axis (the area of detection is the y-z plane).
    # The illuminance should have a 0 or positive value and be received with
@@ -19,49 +29,18 @@ This file was generated from the following content:
    #  - Luminous intensity (candela/light source output)
    #  - Luminance (nits/light output per area)
    #  - Irradiance (watt/area), etc.
-
-   std_msgs/Header header # timestamp is the time the illuminance was measured
-                                # frame_id is the location and direction of the reading
-
-   float64 illuminance          # Measurement of the Photometric Illuminance in Lux.
-
-   float64 variance             # 0 is interpreted as variance unknown
-
-##################################################################################
-
- */
-package sensor_msgs.msg.dds;
-
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.cdr.idl.*;
-import us.ihmc.jros2.ROS2Message;
-
-/**
-   Single photometric illuminance measurement.  Light should be assumed to be
-   measured along the sensor's x-axis (the area of detection is the y-z plane).
-   The illuminance should have a 0 or positive value and be received with
-   the sensor's +X axis pointing toward the light source.
-
-   Photometric illuminance is the measure of the human eye's sensitivity of the
-   intensity of light encountering or passing through a surface.
-
-   All other Photometric and Radiometric measurements should not use this message.
-   This message cannot represent:
-   - Luminous intensity (candela/light source output)
-   - Luminance (nits/light output per area)
-   - Irradiance (watt/area), etc.
 */
 public class Illuminance implements ROS2Message<Illuminance>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
 
-   private final std_msgs.msg.dds.Header header_; // timestamp is the time the illuminance was measured
+   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp is the time the illuminance was measured
    private double illuminance_; // Measurement of the Photometric Illuminance in Lux.
    private double variance_; // 0 is interpreted as variance unknown
 
    public Illuminance()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
 
    }
 
@@ -104,7 +83,7 @@ public class Illuminance implements ROS2Message<Illuminance>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }

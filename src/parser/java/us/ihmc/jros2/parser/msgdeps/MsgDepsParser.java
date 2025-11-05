@@ -17,6 +17,7 @@ package us.ihmc.jros2.parser.msgdeps;
 
 import us.ihmc.jros2.parser.MsgContext;
 import us.ihmc.jros2.parser.MsgParser;
+import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 import java.util.StringJoiner;
 
@@ -37,7 +38,7 @@ public final class MsgDepsParser
     * https://wiki.ros.org/roslib/gentools
     * https://mcap.dev/spec/registry#ros2msg
     */
-   public static MsgDepsContext parseMsgDeps(String schema, String packageResourceName)
+   public static MsgDepsContext parseMsgDeps(String schema, String packageResourceName) throws InterfaceFieldParsingException
    {
       MsgDepsContext msgDepsContext = new MsgDepsContext(schema);
       msgDepsContext.setPackageResourceName(packageResourceName);

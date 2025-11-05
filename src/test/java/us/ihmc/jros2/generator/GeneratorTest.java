@@ -9,7 +9,7 @@ import java.util.HashMap;
 public class GeneratorTest
 {
    @Test
-   public void testGenerateToString()
+   public void testGenerateToString() throws Exception
    {
       MsgContext context = MsgParser.parseMsg("""
                                                     # Header comment for the entire message

@@ -4,27 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(rcl_interfaces/ParameterEvent.msg)
+(rcl_interfaces/ParameterEvent)
 ##################################################################################
-   # This message contains a parameter event.
-   # Because the parameter event was an atomic update, a specific parameter name
-   # can only be in one of the three sets.
-
-   # The time stamp when this parameter event occurred.
-   builtin_interfaces/Time stamp
-
-   # Fully qualified ROS path to node.
-   string node
-
-   # New parameters that have been set for this node.
-   Parameter[] new_parameters
-
-   # Parameters that have been changed during this event.
-   Parameter[] changed_parameters
-
-   # Parameters that have been deleted during this event.
-   Parameter[] deleted_parameters
-
 ##################################################################################
 
  */
@@ -35,38 +16,38 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   This message contains a parameter event.
-   Because the parameter event was an atomic update, a specific parameter name
-   can only be in one of the three sets.
+   # This message contains a parameter event.
+   # Because the parameter event was an atomic update, a specific parameter name
+   # can only be in one of the three sets.
 */
 public class ParameterEvent implements ROS2Message<ParameterEvent>
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterEvent_";
 
    /**
-      The time stamp when this parameter event occurred.
+      # The time stamp when this parameter event occurred.
    */
-   private final builtin_interfaces.msg.dds.Time stamp_;
+   private final rcl_interfaces.msg.dds.builtin_interfaces/Time stamp_;
    /**
-      Fully qualified ROS path to node.
+      # Fully qualified ROS path to node.
    */
    private final StringBuilder node_;
    /**
-      New parameters that have been set for this node.
+      # New parameters that have been set for this node.
    */
    private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> new_parameters_;
    /**
-      Parameters that have been changed during this event.
+      # Parameters that have been changed during this event.
    */
    private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> changed_parameters_;
    /**
-      Parameters that have been deleted during this event.
+      # Parameters that have been deleted during this event.
    */
    private final IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> deleted_parameters_;
 
    public ParameterEvent()
    {
-      stamp_ = new builtin_interfaces.msg.dds.Time();
+      stamp_ = new rcl_interfaces.msg.dds.builtin_interfaces/Time();
       node_ = new StringBuilder();
       new_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.Parameter>(rcl_interfaces.msg.dds.Parameter.class);
       changed_parameters_ = new IDLObjectSequence<rcl_interfaces.msg.dds.Parameter>(rcl_interfaces.msg.dds.Parameter.class);
@@ -122,7 +103,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
 
    }
 
-   public builtin_interfaces.msg.dds.Time getStamp()
+   public rcl_interfaces.msg.dds.builtin_interfaces/Time getStamp()
    {
       return stamp_;
    }

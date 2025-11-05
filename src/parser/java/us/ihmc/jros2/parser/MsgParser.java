@@ -17,12 +17,13 @@ package us.ihmc.jros2.parser;
 
 import us.ihmc.jros2.parser.field.InterfaceField;
 import us.ihmc.jros2.parser.field.InterfaceFieldParser;
+import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 import java.util.StringJoiner;
 
 public final class MsgParser
 {
-   public static MsgContext parseMsg(String schema, String packageResourceName)
+   public static MsgContext parseMsg(String schema, String packageResourceName) throws InterfaceFieldParsingException
    {
       MsgContext msgContext = new MsgContext(schema);
       msgContext.setPackageResourceName(packageResourceName);

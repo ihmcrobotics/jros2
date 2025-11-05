@@ -4,16 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(shape_msgs/Mesh.msg)
+(shape_msgs/Mesh)
 ##################################################################################
-   # Definition of a mesh.
-
-   # List of triangles; the index values refer to positions in vertices[].
-   MeshTriangle[] triangles
-
-   # The actual vertices that make up the mesh.
-   geometry_msgs/Point[] vertices
-
 ##################################################################################
 
  */
@@ -24,25 +16,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   Definition of a mesh.
+   # Definition of a mesh.
 */
 public class Mesh implements ROS2Message<Mesh>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::Mesh_";
 
    /**
-      List of triangles; the index values refer to positions in vertices[].
+      # List of triangles; the index values refer to positions in vertices[].
    */
    private final IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> triangles_;
    /**
-      The actual vertices that make up the mesh.
+      # The actual vertices that make up the mesh.
    */
-   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> vertices_;
+   private final IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point> vertices_;
 
    public Mesh()
    {
       triangles_ = new IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle>(shape_msgs.msg.dds.MeshTriangle.class);
-      vertices_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
+      vertices_ = new IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point>(shape_msgs.msg.dds.geometry_msgs/Point.class);
 
    }
 
@@ -86,7 +78,7 @@ public class Mesh implements ROS2Message<Mesh>
       return triangles_;
    }
 
-   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getVertices()
+   public IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point> getVertices()
    {
       return vertices_;
    }

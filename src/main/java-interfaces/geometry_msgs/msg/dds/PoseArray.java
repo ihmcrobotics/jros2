@@ -4,14 +4,8 @@
 
 ##################################################################################
 This file was generated from the following content:
-(geometry_msgs/PoseArray.msg)
+(geometry_msgs/PoseArray)
 ##################################################################################
-   # An array of poses with a header for global reference.
-
-   std_msgs/Header header
-
-   Pose[] poses
-
 ##################################################################################
 
  */
@@ -22,18 +16,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   An array of poses with a header for global reference.
+   # An array of poses with a header for global reference.
 */
 public class PoseArray implements ROS2Message<PoseArray>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
 
-   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.std_msgs/Header header_;
    private final IDLObjectSequence<geometry_msgs.msg.dds.Pose> poses_;
 
    public PoseArray()
    {
-      header_ = new std_msgs.msg.dds.Header();
+      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
       poses_ = new IDLObjectSequence<geometry_msgs.msg.dds.Pose>(geometry_msgs.msg.dds.Pose.class);
 
    }
@@ -73,7 +67,7 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    }
 
-   public std_msgs.msg.dds.Header getHeader()
+   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
    {
       return header_;
    }
