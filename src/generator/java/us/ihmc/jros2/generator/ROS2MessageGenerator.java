@@ -24,8 +24,19 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+/**
+ * Java code generator from a ROS2 Message schema.
+ */
 public class ROS2MessageGenerator
 {
+   /**
+    * Generate a Java class string from a {@link MsgContext}
+    *
+    * @param context     the ROS Message in {@link MsgContext} form
+    * @param typeToClass a mapping of ROS2 Message type to Java class name for custom written ROS2 Java Message classes.
+    *                    Pass an empty Map if not required.
+    * @return the generated Java code as a string
+    */
    public static String generateJavaClassContents(MsgContext context, Map<String, String> typeToClass)
    {
       String template = null;
