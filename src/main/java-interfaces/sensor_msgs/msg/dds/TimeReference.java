@@ -24,7 +24,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Measurement from an external time source not actively synchronized with the system clock.
+    Measurement from an external time source not actively synchronized with the system clock.
 */
 public class TimeReference implements ROS2Message<TimeReference>
 {

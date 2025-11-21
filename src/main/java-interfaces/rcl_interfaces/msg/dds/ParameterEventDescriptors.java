@@ -24,9 +24,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This message contains descriptors of a parameter event.
-   # It was an atomic update.
-   # A specific parameter name can only be in one of the three sets.
+    This message contains descriptors of a parameter event.
+    It was an atomic update.
+    A specific parameter name can only be in one of the three sets.
 */
 public class ParameterEventDescriptors implements ROS2Message<ParameterEventDescriptors>
 {

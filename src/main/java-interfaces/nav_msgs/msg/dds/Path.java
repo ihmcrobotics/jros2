@@ -24,18 +24,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # An array of poses that represents a Path for a robot to follow.
+    An array of poses that represents a Path for a robot to follow.
 */
 public class Path implements ROS2Message<Path>
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Path_";
 
    /**
-      # Indicates the frame_id of the path.
+       Indicates the frame_id of the path.
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-      # Array of poses to follow.
+       Array of poses to follow.
    */
    private final IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> poses_;
 

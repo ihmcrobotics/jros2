@@ -26,20 +26,20 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This is the message to communicate a parameter. It is an open struct with an enum in
-   # the descriptor to select which value is active.
+    This is the message to communicate a parameter. It is an open struct with an enum in
+    the descriptor to select which value is active.
 */
 public class Parameter implements ROS2Message<Parameter>
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::Parameter_";
 
    /**
-      # The full name of the parameter.
+       The full name of the parameter.
    */
    private final StringBuilder name_;
    /**
-      # The parameter's value which can be one of several types, see
-      # `ParameterValue.msg` and `ParameterType.msg`.
+       The parameter's value which can be one of several types, see
+       `ParameterValue.msg` and `ParameterType.msg`.
    */
    private final rcl_interfaces.msg.dds.ParameterValue value_;
 

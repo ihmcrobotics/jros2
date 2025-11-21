@@ -36,37 +36,37 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This message holds the status of an individual component of the robot.
+    This message holds the status of an individual component of the robot.
 */
 public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 {
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticStatus_";
 
    /**
-      # Possible levels of operations.
+       Possible levels of operations.
    */
    public static final byte OK = 0;
    public static final byte WARN = 1;
    public static final byte ERROR = 2;
    public static final byte STALE = 3;
    /**
-      # Level of operation enumerated above.
+       Level of operation enumerated above.
    */
    private byte level_;
    /**
-      # A description of the test/component reporting.
+       A description of the test/component reporting.
    */
    private final StringBuilder name_;
    /**
-      # A description of the status.
+       A description of the status.
    */
    private final StringBuilder message_;
    /**
-      # A hardware unique string.
+       A hardware unique string.
    */
    private final StringBuilder hardware_id_;
    /**
-      # An array of values associated with the status.
+       An array of values associated with the status.
    */
    private final IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> values_;
 

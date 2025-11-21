@@ -27,22 +27,22 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Reports the state of a joystick's axes and buttons.
+    Reports the state of a joystick's axes and buttons.
 */
 public class Joy implements ROS2Message<Joy>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Joy_";
 
    /**
-      # The timestamp is the time at which data is received from the joystick.
+       The timestamp is the time at which data is received from the joystick.
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-      # The axes measurements from a joystick.
+       The axes measurements from a joystick.
    */
    private final IDLFloatSequence axes_;
    /**
-      # The buttons measurements from a joystick.
+       The buttons measurements from a joystick.
    */
    private final IDLIntSequence buttons_;
 

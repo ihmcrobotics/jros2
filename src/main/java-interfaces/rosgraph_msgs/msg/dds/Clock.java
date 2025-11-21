@@ -25,9 +25,9 @@ public class Clock implements ROS2Message<Clock>
    public static final java.lang.String name = "rosgraph_msgs::msg::dds_::Clock_";
 
    /**
-      # This message communicates the current time.
-      #
-      # For more information, see https://design.ros2.org/articles/clock_and_time.html.
+       This message communicates the current time.
+
+       For more information, see https://design.ros2.org/articles/clock_and_time.html.
    */
    private final builtin_interfaces.msg.dds.Time clock_;
 

@@ -47,11 +47,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Single scan from a planar laser range-finder
-   #
-   # If you have another ranging device with different behavior (e.g. a sonar
-   # array), please find or create a different message, since applications
-   # will make fairly laser-specific assumptions about this data
+    Single scan from a planar laser range-finder
+
+    If you have another ranging device with different behavior (e.g. a sonar
+    array), please find or create a different message, since applications
+    will make fairly laser-specific assumptions about this data
 */
 public class LaserScan implements ROS2Message<LaserScan>
 {
@@ -63,15 +63,15 @@ public class LaserScan implements ROS2Message<LaserScan>
    private float angle_increment_; // angular distance between measurements [rad]
    private float time_increment_; // time between measurements [seconds] - if your scanner
    /**
-      # is moving, this will be used in interpolating position
-      # of 3d points
+       is moving, this will be used in interpolating position
+       of 3d points
    */
    private float scan_time_; // time between scans [seconds]
    private float range_min_; // minimum range value [m]
    private float range_max_; // maximum range value [m]
    private final IDLFloatSequence ranges_; // range data [m]
    /**
-      # (Note: values < range_min or > range_max should be discarded)
+       (Note: values < range_min or > range_max should be discarded)
    */
    private final IDLFloatSequence intensities_; // intensity data [device-specific units].  If your
 

@@ -21,7 +21,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This expresses an estimated pose with a reference coordinate frame and timestamp
+    This expresses an estimated pose with a reference coordinate frame and timestamp
 */
 public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovarianceStamped>
 {

@@ -25,8 +25,8 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatusArray_";
 
    /**
-      # Stores the statuses for goals that are currently being tracked
-      # by an action server
+       Stores the statuses for goals that are currently being tracked
+       by an action server
    */
    private final std_msgs.msg.dds.Header header_;
    private final IDLObjectSequence<actionlib_msgs.msg.dds.GoalStatus> status_list_;

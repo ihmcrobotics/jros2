@@ -28,22 +28,22 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This message communicates ROS Time defined here:
-   # https://design.ros2.org/articles/clock_and_time.html
+    This message communicates ROS Time defined here:
+    https://design.ros2.org/articles/clock_and_time.html
 */
 public class Time implements ROS2Message<Time>
 {
    public static final java.lang.String name = "builtin_interfaces::msg::dds_::Time_";
 
    /**
-      # The seconds component, valid over all int32 values.
+       The seconds component, valid over all int32 values.
    */
    private int sec_;
    /**
-      # The nanoseconds component, valid in the range [0, 1e9), to be added to the seconds component.
-      # e.g.
-      # The time -1.7 seconds is represented as {sec: -2, nanosec: 3e8}
-      # The time 1.7 seconds is represented as {sec: 1, nanosec: 7e8}
+       The nanoseconds component, valid in the range [0, 1e9), to be added to the seconds component.
+       e.g.
+       The time -1.7 seconds is represented as {sec: -2, nanosec: 3e8}
+       The time 1.7 seconds is represented as {sec: 1, nanosec: 7e8}
    */
    private long nanosec_;
 

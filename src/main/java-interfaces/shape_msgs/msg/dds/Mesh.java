@@ -24,18 +24,18 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Definition of a mesh.
+    Definition of a mesh.
 */
 public class Mesh implements ROS2Message<Mesh>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::Mesh_";
 
    /**
-      # List of triangles; the index values refer to positions in vertices[].
+       List of triangles; the index values refer to positions in vertices[].
    */
    private final IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle> triangles_;
    /**
-      # The actual vertices that make up the mesh.
+       The actual vertices that make up the mesh.
    */
    private final IDLObjectSequence<geometry_msgs.msg.dds.Point> vertices_;
 

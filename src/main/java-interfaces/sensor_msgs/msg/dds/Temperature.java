@@ -25,7 +25,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Single temperature reading.
+    Single temperature reading.
 */
 public class Temperature implements ROS2Message<Temperature>
 {

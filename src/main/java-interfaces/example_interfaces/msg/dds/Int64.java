@@ -26,10 +26,10 @@ public class Int64 implements ROS2Message<Int64>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Int64_";
 
    /**
-      # This is an example message of using a primitive datatype, int64.
-      # If you want to test with this that's fine, but if you are deploying
-      # it into a system you should create a semantically meaningful message type.
-      # If you want to embed it in another message, use the primitive data type instead.
+       This is an example message of using a primitive datatype, int64.
+       If you want to test with this that's fine, but if you are deploying
+       it into a system you should create a semantically meaningful message type.
+       If you want to embed it in another message, use the primitive data type instead.
    */
    private long data_;
 

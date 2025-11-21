@@ -65,52 +65,52 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    public static final int REMOVE = 1;
    private final std_msgs.msg.dds.Header header_;
    /**
-      # Namespace which is used with the id to form a unique id.
+       Namespace which is used with the id to form a unique id.
    */
    private final StringBuilder ns_;
    /**
-      # Unique id within the namespace.
+       Unique id within the namespace.
    */
    private int id_;
    /**
-      # One of the above types, e.g. CIRCLE, LINE_STRIP, etc.
+       One of the above types, e.g. CIRCLE, LINE_STRIP, etc.
    */
    private int type_;
    /**
-      # Either ADD or REMOVE.
+       Either ADD or REMOVE.
    */
    private int action_;
    /**
-      # Two-dimensional coordinate position, in pixel-coordinates.
+       Two-dimensional coordinate position, in pixel-coordinates.
    */
    private final geometry_msgs.msg.dds.Point position_;
    /**
-      # The scale of the object, e.g. the diameter for a CIRCLE.
+       The scale of the object, e.g. the diameter for a CIRCLE.
    */
    private float scale_;
    /**
-      # The outline color of the marker.
+       The outline color of the marker.
    */
    private final std_msgs.msg.dds.ColorRGBA outline_color_;
    /**
-      # Whether or not to fill in the shape with color.
+       Whether or not to fill in the shape with color.
    */
    private short filled_;
    /**
-      # Fill color; in the range: [0.0-1.0]
+       Fill color; in the range: [0.0-1.0]
    */
    private final std_msgs.msg.dds.ColorRGBA fill_color_;
    /**
-      # How long the object should last before being automatically deleted.
-      # 0 indicates forever.
+       How long the object should last before being automatically deleted.
+       0 indicates forever.
    */
    private final builtin_interfaces.msg.dds.Duration lifetime_;
    /**
-      # Coordinates in 2D in pixel coords. Used for LINE_STRIP, LINE_LIST, POINTS, etc.
+       Coordinates in 2D in pixel coords. Used for LINE_STRIP, LINE_LIST, POINTS, etc.
    */
    private final IDLObjectSequence<geometry_msgs.msg.dds.Point> points_;
    /**
-      # The color for each line, point, etc. in the points field.
+       The color for each line, point, etc. in the points field.
    */
    private final IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> outline_colors_;
 

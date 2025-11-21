@@ -53,46 +53,46 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This is the message to communicate a parameter's descriptor.
+    This is the message to communicate a parameter's descriptor.
 */
 public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterDescriptor_";
 
    /**
-      # The name of the parameter.
+       The name of the parameter.
    */
    private final StringBuilder name_;
    /**
-      # Enum values are defined in the `ParameterType.msg` message.
+       Enum values are defined in the `ParameterType.msg` message.
    */
    private short type_;
    /**
-      # Description of the parameter, visible from introspection tools.
+       Description of the parameter, visible from introspection tools.
    */
    private final StringBuilder description_;
    /**
-      # Plain English description of additional constraints which cannot be expressed
-      # with the available constraints, e.g. "only prime numbers".
-      #
-      # By convention, this should only be used to clarify constraints which cannot
-      # be completely expressed with the parameter constraints below.
+       Plain English description of additional constraints which cannot be expressed
+       with the available constraints, e.g. "only prime numbers".
+
+       By convention, this should only be used to clarify constraints which cannot
+       be completely expressed with the parameter constraints below.
    */
    private final StringBuilder additional_constraints_;
    /**
-      # If 'true' then the value cannot change after it has been initialized.
+       If 'true' then the value cannot change after it has been initialized.
    */
    private boolean read_only_;
    /**
-      # If true, the parameter is allowed to change type.
+       If true, the parameter is allowed to change type.
    */
    private boolean dynamic_typing_;
    /**
-      # FloatingPointRange consists of a from_value, a to_value, and a step.
+       FloatingPointRange consists of a from_value, a to_value, and a step.
    */
    private final IDLObjectSequence<rcl_interfaces.msg.dds.FloatingPointRange> floating_point_range_;
    /**
-      # IntegerRange consists of a from_value, a to_value, and a step.
+       IntegerRange consists of a from_value, a to_value, and a step.
    */
    private final IDLObjectSequence<rcl_interfaces.msg.dds.IntegerRange> integer_range_;
 

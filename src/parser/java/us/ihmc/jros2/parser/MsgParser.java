@@ -36,7 +36,7 @@ public final class MsgParser
 
          if (line.startsWith("#"))
          {
-            commentLines.add(line);
+            commentLines.add(line.substring(1)); // Remove leading #
             continue;
          }
 

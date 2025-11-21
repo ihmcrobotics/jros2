@@ -34,20 +34,20 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    public static final java.lang.String name = "nav_msgs::msg::dds_::OccupancyGrid_";
 
    /**
-      # This represents a 2-D grid map
+       This represents a 2-D grid map
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-      # MetaData for the map
+       MetaData for the map
    */
    private final nav_msgs.msg.dds.MapMetaData info_;
    /**
-      # The map data, in row-major order, starting with (0,0).
-      # Cell (1, 0) will be listed second, representing the next cell in the x direction.
-      # Cell (0, 1) will be at the index equal to info.width, followed by (1, 1).
-      # The values inside are application dependent, but frequently,
-      # 0 represents unoccupied, 1 represents definitely occupied, and
-      # -1 represents unknown.
+       The map data, in row-major order, starting with (0,0).
+       Cell (1, 0) will be listed second, representing the next cell in the x direction.
+       Cell (0, 1) will be at the index equal to info.width, followed by (1, 1).
+       The values inside are application dependent, but frequently,
+       0 represents unoccupied, 1 represents definitely occupied, and
+       -1 represents unknown.
    */
    private final IDLByteSequence data_;
 

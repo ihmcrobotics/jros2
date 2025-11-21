@@ -24,7 +24,7 @@ public class Accel implements ROS2Message<Accel>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Accel_";
 
    /**
-      # This expresses acceleration in free space broken into its linear and angular parts.
+       This expresses acceleration in free space broken into its linear and angular parts.
    */
    private final geometry_msgs.msg.dds.Vector3 linear_;
    private final geometry_msgs.msg.dds.Vector3 angular_;

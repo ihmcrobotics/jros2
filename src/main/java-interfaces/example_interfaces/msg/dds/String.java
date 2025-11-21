@@ -26,10 +26,10 @@ public class String implements ROS2Message<String>
    public static final java.lang.String name = "example_interfaces::msg::dds_::String_";
 
    /**
-      # This is an example message of using a primitive datatype, string.
-      # If you want to test with this that's fine, but if you are deploying
-      # it into a system you should create a semantically meaningful message type.
-      # If you want to embed it in another message, use the primitive data type instead.
+       This is an example message of using a primitive datatype, string.
+       If you want to test with this that's fine, but if you are deploying
+       it into a system you should create a semantically meaningful message type.
+       If you want to embed it in another message, use the primitive data type instead.
    */
    private final StringBuilder data_;
 

@@ -62,48 +62,48 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Navigation Satellite fix for any Global Navigation Satellite System
-   #
-   # Specified using the WGS 84 reference ellipsoid
+    Navigation Satellite fix for any Global Navigation Satellite System
+
+    Specified using the WGS 84 reference ellipsoid
 */
 public class NavSatFix implements ROS2Message<NavSatFix>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
 
    /**
-      # header.stamp specifies the ROS time for this measurement (the
-      #        corresponding satellite time may be reported using the
-      #        sensor_msgs/TimeReference message).
-      #
-      # header.frame_id is the frame of reference reported by the satellite
-      #        receiver, usually the location of the antenna.  This is a
-      #        Euclidean frame relative to the vehicle, not a reference
-      #        ellipsoid.
+       header.stamp specifies the ROS time for this measurement (the
+              corresponding satellite time may be reported using the
+              sensor_msgs/TimeReference message).
+
+       header.frame_id is the frame of reference reported by the satellite
+              receiver, usually the location of the antenna.  This is a
+              Euclidean frame relative to the vehicle, not a reference
+              ellipsoid.
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-      # Satellite fix status information.
+       Satellite fix status information.
    */
    private final sensor_msgs.msg.dds.NavSatStatus status_;
    /**
-      # Latitude [degrees]. Positive is north of equator; negative is south.
+       Latitude [degrees]. Positive is north of equator; negative is south.
    */
    private double latitude_;
    /**
-      # Longitude [degrees]. Positive is east of prime meridian; negative is west.
+       Longitude [degrees]. Positive is east of prime meridian; negative is west.
    */
    private double longitude_;
    /**
-      # Altitude [m]. Positive is above the WGS 84 ellipsoid
-      # (quiet NaN if no altitude is available).
+       Altitude [m]. Positive is above the WGS 84 ellipsoid
+       (quiet NaN if no altitude is available).
    */
    private double altitude_;
    /**
-      # Position covariance [m^2] defined relative to a tangential plane
-      # through the reported position. The components are East, North, and
-      # Up (ENU), in row-major order.
-      #
-      # Beware: this coordinate system exhibits singularities at the poles.
+       Position covariance [m^2] defined relative to a tangential plane
+       through the reported position. The components are East, North, and
+       Up (ENU), in row-major order.
+
+       Beware: this coordinate system exhibits singularities at the poles.
    */
    private final double[] position_covariance_;
    public static final short COVARIANCE_TYPE_UNKNOWN = 0;

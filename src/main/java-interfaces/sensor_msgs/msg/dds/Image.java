@@ -43,8 +43,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # This message contains an uncompressed image
-   # (0, 0) is at top-left corner of image
+    This message contains an uncompressed image
+    (0, 0) is at top-left corner of image
 */
 public class Image implements ROS2Message<Image>
 {

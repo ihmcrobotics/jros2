@@ -35,25 +35,25 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   #############################################
-   # This file contains the commonly used constants for the statistics data type.
-   #
-   # The value 0 is reserved for unitialized statistic message data type.
-   # Range of values: [0, 255].
-   # Unallowed values: any value that is not specified in this file.
-   #
-   #############################################
+   ############################################
+    This file contains the commonly used constants for the statistics data type.
+
+    The value 0 is reserved for unitialized statistic message data type.
+    Range of values: [0, 255].
+    Unallowed values: any value that is not specified in this file.
+
+   ############################################
 */
 public class StatisticDataType implements ROS2Message<StatisticDataType>
 {
    public static final java.lang.String name = "statistics_msgs::msg::dds_::StatisticDataType_";
 
    /**
-      # Constant for uninitialized
+       Constant for uninitialized
    */
    public static final short STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
    /**
-      # Allowed values
+       Allowed values
    */
    public static final short STATISTICS_DATA_TYPE_AVERAGE = 1;
    public static final short STATISTICS_DATA_TYPE_MINIMUM = 2;

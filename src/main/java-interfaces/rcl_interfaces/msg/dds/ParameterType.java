@@ -31,14 +31,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # These types correspond to the value that is set in the ParameterValue message.
+    These types correspond to the value that is set in the ParameterValue message.
 */
 public class ParameterType implements ROS2Message<ParameterType>
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterType_";
 
    /**
-      # Default value, which implies this is not a valid parameter.
+       Default value, which implies this is not a valid parameter.
    */
    public static final short PARAMETER_NOT_SET = 0;
    public static final short PARAMETER_BOOL = 1;

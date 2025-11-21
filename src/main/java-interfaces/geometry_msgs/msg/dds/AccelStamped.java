@@ -24,7 +24,7 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelStamped_";
 
    /**
-      # An accel with reference coordinate frame and timestamp
+       An accel with reference coordinate frame and timestamp
    */
    private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Accel accel_;

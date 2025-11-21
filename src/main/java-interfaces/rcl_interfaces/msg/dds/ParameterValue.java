@@ -55,54 +55,54 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # Used to determine which of the next *_value fields are set.
-   # ParameterType.PARAMETER_NOT_SET indicates that the parameter was not set
-   # (if gotten) or is uninitialized.
-   # Values are enumerated in `ParameterType.msg`.
+    Used to determine which of the next *_value fields are set.
+    ParameterType.PARAMETER_NOT_SET indicates that the parameter was not set
+    (if gotten) or is uninitialized.
+    Values are enumerated in `ParameterType.msg`.
 */
 public class ParameterValue implements ROS2Message<ParameterValue>
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterValue_";
 
    /**
-      # The type of this parameter, which corresponds to the appropriate field below.
+       The type of this parameter, which corresponds to the appropriate field below.
    */
    private short type_;
    /**
-      # Boolean value, can be either true or false.
+       Boolean value, can be either true or false.
    */
    private boolean bool_value_;
    /**
-      # Integer value ranging from -9,223,372,036,854,775,808 to
-      # 9,223,372,036,854,775,807.
+       Integer value ranging from -9,223,372,036,854,775,808 to
+       9,223,372,036,854,775,807.
    */
    private long integer_value_;
    /**
-      # A double precision floating point value following IEEE 754.
+       A double precision floating point value following IEEE 754.
    */
    private double double_value_;
    /**
-      # A textual value with no practical length limit.
+       A textual value with no practical length limit.
    */
    private final StringBuilder string_value_;
    /**
-      # An array of bytes, used for non-textual information.
+       An array of bytes, used for non-textual information.
    */
    private final IDLByteSequence byte_array_value_;
    /**
-      # An array of boolean values.
+       An array of boolean values.
    */
    private final IDLBoolSequence bool_array_value_;
    /**
-      # An array of 64-bit integer values.
+       An array of 64-bit integer values.
    */
    private final IDLLongSequence integer_array_value_;
    /**
-      # An array of 64-bit floating point values.
+       An array of 64-bit floating point values.
    */
    private final IDLDoubleSequence double_array_value_;
    /**
-      # An array of string values.
+       An array of string values.
    */
    private final IDLStringSequence string_array_value_;
 

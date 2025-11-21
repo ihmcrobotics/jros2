@@ -22,7 +22,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-   # An array of poses with a header for global reference.
+    An array of poses with a header for global reference.
 */
 public class PoseArray implements ROS2Message<PoseArray>
 {
