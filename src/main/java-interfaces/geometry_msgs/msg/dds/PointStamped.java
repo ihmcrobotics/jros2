@@ -22,12 +22,12 @@ public class PointStamped implements ROS2Message<PointStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PointStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Point point_;
 
    public PointStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       point_ = new geometry_msgs.msg.dds.Point();
 
    }
@@ -67,7 +67,7 @@ public class PointStamped implements ROS2Message<PointStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

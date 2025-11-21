@@ -23,7 +23,7 @@ public class Image implements ROS2Message<Image>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
-   private final sensor_msgs.msg.dds.std_msgs.Header header_; // Header timestamp should be acquisition time of image
+   private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
    private long height_; // image height, that is, number of rows
    private long width_; // image width, that is, number of columns
    private final StringBuilder encoding_; // Encoding of pixels -- channel meaning, ordering, size
@@ -33,7 +33,7 @@ public class Image implements ROS2Message<Image>
 
    public Image()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       encoding_ = new StringBuilder();
       data_ = new IDLShortSequence();
 
@@ -95,7 +95,7 @@ public class Image implements ROS2Message<Image>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

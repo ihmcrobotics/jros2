@@ -24,9 +24,9 @@ import java.util.regex.Pattern;
 public final class InterfaceFieldParser
 {
    private static final Pattern STRING_WSTRING_TYPE_PATTERN = Pattern.compile(
-         "^(?<strtype>string|wstring)(<=(?<strlen>\\d+))?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))$");
+         "^(?<strtype>string|wstring)(<=(?<strlen>\\d+))?(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? +(?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))$");
    private static final Pattern TYPE_PATTERN = Pattern.compile(
-         "^(?<type>[a-zA-Z0-9/_]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? (?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
+         "^(?<type>[a-zA-Z0-9/_]+)(?<arr>\\[(?<seqbounds><=)?(?<len>\\d+)?])? +(?<fname>[a-zA-Z](?!.*__)[a-zA-Z0-9_]*(?<!_))(\\s*=\\s*(?<constval>.+)|\\s(?<defval>.+))?$");
 
    public static InterfaceField parseField(InterfaceContext context, String fieldLine, String headerComment) throws InterfaceFieldParsingException
    {
@@ -74,6 +74,7 @@ public final class InterfaceFieldParser
             // Example with const val: MyCustomType[<=4] my_type = {data: 1}
             // Example with default val: MyCustomType[<=4] my_type {data: 1}
             String typeStr = typeMatcher.group("type"); // MyCustomType
+            String typePackageStr = typeStr.contains("/") ? typeStr.substring(0, typeStr.lastIndexOf("/")) : "";
             String arrayStr = typeMatcher.group("arr"); // [<=4]
             String sequenceBoundsStr = typeMatcher.group("seqbounds"); // <=
             String lengthStr = typeMatcher.group("len"); // 4
@@ -85,7 +86,10 @@ public final class InterfaceFieldParser
             field.type(typeStr);
             if (!BuiltinTools.isBuiltinType(typeStr))
             {
-               field.javaType(context.getJavaPackageName() + "." + typeStr);
+               String javaTypePackageStr = typePackageStr.isEmpty() ? context.getJavaPackageName() : typePackageStr + ".msg.dds";
+               String javaTypeStr = typeStr.substring(typeStr.lastIndexOf('/') != -1 ? typeStr.lastIndexOf('/') + 1 : 0);
+
+               field.javaType(javaTypePackageStr + "." + javaTypeStr);
             }
             field.array(arrayStr != null);
             field.upperBounded(sequenceBoundsStr != null);

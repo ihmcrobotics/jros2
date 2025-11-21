@@ -23,13 +23,13 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       # Separate header for compatibility with current TimeSynchronizer.
       # Likely to be removed in a later release, use image.header instead.
    */
-   private final stereo_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # Floating point disparity image. The disparities are pre-adjusted for any
       # x-offset between the principal points of the two cameras (in the case
       # that they are verged). That is: d = x_l - x_r - (cx_l - cx_r)
    */
-   private final stereo_msgs.msg.dds.sensor_msgs/Image image_;
+   private final sensor_msgs.msg.dds.Image image_;
    /**
       # Stereo geometry. For disparity d, the depth from the camera is Z = fT/d.
    */
@@ -38,7 +38,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    /**
       # Subwindow of (potentially) valid disparity values.
    */
-   private final stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest valid_window_;
+   private final sensor_msgs.msg.dds.RegionOfInterest valid_window_;
    /**
       # The range of disparities searched.
       # In the disparity image, any disparity less than min_disparity is invalid.
@@ -58,9 +58,9 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    public DisparityImage()
    {
-      header_ = new stereo_msgs.msg.dds.std_msgs/Header();
-      image_ = new stereo_msgs.msg.dds.sensor_msgs/Image();
-      valid_window_ = new stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest();
+      header_ = new std_msgs.msg.dds.Header();
+      image_ = new sensor_msgs.msg.dds.Image();
+      valid_window_ = new sensor_msgs.msg.dds.RegionOfInterest();
 
    }
 
@@ -123,12 +123,12 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
-   public stereo_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public stereo_msgs.msg.dds.sensor_msgs/Image getImage()
+   public sensor_msgs.msg.dds.Image getImage()
    {
       return image_;
    }
@@ -153,7 +153,7 @@ public class DisparityImage implements ROS2Message<DisparityImage>
       this.t_ = t_;
    }
 
-   public stereo_msgs.msg.dds.sensor_msgs/RegionOfInterest getValidWindow()
+   public sensor_msgs.msg.dds.RegionOfInterest getValidWindow()
    {
       return valid_window_;
    }

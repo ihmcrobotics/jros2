@@ -34,22 +34,22 @@ public class Imu implements ROS2Message<Imu>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_;
-   private final sensor_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.Quaternion orientation_;
    private final double[] orientation_covariance_; // Row major about x, y, z axes
-   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 angular_velocity_;
+   private final geometry_msgs.msg.dds.Vector3 angular_velocity_;
    private final double[] angular_velocity_covariance_; // Row major about x, y, z axes
-   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 linear_acceleration_;
+   private final geometry_msgs.msg.dds.Vector3 linear_acceleration_;
    private final double[] linear_acceleration_covariance_; // Row major x, y z
 
    public Imu()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
-      orientation_ = new sensor_msgs.msg.dds.geometry_msgs/Quaternion();
+      header_ = new std_msgs.msg.dds.Header();
+      orientation_ = new geometry_msgs.msg.dds.Quaternion();
       orientation_covariance_ = new double[9];
-      angular_velocity_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
+      angular_velocity_ = new geometry_msgs.msg.dds.Vector3();
       angular_velocity_covariance_ = new double[9];
-      linear_acceleration_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
+      linear_acceleration_ = new geometry_msgs.msg.dds.Vector3();
       linear_acceleration_covariance_ = new double[9];
 
    }
@@ -136,12 +136,12 @@ public class Imu implements ROS2Message<Imu>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.geometry_msgs/Quaternion getOrientation()
+   public geometry_msgs.msg.dds.Quaternion getOrientation()
    {
       return orientation_;
    }
@@ -151,7 +151,7 @@ public class Imu implements ROS2Message<Imu>
       return orientation_covariance_;
    }
 
-   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getAngularVelocity()
+   public geometry_msgs.msg.dds.Vector3 getAngularVelocity()
    {
       return angular_velocity_;
    }
@@ -161,7 +161,7 @@ public class Imu implements ROS2Message<Imu>
       return angular_velocity_covariance_;
    }
 
-   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getLinearAcceleration()
+   public geometry_msgs.msg.dds.Vector3 getLinearAcceleration()
    {
       return linear_acceleration_;
    }

@@ -23,12 +23,12 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstance_";
 
-   private final geometry_msgs.msg.dds.geometry_msgs/Polygon polygon_;
+   private final geometry_msgs.msg.dds.Polygon polygon_;
    private long id_;
 
    public PolygonInstance()
    {
-      polygon_ = new geometry_msgs.msg.dds.geometry_msgs/Polygon();
+      polygon_ = new geometry_msgs.msg.dds.Polygon();
 
    }
 
@@ -67,7 +67,7 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
    }
 
-   public geometry_msgs.msg.dds.geometry_msgs/Polygon getPolygon()
+   public geometry_msgs.msg.dds.Polygon getPolygon()
    {
       return polygon_;
    }

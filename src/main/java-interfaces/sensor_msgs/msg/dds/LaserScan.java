@@ -26,7 +26,7 @@ public class LaserScan implements ROS2Message<LaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp in the header is the acquisition time of
+   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the acquisition time of
    private float angle_min_; // start angle of the scan [rad]
    private float angle_max_; // end angle of the scan [rad]
    private float angle_increment_; // angular distance between measurements [rad]
@@ -46,7 +46,7 @@ public class LaserScan implements ROS2Message<LaserScan>
 
    public LaserScan()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       ranges_ = new IDLFloatSequence();
       intensities_ = new IDLFloatSequence();
 
@@ -119,7 +119,7 @@ public class LaserScan implements ROS2Message<LaserScan>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

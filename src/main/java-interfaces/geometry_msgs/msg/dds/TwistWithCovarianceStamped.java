@@ -22,12 +22,12 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistWithCovarianceStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.TwistWithCovariance twist_;
 
    public TwistWithCovarianceStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       twist_ = new geometry_msgs.msg.dds.TwistWithCovariance();
 
    }
@@ -67,7 +67,7 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -22,8 +22,14 @@ public class Twist implements ROS2Message<Twist>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Twist_";
 
+   private final geometry_msgs.msg.dds.Vector3 linear_;
+   private final geometry_msgs.msg.dds.Vector3 angular_;
+
    public Twist()
    {
+      linear_ = new geometry_msgs.msg.dds.Vector3();
+      angular_ = new geometry_msgs.msg.dds.Vector3();
+
    }
 
    @Override
@@ -31,22 +37,45 @@ public class Twist implements ROS2Message<Twist>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += linear_.calculateSizeBytes(currentAlignment);
+      currentAlignment += angular_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      linear_.serialize(buffer);
+      angular_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      linear_.deserialize(buffer);
+      angular_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Twist from)
    {
+      linear_.set(from.linear_);
+      angular_.set(from.angular_);
+
    }
+
+   public geometry_msgs.msg.dds.Vector3 getLinear()
+   {
+      return linear_;
+   }
+
+   public geometry_msgs.msg.dds.Vector3 getAngular()
+   {
+      return angular_;
+   }
+
 
 }

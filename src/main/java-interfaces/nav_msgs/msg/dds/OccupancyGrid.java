@@ -22,7 +22,7 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    /**
       # This represents a 2-D grid map
    */
-   private final nav_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # MetaData for the map
    */
@@ -39,7 +39,7 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    public OccupancyGrid()
    {
-      header_ = new nav_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       info_ = new nav_msgs.msg.dds.MapMetaData();
       data_ = new IDLByteSequence();
 
@@ -84,7 +84,7 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    }
 
-   public nav_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

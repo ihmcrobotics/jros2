@@ -23,8 +23,14 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
 {
    public static final java.lang.String name = "example_interfaces::msg::dds_::Float32MultiArray_";
 
+   private final example_interfaces.msg.dds.MultiArrayLayout layout_; // specification of data layout
+   private final IDLFloatSequence data_; // array of data
+
    public Float32MultiArray()
    {
+      layout_ = new example_interfaces.msg.dds.MultiArrayLayout();
+      data_ = new IDLFloatSequence();
+
    }
 
    @Override
@@ -32,22 +38,45 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += layout_.calculateSizeBytes(currentAlignment);
+      currentAlignment += data_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      layout_.serialize(buffer);
+      data_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      layout_.deserialize(buffer);
+      data_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Float32MultiArray from)
    {
+      layout_.set(from.layout_);
+      data_.set(from.data_);
+
    }
+
+   public example_interfaces.msg.dds.MultiArrayLayout getLayout()
+   {
+      return layout_;
+   }
+
+   public IDLFloatSequence getData()
+   {
+      return data_;
+   }
+
 
 }

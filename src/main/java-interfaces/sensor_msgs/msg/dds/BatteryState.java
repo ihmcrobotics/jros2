@@ -55,6 +55,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    public static final short POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
    public static final short POWER_SUPPLY_TECHNOLOGY_NICD = 5;
    public static final short POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
+   private final std_msgs.msg.dds.Header header_;
    private float voltage_; // Voltage in Volts (Mandatory)
    private float temperature_; // Temperature in Degrees Celsius (If unmeasured NaN)
    private float current_; // Negative when discharging (A)  (If unmeasured NaN)
@@ -62,6 +63,10 @@ public class BatteryState implements ROS2Message<BatteryState>
    private float capacity_; // Capacity in Ah (last full capacity)  (If unmeasured NaN)
    private float design_capacity_; // Capacity in Ah (design capacity)  (If unmeasured NaN)
    private float percentage_; // Charge percentage on 0 to 1 range  (If unmeasured NaN)
+   private short power_supply_status_; // The charging status as reported. Values defined above
+   private short power_supply_health_; // The battery health metric. Values defined above
+   private short power_supply_technology_; // The battery chemistry. Values defined above
+   private boolean present_; // True if the battery is present
    private final IDLFloatSequence cell_voltage_; // An array of individual cell voltages for each cell in the pack
    /**
       # If individual voltages unknown but number of cells known set each to NaN
@@ -75,6 +80,8 @@ public class BatteryState implements ROS2Message<BatteryState>
 
    public BatteryState()
    {
+      header_ = new std_msgs.msg.dds.Header();
+      present_ = (boolean) false;
       cell_voltage_ = new IDLFloatSequence();
       cell_temperature_ = new IDLFloatSequence();
       location_ = new StringBuilder();
@@ -87,6 +94,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // voltage_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // temperature_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // current_
@@ -94,6 +102,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // capacity_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // design_capacity_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // percentage_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_status_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_health_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_technology_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // present_
       currentAlignment += cell_voltage_.calculateSizeBytes(currentAlignment);
       currentAlignment += cell_temperature_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * location_.length()) + 1; // location_
@@ -105,6 +117,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      header_.serialize(buffer);
       buffer.writeFloat(voltage_);
       buffer.writeFloat(temperature_);
       buffer.writeFloat(current_);
@@ -112,6 +125,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       buffer.writeFloat(capacity_);
       buffer.writeFloat(design_capacity_);
       buffer.writeFloat(percentage_);
+      buffer.writeShort(power_supply_status_);
+      buffer.writeShort(power_supply_health_);
+      buffer.writeShort(power_supply_technology_);
+      buffer.writeBoolean(present_);
       cell_voltage_.serialize(buffer);
       cell_temperature_.serialize(buffer);
       buffer.writeString(location_);
@@ -122,6 +139,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      header_.deserialize(buffer);
       voltage_ = buffer.readFloat();
       temperature_ = buffer.readFloat();
       current_ = buffer.readFloat();
@@ -129,6 +147,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       capacity_ = buffer.readFloat();
       design_capacity_ = buffer.readFloat();
       percentage_ = buffer.readFloat();
+      power_supply_status_ = buffer.readShort();
+      power_supply_health_ = buffer.readShort();
+      power_supply_technology_ = buffer.readShort();
+      present_ = buffer.readBoolean();
       cell_voltage_.deserialize(buffer);
       cell_temperature_.deserialize(buffer);
       buffer.readString(location_);
@@ -139,6 +161,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    @Override
    public void set(BatteryState from)
    {
+      header_.set(from.header_);
       voltage_ = from.voltage_;
       temperature_ = from.temperature_;
       current_ = from.current_;
@@ -146,6 +169,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       capacity_ = from.capacity_;
       design_capacity_ = from.design_capacity_;
       percentage_ = from.percentage_;
+      power_supply_status_ = from.power_supply_status_;
+      power_supply_health_ = from.power_supply_health_;
+      power_supply_technology_ = from.power_supply_technology_;
+      present_ = from.present_;
       cell_voltage_.set(from.cell_voltage_);
       cell_temperature_.set(from.cell_temperature_);
       location_.delete(0, location_.length());
@@ -153,6 +180,11 @@ public class BatteryState implements ROS2Message<BatteryState>
       serial_number_.delete(0, serial_number_.length());
       serial_number_.insert(0, from.serial_number_);
 
+   }
+
+   public std_msgs.msg.dds.Header getHeader()
+   {
+      return header_;
    }
 
    public float getVoltage()
@@ -223,6 +255,46 @@ public class BatteryState implements ROS2Message<BatteryState>
    public void setPercentage(float percentage_)
    {
       this.percentage_ = percentage_;
+   }
+
+   public short getPowerSupplyStatus()
+   {
+      return power_supply_status_;
+   }
+
+   public void setPowerSupplyStatus(short power_supply_status_)
+   {
+      this.power_supply_status_ = power_supply_status_;
+   }
+
+   public short getPowerSupplyHealth()
+   {
+      return power_supply_health_;
+   }
+
+   public void setPowerSupplyHealth(short power_supply_health_)
+   {
+      this.power_supply_health_ = power_supply_health_;
+   }
+
+   public short getPowerSupplyTechnology()
+   {
+      return power_supply_technology_;
+   }
+
+   public void setPowerSupplyTechnology(short power_supply_technology_)
+   {
+      this.power_supply_technology_ = power_supply_technology_;
+   }
+
+   public boolean getPresent()
+   {
+      return present_;
+   }
+
+   public void setPresent(boolean present_)
+   {
+      this.present_ = present_;
    }
 
    public IDLFloatSequence getCellVoltage()

@@ -19,8 +19,7 @@ public class TestMsg implements ROS2Message<TestMsg>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::TestMsg_";
 
-   private final jros2_example_interfaces.msg.dds.Header header_;
-   private final jros2_example_interfaces.msg.dds.std_msgs/Header header2_;
+   private final std_msgs.msg.dds.Header header_;
    private int my_int_;
    private final StringBuilder my_string_; // Test comment
    private final IDLIntSequence unbounded_integer_array_;
@@ -53,12 +52,11 @@ public class TestMsg implements ROS2Message<TestMsg>
    // Note: The length of each string in this sequence should not exceed 5 characters.
    // This is not strictly enforced in Java / jros2.
    private final StringBuilder[] three_strings_each_max_length_of_five_chars_;
-   private final jros2_example_interfaces.msg.dds.sensor_msgs/Image[] three_images_;
+   private final sensor_msgs.msg.dds.Image[] three_images_;
 
    public TestMsg()
    {
-      header_ = new jros2_example_interfaces.msg.dds.Header();
-      header2_ = new jros2_example_interfaces.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       my_string_ = new StringBuilder();
       unbounded_integer_array_ = new IDLIntSequence();
       five_integers_array_ = new int[5];
@@ -85,11 +83,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       {
          three_strings_each_max_length_of_five_chars_[i] = new StringBuilder(5);
       }
-      three_images_ = new jros2_example_interfaces.msg.dds.sensor_msgs/Image[3];
+      three_images_ = new sensor_msgs.msg.dds.Image[3];
       // three_images is defined as a fixed-size array, so it is pre-allocated.
       for (int i = 0; i < three_images_.length; ++i)
       {
-         three_images_[i] = new jros2_example_interfaces.msg.dds.sensor_msgs/Image();
+         three_images_[i] = new sensor_msgs.msg.dds.Image();
       }
 
    }
@@ -100,7 +98,6 @@ public class TestMsg implements ROS2Message<TestMsg>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += header2_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string_.length()) + 1; // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
@@ -130,7 +127,6 @@ public class TestMsg implements ROS2Message<TestMsg>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      header2_.serialize(buffer);
       buffer.writeInt(my_int_);
       buffer.writeString(my_string_);
       unbounded_integer_array_.serialize(buffer);
@@ -171,7 +167,6 @@ public class TestMsg implements ROS2Message<TestMsg>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      header2_.deserialize(buffer);
       my_int_ = buffer.readInt();
       buffer.readString(my_string_);
       unbounded_integer_array_.deserialize(buffer);
@@ -212,7 +207,6 @@ public class TestMsg implements ROS2Message<TestMsg>
    public void set(TestMsg from)
    {
       header_.set(from.header_);
-      header2_.set(from.header2_);
       my_int_ = from.my_int_;
       my_string_.delete(0, my_string_.length());
       my_string_.insert(0, from.my_string_);
@@ -253,14 +247,9 @@ public class TestMsg implements ROS2Message<TestMsg>
 
    }
 
-   public jros2_example_interfaces.msg.dds.Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
-   }
-
-   public jros2_example_interfaces.msg.dds.std_msgs/Header getHeader2()
-   {
-      return header2_;
    }
 
    public int getMyInt()
@@ -363,7 +352,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       return three_strings_each_max_length_of_five_chars_;
    }
 
-   public jros2_example_interfaces.msg.dds.sensor_msgs/Image[] getThreeImages()
+   public sensor_msgs.msg.dds.Image[] getThreeImages()
    {
       return three_images_;
    }

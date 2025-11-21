@@ -22,12 +22,12 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::InertiaStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Inertia inertia_;
 
    public InertiaStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       inertia_ = new geometry_msgs.msg.dds.Inertia();
 
    }
@@ -67,7 +67,7 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -23,13 +23,13 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
-   private final geometry_msgs.msg.dds.geometry_msgs/PolygonInstance polygon_;
+   private final std_msgs.msg.dds.Header header_;
+   private final geometry_msgs.msg.dds.PolygonInstance polygon_;
 
    public PolygonInstanceStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
-      polygon_ = new geometry_msgs.msg.dds.geometry_msgs/PolygonInstance();
+      header_ = new std_msgs.msg.dds.Header();
+      polygon_ = new geometry_msgs.msg.dds.PolygonInstance();
 
    }
 
@@ -68,12 +68,12 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public geometry_msgs.msg.dds.geometry_msgs/PolygonInstance getPolygon()
+   public geometry_msgs.msg.dds.PolygonInstance getPolygon()
    {
       return polygon_;
    }

@@ -1,5 +1,4 @@
-Header header
-std_msgs/Header header2
+std_msgs/Header header
 
 int32 my_int
 string my_string # Test comment

@@ -45,7 +45,7 @@ public class Marker implements ROS2Message<Marker>
    /**
       # Header for timestamp and frame id.
    */
-   private final visualization_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # Namespace in which to place the object.
       # Used in conjunction with id to create a unique name for the object.
@@ -70,20 +70,20 @@ public class Marker implements ROS2Message<Marker>
    /**
       # Pose of the object with respect the frame_id specified in the header.
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       # Scale of the object; 1,1,1 means default (usually 1 meter square).
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Vector3 scale_;
+   private final geometry_msgs.msg.dds.Vector3 scale_;
    /**
       # Color of the object; in the range: [0.0-1.0]
    */
-   private final visualization_msgs.msg.dds.std_msgs/ColorRGBA color_;
+   private final std_msgs.msg.dds.ColorRGBA color_;
    /**
       # How long the object should last before being automatically deleted.
       # 0 indicates forever.
    */
-   private final visualization_msgs.msg.dds.builtin_interfaces/Duration lifetime_;
+   private final builtin_interfaces.msg.dds.Duration lifetime_;
    /**
       # If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
    */
@@ -91,13 +91,13 @@ public class Marker implements ROS2Message<Marker>
    /**
       # Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
    */
-   private final IDLObjectSequence<visualization_msgs.msg.dds.geometry_msgs/Point> points_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> points_;
    /**
       # Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
       # The number of colors provided must either be 0 or equal to the number of points provided.
       # NOTE: alpha is not yet used
    */
-   private final IDLObjectSequence<visualization_msgs.msg.dds.std_msgs/ColorRGBA> colors_;
+   private final IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> colors_;
    /**
       # Texture resource is a special URI that can either reference a texture file in
       # a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
@@ -109,7 +109,7 @@ public class Marker implements ROS2Message<Marker>
       # An image to be loaded into the rendering engine as the texture for this marker.
       # This will be used iff texture_resource is set to embedded.
    */
-   private final visualization_msgs.msg.dds.sensor_msgs/CompressedImage texture_;
+   private final sensor_msgs.msg.dds.CompressedImage texture_;
    /**
       # Location of each vertex within the texture; in the range: [0.0-1.0]
    */
@@ -131,17 +131,17 @@ public class Marker implements ROS2Message<Marker>
 
    public Marker()
    {
-      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       ns_ = new StringBuilder();
-      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
-      scale_ = new visualization_msgs.msg.dds.geometry_msgs/Vector3();
-      color_ = new visualization_msgs.msg.dds.std_msgs/ColorRGBA();
-      lifetime_ = new visualization_msgs.msg.dds.builtin_interfaces/Duration();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      scale_ = new geometry_msgs.msg.dds.Vector3();
+      color_ = new std_msgs.msg.dds.ColorRGBA();
+      lifetime_ = new builtin_interfaces.msg.dds.Duration();
       frame_locked_ = (boolean) false;
-      points_ = new IDLObjectSequence<visualization_msgs.msg.dds.geometry_msgs/Point>(visualization_msgs.msg.dds.geometry_msgs/Point.class);
-      colors_ = new IDLObjectSequence<visualization_msgs.msg.dds.std_msgs/ColorRGBA>(visualization_msgs.msg.dds.std_msgs/ColorRGBA.class);
+      points_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
+      colors_ = new IDLObjectSequence<std_msgs.msg.dds.ColorRGBA>(std_msgs.msg.dds.ColorRGBA.class);
       texture_resource_ = new StringBuilder();
-      texture_ = new visualization_msgs.msg.dds.sensor_msgs/CompressedImage();
+      texture_ = new sensor_msgs.msg.dds.CompressedImage();
       uv_coordinates_ = new IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate>(visualization_msgs.msg.dds.UVCoordinate.class);
       text_ = new StringBuilder();
       mesh_resource_ = new StringBuilder();
@@ -257,7 +257,7 @@ public class Marker implements ROS2Message<Marker>
 
    }
 
-   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
@@ -297,22 +297,22 @@ public class Marker implements ROS2Message<Marker>
       this.action_ = action_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Vector3 getScale()
+   public geometry_msgs.msg.dds.Vector3 getScale()
    {
       return scale_;
    }
 
-   public visualization_msgs.msg.dds.std_msgs/ColorRGBA getColor()
+   public std_msgs.msg.dds.ColorRGBA getColor()
    {
       return color_;
    }
 
-   public visualization_msgs.msg.dds.builtin_interfaces/Duration getLifetime()
+   public builtin_interfaces.msg.dds.Duration getLifetime()
    {
       return lifetime_;
    }
@@ -327,12 +327,12 @@ public class Marker implements ROS2Message<Marker>
       this.frame_locked_ = frame_locked_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.geometry_msgs/Point> getPoints()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getPoints()
    {
       return points_;
    }
 
-   public IDLObjectSequence<visualization_msgs.msg.dds.std_msgs/ColorRGBA> getColors()
+   public IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> getColors()
    {
       return colors_;
    }
@@ -342,7 +342,7 @@ public class Marker implements ROS2Message<Marker>
       return texture_resource_;
    }
 
-   public visualization_msgs.msg.dds.sensor_msgs/CompressedImage getTexture()
+   public sensor_msgs.msg.dds.CompressedImage getTexture()
    {
       return texture_;
    }

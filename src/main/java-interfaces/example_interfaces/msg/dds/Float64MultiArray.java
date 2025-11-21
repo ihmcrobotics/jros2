@@ -23,8 +23,14 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
 {
    public static final java.lang.String name = "example_interfaces::msg::dds_::Float64MultiArray_";
 
+   private final example_interfaces.msg.dds.MultiArrayLayout layout_; // specification of data layout
+   private final IDLDoubleSequence data_; // array of data
+
    public Float64MultiArray()
    {
+      layout_ = new example_interfaces.msg.dds.MultiArrayLayout();
+      data_ = new IDLDoubleSequence();
+
    }
 
    @Override
@@ -32,22 +38,45 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += layout_.calculateSizeBytes(currentAlignment);
+      currentAlignment += data_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      layout_.serialize(buffer);
+      data_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      layout_.deserialize(buffer);
+      data_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Float64MultiArray from)
    {
+      layout_.set(from.layout_);
+      data_.set(from.data_);
+
    }
+
+   public example_interfaces.msg.dds.MultiArrayLayout getLayout()
+   {
+      return layout_;
+   }
+
+   public IDLDoubleSequence getData()
+   {
+      return data_;
+   }
+
 
 }

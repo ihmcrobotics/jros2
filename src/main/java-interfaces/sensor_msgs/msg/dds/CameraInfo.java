@@ -27,7 +27,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    /**
       # Time of image acquisition, camera coordinate frame ID
    */
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // Header timestamp should be acquisition time of image
+   private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
    /**
       # The image dimensions with which the camera was calibrated.
       # Normally this will be the full camera resolution in pixels.
@@ -45,6 +45,23 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       # For "plumb_bob", the 5 parameters are: (k1, k2, t1, t2, k3).
    */
    private final IDLDoubleSequence d_;
+   /**
+      # Intrinsic camera matrix for the raw (distorted) images.
+      #     [fx  0 cx]
+      # K = [ 0 fy cy]
+      #     [ 0  0  1]
+      # Projects 3D points in the camera coordinate frame to 2D pixel
+      # coordinates using the focal lengths (fx, fy) and principal point
+      # (cx, cy).
+   */
+   private final double[] k_; // 3x3 row-major matrix
+   /**
+      # Rectification matrix (stereo cameras only)
+      # A rotation matrix aligning the camera coordinate system to the ideal
+      # stereo image plane so that epipolar lines in both stereo images are
+      # parallel.
+   */
+   private final double[] r_; // 3x3 row-major matrix
    /**
       # Projection/camera matrix
       #     [fx'  0  cx' Tx]
@@ -94,9 +111,11 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    public CameraInfo()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       distortion_model_ = new StringBuilder();
       d_ = new IDLDoubleSequence();
+      k_ = new double[9];
+      r_ = new double[9];
       p_ = new double[12];
       roi_ = new sensor_msgs.msg.dds.RegionOfInterest();
 
@@ -112,6 +131,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * distortion_model_.length()) + 1; // distortion_model_
       currentAlignment += d_.calculateSizeBytes(currentAlignment);
+      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // k_
+      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // r_
       currentAlignment += (12 * 8) + CDRBuffer.alignment(currentAlignment, (12 * 8)); // p_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_x_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_y_
@@ -128,6 +149,14 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       buffer.writeLong(width_);
       buffer.writeString(distortion_model_);
       d_.serialize(buffer);
+      for (int i = 0; i < k_.length; ++i)
+      {
+         buffer.writeDouble(k_[i]);
+      }
+      for (int i = 0; i < r_.length; ++i)
+      {
+         buffer.writeDouble(r_[i]);
+      }
       for (int i = 0; i < p_.length; ++i)
       {
          buffer.writeDouble(p_[i]);
@@ -146,6 +175,14 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       width_ = buffer.readLong();
       buffer.readString(distortion_model_);
       d_.deserialize(buffer);
+      for (int i = 0; i < k_.length; ++i)
+      {
+         k_[i] = buffer.readDouble();
+      }
+      for (int i = 0; i < r_.length; ++i)
+      {
+         r_[i] = buffer.readDouble();
+      }
       for (int i = 0; i < p_.length; ++i)
       {
          p_[i] = buffer.readDouble();
@@ -165,6 +202,14 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       distortion_model_.delete(0, distortion_model_.length());
       distortion_model_.insert(0, from.distortion_model_);
       d_.set(from.d_);
+      for (int i = 0; i < k_.length; ++i)
+      {
+         k_[i] = from.k_[i];
+      }
+      for (int i = 0; i < r_.length; ++i)
+      {
+         r_[i] = from.r_[i];
+      }
       for (int i = 0; i < p_.length; ++i)
       {
          p_[i] = from.p_[i];
@@ -175,7 +220,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
@@ -208,6 +253,16 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public IDLDoubleSequence getD()
    {
       return d_;
+   }
+
+   public double[] getK()
+   {
+      return k_;
+   }
+
+   public double[] getR()
+   {
+      return r_;
    }
 
    public double[] getP()

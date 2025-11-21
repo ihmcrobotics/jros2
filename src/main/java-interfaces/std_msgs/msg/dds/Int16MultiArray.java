@@ -23,8 +23,14 @@ public class Int16MultiArray implements ROS2Message<Int16MultiArray>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Int16MultiArray_";
 
+   private final std_msgs.msg.dds.MultiArrayLayout layout_; // specification of data layout
+   private final IDLShortSequence data_; // array of data
+
    public Int16MultiArray()
    {
+      layout_ = new std_msgs.msg.dds.MultiArrayLayout();
+      data_ = new IDLShortSequence();
+
    }
 
    @Override
@@ -32,22 +38,45 @@ public class Int16MultiArray implements ROS2Message<Int16MultiArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += layout_.calculateSizeBytes(currentAlignment);
+      currentAlignment += data_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      layout_.serialize(buffer);
+      data_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      layout_.deserialize(buffer);
+      data_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Int16MultiArray from)
    {
+      layout_.set(from.layout_);
+      data_.set(from.data_);
+
    }
+
+   public std_msgs.msg.dds.MultiArrayLayout getLayout()
+   {
+      return layout_;
+   }
+
+   public IDLShortSequence getData()
+   {
+      return data_;
+   }
+
 
 }

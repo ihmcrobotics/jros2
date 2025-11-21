@@ -40,19 +40,19 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final IDLStringSequence joint_names_;
-   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform> transforms_;
-   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist> twist_;
-   private final IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench> wrench_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Transform> transforms_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Twist> twist_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Wrench> wrench_;
 
    public MultiDOFJointState()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
-      transforms_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform>(sensor_msgs.msg.dds.geometry_msgs/Transform.class);
-      twist_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist>(sensor_msgs.msg.dds.geometry_msgs/Twist.class);
-      wrench_ = new IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench>(sensor_msgs.msg.dds.geometry_msgs/Wrench.class);
+      transforms_ = new IDLObjectSequence<geometry_msgs.msg.dds.Transform>(geometry_msgs.msg.dds.Transform.class);
+      twist_ = new IDLObjectSequence<geometry_msgs.msg.dds.Twist>(geometry_msgs.msg.dds.Twist.class);
+      wrench_ = new IDLObjectSequence<geometry_msgs.msg.dds.Wrench>(geometry_msgs.msg.dds.Wrench.class);
 
    }
 
@@ -103,7 +103,7 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
@@ -113,17 +113,17 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
       return joint_names_;
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Transform> getTransforms()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Transform> getTransforms()
    {
       return transforms_;
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Twist> getTwist()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Twist> getTwist()
    {
       return twist_;
    }
 
-   public IDLObjectSequence<sensor_msgs.msg.dds.geometry_msgs/Wrench> getWrench()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Wrench> getWrench()
    {
       return wrench_;
    }

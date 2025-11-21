@@ -25,7 +25,7 @@ public class Joy implements ROS2Message<Joy>
    /**
       # The timestamp is the time at which data is received from the joystick.
    */
-   private final sensor_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # The axes measurements from a joystick.
    */
@@ -37,7 +37,7 @@ public class Joy implements ROS2Message<Joy>
 
    public Joy()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       axes_ = new IDLFloatSequence();
       buttons_ = new IDLIntSequence();
 
@@ -82,7 +82,7 @@ public class Joy implements ROS2Message<Joy>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -29,12 +29,12 @@ public class Mesh implements ROS2Message<Mesh>
    /**
       # The actual vertices that make up the mesh.
    */
-   private final IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point> vertices_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.Point> vertices_;
 
    public Mesh()
    {
       triangles_ = new IDLObjectSequence<shape_msgs.msg.dds.MeshTriangle>(shape_msgs.msg.dds.MeshTriangle.class);
-      vertices_ = new IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point>(shape_msgs.msg.dds.geometry_msgs/Point.class);
+      vertices_ = new IDLObjectSequence<geometry_msgs.msg.dds.Point>(geometry_msgs.msg.dds.Point.class);
 
    }
 
@@ -78,7 +78,7 @@ public class Mesh implements ROS2Message<Mesh>
       return triangles_;
    }
 
-   public IDLObjectSequence<shape_msgs.msg.dds.geometry_msgs/Point> getVertices()
+   public IDLObjectSequence<geometry_msgs.msg.dds.Point> getVertices()
    {
       return vertices_;
    }

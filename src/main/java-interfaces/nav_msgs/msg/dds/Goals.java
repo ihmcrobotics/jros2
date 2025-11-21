@@ -25,19 +25,19 @@ public class Goals implements ROS2Message<Goals>
       # This header will store the time at which the poses were computed (not to be confused with the stamps of the poses themselves)
       # In the case that individual poses do not have their frame_id set or their timetamp set they will use the default value here.
    */
-   private final nav_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # An array of goals to for navigation to achieve.
       # The goals should be executed in the order of the array.
       # The header and stamp are intended to be used for computing the position of the goals.
       # They may vary to support cases of goals that are moving with respect to the robot.
    */
-   private final IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped> goals_;
+   private final IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> goals_;
 
    public Goals()
    {
-      header_ = new nav_msgs.msg.dds.std_msgs/Header();
-      goals_ = new IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped>(nav_msgs.msg.dds.geometry_msgs/PoseStamped.class);
+      header_ = new std_msgs.msg.dds.Header();
+      goals_ = new IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped>(geometry_msgs.msg.dds.PoseStamped.class);
 
    }
 
@@ -76,12 +76,12 @@ public class Goals implements ROS2Message<Goals>
 
    }
 
-   public nav_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public IDLObjectSequence<nav_msgs.msg.dds.geometry_msgs/PoseStamped> getGoals()
+   public IDLObjectSequence<geometry_msgs.msg.dds.PoseStamped> getGoals()
    {
       return goals_;
    }

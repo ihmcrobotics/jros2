@@ -22,12 +22,12 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::QuaternionStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Quaternion quaternion_;
 
    public QuaternionStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       quaternion_ = new geometry_msgs.msg.dds.Quaternion();
 
    }
@@ -67,7 +67,7 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

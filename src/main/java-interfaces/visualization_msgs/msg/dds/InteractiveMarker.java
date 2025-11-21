@@ -27,11 +27,11 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       # Otherwise, you might receive feedback in a different frame.
       # For rviz, this will be the current 'fixed frame' set by the user.
    */
-   private final visualization_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # Initial pose. Also, defines the pivot point for rotations.
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       # Identifying string. Must be globally unique in
       # the topic that this message is sent through.
@@ -56,8 +56,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
    public InteractiveMarker()
    {
-      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
-      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.Pose();
       name_ = new StringBuilder();
       description_ = new StringBuilder();
       menu_entries_ = new IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry>(visualization_msgs.msg.dds.MenuEntry.class);
@@ -122,12 +122,12 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
    }
 
-   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }

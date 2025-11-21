@@ -26,7 +26,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiEchoLaserScan_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp in the header is the acquisition time of
+   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the acquisition time of
    private float angle_min_; // start angle of the scan [rad]
    private float angle_max_; // end angle of the scan [rad]
    private float angle_increment_; // angular distance between measurements [rad]
@@ -48,7 +48,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    public MultiEchoLaserScan()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       ranges_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
       intensities_ = new IDLObjectSequence<sensor_msgs.msg.dds.LaserEcho>(sensor_msgs.msg.dds.LaserEcho.class);
 
@@ -121,7 +121,7 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

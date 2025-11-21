@@ -22,8 +22,14 @@ public class Wrench implements ROS2Message<Wrench>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Wrench_";
 
+   private final geometry_msgs.msg.dds.Vector3 force_;
+   private final geometry_msgs.msg.dds.Vector3 torque_;
+
    public Wrench()
    {
+      force_ = new geometry_msgs.msg.dds.Vector3();
+      torque_ = new geometry_msgs.msg.dds.Vector3();
+
    }
 
    @Override
@@ -31,22 +37,45 @@ public class Wrench implements ROS2Message<Wrench>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += force_.calculateSizeBytes(currentAlignment);
+      currentAlignment += torque_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      force_.serialize(buffer);
+      torque_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      force_.deserialize(buffer);
+      torque_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Wrench from)
    {
+      force_.set(from.force_);
+      torque_.set(from.torque_);
+
    }
+
+   public geometry_msgs.msg.dds.Vector3 getForce()
+   {
+      return force_;
+   }
+
+   public geometry_msgs.msg.dds.Vector3 getTorque()
+   {
+      return torque_;
+   }
+
 
 }

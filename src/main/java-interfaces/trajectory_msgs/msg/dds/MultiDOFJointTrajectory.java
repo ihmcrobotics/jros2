@@ -22,13 +22,13 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    /**
       # The header is used to specify the coordinate frame and the reference time for the trajectory durations
    */
-   private final trajectory_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final IDLStringSequence joint_names_;
    private final IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint> points_;
 
    public MultiDOFJointTrajectory()
    {
-      header_ = new trajectory_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       joint_names_ = new IDLStringSequence();
       points_ = new IDLObjectSequence<trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint>(trajectory_msgs.msg.dds.MultiDOFJointTrajectoryPoint.class);
 
@@ -73,7 +73,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
 
    }
 
-   public trajectory_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -19,8 +19,17 @@ public class Accel implements ROS2Message<Accel>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Accel_";
 
+   /**
+      # This expresses acceleration in free space broken into its linear and angular parts.
+   */
+   private final geometry_msgs.msg.dds.Vector3 linear_;
+   private final geometry_msgs.msg.dds.Vector3 angular_;
+
    public Accel()
    {
+      linear_ = new geometry_msgs.msg.dds.Vector3();
+      angular_ = new geometry_msgs.msg.dds.Vector3();
+
    }
 
    @Override
@@ -28,22 +37,45 @@ public class Accel implements ROS2Message<Accel>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += linear_.calculateSizeBytes(currentAlignment);
+      currentAlignment += angular_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      linear_.serialize(buffer);
+      angular_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      linear_.deserialize(buffer);
+      angular_.deserialize(buffer);
+
    }
 
    @Override
    public void set(Accel from)
    {
+      linear_.set(from.linear_);
+      angular_.set(from.angular_);
+
    }
+
+   public geometry_msgs.msg.dds.Vector3 getLinear()
+   {
+      return linear_;
+   }
+
+   public geometry_msgs.msg.dds.Vector3 getAngular()
+   {
+      return angular_;
+   }
+
 
 }

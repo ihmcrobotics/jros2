@@ -33,7 +33,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       # interactive marker) in which is being rotated and translated.
       # Default: Identity
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Quaternion orientation_;
+   private final geometry_msgs.msg.dds.Quaternion orientation_;
    /**
       # Orientation mode: controls how orientation changes.
       # INHERIT: Follow orientation of interactive marker
@@ -104,7 +104,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public InteractiveMarkerControl()
    {
       name_ = new StringBuilder();
-      orientation_ = new visualization_msgs.msg.dds.geometry_msgs/Quaternion();
+      orientation_ = new geometry_msgs.msg.dds.Quaternion();
       always_visible_ = (boolean) false;
       markers_ = new IDLObjectSequence<visualization_msgs.msg.dds.Marker>(visualization_msgs.msg.dds.Marker.class);
       independent_marker_orientation_ = (boolean) false;
@@ -178,7 +178,7 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return name_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Quaternion getOrientation()
+   public geometry_msgs.msg.dds.Quaternion getOrientation()
    {
       return orientation_;
    }

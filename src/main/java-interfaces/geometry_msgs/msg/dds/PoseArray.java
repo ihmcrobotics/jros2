@@ -22,12 +22,12 @@ public class PoseArray implements ROS2Message<PoseArray>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final IDLObjectSequence<geometry_msgs.msg.dds.Pose> poses_;
 
    public PoseArray()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       poses_ = new IDLObjectSequence<geometry_msgs.msg.dds.Pose>(geometry_msgs.msg.dds.Pose.class);
 
    }
@@ -67,7 +67,7 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -27,7 +27,7 @@ public class Header implements ROS2Message<Header>
    /**
       # Two-integer timestamp that is expressed as seconds and nanoseconds.
    */
-   private final std_msgs.msg.dds.builtin_interfaces/Time stamp_;
+   private final builtin_interfaces.msg.dds.Time stamp_;
    /**
       # Transform frame with which this data is associated.
    */
@@ -35,7 +35,7 @@ public class Header implements ROS2Message<Header>
 
    public Header()
    {
-      stamp_ = new std_msgs.msg.dds.builtin_interfaces/Time();
+      stamp_ = new builtin_interfaces.msg.dds.Time();
       frame_id_ = new StringBuilder();
 
    }
@@ -76,7 +76,7 @@ public class Header implements ROS2Message<Header>
 
    }
 
-   public std_msgs.msg.dds.builtin_interfaces/Time getStamp()
+   public builtin_interfaces.msg.dds.Time getStamp()
    {
       return stamp_;
    }

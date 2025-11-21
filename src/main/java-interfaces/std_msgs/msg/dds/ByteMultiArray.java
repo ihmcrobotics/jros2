@@ -23,8 +23,14 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::ByteMultiArray_";
 
+   private final std_msgs.msg.dds.MultiArrayLayout layout_; // specification of data layout
+   private final IDLByteSequence data_; // array of data
+
    public ByteMultiArray()
    {
+      layout_ = new std_msgs.msg.dds.MultiArrayLayout();
+      data_ = new IDLByteSequence();
+
    }
 
    @Override
@@ -32,22 +38,45 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += layout_.calculateSizeBytes(currentAlignment);
+      currentAlignment += data_.calculateSizeBytes(currentAlignment);
+
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      layout_.serialize(buffer);
+      data_.serialize(buffer);
+
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      layout_.deserialize(buffer);
+      data_.deserialize(buffer);
+
    }
 
    @Override
    public void set(ByteMultiArray from)
    {
+      layout_.set(from.layout_);
+      data_.set(from.data_);
+
    }
+
+   public std_msgs.msg.dds.MultiArrayLayout getLayout()
+   {
+      return layout_;
+   }
+
+   public IDLByteSequence getData()
+   {
+      return data_;
+   }
+
 
 }

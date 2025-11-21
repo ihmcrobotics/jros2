@@ -51,12 +51,12 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    public static final short CONE_HEIGHT = 0;
    public static final short CONE_RADIUS = 1;
    public static final short PRISM_HEIGHT = 0;
-   private final shape_msgs.msg.dds.geometry_msgs/Polygon polygon_;
+   private final geometry_msgs.msg.dds.Polygon polygon_;
 
    public SolidPrimitive()
    {
       dimensions_ = new IDLDoubleSequence(3);
-      polygon_ = new shape_msgs.msg.dds.geometry_msgs/Polygon();
+      polygon_ = new geometry_msgs.msg.dds.Polygon();
 
    }
 
@@ -114,7 +114,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       return dimensions_;
    }
 
-   public shape_msgs.msg.dds.geometry_msgs/Polygon getPolygon()
+   public geometry_msgs.msg.dds.Polygon getPolygon()
    {
       return polygon_;
    }

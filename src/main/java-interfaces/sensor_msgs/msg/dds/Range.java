@@ -30,7 +30,7 @@ public class Range implements ROS2Message<Range>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp in the header is the time the ranger
+   private final std_msgs.msg.dds.Header header_; // timestamp in the header is the time the ranger
    /**
       # Radiation type enums
       # If you want a value added to this list, send an email to the ros-users list
@@ -45,7 +45,7 @@ public class Range implements ROS2Message<Range>
 
    public Range()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
 
    }
 
@@ -100,7 +100,7 @@ public class Range implements ROS2Message<Range>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

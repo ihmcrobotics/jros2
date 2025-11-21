@@ -34,7 +34,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    /**
       # The frame id in the header is used as the reference frame of this transform.
    */
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # The frame id of the child frame to which this transform points.
    */
@@ -46,7 +46,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
 
    public TransformStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       child_frame_id_ = new StringBuilder();
       transform_ = new geometry_msgs.msg.dds.Transform();
 
@@ -92,7 +92,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

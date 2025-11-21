@@ -24,11 +24,11 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    /**
       # Time/frame info.
    */
-   private final visualization_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # Initial pose. Also, defines the pivot point for rotations.
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       # Identifying string. Must be globally unique in
       # the topic that this message is sent through.
@@ -37,8 +37,8 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    public InteractiveMarkerPose()
    {
-      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
-      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
+      header_ = new std_msgs.msg.dds.Header();
+      pose_ = new geometry_msgs.msg.dds.Pose();
       name_ = new StringBuilder();
 
    }
@@ -83,12 +83,12 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    }
 
-   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }

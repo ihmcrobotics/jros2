@@ -22,12 +22,12 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Polygon polygon_;
 
    public PolygonStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       polygon_ = new geometry_msgs.msg.dds.Polygon();
 
    }
@@ -67,7 +67,7 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

@@ -48,11 +48,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    /**
       # Measurement window start time
    */
-   private final statistics_msgs.msg.dds.builtin_interfaces/Time window_start_;
+   private final builtin_interfaces.msg.dds.Time window_start_;
    /**
       # Measurement window end time
    */
-   private final statistics_msgs.msg.dds.builtin_interfaces/Time window_stop_;
+   private final builtin_interfaces.msg.dds.Time window_stop_;
    /**
       # A list of statistics data point, defined in StatisticDataPoint.msg
    */
@@ -63,8 +63,8 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       measurement_source_name_ = new StringBuilder();
       metrics_source_ = new StringBuilder();
       unit_ = new StringBuilder();
-      window_start_ = new statistics_msgs.msg.dds.builtin_interfaces/Time();
-      window_stop_ = new statistics_msgs.msg.dds.builtin_interfaces/Time();
+      window_start_ = new builtin_interfaces.msg.dds.Time();
+      window_stop_ = new builtin_interfaces.msg.dds.Time();
       statistics_ = new IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint>(statistics_msgs.msg.dds.StatisticDataPoint.class);
 
    }
@@ -138,12 +138,12 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return unit_;
    }
 
-   public statistics_msgs.msg.dds.builtin_interfaces/Time getWindowStart()
+   public builtin_interfaces.msg.dds.Time getWindowStart()
    {
       return window_start_;
    }
 
-   public statistics_msgs.msg.dds.builtin_interfaces/Time getWindowStop()
+   public builtin_interfaces.msg.dds.Time getWindowStop()
    {
       return window_stop_;
    }

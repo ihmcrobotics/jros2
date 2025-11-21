@@ -51,7 +51,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    /**
       # Desired time from the trajectory start to arrive at this trajectory point.
    */
-   private final trajectory_msgs.msg.dds.builtin_interfaces/Duration time_from_start_;
+   private final builtin_interfaces.msg.dds.Duration time_from_start_;
 
    public JointTrajectoryPoint()
    {
@@ -59,7 +59,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       velocities_ = new IDLDoubleSequence();
       accelerations_ = new IDLDoubleSequence();
       effort_ = new IDLDoubleSequence();
-      time_from_start_ = new trajectory_msgs.msg.dds.builtin_interfaces/Duration();
+      time_from_start_ = new builtin_interfaces.msg.dds.Duration();
 
    }
 
@@ -130,7 +130,7 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       return effort_;
    }
 
-   public trajectory_msgs.msg.dds.builtin_interfaces/Duration getTimeFromStart()
+   public builtin_interfaces.msg.dds.Duration getTimeFromStart()
    {
       return time_from_start_;
    }

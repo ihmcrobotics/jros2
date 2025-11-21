@@ -22,14 +22,14 @@ public class TimeReference implements ROS2Message<TimeReference>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // stamp is system time for which measurement was valid
-   private final sensor_msgs.msg.dds.builtin_interfaces/Time time_ref_; // corresponding time from this external source
+   private final std_msgs.msg.dds.Header header_; // stamp is system time for which measurement was valid
+   private final builtin_interfaces.msg.dds.Time time_ref_; // corresponding time from this external source
    private final StringBuilder source_; // (optional) name of time source
 
    public TimeReference()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
-      time_ref_ = new sensor_msgs.msg.dds.builtin_interfaces/Time();
+      header_ = new std_msgs.msg.dds.Header();
+      time_ref_ = new builtin_interfaces.msg.dds.Time();
       source_ = new StringBuilder();
 
    }
@@ -74,12 +74,12 @@ public class TimeReference implements ROS2Message<TimeReference>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.builtin_interfaces/Time getTimeRef()
+   public builtin_interfaces.msg.dds.Time getTimeRef()
    {
       return time_ref_;
    }

@@ -29,14 +29,14 @@ public class MagneticField implements ROS2Message<MagneticField>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MagneticField_";
 
-   private final sensor_msgs.msg.dds.std_msgs/Header header_; // timestamp is the time the
-   private final sensor_msgs.msg.dds.geometry_msgs/Vector3 magnetic_field_; // x, y, and z components of the
+   private final std_msgs.msg.dds.Header header_; // timestamp is the time the
+   private final geometry_msgs.msg.dds.Vector3 magnetic_field_; // x, y, and z components of the
    private final double[] magnetic_field_covariance_; // Row major about x, y, z axes
 
    public MagneticField()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
-      magnetic_field_ = new sensor_msgs.msg.dds.geometry_msgs/Vector3();
+      header_ = new std_msgs.msg.dds.Header();
+      magnetic_field_ = new geometry_msgs.msg.dds.Vector3();
       magnetic_field_covariance_ = new double[9];
 
    }
@@ -89,12 +89,12 @@ public class MagneticField implements ROS2Message<MagneticField>
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
 
-   public sensor_msgs.msg.dds.geometry_msgs/Vector3 getMagneticField()
+   public geometry_msgs.msg.dds.Vector3 getMagneticField()
    {
       return magnetic_field_;
    }

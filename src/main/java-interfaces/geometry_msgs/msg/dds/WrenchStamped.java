@@ -22,12 +22,12 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::WrenchStamped_";
 
-   private final geometry_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    private final geometry_msgs.msg.dds.Wrench wrench_;
 
    public WrenchStamped()
    {
-      header_ = new geometry_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       wrench_ = new geometry_msgs.msg.dds.Wrench();
 
    }
@@ -67,7 +67,7 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 
    }
 
-   public geometry_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }

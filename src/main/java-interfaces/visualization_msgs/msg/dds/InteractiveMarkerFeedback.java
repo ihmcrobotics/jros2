@@ -22,7 +22,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    /**
       # Time/frame info.
    */
-   private final visualization_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # Identifying string. Must be unique in the topic namespace.
    */
@@ -50,7 +50,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       # Current pose of the marker
       # Note: Has to be valid for all feedback types.
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Pose pose_;
+   private final geometry_msgs.msg.dds.Pose pose_;
    /**
       # Contains the ID of the selected menu entry
       # Only valid for MENU_SELECT events.
@@ -62,17 +62,17 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       # control.  If it does, mouse_point_valid will be true.  mouse_point
       # will be relative to the frame listed in the header.
    */
-   private final visualization_msgs.msg.dds.geometry_msgs/Point mouse_point_;
+   private final geometry_msgs.msg.dds.Point mouse_point_;
    private boolean mouse_point_valid_;
 
    public InteractiveMarkerFeedback()
    {
-      header_ = new visualization_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       client_id_ = new StringBuilder();
       marker_name_ = new StringBuilder();
       control_name_ = new StringBuilder();
-      pose_ = new visualization_msgs.msg.dds.geometry_msgs/Pose();
-      mouse_point_ = new visualization_msgs.msg.dds.geometry_msgs/Point();
+      pose_ = new geometry_msgs.msg.dds.Pose();
+      mouse_point_ = new geometry_msgs.msg.dds.Point();
       mouse_point_valid_ = (boolean) false;
 
    }
@@ -143,7 +143,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    }
 
-   public visualization_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
@@ -173,7 +173,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.event_type_ = event_type_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Pose getPose()
+   public geometry_msgs.msg.dds.Pose getPose()
    {
       return pose_;
    }
@@ -188,7 +188,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.menu_entry_id_ = menu_entry_id_;
    }
 
-   public visualization_msgs.msg.dds.geometry_msgs/Point getMousePoint()
+   public geometry_msgs.msg.dds.Point getMousePoint()
    {
       return mouse_point_;
    }

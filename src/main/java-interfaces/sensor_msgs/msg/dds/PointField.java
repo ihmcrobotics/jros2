@@ -36,6 +36,7 @@ public class PointField implements ROS2Message<PointField>
    */
    private final StringBuilder name_; // Name of field
    private long offset_; // Offset from start of point struct
+   private short datatype_; // Datatype enumeration, see above
    private long count_; // How many elements in the field
 
    public PointField()
@@ -51,6 +52,7 @@ public class PointField implements ROS2Message<PointField>
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // offset_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // datatype_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // count_
 
       return currentAlignment - initialAlignment;
@@ -61,6 +63,7 @@ public class PointField implements ROS2Message<PointField>
    {
       buffer.writeString(name_);
       buffer.writeLong(offset_);
+      buffer.writeShort(datatype_);
       buffer.writeLong(count_);
 
    }
@@ -70,6 +73,7 @@ public class PointField implements ROS2Message<PointField>
    {
       buffer.readString(name_);
       offset_ = buffer.readLong();
+      datatype_ = buffer.readShort();
       count_ = buffer.readLong();
 
    }
@@ -80,6 +84,7 @@ public class PointField implements ROS2Message<PointField>
       name_.delete(0, name_.length());
       name_.insert(0, from.name_);
       offset_ = from.offset_;
+      datatype_ = from.datatype_;
       count_ = from.count_;
 
    }
@@ -97,6 +102,16 @@ public class PointField implements ROS2Message<PointField>
    public void setOffset(long offset_)
    {
       this.offset_ = offset_;
+   }
+
+   public short getDatatype()
+   {
+      return datatype_;
+   }
+
+   public void setDatatype(short datatype_)
+   {
+      this.datatype_ = datatype_;
    }
 
    public long getCount()

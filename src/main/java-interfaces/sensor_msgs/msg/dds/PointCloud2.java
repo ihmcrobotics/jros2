@@ -32,7 +32,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    /**
       # Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
    */
-   private final sensor_msgs.msg.dds.std_msgs/Header header_;
+   private final std_msgs.msg.dds.Header header_;
    /**
       # 2D structure of the point cloud. If the cloud is unordered, height is
       # 1 and width is the length of the point cloud.
@@ -43,13 +43,17 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       # Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
+   private boolean is_bigendian_; // Is this data bigendian?
+   private long point_step_; // Length of a point in bytes
+   private long row_step_; // Length of a row in bytes
    private final IDLShortSequence data_; // Actual point data, size is (row_step*height)
    private boolean is_dense_; // True if there are no invalid points
 
    public PointCloud2()
    {
-      header_ = new sensor_msgs.msg.dds.std_msgs/Header();
+      header_ = new std_msgs.msg.dds.Header();
       fields_ = new IDLObjectSequence<sensor_msgs.msg.dds.PointField>(sensor_msgs.msg.dds.PointField.class);
+      is_bigendian_ = (boolean) false;
       data_ = new IDLShortSequence();
       is_dense_ = (boolean) false;
 
@@ -64,6 +68,9 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
       currentAlignment += fields_.calculateSizeBytes(currentAlignment);
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_bigendian_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // point_step_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // row_step_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_dense_
 
@@ -77,6 +84,9 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       buffer.writeLong(height_);
       buffer.writeLong(width_);
       fields_.serialize(buffer);
+      buffer.writeBoolean(is_bigendian_);
+      buffer.writeLong(point_step_);
+      buffer.writeLong(row_step_);
       data_.serialize(buffer);
       buffer.writeBoolean(is_dense_);
 
@@ -89,6 +99,9 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       height_ = buffer.readLong();
       width_ = buffer.readLong();
       fields_.deserialize(buffer);
+      is_bigendian_ = buffer.readBoolean();
+      point_step_ = buffer.readLong();
+      row_step_ = buffer.readLong();
       data_.deserialize(buffer);
       is_dense_ = buffer.readBoolean();
 
@@ -101,12 +114,15 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       height_ = from.height_;
       width_ = from.width_;
       fields_.set(from.fields_);
+      is_bigendian_ = from.is_bigendian_;
+      point_step_ = from.point_step_;
+      row_step_ = from.row_step_;
       data_.set(from.data_);
       is_dense_ = from.is_dense_;
 
    }
 
-   public sensor_msgs.msg.dds.std_msgs/Header getHeader()
+   public std_msgs.msg.dds.Header getHeader()
    {
       return header_;
    }
@@ -134,6 +150,36 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public IDLObjectSequence<sensor_msgs.msg.dds.PointField> getFields()
    {
       return fields_;
+   }
+
+   public boolean getIsBigendian()
+   {
+      return is_bigendian_;
+   }
+
+   public void setIsBigendian(boolean is_bigendian_)
+   {
+      this.is_bigendian_ = is_bigendian_;
+   }
+
+   public long getPointStep()
+   {
+      return point_step_;
+   }
+
+   public void setPointStep(long point_step_)
+   {
+      this.point_step_ = point_step_;
+   }
+
+   public long getRowStep()
+   {
+      return row_step_;
+   }
+
+   public void setRowStep(long row_step_)
+   {
+      this.row_step_ = row_step_;
    }
 
    public IDLShortSequence getData()
