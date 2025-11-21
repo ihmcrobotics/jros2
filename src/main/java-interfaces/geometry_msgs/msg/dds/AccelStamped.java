@@ -6,6 +6,10 @@
 This file was generated from the following content:
 (geometry_msgs/AccelStamped)
 ##################################################################################
+   # An accel with reference coordinate frame and timestamp
+   std_msgs/Header header
+   Accel accel
+
 ##################################################################################
 
  */

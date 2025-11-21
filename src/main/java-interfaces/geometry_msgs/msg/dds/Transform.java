@@ -6,6 +6,11 @@
 This file was generated from the following content:
 (geometry_msgs/Transform)
 ##################################################################################
+   # This represents the transform between two coordinate frames in free space.
+
+   Vector3 translation
+   Quaternion rotation
+
 ##################################################################################
 
  */

@@ -28,7 +28,7 @@ Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheats
 This file was generated from the following content:
 (<context.packageName>/<context.resourceName>)
 ##################################################################################
-   <context.fileContent>
+   <context.schema>
 ##################################################################################
 
  */

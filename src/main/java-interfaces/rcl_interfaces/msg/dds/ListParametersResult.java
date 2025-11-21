@@ -6,6 +6,13 @@
 This file was generated from the following content:
 (rcl_interfaces/ListParametersResult)
 ##################################################################################
+   # The resulting parameters under the given prefixes.
+   string[] names
+
+   # The resulting prefixes under the given prefixes.
+   # TODO(wjwwood): link to prefix definition and rules.
+   string[] prefixes
+
 ##################################################################################
 
  */

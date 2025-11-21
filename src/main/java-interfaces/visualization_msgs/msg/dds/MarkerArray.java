@@ -6,6 +6,8 @@
 This file was generated from the following content:
 (visualization_msgs/MarkerArray)
 ##################################################################################
+   Marker[] markers
+
 ##################################################################################
 
  */

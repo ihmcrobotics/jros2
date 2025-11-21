@@ -6,6 +6,10 @@
 This file was generated from the following content:
 (geometry_msgs/AccelWithCovarianceStamped)
 ##################################################################################
+   # This represents an estimated accel with reference coordinate frame and timestamp.
+   std_msgs/Header header
+   AccelWithCovariance accel
+
 ##################################################################################
 
  */

@@ -6,6 +6,9 @@
 This file was generated from the following content:
 (sensor_msgs/JoyFeedbackArray)
 ##################################################################################
+   # This message publishes values for multiple feedback at once.
+   JoyFeedback[] array
+
 ##################################################################################
 
  */

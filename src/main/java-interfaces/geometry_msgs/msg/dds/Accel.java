@@ -6,6 +6,10 @@
 This file was generated from the following content:
 (geometry_msgs/Accel)
 ##################################################################################
+   # This expresses acceleration in free space broken into its linear and angular parts.
+   Vector3  linear
+   Vector3  angular
+
 ##################################################################################
 
  */

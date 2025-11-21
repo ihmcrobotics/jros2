@@ -6,6 +6,11 @@
 This file was generated from the following content:
 (geometry_msgs/QuaternionStamped)
 ##################################################################################
+   # This represents an orientation with reference coordinate frame and timestamp.
+
+   std_msgs/Header header
+   Quaternion quaternion
+
 ##################################################################################
 
  */

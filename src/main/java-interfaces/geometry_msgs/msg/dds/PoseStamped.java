@@ -6,6 +6,11 @@
 This file was generated from the following content:
 (geometry_msgs/PoseStamped)
 ##################################################################################
+   # A Pose with reference coordinate frame and timestamp
+
+   std_msgs/Header header
+   Pose pose
+
 ##################################################################################
 
  */

@@ -6,6 +6,11 @@
 This file was generated from the following content:
 (geometry_msgs/Pose)
 ##################################################################################
+   # A representation of pose in free space, composed of position and orientation.
+
+   Point position
+   Quaternion orientation
+
 ##################################################################################
 
  */

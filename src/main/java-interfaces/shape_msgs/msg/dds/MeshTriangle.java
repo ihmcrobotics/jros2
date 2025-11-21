@@ -6,6 +6,10 @@
 This file was generated from the following content:
 (shape_msgs/MeshTriangle)
 ##################################################################################
+   # Definition of a triangle's vertices.
+
+   uint32[3] vertex_indices
+
 ##################################################################################
 
  */

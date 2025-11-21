@@ -6,6 +6,11 @@
 This file was generated from the following content:
 (geometry_msgs/InertiaStamped)
 ##################################################################################
+   # An Inertia with a time stamp and reference frame.
+
+   std_msgs/Header header
+   Inertia inertia
+
 ##################################################################################
 
  */
