@@ -138,7 +138,15 @@ public class InterfaceField
    {
       if (name != null)
       {
-         return String.format("get%s", snakeToPascal(name));
+         // Handle edge case where we don't want to generate a method getClass()
+         if (name.equals("class"))
+         {
+            return "getClass_";
+         }
+         else
+         {
+            return String.format("get%s", snakeToPascal(name));
+         }
       }
       else
       {
