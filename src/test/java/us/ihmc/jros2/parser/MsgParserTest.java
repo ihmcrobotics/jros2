@@ -41,13 +41,13 @@ public class MsgParserTest
       Assertions.assertEquals("TestMsg.msg", testMsg.getResourceName());
       Assertions.assertEquals("TestMsg", testMsg.getJavaClassName());
       Assertions.assertEquals(
-            "# Header comment for the entire message\n# Header comment for the entire message (line 2)\n# Header comment for the entire message (line 3)",
+            "Header comment for the entire message\nHeader comment for the entire message (line 2)\nHeader comment for the entire message (line 3)",
             testMsg.getHeaderComment());
       Assertions.assertEquals(3, testMsg.getFields().size());
 
       Assertions.assertEquals("uint32", testMsg.getFields().get("test_int").getType());
       Assertions.assertEquals(
-            "# Some comment about test_int # # # #\n# Some comment about test_int (line 2) # # # #\n# Some comment about test_int (line 3) # # # #",
+            "Some comment about test_int # # # #\nSome comment about test_int (line 2) # # # #\nSome comment about test_int (line 3) # # # #",
             testMsg.getFields().get("test_int").getHeaderComment());
       Assertions.assertEquals("Some additional comment about test_int", testMsg.getFields().get("test_int").getTrailingComment());
       Assertions.assertEquals("uint32", testMsg.getFields().get("const_int").getType());

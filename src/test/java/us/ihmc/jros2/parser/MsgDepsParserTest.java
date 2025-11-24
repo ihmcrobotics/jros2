@@ -58,7 +58,7 @@ public class MsgDepsParserTest
       Assertions.assertEquals("Time", builtin_interfaces_Time.getResourceName());
       Assertions.assertEquals("builtin_interfaces.msg.dds", builtin_interfaces_Time.getJavaPackageName());
       Assertions.assertEquals("Time", builtin_interfaces_Time.getJavaClassName());
-      Assertions.assertEquals("# This message communicates ROS Time defined here:\n# https://design.ros2.org/articles/clock_and_time.html",
+      Assertions.assertEquals("This message communicates ROS Time defined here:\nhttps://design.ros2.org/articles/clock_and_time.html",
                               builtin_interfaces_Time.getHeaderComment());
       Assertions.assertEquals(2, builtin_interfaces_Time.getFields().size());
       InterfaceField Time_sec_field = builtin_interfaces_Time.getFields().get("sec");
@@ -79,12 +79,12 @@ public class MsgDepsParserTest
          Assertions.assertFalse(Time_sec_field.isUnbounded());
          Assertions.assertFalse(Time_sec_field.isSequence());
          Assertions.assertFalse(Time_sec_field.isFixedSize());
-         Assertions.assertEquals(-1, Time_sec_field.getLength()); // TODO: Should be 0?
+         Assertions.assertEquals(-1, Time_sec_field.getLength());
          Assertions.assertNull(Time_sec_field.getConstantValue());
          Assertions.assertNull(Time_sec_field.getDefaultValue());
          Assertions.assertFalse(Time_sec_field.isDefaultValueArray());
          Assertions.assertEquals(0, Time_sec_field.getDefaultValueArrayValues().size());
-         Assertions.assertEquals("# The seconds component, valid over all int32 values.", Time_sec_field.getHeaderComment());
+         Assertions.assertEquals("The seconds component, valid over all int32 values.", Time_sec_field.getHeaderComment());
          Assertions.assertNull(Time_sec_field.getTrailingComment());
          Assertions.assertTrue(Time_sec_field.isBuiltinType());
          Assertions.assertFalse(Time_sec_field.isBuiltinStringType());
@@ -113,12 +113,12 @@ public class MsgDepsParserTest
          Assertions.assertFalse(Time_nanosec_field.isUnbounded());
          Assertions.assertFalse(Time_nanosec_field.isSequence());
          Assertions.assertFalse(Time_nanosec_field.isFixedSize());
-         Assertions.assertEquals(-1, Time_nanosec_field.getLength()); // TODO: Should be 0?
+         Assertions.assertEquals(-1, Time_nanosec_field.getLength());
          Assertions.assertNull(Time_nanosec_field.getConstantValue());
          Assertions.assertNull(Time_nanosec_field.getDefaultValue());
          Assertions.assertFalse(Time_nanosec_field.isDefaultValueArray());
          Assertions.assertEquals(0, Time_nanosec_field.getDefaultValueArrayValues().size());
-         Assertions.assertEquals("# The nanoseconds component, valid in the range [0, 10e9).", Time_nanosec_field.getHeaderComment());
+         Assertions.assertEquals("The nanoseconds component, valid in the range [0, 10e9).", Time_nanosec_field.getHeaderComment());
          Assertions.assertNull(Time_nanosec_field.getTrailingComment());
          Assertions.assertTrue(Time_nanosec_field.isBuiltinType());
          Assertions.assertFalse(Time_nanosec_field.isBuiltinStringType());
