@@ -9,8 +9,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- A specification of a polygon where the first and last points are assumed to be connected
- It includes a unique identification field for disambiguating multiple instances
+A specification of a polygon where the first and last points are assumed to be connected
+It includes a unique identification field for disambiguating multiple instances
 <p>Source (geometry_msgs/PolygonInstance):
 <pre>{@code
 # A specification of a polygon where the first and last points are assumed to be connected

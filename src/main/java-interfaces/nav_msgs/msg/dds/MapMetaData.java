@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This hold basic information about the characteristics of the OccupancyGrid
+This hold basic information about the characteristics of the OccupancyGrid
 <p>Source (nav_msgs/MapMetaData):
 <pre>{@code
 # This hold basic information about the characteristics of the OccupancyGrid
@@ -36,24 +36,24 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
    /**
-       The time at which the map was loaded
+      The time at which the map was loaded
    */
    private final builtin_interfaces.msg.dds.Time map_load_time_;
    /**
-       The map resolution [m/cell]
+      The map resolution [m/cell]
    */
    private float resolution_;
    /**
-       Map width [cells]
+      Map width [cells]
    */
    private long width_;
    /**
-       Map height [cells]
+      Map height [cells]
    */
    private long height_;
    /**
-       The origin of the map [m, m, rad].  This is the real-world pose of the
-       bottom left corner of cell (0,0) in the map.
+      The origin of the map [m, m, rad].  This is the real-world pose of the
+      bottom left corner of cell (0,0) in the map.
    */
    private final geometry_msgs.msg.dds.Pose origin_;
 

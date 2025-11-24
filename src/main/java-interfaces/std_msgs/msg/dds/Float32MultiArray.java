@@ -9,8 +9,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Please look at the MultiArrayLayout message definition for
- documentation on all multiarrays.
+Please look at the MultiArrayLayout message definition for
+documentation on all multiarrays.
 <p>Source (std_msgs/Float32MultiArray):
 <pre>{@code
 # This was originally provided as an example message.

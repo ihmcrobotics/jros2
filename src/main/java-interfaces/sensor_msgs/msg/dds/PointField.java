@@ -34,8 +34,8 @@ public class PointField implements ROS2Message<PointField>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
    /**
-       This message holds the description of one point entry in the
-       PointCloud2 message format.
+      This message holds the description of one point entry in the
+      PointCloud2 message format.
    */
    public static final short INT8 = 1;
    public static final short UINT8 = 2;
@@ -46,7 +46,7 @@ public class PointField implements ROS2Message<PointField>
    public static final short FLOAT32 = 7;
    public static final short FLOAT64 = 8;
    /**
-       Common PointField names are x, y, z, intensity, rgb, rgba
+      Common PointField names are x, y, z, intensity, rgb, rgba
    */
    private final StringBuilder name_; // Name of field
    private long offset_; // Offset from start of point struct

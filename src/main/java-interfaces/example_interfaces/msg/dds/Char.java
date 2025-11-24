@@ -23,10 +23,10 @@ public class Char implements ROS2Message<Char>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Char_";
 
    /**
-       This is an example message of using a primitive datatype, char.
-       If you want to test with this that's fine, but if you are deploying
-       it into a system you should create a semantically meaningful message type.
-       If you want to embed it in another message, use the primitive data type instead.
+      This is an example message of using a primitive datatype, char.
+      If you want to test with this that's fine, but if you are deploying
+      it into a system you should create a semantically meaningful message type.
+      If you want to embed it in another message, use the primitive data type instead.
    */
    private char data_;
 

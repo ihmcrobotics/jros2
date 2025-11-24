@@ -44,37 +44,37 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarker_";
 
    /**
-       Time/frame info.
-       If header.time is set to 0, the marker will be retransformed into
-       its frame on each timestep. You will receive the pose feedback
-       in the same frame.
-       Otherwise, you might receive feedback in a different frame.
-       For rviz, this will be the current 'fixed frame' set by the user.
+      Time/frame info.
+      If header.time is set to 0, the marker will be retransformed into
+      its frame on each timestep. You will receive the pose feedback
+      in the same frame.
+      Otherwise, you might receive feedback in a different frame.
+      For rviz, this will be the current 'fixed frame' set by the user.
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-       Initial pose. Also, defines the pivot point for rotations.
+      Initial pose. Also, defines the pivot point for rotations.
    */
    private final geometry_msgs.msg.dds.Pose pose_;
    /**
-       Identifying string. Must be globally unique in
-       the topic that this message is sent through.
+      Identifying string. Must be globally unique in
+      the topic that this message is sent through.
    */
    private final StringBuilder name_;
    /**
-       Short description (< 40 characters).
+      Short description (< 40 characters).
    */
    private final StringBuilder description_;
    /**
-       Scale to be used for default controls (default=1).
+      Scale to be used for default controls (default=1).
    */
    private float scale_;
    /**
-       All menu and submenu entries associated with this marker.
+      All menu and submenu entries associated with this marker.
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.MenuEntry> menu_entries_;
    /**
-       List of controls displayed for this marker.
+      List of controls displayed for this marker.
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerControl> controls_;
 

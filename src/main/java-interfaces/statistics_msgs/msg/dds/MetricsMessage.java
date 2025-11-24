@@ -10,16 +10,16 @@ import us.ihmc.jros2.ROS2Message;
 
 /**
 ############################################
- A generic metrics message providing statistics for measurements from different sources. For example,
- measure a system's CPU % for a given window yields the following data points over a window of time:
+A generic metrics message providing statistics for measurements from different sources. For example,
+measure a system's CPU % for a given window yields the following data points over a window of time:
 
-   - average cpu %
-   - std deviation
-   - min
-   - max
-   - sample count
+- average cpu %
+- std deviation
+- min
+- max
+- sample count
 
- These are all represented as different 'StatisticDataPoint's.
+These are all represented as different 'StatisticDataPoint's.
 ############################################
 <p>Source (statistics_msgs/MetricsMessage):
 <pre>{@code
@@ -60,27 +60,27 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    public static final java.lang.String name = "statistics_msgs::msg::dds_::MetricsMessage_";
 
    /**
-       Name metric measurement source, e.g., node, topic, or process name
+      Name metric measurement source, e.g., node, topic, or process name
    */
    private final StringBuilder measurement_source_name_;
    /**
-       Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
+      Name of the metric being measured, e.g. cpu_percentage, free_memory_mb, message_age, etc.
    */
    private final StringBuilder metrics_source_;
    /**
-       Unit of measure of the metric, e.g. percent, mb, seconds, etc.
+      Unit of measure of the metric, e.g. percent, mb, seconds, etc.
    */
    private final StringBuilder unit_;
    /**
-       Measurement window start time
+      Measurement window start time
    */
    private final builtin_interfaces.msg.dds.Time window_start_;
    /**
-       Measurement window end time
+      Measurement window end time
    */
    private final builtin_interfaces.msg.dds.Time window_stop_;
    /**
-       A list of statistics data point, defined in StatisticDataPoint.msg
+      A list of statistics data point, defined in StatisticDataPoint.msg
    */
    private final IDLObjectSequence<statistics_msgs.msg.dds.StatisticDataPoint> statistics_;
 

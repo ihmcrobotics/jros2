@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Single temperature reading.
+Single temperature reading.
 <p>Source (sensor_msgs/Temperature):
 <pre>{@code
 # Single temperature reading.

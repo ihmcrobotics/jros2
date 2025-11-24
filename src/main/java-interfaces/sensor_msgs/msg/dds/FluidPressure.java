@@ -9,11 +9,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Single pressure reading.  This message is appropriate for measuring the
- pressure inside of a fluid (air, water, etc).  This also includes
- atmospheric or barometric pressure.
+Single pressure reading.  This message is appropriate for measuring the
+pressure inside of a fluid (air, water, etc).  This also includes
+atmospheric or barometric pressure.
 
- This message is not appropriate for force/pressure contact sensors.
+This message is not appropriate for force/pressure contact sensors.
 <p>Source (sensor_msgs/FluidPressure):
 <pre>{@code
 # Single pressure reading.  This message is appropriate for measuring the

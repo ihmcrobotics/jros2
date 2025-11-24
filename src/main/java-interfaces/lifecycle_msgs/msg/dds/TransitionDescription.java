@@ -26,15 +26,15 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::TransitionDescription_";
 
    /**
-       The transition id and label of this description.
+      The transition id and label of this description.
    */
    private final lifecycle_msgs.msg.dds.Transition transition_;
    /**
-       The current state from which this transition transitions.
+      The current state from which this transition transitions.
    */
    private final lifecycle_msgs.msg.dds.State start_state_;
    /**
-       The desired target state of this transition.
+      The desired target state of this transition.
    */
    private final lifecycle_msgs.msg.dds.State goal_state_;
 

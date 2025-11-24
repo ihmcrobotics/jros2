@@ -9,8 +9,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Defines box, sphere, cylinder, cone and prism.
- All shapes are defined to have their bounding boxes centered around 0,0,0.
+Defines box, sphere, cylinder, cone and prism.
+All shapes are defined to have their bounding boxes centered around 0,0,0.
 <p>Source (shape_msgs/SolidPrimitive):
 <pre>{@code
 # Defines box, sphere, cylinder, cone and prism.
@@ -75,21 +75,21 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    public static final short CONE = 4;
    public static final short PRISM = 5;
    /**
-       The type of the shape
+      The type of the shape
    */
    private short type_;
    /**
-       The dimensions of the shape
+      The dimensions of the shape
    */
    private final IDLDoubleSequence dimensions_; // At no point will dimensions have a length > 3.
    /**
-       For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
+      For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */
    public static final short BOX_X = 0;
    public static final short BOX_Y = 1;
    public static final short BOX_Z = 2;
    /**
-       For the SPHERE type, only one component is used, and it gives the radius of the sphere.
+      For the SPHERE type, only one component is used, and it gives the radius of the sphere.
    */
    public static final short SPHERE_RADIUS = 0;
    public static final short CYLINDER_HEIGHT = 0;

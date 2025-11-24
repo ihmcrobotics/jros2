@@ -9,14 +9,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Measurement of the Magnetic Field vector at a specific location.
+Measurement of the Magnetic Field vector at a specific location.
 
- If the covariance of the measurement is known, it should be filled in.
- If all you know is the variance of each measurement, e.g. from the datasheet,
- just put those along the diagonal.
- A covariance matrix of all zeros will be interpreted as "covariance unknown",
- and to use the data a covariance will have to be assumed or gotten from some
- other source.
+If the covariance of the measurement is known, it should be filled in.
+If all you know is the variance of each measurement, e.g. from the datasheet,
+just put those along the diagonal.
+A covariance matrix of all zeros will be interpreted as "covariance unknown",
+and to use the data a covariance will have to be assumed or gotten from some
+other source.
 <p>Source (sensor_msgs/MagneticField):
 <pre>{@code
 # Measurement of the Magnetic Field vector at a specific location.

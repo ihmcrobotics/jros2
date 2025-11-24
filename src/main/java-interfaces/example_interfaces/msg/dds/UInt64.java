@@ -23,10 +23,10 @@ public class UInt64 implements ROS2Message<UInt64>
    public static final java.lang.String name = "example_interfaces::msg::dds_::UInt64_";
 
    /**
-       This is an example message of using a primitive datatype, unint64.
-       If you want to test with this that's fine, but if you are deploying
-       it into a system you should create a semantically meaningful message type.
-       If you want to embed it in another message, use the primitive data type instead.
+      This is an example message of using a primitive datatype, unint64.
+      If you want to test with this that's fine, but if you are deploying
+      it into a system you should create a semantically meaningful message type.
+      If you want to embed it in another message, use the primitive data type instead.
    */
    private long data_;
 

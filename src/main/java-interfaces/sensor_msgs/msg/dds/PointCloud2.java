@@ -9,14 +9,14 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This message holds a collection of N-dimensional points, which may
- contain additional information such as normals, intensity, etc. The
- point data is stored as a binary blob, its layout described by the
- contents of the "fields" array.
+This message holds a collection of N-dimensional points, which may
+contain additional information such as normals, intensity, etc. The
+point data is stored as a binary blob, its layout described by the
+contents of the "fields" array.
 
- The point cloud data may be organized 2d (image-like) or 1d (unordered).
- Point clouds organized as 2d images may be produced by camera depth sensors
- such as stereo or time-of-flight.
+The point cloud data may be organized 2d (image-like) or 1d (unordered).
+Point clouds organized as 2d images may be produced by camera depth sensors
+such as stereo or time-of-flight.
 <p>Source (sensor_msgs/PointCloud2):
 <pre>{@code
 # This message holds a collection of N-dimensional points, which may
@@ -52,17 +52,17 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
 
    /**
-       Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
+      Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-       2D structure of the point cloud. If the cloud is unordered, height is
-       1 and width is the length of the point cloud.
+      2D structure of the point cloud. If the cloud is unordered, height is
+      1 and width is the length of the point cloud.
    */
    private long height_;
    private long width_;
    /**
-       Describes the channels and their layout in the binary data blob.
+      Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
    private boolean is_bigendian_; // Is this data bigendian?

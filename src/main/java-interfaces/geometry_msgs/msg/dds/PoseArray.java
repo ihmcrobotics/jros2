@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- An array of poses with a header for global reference.
+An array of poses with a header for global reference.
 <p>Source (geometry_msgs/PoseArray):
 <pre>{@code
 # An array of poses with a header for global reference.

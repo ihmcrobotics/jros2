@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Standard metadata for higher-level stamped data types.
- This is generally used to communicate timestamped data
- in a particular coordinate frame.
+Standard metadata for higher-level stamped data types.
+This is generally used to communicate timestamped data
+in a particular coordinate frame.
 <p>Source (std_msgs/Header):
 <pre>{@code
 # Standard metadata for higher-level stamped data types.
@@ -30,11 +30,11 @@ public class Header implements ROS2Message<Header>
    public static final java.lang.String name = "std_msgs::msg::dds_::Header_";
 
    /**
-       Two-integer timestamp that is expressed as seconds and nanoseconds.
+      Two-integer timestamp that is expressed as seconds and nanoseconds.
    */
    private final builtin_interfaces.msg.dds.Time stamp_;
    /**
-       Transform frame with which this data is associated.
+      Transform frame with which this data is associated.
    */
    private final StringBuilder frame_id_;
 

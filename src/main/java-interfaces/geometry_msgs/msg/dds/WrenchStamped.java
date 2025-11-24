@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- A wrench with reference coordinate frame and timestamp
+A wrench with reference coordinate frame and timestamp
 <p>Source (geometry_msgs/WrenchStamped):
 <pre>{@code
 # A wrench with reference coordinate frame and timestamp

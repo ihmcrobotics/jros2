@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Single reading from a relative humidity sensor.
- Defines the ratio of partial pressure of water vapor to the saturated vapor
- pressure at a temperature.
+Single reading from a relative humidity sensor.
+Defines the ratio of partial pressure of water vapor to the saturated vapor
+pressure at a temperature.
 <p>Source (sensor_msgs/RelativeHumidity):
 <pre>{@code
 # Single reading from a relative humidity sensor.

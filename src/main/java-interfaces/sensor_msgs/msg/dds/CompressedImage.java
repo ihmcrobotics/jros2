@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This message contains a compressed image.
+This message contains a compressed image.
 <p>Source (sensor_msgs/CompressedImage):
 <pre>{@code
 # This message contains a compressed image.

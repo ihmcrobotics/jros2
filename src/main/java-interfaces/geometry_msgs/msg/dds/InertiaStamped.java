@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- An Inertia with a time stamp and reference frame.
+An Inertia with a time stamp and reference frame.
 <p>Source (geometry_msgs/InertiaStamped):
 <pre>{@code
 # An Inertia with a time stamp and reference frame.

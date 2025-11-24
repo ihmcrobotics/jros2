@@ -9,8 +9,8 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Note that this follows vector semantics with it always anchored at the origin,
- so the rotational elements of a transform are the only parts applied when transforming.
+Note that this follows vector semantics with it always anchored at the origin,
+so the rotational elements of a transform are the only parts applied when transforming.
 <p>Source (geometry_msgs/Vector3Stamped):
 <pre>{@code
 # This represents a Vector3 with reference coordinate frame and timestamp

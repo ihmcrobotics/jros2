@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- An array of cells in a 2D grid
+An array of cells in a 2D grid
 <p>Source (nav_msgs/GridCells):
 <pre>{@code
 # An array of cells in a 2D grid
@@ -32,15 +32,15 @@ public class GridCells implements ROS2Message<GridCells>
 
    private final std_msgs.msg.dds.Header header_;
    /**
-       Width of each cell
+      Width of each cell
    */
    private float cell_width_;
    /**
-       Height of each cell
+      Height of each cell
    */
    private float cell_height_;
    /**
-       Each cell is represented by the Point at the center of the cell
+      Each cell is represented by the Point at the center of the cell
    */
    private final IDLObjectSequence<geometry_msgs.msg.dds.Point> cells_;
 

@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- A representation of pose in free space, composed of position and orientation.
+A representation of pose in free space, composed of position and orientation.
 <p>Source (geometry_msgs/Pose):
 <pre>{@code
 # A representation of pose in free space, composed of position and orientation.

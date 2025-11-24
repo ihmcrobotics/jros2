@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Reserved [0-9], publicly available transitions.
- When a node is in one of these primary states, these transitions can be
- invoked.
+Reserved [0-9], publicly available transitions.
+When a node is in one of these primary states, these transitions can be
+invoked.
 <p>Source (lifecycle_msgs/Transition):
 <pre>{@code
 # Default values for transitions as described in:
@@ -115,54 +115,54 @@ public class Transition implements ROS2Message<Transition>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::Transition_";
 
    /**
-       This transition will instantiate the node, but will not run any code beyond
-       the constructor.
+      This transition will instantiate the node, but will not run any code beyond
+      the constructor.
    */
    public static final short TRANSITION_CREATE = 0;
    /**
-       The node's onConfigure callback will be called to allow the node to load its
-       configuration and conduct any required setup.
+      The node's onConfigure callback will be called to allow the node to load its
+      configuration and conduct any required setup.
    */
    public static final short TRANSITION_CONFIGURE = 1;
    /**
-       The node's callback onCleanup will be called in this transition to allow the
-       node to load its configuration and conduct any required setup.
+      The node's callback onCleanup will be called in this transition to allow the
+      node to load its configuration and conduct any required setup.
    */
    public static final short TRANSITION_CLEANUP = 2;
    /**
-       The node's callback onActivate will be executed to do any final preparations
-       to start executing.
+      The node's callback onActivate will be executed to do any final preparations
+      to start executing.
    */
    public static final short TRANSITION_ACTIVATE = 3;
    /**
-       The node's callback onDeactivate will be executed to do any cleanup to start
-       executing, and reverse the onActivate changes.
+      The node's callback onDeactivate will be executed to do any cleanup to start
+      executing, and reverse the onActivate changes.
    */
    public static final short TRANSITION_DEACTIVATE = 4;
    /**
-       This signals shutdown during an unconfigured state, the node's callback
-       onShutdown will be executed to do any cleanup necessary before destruction.
+      This signals shutdown during an unconfigured state, the node's callback
+      onShutdown will be executed to do any cleanup necessary before destruction.
    */
    public static final short TRANSITION_UNCONFIGURED_SHUTDOWN = 5;
    /**
-       This signals shutdown during an inactive state, the node's callback onShutdown
-       will be executed to do any cleanup necessary before destruction.
+      This signals shutdown during an inactive state, the node's callback onShutdown
+      will be executed to do any cleanup necessary before destruction.
    */
    public static final short TRANSITION_INACTIVE_SHUTDOWN = 6;
    /**
-       This signals shutdown during an active state, the node's callback onShutdown
-       will be executed to do any cleanup necessary before destruction.
+      This signals shutdown during an active state, the node's callback onShutdown
+      will be executed to do any cleanup necessary before destruction.
    */
    public static final short TRANSITION_ACTIVE_SHUTDOWN = 7;
    /**
-       This transition will simply cause the deallocation of the node.
+      This transition will simply cause the deallocation of the node.
    */
    public static final short TRANSITION_DESTROY = 8;
    /**
-       Reserved [10-69], private transitions
-       These transitions are not publicly available and cannot be invoked by a user.
-       The following transitions are implicitly invoked based on the callback
-       feedback of the intermediate transition states.
+      Reserved [10-69], private transitions
+      These transitions are not publicly available and cannot be invoked by a user.
+      The following transitions are implicitly invoked based on the callback
+      feedback of the intermediate transition states.
    */
    public static final short TRANSITION_ON_CONFIGURE_SUCCESS = 10;
    public static final short TRANSITION_ON_CONFIGURE_FAILURE = 11;
@@ -183,24 +183,24 @@ public class Transition implements ROS2Message<Transition>
    public static final short TRANSITION_ON_ERROR_FAILURE = 61;
    public static final short TRANSITION_ON_ERROR_ERROR = 62;
    /**
-       The transition callback successfully performed its required functionality.
+      The transition callback successfully performed its required functionality.
    */
    public static final short TRANSITION_CALLBACK_SUCCESS = 97;
    /**
-       The transition callback failed to perform its required functionality.
+      The transition callback failed to perform its required functionality.
    */
    public static final short TRANSITION_CALLBACK_FAILURE = 98;
    /**
-       The transition callback encountered an error that requires special cleanup, if
-       possible.
+      The transition callback encountered an error that requires special cleanup, if
+      possible.
    */
    public static final short TRANSITION_CALLBACK_ERROR = 99;
    /**
-       The transition id from above definitions.
+      The transition id from above definitions.
    */
    private short id_;
    /**
-       A text label of the transition.
+      A text label of the transition.
    */
    private final StringBuilder label_;
 

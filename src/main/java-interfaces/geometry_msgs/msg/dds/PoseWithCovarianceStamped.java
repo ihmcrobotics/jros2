@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This expresses an estimated pose with a reference coordinate frame and timestamp
+This expresses an estimated pose with a reference coordinate frame and timestamp
 <p>Source (geometry_msgs/PoseWithCovarianceStamped):
 <pre>{@code
 # This expresses an estimated pose with a reference coordinate frame and timestamp

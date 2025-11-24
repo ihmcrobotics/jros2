@@ -9,10 +9,10 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Constants are chosen to match the enums in the linux kernel
- defined in include/linux/power_supply.h as of version 3.7
- The one difference is for style reasons the constants are
- all uppercase not mixed case.
+Constants are chosen to match the enums in the linux kernel
+defined in include/linux/power_supply.h as of version 3.7
+The one difference is for style reasons the constants are
+all uppercase not mixed case.
 <p>Source (sensor_msgs/BatteryState):
 <pre>{@code
 
@@ -74,7 +74,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::BatteryState_";
 
    /**
-       Power supply status constants
+      Power supply status constants
    */
    public static final short POWER_SUPPLY_STATUS_UNKNOWN = 0;
    public static final short POWER_SUPPLY_STATUS_CHARGING = 1;
@@ -82,7 +82,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    public static final short POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
    public static final short POWER_SUPPLY_STATUS_FULL = 4;
    /**
-       Power supply health constants
+      Power supply health constants
    */
    public static final short POWER_SUPPLY_HEALTH_UNKNOWN = 0;
    public static final short POWER_SUPPLY_HEALTH_GOOD = 1;
@@ -94,7 +94,7 @@ public class BatteryState implements ROS2Message<BatteryState>
    public static final short POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
    public static final short POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
    /**
-       Power supply technology (chemistry) constants
+      Power supply technology (chemistry) constants
    */
    public static final short POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
    public static final short POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
@@ -117,11 +117,11 @@ public class BatteryState implements ROS2Message<BatteryState>
    private boolean present_; // True if the battery is present
    private final IDLFloatSequence cell_voltage_; // An array of individual cell voltages for each cell in the pack
    /**
-       If individual voltages unknown but number of cells known set each to NaN
+      If individual voltages unknown but number of cells known set each to NaN
    */
    private final IDLFloatSequence cell_temperature_; // An array of individual cell temperatures for each cell in the pack
    /**
-       If individual temperatures unknown but number of cells known set each to NaN
+      If individual temperatures unknown but number of cells known set each to NaN
    */
    private final StringBuilder location_; // The location into which the battery is inserted. (slot number or plug)
    private final StringBuilder serial_number_; // The best approximation of the battery serial number

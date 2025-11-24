@@ -59,7 +59,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    private final StringBuilder up_to_ten_characters_string_;
    private final IDLStringSequence up_to_five_unbounded_strings_;
    /**
-       Test header comment
+      Test header comment
    */
    // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.

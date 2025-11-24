@@ -50,37 +50,37 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerUpdate_";
 
    /**
-       Identifying string. Must be unique in the topic namespace
-       that this server works on.
+      Identifying string. Must be unique in the topic namespace
+      that this server works on.
    */
    private final StringBuilder server_id_;
    /**
-       Sequence number.
-       The client will use this to detect if it has missed an update.
+      Sequence number.
+      The client will use this to detect if it has missed an update.
    */
    private long seq_num_;
    /**
-       Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
-       UPDATE: Incremental update to previous state.
-               The sequence number must be 1 higher than for
-               the previous update.
-       KEEP_ALIVE: Indicates the that the server is still living.
-                   The sequence number does not increase.
-                   No payload data should be filled out (markers, poses, or erases).
+      Type holds the purpose of this message.  It must be one of UPDATE or KEEP_ALIVE.
+      UPDATE: Incremental update to previous state.
+      The sequence number must be 1 higher than for
+      the previous update.
+      KEEP_ALIVE: Indicates the that the server is still living.
+      The sequence number does not increase.
+      No payload data should be filled out (markers, poses, or erases).
    */
    public static final short KEEP_ALIVE = 0;
    public static final short UPDATE = 1;
    private short type_;
    /**
-       Markers to be added or updated
+      Markers to be added or updated
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarker> markers_;
    /**
-       Poses of markers that should be moved
+      Poses of markers that should be moved
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.InteractiveMarkerPose> poses_;
    /**
-       Names of markers to be erased
+      Names of markers to be erased
    */
    private final IDLStringSequence erases_;
 

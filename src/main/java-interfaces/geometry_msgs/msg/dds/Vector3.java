@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This is semantically different than a point.
- A vector is always anchored at the origin.
- When a transform is applied to a vector, only the rotational component is applied.
+This is semantically different than a point.
+A vector is always anchored at the origin.
+When a transform is applied to a vector, only the rotational component is applied.
 <p>Source (geometry_msgs/Vector3):
 <pre>{@code
 # This represents a vector in free space.

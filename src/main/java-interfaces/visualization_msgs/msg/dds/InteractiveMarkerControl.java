@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Represents a control that is to be displayed together with an interactive marker
+Represents a control that is to be displayed together with an interactive marker
 <p>Source (visualization_msgs/InteractiveMarkerControl):
 <pre>{@code
 # Represents a control that is to be displayed together with an interactive marker
@@ -96,37 +96,37 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
 
    /**
-       Identifying string for this control.
-       You need to assign a unique value to this to receive feedback from the GUI
-       on what actions the user performs on this control (e.g. a button click).
+      Identifying string for this control.
+      You need to assign a unique value to this to receive feedback from the GUI
+      on what actions the user performs on this control (e.g. a button click).
    */
    private final StringBuilder name_;
    /**
-       Defines the local coordinate frame (relative to the pose of the parent
-       interactive marker) in which is being rotated and translated.
-       Default: Identity
+      Defines the local coordinate frame (relative to the pose of the parent
+      interactive marker) in which is being rotated and translated.
+      Default: Identity
    */
    private final geometry_msgs.msg.dds.Quaternion orientation_;
    /**
-       Orientation mode: controls how orientation changes.
-       INHERIT: Follow orientation of interactive marker
-       FIXED: Keep orientation fixed at initial state
-       VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
+      Orientation mode: controls how orientation changes.
+      INHERIT: Follow orientation of interactive marker
+      FIXED: Keep orientation fixed at initial state
+      VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
    */
    public static final short INHERIT = 0;
    public static final short FIXED = 1;
    public static final short VIEW_FACING = 2;
    private short orientation_mode_;
    /**
-       Interaction mode for this control
+      Interaction mode for this control
 
-       NONE: This control is only meant for visualization; no context menu.
-       MENU: Like NONE, but right-click menu is active.
-       BUTTON: Element can be left-clicked.
-       MOVE_AXIS: Translate along local x-axis.
-       MOVE_PLANE: Translate in local y-z plane.
-       ROTATE_AXIS: Rotate around local x-axis.
-       MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
+      NONE: This control is only meant for visualization; no context menu.
+      MENU: Like NONE, but right-click menu is active.
+      BUTTON: Element can be left-clicked.
+      MOVE_AXIS: Translate along local x-axis.
+      MOVE_PLANE: Translate in local y-z plane.
+      ROTATE_AXIS: Rotate around local x-axis.
+      MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
    */
    public static final short NONE = 0;
    public static final short MENU = 1;
@@ -136,41 +136,41 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public static final short ROTATE_AXIS = 5;
    public static final short MOVE_ROTATE = 6;
    /**
-       "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
-       MOVE_3D: Translate freely in 3D space.
-       ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
-       MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
+      "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
+      MOVE_3D: Translate freely in 3D space.
+      ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
+      MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
    */
    public static final short MOVE_3D = 7;
    public static final short ROTATE_3D = 8;
    public static final short MOVE_ROTATE_3D = 9;
    private short interaction_mode_;
    /**
-       If true, the contained markers will also be visible
-       when the gui is not in interactive mode.
+      If true, the contained markers will also be visible
+      when the gui is not in interactive mode.
    */
    private boolean always_visible_;
    /**
-       Markers to be displayed as custom visual representation.
-       Leave this empty to use the default control handles.
+      Markers to be displayed as custom visual representation.
+      Leave this empty to use the default control handles.
 
-       Note:
-       - The markers can be defined in an arbitrary coordinate frame,
-         but will be transformed into the local frame of the interactive marker.
-       - If the header of a marker is empty, its pose will be interpreted as
-         relative to the pose of the parent interactive marker.
+      Note:
+      - The markers can be defined in an arbitrary coordinate frame,
+      but will be transformed into the local frame of the interactive marker.
+      - If the header of a marker is empty, its pose will be interpreted as
+      relative to the pose of the parent interactive marker.
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.Marker> markers_;
    /**
-       In VIEW_FACING mode, set this to true if you don't want the markers
-       to be aligned with the camera view point. The markers will show up
-       as in INHERIT mode.
+      In VIEW_FACING mode, set this to true if you don't want the markers
+      to be aligned with the camera view point. The markers will show up
+      as in INHERIT mode.
    */
    private boolean independent_marker_orientation_;
    /**
-       Short description (< 40 characters) of what this control does,
-       e.g. "Move the robot".
-       Default: A generic description based on the interaction mode
+      Short description (< 40 characters) of what this control does,
+      e.g. "Move the robot".
+      Default: A generic description based on the interaction mode
    */
    private final StringBuilder description_;
 

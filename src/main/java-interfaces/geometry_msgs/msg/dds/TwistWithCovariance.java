@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This expresses velocity in free space with uncertainty.
+This expresses velocity in free space with uncertainty.
 <p>Source (geometry_msgs/TwistWithCovariance):
 <pre>{@code
 # This expresses velocity in free space with uncertainty.
@@ -29,10 +29,10 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
    private final geometry_msgs.msg.dds.Twist twist_;
    /**
-       Row-major representation of the 6x6 covariance matrix
-       The orientation parameters use a fixed-axis representation.
-       In order, the parameters are:
-       (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)
+      Row-major representation of the 6x6 covariance matrix
+      The orientation parameters use a fixed-axis representation.
+      In order, the parameters are:
+      (x, y, z, rotation about X axis, rotation about Y axis, rotation about Z axis)
    */
    private final double[] covariance_;
 

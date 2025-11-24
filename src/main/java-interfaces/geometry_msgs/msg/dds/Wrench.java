@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This represents force in free space, separated into its linear and angular parts.
+This represents force in free space, separated into its linear and angular parts.
 <p>Source (geometry_msgs/Wrench):
 <pre>{@code
 # This represents force in free space, separated into its linear and angular parts.

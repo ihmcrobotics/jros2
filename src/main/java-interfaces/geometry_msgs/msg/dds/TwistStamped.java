@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- A twist with reference coordinate frame and timestamp
+A twist with reference coordinate frame and timestamp
 <p>Source (geometry_msgs/TwistStamped):
 <pre>{@code
 # A twist with reference coordinate frame and timestamp

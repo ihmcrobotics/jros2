@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Each trajectory point specifies either positions[, velocities[, accelerations]]
- or positions[, effort] for the trajectory to be executed.
- All specified values are in the same order as the joint names in JointTrajectory.msg.
+Each trajectory point specifies either positions[, velocities[, accelerations]]
+or positions[, effort] for the trajectory to be executed.
+All specified values are in the same order as the joint names in JointTrajectory.msg.
 <p>Source (trajectory_msgs/JointTrajectoryPoint):
 <pre>{@code
 # Each trajectory point specifies either positions[, velocities[, accelerations]]
@@ -47,31 +47,31 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::JointTrajectoryPoint_";
 
    /**
-       Single DOF joint positions for each joint relative to their "0" position.
-       The units depend on the specific joint type: radians for revolute or
-       continuous joints, and meters for prismatic joints.
+      Single DOF joint positions for each joint relative to their "0" position.
+      The units depend on the specific joint type: radians for revolute or
+      continuous joints, and meters for prismatic joints.
    */
    private final IDLDoubleSequence positions_;
    /**
-       The rate of change in position of each joint. Units are joint type dependent.
-       Radians/second for revolute or continuous joints, and meters/second for
-       prismatic joints.
+      The rate of change in position of each joint. Units are joint type dependent.
+      Radians/second for revolute or continuous joints, and meters/second for
+      prismatic joints.
    */
    private final IDLDoubleSequence velocities_;
    /**
-       Rate of change in velocity of each joint. Units are joint type dependent.
-       Radians/second^2 for revolute or continuous joints, and meters/second^2 for
-       prismatic joints.
+      Rate of change in velocity of each joint. Units are joint type dependent.
+      Radians/second^2 for revolute or continuous joints, and meters/second^2 for
+      prismatic joints.
    */
    private final IDLDoubleSequence accelerations_;
    /**
-       The torque or the force to be applied at each joint. For revolute/continuous
-       joints effort denotes a torque in newton-meters. For prismatic joints, effort
-       denotes a force in newtons.
+      The torque or the force to be applied at each joint. For revolute/continuous
+      joints effort denotes a torque in newton-meters. For prismatic joints, effort
+      denotes a force in newtons.
    */
    private final IDLDoubleSequence effort_;
    /**
-       Desired time from the trajectory start to arrive at this trajectory point.
+      Desired time from the trajectory start to arrive at this trajectory point.
    */
    private final builtin_interfaces.msg.dds.Duration time_from_start_;
 

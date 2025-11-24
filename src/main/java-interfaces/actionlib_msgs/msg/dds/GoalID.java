@@ -28,15 +28,15 @@ public class GoalID implements ROS2Message<GoalID>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalID_";
 
    /**
-       The stamp should store the time at which this goal was requested.
-       It is used by an action server when it tries to preempt all
-       goals that were requested before a certain time
+      The stamp should store the time at which this goal was requested.
+      It is used by an action server when it tries to preempt all
+      goals that were requested before a certain time
    */
    private final builtin_interfaces.msg.dds.Time stamp_;
    /**
-       The id provides a way to associate feedback and
-       result message with specific goal requests. The id
-       specified must be unique.
+      The id provides a way to associate feedback and
+      result message with specific goal requests. The id
+      specified must be unique.
    */
    private final StringBuilder id_;
 

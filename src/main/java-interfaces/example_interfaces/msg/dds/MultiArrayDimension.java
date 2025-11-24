@@ -9,9 +9,9 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This is an example of using complex datatypes.
- It is not recommended to use directly.
- To use a similar datastruct please define a custom message with appropriate semantic meaning.
+This is an example of using complex datatypes.
+It is not recommended to use directly.
+To use a similar datastruct please define a custom message with appropriate semantic meaning.
 <p>Source (example_interfaces/MultiArrayDimension):
 <pre>{@code
 # This is an example of using complex datatypes.

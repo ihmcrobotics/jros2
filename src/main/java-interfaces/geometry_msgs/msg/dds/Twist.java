@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This expresses velocity in free space broken into its linear and angular parts.
+This expresses velocity in free space broken into its linear and angular parts.
 <p>Source (geometry_msgs/Twist):
 <pre>{@code
 # This expresses velocity in free space broken into its linear and angular parts.

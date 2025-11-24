@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This represents an orientation in free space in quaternion form.
+This represents an orientation in free space in quaternion form.
 <p>Source (geometry_msgs/Quaternion):
 <pre>{@code
 # This represents an orientation in free space in quaternion form.

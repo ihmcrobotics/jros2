@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- This represents the transform between two coordinate frames in free space.
+This represents the transform between two coordinate frames in free space.
 <p>Source (geometry_msgs/Transform):
 <pre>{@code
 # This represents the transform between two coordinate frames in free space.

@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- A specification of a polygon where the first and last points are assumed to be connected
+A specification of a polygon where the first and last points are assumed to be connected
 <p>Source (geometry_msgs/Polygon):
 <pre>{@code
 # A specification of a polygon where the first and last points are assumed to be connected

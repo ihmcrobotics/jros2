@@ -28,7 +28,7 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectory_";
 
    /**
-       The header is used to specify the coordinate frame and the reference time for the trajectory durations
+      The header is used to specify the coordinate frame and the reference time for the trajectory durations
    */
    private final std_msgs.msg.dds.Header header_;
    private final IDLStringSequence joint_names_;

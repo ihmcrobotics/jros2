@@ -21,7 +21,7 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticArray_";
 
    /**
-       This message is used to send diagnostic information about the state of the robot.
+      This message is used to send diagnostic information about the state of the robot.
    */
    private final std_msgs.msg.dds.Header header_; // for timestamp
    private final IDLObjectSequence<diagnostic_msgs.msg.dds.DiagnosticStatus> status_; // an array of components being reported on

@@ -9,11 +9,11 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- See:
-  - http://www.ros.org/wiki/rviz/DisplayTypes/Marker
-  - http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes
+See:
+- http://www.ros.org/wiki/rviz/DisplayTypes/Marker
+- http://www.ros.org/wiki/rviz/Tutorials/Markers%3A%20Basic%20Shapes
 
- for more information on using this message with rviz.
+for more information on using this message with rviz.
 <p>Source (visualization_msgs/Marker):
 <pre>{@code
 # See:
@@ -119,87 +119,87 @@ public class Marker implements ROS2Message<Marker>
    public static final int DELETE = 2;
    public static final int DELETEALL = 3;
    /**
-       Header for timestamp and frame id.
+      Header for timestamp and frame id.
    */
    private final std_msgs.msg.dds.Header header_;
    /**
-       Namespace in which to place the object.
-       Used in conjunction with id to create a unique name for the object.
+      Namespace in which to place the object.
+      Used in conjunction with id to create a unique name for the object.
    */
    private final StringBuilder ns_;
    /**
-       Object ID used in conjunction with the namespace for manipulating and deleting the object later.
+      Object ID used in conjunction with the namespace for manipulating and deleting the object later.
    */
    private int id_;
    /**
-       Type of object.
+      Type of object.
    */
    private int type_;
    /**
-       Action to take; one of:
-        - 0 add/modify an object
-        - 1 (deprecated)
-        - 2 deletes an object (with the given ns and id)
-        - 3 deletes all objects (or those with the given ns if any)
+      Action to take; one of:
+      - 0 add/modify an object
+      - 1 (deprecated)
+      - 2 deletes an object (with the given ns and id)
+      - 3 deletes all objects (or those with the given ns if any)
    */
    private int action_;
    /**
-       Pose of the object with respect the frame_id specified in the header.
+      Pose of the object with respect the frame_id specified in the header.
    */
    private final geometry_msgs.msg.dds.Pose pose_;
    /**
-       Scale of the object; 1,1,1 means default (usually 1 meter square).
+      Scale of the object; 1,1,1 means default (usually 1 meter square).
    */
    private final geometry_msgs.msg.dds.Vector3 scale_;
    /**
-       Color of the object; in the range: [0.0-1.0]
+      Color of the object; in the range: [0.0-1.0]
    */
    private final std_msgs.msg.dds.ColorRGBA color_;
    /**
-       How long the object should last before being automatically deleted.
-       0 indicates forever.
+      How long the object should last before being automatically deleted.
+      0 indicates forever.
    */
    private final builtin_interfaces.msg.dds.Duration lifetime_;
    /**
-       If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
+      If this marker should be frame-locked, i.e. retransformed into its frame every timestep.
    */
    private boolean frame_locked_;
    /**
-       Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
+      Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
    */
    private final IDLObjectSequence<geometry_msgs.msg.dds.Point> points_;
    /**
-       Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
-       The number of colors provided must either be 0 or equal to the number of points provided.
-       NOTE: alpha is not yet used
+      Only used if the type specified has some use for them (eg. POINTS, LINE_STRIP, etc.)
+      The number of colors provided must either be 0 or equal to the number of points provided.
+      NOTE: alpha is not yet used
    */
    private final IDLObjectSequence<std_msgs.msg.dds.ColorRGBA> colors_;
    /**
-       Texture resource is a special URI that can either reference a texture file in
-       a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
-       or an embedded texture via a string matching the format:
-         "embedded://texture_name"
+      Texture resource is a special URI that can either reference a texture file in
+      a format acceptable to (resource retriever)[https://index.ros.org/p/resource_retriever/]
+      or an embedded texture via a string matching the format:
+      "embedded://texture_name"
    */
    private final StringBuilder texture_resource_;
    /**
-       An image to be loaded into the rendering engine as the texture for this marker.
-       This will be used iff texture_resource is set to embedded.
+      An image to be loaded into the rendering engine as the texture for this marker.
+      This will be used iff texture_resource is set to embedded.
    */
    private final sensor_msgs.msg.dds.CompressedImage texture_;
    /**
-       Location of each vertex within the texture; in the range: [0.0-1.0]
+      Location of each vertex within the texture; in the range: [0.0-1.0]
    */
    private final IDLObjectSequence<visualization_msgs.msg.dds.UVCoordinate> uv_coordinates_;
    /**
-       Only used for text markers
+      Only used for text markers
    */
    private final StringBuilder text_;
    /**
-       Only used for MESH_RESOURCE markers.
-       Similar to texture_resource, mesh_resource uses resource retriever to load a mesh.
-       Optionally, a mesh file can be sent in-message via the mesh_file field. If doing so,
-       use the following format for mesh_resource:
-         "embedded://mesh_name"
+      Only used for MESH_RESOURCE markers.
+      Similar to texture_resource, mesh_resource uses resource retriever to load a mesh.
+      Optionally, a mesh file can be sent in-message via the mesh_file field. If doing so,
+      use the following format for mesh_resource:
+      "embedded://mesh_name"
    */
    private final StringBuilder mesh_resource_;
    private final visualization_msgs.msg.dds.MeshFile mesh_file_;

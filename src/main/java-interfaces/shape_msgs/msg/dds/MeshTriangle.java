@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- Definition of a triangle's vertices.
+Definition of a triangle's vertices.
 <p>Source (shape_msgs/MeshTriangle):
 <pre>{@code
 # Definition of a triangle's vertices.

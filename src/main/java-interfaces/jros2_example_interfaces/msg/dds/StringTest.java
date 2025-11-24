@@ -9,7 +9,7 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
- https://design.ros2.org/articles/interface_definition.html
+https://design.ros2.org/articles/interface_definition.html
 <p>Source (jros2_example_interfaces/StringTest):
 <pre>{@code
 # https://design.ros2.org/articles/interface_definition.html

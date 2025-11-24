@@ -25,13 +25,13 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersResult_";
 
    /**
-       A true value of the same index indicates that the parameter was set
-       successfully. A false value indicates the change was rejected.
+      A true value of the same index indicates that the parameter was set
+      successfully. A false value indicates the change was rejected.
    */
    private boolean successful_;
    /**
-       Reason why the setting was either successful or a failure. This should only be
-       used for logging and user interfaces.
+      Reason why the setting was either successful or a failure. This should only be
+      used for logging and user interfaces.
    */
    private final StringBuilder reason_;
 

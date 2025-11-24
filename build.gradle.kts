@@ -1,5 +1,3 @@
-//import us.ihmc.jros2.generator.jros2GenTask
-
 /*
  *  Copyright 2025 Florida Institute for Human and Machine Cognition (IHMC)
  *
@@ -15,18 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+import us.ihmc.jros2.generator.jros2GenTask
 
 plugins {
    id("java-library")
    id("java-gradle-plugin")
    id("us.ihmc.ihmc-build")
 
-//   id("us.ihmc.jros2.generator") version "1.0.3"
+   id("us.ihmc.jros2.generator") version "1.1.0"
 }
 
 ihmc {
    group = "us.ihmc"
-   version = "1.0.1"
+   version = "1.1.0"
    vcsUrl = "https://github.com/ihmcrobotics/jros2"
    openSource = true
 
@@ -99,34 +98,39 @@ testDependencies {
    api(ihmc.sourceSetProject("generator"))
 }
 
-//tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
-//    // Make sure the git submodules are updated
-//    ProcessBuilder("git", "submodule", "update", "--init", "--recursive").directory(projectDir).start().waitFor()
-//
-//    description = "Generate ROS 2 default interfaces source files"
-//    group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
-//    packagePaths = listOf(
-//        projectDir.resolve("ros2_interfaces").resolve("example_interfaces").absolutePath,
-//
-//        // rcl_interfaces used as dependency to common_interfaces; we include it here
-//        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rosgraph_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("statistics_msgs").absolutePath,
-//
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("actionlib_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("diagnostic_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("geometry_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("nav_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("sensor_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("shape_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("std_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("stereo_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
-//        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
-//
-//        projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
-//    )
-//    outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
-//}
+tasks.register("publishGenerator") {
+   dependsOn(ihmc.sourceSetProject("parser").tasks["publish"])
+   dependsOn(ihmc.sourceSetProject("generator").tasks["publish"])
+}
+
+tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
+    // Make sure the git submodules are updated
+    ProcessBuilder("git", "submodule", "update", "--init", "--recursive").directory(projectDir).start().waitFor()
+
+    description = "Generate ROS 2 default interfaces source files"
+    group = Char.MIN_VALUE + "jros2" // Hack to prevent Gradle from capitalizing jros2
+    packagePaths = listOf(
+        projectDir.resolve("ros2_interfaces").resolve("example_interfaces").absolutePath,
+
+        // rcl_interfaces used as dependency to common_interfaces; we include it here
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rosgraph_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("statistics_msgs").absolutePath,
+
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("actionlib_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("diagnostic_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("geometry_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("nav_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("sensor_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("shape_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("std_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("stereo_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
+
+        projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
+    )
+    outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
+}
