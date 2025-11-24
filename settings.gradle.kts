@@ -2,12 +2,17 @@ pluginManagement {
    plugins {
       id("us.ihmc.ihmc-build") version "1.3.0"
    }
+   repositories {
+      mavenCentral()
+      mavenLocal()
+   }
 }
 
 buildscript {
    repositories {
       maven { url = uri("https://plugins.gradle.org/m2/") }
-      maven { url = uri("https://robotlabfiles.ihmc.us/repository/") }
+      mavenCentral()
+      mavenLocal()
    }
    dependencies {
       classpath("us.ihmc:ihmc-build:1.3.0")
