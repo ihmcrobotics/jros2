@@ -98,7 +98,7 @@ public class MsgDepsParserTest
       InterfaceField Time_nanosec_field = builtin_interfaces_Time.getFields().get("nanosec");
       {
          Assertions.assertEquals("uint32", Time_nanosec_field.getType());
-         Assertions.assertEquals("long", Time_nanosec_field.getJavaType());
+         Assertions.assertEquals("int", Time_nanosec_field.getJavaType());
          Assertions.assertFalse(Time_nanosec_field.isObjectSequence());
          Assertions.assertNull(Time_nanosec_field.getObjectSequenceTypeClass());
          Assertions.assertEquals("nanosec", Time_nanosec_field.getName());
@@ -124,10 +124,10 @@ public class MsgDepsParserTest
          Assertions.assertFalse(Time_nanosec_field.isBuiltinStringType());
          Assertions.assertFalse(Time_nanosec_field.isBuiltinWStringType());
          Assertions.assertEquals(4, Time_nanosec_field.getBuiltinTypeSize());
-         Assertions.assertEquals("long", Time_nanosec_field.getBuiltinTypeJavaType());
-         Assertions.assertEquals("IDLLongSequence", Time_nanosec_field.getBuiltinTypeIDLSequenceType());
-         Assertions.assertEquals("writeLong", Time_nanosec_field.getBuiltinCDRBufferWriteMethod());
-         Assertions.assertEquals("readLong", Time_nanosec_field.getBuiltinCDRBufferReadMethod());
+         Assertions.assertEquals("int", Time_nanosec_field.getBuiltinTypeJavaType());
+         Assertions.assertEquals("IDLIntSequence", Time_nanosec_field.getBuiltinTypeIDLSequenceType());
+         Assertions.assertEquals("writeInt", Time_nanosec_field.getBuiltinCDRBufferWriteMethod());
+         Assertions.assertEquals("readInt", Time_nanosec_field.getBuiltinCDRBufferReadMethod());
       }
    }
 }
