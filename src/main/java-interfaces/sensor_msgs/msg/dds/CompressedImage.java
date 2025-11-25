@@ -34,13 +34,13 @@ public class CompressedImage implements ROS2Message<CompressedImage>
 
    private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
    private final StringBuilder format_; // Specifies the format of the data
-   private final IDLShortSequence data_; // Compressed image buffer
+   private final IDLByteSequence data_; // Compressed image buffer
 
    public CompressedImage()
    {
       header_ = new std_msgs.msg.dds.Header();
       format_ = new StringBuilder();
-      data_ = new IDLShortSequence();
+      data_ = new IDLByteSequence();
 
    }
 
@@ -94,7 +94,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       return format_;
    }
 
-   public IDLShortSequence getData()
+   public IDLByteSequence getData()
    {
       return data_;
    }

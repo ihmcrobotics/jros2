@@ -21,11 +21,11 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::MeshTriangle_";
 
-   private final long[] vertex_indices_;
+   private final int[] vertex_indices_;
 
    public MeshTriangle()
    {
-      vertex_indices_ = new long[3];
+      vertex_indices_ = new int[3];
 
    }
 
@@ -44,7 +44,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    {
       for (int i = 0; i < vertex_indices_.length; ++i)
       {
-         buffer.writeLong(vertex_indices_[i]);
+         buffer.writeInt(vertex_indices_[i]);
       }
 
    }
@@ -54,7 +54,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    {
       for (int i = 0; i < vertex_indices_.length; ++i)
       {
-         vertex_indices_[i] = buffer.readLong();
+         vertex_indices_[i] = buffer.readInt();
       }
 
    }
@@ -69,7 +69,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 
    }
 
-   public long[] getVertexIndices()
+   public int[] getVertexIndices()
    {
       return vertex_indices_;
    }

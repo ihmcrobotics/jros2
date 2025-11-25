@@ -114,22 +114,22 @@ public final class BuiltinTools
             return "boolean";
          case "byte":
          case "int8":
+         case "uint8":
             return "byte";
          case "char":
             return "char";
-         case "uint8":
          case "int16":
+         case "uint16":
             return "short";
          case "float32":
             return "float";
-         case "uint16":
          case "int32":
+         case "uint32":
             return "int";
          case "float64":
             return "double";
-         case "uint32":
-         case "uint64":
          case "int64":
+         case "uint64":
             return "long";
          case "string":
          case "wstring":
@@ -158,20 +158,20 @@ public final class BuiltinTools
             return "IDLBoolSequence";
          case "byte":
          case "int8":
+         case "uint8":
             return "IDLByteSequence";
          case "char":
             return "IDLCharSequence";
-         case "uint8":
          case "int16":
+         case "uint16":
             return "IDLShortSequence";
          case "float32":
             return "IDLFloatSequence";
-         case "uint16":
          case "int32":
+         case "uint32":
             return "IDLIntSequence";
          case "float64":
             return "IDLDoubleSequence";
-         case "uint32":
          case "uint64":
          case "int64":
             return "IDLLongSequence";
@@ -203,22 +203,22 @@ public final class BuiltinTools
             return "writeBoolean";
          case "byte":
          case "int8":
+         case "uint8":
             return "writeByte";
          case "char":
             return "writeChar";
-         case "uint8":
          case "int16":
+         case "uint16":
             return "writeShort";
          case "float32":
             return "writeFloat";
          case "int32":
-         case "uint16":
+         case "uint32":
             return "writeInt";
          case "float64":
             return "writeDouble";
-         case "uint32":
-         case "uint64":
          case "int64":
+         case "uint64":
             return "writeLong";
          case "string":
             return "writeString";
@@ -248,22 +248,22 @@ public final class BuiltinTools
             return "readBoolean";
          case "byte":
          case "int8":
+         case "uint8":
             return "readByte";
          case "char":
             return "readChar";
-         case "uint8":
          case "int16":
+         case "uint16":
             return "readShort";
          case "float32":
             return "readFloat";
-         case "uint16":
          case "int32":
+         case "uint32":
             return "readInt";
          case "float64":
             return "readDouble";
-         case "uint32":
-         case "uint64":
          case "int64":
+         case "uint64":
             return "readLong";
          case "string":
             return "readString";

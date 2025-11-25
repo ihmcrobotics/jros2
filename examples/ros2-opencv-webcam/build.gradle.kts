@@ -8,10 +8,11 @@ version = "1.0.0"
 
 repositories {
    mavenCentral()
+   maven { url = uri("https://robotlabfiles.ihmc.us/repository") }
 }
 
 dependencies {
-   implementation("us.ihmc:jros2:1.0.1")
+   implementation("us.ihmc:jros2:1.1.0")
 
    implementation("org.bytedeco:javacv-platform:1.5.11")
 }

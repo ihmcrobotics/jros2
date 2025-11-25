@@ -61,7 +61,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       Enum values are defined in the `ParameterType.msg` message.
    */
-   private short type_;
+   private byte type_;
    /**
       Description of the parameter, visible from introspection tools.
    */
@@ -124,7 +124,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
-      buffer.writeShort(type_);
+      buffer.writeByte(type_);
       buffer.writeString(description_);
       buffer.writeString(additional_constraints_);
       buffer.writeBoolean(read_only_);
@@ -138,7 +138,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
-      type_ = buffer.readShort();
+      type_ = buffer.readByte();
       buffer.readString(description_);
       buffer.readString(additional_constraints_);
       read_only_ = buffer.readBoolean();
@@ -170,12 +170,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return name_;
    }
 
-   public short getType()
+   public byte getType()
    {
       return type_;
    }
 
-   public void setType(short type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }

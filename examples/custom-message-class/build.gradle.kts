@@ -1,9 +1,9 @@
-import us.ihmc.jros2.generator.task.jros2GenTask
+import us.ihmc.jros2.generator.jros2GenTask
 
 plugins {
-    id("java")
-    id("application")
-    id("us.ihmc.jros2.generator") version "1.0.2"
+   id("java")
+   id("application")
+   id("us.ihmc.jros2.generator") version "1.1.0"
 }
 
 group = "us.ihmc"
@@ -11,11 +11,11 @@ version = "1.0.0"
 
 repositories {
    mavenCentral()
-   mavenLocal()
+   maven { url = uri("https://robotlabfiles.ihmc.us/repository") }
 }
 
 dependencies {
-    implementation("us.ihmc:jros2:1.0.1")
+   implementation("us.ihmc:jros2:1.1.0")
 }
 
 application {

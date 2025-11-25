@@ -46,11 +46,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    /**
       Map width [cells]
    */
-   private long width_;
+   private int width_;
    /**
       Map height [cells]
    */
-   private long height_;
+   private int height_;
    /**
       The origin of the map [m, m, rad].  This is the real-world pose of the
       bottom left corner of cell (0,0) in the map.
@@ -83,8 +83,8 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       map_load_time_.serialize(buffer);
       buffer.writeFloat(resolution_);
-      buffer.writeLong(width_);
-      buffer.writeLong(height_);
+      buffer.writeInt(width_);
+      buffer.writeInt(height_);
       origin_.serialize(buffer);
 
    }
@@ -94,8 +94,8 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       map_load_time_.deserialize(buffer);
       resolution_ = buffer.readFloat();
-      width_ = buffer.readLong();
-      height_ = buffer.readLong();
+      width_ = buffer.readInt();
+      height_ = buffer.readInt();
       origin_.deserialize(buffer);
 
    }
@@ -126,22 +126,22 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       this.resolution_ = resolution_;
    }
 
-   public long getWidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setWidth(long width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
 
-   public long getHeight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setHeight(long height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }

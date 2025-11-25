@@ -60,7 +60,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
       The statistic type of this data point, defined in StatisticDataType.msg
       Default value should be StatisticDataType.STATISTICS_DATA_TYPE_UNINITIALIZED (0).
    */
-   private short data_type_;
+   private byte data_type_;
    /**
       The value of the data point
    */
@@ -84,7 +84,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(data_type_);
+      buffer.writeByte(data_type_);
       buffer.writeDouble(data_);
 
    }
@@ -92,7 +92,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_type_ = buffer.readShort();
+      data_type_ = buffer.readByte();
       data_ = buffer.readDouble();
 
    }
@@ -105,12 +105,12 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
 
    }
 
-   public short getDataType()
+   public byte getDataType()
    {
       return data_type_;
    }
 
-   public void setDataType(short data_type_)
+   public void setDataType(byte data_type_)
    {
       this.data_type_ = data_type_;
    }

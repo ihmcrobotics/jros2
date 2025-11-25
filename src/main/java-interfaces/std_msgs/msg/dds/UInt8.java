@@ -27,7 +27,7 @@ public class UInt8 implements ROS2Message<UInt8>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt8_";
 
-   private short data_;
+   private byte data_;
 
    public UInt8()
    {
@@ -46,14 +46,14 @@ public class UInt8 implements ROS2Message<UInt8>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(data_);
+      buffer.writeByte(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readShort();
+      data_ = buffer.readByte();
 
    }
 
@@ -64,12 +64,12 @@ public class UInt8 implements ROS2Message<UInt8>
 
    }
 
-   public short getData()
+   public byte getData()
    {
       return data_;
    }
 
-   public void setData(short data_)
+   public void setData(byte data_)
    {
       this.data_ = data_;
    }

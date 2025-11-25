@@ -62,7 +62,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    /**
       The type of this parameter, which corresponds to the appropriate field below.
    */
-   private short type_;
+   private byte type_;
    /**
       Boolean value, can be either true or false.
    */
@@ -135,7 +135,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(type_);
+      buffer.writeByte(type_);
       buffer.writeBoolean(bool_value_);
       buffer.writeLong(integer_value_);
       buffer.writeDouble(double_value_);
@@ -151,7 +151,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      type_ = buffer.readShort();
+      type_ = buffer.readByte();
       bool_value_ = buffer.readBoolean();
       integer_value_ = buffer.readLong();
       double_value_ = buffer.readDouble();
@@ -181,12 +181,12 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    }
 
-   public short getType()
+   public byte getType()
    {
       return type_;
    }
 
-   public void setType(short type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }

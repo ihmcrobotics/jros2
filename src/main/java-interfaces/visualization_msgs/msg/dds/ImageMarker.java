@@ -92,7 +92,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    /**
       Whether or not to fill in the shape with color.
    */
-   private short filled_;
+   private byte filled_;
    /**
       Fill color; in the range: [0.0-1.0]
    */
@@ -157,7 +157,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       position_.serialize(buffer);
       buffer.writeFloat(scale_);
       outline_color_.serialize(buffer);
-      buffer.writeShort(filled_);
+      buffer.writeByte(filled_);
       fill_color_.serialize(buffer);
       lifetime_.serialize(buffer);
       points_.serialize(buffer);
@@ -176,7 +176,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       position_.deserialize(buffer);
       scale_ = buffer.readFloat();
       outline_color_.deserialize(buffer);
-      filled_ = buffer.readShort();
+      filled_ = buffer.readByte();
       fill_color_.deserialize(buffer);
       lifetime_.deserialize(buffer);
       points_.deserialize(buffer);
@@ -264,12 +264,12 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       return outline_color_;
    }
 
-   public short getFilled()
+   public byte getFilled()
    {
       return filled_;
    }
 
-   public void setFilled(short filled_)
+   public void setFilled(byte filled_)
    {
       this.filled_ = filled_;
    }

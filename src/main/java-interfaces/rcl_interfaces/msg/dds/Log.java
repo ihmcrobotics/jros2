@@ -112,7 +112,7 @@ public class Log implements ROS2Message<Log>
    /**
       Corresponding log level, see above definitions.
    */
-   private short level_;
+   private byte level_;
    /**
       The name representing the logger this message came from.
    */
@@ -132,7 +132,7 @@ public class Log implements ROS2Message<Log>
    /**
       The line in the file the message came from.
    */
-   private long line_;
+   private int line_;
 
    public Log()
    {
@@ -164,12 +164,12 @@ public class Log implements ROS2Message<Log>
    public void serialize(CDRBuffer buffer)
    {
       stamp_.serialize(buffer);
-      buffer.writeShort(level_);
+      buffer.writeByte(level_);
       buffer.writeString(name_);
       buffer.writeString(msg_);
       buffer.writeString(file_);
       buffer.writeString(function_);
-      buffer.writeLong(line_);
+      buffer.writeInt(line_);
 
    }
 
@@ -177,12 +177,12 @@ public class Log implements ROS2Message<Log>
    public void deserialize(CDRBuffer buffer)
    {
       stamp_.deserialize(buffer);
-      level_ = buffer.readShort();
+      level_ = buffer.readByte();
       buffer.readString(name_);
       buffer.readString(msg_);
       buffer.readString(file_);
       buffer.readString(function_);
-      line_ = buffer.readLong();
+      line_ = buffer.readInt();
 
    }
 
@@ -208,12 +208,12 @@ public class Log implements ROS2Message<Log>
       return stamp_;
    }
 
-   public short getLevel()
+   public byte getLevel()
    {
       return level_;
    }
 
-   public void setLevel(short level_)
+   public void setLevel(byte level_)
    {
       this.level_ = level_;
    }
@@ -238,12 +238,12 @@ public class Log implements ROS2Message<Log>
       return function_;
    }
 
-   public long getLine()
+   public int getLine()
    {
       return line_;
    }
 
-   public void setLine(long line_)
+   public void setLine(int line_)
    {
       this.line_ = line_;
    }

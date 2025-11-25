@@ -79,13 +79,13 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       BUTTON_CLICK: a button control has been clicked
       POSE_UPDATE: the pose has been changed using one of the controls
    */
-   public static final short KEEP_ALIVE = 0;
-   public static final short POSE_UPDATE = 1;
-   public static final short MENU_SELECT = 2;
-   public static final short BUTTON_CLICK = 3;
-   public static final short MOUSE_DOWN = 4;
-   public static final short MOUSE_UP = 5;
-   private short event_type_;
+   public static final byte KEEP_ALIVE = 0;
+   public static final byte POSE_UPDATE = 1;
+   public static final byte MENU_SELECT = 2;
+   public static final byte BUTTON_CLICK = 3;
+   public static final byte MOUSE_DOWN = 4;
+   public static final byte MOUSE_UP = 5;
+   private byte event_type_;
    /**
       Current pose of the marker
       Note: Has to be valid for all feedback types.
@@ -95,7 +95,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       Contains the ID of the selected menu entry
       Only valid for MENU_SELECT events.
    */
-   private long menu_entry_id_;
+   private int menu_entry_id_;
    /**
       If event_type is BUTTON_CLICK, MOUSE_DOWN, or MOUSE_UP, mouse_point
       may contain the 3 dimensional position of the event on the
@@ -142,9 +142,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.writeString(client_id_);
       buffer.writeString(marker_name_);
       buffer.writeString(control_name_);
-      buffer.writeShort(event_type_);
+      buffer.writeByte(event_type_);
       pose_.serialize(buffer);
-      buffer.writeLong(menu_entry_id_);
+      buffer.writeInt(menu_entry_id_);
       mouse_point_.serialize(buffer);
       buffer.writeBoolean(mouse_point_valid_);
 
@@ -157,9 +157,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.readString(client_id_);
       buffer.readString(marker_name_);
       buffer.readString(control_name_);
-      event_type_ = buffer.readShort();
+      event_type_ = buffer.readByte();
       pose_.deserialize(buffer);
-      menu_entry_id_ = buffer.readLong();
+      menu_entry_id_ = buffer.readInt();
       mouse_point_.deserialize(buffer);
       mouse_point_valid_ = buffer.readBoolean();
 
@@ -203,12 +203,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return control_name_;
    }
 
-   public short getEventType()
+   public byte getEventType()
    {
       return event_type_;
    }
 
-   public void setEventType(short event_type_)
+   public void setEventType(byte event_type_)
    {
       this.event_type_ = event_type_;
    }
@@ -218,12 +218,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return pose_;
    }
 
-   public long getMenuEntryId()
+   public int getMenuEntryId()
    {
       return menu_entry_id_;
    }
 
-   public void setMenuEntryId(long menu_entry_id_)
+   public void setMenuEntryId(int menu_entry_id_)
    {
       this.menu_entry_id_ = menu_entry_id_;
    }

@@ -69,15 +69,15 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
-   public static final short BOX = 1;
-   public static final short SPHERE = 2;
-   public static final short CYLINDER = 3;
-   public static final short CONE = 4;
-   public static final short PRISM = 5;
+   public static final byte BOX = 1;
+   public static final byte SPHERE = 2;
+   public static final byte CYLINDER = 3;
+   public static final byte CONE = 4;
+   public static final byte PRISM = 5;
    /**
       The type of the shape
    */
-   private short type_;
+   private byte type_;
    /**
       The dimensions of the shape
    */
@@ -85,18 +85,18 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    /**
       For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */
-   public static final short BOX_X = 0;
-   public static final short BOX_Y = 1;
-   public static final short BOX_Z = 2;
+   public static final byte BOX_X = 0;
+   public static final byte BOX_Y = 1;
+   public static final byte BOX_Z = 2;
    /**
       For the SPHERE type, only one component is used, and it gives the radius of the sphere.
    */
-   public static final short SPHERE_RADIUS = 0;
-   public static final short CYLINDER_HEIGHT = 0;
-   public static final short CYLINDER_RADIUS = 1;
-   public static final short CONE_HEIGHT = 0;
-   public static final short CONE_RADIUS = 1;
-   public static final short PRISM_HEIGHT = 0;
+   public static final byte SPHERE_RADIUS = 0;
+   public static final byte CYLINDER_HEIGHT = 0;
+   public static final byte CYLINDER_RADIUS = 1;
+   public static final byte CONE_HEIGHT = 0;
+   public static final byte CONE_RADIUS = 1;
+   public static final byte PRISM_HEIGHT = 0;
    private final geometry_msgs.msg.dds.Polygon polygon_;
 
    public SolidPrimitive()
@@ -121,7 +121,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(type_);
+      buffer.writeByte(type_);
       dimensions_.serialize(buffer);
       polygon_.serialize(buffer);
 
@@ -130,7 +130,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      type_ = buffer.readShort();
+      type_ = buffer.readByte();
       dimensions_.deserialize(buffer);
       polygon_.deserialize(buffer);
 
@@ -145,12 +145,12 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    }
 
-   public short getType()
+   public byte getType()
    {
       return type_;
    }
 
-   public void setType(short type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }

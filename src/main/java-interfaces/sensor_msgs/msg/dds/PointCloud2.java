@@ -59,16 +59,16 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       2D structure of the point cloud. If the cloud is unordered, height is
       1 and width is the length of the point cloud.
    */
-   private long height_;
-   private long width_;
+   private int height_;
+   private int width_;
    /**
       Describes the channels and their layout in the binary data blob.
    */
    private final IDLObjectSequence<sensor_msgs.msg.dds.PointField> fields_;
    private boolean is_bigendian_; // Is this data bigendian?
-   private long point_step_; // Length of a point in bytes
-   private long row_step_; // Length of a row in bytes
-   private final IDLShortSequence data_; // Actual point data, size is (row_step*height)
+   private int point_step_; // Length of a point in bytes
+   private int row_step_; // Length of a row in bytes
+   private final IDLByteSequence data_; // Actual point data, size is (row_step*height)
    private boolean is_dense_; // True if there are no invalid points
 
    public PointCloud2()
@@ -76,7 +76,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       header_ = new std_msgs.msg.dds.Header();
       fields_ = new IDLObjectSequence<sensor_msgs.msg.dds.PointField>(sensor_msgs.msg.dds.PointField.class);
       is_bigendian_ = (boolean) false;
-      data_ = new IDLShortSequence();
+      data_ = new IDLByteSequence();
       is_dense_ = (boolean) false;
 
    }
@@ -103,12 +103,12 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeLong(height_);
-      buffer.writeLong(width_);
+      buffer.writeInt(height_);
+      buffer.writeInt(width_);
       fields_.serialize(buffer);
       buffer.writeBoolean(is_bigendian_);
-      buffer.writeLong(point_step_);
-      buffer.writeLong(row_step_);
+      buffer.writeInt(point_step_);
+      buffer.writeInt(row_step_);
       data_.serialize(buffer);
       buffer.writeBoolean(is_dense_);
 
@@ -118,12 +118,12 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      height_ = buffer.readLong();
-      width_ = buffer.readLong();
+      height_ = buffer.readInt();
+      width_ = buffer.readInt();
       fields_.deserialize(buffer);
       is_bigendian_ = buffer.readBoolean();
-      point_step_ = buffer.readLong();
-      row_step_ = buffer.readLong();
+      point_step_ = buffer.readInt();
+      row_step_ = buffer.readInt();
       data_.deserialize(buffer);
       is_dense_ = buffer.readBoolean();
 
@@ -149,22 +149,22 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       return header_;
    }
 
-   public long getHeight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setHeight(long height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public long getWidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setWidth(long width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
@@ -184,27 +184,27 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       this.is_bigendian_ = is_bigendian_;
    }
 
-   public long getPointStep()
+   public int getPointStep()
    {
       return point_step_;
    }
 
-   public void setPointStep(long point_step_)
+   public void setPointStep(int point_step_)
    {
       this.point_step_ = point_step_;
    }
 
-   public long getRowStep()
+   public int getRowStep()
    {
       return row_step_;
    }
 
-   public void setRowStep(long row_step_)
+   public void setRowStep(int row_step_)
    {
       this.row_step_ = row_step_;
    }
 
-   public IDLShortSequence getData()
+   public IDLByteSequence getData()
    {
       return data_;
    }

@@ -68,9 +68,9 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       The sequence number does not increase.
       No payload data should be filled out (markers, poses, or erases).
    */
-   public static final short KEEP_ALIVE = 0;
-   public static final short UPDATE = 1;
-   private short type_;
+   public static final byte KEEP_ALIVE = 0;
+   public static final byte UPDATE = 1;
+   private byte type_;
    /**
       Markers to be added or updated
    */
@@ -113,7 +113,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
-      buffer.writeShort(type_);
+      buffer.writeByte(type_);
       markers_.serialize(buffer);
       poses_.serialize(buffer);
       erases_.serialize(buffer);
@@ -125,7 +125,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
-      type_ = buffer.readShort();
+      type_ = buffer.readByte();
       markers_.deserialize(buffer);
       poses_.deserialize(buffer);
       erases_.deserialize(buffer);
@@ -160,12 +160,12 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       this.seq_num_ = seq_num_;
    }
 
-   public short getType()
+   public byte getType()
    {
       return type_;
    }
 
-   public void setType(short type_)
+   public void setType(byte type_)
    {
       this.type_ = type_;
    }

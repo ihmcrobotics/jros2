@@ -46,18 +46,18 @@ public class Image implements ROS2Message<Image>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
 
    private final std_msgs.msg.dds.Header header_; // Header timestamp should be acquisition time of image
-   private long height_; // image height, that is, number of rows
-   private long width_; // image width, that is, number of columns
+   private int height_; // image height, that is, number of rows
+   private int width_; // image width, that is, number of columns
    private final StringBuilder encoding_; // Encoding of pixels -- channel meaning, ordering, size
-   private short is_bigendian_; // is this data bigendian?
-   private long step_; // Full row length in bytes
-   private final IDLShortSequence data_; // actual matrix data, size is (step * rows)
+   private byte is_bigendian_; // is this data bigendian?
+   private int step_; // Full row length in bytes
+   private final IDLByteSequence data_; // actual matrix data, size is (step * rows)
 
    public Image()
    {
       header_ = new std_msgs.msg.dds.Header();
       encoding_ = new StringBuilder();
-      data_ = new IDLShortSequence();
+      data_ = new IDLByteSequence();
 
    }
 
@@ -81,11 +81,11 @@ public class Image implements ROS2Message<Image>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeLong(height_);
-      buffer.writeLong(width_);
+      buffer.writeInt(height_);
+      buffer.writeInt(width_);
       buffer.writeString(encoding_);
-      buffer.writeShort(is_bigendian_);
-      buffer.writeLong(step_);
+      buffer.writeByte(is_bigendian_);
+      buffer.writeInt(step_);
       data_.serialize(buffer);
 
    }
@@ -94,11 +94,11 @@ public class Image implements ROS2Message<Image>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      height_ = buffer.readLong();
-      width_ = buffer.readLong();
+      height_ = buffer.readInt();
+      width_ = buffer.readInt();
       buffer.readString(encoding_);
-      is_bigendian_ = buffer.readShort();
-      step_ = buffer.readLong();
+      is_bigendian_ = buffer.readByte();
+      step_ = buffer.readInt();
       data_.deserialize(buffer);
 
    }
@@ -122,22 +122,22 @@ public class Image implements ROS2Message<Image>
       return header_;
    }
 
-   public long getHeight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setHeight(long height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public long getWidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setWidth(long width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
@@ -147,27 +147,27 @@ public class Image implements ROS2Message<Image>
       return encoding_;
    }
 
-   public short getIsBigendian()
+   public byte getIsBigendian()
    {
       return is_bigendian_;
    }
 
-   public void setIsBigendian(short is_bigendian_)
+   public void setIsBigendian(byte is_bigendian_)
    {
       this.is_bigendian_ = is_bigendian_;
    }
 
-   public long getStep()
+   public int getStep()
    {
       return step_;
    }
 
-   public void setStep(long step_)
+   public void setStep(int step_)
    {
       this.step_ = step_;
    }
 
-   public IDLShortSequence getData()
+   public IDLByteSequence getData()
    {
       return data_;
    }

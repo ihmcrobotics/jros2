@@ -67,7 +67,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
    private final IDLStringSequence up_to_five_strings_up_to_ten_characters_each_;
-   private short x_;
+   private byte x_;
    private short y_;
    private final StringBuilder full_name_;
    private final IDLIntSequence samples_;
@@ -94,7 +94,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
       up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5, 5, 10);
-      x_ = (short) 42;
+      x_ = (byte) 42;
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
@@ -168,7 +168,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.serialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.serialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.serialize(buffer);
-      buffer.writeShort(x_);
+      buffer.writeByte(x_);
       buffer.writeShort(y_);
       buffer.writeString(full_name_);
       samples_.serialize(buffer);
@@ -208,7 +208,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.deserialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.deserialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.deserialize(buffer);
-      x_ = buffer.readShort();
+      x_ = buffer.readByte();
       y_ = buffer.readShort();
       buffer.readString(full_name_);
       samples_.deserialize(buffer);
@@ -335,12 +335,12 @@ public class TestMsg implements ROS2Message<TestMsg>
       return up_to_five_strings_up_to_ten_characters_each_;
    }
 
-   public short getX()
+   public byte getX()
    {
       return x_;
    }
 
-   public void setX(short x_)
+   public void setX(byte x_)
    {
       this.x_ = x_;
    }

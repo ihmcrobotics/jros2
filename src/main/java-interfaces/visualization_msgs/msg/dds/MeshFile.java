@@ -34,12 +34,12 @@ public class MeshFile implements ROS2Message<MeshFile>
    /**
       This stores the raw text of the mesh file.
    */
-   private final IDLShortSequence data_;
+   private final IDLByteSequence data_;
 
    public MeshFile()
    {
       filename_ = new StringBuilder();
-      data_ = new IDLShortSequence();
+      data_ = new IDLByteSequence();
 
    }
 
@@ -84,7 +84,7 @@ public class MeshFile implements ROS2Message<MeshFile>
       return filename_;
    }
 
-   public IDLShortSequence getData()
+   public IDLByteSequence getData()
    {
       return data_;
    }

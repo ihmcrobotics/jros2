@@ -35,16 +35,16 @@ public class ParameterType implements ROS2Message<ParameterType>
    /**
       Default value, which implies this is not a valid parameter.
    */
-   public static final short PARAMETER_NOT_SET = 0;
-   public static final short PARAMETER_BOOL = 1;
-   public static final short PARAMETER_INTEGER = 2;
-   public static final short PARAMETER_DOUBLE = 3;
-   public static final short PARAMETER_STRING = 4;
-   public static final short PARAMETER_BYTE_ARRAY = 5;
-   public static final short PARAMETER_BOOL_ARRAY = 6;
-   public static final short PARAMETER_INTEGER_ARRAY = 7;
-   public static final short PARAMETER_DOUBLE_ARRAY = 8;
-   public static final short PARAMETER_STRING_ARRAY = 9;
+   public static final byte PARAMETER_NOT_SET = 0;
+   public static final byte PARAMETER_BOOL = 1;
+   public static final byte PARAMETER_INTEGER = 2;
+   public static final byte PARAMETER_DOUBLE = 3;
+   public static final byte PARAMETER_STRING = 4;
+   public static final byte PARAMETER_BYTE_ARRAY = 5;
+   public static final byte PARAMETER_BOOL_ARRAY = 6;
+   public static final byte PARAMETER_INTEGER_ARRAY = 7;
+   public static final byte PARAMETER_DOUBLE_ARRAY = 8;
+   public static final byte PARAMETER_STRING_ARRAY = 9;
 
    public ParameterType()
    {

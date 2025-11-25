@@ -42,16 +42,16 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
 
-   private long x_offset_; // Leftmost pixel of the ROI
+   private int x_offset_; // Leftmost pixel of the ROI
    /**
       (0 if the ROI includes the left edge of the image)
    */
-   private long y_offset_; // Topmost pixel of the ROI
+   private int y_offset_; // Topmost pixel of the ROI
    /**
       (0 if the ROI includes the top edge of the image)
    */
-   private long height_; // Height of ROI
-   private long width_; // Width of ROI
+   private int height_; // Height of ROI
+   private int width_; // Width of ROI
    /**
       True if a distinct rectified ROI should be calculated from the "raw"
       ROI in this message. Typically this should be False if the full image
@@ -83,10 +83,10 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeLong(x_offset_);
-      buffer.writeLong(y_offset_);
-      buffer.writeLong(height_);
-      buffer.writeLong(width_);
+      buffer.writeInt(x_offset_);
+      buffer.writeInt(y_offset_);
+      buffer.writeInt(height_);
+      buffer.writeInt(width_);
       buffer.writeBoolean(do_rectify_);
 
    }
@@ -94,10 +94,10 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      x_offset_ = buffer.readLong();
-      y_offset_ = buffer.readLong();
-      height_ = buffer.readLong();
-      width_ = buffer.readLong();
+      x_offset_ = buffer.readInt();
+      y_offset_ = buffer.readInt();
+      height_ = buffer.readInt();
+      width_ = buffer.readInt();
       do_rectify_ = buffer.readBoolean();
 
    }
@@ -113,42 +113,42 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    }
 
-   public long getXOffset()
+   public int getXOffset()
    {
       return x_offset_;
    }
 
-   public void setXOffset(long x_offset_)
+   public void setXOffset(int x_offset_)
    {
       this.x_offset_ = x_offset_;
    }
 
-   public long getYOffset()
+   public int getYOffset()
    {
       return y_offset_;
    }
 
-   public void setYOffset(long y_offset_)
+   public void setYOffset(int y_offset_)
    {
       this.y_offset_ = y_offset_;
    }
 
-   public long getHeight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setHeight(long height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public long getWidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setWidth(long width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }

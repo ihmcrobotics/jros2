@@ -79,61 +79,61 @@ public class State implements ROS2Message<State>
    /**
       Indicates state has not yet been set.
    */
-   public static final short PRIMARY_STATE_UNKNOWN = 0;
+   public static final byte PRIMARY_STATE_UNKNOWN = 0;
    /**
       This is the life cycle state the node is in immediately after being
       instantiated.
    */
-   public static final short PRIMARY_STATE_UNCONFIGURED = 1;
+   public static final byte PRIMARY_STATE_UNCONFIGURED = 1;
    /**
       This state represents a node that is not currently performing any processing.
    */
-   public static final short PRIMARY_STATE_INACTIVE = 2;
+   public static final byte PRIMARY_STATE_INACTIVE = 2;
    /**
       This is the main state of the node's life cycle. While in this state, the node
       performs any processing, responds to service requests, reads and processes
       data, produces output, etc.
    */
-   public static final short PRIMARY_STATE_ACTIVE = 3;
+   public static final byte PRIMARY_STATE_ACTIVE = 3;
    /**
       The finalized state is the state in which the node ends immediately before
       being destroyed.
    */
-   public static final short PRIMARY_STATE_FINALIZED = 4;
+   public static final byte PRIMARY_STATE_FINALIZED = 4;
    /**
       In this transition state the node's onConfigure callback will be called to
       allow the node to load its configuration and conduct any required setup.
    */
-   public static final short TRANSITION_STATE_CONFIGURING = 10;
+   public static final byte TRANSITION_STATE_CONFIGURING = 10;
    /**
       In this transition state the node's callback onCleanup will be called to clear
       all state and return the node to a functionally equivalent state as when
       first created.
    */
-   public static final short TRANSITION_STATE_CLEANINGUP = 11;
+   public static final byte TRANSITION_STATE_CLEANINGUP = 11;
    /**
       In this transition state the callback onShutdown will be executed to do any
       cleanup necessary before destruction.
    */
-   public static final short TRANSITION_STATE_SHUTTINGDOWN = 12;
+   public static final byte TRANSITION_STATE_SHUTTINGDOWN = 12;
    /**
       In this transition state the callback onActivate will be executed to do any
       final preparations to start executing.
    */
-   public static final short TRANSITION_STATE_ACTIVATING = 13;
+   public static final byte TRANSITION_STATE_ACTIVATING = 13;
    /**
       In this transition state the callback onDeactivate will be executed to do any
       cleanup to start executing, and reverse the onActivate changes.
    */
-   public static final short TRANSITION_STATE_DEACTIVATING = 14;
+   public static final byte TRANSITION_STATE_DEACTIVATING = 14;
    /**
       This transition state is where any error may be cleaned up.
    */
-   public static final short TRANSITION_STATE_ERRORPROCESSING = 15;
+   public static final byte TRANSITION_STATE_ERRORPROCESSING = 15;
    /**
       The state id value from the above definitions.
    */
-   private short id_;
+   private byte id_;
    /**
       A text label of the state.
    */
@@ -159,7 +159,7 @@ public class State implements ROS2Message<State>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(id_);
+      buffer.writeByte(id_);
       buffer.writeString(label_);
 
    }
@@ -167,7 +167,7 @@ public class State implements ROS2Message<State>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      id_ = buffer.readShort();
+      id_ = buffer.readByte();
       buffer.readString(label_);
 
    }
@@ -181,12 +181,12 @@ public class State implements ROS2Message<State>
 
    }
 
-   public short getId()
+   public byte getId()
    {
       return id_;
    }
 
-   public void setId(short id_)
+   public void setId(byte id_)
    {
       this.id_ = id_;
    }

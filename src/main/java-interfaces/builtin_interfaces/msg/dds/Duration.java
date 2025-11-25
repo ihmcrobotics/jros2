@@ -42,7 +42,7 @@ public class Duration implements ROS2Message<Duration>
       The duration -1.7 seconds is represented as {sec: -2, nanosec: 3e8}
       The duration 1.7 seconds is represented as {sec: 1, nanosec: 7e8}
    */
-   private long nanosec_;
+   private int nanosec_;
 
    public Duration()
    {
@@ -63,7 +63,7 @@ public class Duration implements ROS2Message<Duration>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeInt(sec_);
-      buffer.writeLong(nanosec_);
+      buffer.writeInt(nanosec_);
 
    }
 
@@ -71,7 +71,7 @@ public class Duration implements ROS2Message<Duration>
    public void deserialize(CDRBuffer buffer)
    {
       sec_ = buffer.readInt();
-      nanosec_ = buffer.readLong();
+      nanosec_ = buffer.readInt();
 
    }
 
@@ -93,12 +93,12 @@ public class Duration implements ROS2Message<Duration>
       this.sec_ = sec_;
    }
 
-   public long getNanosec()
+   public int getNanosec()
    {
       return nanosec_;
    }
 
-   public void setNanosec(long nanosec_)
+   public void setNanosec(int nanosec_)
    {
       this.nanosec_ = nanosec_;
    }

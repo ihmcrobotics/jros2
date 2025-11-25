@@ -113,10 +113,10 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       FIXED: Keep orientation fixed at initial state
       VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
    */
-   public static final short INHERIT = 0;
-   public static final short FIXED = 1;
-   public static final short VIEW_FACING = 2;
-   private short orientation_mode_;
+   public static final byte INHERIT = 0;
+   public static final byte FIXED = 1;
+   public static final byte VIEW_FACING = 2;
+   private byte orientation_mode_;
    /**
       Interaction mode for this control
 
@@ -128,23 +128,23 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       ROTATE_AXIS: Rotate around local x-axis.
       MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
    */
-   public static final short NONE = 0;
-   public static final short MENU = 1;
-   public static final short BUTTON = 2;
-   public static final short MOVE_AXIS = 3;
-   public static final short MOVE_PLANE = 4;
-   public static final short ROTATE_AXIS = 5;
-   public static final short MOVE_ROTATE = 6;
+   public static final byte NONE = 0;
+   public static final byte MENU = 1;
+   public static final byte BUTTON = 2;
+   public static final byte MOVE_AXIS = 3;
+   public static final byte MOVE_PLANE = 4;
+   public static final byte ROTATE_AXIS = 5;
+   public static final byte MOVE_ROTATE = 6;
    /**
       "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
       MOVE_3D: Translate freely in 3D space.
       ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
       MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
    */
-   public static final short MOVE_3D = 7;
-   public static final short ROTATE_3D = 8;
-   public static final short MOVE_ROTATE_3D = 9;
-   private short interaction_mode_;
+   public static final byte MOVE_3D = 7;
+   public static final byte ROTATE_3D = 8;
+   public static final byte MOVE_ROTATE_3D = 9;
+   private byte interaction_mode_;
    /**
       If true, the contained markers will also be visible
       when the gui is not in interactive mode.
@@ -207,8 +207,8 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       buffer.writeString(name_);
       orientation_.serialize(buffer);
-      buffer.writeShort(orientation_mode_);
-      buffer.writeShort(interaction_mode_);
+      buffer.writeByte(orientation_mode_);
+      buffer.writeByte(interaction_mode_);
       buffer.writeBoolean(always_visible_);
       markers_.serialize(buffer);
       buffer.writeBoolean(independent_marker_orientation_);
@@ -221,8 +221,8 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       buffer.readString(name_);
       orientation_.deserialize(buffer);
-      orientation_mode_ = buffer.readShort();
-      interaction_mode_ = buffer.readShort();
+      orientation_mode_ = buffer.readByte();
+      interaction_mode_ = buffer.readByte();
       always_visible_ = buffer.readBoolean();
       markers_.deserialize(buffer);
       independent_marker_orientation_ = buffer.readBoolean();
@@ -256,22 +256,22 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return orientation_;
    }
 
-   public short getOrientationMode()
+   public byte getOrientationMode()
    {
       return orientation_mode_;
    }
 
-   public void setOrientationMode(short orientation_mode_)
+   public void setOrientationMode(byte orientation_mode_)
    {
       this.orientation_mode_ = orientation_mode_;
    }
 
-   public short getInteractionMode()
+   public byte getInteractionMode()
    {
       return interaction_mode_;
    }
 
-   public void setInteractionMode(short interaction_mode_)
+   public void setInteractionMode(byte interaction_mode_)
    {
       this.interaction_mode_ = interaction_mode_;
    }

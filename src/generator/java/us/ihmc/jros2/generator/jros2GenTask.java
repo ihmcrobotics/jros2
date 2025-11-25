@@ -30,7 +30,6 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -110,8 +109,14 @@ public class jros2GenTask extends DefaultTask
                   try
                   {
                      String packageResourceName = packagePath.getFileName().toString() + "/" + msgFile.getFileName().toString().replace(".msg", "");
+                     if (typeToClass.containsKey(packageResourceName))
+                     {
+                        // Do not generate files for package-resources defined in typeToClass map
+                        System.out.println("Not generating for " + packageResourceName + ". It is mapped to: " + typeToClass.get(packageResourceName));
+                        continue;
+                     }
                      MsgContext context = MsgParser.parseMsg(Files.readString(msgFile), packageResourceName);
-                     String classContent = ROS2MessageGenerator.generateJavaClassContents(context, new LinkedHashMap<>());
+                     String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
                      Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
                      if (outputFilePath.toFile().exists())
                      {
@@ -119,7 +124,7 @@ public class jros2GenTask extends DefaultTask
                      }
                      outputFilePath.toFile().getParentFile().mkdirs();
                      Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
-                     System.out.println("Generated " + outputFilePath.toFile().getAbsolutePath());
+                     System.out.println(packageResourceName + " -> " + outputFilePath.toFile().getAbsolutePath());
                   }
                   catch (InterfaceFieldParsingException e)
                   {

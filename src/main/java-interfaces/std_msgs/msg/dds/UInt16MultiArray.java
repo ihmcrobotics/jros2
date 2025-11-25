@@ -30,12 +30,12 @@ public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt16MultiArray_";
 
    private final std_msgs.msg.dds.MultiArrayLayout layout_; // specification of data layout
-   private final IDLIntSequence data_; // array of data
+   private final IDLShortSequence data_; // array of data
 
    public UInt16MultiArray()
    {
       layout_ = new std_msgs.msg.dds.MultiArrayLayout();
-      data_ = new IDLIntSequence();
+      data_ = new IDLShortSequence();
 
    }
 
@@ -79,7 +79,7 @@ public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
       return layout_;
    }
 
-   public IDLIntSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

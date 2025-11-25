@@ -105,12 +105,12 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       ID is a number for each menu entry.  Must be unique within the
       control, and should never be 0.
    */
-   private long id_;
+   private int id_;
    /**
       ID of the parent of this menu entry, if it is a submenu.  If this
       menu entry is a top-level entry, set parent_id to 0.
    */
-   private long parent_id_;
+   private int parent_id_;
    /**
       menu / entry title
    */
@@ -126,10 +126,10 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       ROSRUN: execute "rosrun" with arguments given in the command field (above).
       ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
    */
-   public static final short FEEDBACK = 0;
-   public static final short ROSRUN = 1;
-   public static final short ROSLAUNCH = 2;
-   private short command_type_;
+   public static final byte FEEDBACK = 0;
+   public static final byte ROSRUN = 1;
+   public static final byte ROSLAUNCH = 2;
+   private byte command_type_;
 
    public MenuEntry()
    {
@@ -155,22 +155,22 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeLong(id_);
-      buffer.writeLong(parent_id_);
+      buffer.writeInt(id_);
+      buffer.writeInt(parent_id_);
       buffer.writeString(title_);
       buffer.writeString(command_);
-      buffer.writeShort(command_type_);
+      buffer.writeByte(command_type_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      id_ = buffer.readLong();
-      parent_id_ = buffer.readLong();
+      id_ = buffer.readInt();
+      parent_id_ = buffer.readInt();
       buffer.readString(title_);
       buffer.readString(command_);
-      command_type_ = buffer.readShort();
+      command_type_ = buffer.readByte();
 
    }
 
@@ -187,22 +187,22 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
    }
 
-   public long getId()
+   public int getId()
    {
       return id_;
    }
 
-   public void setId(long id_)
+   public void setId(int id_)
    {
       this.id_ = id_;
    }
 
-   public long getParentId()
+   public int getParentId()
    {
       return parent_id_;
    }
 
-   public void setParentId(long parent_id_)
+   public void setParentId(int parent_id_)
    {
       this.parent_id_ = parent_id_;
    }
@@ -217,12 +217,12 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return command_;
    }
 
-   public short getCommandType()
+   public byte getCommandType()
    {
       return command_type_;
    }
 
-   public void setCommandType(short command_type_)
+   public void setCommandType(byte command_type_)
    {
       this.command_type_ = command_type_;
    }

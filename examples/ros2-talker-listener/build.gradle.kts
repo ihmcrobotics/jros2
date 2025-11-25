@@ -7,11 +7,12 @@ group = "us.ihmc"
 version = "1.0.0"
 
 repositories {
-    mavenCentral()
+   mavenCentral()
+   maven { url = uri("https://robotlabfiles.ihmc.us/repository") }
 }
 
 dependencies {
-    implementation("us.ihmc:jros2:1.0.0")
+    implementation("us.ihmc:jros2:1.1.0")
 }
 
 application {

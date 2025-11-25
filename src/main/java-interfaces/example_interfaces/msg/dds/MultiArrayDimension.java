@@ -28,8 +28,8 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    public static final java.lang.String name = "example_interfaces::msg::dds_::MultiArrayDimension_";
 
    private final StringBuilder label_; // label of given dimension
-   private long size_; // size of given dimension (in type units)
-   private long stride_; // stride of given dimension
+   private int size_; // size of given dimension (in type units)
+   private int stride_; // stride of given dimension
 
    public MultiArrayDimension()
    {
@@ -53,8 +53,8 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(label_);
-      buffer.writeLong(size_);
-      buffer.writeLong(stride_);
+      buffer.writeInt(size_);
+      buffer.writeInt(stride_);
 
    }
 
@@ -62,8 +62,8 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(label_);
-      size_ = buffer.readLong();
-      stride_ = buffer.readLong();
+      size_ = buffer.readInt();
+      stride_ = buffer.readInt();
 
    }
 
@@ -82,22 +82,22 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       return label_;
    }
 
-   public long getSize()
+   public int getSize()
    {
       return size_;
    }
 
-   public void setSize(long size_)
+   public void setSize(int size_)
    {
       this.size_ = size_;
    }
 
-   public long getStride()
+   public int getStride()
    {
       return stride_;
    }
 
-   public void setStride(long stride_)
+   public void setStride(int stride_)
    {
       this.stride_ = stride_;
    }

@@ -40,7 +40,7 @@ public class Time implements ROS2Message<Time>
       The time -1.7 seconds is represented as {sec: -2, nanosec: 3e8}
       The time 1.7 seconds is represented as {sec: 1, nanosec: 7e8}
    */
-   private long nanosec_;
+   private int nanosec_;
 
    public Time()
    {
@@ -61,7 +61,7 @@ public class Time implements ROS2Message<Time>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeInt(sec_);
-      buffer.writeLong(nanosec_);
+      buffer.writeInt(nanosec_);
 
    }
 
@@ -69,7 +69,7 @@ public class Time implements ROS2Message<Time>
    public void deserialize(CDRBuffer buffer)
    {
       sec_ = buffer.readInt();
-      nanosec_ = buffer.readLong();
+      nanosec_ = buffer.readInt();
 
    }
 
@@ -91,12 +91,12 @@ public class Time implements ROS2Message<Time>
       this.sec_ = sec_;
    }
 
-   public long getNanosec()
+   public int getNanosec()
    {
       return nanosec_;
    }
 
-   public void setNanosec(long nanosec_)
+   public void setNanosec(int nanosec_)
    {
       this.nanosec_ = nanosec_;
    }

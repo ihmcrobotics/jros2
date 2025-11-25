@@ -159,8 +159,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       The image dimensions with which the camera was calibrated.
       Normally this will be the full camera resolution in pixels.
    */
-   private long height_;
-   private long width_;
+   private int height_;
+   private int width_;
    /**
       The distortion model used. Supported models are listed in
       sensor_msgs/distortion_models.hpp. For most cameras, "plumb_bob" - a
@@ -224,8 +224,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       The default values binning_x = binning_y = 0 is considered the same
       as binning_x = binning_y = 1 (no subsampling).
    */
-   private long binning_x_;
-   private long binning_y_;
+   private int binning_x_;
+   private int binning_y_;
    /**
       Region of interest (subwindow of full camera resolution), given in
       full resolution (unbinned) image coordinates. A particular ROI
@@ -272,8 +272,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeLong(height_);
-      buffer.writeLong(width_);
+      buffer.writeInt(height_);
+      buffer.writeInt(width_);
       buffer.writeString(distortion_model_);
       d_.serialize(buffer);
       for (int i = 0; i < k_.length; ++i)
@@ -288,8 +288,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       {
          buffer.writeDouble(p_[i]);
       }
-      buffer.writeLong(binning_x_);
-      buffer.writeLong(binning_y_);
+      buffer.writeInt(binning_x_);
+      buffer.writeInt(binning_y_);
       roi_.serialize(buffer);
 
    }
@@ -298,8 +298,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      height_ = buffer.readLong();
-      width_ = buffer.readLong();
+      height_ = buffer.readInt();
+      width_ = buffer.readInt();
       buffer.readString(distortion_model_);
       d_.deserialize(buffer);
       for (int i = 0; i < k_.length; ++i)
@@ -314,8 +314,8 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       {
          p_[i] = buffer.readDouble();
       }
-      binning_x_ = buffer.readLong();
-      binning_y_ = buffer.readLong();
+      binning_x_ = buffer.readInt();
+      binning_y_ = buffer.readInt();
       roi_.deserialize(buffer);
 
    }
@@ -352,22 +352,22 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       return header_;
    }
 
-   public long getHeight()
+   public int getHeight()
    {
       return height_;
    }
 
-   public void setHeight(long height_)
+   public void setHeight(int height_)
    {
       this.height_ = height_;
    }
 
-   public long getWidth()
+   public int getWidth()
    {
       return width_;
    }
 
-   public void setWidth(long width_)
+   public void setWidth(int width_)
    {
       this.width_ = width_;
    }
@@ -397,22 +397,22 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       return p_;
    }
 
-   public long getBinningX()
+   public int getBinningX()
    {
       return binning_x_;
    }
 
-   public void setBinningX(long binning_x_)
+   public void setBinningX(int binning_x_)
    {
       this.binning_x_ = binning_x_;
    }
 
-   public long getBinningY()
+   public int getBinningY()
    {
       return binning_y_;
    }
 
-   public void setBinningY(long binning_y_)
+   public void setBinningY(int binning_y_)
    {
       this.binning_y_ = binning_y_;
    }

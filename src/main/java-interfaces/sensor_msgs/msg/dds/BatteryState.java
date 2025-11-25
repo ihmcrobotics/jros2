@@ -76,33 +76,33 @@ public class BatteryState implements ROS2Message<BatteryState>
    /**
       Power supply status constants
    */
-   public static final short POWER_SUPPLY_STATUS_UNKNOWN = 0;
-   public static final short POWER_SUPPLY_STATUS_CHARGING = 1;
-   public static final short POWER_SUPPLY_STATUS_DISCHARGING = 2;
-   public static final short POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
-   public static final short POWER_SUPPLY_STATUS_FULL = 4;
+   public static final byte POWER_SUPPLY_STATUS_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_STATUS_CHARGING = 1;
+   public static final byte POWER_SUPPLY_STATUS_DISCHARGING = 2;
+   public static final byte POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
+   public static final byte POWER_SUPPLY_STATUS_FULL = 4;
    /**
       Power supply health constants
    */
-   public static final short POWER_SUPPLY_HEALTH_UNKNOWN = 0;
-   public static final short POWER_SUPPLY_HEALTH_GOOD = 1;
-   public static final short POWER_SUPPLY_HEALTH_OVERHEAT = 2;
-   public static final short POWER_SUPPLY_HEALTH_DEAD = 3;
-   public static final short POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
-   public static final short POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
-   public static final short POWER_SUPPLY_HEALTH_COLD = 6;
-   public static final short POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
-   public static final short POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
+   public static final byte POWER_SUPPLY_HEALTH_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_HEALTH_GOOD = 1;
+   public static final byte POWER_SUPPLY_HEALTH_OVERHEAT = 2;
+   public static final byte POWER_SUPPLY_HEALTH_DEAD = 3;
+   public static final byte POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
+   public static final byte POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
+   public static final byte POWER_SUPPLY_HEALTH_COLD = 6;
+   public static final byte POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
+   public static final byte POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
    /**
       Power supply technology (chemistry) constants
    */
-   public static final short POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
-   public static final short POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
-   public static final short POWER_SUPPLY_TECHNOLOGY_LION = 2;
-   public static final short POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
-   public static final short POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
-   public static final short POWER_SUPPLY_TECHNOLOGY_NICD = 5;
-   public static final short POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LION = 2;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NICD = 5;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
    private final std_msgs.msg.dds.Header header_;
    private float voltage_; // Voltage in Volts (Mandatory)
    private float temperature_; // Temperature in Degrees Celsius (If unmeasured NaN)
@@ -111,9 +111,9 @@ public class BatteryState implements ROS2Message<BatteryState>
    private float capacity_; // Capacity in Ah (last full capacity)  (If unmeasured NaN)
    private float design_capacity_; // Capacity in Ah (design capacity)  (If unmeasured NaN)
    private float percentage_; // Charge percentage on 0 to 1 range  (If unmeasured NaN)
-   private short power_supply_status_; // The charging status as reported. Values defined above
-   private short power_supply_health_; // The battery health metric. Values defined above
-   private short power_supply_technology_; // The battery chemistry. Values defined above
+   private byte power_supply_status_; // The charging status as reported. Values defined above
+   private byte power_supply_health_; // The battery health metric. Values defined above
+   private byte power_supply_technology_; // The battery chemistry. Values defined above
    private boolean present_; // True if the battery is present
    private final IDLFloatSequence cell_voltage_; // An array of individual cell voltages for each cell in the pack
    /**
@@ -173,9 +173,9 @@ public class BatteryState implements ROS2Message<BatteryState>
       buffer.writeFloat(capacity_);
       buffer.writeFloat(design_capacity_);
       buffer.writeFloat(percentage_);
-      buffer.writeShort(power_supply_status_);
-      buffer.writeShort(power_supply_health_);
-      buffer.writeShort(power_supply_technology_);
+      buffer.writeByte(power_supply_status_);
+      buffer.writeByte(power_supply_health_);
+      buffer.writeByte(power_supply_technology_);
       buffer.writeBoolean(present_);
       cell_voltage_.serialize(buffer);
       cell_temperature_.serialize(buffer);
@@ -195,9 +195,9 @@ public class BatteryState implements ROS2Message<BatteryState>
       capacity_ = buffer.readFloat();
       design_capacity_ = buffer.readFloat();
       percentage_ = buffer.readFloat();
-      power_supply_status_ = buffer.readShort();
-      power_supply_health_ = buffer.readShort();
-      power_supply_technology_ = buffer.readShort();
+      power_supply_status_ = buffer.readByte();
+      power_supply_health_ = buffer.readByte();
+      power_supply_technology_ = buffer.readByte();
       present_ = buffer.readBoolean();
       cell_voltage_.deserialize(buffer);
       cell_temperature_.deserialize(buffer);
@@ -305,32 +305,32 @@ public class BatteryState implements ROS2Message<BatteryState>
       this.percentage_ = percentage_;
    }
 
-   public short getPowerSupplyStatus()
+   public byte getPowerSupplyStatus()
    {
       return power_supply_status_;
    }
 
-   public void setPowerSupplyStatus(short power_supply_status_)
+   public void setPowerSupplyStatus(byte power_supply_status_)
    {
       this.power_supply_status_ = power_supply_status_;
    }
 
-   public short getPowerSupplyHealth()
+   public byte getPowerSupplyHealth()
    {
       return power_supply_health_;
    }
 
-   public void setPowerSupplyHealth(short power_supply_health_)
+   public void setPowerSupplyHealth(byte power_supply_health_)
    {
       this.power_supply_health_ = power_supply_health_;
    }
 
-   public short getPowerSupplyTechnology()
+   public byte getPowerSupplyTechnology()
    {
       return power_supply_technology_;
    }
 
-   public void setPowerSupplyTechnology(short power_supply_technology_)
+   public void setPowerSupplyTechnology(byte power_supply_technology_)
    {
       this.power_supply_technology_ = power_supply_technology_;
    }

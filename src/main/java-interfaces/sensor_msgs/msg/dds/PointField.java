@@ -37,21 +37,21 @@ public class PointField implements ROS2Message<PointField>
       This message holds the description of one point entry in the
       PointCloud2 message format.
    */
-   public static final short INT8 = 1;
-   public static final short UINT8 = 2;
-   public static final short INT16 = 3;
-   public static final short UINT16 = 4;
-   public static final short INT32 = 5;
-   public static final short UINT32 = 6;
-   public static final short FLOAT32 = 7;
-   public static final short FLOAT64 = 8;
+   public static final byte INT8 = 1;
+   public static final byte UINT8 = 2;
+   public static final byte INT16 = 3;
+   public static final byte UINT16 = 4;
+   public static final byte INT32 = 5;
+   public static final byte UINT32 = 6;
+   public static final byte FLOAT32 = 7;
+   public static final byte FLOAT64 = 8;
    /**
       Common PointField names are x, y, z, intensity, rgb, rgba
    */
    private final StringBuilder name_; // Name of field
-   private long offset_; // Offset from start of point struct
-   private short datatype_; // Datatype enumeration, see above
-   private long count_; // How many elements in the field
+   private int offset_; // Offset from start of point struct
+   private byte datatype_; // Datatype enumeration, see above
+   private int count_; // How many elements in the field
 
    public PointField()
    {
@@ -76,9 +76,9 @@ public class PointField implements ROS2Message<PointField>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
-      buffer.writeLong(offset_);
-      buffer.writeShort(datatype_);
-      buffer.writeLong(count_);
+      buffer.writeInt(offset_);
+      buffer.writeByte(datatype_);
+      buffer.writeInt(count_);
 
    }
 
@@ -86,9 +86,9 @@ public class PointField implements ROS2Message<PointField>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
-      offset_ = buffer.readLong();
-      datatype_ = buffer.readShort();
-      count_ = buffer.readLong();
+      offset_ = buffer.readInt();
+      datatype_ = buffer.readByte();
+      count_ = buffer.readInt();
 
    }
 
@@ -108,32 +108,32 @@ public class PointField implements ROS2Message<PointField>
       return name_;
    }
 
-   public long getOffset()
+   public int getOffset()
    {
       return offset_;
    }
 
-   public void setOffset(long offset_)
+   public void setOffset(int offset_)
    {
       this.offset_ = offset_;
    }
 
-   public short getDatatype()
+   public byte getDatatype()
    {
       return datatype_;
    }
 
-   public void setDatatype(short datatype_)
+   public void setDatatype(byte datatype_)
    {
       this.datatype_ = datatype_;
    }
 
-   public long getCount()
+   public int getCount()
    {
       return count_;
    }
 
-   public void setCount(long count_)
+   public void setCount(int count_)
    {
       this.count_ = count_;
    }

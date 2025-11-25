@@ -41,38 +41,38 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatus_";
 
    private final actionlib_msgs.msg.dds.GoalID goal_id_;
-   private short status_;
-   public static final short PENDING = 0; // The goal has yet to be processed by the action server.
-   public static final short ACTIVE = 1; // The goal is currently being processed by the action server.
-   public static final short PREEMPTED = 2; // The goal received a cancel request after it started executing
+   private byte status_;
+   public static final byte PENDING = 0; // The goal has yet to be processed by the action server.
+   public static final byte ACTIVE = 1; // The goal is currently being processed by the action server.
+   public static final byte PREEMPTED = 2; // The goal received a cancel request after it started executing
    /**
       and has since completed its execution (Terminal State).
    */
-   public static final short SUCCEEDED = 3; // The goal was achieved successfully by the action server
+   public static final byte SUCCEEDED = 3; // The goal was achieved successfully by the action server
    /**
       (Terminal State).
    */
-   public static final short ABORTED = 4; // The goal was aborted during execution by the action server due
+   public static final byte ABORTED = 4; // The goal was aborted during execution by the action server due
    /**
       to some failure (Terminal State).
    */
-   public static final short REJECTED = 5; // The goal was rejected by the action server without being processed,
+   public static final byte REJECTED = 5; // The goal was rejected by the action server without being processed,
    /**
       because the goal was unattainable or invalid (Terminal State).
    */
-   public static final short PREEMPTING = 6; // The goal received a cancel request after it started executing
+   public static final byte PREEMPTING = 6; // The goal received a cancel request after it started executing
    /**
       and has not yet completed execution.
    */
-   public static final short RECALLING = 7; // The goal received a cancel request before it started executing, but
+   public static final byte RECALLING = 7; // The goal received a cancel request before it started executing, but
    /**
       the action server has not yet confirmed that the goal is canceled.
    */
-   public static final short RECALLED = 8; // The goal received a cancel request before it started executing
+   public static final byte RECALLED = 8; // The goal received a cancel request before it started executing
    /**
       and was successfully cancelled (Terminal State).
    */
-   public static final short LOST = 9; // An action client can determine that a goal is LOST. This should not
+   public static final byte LOST = 9; // An action client can determine that a goal is LOST. This should not
    /**
       Allow for the user to associate a string with GoalStatus for debugging.
    */
@@ -101,7 +101,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public void serialize(CDRBuffer buffer)
    {
       goal_id_.serialize(buffer);
-      buffer.writeShort(status_);
+      buffer.writeByte(status_);
       buffer.writeString(text_);
 
    }
@@ -110,7 +110,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public void deserialize(CDRBuffer buffer)
    {
       goal_id_.deserialize(buffer);
-      status_ = buffer.readShort();
+      status_ = buffer.readByte();
       buffer.readString(text_);
 
    }
@@ -130,12 +130,12 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       return goal_id_;
    }
 
-   public short getStatus()
+   public byte getStatus()
    {
       return status_;
    }
 
-   public void setStatus(short status_)
+   public void setStatus(byte status_)
    {
       this.status_ = status_;
    }
