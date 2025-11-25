@@ -38,6 +38,7 @@ public class MsgDepsParserTest
 
       MsgDepsContext msgDepsContext = MsgDepsParser.parseMsgDeps(schema, "test_pkg/Test");
 
+      Assertions.assertEquals(2, msgDepsContext.getFieldList().size());
       Assertions.assertEquals("test_pkg/Test", msgDepsContext.getPackageResourceName());
       Assertions.assertEquals("test_pkg", msgDepsContext.getPackageName());
       Assertions.assertEquals("Test", msgDepsContext.getResourceName());

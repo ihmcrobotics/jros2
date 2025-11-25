@@ -48,9 +48,29 @@ public final class MsgDepsParser
 
       while (i < lines.length)
       {
-         String line = lines[i].trim();
+         /*
+          * Handle the first part of the msgdeps, before any dependency declarations
+          */
+         if (i == 0)
+         {
+            StringJoiner parentSchema = new StringJoiner("\n");
 
-         if (line.matches(DEPENDENCY_DELIMITER_PATTERN))
+            // Seek until first delimiter
+            int j = i;
+            while (!lines[j].matches(DEPENDENCY_DELIMITER_PATTERN))
+            {
+               parentSchema.add(lines[j]);
+               ++j;
+            }
+
+            MsgContext parentContext = MsgParser.parseMsg(parentSchema.toString(), packageResourceName);
+
+            msgDepsContext.getFields().putAll(parentContext.getFields());
+
+            i = j;
+         }
+
+         if (lines[i].matches(DEPENDENCY_DELIMITER_PATTERN))
          {
             if (i + 1 >= lines.length)
             {
