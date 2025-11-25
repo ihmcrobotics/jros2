@@ -13,3 +13,9 @@ Commit those generated files (if any were updated)
 
 Publish the base library
 ./gradlew publish -PpublishUrl=robotlabfiles
+
+Commit the version bump with message ":bookmark: <version>"
+
+Create a tag with the version e.g. `git tag 1.0.0`
+
+Push the commit and tag to develop
