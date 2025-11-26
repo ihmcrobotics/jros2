@@ -57,7 +57,7 @@ public final class MsgDepsParser
 
             // Seek until first delimiter
             int j = i;
-            while (!lines[j].matches(DEPENDENCY_DELIMITER_PATTERN))
+            while (j < lines.length && !lines[j].matches(DEPENDENCY_DELIMITER_PATTERN))
             {
                parentSchema.add(lines[j]);
                ++j;
@@ -70,13 +70,8 @@ public final class MsgDepsParser
             i = j;
          }
 
-         if (lines[i].matches(DEPENDENCY_DELIMITER_PATTERN))
+         if (i < lines.length && lines[i].matches(DEPENDENCY_DELIMITER_PATTERN))
          {
-            if (i + 1 >= lines.length)
-            {
-               break;
-            }
-
             String msgLine = lines[i + 1];
             if (!msgLine.startsWith("MSG: "))
             {
