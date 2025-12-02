@@ -1,3 +1,8 @@
+#
+# /* Test comment escape */
+# /** Test comment escape 2 **/
+#
+
 std_msgs/Header header
 
 int32 my_int

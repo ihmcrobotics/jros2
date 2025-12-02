@@ -115,7 +115,8 @@ public class jros2GenTask extends DefaultTask
                         System.out.println("Not generating for " + packageResourceName + ". It is mapped to: " + typeToClass.get(packageResourceName));
                         continue;
                      }
-                     MsgContext context = MsgParser.parseMsg(Files.readString(msgFile), packageResourceName);
+                     String msgFileContent = Files.readString(msgFile).replaceAll("\\*+/", ""); // Replace any comment enders in the file
+                     MsgContext context = MsgParser.parseMsg(msgFileContent, packageResourceName);
                      String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
                      Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
                      if (outputFilePath.toFile().exists())

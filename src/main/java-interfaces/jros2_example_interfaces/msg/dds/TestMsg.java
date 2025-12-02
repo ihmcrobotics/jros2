@@ -9,8 +9,17 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
+
+/* Test comment escape
+/** Test comment escape 2
+
 <p>Source (jros2_example_interfaces/TestMsg):
 <pre>{@code
+#
+# /* Test comment escape 
+# /** Test comment escape 2 
+#
+
 std_msgs/Header header
 
 int32 my_int
