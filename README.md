@@ -6,7 +6,7 @@
 
 -----------------
 
-A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other supported ROS 2 middlewares.
+A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other supported ROS 2 DDS middlewares.
 
 Fast-DDS version: `3.2.2`
 
