@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-   implementation("us.ihmc:jros2:1.1.0")
+   implementation("us.ihmc:jros2:1.1.3")
 
    implementation("org.bytedeco:javacv-platform:1.5.11")
 }
