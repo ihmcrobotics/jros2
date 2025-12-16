@@ -6,8 +6,8 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-  schedule:
-    - cron: '0 */8 * * *'
+  # schedule:
+  #   - cron: '0 */8 * * *'
 
 jobs:
   gradle-test-linux:
