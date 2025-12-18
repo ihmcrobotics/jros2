@@ -41,7 +41,7 @@ Read in-depth documentation on the [Wiki](https://github.com/ihmcrobotics/jros2/
 ### Gradle
 ```
 dependencies {
-  implementation("us.ihmc:jros2:1.1.4")
+  implementation("us.ihmc:jros2:1.1.5")
 }
 ```
 ### Maven
@@ -50,7 +50,7 @@ dependencies {
   <dependency>
     <groupId>us.ihmc</groupId>
     <artifactId>jros2</artifactId>
-    <version>1.1.4</version>
+    <version>1.1.5</version>
   </dependency>
 </dependencies>
 ```
