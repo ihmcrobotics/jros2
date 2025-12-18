@@ -212,9 +212,21 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return title_;
    }
 
+   public void setTitle(java.lang.String s)
+   {
+      this.title_.delete(0, this.title_.length());
+      this.title_.insert(0, s);
+   }
+
    public StringBuilder getCommand()
    {
       return command_;
+   }
+
+   public void setCommand(java.lang.String s)
+   {
+      this.command_.delete(0, this.command_.length());
+      this.command_.insert(0, s);
    }
 
    public byte getCommandType()

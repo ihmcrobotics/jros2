@@ -343,6 +343,12 @@ public class Marker implements ROS2Message<Marker>
       return ns_;
    }
 
+   public void setNs(java.lang.String s)
+   {
+      this.ns_.delete(0, this.ns_.length());
+      this.ns_.insert(0, s);
+   }
+
    public int getId()
    {
       return id_;
@@ -418,6 +424,12 @@ public class Marker implements ROS2Message<Marker>
       return texture_resource_;
    }
 
+   public void setTextureResource(java.lang.String s)
+   {
+      this.texture_resource_.delete(0, this.texture_resource_.length());
+      this.texture_resource_.insert(0, s);
+   }
+
    public sensor_msgs.msg.dds.CompressedImage getTexture()
    {
       return texture_;
@@ -433,9 +445,21 @@ public class Marker implements ROS2Message<Marker>
       return text_;
    }
 
+   public void setText(java.lang.String s)
+   {
+      this.text_.delete(0, this.text_.length());
+      this.text_.insert(0, s);
+   }
+
    public StringBuilder getMeshResource()
    {
       return mesh_resource_;
+   }
+
+   public void setMeshResource(java.lang.String s)
+   {
+      this.mesh_resource_.delete(0, this.mesh_resource_.length());
+      this.mesh_resource_.insert(0, s);
    }
 
    public visualization_msgs.msg.dds.MeshFile getMeshFile()

@@ -170,6 +170,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public byte getType()
    {
       return type_;
@@ -185,9 +191,21 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return description_;
    }
 
+   public void setDescription(java.lang.String s)
+   {
+      this.description_.delete(0, this.description_.length());
+      this.description_.insert(0, s);
+   }
+
    public StringBuilder getAdditionalConstraints()
    {
       return additional_constraints_;
+   }
+
+   public void setAdditionalConstraints(java.lang.String s)
+   {
+      this.additional_constraints_.delete(0, this.additional_constraints_.length());
+      this.additional_constraints_.insert(0, s);
    }
 
    public boolean getReadOnly()

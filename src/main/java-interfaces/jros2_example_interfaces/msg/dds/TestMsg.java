@@ -304,6 +304,12 @@ public class TestMsg implements ROS2Message<TestMsg>
       return my_string_;
    }
 
+   public void setMyString(java.lang.String s)
+   {
+      this.my_string_.delete(0, this.my_string_.length());
+      this.my_string_.insert(0, s);
+   }
+
    public IDLIntSequence getUnboundedIntegerArray()
    {
       return unbounded_integer_array_;
@@ -324,9 +330,21 @@ public class TestMsg implements ROS2Message<TestMsg>
       return string_of_unbounded_size_;
    }
 
+   public void setStringOfUnboundedSize(java.lang.String s)
+   {
+      this.string_of_unbounded_size_.delete(0, this.string_of_unbounded_size_.length());
+      this.string_of_unbounded_size_.insert(0, s);
+   }
+
    public StringBuilder getUpToTenCharactersString()
    {
       return up_to_ten_characters_string_;
+   }
+
+   public void setUpToTenCharactersString(java.lang.String s)
+   {
+      this.up_to_ten_characters_string_.delete(0, this.up_to_ten_characters_string_.length());
+      this.up_to_ten_characters_string_.insert(0, s);
    }
 
    public IDLStringSequence getUpToFiveUnboundedStrings()
@@ -367,6 +385,12 @@ public class TestMsg implements ROS2Message<TestMsg>
    public StringBuilder getFullName()
    {
       return full_name_;
+   }
+
+   public void setFullName(java.lang.String s)
+   {
+      this.full_name_.delete(0, this.full_name_.length());
+      this.full_name_.insert(0, s);
    }
 
    public IDLIntSequence getSamples()

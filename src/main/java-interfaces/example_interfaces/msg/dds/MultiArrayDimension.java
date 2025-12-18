@@ -82,6 +82,12 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       return label_;
    }
 
+   public void setLabel(java.lang.String s)
+   {
+      this.label_.delete(0, this.label_.length());
+      this.label_.insert(0, s);
+   }
+
    public int getSize()
    {
       return size_;

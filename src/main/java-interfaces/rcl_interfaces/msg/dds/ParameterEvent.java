@@ -127,6 +127,12 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       return node_;
    }
 
+   public void setNode(java.lang.String s)
+   {
+      this.node_.delete(0, this.node_.length());
+      this.node_.insert(0, s);
+   }
+
    public IDLObjectSequence<rcl_interfaces.msg.dds.Parameter> getNewParameters()
    {
       return new_parameters_;

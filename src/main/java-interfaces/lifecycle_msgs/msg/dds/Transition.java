@@ -261,5 +261,11 @@ public class Transition implements ROS2Message<Transition>
       return label_;
    }
 
+   public void setLabel(java.lang.String s)
+   {
+      this.label_.delete(0, this.label_.length());
+      this.label_.insert(0, s);
+   }
+
 
 }

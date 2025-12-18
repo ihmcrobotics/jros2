@@ -117,6 +117,12 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       return child_frame_id_;
    }
 
+   public void setChildFrameId(java.lang.String s)
+   {
+      this.child_frame_id_.delete(0, this.child_frame_id_.length());
+      this.child_frame_id_.insert(0, s);
+   }
+
    public geometry_msgs.msg.dds.Transform getTransform()
    {
       return transform_;

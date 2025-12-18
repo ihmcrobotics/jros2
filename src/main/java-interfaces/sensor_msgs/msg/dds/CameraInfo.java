@@ -377,6 +377,12 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       return distortion_model_;
    }
 
+   public void setDistortionModel(java.lang.String s)
+   {
+      this.distortion_model_.delete(0, this.distortion_model_.length());
+      this.distortion_model_.insert(0, s);
+   }
+
    public IDLDoubleSequence getD()
    {
       return d_;

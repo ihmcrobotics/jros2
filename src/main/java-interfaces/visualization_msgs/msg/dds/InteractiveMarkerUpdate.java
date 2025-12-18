@@ -150,6 +150,12 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       return server_id_;
    }
 
+   public void setServerId(java.lang.String s)
+   {
+      this.server_id_.delete(0, this.server_id_.length());
+      this.server_id_.insert(0, s);
+   }
+
    public long getSeqNum()
    {
       return seq_num_;

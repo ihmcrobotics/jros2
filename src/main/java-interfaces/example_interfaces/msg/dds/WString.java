@@ -73,5 +73,11 @@ public class WString implements ROS2Message<WString>
       return data_;
    }
 
+   public void setData(java.lang.String s)
+   {
+      this.data_.delete(0, this.data_.length());
+      this.data_.insert(0, s);
+   }
+
 
 }

@@ -226,9 +226,21 @@ public class StringTest implements ROS2Message<StringTest>
       return str1_;
    }
 
+   public void setStr1(java.lang.String s)
+   {
+      this.str1_.delete(0, this.str1_.length());
+      this.str1_.insert(0, s);
+   }
+
    public StringBuilder getStr2()
    {
       return str2_;
+   }
+
+   public void setStr2(java.lang.String s)
+   {
+      this.str2_.delete(0, this.str2_.length());
+      this.str2_.insert(0, s);
    }
 
    public StringBuilder getStr3()
@@ -236,9 +248,21 @@ public class StringTest implements ROS2Message<StringTest>
       return str3_;
    }
 
+   public void setStr3(java.lang.String s)
+   {
+      this.str3_.delete(0, this.str3_.length());
+      this.str3_.insert(0, s);
+   }
+
    public StringBuilder getStr4()
    {
       return str4_;
+   }
+
+   public void setStr4(java.lang.String s)
+   {
+      this.str4_.delete(0, this.str4_.length());
+      this.str4_.insert(0, s);
    }
 
    public StringBuilder getStr5()
@@ -246,9 +270,21 @@ public class StringTest implements ROS2Message<StringTest>
       return str5_;
    }
 
+   public void setStr5(java.lang.String s)
+   {
+      this.str5_.delete(0, this.str5_.length());
+      this.str5_.insert(0, s);
+   }
+
    public StringBuilder getStr6()
    {
       return str6_;
+   }
+
+   public void setStr6(java.lang.String s)
+   {
+      this.str6_.delete(0, this.str6_.length());
+      this.str6_.insert(0, s);
    }
 
    public StringBuilder getStr7()
@@ -256,9 +292,21 @@ public class StringTest implements ROS2Message<StringTest>
       return str7_;
    }
 
+   public void setStr7(java.lang.String s)
+   {
+      this.str7_.delete(0, this.str7_.length());
+      this.str7_.insert(0, s);
+   }
+
    public StringBuilder getStr8()
    {
       return str8_;
+   }
+
+   public void setStr8(java.lang.String s)
+   {
+      this.str8_.delete(0, this.str8_.length());
+      this.str8_.insert(0, s);
    }
 
    public StringBuilder getStr9()
@@ -266,9 +314,21 @@ public class StringTest implements ROS2Message<StringTest>
       return str9_;
    }
 
+   public void setStr9(java.lang.String s)
+   {
+      this.str9_.delete(0, this.str9_.length());
+      this.str9_.insert(0, s);
+   }
+
    public StringBuilder getStra()
    {
       return stra_;
+   }
+
+   public void setStra(java.lang.String s)
+   {
+      this.stra_.delete(0, this.stra_.length());
+      this.stra_.insert(0, s);
    }
 
    public StringBuilder getStrb()
@@ -276,9 +336,21 @@ public class StringTest implements ROS2Message<StringTest>
       return strb_;
    }
 
+   public void setStrb(java.lang.String s)
+   {
+      this.strb_.delete(0, this.strb_.length());
+      this.strb_.insert(0, s);
+   }
+
    public StringBuilder getStrc()
    {
       return strc_;
+   }
+
+   public void setStrc(java.lang.String s)
+   {
+      this.strc_.delete(0, this.strc_.length());
+      this.strc_.insert(0, s);
    }
 
    public StringBuilder getStrd()
@@ -286,9 +358,21 @@ public class StringTest implements ROS2Message<StringTest>
       return strd_;
    }
 
+   public void setStrd(java.lang.String s)
+   {
+      this.strd_.delete(0, this.strd_.length());
+      this.strd_.insert(0, s);
+   }
+
    public StringBuilder getStre()
    {
       return stre_;
+   }
+
+   public void setStre(java.lang.String s)
+   {
+      this.stre_.delete(0, this.stre_.length());
+      this.stre_.insert(0, s);
    }
 
    public StringBuilder getStrf()
@@ -296,9 +380,21 @@ public class StringTest implements ROS2Message<StringTest>
       return strf_;
    }
 
+   public void setStrf(java.lang.String s)
+   {
+      this.strf_.delete(0, this.strf_.length());
+      this.strf_.insert(0, s);
+   }
+
    public StringBuilder getStrg()
    {
       return strg_;
+   }
+
+   public void setStrg(java.lang.String s)
+   {
+      this.strg_.delete(0, this.strg_.length());
+      this.strg_.insert(0, s);
    }
 
    public StringBuilder getStrh()
@@ -306,9 +402,21 @@ public class StringTest implements ROS2Message<StringTest>
       return strh_;
    }
 
+   public void setStrh(java.lang.String s)
+   {
+      this.strh_.delete(0, this.strh_.length());
+      this.strh_.insert(0, s);
+   }
+
    public StringBuilder getStri()
    {
       return stri_;
+   }
+
+   public void setStri(java.lang.String s)
+   {
+      this.stri_.delete(0, this.stri_.length());
+      this.stri_.insert(0, s);
    }
 
    public StringBuilder getStrj()
@@ -316,14 +424,32 @@ public class StringTest implements ROS2Message<StringTest>
       return strj_;
    }
 
+   public void setStrj(java.lang.String s)
+   {
+      this.strj_.delete(0, this.strj_.length());
+      this.strj_.insert(0, s);
+   }
+
    public StringBuilder getStrk()
    {
       return strk_;
    }
 
+   public void setStrk(java.lang.String s)
+   {
+      this.strk_.delete(0, this.strk_.length());
+      this.strk_.insert(0, s);
+   }
+
    public StringBuilder getStrl()
    {
       return strl_;
+   }
+
+   public void setStrl(java.lang.String s)
+   {
+      this.strl_.delete(0, this.strl_.length());
+      this.strl_.insert(0, s);
    }
 
 

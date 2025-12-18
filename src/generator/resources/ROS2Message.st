@@ -223,6 +223,13 @@ public void <field.javaSetterMethodName>(<field.javaType> <field.javaName>)
    this.<field.javaName> = <field.javaName>;
 \}
 
+<elseif(field.builtinType&&field.builtinStringType&&!field.array)>
+public void <field.javaSetterMethodName>(java.lang.String s)
+{
+   this.<field.javaName>.delete(0, this.<field.javaName>.length());
+   this.<field.javaName>.insert(0, s);
+\}
+
 <endif>
 <endif>
    }>

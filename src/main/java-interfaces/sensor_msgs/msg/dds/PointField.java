@@ -108,6 +108,12 @@ public class PointField implements ROS2Message<PointField>
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public int getOffset()
    {
       return offset_;

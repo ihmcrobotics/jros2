@@ -92,5 +92,11 @@ public class TimeReference implements ROS2Message<TimeReference>
       return source_;
    }
 
+   public void setSource(java.lang.String s)
+   {
+      this.source_.delete(0, this.source_.length());
+      this.source_.insert(0, s);
+   }
+
 
 }

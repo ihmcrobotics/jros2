@@ -251,6 +251,12 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public geometry_msgs.msg.dds.Quaternion getOrientation()
    {
       return orientation_;
@@ -304,6 +310,12 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public StringBuilder getDescription()
    {
       return description_;
+   }
+
+   public void setDescription(java.lang.String s)
+   {
+      this.description_.delete(0, this.description_.length());
+      this.description_.insert(0, s);
    }
 
 

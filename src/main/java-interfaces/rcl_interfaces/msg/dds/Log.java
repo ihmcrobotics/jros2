@@ -223,9 +223,21 @@ public class Log implements ROS2Message<Log>
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public StringBuilder getMsg()
    {
       return msg_;
+   }
+
+   public void setMsg(java.lang.String s)
+   {
+      this.msg_.delete(0, this.msg_.length());
+      this.msg_.insert(0, s);
    }
 
    public StringBuilder getFile()
@@ -233,9 +245,21 @@ public class Log implements ROS2Message<Log>
       return file_;
    }
 
+   public void setFile(java.lang.String s)
+   {
+      this.file_.delete(0, this.file_.length());
+      this.file_.insert(0, s);
+   }
+
    public StringBuilder getFunction()
    {
       return function_;
+   }
+
+   public void setFunction(java.lang.String s)
+   {
+      this.function_.delete(0, this.function_.length());
+      this.function_.insert(0, s);
    }
 
    public int getLine()

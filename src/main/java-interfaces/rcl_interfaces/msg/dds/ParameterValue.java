@@ -226,6 +226,12 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       return string_value_;
    }
 
+   public void setStringValue(java.lang.String s)
+   {
+      this.string_value_.delete(0, this.string_value_.length());
+      this.string_value_.insert(0, s);
+   }
+
    public IDLByteSequence getByteArrayValue()
    {
       return byte_array_value_;

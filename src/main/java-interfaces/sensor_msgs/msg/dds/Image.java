@@ -147,6 +147,12 @@ public class Image implements ROS2Message<Image>
       return encoding_;
    }
 
+   public void setEncoding(java.lang.String s)
+   {
+      this.encoding_.delete(0, this.encoding_.length());
+      this.encoding_.insert(0, s);
+   }
+
    public byte getIsBigendian()
    {
       return is_bigendian_;

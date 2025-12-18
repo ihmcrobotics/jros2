@@ -86,6 +86,12 @@ public class Parameter implements ROS2Message<Parameter>
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public rcl_interfaces.msg.dds.ParameterValue getValue()
    {
       return value_;

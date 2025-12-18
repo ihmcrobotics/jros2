@@ -154,14 +154,32 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return measurement_source_name_;
    }
 
+   public void setMeasurementSourceName(java.lang.String s)
+   {
+      this.measurement_source_name_.delete(0, this.measurement_source_name_.length());
+      this.measurement_source_name_.insert(0, s);
+   }
+
    public StringBuilder getMetricsSource()
    {
       return metrics_source_;
    }
 
+   public void setMetricsSource(java.lang.String s)
+   {
+      this.metrics_source_.delete(0, this.metrics_source_.length());
+      this.metrics_source_.insert(0, s);
+   }
+
    public StringBuilder getUnit()
    {
       return unit_;
+   }
+
+   public void setUnit(java.lang.String s)
+   {
+      this.unit_.delete(0, this.unit_.length());
+      this.unit_.insert(0, s);
    }
 
    public builtin_interfaces.msg.dds.Time getWindowStart()

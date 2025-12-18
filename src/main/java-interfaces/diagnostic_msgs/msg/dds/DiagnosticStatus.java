@@ -139,14 +139,32 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       return name_;
    }
 
+   public void setName(java.lang.String s)
+   {
+      this.name_.delete(0, this.name_.length());
+      this.name_.insert(0, s);
+   }
+
    public StringBuilder getMessage()
    {
       return message_;
    }
 
+   public void setMessage(java.lang.String s)
+   {
+      this.message_.delete(0, this.message_.length());
+      this.message_.insert(0, s);
+   }
+
    public StringBuilder getHardwareId()
    {
       return hardware_id_;
+   }
+
+   public void setHardwareId(java.lang.String s)
+   {
+      this.hardware_id_.delete(0, this.hardware_id_.length());
+      this.hardware_id_.insert(0, s);
    }
 
    public IDLObjectSequence<diagnostic_msgs.msg.dds.KeyValue> getValues()

@@ -145,7 +145,7 @@ public class InterfaceField
          }
          else
          {
-            return String.format("get%s", snakeToPascal(name));
+            return String.format("get%s", normalizeToPascal(name));
          }
       }
       else
@@ -158,7 +158,7 @@ public class InterfaceField
    {
       if (name != null)
       {
-         return String.format("set%s", snakeToPascal(name));
+         return String.format("set%s", normalizeToPascal(name));
       }
       else
       {
@@ -415,9 +415,12 @@ public class InterfaceField
       }
    }
 
-   private static String snakeToPascal(String snake)
+   private static String normalizeToPascal(String input)
    {
-      String[] parts = snake.split("_");
+      String normalized = input.replace("_", " ");
+      normalized = normalized.replaceAll("(?<!^)([A-Z])", " $1");
+      String[] parts = normalized.split("\\s+");
+
       StringBuilder pascal = new StringBuilder();
       for (String part : parts)
       {
@@ -427,6 +430,7 @@ public class InterfaceField
             pascal.append(part.substring(1).toLowerCase());
          }
       }
+
       return pascal.toString();
    }
 }

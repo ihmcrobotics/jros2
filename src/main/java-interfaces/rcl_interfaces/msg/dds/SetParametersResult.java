@@ -93,5 +93,11 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       return reason_;
    }
 
+   public void setReason(java.lang.String s)
+   {
+      this.reason_.delete(0, this.reason_.length());
+      this.reason_.insert(0, s);
+   }
+
 
 }

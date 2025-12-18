@@ -193,14 +193,32 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return client_id_;
    }
 
+   public void setClientId(java.lang.String s)
+   {
+      this.client_id_.delete(0, this.client_id_.length());
+      this.client_id_.insert(0, s);
+   }
+
    public StringBuilder getMarkerName()
    {
       return marker_name_;
    }
 
+   public void setMarkerName(java.lang.String s)
+   {
+      this.marker_name_.delete(0, this.marker_name_.length());
+      this.marker_name_.insert(0, s);
+   }
+
    public StringBuilder getControlName()
    {
       return control_name_;
+   }
+
+   public void setControlName(java.lang.String s)
+   {
+      this.control_name_.delete(0, this.control_name_.length());
+      this.control_name_.insert(0, s);
    }
 
    public byte getEventType()

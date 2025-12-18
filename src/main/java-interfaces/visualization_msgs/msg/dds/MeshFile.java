@@ -84,6 +84,12 @@ public class MeshFile implements ROS2Message<MeshFile>
       return filename_;
    }
 
+   public void setFilename(java.lang.String s)
+   {
+      this.filename_.delete(0, this.filename_.length());
+      this.filename_.insert(0, s);
+   }
+
    public IDLByteSequence getData()
    {
       return data_;
