@@ -36,12 +36,8 @@ import us.ihmc.jros2.ROS2Message;
 \<pre>{@code
 <context.schema>}\</pre>
 */
-public <if(context.enum)>enum<else>class<endif> <context.javaClassName> implements ROS2Message\<<context.javaClassName>>
+public class <context.javaClassName> implements ROS2Message\<<context.javaClassName>>
 {
-   <if(context.enum)>
-   <context.enumNames; wrap, anchor, separator=",\n">;
-   <endif>
-
    public static final java.lang.String name = "<context.packageName>::msg::dds_::<context.javaClassName>_";
 
    <context.fieldList:{ field |
@@ -53,15 +49,9 @@ public <if(context.enum)>enum<else>class<endif> <context.javaClassName> implemen
 // Note: The length of <if(field.array)>each string in this sequence<else>this string<endif> should not exceed <field.stringLength> characters.
 // This is not strictly enforced in Java / jros2.
 <endif>
-<if(context.enum)>
-<if(!field.constantValue)>
-private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName>;<if(field.trailingComment)> // <field.trailingComment><endif>
-<endif>
-<else>
 <if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;<if(field.trailingComment)> // <field.trailingComment><endif>
-<endif>
    }>
-<if(!context.enum)>   public <else>   <endif><context.javaClassName>()
+   public <context.javaClassName>()
    {
       <context.fieldList:{ field |
       <if(!field.constantValue)>
