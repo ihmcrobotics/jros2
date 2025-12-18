@@ -53,7 +53,7 @@ public class MsgContext extends InterfaceContext
       }
 
       /*
-       * We assume a message interface is an enum if there are more than 1 uint8 constant fields,
+       * We assume a message interface is an enum if there are more than 0 uint8 constant fields,
        * exactly 1 uint8 fields, and no other fields.
        */
       return uint8_constantFieldsCount > 0 && uint8_otherFieldsCount == 1 && otherFieldsCount == 0;
