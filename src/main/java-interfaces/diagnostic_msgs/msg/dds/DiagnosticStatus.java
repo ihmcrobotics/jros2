@@ -139,6 +139,11 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       return name_;
    }
 
+   public java.lang.String getNameAsString()
+   {
+      return name_.toString();
+   }
+
    public void setName(java.lang.String s)
    {
       this.name_.delete(0, this.name_.length());
@@ -150,6 +155,11 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       return message_;
    }
 
+   public java.lang.String getMessageAsString()
+   {
+      return message_.toString();
+   }
+
    public void setMessage(java.lang.String s)
    {
       this.message_.delete(0, this.message_.length());
@@ -159,6 +169,11 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public StringBuilder getHardwareId()
    {
       return hardware_id_;
+   }
+
+   public java.lang.String getHardwareIdAsString()
+   {
+      return hardware_id_.toString();
    }
 
    public void setHardwareId(java.lang.String s)

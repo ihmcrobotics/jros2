@@ -154,6 +154,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return measurement_source_name_;
    }
 
+   public java.lang.String getMeasurementSourceNameAsString()
+   {
+      return measurement_source_name_.toString();
+   }
+
    public void setMeasurementSourceName(java.lang.String s)
    {
       this.measurement_source_name_.delete(0, this.measurement_source_name_.length());
@@ -165,6 +170,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return metrics_source_;
    }
 
+   public java.lang.String getMetricsSourceAsString()
+   {
+      return metrics_source_.toString();
+   }
+
    public void setMetricsSource(java.lang.String s)
    {
       this.metrics_source_.delete(0, this.metrics_source_.length());
@@ -174,6 +184,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    public StringBuilder getUnit()
    {
       return unit_;
+   }
+
+   public java.lang.String getUnitAsString()
+   {
+      return unit_.toString();
    }
 
    public void setUnit(java.lang.String s)

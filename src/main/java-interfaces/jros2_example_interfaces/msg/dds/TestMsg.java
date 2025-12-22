@@ -304,6 +304,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       return my_string_;
    }
 
+   public java.lang.String getMyStringAsString()
+   {
+      return my_string_.toString();
+   }
+
    public void setMyString(java.lang.String s)
    {
       this.my_string_.delete(0, this.my_string_.length());
@@ -330,6 +335,11 @@ public class TestMsg implements ROS2Message<TestMsg>
       return string_of_unbounded_size_;
    }
 
+   public java.lang.String getStringOfUnboundedSizeAsString()
+   {
+      return string_of_unbounded_size_.toString();
+   }
+
    public void setStringOfUnboundedSize(java.lang.String s)
    {
       this.string_of_unbounded_size_.delete(0, this.string_of_unbounded_size_.length());
@@ -339,6 +349,11 @@ public class TestMsg implements ROS2Message<TestMsg>
    public StringBuilder getUpToTenCharactersString()
    {
       return up_to_ten_characters_string_;
+   }
+
+   public java.lang.String getUpToTenCharactersStringAsString()
+   {
+      return up_to_ten_characters_string_.toString();
    }
 
    public void setUpToTenCharactersString(java.lang.String s)
@@ -385,6 +400,11 @@ public class TestMsg implements ROS2Message<TestMsg>
    public StringBuilder getFullName()
    {
       return full_name_;
+   }
+
+   public java.lang.String getFullNameAsString()
+   {
+      return full_name_.toString();
    }
 
    public void setFullName(java.lang.String s)

@@ -224,6 +224,11 @@ public void <field.javaSetterMethodName>(<field.javaType> <field.javaName>)
 \}
 
 <elseif(field.builtinType&&field.builtinStringType&&!field.array)>
+public java.lang.String <field.javaGetterMethodName>AsString()
+{
+   return <field.javaName>.toString();
+\}
+
 public void <field.javaSetterMethodName>(java.lang.String s)
 {
    this.<field.javaName>.delete(0, this.<field.javaName>.length());

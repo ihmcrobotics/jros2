@@ -226,6 +226,11 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       return string_value_;
    }
 
+   public java.lang.String getStringValueAsString()
+   {
+      return string_value_.toString();
+   }
+
    public void setStringValue(java.lang.String s)
    {
       this.string_value_.delete(0, this.string_value_.length());

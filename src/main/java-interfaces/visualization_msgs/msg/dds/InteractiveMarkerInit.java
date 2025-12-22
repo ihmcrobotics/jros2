@@ -102,6 +102,11 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       return server_id_;
    }
 
+   public java.lang.String getServerIdAsString()
+   {
+      return server_id_.toString();
+   }
+
    public void setServerId(java.lang.String s)
    {
       this.server_id_.delete(0, this.server_id_.length());

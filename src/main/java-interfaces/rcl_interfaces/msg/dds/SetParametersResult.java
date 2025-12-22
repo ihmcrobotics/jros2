@@ -93,6 +93,11 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       return reason_;
    }
 
+   public java.lang.String getReasonAsString()
+   {
+      return reason_.toString();
+   }
+
    public void setReason(java.lang.String s)
    {
       this.reason_.delete(0, this.reason_.length());

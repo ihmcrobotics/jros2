@@ -97,6 +97,11 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       return body_frame_id_;
    }
 
+   public java.lang.String getBodyFrameIdAsString()
+   {
+      return body_frame_id_.toString();
+   }
+
    public void setBodyFrameId(java.lang.String s)
    {
       this.body_frame_id_.delete(0, this.body_frame_id_.length());
@@ -106,6 +111,11 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    public StringBuilder getReferenceFrameId()
    {
       return reference_frame_id_;
+   }
+
+   public java.lang.String getReferenceFrameIdAsString()
+   {
+      return reference_frame_id_.toString();
    }
 
    public void setReferenceFrameId(java.lang.String s)

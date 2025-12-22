@@ -93,6 +93,11 @@ public class GoalID implements ROS2Message<GoalID>
       return id_;
    }
 
+   public java.lang.String getIdAsString()
+   {
+      return id_.toString();
+   }
+
    public void setId(java.lang.String s)
    {
       this.id_.delete(0, this.id_.length());

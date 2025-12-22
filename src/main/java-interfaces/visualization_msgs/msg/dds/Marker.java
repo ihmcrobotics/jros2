@@ -343,6 +343,11 @@ public class Marker implements ROS2Message<Marker>
       return ns_;
    }
 
+   public java.lang.String getNsAsString()
+   {
+      return ns_.toString();
+   }
+
    public void setNs(java.lang.String s)
    {
       this.ns_.delete(0, this.ns_.length());
@@ -424,6 +429,11 @@ public class Marker implements ROS2Message<Marker>
       return texture_resource_;
    }
 
+   public java.lang.String getTextureResourceAsString()
+   {
+      return texture_resource_.toString();
+   }
+
    public void setTextureResource(java.lang.String s)
    {
       this.texture_resource_.delete(0, this.texture_resource_.length());
@@ -445,6 +455,11 @@ public class Marker implements ROS2Message<Marker>
       return text_;
    }
 
+   public java.lang.String getTextAsString()
+   {
+      return text_.toString();
+   }
+
    public void setText(java.lang.String s)
    {
       this.text_.delete(0, this.text_.length());
@@ -454,6 +469,11 @@ public class Marker implements ROS2Message<Marker>
    public StringBuilder getMeshResource()
    {
       return mesh_resource_;
+   }
+
+   public java.lang.String getMeshResourceAsString()
+   {
+      return mesh_resource_.toString();
    }
 
    public void setMeshResource(java.lang.String s)

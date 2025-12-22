@@ -91,6 +91,11 @@ public class Header implements ROS2Message<Header>
       return frame_id_;
    }
 
+   public java.lang.String getFrameIdAsString()
+   {
+      return frame_id_.toString();
+   }
+
    public void setFrameId(java.lang.String s)
    {
       this.frame_id_.delete(0, this.frame_id_.length());

@@ -79,6 +79,11 @@ public class KeyValue implements ROS2Message<KeyValue>
       return key_;
    }
 
+   public java.lang.String getKeyAsString()
+   {
+      return key_.toString();
+   }
+
    public void setKey(java.lang.String s)
    {
       this.key_.delete(0, this.key_.length());
@@ -88,6 +93,11 @@ public class KeyValue implements ROS2Message<KeyValue>
    public StringBuilder getValue()
    {
       return value_;
+   }
+
+   public java.lang.String getValueAsString()
+   {
+      return value_.toString();
    }
 
    public void setValue(java.lang.String s)

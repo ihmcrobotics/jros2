@@ -86,6 +86,11 @@ public class Parameter implements ROS2Message<Parameter>
       return name_;
    }
 
+   public java.lang.String getNameAsString()
+   {
+      return name_.toString();
+   }
+
    public void setName(java.lang.String s)
    {
       this.name_.delete(0, this.name_.length());

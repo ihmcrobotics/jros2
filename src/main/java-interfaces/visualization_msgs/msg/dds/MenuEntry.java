@@ -212,6 +212,11 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return title_;
    }
 
+   public java.lang.String getTitleAsString()
+   {
+      return title_.toString();
+   }
+
    public void setTitle(java.lang.String s)
    {
       this.title_.delete(0, this.title_.length());
@@ -221,6 +226,11 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    public StringBuilder getCommand()
    {
       return command_;
+   }
+
+   public java.lang.String getCommandAsString()
+   {
+      return command_.toString();
    }
 
    public void setCommand(java.lang.String s)

@@ -360,6 +360,11 @@ public class BatteryState implements ROS2Message<BatteryState>
       return location_;
    }
 
+   public java.lang.String getLocationAsString()
+   {
+      return location_.toString();
+   }
+
    public void setLocation(java.lang.String s)
    {
       this.location_.delete(0, this.location_.length());
@@ -369,6 +374,11 @@ public class BatteryState implements ROS2Message<BatteryState>
    public StringBuilder getSerialNumber()
    {
       return serial_number_;
+   }
+
+   public java.lang.String getSerialNumberAsString()
+   {
+      return serial_number_.toString();
    }
 
    public void setSerialNumber(java.lang.String s)

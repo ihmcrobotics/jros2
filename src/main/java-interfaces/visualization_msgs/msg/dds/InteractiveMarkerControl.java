@@ -251,6 +251,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return name_;
    }
 
+   public java.lang.String getNameAsString()
+   {
+      return name_.toString();
+   }
+
    public void setName(java.lang.String s)
    {
       this.name_.delete(0, this.name_.length());
@@ -310,6 +315,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public StringBuilder getDescription()
    {
       return description_;
+   }
+
+   public java.lang.String getDescriptionAsString()
+   {
+      return description_.toString();
    }
 
    public void setDescription(java.lang.String s)

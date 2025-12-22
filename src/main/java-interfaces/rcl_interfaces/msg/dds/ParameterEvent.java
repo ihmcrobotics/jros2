@@ -127,6 +127,11 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       return node_;
    }
 
+   public java.lang.String getNodeAsString()
+   {
+      return node_.toString();
+   }
+
    public void setNode(java.lang.String s)
    {
       this.node_.delete(0, this.node_.length());

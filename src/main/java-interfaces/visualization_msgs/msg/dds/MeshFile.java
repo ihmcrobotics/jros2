@@ -84,6 +84,11 @@ public class MeshFile implements ROS2Message<MeshFile>
       return filename_;
    }
 
+   public java.lang.String getFilenameAsString()
+   {
+      return filename_.toString();
+   }
+
    public void setFilename(java.lang.String s)
    {
       this.filename_.delete(0, this.filename_.length());

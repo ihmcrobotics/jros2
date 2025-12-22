@@ -94,6 +94,11 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       return format_;
    }
 
+   public java.lang.String getFormatAsString()
+   {
+      return format_.toString();
+   }
+
    public void setFormat(java.lang.String s)
    {
       this.format_.delete(0, this.format_.length());

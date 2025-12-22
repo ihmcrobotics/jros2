@@ -115,6 +115,11 @@ public class Odometry implements ROS2Message<Odometry>
       return child_frame_id_;
    }
 
+   public java.lang.String getChildFrameIdAsString()
+   {
+      return child_frame_id_.toString();
+   }
+
    public void setChildFrameId(java.lang.String s)
    {
       this.child_frame_id_.delete(0, this.child_frame_id_.length());

@@ -145,6 +145,11 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       return text_;
    }
 
+   public java.lang.String getTextAsString()
+   {
+      return text_.toString();
+   }
+
    public void setText(java.lang.String s)
    {
       this.text_.delete(0, this.text_.length());

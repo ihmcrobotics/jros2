@@ -147,6 +147,11 @@ public class Image implements ROS2Message<Image>
       return encoding_;
    }
 
+   public java.lang.String getEncodingAsString()
+   {
+      return encoding_.toString();
+   }
+
    public void setEncoding(java.lang.String s)
    {
       this.encoding_.delete(0, this.encoding_.length());

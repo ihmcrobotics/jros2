@@ -214,6 +214,11 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       return ns_;
    }
 
+   public java.lang.String getNsAsString()
+   {
+      return ns_.toString();
+   }
+
    public void setNs(java.lang.String s)
    {
       this.ns_.delete(0, this.ns_.length());
