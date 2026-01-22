@@ -116,7 +116,7 @@ public class ROS2Node implements Closeable
 
       if (domainId < 0 || domainId > 232)
       {
-         throw new IllegalArgumentException(String.format("Invalid domain ID used when constructing a ROS2Node (%d)", domainId));
+         throw new IllegalArgumentException("Invalid domain ID used when constructing a ROS2Node (" + domainId + ")");
       }
       this.domainId = domainId;
 

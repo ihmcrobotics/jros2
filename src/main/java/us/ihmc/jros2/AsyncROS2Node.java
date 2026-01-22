@@ -53,7 +53,7 @@ public class AsyncROS2Node extends ROS2Node
 
       tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, false); // Unfair for better performance
 
-      publishThread = new Thread(this::publishLoop, String.format("AsyncROS2NodePublishThread-%s", name));
+      publishThread = new Thread(this::publishLoop, "AsyncROS2NodePublishThread-" + name);
       publishThread.setPriority(Thread.NORM_PRIORITY + 1); // Slightly higher priority
       publishThread.start();
    }
