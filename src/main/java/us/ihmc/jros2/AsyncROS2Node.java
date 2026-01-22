@@ -39,7 +39,7 @@ public class AsyncROS2Node extends ROS2Node
       jros2.load();
    }
 
-   private static final int QUEUE_CAPACITY = 128;
+   private static final int QUEUE_CAPACITY = 256;
 
    /*
     * Publish thread
@@ -51,9 +51,10 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, fastddsTransports);
 
-      tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, true);
+      tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, false); // Unfair for better performance
 
       publishThread = new Thread(this::publishLoop, "AsyncROS2NodePublishThread-" + name);
+      publishThread.setPriority(Thread.NORM_PRIORITY + 1); // Slightly higher priority
       publishThread.start();
    }
 
@@ -147,11 +148,13 @@ public class AsyncROS2Node extends ROS2Node
       {
          while (!publishThread.isInterrupted())
          {
-            tasks.take().run();
+            Runnable task = tasks.take();
+            task.run();
          }
       }
       catch (InterruptedException ignored)
       {
+         // Thread interrupted during shutdown
       }
    }
 }

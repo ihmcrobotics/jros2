@@ -82,7 +82,8 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    {
       if (!closed)
       {
-         if (queueSize.getAndIncrement() >= queueCapacity)
+         int currentSize = queueSize.get();
+         if (currentSize >= queueCapacity)
          {
             long now = System.nanoTime();
 
@@ -100,9 +101,10 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
                lastQueueOverflowWarnTimeNs = now;
             }
-
-            queueSize.decrementAndGet();
+            return; // Drop message instead of failing
          }
+
+         queueSize.incrementAndGet();
 
          T messageToPublish = messagesToPublish[insertPosition];
          messageToPublish.set(message);
