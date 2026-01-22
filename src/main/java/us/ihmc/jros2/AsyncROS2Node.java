@@ -21,9 +21,9 @@ import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.log.LogTools;
 
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
@@ -40,11 +40,6 @@ public class AsyncROS2Node extends ROS2Node
    }
 
    private static final int QUEUE_CAPACITY = 128;
-
-   /*
-    * Publisher profile counter for garbage-free unique names
-    */
-   private final AtomicLong publisherProfileCounter = new AtomicLong(0);
 
    /*
     * Publish thread
@@ -81,7 +76,7 @@ public class AsyncROS2Node extends ROS2Node
          {
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
-            String publisherProfileName = getName() + "_pub_" + publisherProfileCounter.getAndIncrement();
+            String publisherProfileName = UUID.randomUUID().toString();
             publisherProfile.setProfileName(publisherProfileName);
             profilesXML.addPublisherProfile(publisherProfile);
 
