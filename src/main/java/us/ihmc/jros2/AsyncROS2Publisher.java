@@ -86,13 +86,17 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
          {
             long now = System.nanoTime();
 
-            // Print a warning every 1 second
-            if (now - lastQueueOverflowWarnTimeNs > 1e9)
+            // Print a warning every 1 second (avoid string formatting in hot path)
+            if (now - lastQueueOverflowWarnTimeNs > 1_000_000_000L)
             {
-               LogTools.warn(
-                     "AsyncROS2Publisher ({}) has exceeded the queue capacity of {}. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
-                     node.getName(),
-                     queueCapacity);
+               // Only allocate strings when actually logging
+               if (LogTools.isWarnEnabled())
+               {
+                  LogTools.warn(
+                        "AsyncROS2Publisher ({}) has exceeded the queue capacity of {}. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
+                        node.getName(),
+                        queueCapacity);
+               }
 
                lastQueueOverflowWarnTimeNs = now;
             }

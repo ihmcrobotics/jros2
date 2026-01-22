@@ -231,6 +231,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    /**
     * {@inheritDoc}
+    * This method allocates a new message instance on every call and is not garbage-free.
+    * Use {@link #read(ROS2Message)} for a garbage-free version.
     */
    @Override
    public T read()
@@ -289,7 +291,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    /**
     * {@inheritDoc}
+    * This method allocates a new message instance on every call and is not garbage-free.
+    * Use {@link #read(ROS2Message)} for a garbage-free version.
     */
+   @Deprecated
    @Override
    public T readLatest()
    {

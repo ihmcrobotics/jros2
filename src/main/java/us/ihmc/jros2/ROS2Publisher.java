@@ -153,6 +153,9 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          lastPublishTime = publishTimeMillis;
 
          // Record publish age
+         // Note: Reflection invoke() may cause some allocation, but this is only for statistics
+         // and can be disabled if needed. The alternative would be to require messages to implement
+         // a getHeader() interface method, but that would break compatibility.
          if (getHeaderMethod != null)
          {
             try
@@ -163,7 +166,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             }
             catch (IllegalAccessException | InvocationTargetException e)
             {
-               LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
+               // Only log if logging is enabled to avoid allocation
+               if (LogTools.isErrorEnabled())
+               {
+                  LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
+               }
                getHeaderMethod = null;
             }
          }

@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -93,6 +93,14 @@ public class ROS2Node implements Closeable
    private final List<ROS2Subscription<?>> subscriptions;
 
    /*
+    * Profile name counters for garbage-free operation
+    */
+   private final AtomicLong topicProfileCounter = new AtomicLong(0);
+   private final AtomicLong publisherProfileCounter = new AtomicLong(0);
+   private final AtomicLong subscriberProfileCounter = new AtomicLong(0);
+   private final AtomicLong participantProfileCounter = new AtomicLong(0);
+
+   /*
     * Locks
     */
    protected final ReadWriteLock closeLock;
@@ -116,14 +124,14 @@ public class ROS2Node implements Closeable
 
       if (domainId < 0 || domainId > 232)
       {
-         throw new IllegalArgumentException(String.format("Invalid domain ID used when constructing a ROS2Node (%d)", domainId));
+         throw new IllegalArgumentException("Invalid domain ID used when constructing a ROS2Node (" + domainId + ")");
       }
       this.domainId = domainId;
 
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
-      String participantProfileName = UUID.randomUUID().toString();
+      String participantProfileName = name + "_participant_" + participantProfileCounter.getAndIncrement();
       participantProfile.setDomainId(domainId);
       participantProfile.setProfileName(participantProfileName);
       Rtps rtps = new Rtps();
@@ -215,7 +223,7 @@ public class ROS2Node implements Closeable
                {
                   ProfilesXML profilesXML = new ProfilesXML();
                   TopicProfileType topicProfile = new TopicProfileType();
-                  String topicProfileName = UUID.randomUUID().toString();
+                  String topicProfileName = name + "_topic_" + topicProfileCounter.getAndIncrement();
                   topicProfile.setProfileName(topicProfileName);
                   profilesXML.addTopicProfile(topicProfile);
 
@@ -275,7 +283,7 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
-            String publisherProfileName = UUID.randomUUID().toString();
+            String publisherProfileName = name + "_pub_" + publisherProfileCounter.getAndIncrement();
             publisherProfile.setProfileName(publisherProfileName);
             profilesXML.addPublisherProfile(publisherProfile);
 
@@ -375,7 +383,7 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             SubscriberProfileType subscriberProfile = new SubscriberProfileType();
-            String subscriberProfileName = UUID.randomUUID().toString();
+            String subscriberProfileName = name + "_sub_" + subscriberProfileCounter.getAndIncrement();
             subscriberProfile.setProfileName(subscriberProfileName);
             profilesXML.addSubscriberProfile(subscriberProfile);
 
