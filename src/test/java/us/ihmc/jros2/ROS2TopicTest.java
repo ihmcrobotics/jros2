@@ -15,8 +15,8 @@
  */
 package us.ihmc.jros2;
 
+import example_interfaces.Bool;
 import org.junit.jupiter.api.Test;
-import std_msgs.msg.dds.Bool;
 
 import static org.junit.jupiter.api.Assertions.*;
 

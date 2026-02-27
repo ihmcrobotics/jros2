@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.ROS2QoSProfile.History;
 import us.ihmc.jros2.ROS2QoSProfile.Reliability;
@@ -52,13 +51,13 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node and topic
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       assertDoesNotThrow(() ->
       {
          // Create publishers
-         ROS2Publisher<Bool> publisher1 = ros2Node.createPublisher(topic);
-         ROS2Publisher<Bool> publisher2 = ros2Node.createPublisher(topic);
+         ROS2Publisher<example_interfaces.Bool> publisher1 = ros2Node.createPublisher(topic);
+         ROS2Publisher<example_interfaces.Bool> publisher2 = ros2Node.createPublisher(topic);
 
          // Try publishing concurrently
          Thread[] publishThreads = new Thread[10];
@@ -67,7 +66,7 @@ public class ROS2PublishSubscribeTest
             Thread thread = new Thread(() ->
             {
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8));
-               publisher1.publish(new Bool());
+               publisher1.publish(new example_interfaces.Bool());
             }, "PublishThread" + i);
             thread.start();
             publishThreads[i] = thread;
@@ -88,7 +87,7 @@ public class ROS2PublishSubscribeTest
          {
             while (!Thread.interrupted())
             {
-               publisher2.publish(new Bool());
+               publisher2.publish(new example_interfaces.Bool());
             }
          }, ":PublishThread");
          publishThread.start();
@@ -113,7 +112,7 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node and topic
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       assertDoesNotThrow(() ->
       {
@@ -121,9 +120,9 @@ public class ROS2PublishSubscribeTest
          subscriptionQos.reliability(Reliability.RELIABLE);
 
          // Create subscriptions
-         ROS2Subscription<Bool> subscription1 = ros2Node.createSubscription(topic, reader ->
+         ROS2Subscription<example_interfaces.Bool> subscription1 = ros2Node.createSubscription(topic, reader ->
          {
-            Bool message = new Bool();
+            example_interfaces.Bool message = new example_interfaces.Bool();
             reader.read(message);
             assert false; // Should never reach here since we don't publish anything
          }, subscriptionQos);
@@ -158,14 +157,14 @@ public class ROS2PublishSubscribeTest
 
       // Create ROS 2 node, topic, and publisher
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       ROS2QoSProfile publisherQos = new ROS2QoSProfile();
       publisherQos.durability(Durability.TRANSIENT_LOCAL);
-      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic, publisherQos);
+      ROS2Publisher<example_interfaces.Bool> publisher = ros2Node.createPublisher(topic, publisherQos);
 
       // Create a Bool message and publish it
-      Bool bool = new Bool();
+      example_interfaces.Bool bool = new example_interfaces.Bool();
       bool.setData(expectedValue);
       publisher.publish(bool);
 
@@ -189,13 +188,13 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.reliability(Reliability.RELIABLE);
 
       // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
-      std_msgs.msg.dds.String msg = new std_msgs.msg.dds.String();
+      std_msgs.String msg = new std_msgs.String();
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
@@ -244,7 +243,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
@@ -254,7 +253,7 @@ public class ROS2PublishSubscribeTest
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
-         std_msgs.msg.dds.String msg = reader.read();
+         std_msgs.String msg = reader.read();
 
          synchronized (sync)
          {
@@ -300,7 +299,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
@@ -355,14 +354,14 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
 
-      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
+      ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
@@ -383,7 +382,7 @@ public class ROS2PublishSubscribeTest
 
       // By this point, the subscription should have received all the messages, let's read them all
       int totalRead = 0;
-      std_msgs.msg.dds.String msg = subscription.read();
+      std_msgs.String msg = subscription.read();
       while (msg != null)
       {
          assertEquals(data, msg.getData().toString());
@@ -413,7 +412,7 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.msg.dds.String> topic = new ROS2Topic<>(topicName, std_msgs.msg.dds.String.class);
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
@@ -421,7 +420,7 @@ public class ROS2PublishSubscribeTest
       subscriptionQos.reliability(Reliability.RELIABLE);
 
       AtomicInteger callbackRun = new AtomicInteger();
-      ROS2Subscription<std_msgs.msg.dds.String> subscription = ros2Node.createSubscription(topic, reader ->
+      ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, reader ->
       {
          // Only read in half of the callbacks
          if (callbackRun.get() % 2 == 0)
@@ -451,7 +450,7 @@ public class ROS2PublishSubscribeTest
 
       // By this point, the subscription should have received all the messages, let's read them all
       int totalRead = 0;
-      std_msgs.msg.dds.String msg = subscription.read();
+      std_msgs.String msg = subscription.read();
       while (msg != null)
       {
          assertEquals(data, msg.getData().toString());
@@ -486,11 +485,11 @@ public class ROS2PublishSubscribeTest
    {
       Instant start = Instant.now();
 
-      ROS2Topic<Bool> topic = new ROS2Topic<>("/ihmc/test_topic", Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/ihmc/test_topic", example_interfaces.Bool.class);
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
 
-      ROS2Publisher<Bool> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<example_interfaces.Bool> publisher = publisherNode.createPublisher(topic);
 
       Thread destroyThread = new Thread(() ->
       {
@@ -502,9 +501,9 @@ public class ROS2PublishSubscribeTest
             {
                LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
 
-               ROS2Subscription<Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
+               ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
                {
-                  Bool data = new Bool();
+                  example_interfaces.Bool data = new example_interfaces.Bool();
                   subscriber.read(data);
                }, ROS2QoSProfile.DEFAULT);
 
@@ -531,7 +530,7 @@ public class ROS2PublishSubscribeTest
       }, "destroyThread");
       destroyThread.start();
 
-      Bool messageToPublish = new Bool();
+      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
       messageToPublish.setData(true);
       Thread publishThread = new Thread(() ->
       {
@@ -569,13 +568,13 @@ public class ROS2PublishSubscribeTest
 
       // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       // Create a publisher
-      ROS2Publisher<Bool> publisher = ros2Node.createPublisher(topic);
+      ROS2Publisher<example_interfaces.Bool> publisher = ros2Node.createPublisher(topic);
 
       // Publisher will publish in a free loop until subscription is created and destroyed
-      Bool messageToPublish = new Bool();
+      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
       messageToPublish.setData(true);
       Thread publishThread = new Thread(() ->
       {
@@ -587,9 +586,9 @@ public class ROS2PublishSubscribeTest
       publishThread.start();
 
       // Create a subscription
-      ROS2Subscription<Bool> subscription = ros2Node.createSubscription(topic, subscriber ->
+      ROS2Subscription<example_interfaces.Bool> subscription = ros2Node.createSubscription(topic, subscriber ->
       {
-         Bool data = new Bool();
+         example_interfaces.Bool data = new example_interfaces.Bool();
          subscriber.read(data);
       }, ROS2QoSProfile.DEFAULT);
 

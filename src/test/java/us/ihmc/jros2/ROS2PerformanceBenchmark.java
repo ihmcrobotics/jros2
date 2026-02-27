@@ -15,8 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import std_msgs.msg.dds.Bool;
-import std_msgs.msg.dds.Float64;
 import us.ihmc.log.LogTools;
 
 import java.io.File;
@@ -74,11 +72,11 @@ public class ROS2PerformanceBenchmark
       LogTools.info("Running Bool message benchmark...");
 
       // Standard ROS2Node benchmark
-      BenchmarkResult standardResult = benchmarkStandardNode(Bool.class, "/benchmark/bool/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult standardResult = benchmarkStandardNode(example_interfaces.Bool.class, "/benchmark/bool/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Standard Node - Bool: {}", standardResult);
 
       // Async ROS2Node benchmark
-      BenchmarkResult asyncResult = benchmarkAsyncNode(Bool.class, "/benchmark/bool/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult asyncResult = benchmarkAsyncNode(example_interfaces.Bool.class, "/benchmark/bool/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Async Node - Bool:    {}", asyncResult);
 
       // Write CSV
@@ -92,10 +90,10 @@ public class ROS2PerformanceBenchmark
    {
       LogTools.info("Running Float64 message benchmark...");
 
-      BenchmarkResult standardResult = benchmarkStandardNode(Float64.class, "/benchmark/float64/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult standardResult = benchmarkStandardNode(example_interfaces.Float64.class, "/benchmark/float64/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Standard Node - Float64: {}", standardResult);
 
-      BenchmarkResult asyncResult = benchmarkAsyncNode(Float64.class, "/benchmark/float64/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult asyncResult = benchmarkAsyncNode(example_interfaces.Float64.class, "/benchmark/float64/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Async Node - Float64:    {}", asyncResult);
 
       writeBenchmarkCSV("float64_benchmark", standardResult, asyncResult);
@@ -108,10 +106,10 @@ public class ROS2PerformanceBenchmark
    {
       LogTools.info("Running String message benchmark...");
 
-      BenchmarkResult standardResult = benchmarkStandardNode(std_msgs.msg.dds.String.class, "/benchmark/string/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult standardResult = benchmarkStandardNode(std_msgs.String.class, "/benchmark/string/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Standard Node - String: {}", standardResult);
 
-      BenchmarkResult asyncResult = benchmarkAsyncNode(std_msgs.msg.dds.String.class, "/benchmark/string/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult asyncResult = benchmarkAsyncNode(std_msgs.String.class, "/benchmark/string/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       LogTools.info("Async Node - String:    {}", asyncResult);
 
       writeBenchmarkCSV("string_benchmark", standardResult, asyncResult);
@@ -247,7 +245,7 @@ public class ROS2PerformanceBenchmark
    private MultiThreadBenchmarkResult benchmarkStandardNodeMultiThreaded(int threadCount, int messagesPerThread) throws Exception
    {
       ROS2Node node = new ROS2Node("benchmark_mt_standard");
-      ROS2Topic<Bool> topic = new ROS2Topic<>("/benchmark/mt/standard", Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/benchmark/mt/standard", example_interfaces.Bool.class);
 
       CountDownLatch startLatch = new CountDownLatch(threadCount);
       CountDownLatch endLatch = new CountDownLatch(threadCount);
@@ -265,8 +263,8 @@ public class ROS2PerformanceBenchmark
       {
          final int threadIndex = i;
          threads[i] = new Thread(() -> {
-            ROS2Publisher<Bool> publisher = node.createPublisher(topic);
-            Bool message = new Bool();
+            ROS2Publisher<example_interfaces.Bool> publisher = node.createPublisher(topic);
+            example_interfaces.Bool message = new example_interfaces.Bool();
             message.setData(true);
 
             startLatch.countDown();
@@ -306,7 +304,7 @@ public class ROS2PerformanceBenchmark
    private MultiThreadBenchmarkResult benchmarkAsyncNodeMultiThreaded(int threadCount, int messagesPerThread) throws Exception
    {
       AsyncROS2Node node = new AsyncROS2Node("benchmark_mt_async");
-      ROS2Topic<Bool> topic = new ROS2Topic<>("/benchmark/mt/async", Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/benchmark/mt/async", example_interfaces.Bool.class);
 
       CountDownLatch startLatch = new CountDownLatch(threadCount);
       CountDownLatch endLatch = new CountDownLatch(threadCount);
@@ -324,8 +322,8 @@ public class ROS2PerformanceBenchmark
       {
          final int threadIndex = i;
          threads[i] = new Thread(() -> {
-            AsyncROS2Publisher<Bool> publisher = (AsyncROS2Publisher<Bool>) node.createPublisher(topic);
-            Bool message = new Bool();
+            AsyncROS2Publisher<example_interfaces.Bool> publisher = (AsyncROS2Publisher<example_interfaces.Bool>) node.createPublisher(topic);
+            example_interfaces.Bool message = new example_interfaces.Bool();
             message.setData(true);
 
             startLatch.countDown();
@@ -365,17 +363,17 @@ public class ROS2PerformanceBenchmark
    @SuppressWarnings("unchecked")
    private <T extends ROS2Message<T>> void setMessageData(T message)
    {
-      if (message instanceof Bool)
+      if (message instanceof example_interfaces.Bool)
       {
-         ((Bool) message).setData(true);
+         ((example_interfaces.Bool) message).setData(true);
       }
-      else if (message instanceof Float64)
+      else if (message instanceof example_interfaces.Float64)
       {
-         ((Float64) message).setData(3.14159);
+         ((example_interfaces.Float64) message).setData(3.14159);
       }
-      else if (message instanceof std_msgs.msg.dds.String)
+      else if (message instanceof std_msgs.String)
       {
-         ((std_msgs.msg.dds.String) message).setData("Benchmark test message with some data");
+         ((std_msgs.String) message).setData("Benchmark test message with some data");
       }
    }
 

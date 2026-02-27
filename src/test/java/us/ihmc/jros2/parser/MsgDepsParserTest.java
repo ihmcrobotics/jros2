@@ -42,7 +42,7 @@ public class MsgDepsParserTest
       Assertions.assertEquals("test_pkg/Test", msgDepsContext.getPackageResourceName());
       Assertions.assertEquals("test_pkg", msgDepsContext.getPackageName());
       Assertions.assertEquals("Test", msgDepsContext.getResourceName());
-      Assertions.assertEquals("test_pkg.msg.dds", msgDepsContext.getJavaPackageName());
+      Assertions.assertEquals("test_pkg", msgDepsContext.getJavaPackageName());
       Assertions.assertEquals("Test", msgDepsContext.getJavaClassName());
 
       Assertions.assertEquals(2, msgDepsContext.getDependencies().size());
@@ -57,7 +57,7 @@ public class MsgDepsParserTest
       Assertions.assertEquals("builtin_interfaces/Time", builtin_interfaces_Time.getPackageResourceName());
       Assertions.assertEquals("builtin_interfaces", builtin_interfaces_Time.getPackageName());
       Assertions.assertEquals("Time", builtin_interfaces_Time.getResourceName());
-      Assertions.assertEquals("builtin_interfaces.msg.dds", builtin_interfaces_Time.getJavaPackageName());
+      Assertions.assertEquals("builtin_interfaces", builtin_interfaces_Time.getJavaPackageName());
       Assertions.assertEquals("Time", builtin_interfaces_Time.getJavaClassName());
       Assertions.assertEquals("This message communicates ROS Time defined here:\nhttps://design.ros2.org/articles/clock_and_time.html",
                               builtin_interfaces_Time.getHeaderComment());

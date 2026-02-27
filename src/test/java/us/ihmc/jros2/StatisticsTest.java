@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import geometry_msgs.msg.dds.Point;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
@@ -130,20 +129,20 @@ public class StatisticsTest
    {
       // Create a publisher
       ROS2Node node = new ROS2Node("test_node");
-      ROS2Topic<Point> topic = new ROS2Topic<>("/test_topic", Point.class);
-      ROS2Publisher<Point> publisher = node.createPublisher(topic);
+      ROS2Topic<geometry_msgs.Point> topic = new ROS2Topic<>("/test_topic", geometry_msgs.Point.class);
+      ROS2Publisher<geometry_msgs.Point> publisher = node.createPublisher(topic);
 
       // Create the message to publish
-      Point message = new Point();
+      geometry_msgs.Point message = new geometry_msgs.Point();
       message.setX(1.0);
       message.setY(2.0);
       message.setZ(3.0);
 
       // Create subscription
       AtomicInteger receivedCount = new AtomicInteger(0);
-      ROS2Subscription<Point> subscription = node.createSubscription(topic, reader ->
+      ROS2Subscription<geometry_msgs.Point> subscription = node.createSubscription(topic, reader ->
       {
-         Point received = reader.read();
+         geometry_msgs.Point received = reader.read();
          assertEquals(received.getX(), message.getX());
          assertEquals(received.getY(), message.getY());
          assertEquals(received.getZ(), message.getZ());

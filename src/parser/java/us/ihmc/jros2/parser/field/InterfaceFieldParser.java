@@ -86,7 +86,7 @@ public final class InterfaceFieldParser
             field.type(typeStr);
             if (!BuiltinTools.isBuiltinType(typeStr))
             {
-               String javaTypePackageStr = typePackageStr.isEmpty() ? context.getJavaPackageName() : typePackageStr + ".msg.dds";
+               String javaTypePackageStr = typePackageStr.isEmpty() ? context.getJavaPackageName() : typePackageStr;
                String javaTypeStr = typeStr.substring(typeStr.lastIndexOf('/') != -1 ? typeStr.lastIndexOf('/') + 1 : 0);
 
                field.javaType(javaTypePackageStr + "." + javaTypeStr);
