@@ -4,7 +4,6 @@ pluginManagement {
    }
    repositories {
       mavenCentral()
-      mavenLocal()
       maven { url = uri("https://robotlabfiles.ihmc.us/repository") }
    }
 }
