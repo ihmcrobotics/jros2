@@ -104,7 +104,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 1 + CDRBuffer.alignment(currentAlignment, 1);
+      return 1; // Size of boolean element (alignment added by caller)
    }
 
    @Override

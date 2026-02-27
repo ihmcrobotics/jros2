@@ -104,7 +104,9 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return CDRBuffer.alignment(currentAlignment, 4);
+      // Return the actual size of an int element (4 bytes)
+      // The alignment padding is added separately by the caller in calculateSizeBytes
+      return 4;
    }
 
    @Override

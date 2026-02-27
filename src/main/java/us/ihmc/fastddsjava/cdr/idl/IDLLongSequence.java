@@ -104,7 +104,9 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return CDRBuffer.alignment(currentAlignment, 8);
+      // Return the actual size of a long element (8 bytes)
+      // The alignment padding is added separately by the caller in calculateSizeBytes
+      return 8;
    }
 
    @Override

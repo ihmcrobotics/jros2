@@ -104,7 +104,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 1 + CDRBuffer.alignment(currentAlignment, 1);
+      return 1; // Size of byte element (alignment added by caller)
    }
 
    @Override

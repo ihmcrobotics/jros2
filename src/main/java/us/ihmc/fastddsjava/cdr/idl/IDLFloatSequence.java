@@ -104,7 +104,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 4 + CDRBuffer.alignment(currentAlignment, 4);
+      return 4; // Size of float element (alignment added by caller)
    }
 
    @Override

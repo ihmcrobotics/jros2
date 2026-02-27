@@ -104,7 +104,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 8 + CDRBuffer.alignment(currentAlignment, 8);
+      return 8; // Size of double element (alignment added by caller)
    }
 
    @Override
