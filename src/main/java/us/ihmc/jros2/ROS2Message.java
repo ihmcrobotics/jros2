@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import std_msgs.msg.dds.Header;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 import us.ihmc.log.LogTools;
 
@@ -60,7 +59,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
    }
 
    /**
-    * Finds the first method in a ROS2Message which returns type {@link Header}. Used for statistics.
+    * Finds the first method in a ROS2Message which returns type {@link std_msgs.Header}. Used for statistics.
     * @param topicType the ROS2Message topic type class.
     * @return the method reference to the Header getter.
     */
@@ -69,7 +68,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       Method[] methods = topicType.getDeclaredMethods();
       for (int i = 0; i < methods.length; ++i)
       {
-         if (Header.class.equals(methods[i].getReturnType()))
+         if (std_msgs.Header.class.equals(methods[i].getReturnType()))
          {
             return methods[i];
          }

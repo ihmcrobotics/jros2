@@ -71,7 +71,7 @@ public abstract class InterfaceContext
       String[] package0Resource1 = InterfaceTools.checkAndParsePackageResourceName(packageResourceName);
       packageName = package0Resource1[0];
       resourceName = package0Resource1[1];
-      javaPackageName = packageName + ".msg.dds";
+      javaPackageName = packageName;
       javaClassName = resourceName.split("\\.")[0]; // TODO: Possibly add sanitation
    }
 

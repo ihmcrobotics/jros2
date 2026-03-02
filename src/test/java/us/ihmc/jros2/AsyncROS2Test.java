@@ -18,7 +18,6 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import std_msgs.msg.dds.Bool;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.log.LogTools;
 
@@ -28,7 +27,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -47,13 +45,13 @@ public class AsyncROS2Test
       final String topicName = "/ihmc/test_bool";
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       ROS2QoSProfile qosProfile = new ROS2QoSProfile();
       qosProfile.durability(Durability.TRANSIENT_LOCAL);
-      ROS2Publisher<Bool> publisher = asyncNode.createPublisher(topic, qosProfile);
+      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic, qosProfile);
 
-      Bool bool = new Bool();
+      example_interfaces.Bool bool = new example_interfaces.Bool();
       bool.setData(expectedValue);
       publisher.publish(bool);
 
@@ -75,11 +73,11 @@ public class AsyncROS2Test
       final String topicName = "/ihmc/test_bool";
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>(topicName, Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
       asyncNode.createSubscription(topic, reader ->
       {
-         Bool value = reader.read();
+         example_interfaces.Bool value = reader.read();
          assertEquals(expectedValue.get(), value.getData());
          expectedValue.set(!expectedValue.get());
 
@@ -92,9 +90,9 @@ public class AsyncROS2Test
          }
       });
 
-      ROS2Publisher<Bool> publisher = asyncNode.createPublisher(topic);
+      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
 
-      Bool bool = new Bool();
+      example_interfaces.Bool bool = new example_interfaces.Bool();
       for (int i = 0; i < messagesToPublish; ++i)
       {
          bool.setData(publish);
@@ -124,18 +122,18 @@ public class AsyncROS2Test
       final boolean expected = true;
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
-      ROS2Topic<Bool> topic = new ROS2Topic<>("/test_topic", Bool.class);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/test_topic", example_interfaces.Bool.class);
 
       Thread[] publisherThreads = new Thread[publisherCount];
 
       for (int i = 0; i < publisherCount; ++i)
       {
-         ROS2Publisher<Bool> asyncPublisher = asyncNode.createPublisher(topic);
+         ROS2Publisher<example_interfaces.Bool> asyncPublisher = asyncNode.createPublisher(topic);
          publisherThreads[i] = new Thread(() ->
          {
             for (int j = 0; j < messagesToPublish; j++)
             {
-               Bool message = new Bool();
+               example_interfaces.Bool message = new example_interfaces.Bool();
                message.setData(expected);
                asyncPublisher.publish(message);
                LockSupport.parkNanos(500000); // park for 0.5ms
@@ -146,7 +144,7 @@ public class AsyncROS2Test
       AtomicInteger receivedMessageCount = new AtomicInteger(0);
       asyncNode.createSubscription(topic, reader ->
       {
-         Bool received = reader.read();
+         example_interfaces.Bool received = reader.read();
          assertEquals(expected, received.getData());
          receivedMessageCount.incrementAndGet();
       });
@@ -180,25 +178,25 @@ public class AsyncROS2Test
       AsyncROS2Node asyncROS2Node = new AsyncROS2Node("async_node");
 
       // Create topics to publish on
-      ROS2Topic<Bool> standardTopic = new ROS2Topic<>("/standard_topic", Bool.class);
-      ROS2Topic<Bool> asyncTopic = new ROS2Topic<>("/async_topic", Bool.class);
+      ROS2Topic<example_interfaces.Bool> standardTopic = new ROS2Topic<>("/standard_topic", example_interfaces.Bool.class);
+      ROS2Topic<example_interfaces.Bool> asyncTopic = new ROS2Topic<>("/async_topic", example_interfaces.Bool.class);
 
       // Create normal and async publishers
-      ROS2Publisher<Bool> standardPublisher = ros2Node.createPublisher(standardTopic);
+      ROS2Publisher<example_interfaces.Bool> standardPublisher = ros2Node.createPublisher(standardTopic);
       DoubleStatisticsHelper standardPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
-      ROS2Publisher<Bool> asyncPublisher = asyncROS2Node.createPublisher(asyncTopic);
+      ROS2Publisher<example_interfaces.Bool> asyncPublisher = asyncROS2Node.createPublisher(asyncTopic);
       DoubleStatisticsHelper asyncPublisherStatistics = new DoubleStatisticsHelper(messagesToPublish);
 
       // Create subscribers
-      ROS2SubscriptionCallback<Bool> callback = reader -> assertEquals(expected, reader.read().getData());
+      ROS2SubscriptionCallback<example_interfaces.Bool> callback = reader -> assertEquals(expected, reader.read().getData());
       ros2Node.createSubscription(standardTopic, callback);
       asyncROS2Node.createSubscription(asyncTopic, callback);
 
-      Bool message = new Bool();
+      example_interfaces.Bool message = new example_interfaces.Bool();
       message.setData(expected);
 
-      BiFunction<ROS2Publisher<Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
+      BiFunction<ROS2Publisher<example_interfaces.Bool>, DoubleStatisticsHelper, Runnable> runnableProvider = (ros2Publisher, statistics) -> () ->
       {
          // Warm up publishers
          for (int i = 0; i < messagesToPublish / 10; ++i)
