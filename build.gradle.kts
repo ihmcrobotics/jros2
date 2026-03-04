@@ -20,12 +20,12 @@ plugins {
    id("java-gradle-plugin")
    id("us.ihmc.ihmc-build")
 
-   id("us.ihmc.jros2.generator") version "1.1.999"
+   id("us.ihmc.jros2.generator") version "1.1.6"
 }
 
 ihmc {
    group = "us.ihmc"
-   version = "1.1.999"
+   version = "1.1.6"
    vcsUrl = "https://github.com/ihmcrobotics/jros2"
    openSource = true
 
