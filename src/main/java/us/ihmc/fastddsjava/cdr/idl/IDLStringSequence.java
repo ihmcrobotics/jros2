@@ -20,7 +20,7 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<java.lang.String>
+public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<String>
 {
    private static final StringBuilder[] EMPTY_ARRAY = new StringBuilder[0];
    private static final int DEFAULT_MAX_STRING_LENGTH = 16;
@@ -216,7 +216,7 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    }
 
    @Override
-   public Iterator<java.lang.String> iterator()
+   public Iterator<String> iterator()
    {
       return new Iterator<>()
       {
