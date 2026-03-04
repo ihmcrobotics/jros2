@@ -92,7 +92,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       this.label_.delete(0, this.label_.length());
       this.label_.insert(0, s);
    }
-
    public int getSize()
    {
       return size_;
@@ -114,4 +113,19 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MultiArrayDimension {");
+      builder.append("label_=");
+      builder.append(label_.toString());
+      builder.append("size_=");
+      builder.append(size_);
+      builder.append("stride_=");
+      builder.append(stride_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

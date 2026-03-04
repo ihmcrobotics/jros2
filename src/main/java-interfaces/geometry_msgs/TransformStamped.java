@@ -127,11 +127,25 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       this.child_frame_id_.delete(0, this.child_frame_id_.length());
       this.child_frame_id_.insert(0, s);
    }
-
    public geometry_msgs.Transform getTransform()
    {
       return transform_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TransformStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("child_frame_id_=");
+      builder.append(child_frame_id_.toString());
+      builder.append("transform_=");
+      builder.append(transform_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

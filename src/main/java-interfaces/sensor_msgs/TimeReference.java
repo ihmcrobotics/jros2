@@ -103,5 +103,19 @@ public class TimeReference implements ROS2Message<TimeReference>
       this.source_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TimeReference {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("time_ref_=");
+      builder.append(time_ref_);
+      builder.append("source_=");
+      builder.append(source_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

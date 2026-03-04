@@ -171,7 +171,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public StringBuilder getDescription()
    {
       return description_;
@@ -187,7 +186,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       this.description_.delete(0, this.description_.length());
       this.description_.insert(0, s);
    }
-
    public float getScale()
    {
       return scale_;
@@ -209,4 +207,27 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("InteractiveMarker {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("pose_=");
+      builder.append(pose_);
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("description_=");
+      builder.append(description_.toString());
+      builder.append("scale_=");
+      builder.append(scale_);
+      builder.append("menu_entries_=");
+      builder.append(menu_entries_);
+      builder.append("controls_=");
+      builder.append(controls_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

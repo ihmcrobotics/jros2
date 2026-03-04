@@ -78,4 +78,17 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TwistStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("twist_=");
+      builder.append(twist_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

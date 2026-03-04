@@ -233,7 +233,6 @@ public class Log implements ROS2Message<Log>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public StringBuilder getMsg()
    {
       return msg_;
@@ -249,7 +248,6 @@ public class Log implements ROS2Message<Log>
       this.msg_.delete(0, this.msg_.length());
       this.msg_.insert(0, s);
    }
-
    public StringBuilder getFile()
    {
       return file_;
@@ -265,7 +263,6 @@ public class Log implements ROS2Message<Log>
       this.file_.delete(0, this.file_.length());
       this.file_.insert(0, s);
    }
-
    public StringBuilder getFunction()
    {
       return function_;
@@ -281,7 +278,6 @@ public class Log implements ROS2Message<Log>
       this.function_.delete(0, this.function_.length());
       this.function_.insert(0, s);
    }
-
    public int getLine()
    {
       return line_;
@@ -293,4 +289,37 @@ public class Log implements ROS2Message<Log>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Log {");
+      builder.append("DEBUG=");
+      builder.append(DEBUG);
+      builder.append("INFO=");
+      builder.append(INFO);
+      builder.append("WARN=");
+      builder.append(WARN);
+      builder.append("ERROR=");
+      builder.append(ERROR);
+      builder.append("FATAL=");
+      builder.append(FATAL);
+      builder.append("stamp_=");
+      builder.append(stamp_);
+      builder.append("level_=");
+      builder.append(level_);
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("msg_=");
+      builder.append(msg_.toString());
+      builder.append("file_=");
+      builder.append(file_.toString());
+      builder.append("function_=");
+      builder.append(function_.toString());
+      builder.append("line_=");
+      builder.append(line_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -74,6 +74,27 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       buffer.clear();
    }
 
+   public void add(boolean value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   public void add()
+   {
+      add(false);
+   }
+
+   public void remove()
+   {
+      buffer.position(buffer.position() - 1);
+   }
+
+   public boolean get(int index)
+   {
+      return buffer.get(index);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -129,6 +150,23 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
    }
 
    public static class BooleanBufferWrapper

@@ -164,4 +164,23 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("RegionOfInterest {");
+      builder.append("x_offset_=");
+      builder.append(x_offset_);
+      builder.append("y_offset_=");
+      builder.append(y_offset_);
+      builder.append("height_=");
+      builder.append(height_);
+      builder.append("width_=");
+      builder.append(width_);
+      builder.append("do_rectify_=");
+      builder.append(do_rectify_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

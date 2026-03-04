@@ -137,7 +137,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       this.node_.delete(0, this.node_.length());
       this.node_.insert(0, s);
    }
-
    public IDLObjectSequence<rcl_interfaces.Parameter> getNewParameters()
    {
       return new_parameters_;
@@ -154,4 +153,23 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ParameterEvent {");
+      builder.append("stamp_=");
+      builder.append(stamp_);
+      builder.append("node_=");
+      builder.append(node_.toString());
+      builder.append("new_parameters_=");
+      builder.append(new_parameters_);
+      builder.append("changed_parameters_=");
+      builder.append(changed_parameters_);
+      builder.append("deleted_parameters_=");
+      builder.append(deleted_parameters_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

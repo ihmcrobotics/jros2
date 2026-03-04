@@ -220,4 +220,31 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PointCloud2 {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("height_=");
+      builder.append(height_);
+      builder.append("width_=");
+      builder.append(width_);
+      builder.append("fields_=");
+      builder.append(fields_);
+      builder.append("is_bigendian_=");
+      builder.append(is_bigendian_);
+      builder.append("point_step_=");
+      builder.append(point_step_);
+      builder.append("row_step_=");
+      builder.append(row_step_);
+      builder.append("data_=");
+      builder.append(data_);
+      builder.append("is_dense_=");
+      builder.append(is_dense_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

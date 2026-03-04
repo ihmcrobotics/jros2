@@ -27,7 +27,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -111,7 +111,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -194,7 +194,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -277,7 +277,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -360,7 +360,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -443,13 +443,21 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
          sequence.add().setData(i % 2 == 0);
+      }
+
+      // Test enhanced-for
+      int i0 = 0;
+      for (TestIDLMsg testIDLMsg : sequence)
+      {
+         assertEquals(i0 % 2 == 0, testIDLMsg.getData());
+         ++i0;
       }
 
       // It should have initialCapacity elements
@@ -527,7 +535,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
@@ -610,13 +618,21 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence
       for (int i = 0; i < initialCapacity; ++i)
       {
          sequence.add(String.valueOf(i));
+      }
+
+      // Test enhanced-for
+      int i0 = 0;
+      for (String string : sequence)
+      {
+         assertEquals(String.valueOf(i0), string);
+         ++i0;
       }
 
       // It should have initialCapacity elements
@@ -695,7 +711,7 @@ public class IDLSequenceTest
       // The sequence should have no elements
       assertEquals(0, sequence.size());
 
-      // It's capacity should be the requested initial capacity
+      // Its capacity should be the requested initial capacity
       assertEquals(initialCapacity, sequence.capacity());
 
       // Add initialCapacity number of elements to the sequence

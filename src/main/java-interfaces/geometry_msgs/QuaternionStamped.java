@@ -78,4 +78,17 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("QuaternionStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("quaternion_=");
+      builder.append(quaternion_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

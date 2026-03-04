@@ -46,4 +46,12 @@ public class Empty implements ROS2Message<Empty>
    {
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Empty {");
+      builder.append("}");
+      return builder.toString();
+   }
 }

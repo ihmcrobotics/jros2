@@ -86,4 +86,15 @@ public class Plane implements ROS2Message<Plane>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Plane {");
+      builder.append("coef_=");
+      builder.append(java.util.Arrays.toString(coef_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

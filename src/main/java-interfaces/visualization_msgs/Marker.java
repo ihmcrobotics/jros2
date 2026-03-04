@@ -353,7 +353,6 @@ public class Marker implements ROS2Message<Marker>
       this.ns_.delete(0, this.ns_.length());
       this.ns_.insert(0, s);
    }
-
    public int getId()
    {
       return id_;
@@ -439,7 +438,6 @@ public class Marker implements ROS2Message<Marker>
       this.texture_resource_.delete(0, this.texture_resource_.length());
       this.texture_resource_.insert(0, s);
    }
-
    public sensor_msgs.CompressedImage getTexture()
    {
       return texture_;
@@ -465,7 +463,6 @@ public class Marker implements ROS2Message<Marker>
       this.text_.delete(0, this.text_.length());
       this.text_.insert(0, s);
    }
-
    public StringBuilder getMeshResource()
    {
       return mesh_resource_;
@@ -481,7 +478,6 @@ public class Marker implements ROS2Message<Marker>
       this.mesh_resource_.delete(0, this.mesh_resource_.length());
       this.mesh_resource_.insert(0, s);
    }
-
    public visualization_msgs.MeshFile getMeshFile()
    {
       return mesh_file_;
@@ -498,4 +494,83 @@ public class Marker implements ROS2Message<Marker>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Marker {");
+      builder.append("ARROW=");
+      builder.append(ARROW);
+      builder.append("CUBE=");
+      builder.append(CUBE);
+      builder.append("SPHERE=");
+      builder.append(SPHERE);
+      builder.append("CYLINDER=");
+      builder.append(CYLINDER);
+      builder.append("LINE_STRIP=");
+      builder.append(LINE_STRIP);
+      builder.append("LINE_LIST=");
+      builder.append(LINE_LIST);
+      builder.append("CUBE_LIST=");
+      builder.append(CUBE_LIST);
+      builder.append("SPHERE_LIST=");
+      builder.append(SPHERE_LIST);
+      builder.append("POINTS=");
+      builder.append(POINTS);
+      builder.append("TEXT_VIEW_FACING=");
+      builder.append(TEXT_VIEW_FACING);
+      builder.append("MESH_RESOURCE=");
+      builder.append(MESH_RESOURCE);
+      builder.append("TRIANGLE_LIST=");
+      builder.append(TRIANGLE_LIST);
+      builder.append("ADD=");
+      builder.append(ADD);
+      builder.append("MODIFY=");
+      builder.append(MODIFY);
+      builder.append("DELETE=");
+      builder.append(DELETE);
+      builder.append("DELETEALL=");
+      builder.append(DELETEALL);
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("ns_=");
+      builder.append(ns_.toString());
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("type_=");
+      builder.append(type_);
+      builder.append("action_=");
+      builder.append(action_);
+      builder.append("pose_=");
+      builder.append(pose_);
+      builder.append("scale_=");
+      builder.append(scale_);
+      builder.append("color_=");
+      builder.append(color_);
+      builder.append("lifetime_=");
+      builder.append(lifetime_);
+      builder.append("frame_locked_=");
+      builder.append(frame_locked_);
+      builder.append("points_=");
+      builder.append(points_);
+      builder.append("colors_=");
+      builder.append(colors_);
+      builder.append("texture_resource_=");
+      builder.append(texture_resource_.toString());
+      builder.append("texture_=");
+      builder.append(texture_);
+      builder.append("uv_coordinates_=");
+      builder.append(uv_coordinates_);
+      builder.append("text_=");
+      builder.append(text_.toString());
+      builder.append("mesh_resource_=");
+      builder.append(mesh_resource_.toString());
+      builder.append("mesh_file_=");
+      builder.append(mesh_file_);
+      builder.append("mesh_use_embedded_materials_=");
+      builder.append(mesh_use_embedded_materials_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

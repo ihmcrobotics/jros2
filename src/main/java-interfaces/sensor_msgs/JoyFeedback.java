@@ -123,4 +123,25 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("JoyFeedback {");
+      builder.append("TYPE_LED=");
+      builder.append(TYPE_LED);
+      builder.append("TYPE_RUMBLE=");
+      builder.append(TYPE_RUMBLE);
+      builder.append("TYPE_BUZZER=");
+      builder.append(TYPE_BUZZER);
+      builder.append("type_=");
+      builder.append(type_);
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("intensity_=");
+      builder.append(intensity_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

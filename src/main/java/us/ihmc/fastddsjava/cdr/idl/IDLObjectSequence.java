@@ -21,9 +21,10 @@ import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
-public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
+public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>> implements Iterable<T>
 {
    private static final CDRSerializable[] EMPTY_ARRAY = new CDRSerializable[0];
 
@@ -187,5 +188,43 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       // TODO: This could be done better if this has existing elements
       System.arraycopy(other.elements, 0, elements, 0, othersElements);
       position = other.size();
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(elements[i].toString());
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<T> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public T next()
+         {
+            return elements[index++];
+         }
+      };
    }
 }

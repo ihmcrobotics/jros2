@@ -234,9 +234,31 @@ public void <field.javaSetterMethodName>(java.lang.String s)
    this.<field.javaName>.delete(0, this.<field.javaName>.length());
    this.<field.javaName>.insert(0, s);
 \}
-
 <endif>
 <endif>
    }>
-<! Getters and setters end !>
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("<context.javaClassName> {");
+<context.fieldList:{ field |
+      builder.append("<field.javaName>=");
+<if(field.constantValue)>
+      builder.append(<field.javaName>);
+<elseif(field.array&&field.fixedSize)>
+      builder.append(java.util.Arrays.toString(<field.javaName>));
+<elseif(field.sequence)>
+      builder.append(<field.javaName>);
+<elseif(field.builtinType&&!field.builtinStringType)>
+      builder.append(<field.javaName>);
+<elseif(field.builtinType&&field.builtinStringType)>
+      builder.append(<field.javaName>.toString());
+<else>
+      builder.append(<field.javaName>);
+<endif>
+}>
+      builder.append("}");
+      return builder.toString();
+   \}
 }

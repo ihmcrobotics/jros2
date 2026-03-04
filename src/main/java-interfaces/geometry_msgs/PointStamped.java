@@ -78,4 +78,17 @@ public class PointStamped implements ROS2Message<PointStamped>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PointStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("point_=");
+      builder.append(point_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

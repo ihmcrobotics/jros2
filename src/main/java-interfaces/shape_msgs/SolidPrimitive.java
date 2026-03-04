@@ -166,4 +166,47 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("SolidPrimitive {");
+      builder.append("BOX=");
+      builder.append(BOX);
+      builder.append("SPHERE=");
+      builder.append(SPHERE);
+      builder.append("CYLINDER=");
+      builder.append(CYLINDER);
+      builder.append("CONE=");
+      builder.append(CONE);
+      builder.append("PRISM=");
+      builder.append(PRISM);
+      builder.append("type_=");
+      builder.append(type_);
+      builder.append("dimensions_=");
+      builder.append(dimensions_);
+      builder.append("BOX_X=");
+      builder.append(BOX_X);
+      builder.append("BOX_Y=");
+      builder.append(BOX_Y);
+      builder.append("BOX_Z=");
+      builder.append(BOX_Z);
+      builder.append("SPHERE_RADIUS=");
+      builder.append(SPHERE_RADIUS);
+      builder.append("CYLINDER_HEIGHT=");
+      builder.append(CYLINDER_HEIGHT);
+      builder.append("CYLINDER_RADIUS=");
+      builder.append(CYLINDER_RADIUS);
+      builder.append("CONE_HEIGHT=");
+      builder.append(CONE_HEIGHT);
+      builder.append("CONE_RADIUS=");
+      builder.append(CONE_RADIUS);
+      builder.append("PRISM_HEIGHT=");
+      builder.append(PRISM_HEIGHT);
+      builder.append("polygon_=");
+      builder.append(polygon_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

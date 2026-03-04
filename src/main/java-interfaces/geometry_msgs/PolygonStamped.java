@@ -78,4 +78,17 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PolygonStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("polygon_=");
+      builder.append(polygon_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -122,4 +122,21 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TransitionEvent {");
+      builder.append("timestamp_=");
+      builder.append(timestamp_);
+      builder.append("transition_=");
+      builder.append(transition_);
+      builder.append("start_state_=");
+      builder.append(start_state_);
+      builder.append("goal_state_=");
+      builder.append(goal_state_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

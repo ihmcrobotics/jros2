@@ -158,4 +158,23 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("JointTrajectoryPoint {");
+      builder.append("positions_=");
+      builder.append(positions_);
+      builder.append("velocities_=");
+      builder.append(velocities_);
+      builder.append("accelerations_=");
+      builder.append(accelerations_);
+      builder.append("effort_=");
+      builder.append(effort_);
+      builder.append("time_from_start_=");
+      builder.append(time_from_start_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

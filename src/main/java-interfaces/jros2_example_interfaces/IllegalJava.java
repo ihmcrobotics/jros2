@@ -66,4 +66,15 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("IllegalJava {");
+      builder.append("class_=");
+      builder.append(class_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

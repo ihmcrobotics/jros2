@@ -104,4 +104,19 @@ public class Joy implements ROS2Message<Joy>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Joy {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("axes_=");
+      builder.append(axes_);
+      builder.append("buttons_=");
+      builder.append(buttons_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

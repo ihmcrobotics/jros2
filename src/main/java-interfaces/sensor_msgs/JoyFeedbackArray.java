@@ -67,4 +67,15 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("JoyFeedbackArray {");
+      builder.append("array_=");
+      builder.append(array_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

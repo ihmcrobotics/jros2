@@ -98,4 +98,19 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("CapitalizationTest {");
+      builder.append("test_test1_=");
+      builder.append(test_test1_);
+      builder.append("testTest2_=");
+      builder.append(testTest2_);
+      builder.append("TestTest3_=");
+      builder.append(TestTest3_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

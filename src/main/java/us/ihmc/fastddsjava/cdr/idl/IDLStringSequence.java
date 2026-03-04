@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class IDLStringSequence extends IDLSequence<IDLStringSequence>
+public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<java.lang.String>
 {
    private static final StringBuilder[] EMPTY_ARRAY = new StringBuilder[0];
    private static final int DEFAULT_MAX_STRING_LENGTH = 16;
@@ -185,5 +186,53 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       }
 
       position = othersElements;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(elements[i].toString());
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   public String[] toStringArray()
+   {
+      String[] array = new String[size()];
+      for (int i = 0; i < size(); i++)
+      {
+         array[i] = elements[i].toString();
+      }
+      return array;
+   }
+
+   @Override
+   public Iterator<java.lang.String> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public String next()
+         {
+            return elements[index++].toString();
+         }
+      };
    }
 }

@@ -78,4 +78,17 @@ public class Transform implements ROS2Message<Transform>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Transform {");
+      builder.append("translation_=");
+      builder.append(translation_);
+      builder.append("rotation_=");
+      builder.append(rotation_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -104,11 +104,25 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       this.format_.delete(0, this.format_.length());
       this.format_.insert(0, s);
    }
-
    public IDLByteSequence getData()
    {
       return data_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("CompressedImage {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("format_=");
+      builder.append(format_.toString());
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

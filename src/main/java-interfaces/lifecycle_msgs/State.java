@@ -207,5 +207,39 @@ public class State implements ROS2Message<State>
       this.label_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("State {");
+      builder.append("PRIMARY_STATE_UNKNOWN=");
+      builder.append(PRIMARY_STATE_UNKNOWN);
+      builder.append("PRIMARY_STATE_UNCONFIGURED=");
+      builder.append(PRIMARY_STATE_UNCONFIGURED);
+      builder.append("PRIMARY_STATE_INACTIVE=");
+      builder.append(PRIMARY_STATE_INACTIVE);
+      builder.append("PRIMARY_STATE_ACTIVE=");
+      builder.append(PRIMARY_STATE_ACTIVE);
+      builder.append("PRIMARY_STATE_FINALIZED=");
+      builder.append(PRIMARY_STATE_FINALIZED);
+      builder.append("TRANSITION_STATE_CONFIGURING=");
+      builder.append(TRANSITION_STATE_CONFIGURING);
+      builder.append("TRANSITION_STATE_CLEANINGUP=");
+      builder.append(TRANSITION_STATE_CLEANINGUP);
+      builder.append("TRANSITION_STATE_SHUTTINGDOWN=");
+      builder.append(TRANSITION_STATE_SHUTTINGDOWN);
+      builder.append("TRANSITION_STATE_ACTIVATING=");
+      builder.append(TRANSITION_STATE_ACTIVATING);
+      builder.append("TRANSITION_STATE_DEACTIVATING=");
+      builder.append(TRANSITION_STATE_DEACTIVATING);
+      builder.append("TRANSITION_STATE_ERRORPROCESSING=");
+      builder.append(TRANSITION_STATE_ERRORPROCESSING);
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("label_=");
+      builder.append(label_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

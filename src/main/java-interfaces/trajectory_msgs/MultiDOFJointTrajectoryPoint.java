@@ -118,4 +118,21 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MultiDOFJointTrajectoryPoint {");
+      builder.append("transforms_=");
+      builder.append(transforms_);
+      builder.append("velocities_=");
+      builder.append(velocities_);
+      builder.append("accelerations_=");
+      builder.append(accelerations_);
+      builder.append("time_from_start_=");
+      builder.append(time_from_start_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

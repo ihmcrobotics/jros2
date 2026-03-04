@@ -157,7 +157,6 @@ public class Image implements ROS2Message<Image>
       this.encoding_.delete(0, this.encoding_.length());
       this.encoding_.insert(0, s);
    }
-
    public byte getIsBigendian()
    {
       return is_bigendian_;
@@ -184,4 +183,27 @@ public class Image implements ROS2Message<Image>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Image {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("height_=");
+      builder.append(height_);
+      builder.append("width_=");
+      builder.append(width_);
+      builder.append("encoding_=");
+      builder.append(encoding_.toString());
+      builder.append("is_bigendian_=");
+      builder.append(is_bigendian_);
+      builder.append("step_=");
+      builder.append(step_);
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

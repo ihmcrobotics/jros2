@@ -84,5 +84,15 @@ public class WString implements ROS2Message<WString>
       this.data_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("WString {");
+      builder.append("data_=");
+      builder.append(data_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

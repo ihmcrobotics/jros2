@@ -78,4 +78,17 @@ public class Wrench implements ROS2Message<Wrench>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Wrench {");
+      builder.append("force_=");
+      builder.append(force_);
+      builder.append("torque_=");
+      builder.append(torque_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

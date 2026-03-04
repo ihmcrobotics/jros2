@@ -216,4 +216,29 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("DisparityImage {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("image_=");
+      builder.append(image_);
+      builder.append("f_=");
+      builder.append(f_);
+      builder.append("t_=");
+      builder.append(t_);
+      builder.append("valid_window_=");
+      builder.append(valid_window_);
+      builder.append("min_disparity_=");
+      builder.append(min_disparity_);
+      builder.append("max_disparity_=");
+      builder.append(max_disparity_);
+      builder.append("delta_d_=");
+      builder.append(delta_d_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

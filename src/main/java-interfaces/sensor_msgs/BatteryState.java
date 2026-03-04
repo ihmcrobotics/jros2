@@ -370,7 +370,6 @@ public class BatteryState implements ROS2Message<BatteryState>
       this.location_.delete(0, this.location_.length());
       this.location_.insert(0, s);
    }
-
    public StringBuilder getSerialNumber()
    {
       return serial_number_;
@@ -387,5 +386,87 @@ public class BatteryState implements ROS2Message<BatteryState>
       this.serial_number_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("BatteryState {");
+      builder.append("POWER_SUPPLY_STATUS_UNKNOWN=");
+      builder.append(POWER_SUPPLY_STATUS_UNKNOWN);
+      builder.append("POWER_SUPPLY_STATUS_CHARGING=");
+      builder.append(POWER_SUPPLY_STATUS_CHARGING);
+      builder.append("POWER_SUPPLY_STATUS_DISCHARGING=");
+      builder.append(POWER_SUPPLY_STATUS_DISCHARGING);
+      builder.append("POWER_SUPPLY_STATUS_NOT_CHARGING=");
+      builder.append(POWER_SUPPLY_STATUS_NOT_CHARGING);
+      builder.append("POWER_SUPPLY_STATUS_FULL=");
+      builder.append(POWER_SUPPLY_STATUS_FULL);
+      builder.append("POWER_SUPPLY_HEALTH_UNKNOWN=");
+      builder.append(POWER_SUPPLY_HEALTH_UNKNOWN);
+      builder.append("POWER_SUPPLY_HEALTH_GOOD=");
+      builder.append(POWER_SUPPLY_HEALTH_GOOD);
+      builder.append("POWER_SUPPLY_HEALTH_OVERHEAT=");
+      builder.append(POWER_SUPPLY_HEALTH_OVERHEAT);
+      builder.append("POWER_SUPPLY_HEALTH_DEAD=");
+      builder.append(POWER_SUPPLY_HEALTH_DEAD);
+      builder.append("POWER_SUPPLY_HEALTH_OVERVOLTAGE=");
+      builder.append(POWER_SUPPLY_HEALTH_OVERVOLTAGE);
+      builder.append("POWER_SUPPLY_HEALTH_UNSPEC_FAILURE=");
+      builder.append(POWER_SUPPLY_HEALTH_UNSPEC_FAILURE);
+      builder.append("POWER_SUPPLY_HEALTH_COLD=");
+      builder.append(POWER_SUPPLY_HEALTH_COLD);
+      builder.append("POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE=");
+      builder.append(POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE);
+      builder.append("POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE=");
+      builder.append(POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_UNKNOWN=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_UNKNOWN);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_NIMH=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_NIMH);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_LION=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_LION);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_LIPO=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_LIPO);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_LIFE=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_LIFE);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_NICD=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_NICD);
+      builder.append("POWER_SUPPLY_TECHNOLOGY_LIMN=");
+      builder.append(POWER_SUPPLY_TECHNOLOGY_LIMN);
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("voltage_=");
+      builder.append(voltage_);
+      builder.append("temperature_=");
+      builder.append(temperature_);
+      builder.append("current_=");
+      builder.append(current_);
+      builder.append("charge_=");
+      builder.append(charge_);
+      builder.append("capacity_=");
+      builder.append(capacity_);
+      builder.append("design_capacity_=");
+      builder.append(design_capacity_);
+      builder.append("percentage_=");
+      builder.append(percentage_);
+      builder.append("power_supply_status_=");
+      builder.append(power_supply_status_);
+      builder.append("power_supply_health_=");
+      builder.append(power_supply_health_);
+      builder.append("power_supply_technology_=");
+      builder.append(power_supply_technology_);
+      builder.append("present_=");
+      builder.append(present_);
+      builder.append("cell_voltage_=");
+      builder.append(cell_voltage_);
+      builder.append("cell_temperature_=");
+      builder.append(cell_temperature_);
+      builder.append("location_=");
+      builder.append(location_.toString());
+      builder.append("serial_number_=");
+      builder.append(serial_number_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -125,4 +125,21 @@ public class GridCells implements ROS2Message<GridCells>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("GridCells {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("cell_width_=");
+      builder.append(cell_width_);
+      builder.append("cell_height_=");
+      builder.append(cell_height_);
+      builder.append("cells_=");
+      builder.append(cells_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

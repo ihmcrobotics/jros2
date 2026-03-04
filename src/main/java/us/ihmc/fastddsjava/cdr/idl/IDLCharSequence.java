@@ -74,6 +74,27 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
       buffer.clear();
    }
 
+   public void add(char value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   public void add()
+   {
+      add((char) 0);
+   }
+
+   public void remove()
+   {
+      buffer.position(buffer.position() - 1);
+   }
+
+   public char get(int index)
+   {
+      return buffer.get(index);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -129,5 +150,22 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
    }
 }

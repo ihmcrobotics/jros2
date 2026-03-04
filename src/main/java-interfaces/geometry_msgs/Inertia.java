@@ -195,4 +195,29 @@ public class Inertia implements ROS2Message<Inertia>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Inertia {");
+      builder.append("m_=");
+      builder.append(m_);
+      builder.append("com_=");
+      builder.append(com_);
+      builder.append("ixx_=");
+      builder.append(ixx_);
+      builder.append("ixy_=");
+      builder.append(ixy_);
+      builder.append("ixz_=");
+      builder.append(ixz_);
+      builder.append("iyy_=");
+      builder.append(iyy_);
+      builder.append("iyz_=");
+      builder.append(iyz_);
+      builder.append("izz_=");
+      builder.append(izz_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

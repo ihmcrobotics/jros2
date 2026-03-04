@@ -98,4 +98,17 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TwistWithCovariance {");
+      builder.append("twist_=");
+      builder.append(twist_);
+      builder.append("covariance_=");
+      builder.append(java.util.Arrays.toString(covariance_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

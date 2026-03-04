@@ -149,4 +149,23 @@ public class JointState implements ROS2Message<JointState>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("JointState {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("name_=");
+      builder.append(name_);
+      builder.append("position_=");
+      builder.append(position_);
+      builder.append("velocity_=");
+      builder.append(velocity_);
+      builder.append("effort_=");
+      builder.append(effort_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

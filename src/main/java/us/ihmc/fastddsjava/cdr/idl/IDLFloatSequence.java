@@ -74,6 +74,27 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
       buffer.clear();
    }
 
+   public void add(float value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   public void add()
+   {
+      add(0f);
+   }
+
+   public void remove()
+   {
+      buffer.position(buffer.position() - 1);
+   }
+
+   public float get(int index)
+   {
+      return buffer.get(index);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -129,5 +150,22 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
    }
 }

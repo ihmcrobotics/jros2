@@ -75,4 +75,15 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MeshTriangle {");
+      builder.append("vertex_indices_=");
+      builder.append(java.util.Arrays.toString(vertex_indices_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

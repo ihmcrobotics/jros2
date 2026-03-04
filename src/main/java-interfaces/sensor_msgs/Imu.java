@@ -192,4 +192,27 @@ public class Imu implements ROS2Message<Imu>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Imu {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("orientation_=");
+      builder.append(orientation_);
+      builder.append("orientation_covariance_=");
+      builder.append(java.util.Arrays.toString(orientation_covariance_));
+      builder.append("angular_velocity_=");
+      builder.append(angular_velocity_);
+      builder.append("angular_velocity_covariance_=");
+      builder.append(java.util.Arrays.toString(angular_velocity_covariance_));
+      builder.append("linear_acceleration_=");
+      builder.append(linear_acceleration_);
+      builder.append("linear_acceleration_covariance_=");
+      builder.append(java.util.Arrays.toString(linear_acceleration_covariance_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

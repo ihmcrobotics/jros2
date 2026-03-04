@@ -272,5 +272,77 @@ public class Transition implements ROS2Message<Transition>
       this.label_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Transition {");
+      builder.append("TRANSITION_CREATE=");
+      builder.append(TRANSITION_CREATE);
+      builder.append("TRANSITION_CONFIGURE=");
+      builder.append(TRANSITION_CONFIGURE);
+      builder.append("TRANSITION_CLEANUP=");
+      builder.append(TRANSITION_CLEANUP);
+      builder.append("TRANSITION_ACTIVATE=");
+      builder.append(TRANSITION_ACTIVATE);
+      builder.append("TRANSITION_DEACTIVATE=");
+      builder.append(TRANSITION_DEACTIVATE);
+      builder.append("TRANSITION_UNCONFIGURED_SHUTDOWN=");
+      builder.append(TRANSITION_UNCONFIGURED_SHUTDOWN);
+      builder.append("TRANSITION_INACTIVE_SHUTDOWN=");
+      builder.append(TRANSITION_INACTIVE_SHUTDOWN);
+      builder.append("TRANSITION_ACTIVE_SHUTDOWN=");
+      builder.append(TRANSITION_ACTIVE_SHUTDOWN);
+      builder.append("TRANSITION_DESTROY=");
+      builder.append(TRANSITION_DESTROY);
+      builder.append("TRANSITION_ON_CONFIGURE_SUCCESS=");
+      builder.append(TRANSITION_ON_CONFIGURE_SUCCESS);
+      builder.append("TRANSITION_ON_CONFIGURE_FAILURE=");
+      builder.append(TRANSITION_ON_CONFIGURE_FAILURE);
+      builder.append("TRANSITION_ON_CONFIGURE_ERROR=");
+      builder.append(TRANSITION_ON_CONFIGURE_ERROR);
+      builder.append("TRANSITION_ON_CLEANUP_SUCCESS=");
+      builder.append(TRANSITION_ON_CLEANUP_SUCCESS);
+      builder.append("TRANSITION_ON_CLEANUP_FAILURE=");
+      builder.append(TRANSITION_ON_CLEANUP_FAILURE);
+      builder.append("TRANSITION_ON_CLEANUP_ERROR=");
+      builder.append(TRANSITION_ON_CLEANUP_ERROR);
+      builder.append("TRANSITION_ON_ACTIVATE_SUCCESS=");
+      builder.append(TRANSITION_ON_ACTIVATE_SUCCESS);
+      builder.append("TRANSITION_ON_ACTIVATE_FAILURE=");
+      builder.append(TRANSITION_ON_ACTIVATE_FAILURE);
+      builder.append("TRANSITION_ON_ACTIVATE_ERROR=");
+      builder.append(TRANSITION_ON_ACTIVATE_ERROR);
+      builder.append("TRANSITION_ON_DEACTIVATE_SUCCESS=");
+      builder.append(TRANSITION_ON_DEACTIVATE_SUCCESS);
+      builder.append("TRANSITION_ON_DEACTIVATE_FAILURE=");
+      builder.append(TRANSITION_ON_DEACTIVATE_FAILURE);
+      builder.append("TRANSITION_ON_DEACTIVATE_ERROR=");
+      builder.append(TRANSITION_ON_DEACTIVATE_ERROR);
+      builder.append("TRANSITION_ON_SHUTDOWN_SUCCESS=");
+      builder.append(TRANSITION_ON_SHUTDOWN_SUCCESS);
+      builder.append("TRANSITION_ON_SHUTDOWN_FAILURE=");
+      builder.append(TRANSITION_ON_SHUTDOWN_FAILURE);
+      builder.append("TRANSITION_ON_SHUTDOWN_ERROR=");
+      builder.append(TRANSITION_ON_SHUTDOWN_ERROR);
+      builder.append("TRANSITION_ON_ERROR_SUCCESS=");
+      builder.append(TRANSITION_ON_ERROR_SUCCESS);
+      builder.append("TRANSITION_ON_ERROR_FAILURE=");
+      builder.append(TRANSITION_ON_ERROR_FAILURE);
+      builder.append("TRANSITION_ON_ERROR_ERROR=");
+      builder.append(TRANSITION_ON_ERROR_ERROR);
+      builder.append("TRANSITION_CALLBACK_SUCCESS=");
+      builder.append(TRANSITION_CALLBACK_SUCCESS);
+      builder.append("TRANSITION_CALLBACK_FAILURE=");
+      builder.append(TRANSITION_CALLBACK_FAILURE);
+      builder.append("TRANSITION_CALLBACK_ERROR=");
+      builder.append(TRANSITION_CALLBACK_ERROR);
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("label_=");
+      builder.append(label_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -261,7 +261,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public geometry_msgs.Quaternion getOrientation()
    {
       return orientation_;
@@ -328,5 +327,55 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       this.description_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("InteractiveMarkerControl {");
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("orientation_=");
+      builder.append(orientation_);
+      builder.append("INHERIT=");
+      builder.append(INHERIT);
+      builder.append("FIXED=");
+      builder.append(FIXED);
+      builder.append("VIEW_FACING=");
+      builder.append(VIEW_FACING);
+      builder.append("orientation_mode_=");
+      builder.append(orientation_mode_);
+      builder.append("NONE=");
+      builder.append(NONE);
+      builder.append("MENU=");
+      builder.append(MENU);
+      builder.append("BUTTON=");
+      builder.append(BUTTON);
+      builder.append("MOVE_AXIS=");
+      builder.append(MOVE_AXIS);
+      builder.append("MOVE_PLANE=");
+      builder.append(MOVE_PLANE);
+      builder.append("ROTATE_AXIS=");
+      builder.append(ROTATE_AXIS);
+      builder.append("MOVE_ROTATE=");
+      builder.append(MOVE_ROTATE);
+      builder.append("MOVE_3D=");
+      builder.append(MOVE_3D);
+      builder.append("ROTATE_3D=");
+      builder.append(ROTATE_3D);
+      builder.append("MOVE_ROTATE_3D=");
+      builder.append(MOVE_ROTATE_3D);
+      builder.append("interaction_mode_=");
+      builder.append(interaction_mode_);
+      builder.append("always_visible_=");
+      builder.append(always_visible_);
+      builder.append("markers_=");
+      builder.append(markers_);
+      builder.append("independent_marker_orientation_=");
+      builder.append(independent_marker_orientation_);
+      builder.append("description_=");
+      builder.append(description_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

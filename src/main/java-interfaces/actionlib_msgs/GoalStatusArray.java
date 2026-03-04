@@ -81,4 +81,17 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("GoalStatusArray {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("status_list_=");
+      builder.append(status_list_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

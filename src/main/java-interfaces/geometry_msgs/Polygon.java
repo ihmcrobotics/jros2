@@ -66,4 +66,15 @@ public class Polygon implements ROS2Message<Polygon>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Polygon {");
+      builder.append("points_=");
+      builder.append(points_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

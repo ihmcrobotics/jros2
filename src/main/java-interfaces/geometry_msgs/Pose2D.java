@@ -106,4 +106,19 @@ public class Pose2D implements ROS2Message<Pose2D>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Pose2D {");
+      builder.append("x_=");
+      builder.append(x_);
+      builder.append("y_=");
+      builder.append(y_);
+      builder.append("theta_=");
+      builder.append(theta_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -224,7 +224,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       this.ns_.delete(0, this.ns_.length());
       this.ns_.insert(0, s);
    }
-
    public int getId()
    {
       return id_;
@@ -306,4 +305,53 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ImageMarker {");
+      builder.append("CIRCLE=");
+      builder.append(CIRCLE);
+      builder.append("LINE_STRIP=");
+      builder.append(LINE_STRIP);
+      builder.append("LINE_LIST=");
+      builder.append(LINE_LIST);
+      builder.append("POLYGON=");
+      builder.append(POLYGON);
+      builder.append("POINTS=");
+      builder.append(POINTS);
+      builder.append("ADD=");
+      builder.append(ADD);
+      builder.append("REMOVE=");
+      builder.append(REMOVE);
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("ns_=");
+      builder.append(ns_.toString());
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("type_=");
+      builder.append(type_);
+      builder.append("action_=");
+      builder.append(action_);
+      builder.append("position_=");
+      builder.append(position_);
+      builder.append("scale_=");
+      builder.append(scale_);
+      builder.append("outline_color_=");
+      builder.append(outline_color_);
+      builder.append("filled_=");
+      builder.append(filled_);
+      builder.append("fill_color_=");
+      builder.append(fill_color_);
+      builder.append("lifetime_=");
+      builder.append(lifetime_);
+      builder.append("points_=");
+      builder.append(points_);
+      builder.append("outline_colors_=");
+      builder.append(outline_colors_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

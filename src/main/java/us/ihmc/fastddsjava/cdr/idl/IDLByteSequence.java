@@ -62,6 +62,27 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       buffer.clear();
    }
 
+   public void add(byte value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   public void add()
+   {
+      add((byte) 0);
+   }
+
+   public void remove()
+   {
+      buffer.position(buffer.position() - 1);
+   }
+
+   public byte get(int index)
+   {
+      return buffer.get(index);
+   }
+
    /**
     * Get the backing heap {@link ByteBuffer} holding all byte values in the sequence.
     * Use this for efficient copy operations, however ensure the buffer is initialized and
@@ -133,5 +154,22 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
    }
 }

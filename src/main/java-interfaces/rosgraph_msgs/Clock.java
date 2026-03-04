@@ -71,4 +71,15 @@ public class Clock implements ROS2Message<Clock>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Clock {");
+      builder.append("clock_=");
+      builder.append(clock_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

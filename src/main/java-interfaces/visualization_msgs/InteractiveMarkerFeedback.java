@@ -203,7 +203,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.client_id_.delete(0, this.client_id_.length());
       this.client_id_.insert(0, s);
    }
-
    public StringBuilder getMarkerName()
    {
       return marker_name_;
@@ -219,7 +218,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.marker_name_.delete(0, this.marker_name_.length());
       this.marker_name_.insert(0, s);
    }
-
    public StringBuilder getControlName()
    {
       return control_name_;
@@ -235,7 +233,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.control_name_.delete(0, this.control_name_.length());
       this.control_name_.insert(0, s);
    }
-
    public byte getEventType()
    {
       return event_type_;
@@ -277,4 +274,43 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("InteractiveMarkerFeedback {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("client_id_=");
+      builder.append(client_id_.toString());
+      builder.append("marker_name_=");
+      builder.append(marker_name_.toString());
+      builder.append("control_name_=");
+      builder.append(control_name_.toString());
+      builder.append("KEEP_ALIVE=");
+      builder.append(KEEP_ALIVE);
+      builder.append("POSE_UPDATE=");
+      builder.append(POSE_UPDATE);
+      builder.append("MENU_SELECT=");
+      builder.append(MENU_SELECT);
+      builder.append("BUTTON_CLICK=");
+      builder.append(BUTTON_CLICK);
+      builder.append("MOUSE_DOWN=");
+      builder.append(MOUSE_DOWN);
+      builder.append("MOUSE_UP=");
+      builder.append(MOUSE_UP);
+      builder.append("event_type_=");
+      builder.append(event_type_);
+      builder.append("pose_=");
+      builder.append(pose_);
+      builder.append("menu_entry_id_=");
+      builder.append(menu_entry_id_);
+      builder.append("mouse_point_=");
+      builder.append(mouse_point_);
+      builder.append("mouse_point_valid_=");
+      builder.append(mouse_point_valid_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

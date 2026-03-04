@@ -236,7 +236,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str1_.delete(0, this.str1_.length());
       this.str1_.insert(0, s);
    }
-
    public StringBuilder getStr2()
    {
       return str2_;
@@ -252,7 +251,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str2_.delete(0, this.str2_.length());
       this.str2_.insert(0, s);
    }
-
    public StringBuilder getStr3()
    {
       return str3_;
@@ -268,7 +266,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str3_.delete(0, this.str3_.length());
       this.str3_.insert(0, s);
    }
-
    public StringBuilder getStr4()
    {
       return str4_;
@@ -284,7 +281,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str4_.delete(0, this.str4_.length());
       this.str4_.insert(0, s);
    }
-
    public StringBuilder getStr5()
    {
       return str5_;
@@ -300,7 +296,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str5_.delete(0, this.str5_.length());
       this.str5_.insert(0, s);
    }
-
    public StringBuilder getStr6()
    {
       return str6_;
@@ -316,7 +311,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str6_.delete(0, this.str6_.length());
       this.str6_.insert(0, s);
    }
-
    public StringBuilder getStr7()
    {
       return str7_;
@@ -332,7 +326,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str7_.delete(0, this.str7_.length());
       this.str7_.insert(0, s);
    }
-
    public StringBuilder getStr8()
    {
       return str8_;
@@ -348,7 +341,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str8_.delete(0, this.str8_.length());
       this.str8_.insert(0, s);
    }
-
    public StringBuilder getStr9()
    {
       return str9_;
@@ -364,7 +356,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.str9_.delete(0, this.str9_.length());
       this.str9_.insert(0, s);
    }
-
    public StringBuilder getStra()
    {
       return stra_;
@@ -380,7 +371,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.stra_.delete(0, this.stra_.length());
       this.stra_.insert(0, s);
    }
-
    public StringBuilder getStrb()
    {
       return strb_;
@@ -396,7 +386,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strb_.delete(0, this.strb_.length());
       this.strb_.insert(0, s);
    }
-
    public StringBuilder getStrc()
    {
       return strc_;
@@ -412,7 +401,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strc_.delete(0, this.strc_.length());
       this.strc_.insert(0, s);
    }
-
    public StringBuilder getStrd()
    {
       return strd_;
@@ -428,7 +416,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strd_.delete(0, this.strd_.length());
       this.strd_.insert(0, s);
    }
-
    public StringBuilder getStre()
    {
       return stre_;
@@ -444,7 +431,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.stre_.delete(0, this.stre_.length());
       this.stre_.insert(0, s);
    }
-
    public StringBuilder getStrf()
    {
       return strf_;
@@ -460,7 +446,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strf_.delete(0, this.strf_.length());
       this.strf_.insert(0, s);
    }
-
    public StringBuilder getStrg()
    {
       return strg_;
@@ -476,7 +461,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strg_.delete(0, this.strg_.length());
       this.strg_.insert(0, s);
    }
-
    public StringBuilder getStrh()
    {
       return strh_;
@@ -492,7 +476,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strh_.delete(0, this.strh_.length());
       this.strh_.insert(0, s);
    }
-
    public StringBuilder getStri()
    {
       return stri_;
@@ -508,7 +491,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.stri_.delete(0, this.stri_.length());
       this.stri_.insert(0, s);
    }
-
    public StringBuilder getStrj()
    {
       return strj_;
@@ -524,7 +506,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strj_.delete(0, this.strj_.length());
       this.strj_.insert(0, s);
    }
-
    public StringBuilder getStrk()
    {
       return strk_;
@@ -540,7 +521,6 @@ public class StringTest implements ROS2Message<StringTest>
       this.strk_.delete(0, this.strk_.length());
       this.strk_.insert(0, s);
    }
-
    public StringBuilder getStrl()
    {
       return strl_;
@@ -557,5 +537,55 @@ public class StringTest implements ROS2Message<StringTest>
       this.strl_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("StringTest {");
+      builder.append("str1_=");
+      builder.append(str1_.toString());
+      builder.append("str2_=");
+      builder.append(str2_.toString());
+      builder.append("str3_=");
+      builder.append(str3_.toString());
+      builder.append("str4_=");
+      builder.append(str4_.toString());
+      builder.append("str5_=");
+      builder.append(str5_.toString());
+      builder.append("str6_=");
+      builder.append(str6_.toString());
+      builder.append("str7_=");
+      builder.append(str7_.toString());
+      builder.append("str8_=");
+      builder.append(str8_.toString());
+      builder.append("str9_=");
+      builder.append(str9_.toString());
+      builder.append("stra_=");
+      builder.append(stra_.toString());
+      builder.append("strb_=");
+      builder.append(strb_.toString());
+      builder.append("strc_=");
+      builder.append(strc_.toString());
+      builder.append("strd_=");
+      builder.append(strd_.toString());
+      builder.append("stre_=");
+      builder.append(stre_.toString());
+      builder.append("strf_=");
+      builder.append(strf_.toString());
+      builder.append("strg_=");
+      builder.append(strg_.toString());
+      builder.append("strh_=");
+      builder.append(strh_.toString());
+      builder.append("stri_=");
+      builder.append(stri_.toString());
+      builder.append("strj_=");
+      builder.append(strj_.toString());
+      builder.append("strk_=");
+      builder.append(strk_.toString());
+      builder.append("strl_=");
+      builder.append(strl_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }
