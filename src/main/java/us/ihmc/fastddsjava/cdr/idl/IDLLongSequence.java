@@ -46,7 +46,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
 
    /**
     * Get the backing heap {@link LongBuffer} holding all long values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of long values
@@ -80,14 +80,11 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public long remove()
    {
-      add(0);
-   }
-
-   public void remove()
-   {
+      long value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public long get(int index)

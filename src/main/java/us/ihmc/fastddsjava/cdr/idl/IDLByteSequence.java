@@ -68,14 +68,11 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public byte remove()
    {
-      add((byte) 0);
-   }
-
-   public void remove()
-   {
+      byte value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public byte get(int index)
@@ -85,7 +82,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
 
    /**
     * Get the backing heap {@link ByteBuffer} holding all byte values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * Use this for efficient copy operations, however, ensure the buffer is initialized and
     * of the correct capacity first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of byte values, may be null
@@ -131,16 +128,12 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readByte());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeByte(buffer.get(i));
    }
 

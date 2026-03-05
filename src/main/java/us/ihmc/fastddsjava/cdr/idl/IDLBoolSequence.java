@@ -46,7 +46,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
 
    /**
     * Get the backing heap {@link BooleanBufferWrapper} holding all boolean values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of boolean values
@@ -80,14 +80,11 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public boolean remove()
    {
-      add(false);
-   }
-
-   public void remove()
-   {
+      boolean value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public boolean get(int index)

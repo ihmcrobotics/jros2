@@ -46,7 +46,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
 
    /**
     * Get the backing heap {@link DoubleBuffer} holding all double values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of double values
@@ -80,14 +80,11 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public double remove()
    {
-      add(0);
-   }
-
-   public void remove()
-   {
+      double value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public double get(int index)

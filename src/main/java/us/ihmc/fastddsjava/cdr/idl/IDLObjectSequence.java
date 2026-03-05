@@ -112,15 +112,13 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[position++];
    }
 
-   public void remove()
+   public T remove()
    {
-      position--;
+      return elements[position--];
    }
 
    public T get(int index)
    {
-      assert index < size();
-
       return elements[index];
    }
 

@@ -46,7 +46,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 
    /**
     * Get the backing heap {@link IntBuffer} holding all int values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of int values
@@ -80,14 +80,11 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public int remove()
    {
-      add(0);
-   }
-
-   public void remove()
-   {
+      int value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public int get(int index)

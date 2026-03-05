@@ -106,9 +106,9 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       return elements[position++];
    }
 
-   public void remove()
+   public StringBuilder remove()
    {
-      position--;
+      return elements[position--];
    }
 
    public StringBuilder get(int index)

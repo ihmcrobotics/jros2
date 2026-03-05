@@ -46,7 +46,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 
    /**
     * Get the backing heap {@link FloatBuffer} holding all float values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of float values
@@ -80,14 +80,11 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public float remove()
    {
-      add(0f);
-   }
-
-   public void remove()
-   {
+      float value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public float get(int index)

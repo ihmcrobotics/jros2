@@ -46,7 +46,7 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 
    /**
     * Get the backing heap {@link CharBuffer} holding all char values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct
+    * Use this for efficient copy operations, however, ensure the buffer is the correct
     * capacity first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of char values
@@ -80,14 +80,11 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
       buffer.put(value);
    }
 
-   public void add()
+   public char remove()
    {
-      add((char) 0);
-   }
-
-   public void remove()
-   {
+      char value = buffer.get();
       buffer.position(buffer.position() - 1);
+      return value;
    }
 
    public char get(int index)
