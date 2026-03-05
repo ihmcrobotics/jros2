@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
-public class IDLByteSequence extends IDLSequence<IDLByteSequence>
+public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Iterable<Byte>
 {
    private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
 
@@ -62,19 +63,50 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       buffer.clear();
    }
 
+   /**
+    * Appends a byte value to the end of the sequence.
+    *
+    * @param value the byte value to add
+    */
    public void add(byte value)
    {
       ensureMinCapacity(buffer.position() + 1);
       buffer.put(value);
    }
 
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
    public byte remove()
    {
-      byte value = buffer.get();
+      byte value = buffer.get(buffer.position() - 1);
       buffer.position(buffer.position() - 1);
       return value;
    }
 
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public byte remove(int index)
+   {
+      byte value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
    public byte get(int index)
    {
       return buffer.get(index);
@@ -164,5 +196,32 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
       }
       builder.append("]");
       return builder.toString();
+   }
+
+   @Override
+   public Iterator<Byte> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Byte next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLByteSequence.this.remove(--index);
+         }
+      };
    }
 }

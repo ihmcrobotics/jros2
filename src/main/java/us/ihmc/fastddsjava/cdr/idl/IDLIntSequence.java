@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.IntBuffer;
+import java.util.Iterator;
 
-public class IDLIntSequence extends IDLSequence<IDLIntSequence>
+public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Iterable<Integer>
 {
    private static final IntBuffer EMPTY_BUFFER = IntBuffer.allocate(0);
 
@@ -74,19 +75,50 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       buffer.clear();
    }
 
+   /**
+    * Appends an int value to the end of the sequence.
+    *
+    * @param value the int value to add
+    */
    public void add(int value)
    {
       ensureMinCapacity(buffer.position() + 1);
       buffer.put(value);
    }
 
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
    public int remove()
    {
-      int value = buffer.get();
+      int value = buffer.get(buffer.position() - 1);
       buffer.position(buffer.position() - 1);
       return value;
    }
 
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public int remove(int index)
+   {
+      int value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
    public int get(int index)
    {
       return buffer.get(index);
@@ -164,5 +196,32 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
       }
       builder.append("]");
       return builder.toString();
+   }
+
+   @Override
+   public Iterator<Integer> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Integer next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLIntSequence.this.remove(--index);
+         }
+      };
    }
 }

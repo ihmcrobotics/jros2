@@ -73,11 +73,21 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       position = 0;
    }
 
+   /**
+    * Appends a String element to the end of the sequence.
+    *
+    * @param element the String to add
+    */
    public void add(String element)
    {
       add(new StringBuilder(element));
    }
 
+   /**
+    * Appends a StringBuilder element to the end of the sequence.
+    *
+    * @param element the StringBuilder to add
+    */
    public void add(StringBuilder element)
    {
       ensureMinCapacity(position + 1);
@@ -85,11 +95,22 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       elements[position++] = element;
    }
 
+   /**
+    * Adds a new StringBuilder to the end of the sequence using the default string length.
+    *
+    * @return the StringBuilder at the new position (newly created or existing)
+    */
    public StringBuilder add()
    {
       return add(defaultStringLength);
    }
 
+   /**
+    * Adds a new StringBuilder to the end of the sequence with the specified capacity.
+    *
+    * @param stringLength the initial capacity for the StringBuilder
+    * @return the StringBuilder at the new position (newly created or existing)
+    */
    public StringBuilder add(int stringLength)
    {
       ensureMinCapacity(position + 1);
@@ -106,16 +127,48 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       return elements[position++];
    }
 
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last StringBuilder in the sequence
+    */
    public StringBuilder remove()
    {
-      return elements[position--];
+      return elements[--position];
    }
 
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the StringBuilder at the specified index
+    */
+   public StringBuilder remove(int index)
+   {
+      StringBuilder element = elements[index];
+      System.arraycopy(elements, index + 1, elements, index, position - index - 1);
+      elements[--position] = null;
+      return element;
+   }
+
+   /**
+    * Returns the StringBuilder at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the StringBuilder at the specified index
+    */
    public StringBuilder get(int index)
    {
       return elements[index];
    }
 
+   /**
+    * Returns the String representation of the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the String at the specified index
+    */
    public String getAsString(int index)
    {
       return get(index).toString();
@@ -232,6 +285,12 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
          public String next()
          {
             return elements[index++].toString();
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLStringSequence.this.remove(--index);
          }
       };
    }

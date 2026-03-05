@@ -93,6 +93,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       position = 0;
    }
 
+   /**
+    * Appends an element to the end of the sequence.
+    *
+    * @param element the element to add
+    */
    public void add(T element)
    {
       ensureMinCapacity(position + 1);
@@ -100,6 +105,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       elements[position++] = element;
    }
 
+   /**
+    * Adds a new element to the end of the sequence, creating a new instance if necessary.
+    *
+    * @return the element at the new position (newly created or existing)
+    */
    public T add()
    {
       ensureMinCapacity(position + 1);
@@ -112,11 +122,37 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[position++];
    }
 
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
    public T remove()
    {
-      return elements[position--];
+      return elements[--position];
    }
 
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public T remove(int index)
+   {
+      T element = elements[index];
+      System.arraycopy(elements, index + 1, elements, index, position - index - 1);
+      elements[--position] = null;
+      return element;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
    public T get(int index)
    {
       return elements[index];
@@ -185,7 +221,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
       // TODO: This could be done better if this has existing elements
       System.arraycopy(other.elements, 0, elements, 0, othersElements);
-      position = other.size();
+      position = othersElements;
    }
 
    @Override
@@ -222,6 +258,12 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
          public T next()
          {
             return elements[index++];
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLObjectSequence.this.remove(--index);
          }
       };
    }

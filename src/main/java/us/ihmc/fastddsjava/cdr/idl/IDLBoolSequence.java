@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
-public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
+public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Iterable<Boolean>
 {
    private static final BooleanBufferWrapper EMPTY_BUFFER = new BooleanBufferWrapper(0);
 
@@ -74,19 +75,50 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       buffer.clear();
    }
 
+   /**
+    * Appends a boolean value to the end of the sequence.
+    *
+    * @param value the boolean value to add
+    */
    public void add(boolean value)
    {
       ensureMinCapacity(buffer.position() + 1);
       buffer.put(value);
    }
 
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
    public boolean remove()
    {
-      boolean value = buffer.get();
+      boolean value = buffer.get(buffer.position() - 1);
       buffer.position(buffer.position() - 1);
       return value;
    }
 
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public boolean remove(int index)
+   {
+      boolean value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
    public boolean get(int index)
    {
       return buffer.get(index);
@@ -164,6 +196,33 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence>
       }
       builder.append("]");
       return builder.toString();
+   }
+
+   @Override
+   public Iterator<Boolean> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Boolean next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLBoolSequence.this.remove(--index);
+         }
+      };
    }
 
    public static class BooleanBufferWrapper
