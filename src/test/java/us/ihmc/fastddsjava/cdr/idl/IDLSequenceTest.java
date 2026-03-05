@@ -1,15 +1,6 @@
-package us.ihmc.fastddsjava;
+package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastddsjava.cdr.idl.IDLBoolSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLByteSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLCharSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLDoubleSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLFloatSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLObjectSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLShortSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLStringSequence;
-import us.ihmc.fastddsjava.cdr.idl.IDLWStringSequence;
 import us.ihmc.fastddsjava.msg.TestIDLMsg;
 import us.ihmc.log.LogTools;
 

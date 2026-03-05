@@ -1,7 +1,6 @@
-package us.ihmc.fastddsjava;
+package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastddsjava.cdr.idl.IDLObjectSequence;
 import us.ihmc.fastddsjava.msg.TestIDLMsg;
 
 import static org.junit.jupiter.api.Assertions.*;

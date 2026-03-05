@@ -1,7 +1,6 @@
-package us.ihmc.fastddsjava;
+package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastddsjava.cdr.idl.IDLFloatSequence;
 
 import static org.junit.jupiter.api.Assertions.*;
 

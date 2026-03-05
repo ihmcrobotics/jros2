@@ -55,9 +55,14 @@ public final class CDRBuffer
 
       if (remainingCapacity < capacity)
       {
-         ByteBuffer newBuffer = ByteBuffer.allocate(buffer.position() + capacity);
+         int oldPosition = buffer.position();
+         ByteOrder oldOrder = buffer.order();
+         ByteBuffer newBuffer = ByteBuffer.allocate(oldPosition + capacity);
+         newBuffer.order(oldOrder);
 
+         buffer.flip();
          newBuffer.put(buffer);
+         newBuffer.position(oldPosition);
 
          buffer = newBuffer;
 
