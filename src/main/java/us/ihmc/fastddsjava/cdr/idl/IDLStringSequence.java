@@ -144,21 +144,19 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
     */
    public void remove(int index)
    {
-      if (index == position - 1)
+      if (index != position - 1)
       {
-         position--;
-         return;
+         StringBuilder sb = elements[index];
+
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = sb;
       }
 
-      StringBuilder sb = elements[index];
-
-      while (index < position - 1)
-      {
-         elements[index] = elements[++index];
-      }
-
-      // Do not throw away the removed element, put it at the end of the list instead.
-      elements[position - 1] = sb;
       position--;
    }
 

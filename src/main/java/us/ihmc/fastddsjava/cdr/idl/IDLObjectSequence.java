@@ -139,21 +139,19 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
     */
    public void remove(int index)
    {
-      if (index == position - 1)
+      if (index != position - 1)
       {
-         position--;
-         return;
+         T t = elements[index];
+
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = t;
       }
 
-      T t = elements[index];
-
-      while (index < position - 1)
-      {
-         elements[index] = elements[++index];
-      }
-
-      // Do not throw away the removed element, put it at the end of the list instead.
-      elements[position - 1] = t;
       position--;
    }
 
