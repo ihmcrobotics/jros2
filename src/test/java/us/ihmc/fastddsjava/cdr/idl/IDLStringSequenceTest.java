@@ -82,17 +82,18 @@ public class IDLStringSequenceTest
    }
 
    @Test
-   public void testRemove()
+   public void testRemoveLast()
    {
       IDLStringSequence sequence = new IDLStringSequence(INITIAL_CAPACITY);
       sequence.add("First");
       sequence.add("Second");
       sequence.add("Third");
 
-      StringBuilder removed = sequence.remove();
+      sequence.removeLast();
 
-      assertEquals("Third", removed.toString());
       assertEquals(2, sequence.size());
+      assertEquals("First", sequence.getAsString(0));
+      assertEquals("Second", sequence.getAsString(1));
    }
 
    @Test

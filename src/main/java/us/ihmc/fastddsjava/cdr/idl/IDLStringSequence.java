@@ -128,13 +128,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    }
 
    /**
-    * Removes and returns the last element from the sequence.
-    *
-    * @return the last StringBuilder in the sequence
+    * Removes the last element from the sequence.
     */
-   public StringBuilder remove()
+   public void removeLast()
    {
-      return elements[--position];
+      position--;
    }
 
    /**
@@ -149,20 +147,19 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       if (index == position - 1)
       {
          position--;
+         return;
       }
-      else
+
+      StringBuilder sb = elements[index];
+
+      while (index < position - 1)
       {
-         StringBuilder sb = elements[index];
-
-         while (index < position - 1)
-         {
-            elements[index] = elements[++index];
-         }
-
-         // Do not throw away the removed element, put it at the end of the list instead.
-         elements[position - 1] = sb;
-         position--;
+         elements[index] = elements[++index];
       }
+
+      // Do not throw away the removed element, put it at the end of the list instead.
+      elements[position - 1] = sb;
+      position--;
    }
 
    /**

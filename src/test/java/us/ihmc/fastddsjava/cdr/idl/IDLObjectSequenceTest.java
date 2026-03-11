@@ -55,17 +55,18 @@ public class IDLObjectSequenceTest
    }
 
    @Test
-   public void testRemove()
+   public void testRemoveLast()
    {
       IDLObjectSequence<TestIDLMsg> sequence = new IDLObjectSequence<>(INITIAL_CAPACITY, TestIDLMsg.class);
       sequence.add().setData(10);
       sequence.add().setData(20);
       sequence.add().setData(30);
 
-      TestIDLMsg removed = sequence.remove();
+      sequence.removeLast();
 
-      assertEquals(30, removed.getData());
       assertEquals(2, sequence.size());
+      assertEquals(10, sequence.get(0).getData());
+      assertEquals(20, sequence.get(1).getData());
    }
 
    @Test
@@ -118,7 +119,7 @@ public class IDLObjectSequenceTest
    }
 
    @Test
-   public void testIteratorRemove()
+   public void testIteratorRemoveLast()
    {
       IDLObjectSequence<TestIDLMsg> sequence = new IDLObjectSequence<>(INITIAL_CAPACITY, TestIDLMsg.class);
       sequence.add().setData(1000);

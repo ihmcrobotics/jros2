@@ -123,13 +123,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    /**
-    * Removes and returns the last element from the sequence.
-    *
-    * @return the last element in the sequence
+    * Removes the last element from the sequence.
     */
-   public T remove()
+   public void removeLast()
    {
-      return elements[--position];
+      position--;
    }
 
    /**
@@ -144,20 +142,19 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       if (index == position - 1)
       {
          position--;
+         return;
       }
-      else
+
+      T t = elements[index];
+
+      while (index < position - 1)
       {
-         T t = elements[index];
-
-         while (index < position - 1)
-         {
-            elements[index] = elements[++index];
-         }
-
-         // Do not throw away the removed element, put it at the end of the list instead.
-         elements[position - 1] = t;
-         position--;
+         elements[index] = elements[++index];
       }
+
+      // Do not throw away the removed element, put it at the end of the list instead.
+      elements[position - 1] = t;
+      position--;
    }
 
    /**
