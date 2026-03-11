@@ -104,9 +104,8 @@ public class IDLStringSequenceTest
       sequence.add("C");
       sequence.add("D");
 
-      StringBuilder removed = sequence.remove(1);
+      sequence.remove(1);
 
-      assertEquals("B", removed.toString());
       assertEquals(3, sequence.size());
       assertEquals("A", sequence.getAsString(0));
       assertEquals("C", sequence.getAsString(1));
@@ -121,9 +120,8 @@ public class IDLStringSequenceTest
       sequence.add("Second");
       sequence.add("Third");
 
-      StringBuilder removed = sequence.remove(0);
+      sequence.remove(0);
 
-      assertEquals("First", removed.toString());
       assertEquals(2, sequence.size());
       assertEquals("Second", sequence.getAsString(0));
       assertEquals("Third", sequence.getAsString(1));

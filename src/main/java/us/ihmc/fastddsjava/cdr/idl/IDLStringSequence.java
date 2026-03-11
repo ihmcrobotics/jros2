@@ -138,18 +138,30 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    }
 
    /**
-    * Removes and returns the element at the specified index.
-    * Shifts subsequent elements left by one position.
+    * Removes the element at the specified position in this list.
+    * Shifts any subsequent elements to the left (subtracts one from their
+    * indices).
     *
-    * @param index the index of the element to remove
-    * @return the StringBuilder at the specified index
+    * @param index the index of the element to be removed
     */
-   public StringBuilder remove(int index)
+   public void remove(int index)
    {
-      StringBuilder element = elements[index];
-      System.arraycopy(elements, index + 1, elements, index, position - index - 1);
-      elements[--position] = null;
-      return element;
+      if (index == position - 1)
+      {
+         position--;
+         return;
+      }
+
+      StringBuilder sb = elements[index];
+
+      while (index < position - 1)
+      {
+         elements[index] = elements[++index];
+      }
+
+      // Do not throw away the removed element, put it at the end of the list instead.
+      elements[position - 1] = sb;
+      position--;
    }
 
    /**

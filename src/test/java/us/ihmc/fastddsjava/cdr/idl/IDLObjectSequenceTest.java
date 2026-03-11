@@ -77,9 +77,8 @@ public class IDLObjectSequenceTest
       sequence.add().setData(true);
       sequence.add().setData(false);
 
-      TestIDLMsg removed = sequence.remove(1);
+      sequence.remove(1);
 
-      assertFalse(removed.getData());
       assertEquals(3, sequence.size());
       assertTrue(sequence.get(0).getData());
       assertTrue(sequence.get(1).getData()); // Shifted from index 2
@@ -94,9 +93,8 @@ public class IDLObjectSequenceTest
       sequence.add().setData(false);
       sequence.add().setData(true);
 
-      TestIDLMsg removed = sequence.remove(0);
+      sequence.remove(0);
 
-      assertTrue(removed.getData());
       assertEquals(2, sequence.size());
       assertFalse(sequence.get(0).getData());
       assertTrue(sequence.get(1).getData());
