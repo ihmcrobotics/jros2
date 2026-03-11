@@ -5,14 +5,14 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 public class TestIDLMsg implements CDRSerializable
 {
-   private boolean data;
+   private int data;
 
-   public boolean getData()
+   public int getData()
    {
       return data;
    }
 
-   public void setData(boolean data_)
+   public void setData(int data_)
    {
       this.data = data_;
    }
@@ -22,7 +22,7 @@ public class TestIDLMsg implements CDRSerializable
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4);
 
       return currentAlignment - initialAlignment;
    }
@@ -30,12 +30,12 @@ public class TestIDLMsg implements CDRSerializable
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeBoolean(data);
+      buffer.writeInt(data);
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data = buffer.readBoolean();
+      data = buffer.readInt();
    }
 }

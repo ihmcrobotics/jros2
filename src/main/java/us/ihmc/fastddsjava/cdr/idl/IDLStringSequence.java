@@ -149,19 +149,20 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       if (index == position - 1)
       {
          position--;
-         return;
       }
-
-      StringBuilder sb = elements[index];
-
-      while (index < position - 1)
+      else
       {
-         elements[index] = elements[++index];
-      }
+         StringBuilder sb = elements[index];
 
-      // Do not throw away the removed element, put it at the end of the list instead.
-      elements[position - 1] = sb;
-      position--;
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = sb;
+         position--;
+      }
    }
 
    /**

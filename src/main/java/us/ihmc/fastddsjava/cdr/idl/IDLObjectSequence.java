@@ -145,17 +145,19 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       {
          position--;
       }
-
-      T t = elements[index];
-
-      while (index < position - 1)
+      else
       {
-         elements[index] = elements[++index];
-      }
+         T t = elements[index];
 
-      // Do not throw away the removed element, put it at the end of the list instead.
-      elements[position - 1] = t;
-      position--;
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = t;
+         position--;
+      }
    }
 
    /**
