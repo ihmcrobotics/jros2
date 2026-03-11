@@ -80,4 +80,17 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PolygonInstanceStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("polygon_=");
+      builder.append(polygon_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -75,4 +75,15 @@ public class UInt16 implements ROS2Message<UInt16>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("UInt16 {");
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

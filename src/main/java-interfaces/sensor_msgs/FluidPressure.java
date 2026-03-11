@@ -109,4 +109,19 @@ public class FluidPressure implements ROS2Message<FluidPressure>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("FluidPressure {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("fluid_pressure_=");
+      builder.append(fluid_pressure_);
+      builder.append("variance_=");
+      builder.append(variance_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

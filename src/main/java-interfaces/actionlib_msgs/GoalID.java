@@ -104,5 +104,17 @@ public class GoalID implements ROS2Message<GoalID>
       this.id_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("GoalID {");
+      builder.append("stamp_=");
+      builder.append(stamp_);
+      builder.append("id_=");
+      builder.append(id_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

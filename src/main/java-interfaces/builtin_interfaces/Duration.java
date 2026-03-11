@@ -104,4 +104,17 @@ public class Duration implements ROS2Message<Duration>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Duration {");
+      builder.append("sec_=");
+      builder.append(sec_);
+      builder.append("nanosec_=");
+      builder.append(nanosec_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

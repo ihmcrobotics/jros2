@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.FloatBuffer;
+import java.util.Iterator;
 
-public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
+public class IDLFloatSequence extends IDLSequence<IDLFloatSequence> implements Iterable<Float>
 {
    private static final FloatBuffer EMPTY_BUFFER = FloatBuffer.allocate(0);
 
@@ -46,7 +47,7 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 
    /**
     * Get the backing heap {@link FloatBuffer} holding all float values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of float values
@@ -72,6 +73,55 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
    public void clear()
    {
       buffer.clear();
+   }
+
+   /**
+    * Appends a float value to the end of the sequence.
+    *
+    * @param value the float value to add
+    */
+   public void add(float value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public float remove()
+   {
+      float value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public float remove(int index)
+   {
+      float value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public float get(int index)
+   {
+      return buffer.get(index);
    }
 
    /**
@@ -129,5 +179,49 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Float> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Float next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLFloatSequence.this.remove(--index);
+         }
+      };
    }
 }

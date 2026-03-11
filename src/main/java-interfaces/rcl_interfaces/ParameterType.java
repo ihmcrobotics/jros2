@@ -73,4 +73,33 @@ public class ParameterType implements ROS2Message<ParameterType>
    {
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ParameterType {");
+      builder.append("PARAMETER_NOT_SET=");
+      builder.append(PARAMETER_NOT_SET);
+      builder.append("PARAMETER_BOOL=");
+      builder.append(PARAMETER_BOOL);
+      builder.append("PARAMETER_INTEGER=");
+      builder.append(PARAMETER_INTEGER);
+      builder.append("PARAMETER_DOUBLE=");
+      builder.append(PARAMETER_DOUBLE);
+      builder.append("PARAMETER_STRING=");
+      builder.append(PARAMETER_STRING);
+      builder.append("PARAMETER_BYTE_ARRAY=");
+      builder.append(PARAMETER_BYTE_ARRAY);
+      builder.append("PARAMETER_BOOL_ARRAY=");
+      builder.append(PARAMETER_BOOL_ARRAY);
+      builder.append("PARAMETER_INTEGER_ARRAY=");
+      builder.append(PARAMETER_INTEGER_ARRAY);
+      builder.append("PARAMETER_DOUBLE_ARRAY=");
+      builder.append(PARAMETER_DOUBLE_ARRAY);
+      builder.append("PARAMETER_STRING_ARRAY=");
+      builder.append(PARAMETER_STRING_ARRAY);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

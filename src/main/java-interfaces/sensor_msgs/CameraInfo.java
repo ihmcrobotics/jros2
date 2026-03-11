@@ -387,7 +387,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       this.distortion_model_.delete(0, this.distortion_model_.length());
       this.distortion_model_.insert(0, s);
    }
-
    public IDLDoubleSequence getD()
    {
       return d_;
@@ -434,4 +433,35 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("CameraInfo {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("height_=");
+      builder.append(height_);
+      builder.append("width_=");
+      builder.append(width_);
+      builder.append("distortion_model_=");
+      builder.append(distortion_model_.toString());
+      builder.append("d_=");
+      builder.append(d_);
+      builder.append("k_=");
+      builder.append(java.util.Arrays.toString(k_));
+      builder.append("r_=");
+      builder.append(java.util.Arrays.toString(r_));
+      builder.append("p_=");
+      builder.append(java.util.Arrays.toString(p_));
+      builder.append("binning_x_=");
+      builder.append(binning_x_);
+      builder.append("binning_y_=");
+      builder.append(binning_y_);
+      builder.append("roi_=");
+      builder.append(roi_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

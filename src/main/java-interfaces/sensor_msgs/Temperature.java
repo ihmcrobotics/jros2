@@ -101,4 +101,19 @@ public class Temperature implements ROS2Message<Temperature>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Temperature {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("temperature_=");
+      builder.append(temperature_);
+      builder.append("variance_=");
+      builder.append(variance_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

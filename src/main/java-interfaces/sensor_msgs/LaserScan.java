@@ -231,4 +231,33 @@ public class LaserScan implements ROS2Message<LaserScan>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("LaserScan {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("angle_min_=");
+      builder.append(angle_min_);
+      builder.append("angle_max_=");
+      builder.append(angle_max_);
+      builder.append("angle_increment_=");
+      builder.append(angle_increment_);
+      builder.append("time_increment_=");
+      builder.append(time_increment_);
+      builder.append("scan_time_=");
+      builder.append(scan_time_);
+      builder.append("range_min_=");
+      builder.append(range_min_);
+      builder.append("range_max_=");
+      builder.append(range_max_);
+      builder.append("ranges_=");
+      builder.append(ranges_);
+      builder.append("intensities_=");
+      builder.append(intensities_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

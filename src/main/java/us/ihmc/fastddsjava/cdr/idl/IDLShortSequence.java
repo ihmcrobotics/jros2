@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.ShortBuffer;
+import java.util.Iterator;
 
-public class IDLShortSequence extends IDLSequence<IDLShortSequence>
+public class IDLShortSequence extends IDLSequence<IDLShortSequence> implements Iterable<Short>
 {
    private static final ShortBuffer EMPTY_BUFFER = ShortBuffer.allocate(0);
 
@@ -46,7 +47,7 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
 
    /**
     * Get the backing heap {@link ShortBuffer} holding all short values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of short values
@@ -72,6 +73,55 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
    public void clear()
    {
       buffer.clear();
+   }
+
+   /**
+    * Appends a short value to the end of the sequence.
+    *
+    * @param value the short value to add
+    */
+   public void add(short value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public short remove()
+   {
+      short value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public short remove(int index)
+   {
+      short value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public short get(int index)
+   {
+      return buffer.get(index);
    }
 
    /**
@@ -129,5 +179,49 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Short> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Short next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLShortSequence.this.remove(--index);
+         }
+      };
    }
 }

@@ -107,7 +107,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       this.body_frame_id_.delete(0, this.body_frame_id_.length());
       this.body_frame_id_.insert(0, s);
    }
-
    public StringBuilder getReferenceFrameId()
    {
       return reference_frame_id_;
@@ -123,11 +122,27 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       this.reference_frame_id_.delete(0, this.reference_frame_id_.length());
       this.reference_frame_id_.insert(0, s);
    }
-
    public geometry_msgs.Twist getVelocity()
    {
       return velocity_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("VelocityStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("body_frame_id_=");
+      builder.append(body_frame_id_.toString());
+      builder.append("reference_frame_id_=");
+      builder.append(reference_frame_id_.toString());
+      builder.append("velocity_=");
+      builder.append(velocity_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.IntBuffer;
+import java.util.Iterator;
 
-public class IDLIntSequence extends IDLSequence<IDLIntSequence>
+public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Iterable<Integer>
 {
    private static final IntBuffer EMPTY_BUFFER = IntBuffer.allocate(0);
 
@@ -46,7 +47,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 
    /**
     * Get the backing heap {@link IntBuffer} holding all int values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of int values
@@ -72,6 +73,55 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    public void clear()
    {
       buffer.clear();
+   }
+
+   /**
+    * Appends an int value to the end of the sequence.
+    *
+    * @param value the int value to add
+    */
+   public void add(int value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public int remove()
+   {
+      int value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public int remove(int index)
+   {
+      int value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public int get(int index)
+   {
+      return buffer.get(index);
    }
 
    /**
@@ -104,7 +154,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return CDRBuffer.alignment(currentAlignment, 4);
+      return 4 + CDRBuffer.alignment(currentAlignment, 4);
    }
 
    @Override
@@ -129,5 +179,49 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Integer> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Integer next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLIntSequence.this.remove(--index);
+         }
+      };
    }
 }

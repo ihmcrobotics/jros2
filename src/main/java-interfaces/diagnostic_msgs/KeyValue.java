@@ -89,7 +89,6 @@ public class KeyValue implements ROS2Message<KeyValue>
       this.key_.delete(0, this.key_.length());
       this.key_.insert(0, s);
    }
-
    public StringBuilder getValue()
    {
       return value_;
@@ -106,5 +105,17 @@ public class KeyValue implements ROS2Message<KeyValue>
       this.value_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("KeyValue {");
+      builder.append("key_=");
+      builder.append(key_.toString());
+      builder.append("value_=");
+      builder.append(value_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

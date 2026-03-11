@@ -94,4 +94,19 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ParameterEventDescriptors {");
+      builder.append("new_parameters_=");
+      builder.append(new_parameters_);
+      builder.append("changed_parameters_=");
+      builder.append(changed_parameters_);
+      builder.append("deleted_parameters_=");
+      builder.append(deleted_parameters_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

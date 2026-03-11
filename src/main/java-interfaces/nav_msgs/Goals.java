@@ -95,4 +95,17 @@ public class Goals implements ROS2Message<Goals>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Goals {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("goals_=");
+      builder.append(goals_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

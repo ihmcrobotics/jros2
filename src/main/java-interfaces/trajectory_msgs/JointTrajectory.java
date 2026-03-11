@@ -107,4 +107,19 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("JointTrajectory {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("joint_names_=");
+      builder.append(joint_names_);
+      builder.append("points_=");
+      builder.append(points_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

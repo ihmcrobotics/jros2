@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
-public class IDLStringSequence extends IDLSequence<IDLStringSequence>
+public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<String>
 {
    private static final StringBuilder[] EMPTY_ARRAY = new StringBuilder[0];
    private static final int DEFAULT_MAX_STRING_LENGTH = 16;
@@ -72,11 +73,21 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       position = 0;
    }
 
+   /**
+    * Appends a String element to the end of the sequence.
+    *
+    * @param element the String to add
+    */
    public void add(String element)
    {
       add(new StringBuilder(element));
    }
 
+   /**
+    * Appends a StringBuilder element to the end of the sequence.
+    *
+    * @param element the StringBuilder to add
+    */
    public void add(StringBuilder element)
    {
       ensureMinCapacity(position + 1);
@@ -84,11 +95,22 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       elements[position++] = element;
    }
 
+   /**
+    * Adds a new StringBuilder to the end of the sequence using the default string length.
+    *
+    * @return the StringBuilder at the new position (newly created or existing)
+    */
    public StringBuilder add()
    {
       return add(defaultStringLength);
    }
 
+   /**
+    * Adds a new StringBuilder to the end of the sequence with the specified capacity.
+    *
+    * @param stringLength the initial capacity for the StringBuilder
+    * @return the StringBuilder at the new position (newly created or existing)
+    */
    public StringBuilder add(int stringLength)
    {
       ensureMinCapacity(position + 1);
@@ -105,16 +127,56 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       return elements[position++];
    }
 
-   public void remove()
+   /**
+    * Removes the last element from the sequence.
+    */
+   public void removeLast()
    {
       position--;
    }
 
+   /**
+    * Removes the element at the specified position in this list.
+    * Shifts any subsequent elements to the left (subtracts one from their
+    * indices).
+    *
+    * @param index the index of the element to be removed
+    */
+   public void remove(int index)
+   {
+      if (index != position - 1)
+      {
+         StringBuilder sb = elements[index];
+
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = sb;
+      }
+
+      position--;
+   }
+
+   /**
+    * Returns the StringBuilder at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the StringBuilder at the specified index
+    */
    public StringBuilder get(int index)
    {
       return elements[index];
    }
 
+   /**
+    * Returns the String representation of the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the String at the specified index
+    */
    public String getAsString(int index)
    {
       return get(index).toString();
@@ -185,5 +247,59 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence>
       }
 
       position = othersElements;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(elements[i].toString());
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   public String[] toStringArray()
+   {
+      String[] array = new String[size()];
+      for (int i = 0; i < size(); i++)
+      {
+         array[i] = elements[i].toString();
+      }
+      return array;
+   }
+
+   @Override
+   public Iterator<String> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public String next()
+         {
+            return elements[index++].toString();
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLStringSequence.this.remove(--index);
+         }
+      };
    }
 }

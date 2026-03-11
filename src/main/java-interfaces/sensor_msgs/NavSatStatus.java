@@ -115,4 +115,33 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("NavSatStatus {");
+      builder.append("STATUS_NO_FIX=");
+      builder.append(STATUS_NO_FIX);
+      builder.append("STATUS_FIX=");
+      builder.append(STATUS_FIX);
+      builder.append("STATUS_SBAS_FIX=");
+      builder.append(STATUS_SBAS_FIX);
+      builder.append("STATUS_GBAS_FIX=");
+      builder.append(STATUS_GBAS_FIX);
+      builder.append("status_=");
+      builder.append(status_);
+      builder.append("SERVICE_GPS=");
+      builder.append(SERVICE_GPS);
+      builder.append("SERVICE_GLONASS=");
+      builder.append(SERVICE_GLONASS);
+      builder.append("SERVICE_COMPASS=");
+      builder.append(SERVICE_COMPASS);
+      builder.append("SERVICE_GALILEO=");
+      builder.append(SERVICE_GALILEO);
+      builder.append("service_=");
+      builder.append(service_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -121,4 +121,19 @@ public class MagneticField implements ROS2Message<MagneticField>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MagneticField {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("magnetic_field_=");
+      builder.append(magnetic_field_);
+      builder.append("magnetic_field_covariance_=");
+      builder.append(java.util.Arrays.toString(magnetic_field_covariance_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

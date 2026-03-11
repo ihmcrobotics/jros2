@@ -85,4 +85,17 @@ public class Int64MultiArray implements ROS2Message<Int64MultiArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Int64MultiArray {");
+      builder.append("layout_=");
+      builder.append(layout_);
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

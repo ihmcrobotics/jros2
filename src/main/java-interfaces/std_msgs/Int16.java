@@ -75,4 +75,15 @@ public class Int16 implements ROS2Message<Int16>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Int16 {");
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

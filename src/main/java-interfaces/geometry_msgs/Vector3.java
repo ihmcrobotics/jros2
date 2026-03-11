@@ -107,4 +107,19 @@ public class Vector3 implements ROS2Message<Vector3>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Vector3 {");
+      builder.append("x_=");
+      builder.append(x_);
+      builder.append("y_=");
+      builder.append(y_);
+      builder.append("z_=");
+      builder.append(z_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

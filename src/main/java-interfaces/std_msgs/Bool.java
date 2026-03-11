@@ -77,4 +77,15 @@ public class Bool implements ROS2Message<Bool>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Bool {");
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

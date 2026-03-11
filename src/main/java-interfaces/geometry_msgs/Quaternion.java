@@ -122,4 +122,21 @@ public class Quaternion implements ROS2Message<Quaternion>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Quaternion {");
+      builder.append("x_=");
+      builder.append(x_);
+      builder.append("y_=");
+      builder.append(y_);
+      builder.append("z_=");
+      builder.append(z_);
+      builder.append("w_=");
+      builder.append(w_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

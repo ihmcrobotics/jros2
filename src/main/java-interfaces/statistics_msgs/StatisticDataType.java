@@ -83,4 +83,25 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    {
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("StatisticDataType {");
+      builder.append("STATISTICS_DATA_TYPE_UNINITIALIZED=");
+      builder.append(STATISTICS_DATA_TYPE_UNINITIALIZED);
+      builder.append("STATISTICS_DATA_TYPE_AVERAGE=");
+      builder.append(STATISTICS_DATA_TYPE_AVERAGE);
+      builder.append("STATISTICS_DATA_TYPE_MINIMUM=");
+      builder.append(STATISTICS_DATA_TYPE_MINIMUM);
+      builder.append("STATISTICS_DATA_TYPE_MAXIMUM=");
+      builder.append(STATISTICS_DATA_TYPE_MAXIMUM);
+      builder.append("STATISTICS_DATA_TYPE_STDDEV=");
+      builder.append(STATISTICS_DATA_TYPE_STDDEV);
+      builder.append("STATISTICS_DATA_TYPE_SAMPLE_COUNT=");
+      builder.append(STATISTICS_DATA_TYPE_SAMPLE_COUNT);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

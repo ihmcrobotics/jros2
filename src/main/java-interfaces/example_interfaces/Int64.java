@@ -76,4 +76,15 @@ public class Int64 implements ROS2Message<Int64>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Int64 {");
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

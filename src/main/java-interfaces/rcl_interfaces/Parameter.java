@@ -96,11 +96,23 @@ public class Parameter implements ROS2Message<Parameter>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public rcl_interfaces.ParameterValue getValue()
    {
       return value_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Parameter {");
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("value_=");
+      builder.append(value_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

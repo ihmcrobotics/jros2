@@ -87,4 +87,17 @@ public class Mesh implements ROS2Message<Mesh>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Mesh {");
+      builder.append("triangles_=");
+      builder.append(triangles_);
+      builder.append("vertices_=");
+      builder.append(vertices_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

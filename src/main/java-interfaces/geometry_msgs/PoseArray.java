@@ -79,4 +79,17 @@ public class PoseArray implements ROS2Message<PoseArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PoseArray {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("poses_=");
+      builder.append(poses_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

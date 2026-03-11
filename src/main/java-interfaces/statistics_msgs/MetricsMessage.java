@@ -164,7 +164,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       this.measurement_source_name_.delete(0, this.measurement_source_name_.length());
       this.measurement_source_name_.insert(0, s);
    }
-
    public StringBuilder getMetricsSource()
    {
       return metrics_source_;
@@ -180,7 +179,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       this.metrics_source_.delete(0, this.metrics_source_.length());
       this.metrics_source_.insert(0, s);
    }
-
    public StringBuilder getUnit()
    {
       return unit_;
@@ -196,7 +194,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       this.unit_.delete(0, this.unit_.length());
       this.unit_.insert(0, s);
    }
-
    public builtin_interfaces.Time getWindowStart()
    {
       return window_start_;
@@ -213,4 +210,25 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MetricsMessage {");
+      builder.append("measurement_source_name_=");
+      builder.append(measurement_source_name_.toString());
+      builder.append("metrics_source_=");
+      builder.append(metrics_source_.toString());
+      builder.append("unit_=");
+      builder.append(unit_.toString());
+      builder.append("window_start_=");
+      builder.append(window_start_);
+      builder.append("window_stop_=");
+      builder.append(window_stop_);
+      builder.append("statistics_=");
+      builder.append(statistics_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

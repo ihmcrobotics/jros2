@@ -235,4 +235,35 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("NavSatFix {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("status_=");
+      builder.append(status_);
+      builder.append("latitude_=");
+      builder.append(latitude_);
+      builder.append("longitude_=");
+      builder.append(longitude_);
+      builder.append("altitude_=");
+      builder.append(altitude_);
+      builder.append("position_covariance_=");
+      builder.append(java.util.Arrays.toString(position_covariance_));
+      builder.append("COVARIANCE_TYPE_UNKNOWN=");
+      builder.append(COVARIANCE_TYPE_UNKNOWN);
+      builder.append("COVARIANCE_TYPE_APPROXIMATED=");
+      builder.append(COVARIANCE_TYPE_APPROXIMATED);
+      builder.append("COVARIANCE_TYPE_DIAGONAL_KNOWN=");
+      builder.append(COVARIANCE_TYPE_DIAGONAL_KNOWN);
+      builder.append("COVARIANCE_TYPE_KNOWN=");
+      builder.append(COVARIANCE_TYPE_KNOWN);
+      builder.append("position_covariance_type_=");
+      builder.append(position_covariance_type_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -131,4 +131,17 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MultiArrayLayout {");
+      builder.append("dim_=");
+      builder.append(dim_);
+      builder.append("data_offset_=");
+      builder.append(data_offset_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

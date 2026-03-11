@@ -120,4 +120,21 @@ public class BoolTest implements ROS2Message<BoolTest>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("BoolTest {");
+      builder.append("bool_1_=");
+      builder.append(bool_1_);
+      builder.append("bool_2_=");
+      builder.append(bool_2_);
+      builder.append("bool_3_=");
+      builder.append(bool_3_);
+      builder.append("bool_4_=");
+      builder.append(bool_4_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

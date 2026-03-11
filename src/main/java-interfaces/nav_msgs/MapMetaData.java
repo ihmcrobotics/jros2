@@ -152,4 +152,23 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MapMetaData {");
+      builder.append("map_load_time_=");
+      builder.append(map_load_time_);
+      builder.append("resolution_=");
+      builder.append(resolution_);
+      builder.append("width_=");
+      builder.append(width_);
+      builder.append("height_=");
+      builder.append(height_);
+      builder.append("origin_=");
+      builder.append(origin_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

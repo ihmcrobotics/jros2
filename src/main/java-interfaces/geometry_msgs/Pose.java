@@ -78,4 +78,17 @@ public class Pose implements ROS2Message<Pose>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Pose {");
+      builder.append("position_=");
+      builder.append(position_);
+      builder.append("orientation_=");
+      builder.append(orientation_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

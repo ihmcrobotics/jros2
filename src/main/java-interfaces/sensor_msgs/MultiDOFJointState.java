@@ -151,4 +151,23 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MultiDOFJointState {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("joint_names_=");
+      builder.append(joint_names_);
+      builder.append("transforms_=");
+      builder.append(transforms_);
+      builder.append("twist_=");
+      builder.append(twist_);
+      builder.append("wrench_=");
+      builder.append(wrench_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

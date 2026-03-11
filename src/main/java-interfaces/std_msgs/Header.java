@@ -102,5 +102,17 @@ public class Header implements ROS2Message<Header>
       this.frame_id_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Header {");
+      builder.append("stamp_=");
+      builder.append(stamp_);
+      builder.append("frame_id_=");
+      builder.append(frame_id_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

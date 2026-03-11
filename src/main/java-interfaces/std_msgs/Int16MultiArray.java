@@ -85,4 +85,17 @@ public class Int16MultiArray implements ROS2Message<Int16MultiArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Int16MultiArray {");
+      builder.append("layout_=");
+      builder.append(layout_);
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -125,7 +125,6 @@ public class Odometry implements ROS2Message<Odometry>
       this.child_frame_id_.delete(0, this.child_frame_id_.length());
       this.child_frame_id_.insert(0, s);
    }
-
    public geometry_msgs.PoseWithCovariance getPose()
    {
       return pose_;
@@ -137,4 +136,21 @@ public class Odometry implements ROS2Message<Odometry>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Odometry {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("child_frame_id_=");
+      builder.append(child_frame_id_.toString());
+      builder.append("pose_=");
+      builder.append(pose_);
+      builder.append("twist_=");
+      builder.append(twist_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

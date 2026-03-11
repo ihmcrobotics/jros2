@@ -156,5 +156,39 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       this.text_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("GoalStatus {");
+      builder.append("goal_id_=");
+      builder.append(goal_id_);
+      builder.append("status_=");
+      builder.append(status_);
+      builder.append("PENDING=");
+      builder.append(PENDING);
+      builder.append("ACTIVE=");
+      builder.append(ACTIVE);
+      builder.append("PREEMPTED=");
+      builder.append(PREEMPTED);
+      builder.append("SUCCEEDED=");
+      builder.append(SUCCEEDED);
+      builder.append("ABORTED=");
+      builder.append(ABORTED);
+      builder.append("REJECTED=");
+      builder.append(REJECTED);
+      builder.append("PREEMPTING=");
+      builder.append(PREEMPTING);
+      builder.append("RECALLING=");
+      builder.append(RECALLING);
+      builder.append("RECALLED=");
+      builder.append(RECALLED);
+      builder.append("LOST=");
+      builder.append(LOST);
+      builder.append("text_=");
+      builder.append(text_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

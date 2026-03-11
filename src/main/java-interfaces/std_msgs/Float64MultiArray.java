@@ -85,4 +85,17 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Float64MultiArray {");
+      builder.append("layout_=");
+      builder.append(layout_);
+      builder.append("data_=");
+      builder.append(data_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

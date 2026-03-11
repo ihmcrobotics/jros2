@@ -149,7 +149,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public StringBuilder getMessage()
    {
       return message_;
@@ -165,7 +164,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       this.message_.delete(0, this.message_.length());
       this.message_.insert(0, s);
    }
-
    public StringBuilder getHardwareId()
    {
       return hardware_id_;
@@ -181,11 +179,37 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       this.hardware_id_.delete(0, this.hardware_id_.length());
       this.hardware_id_.insert(0, s);
    }
-
    public IDLObjectSequence<diagnostic_msgs.KeyValue> getValues()
    {
       return values_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("DiagnosticStatus {");
+      builder.append("OK=");
+      builder.append(OK);
+      builder.append("WARN=");
+      builder.append(WARN);
+      builder.append("ERROR=");
+      builder.append(ERROR);
+      builder.append("STALE=");
+      builder.append(STALE);
+      builder.append("level_=");
+      builder.append(level_);
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("message_=");
+      builder.append(message_.toString());
+      builder.append("hardware_id_=");
+      builder.append(hardware_id_.toString());
+      builder.append("values_=");
+      builder.append(values_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

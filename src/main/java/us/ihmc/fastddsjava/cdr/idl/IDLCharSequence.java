@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.CharBuffer;
+import java.util.Iterator;
 
-public class IDLCharSequence extends IDLSequence<IDLCharSequence>
+public class IDLCharSequence extends IDLSequence<IDLCharSequence> implements Iterable<Character>
 {
    private static final CharBuffer EMPTY_BUFFER = CharBuffer.allocate(0);
 
@@ -46,7 +47,7 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 
    /**
     * Get the backing heap {@link CharBuffer} holding all char values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct
+    * Use this for efficient copy operations, however, ensure the buffer is the correct
     * capacity first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of char values
@@ -72,6 +73,55 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
    public void clear()
    {
       buffer.clear();
+   }
+
+   /**
+    * Appends a char value to the end of the sequence.
+    *
+    * @param value the char value to add
+    */
+   public void add(char value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public char remove()
+   {
+      char value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public char remove(int index)
+   {
+      char value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public char get(int index)
+   {
+      return buffer.get(index);
    }
 
    /**
@@ -129,5 +179,49 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Character> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Character next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLCharSequence.this.remove(--index);
+         }
+      };
    }
 }

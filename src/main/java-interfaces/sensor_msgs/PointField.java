@@ -118,7 +118,6 @@ public class PointField implements ROS2Message<PointField>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public int getOffset()
    {
       return offset_;
@@ -150,4 +149,37 @@ public class PointField implements ROS2Message<PointField>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PointField {");
+      builder.append("INT8=");
+      builder.append(INT8);
+      builder.append("UINT8=");
+      builder.append(UINT8);
+      builder.append("INT16=");
+      builder.append(INT16);
+      builder.append("UINT16=");
+      builder.append(UINT16);
+      builder.append("INT32=");
+      builder.append(INT32);
+      builder.append("UINT32=");
+      builder.append(UINT32);
+      builder.append("FLOAT32=");
+      builder.append(FLOAT32);
+      builder.append("FLOAT64=");
+      builder.append(FLOAT64);
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("offset_=");
+      builder.append(offset_);
+      builder.append("datatype_=");
+      builder.append(datatype_);
+      builder.append("count_=");
+      builder.append(count_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

@@ -222,7 +222,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       this.title_.delete(0, this.title_.length());
       this.title_.insert(0, s);
    }
-
    public StringBuilder getCommand()
    {
       return command_;
@@ -238,7 +237,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       this.command_.delete(0, this.command_.length());
       this.command_.insert(0, s);
    }
-
    public byte getCommandType()
    {
       return command_type_;
@@ -250,4 +248,29 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("MenuEntry {");
+      builder.append("id_=");
+      builder.append(id_);
+      builder.append("parent_id_=");
+      builder.append(parent_id_);
+      builder.append("title_=");
+      builder.append(title_.toString());
+      builder.append("command_=");
+      builder.append(command_.toString());
+      builder.append("FEEDBACK=");
+      builder.append(FEEDBACK);
+      builder.append("ROSRUN=");
+      builder.append(ROSRUN);
+      builder.append("ROSLAUNCH=");
+      builder.append(ROSLAUNCH);
+      builder.append("command_type_=");
+      builder.append(command_type_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

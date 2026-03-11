@@ -88,4 +88,17 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("UVCoordinate {");
+      builder.append("u_=");
+      builder.append(u_);
+      builder.append("v_=");
+      builder.append(v_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

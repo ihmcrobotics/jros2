@@ -84,6 +84,9 @@ public class jros2GenTask extends DefaultTask
    @TaskAction
    public void run() throws IOException
    {
+      long startTime = System.currentTimeMillis();
+      int totalInterfacesGenerated = 0;
+
       Path outputDirPath = Path.of(outputDir);
 
       for (String packagePathStr : packagePaths)
@@ -125,7 +128,8 @@ public class jros2GenTask extends DefaultTask
                      }
                      outputFilePath.toFile().getParentFile().mkdirs();
                      Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
-                     System.out.println(packageResourceName + " -> " + outputFilePath.toFile().getAbsolutePath());
+                     System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
                   }
                   catch (InterfaceFieldParsingException e)
                   {
@@ -136,5 +140,11 @@ public class jros2GenTask extends DefaultTask
             }
          }
       }
+
+      long endTime = System.currentTimeMillis();
+      double runTimeSeconds = (endTime - startTime) / 1000.0;
+
+      System.out.println();
+      System.out.println(totalInterfacesGenerated + " interfaces generated in " + runTimeSeconds + "s");
    }
 }

@@ -21,9 +21,10 @@ import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
-public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>>
+public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>> implements Iterable<T>
 {
    private static final CDRSerializable[] EMPTY_ARRAY = new CDRSerializable[0];
 
@@ -92,6 +93,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       position = 0;
    }
 
+   /**
+    * Appends an element to the end of the sequence.
+    *
+    * @param element the element to add
+    */
    public void add(T element)
    {
       ensureMinCapacity(position + 1);
@@ -99,6 +105,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       elements[position++] = element;
    }
 
+   /**
+    * Adds a new element to the end of the sequence, creating a new instance if necessary.
+    *
+    * @return the element at the new position (newly created or existing)
+    */
    public T add()
    {
       ensureMinCapacity(position + 1);
@@ -111,15 +122,47 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[position++];
    }
 
-   public void remove()
+   /**
+    * Removes the last element from the sequence.
+    */
+   public void removeLast()
    {
       position--;
    }
 
+   /**
+    * Removes the element at the specified position in this list.
+    * Shifts any subsequent elements to the left (subtracts one from their
+    * indices).
+    *
+    * @param index the index of the element to be removed
+    */
+   public void remove(int index)
+   {
+      if (index != position - 1)
+      {
+         T t = elements[index];
+
+         while (index < position - 1)
+         {
+            elements[index] = elements[++index];
+         }
+
+         // Do not throw away the removed element, put it at the end of the list instead.
+         elements[position - 1] = t;
+      }
+
+      position--;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
    public T get(int index)
    {
-      assert index < size();
-
       return elements[index];
    }
 
@@ -186,6 +229,50 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
 
       // TODO: This could be done better if this has existing elements
       System.arraycopy(other.elements, 0, elements, 0, othersElements);
-      position = other.size();
+      position = othersElements;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(elements[i].toString());
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<T> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public T next()
+         {
+            return elements[index++];
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLObjectSequence.this.remove(--index);
+         }
+      };
    }
 }

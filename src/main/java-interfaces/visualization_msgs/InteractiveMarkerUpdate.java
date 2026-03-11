@@ -160,7 +160,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       this.server_id_.delete(0, this.server_id_.length());
       this.server_id_.insert(0, s);
    }
-
    public long getSeqNum()
    {
       return seq_num_;
@@ -197,4 +196,29 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("InteractiveMarkerUpdate {");
+      builder.append("server_id_=");
+      builder.append(server_id_.toString());
+      builder.append("seq_num_=");
+      builder.append(seq_num_);
+      builder.append("KEEP_ALIVE=");
+      builder.append(KEEP_ALIVE);
+      builder.append("UPDATE=");
+      builder.append(UPDATE);
+      builder.append("type_=");
+      builder.append(type_);
+      builder.append("markers_=");
+      builder.append(markers_);
+      builder.append("poses_=");
+      builder.append(poses_);
+      builder.append("erases_=");
+      builder.append(erases_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

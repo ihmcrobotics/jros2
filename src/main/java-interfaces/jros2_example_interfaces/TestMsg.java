@@ -314,7 +314,6 @@ public class TestMsg implements ROS2Message<TestMsg>
       this.my_string_.delete(0, this.my_string_.length());
       this.my_string_.insert(0, s);
    }
-
    public IDLIntSequence getUnboundedIntegerArray()
    {
       return unbounded_integer_array_;
@@ -345,7 +344,6 @@ public class TestMsg implements ROS2Message<TestMsg>
       this.string_of_unbounded_size_.delete(0, this.string_of_unbounded_size_.length());
       this.string_of_unbounded_size_.insert(0, s);
    }
-
    public StringBuilder getUpToTenCharactersString()
    {
       return up_to_ten_characters_string_;
@@ -361,7 +359,6 @@ public class TestMsg implements ROS2Message<TestMsg>
       this.up_to_ten_characters_string_.delete(0, this.up_to_ten_characters_string_.length());
       this.up_to_ten_characters_string_.insert(0, s);
    }
-
    public IDLStringSequence getUpToFiveUnboundedStrings()
    {
       return up_to_five_unbounded_strings_;
@@ -412,7 +409,6 @@ public class TestMsg implements ROS2Message<TestMsg>
       this.full_name_.delete(0, this.full_name_.length());
       this.full_name_.insert(0, s);
    }
-
    public IDLIntSequence getSamples()
    {
       return samples_;
@@ -439,4 +435,59 @@ public class TestMsg implements ROS2Message<TestMsg>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("TestMsg {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("my_int_=");
+      builder.append(my_int_);
+      builder.append("my_string_=");
+      builder.append(my_string_.toString());
+      builder.append("unbounded_integer_array_=");
+      builder.append(unbounded_integer_array_);
+      builder.append("five_integers_array_=");
+      builder.append(java.util.Arrays.toString(five_integers_array_));
+      builder.append("up_to_five_integers_array_=");
+      builder.append(up_to_five_integers_array_);
+      builder.append("string_of_unbounded_size_=");
+      builder.append(string_of_unbounded_size_.toString());
+      builder.append("up_to_ten_characters_string_=");
+      builder.append(up_to_ten_characters_string_.toString());
+      builder.append("up_to_five_unbounded_strings_=");
+      builder.append(up_to_five_unbounded_strings_);
+      builder.append("unbounded_array_of_strings_up_to_ten_characters_each_=");
+      builder.append(unbounded_array_of_strings_up_to_ten_characters_each_);
+      builder.append("up_to_five_strings_up_to_ten_characters_each_=");
+      builder.append(up_to_five_strings_up_to_ten_characters_each_);
+      builder.append("x_=");
+      builder.append(x_);
+      builder.append("y_=");
+      builder.append(y_);
+      builder.append("full_name_=");
+      builder.append(full_name_.toString());
+      builder.append("samples_=");
+      builder.append(samples_);
+      builder.append("samples2_=");
+      builder.append(java.util.Arrays.toString(samples2_));
+      builder.append("X=");
+      builder.append(X);
+      builder.append("Y=");
+      builder.append(Y);
+      builder.append("FOO=");
+      builder.append(FOO);
+      builder.append("EXAMPLE=");
+      builder.append(EXAMPLE);
+      builder.append("three_strings_=");
+      builder.append(java.util.Arrays.toString(three_strings_));
+      builder.append("three_strings_each_max_length_of_five_chars_=");
+      builder.append(java.util.Arrays.toString(three_strings_each_max_length_of_five_chars_));
+      builder.append("three_images_=");
+      builder.append(java.util.Arrays.toString(three_images_));
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

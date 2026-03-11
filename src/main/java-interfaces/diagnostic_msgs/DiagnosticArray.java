@@ -79,4 +79,17 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("DiagnosticArray {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("status_=");
+      builder.append(status_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

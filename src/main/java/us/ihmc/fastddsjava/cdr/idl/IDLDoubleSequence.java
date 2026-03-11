@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.DoubleBuffer;
+import java.util.Iterator;
 
-public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
+public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence> implements Iterable<Double>
 {
    private static final DoubleBuffer EMPTY_BUFFER = DoubleBuffer.allocate(0);
 
@@ -46,7 +47,7 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
 
    /**
     * Get the backing heap {@link DoubleBuffer} holding all double values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is the correct capacity
+    * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
     * first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of double values
@@ -72,6 +73,55 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
    public void clear()
    {
       buffer.clear();
+   }
+
+   /**
+    * Appends a double value to the end of the sequence.
+    *
+    * @param value the double value to add
+    */
+   public void add(double value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public double remove()
+   {
+      double value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public double remove(int index)
+   {
+      double value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public double get(int index)
+   {
+      return buffer.get(index);
    }
 
    /**
@@ -129,5 +179,49 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Double> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Double next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLDoubleSequence.this.remove(--index);
+         }
+      };
    }
 }

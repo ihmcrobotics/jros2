@@ -84,4 +84,17 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("PolygonInstance {");
+      builder.append("polygon_=");
+      builder.append(polygon_);
+      builder.append("id_=");
+      builder.append(id_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

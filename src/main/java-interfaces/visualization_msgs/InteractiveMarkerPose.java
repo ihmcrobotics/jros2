@@ -115,5 +115,19 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       this.name_.insert(0, s);
    }
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("InteractiveMarkerPose {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("pose_=");
+      builder.append(pose_);
+      builder.append("name_=");
+      builder.append(name_.toString());
 
+      builder.append("}");
+      return builder.toString();
+   }
 }

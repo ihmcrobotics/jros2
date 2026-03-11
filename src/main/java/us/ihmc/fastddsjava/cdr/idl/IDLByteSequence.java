@@ -18,8 +18,9 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 
-public class IDLByteSequence extends IDLSequence<IDLByteSequence>
+public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Iterable<Byte>
 {
    private static final ByteBuffer EMPTY_BUFFER = ByteBuffer.allocate(0);
 
@@ -63,8 +64,57 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    }
 
    /**
+    * Appends a byte value to the end of the sequence.
+    *
+    * @param value the byte value to add
+    */
+   public void add(byte value)
+   {
+      ensureMinCapacity(buffer.position() + 1);
+      buffer.put(value);
+   }
+
+   /**
+    * Removes and returns the last element from the sequence.
+    *
+    * @return the last element in the sequence
+    */
+   public byte remove()
+   {
+      byte value = buffer.get(buffer.position() - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Removes and returns the element at the specified index.
+    * Shifts subsequent elements left by one position.
+    *
+    * @param index the index of the element to remove
+    * @return the element at the specified index
+    */
+   public byte remove(int index)
+   {
+      byte value = buffer.get(index);
+      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
+      buffer.position(buffer.position() - 1);
+      return value;
+   }
+
+   /**
+    * Returns the element at the specified index.
+    *
+    * @param index the index of the element to return
+    * @return the element at the specified index
+    */
+   public byte get(int index)
+   {
+      return buffer.get(index);
+   }
+
+   /**
     * Get the backing heap {@link ByteBuffer} holding all byte values in the sequence.
-    * Use this for efficient copy operations, however ensure the buffer is initialized and
+    * Use this for efficient copy operations, however, ensure the buffer is initialized and
     * of the correct capacity first with {@link #ensureMinCapacity(int)}!
     *
     * @return the buffer of byte values, may be null
@@ -110,16 +160,12 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       buffer.put(cdrBuffer.readByte());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      assert buffer != null;
-
       cdrBuffer.writeByte(buffer.get(i));
    }
 
@@ -133,5 +179,49 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence>
 
       buffer.put(0, other.buffer, 0, othersElements);
       buffer.position(othersElements);
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder builder = new StringBuilder();
+      builder.append("[");
+      for (int i = 0; i < size(); ++i)
+      {
+         builder.append(buffer.get(i));
+         if (i < size() - 1)
+         {
+            builder.append(", ");
+         }
+      }
+      builder.append("]");
+      return builder.toString();
+   }
+
+   @Override
+   public Iterator<Byte> iterator()
+   {
+      return new Iterator<>()
+      {
+         private int index = 0;
+
+         @Override
+         public boolean hasNext()
+         {
+            return index < size();
+         }
+
+         @Override
+         public Byte next()
+         {
+            return buffer.get(index++);
+         }
+
+         @Override
+         public void remove()
+         {
+            IDLByteSequence.this.remove(--index);
+         }
+      };
    }
 }

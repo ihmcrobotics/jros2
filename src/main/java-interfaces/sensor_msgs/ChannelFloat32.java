@@ -126,11 +126,23 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-
    public IDLFloatSequence getValues()
    {
       return values_;
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ChannelFloat32 {");
+      builder.append("name_=");
+      builder.append(name_.toString());
+      builder.append("values_=");
+      builder.append(values_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

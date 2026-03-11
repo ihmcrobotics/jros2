@@ -78,4 +78,17 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("WrenchStamped {");
+      builder.append("header_=");
+      builder.append(header_);
+      builder.append("wrench_=");
+      builder.append(wrench_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

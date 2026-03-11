@@ -114,4 +114,21 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("ColorRGBA {");
+      builder.append("r_=");
+      builder.append(r_);
+      builder.append("g_=");
+      builder.append(g_);
+      builder.append("b_=");
+      builder.append(b_);
+      builder.append("a_=");
+      builder.append(a_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }

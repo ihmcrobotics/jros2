@@ -21,8 +21,16 @@ import java.nio.ByteOrder;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 /**
- * <a href="https://www.omg.org/spec/DDSI-RTPS/2.3/PDF">...</a>
- * <a href="https://www.omg.org/spec/CORBA/3.3/Interoperability/PDF">...</a>
+ * A buffer wrapper for reading and writing data using Common Data Representation (CDR) encoding,
+ * as specified by the OMG DDS-RTPS and CORBA specifications.
+ * <p>
+ * This class provides methods to serialize and deserialize primitive types and strings according to
+ * CDR encoding rules, including proper alignment and endianness handling. It automatically manages
+ * buffer capacity and handles the RTPS payload header format.
+ * </p>
+ *
+ * @see <a href="https://www.omg.org/spec/DDSI-RTPS/2.3/PDF">DDS-RTPS 2.3 Specification</a>
+ * @see <a href="https://www.omg.org/spec/CORBA/3.3/Interoperability/PDF">CORBA 3.3 Interoperability Specification</a>
  */
 public final class CDRBuffer
 {
@@ -47,9 +55,14 @@ public final class CDRBuffer
 
       if (remainingCapacity < capacity)
       {
-         ByteBuffer newBuffer = ByteBuffer.allocate(buffer.position() + capacity);
+         int oldPosition = buffer.position();
+         ByteOrder oldOrder = buffer.order();
+         ByteBuffer newBuffer = ByteBuffer.allocate(oldPosition + capacity);
+         newBuffer.order(oldOrder);
 
+         buffer.flip();
          newBuffer.put(buffer);
+         newBuffer.position(oldPosition);
 
          buffer = newBuffer;
 

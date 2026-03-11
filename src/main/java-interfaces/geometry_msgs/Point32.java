@@ -113,4 +113,19 @@ public class Point32 implements ROS2Message<Point32>
    }
 
 
+   @Override
+   public java.lang.String toString()
+   {
+      java.lang.StringBuilder builder = new java.lang.StringBuilder();
+      builder.append("Point32 {");
+      builder.append("x_=");
+      builder.append(x_);
+      builder.append("y_=");
+      builder.append(y_);
+      builder.append("z_=");
+      builder.append(z_);
+
+      builder.append("}");
+      return builder.toString();
+   }
 }
