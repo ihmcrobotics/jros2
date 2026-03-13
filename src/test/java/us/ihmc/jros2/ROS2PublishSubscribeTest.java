@@ -423,17 +423,24 @@ public class ROS2PublishSubscribeTest
       ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, reader ->
       {
          // Only read in half of the callbacks
-         if (callbackRun.get() % 2 == 0)
+         int runNumber = callbackRun.getAndIncrement();
+         if (runNumber % 2 == 0)
          {
             reader.read();
          }
 
-         callbackRun.getAndIncrement();
+         if (runNumber == publishCount - 1)
+         {
+            synchronized (callbackRun)
+            {
+               callbackRun.notify();
+            }
+         }
       }, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000",
+                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
                                                                // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
@@ -441,12 +448,15 @@ public class ROS2PublishSubscribeTest
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
 
-      while (!subscription.hasHadData())
+      synchronized (callbackRun)
       {
-         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
+         if (callbackRun.get() < publishCount)
+         {
+            callbackRun.wait(5000);
+         }
       }
 
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+      assertEquals(publishCount, callbackRun.get());
 
       // By this point, the subscription should have received all the messages, let's read them all
       int totalRead = 0;
