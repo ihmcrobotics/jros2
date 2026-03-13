@@ -23,19 +23,19 @@ pushd .
 mkdir -p cppbuild
 cd cppbuild
 
-FOONATHAN_MEMORY_VENDOR_VERSION=1.3.1
+FOONATHAN_MEMORY_VENDOR_VERSION=1.4.0
 if [ ! -f "foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz" ]; then
   curl -o foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz https://codeload.github.com/eProsima/foonathan_memory_vendor/tar.gz/refs/tags/v$FOONATHAN_MEMORY_VENDOR_VERSION
 fi
 tar -xvf foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz
 
-FASTCDR_VERSION=2.3.0
+FASTCDR_VERSION=2.3.5
 if [ ! -f "Fast-CDR-$FASTCDR_VERSION.tar.gz" ]; then
   curl -o Fast-CDR-$FASTCDR_VERSION.tar.gz https://codeload.github.com/eProsima/Fast-CDR/tar.gz/refs/tags/v$FASTCDR_VERSION
 fi
 tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 
-FASTDDS_VERSION=3.2.2
+FASTDDS_VERSION=3.5.0
 # Using git for libtinyxml and libasio submodules
 git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS-$FASTDDS_VERSION
 
@@ -83,11 +83,11 @@ rm -rf install/include/fastddsjava.h
 cp ../src/native/fastddsjava.h install/include/fastddsjava.h
 
 ### Windows hack ###
-if [ -f "install/lib/fastcdr-2.3.lib" ]; then
-  cp install/lib/fastcdr-2.3.lib install/lib/libfastcdr-2.3.lib
+if [ -f "install/lib/fastcdr-${FASTCDR_VERSION}.lib" ]; then
+  cp install/lib/fastcdr-${FASTCDR_VERSION}.lib install/lib/libfastcdr-${FASTCDR_VERSION}.lib
 fi
-if [ -f "install/lib/fastdds-3.2.lib" ]; then
-  cp install/lib/fastdds-3.2.lib install/lib/libfastdds-3.2.lib
+if [ -f "install/lib/fastdds-3.5.lib" ]; then
+  cp install/lib/fastdds-3.5.lib install/lib/libfastdds-3.5.lib
 fi
 
 popd
@@ -121,13 +121,13 @@ else
   LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-x86_64"
 fi
 mkdir -p "$LINUX_GEN_PATH"
-if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
-  cp install/lib/libfastcdr.so.2.3.0 "$LINUX_GEN_PATH"
-  strip "$LINUX_GEN_PATH/libfastcdr.so.2.3.0"
+if [ -f "install/lib/libfastcdr.so.${FASTCDR_VERSION}" ]; then
+  cp install/lib/libfastcdr.so.${FASTCDR_VERSION} "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastcdr.so.${FASTCDR_VERSION}"
 fi
-if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
-  cp install/lib/libfastdds.so.3.2.2 "$LINUX_GEN_PATH"
-  strip "$LINUX_GEN_PATH/libfastdds.so.3.2.2"
+if [ -f "install/lib/libfastdds.so.${FASTDDS_VERSION}" ]; then
+  cp install/lib/libfastdds.so.${FASTDDS_VERSION} "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastdds.so.${FASTDDS_VERSION}"
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so "$LINUX_GEN_PATH"
@@ -135,11 +135,11 @@ if [ -f "javainstall/libjnifastddsjava.so" ]; then
 fi
 # Windows
 mkdir -p ../src/main/resources/fastddsjava/native/windows-x86_64
-if [ -f "install/bin/fastcdr-2.3.dll" ]; then
-  cp install/bin/fastcdr-2.3.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+if [ -f "install/bin/fastcdr-${FASTCDR_VERSION}.dll" ]; then
+  cp install/bin/fastcdr-${FASTCDR_VERSION}.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
-if [ -f "install/bin/fastdds-3.2.dll" ]; then
-  cp install/bin/fastdds-3.2.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+if [ -f "install/bin/fastdds-3.5.dll" ]; then
+  cp install/bin/fastdds-3.5.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
@@ -151,11 +151,11 @@ else
   MACOS_GEN_PATH="../src/main/resources/fastddsjava/native/macos-x86_64"
 fi
 mkdir -p "$MACOS_GEN_PATH"
-if [ -f "install/lib/libfastcdr.2.3.0.dylib" ]; then
-  cp install/lib/libfastcdr.2.3.0.dylib "$MACOS_GEN_PATH"
+if [ -f "install/lib/libfastcdr.${FASTCDR_VERSION}.dylib" ]; then
+  cp install/lib/libfastcdr.${FASTCDR_VERSION}.dylib "$MACOS_GEN_PATH"
 fi
-if [ -f "install/lib/libfastdds.3.2.2.dylib" ]; then
-  cp install/lib/libfastdds.3.2.2.dylib "$MACOS_GEN_PATH"
+if [ -f "install/lib/libfastdds.${FASTDDS_VERSION}.dylib" ]; then
+  cp install/lib/libfastdds.${FASTDDS_VERSION}.dylib "$MACOS_GEN_PATH"
 fi
 if [ -f "javainstall/libjnifastddsjava.dylib" ]; then
   cp javainstall/libjnifastddsjava.dylib "$MACOS_GEN_PATH"
