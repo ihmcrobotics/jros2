@@ -80,6 +80,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     * Flags
     */
    private boolean flagHadData;
+   private volatile int untakenMessageCount;
 
    /*
     * Statistics
@@ -110,6 +111,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       fastddsUserSampleInfo = fastddsjava_create_sampleinfo();
 
       readBuffer = new CDRBuffer();
+
+      untakenMessageCount = 0;
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -152,6 +155,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                while (!closed && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo)))
                {
                   flagHadData = true;
+                  ++untakenMessageCount;
 
                   recordStatistics();
 
@@ -203,6 +207,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo);
                if (OK == ret)
                {
+                  --untakenMessageCount;
+
                   long payloadSizeBytes = userSampleData.data_vector().size();
 
                   // Resize Java heap buffer (if necessary) and rewind
@@ -406,5 +412,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    public String getTopicName()
    {
       return topic.getName();
+   }
+
+   public int getUnreadMessageCount()
+   {
+      return untakenMessageCount;
    }
 }
