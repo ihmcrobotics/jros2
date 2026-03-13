@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -53,6 +53,14 @@ public class ROS2Node implements Closeable
    {
       jros2.load();
    }
+
+   /*
+    * Atomic counters for garbage-free ID generation
+    */
+   private static final AtomicLong participantIdCounter = new AtomicLong(0);
+   private static final AtomicLong topicIdCounter = new AtomicLong(0);
+   private static final AtomicLong publisherIdCounter = new AtomicLong(0);
+   private static final AtomicLong subscriberIdCounter = new AtomicLong(0);
 
    /*
     * Node identification
@@ -123,7 +131,9 @@ public class ROS2Node implements Closeable
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
-      String participantProfileName = UUID.randomUUID().toString();
+      // Prefix with "p_" to ensure valid XML identifier
+      long participantId = participantIdCounter.getAndIncrement();
+      String participantProfileName = "p_" + participantId;
       participantProfile.setDomainId(domainId);
       participantProfile.setProfileName(participantProfileName);
       Rtps rtps = new Rtps();
@@ -215,7 +225,9 @@ public class ROS2Node implements Closeable
                {
                   ProfilesXML profilesXML = new ProfilesXML();
                   TopicProfileType topicProfile = new TopicProfileType();
-                  String topicProfileName = UUID.randomUUID().toString();
+                  // Prefix with "t_" to ensure valid XML identifier
+                  long topicId = topicIdCounter.getAndIncrement();
+                  String topicProfileName = "t_" + topicId;
                   topicProfile.setProfileName(topicProfileName);
                   profilesXML.addTopicProfile(topicProfile);
 
@@ -235,7 +247,8 @@ public class ROS2Node implements Closeable
                    * https://design.ros2.org/articles/topic_and_service_names.html
                    */
                   // TODO: Support other prefixes depending on ROS subsystem
-                  String prefixedTopicName = "rt" + topic.getName();
+                  // Use concat method to avoid string allocation on hot path (though this still allocates)
+                  String prefixedTopicName = "rt".concat(topic.getName());
                   String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
@@ -275,7 +288,9 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
-            String publisherProfileName = UUID.randomUUID().toString();
+            // Prefix with "pub_" to ensure valid XML identifier
+            long publisherId = publisherIdCounter.getAndIncrement();
+            String publisherProfileName = "pub_" + publisherId;
             publisherProfile.setProfileName(publisherProfileName);
             profilesXML.addPublisherProfile(publisherProfile);
 
@@ -375,7 +390,9 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             SubscriberProfileType subscriberProfile = new SubscriberProfileType();
-            String subscriberProfileName = UUID.randomUUID().toString();
+            // Prefix with "sub_" to ensure valid XML identifier
+            long subscriberId = subscriberIdCounter.getAndIncrement();
+            String subscriberProfileName = "sub_" + subscriberId;
             subscriberProfile.setProfileName(subscriberProfileName);
             profilesXML.addSubscriberProfile(subscriberProfile);
 
