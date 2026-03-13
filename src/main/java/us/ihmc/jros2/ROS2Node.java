@@ -54,7 +54,9 @@ public class ROS2Node implements Closeable
       jros2.load();
    }
 
-   // Atomic counters for garbage-free ID generation
+   /*
+    * Atomic counters for garbage-free ID generation
+    */
    private static final AtomicLong participantIdCounter = new AtomicLong(0);
    private static final AtomicLong topicIdCounter = new AtomicLong(0);
    private static final AtomicLong publisherIdCounter = new AtomicLong(0);
