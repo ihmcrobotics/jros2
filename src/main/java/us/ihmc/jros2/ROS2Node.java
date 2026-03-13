@@ -129,7 +129,6 @@ public class ROS2Node implements Closeable
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
-      // Use monotonic counter instead of UUID to avoid allocation
       // Prefix with "p_" to ensure valid XML identifier
       long participantId = participantIdCounter.getAndIncrement();
       String participantProfileName = "p_" + participantId;
@@ -224,7 +223,6 @@ public class ROS2Node implements Closeable
                {
                   ProfilesXML profilesXML = new ProfilesXML();
                   TopicProfileType topicProfile = new TopicProfileType();
-                  // Use monotonic counter instead of UUID to avoid allocation
                   // Prefix with "t_" to ensure valid XML identifier
                   long topicId = topicIdCounter.getAndIncrement();
                   String topicProfileName = "t_" + topicId;
@@ -288,7 +286,6 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
-            // Use monotonic counter instead of UUID to avoid allocation
             // Prefix with "pub_" to ensure valid XML identifier
             long publisherId = publisherIdCounter.getAndIncrement();
             String publisherProfileName = "pub_" + publisherId;
@@ -391,7 +388,6 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             SubscriberProfileType subscriberProfile = new SubscriberProfileType();
-            // Use monotonic counter instead of UUID to avoid allocation
             // Prefix with "sub_" to ensure valid XML identifier
             long subscriberId = subscriberIdCounter.getAndIncrement();
             String subscriberProfileName = "sub_" + subscriberId;

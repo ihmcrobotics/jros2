@@ -82,7 +82,6 @@ public class AsyncROS2Node extends ROS2Node
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
 
-            // Use monotonic counter instead of UUID to avoid allocation
             // Prefix with "apub_" to ensure valid XML identifier
             long publisherId = publisherIdCounter.getAndIncrement();
             String publisherProfileName = "apub_" + publisherId;
