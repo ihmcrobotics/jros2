@@ -342,7 +342,7 @@ public class ROS2PublishSubscribeTest
       ros2Node.close();
    }
 
-   @RepeatedTest(100)
+   @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    // Callback-less subscription

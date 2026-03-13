@@ -23,6 +23,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.log.LogTools;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -80,7 +81,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     * Flags
     */
    private boolean flagHadData;
-   private volatile int untakenMessageCount;
+   private final AtomicInteger untakenMessageCount;
 
    /*
     * Statistics
@@ -112,7 +113,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       readBuffer = new CDRBuffer();
 
-      untakenMessageCount = 0;
+      untakenMessageCount = new AtomicInteger(0);
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -155,7 +156,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                while (!closed && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo)))
                {
                   flagHadData = true;
-                  ++untakenMessageCount;
+                  untakenMessageCount.incrementAndGet();
 
                   recordStatistics();
 
@@ -207,7 +208,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo);
                if (OK == ret)
                {
-                  --untakenMessageCount;
+                  untakenMessageCount.decrementAndGet();
 
                   long payloadSizeBytes = userSampleData.data_vector().size();
 
@@ -416,6 +417,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    public int getUnreadMessageCount()
    {
-      return untakenMessageCount;
+      return untakenMessageCount.get();
    }
 }
