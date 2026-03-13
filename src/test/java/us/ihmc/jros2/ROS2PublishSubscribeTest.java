@@ -342,7 +342,7 @@ public class ROS2PublishSubscribeTest
       ros2Node.close();
    }
 
-   @Test
+   @RepeatedTest(100)
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
    // Callback-less subscription
@@ -365,7 +365,7 @@ public class ROS2PublishSubscribeTest
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000",
+                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
                                                                // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
@@ -373,12 +373,13 @@ public class ROS2PublishSubscribeTest
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
 
-      while (!subscription.hasHadData())
+      // Wait until the subscription receives all the messages
+      long startTime = System.nanoTime();
+      while (subscription.getUnreadMessageCount() < publishCount && System.nanoTime() - startTime < TimeUnit.SECONDS.toNanos(5))
       {
          LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
       }
-
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(5));
+      assertEquals(publishCount, subscription.getUnreadMessageCount());
 
       // By this point, the subscription should have received all the messages, let's read them all
       int totalRead = 0;
@@ -390,6 +391,7 @@ public class ROS2PublishSubscribeTest
          msg = subscription.read();
       }
       assertEquals(publishCount, totalRead);
+      assertEquals(0, subscription.getUnreadMessageCount());
 
       assertNull(subscription.read());
       assertNull(subscription.readLatest());
