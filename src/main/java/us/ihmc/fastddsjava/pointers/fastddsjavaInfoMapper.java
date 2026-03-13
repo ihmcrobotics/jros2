@@ -42,7 +42,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
             compiler = "cpp11"
       ),
       @Platform(value = "linux", link = {"fastcdr", "fastdds"}),
-      @Platform(value = "windows", link = {"fastcdr-2.3", "fastdds-3.2"})
+      @Platform(value = "windows", link = {"fastcdr-2.3", "fastdds-3.5"})
 },
       target = "us.ihmc.fastddsjava.pointers",
       global = "us.ihmc.fastddsjava.pointers.fastddsjava"

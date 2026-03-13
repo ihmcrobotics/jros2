@@ -30,12 +30,14 @@ fi
 tar -xvf foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION.tar.gz
 
 FASTCDR_VERSION=2.3.5
+FASTCDR_VERSION_MAJOR_MINOR=2.3
 if [ ! -f "Fast-CDR-$FASTCDR_VERSION.tar.gz" ]; then
   curl -o Fast-CDR-$FASTCDR_VERSION.tar.gz https://codeload.github.com/eProsima/Fast-CDR/tar.gz/refs/tags/v$FASTCDR_VERSION
 fi
 tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 
 FASTDDS_VERSION=3.5.0
+FASTDDS_VERSION_MAJOR_MINOR=3.5
 # Using git for libtinyxml and libasio submodules
 git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS-$FASTDDS_VERSION
 
@@ -83,11 +85,11 @@ rm -rf install/include/fastddsjava.h
 cp ../src/native/fastddsjava.h install/include/fastddsjava.h
 
 ### Windows hack ###
-if [ -f "install/lib/fastcdr-${FASTCDR_VERSION}.lib" ]; then
-  cp install/lib/fastcdr-${FASTCDR_VERSION}.lib install/lib/libfastcdr-${FASTCDR_VERSION}.lib
+if [ -f "install/lib/fastcdr-${FASTCDR_VERSION_MAJOR_MINOR}.lib" ]; then
+  cp install/lib/fastcdr-${FASTCDR_VERSION_MAJOR_MINOR}.lib install/lib/libfastcdr-${FASTCDR_VERSION_MAJOR_MINOR}.lib
 fi
-if [ -f "install/lib/fastdds-3.5.lib" ]; then
-  cp install/lib/fastdds-3.5.lib install/lib/libfastdds-3.5.lib
+if [ -f "install/lib/fastdds-${FASTDDS_VERSION_MAJOR_MINOR}.lib" ]; then
+  cp install/lib/fastdds-${FASTDDS_VERSION_MAJOR_MINOR}.lib install/lib/libfastdds-${FASTDDS_VERSION_MAJOR_MINOR}.lib
 fi
 
 popd
@@ -135,11 +137,11 @@ if [ -f "javainstall/libjnifastddsjava.so" ]; then
 fi
 # Windows
 mkdir -p ../src/main/resources/fastddsjava/native/windows-x86_64
-if [ -f "install/bin/fastcdr-${FASTCDR_VERSION}.dll" ]; then
-  cp install/bin/fastcdr-${FASTCDR_VERSION}.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+if [ -f "install/bin/fastcdr-${FASTCDR_VERSION_MAJOR_MINOR}.dll" ]; then
+  cp install/bin/fastcdr-${FASTCDR_VERSION_MAJOR_MINOR}.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
-if [ -f "install/bin/fastdds-3.5.dll" ]; then
-  cp install/bin/fastdds-3.5.dll ../src/main/resources/fastddsjava/native/windows-x86_64
+if [ -f "install/bin/fastdds-${FASTDDS_VERSION_MAJOR_MINOR}.dll" ]; then
+  cp install/bin/fastdds-${FASTDDS_VERSION_MAJOR_MINOR}.dll ../src/main/resources/fastddsjava/native/windows-x86_64
 fi
 if [ -f "javainstall/jnifastddsjava.dll" ]; then
   cp javainstall/jnifastddsjava.dll ../src/main/resources/fastddsjava/native/windows-x86_64
