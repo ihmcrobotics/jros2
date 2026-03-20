@@ -161,9 +161,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      {
                         callback.onMessage(ROS2Subscription.this);
                      }
-                     catch (Exception e)
+                     catch (Throwable e)
                      {
-                        LogTools.error(e);
+                        LogTools.error("Exception thrown in ROS2Subscription callback");
+                        e.printStackTrace();
+                        throw e;
                      }
                   }
                }
