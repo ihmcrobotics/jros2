@@ -24,6 +24,7 @@ import us.ihmc.log.LogTools;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -157,29 +158,33 @@ public class AsyncROS2Node extends ROS2Node
    {
       ArrayList<Runnable> batch = new ArrayList<>(QUEUE_CAPACITY);
 
-      try
+      while (!publishThread.isInterrupted())
       {
-         while (!publishThread.isInterrupted())
+         try
          {
-            // Block waiting for first task
-            Runnable task = tasks.take();
-            batch.add(task);
-
-            // Drain any additional available tasks without blocking
-            tasks.drainTo(batch, QUEUE_CAPACITY - 1);
-
-            // Execute all tasks in batch
-            for (int i = 0; i < batch.size(); i++)
+            // Try to get first task with short timeout to avoid expensive blocking on Windows
+            Runnable task = tasks.poll(10, TimeUnit.MILLISECONDS);
+            if (task != null)
             {
-               batch.get(i).run();
-            }
+               batch.add(task);
 
-            batch.clear();
+               // Drain any additional available tasks without blocking
+               tasks.drainTo(batch, QUEUE_CAPACITY - 1);
+
+               // Execute all tasks in batch
+               for (int i = 0; i < batch.size(); i++)
+               {
+                  batch.get(i).run();
+               }
+
+               batch.clear();
+            }
          }
-      }
-      catch (InterruptedException ignored)
-      {
-         // Thread interrupted during shutdown
+         catch (InterruptedException e)
+         {
+            // Thread interrupted during shutdown
+            break;
+         }
       }
    }
 }

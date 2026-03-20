@@ -127,27 +127,18 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
     */
    private void publishTask()
    {
-      // Check closed flag without locking for fast path
-      if (closed)
+      try
+      {
+         // Check closed flag without locking for fast path (volatile read)
+         if (!closed)
+         {
+            super.publish(messagesToPublish[publishPosition]);
+            publishPosition = (publishPosition + 1) % queueCapacity;
+         }
+      }
+      finally
       {
          queueSize.decrementAndGet();
-         return;
-      }
-
-      synchronized (closeLock)
-      {
-         try
-         {
-            if (!closed)
-            {
-               super.publish(messagesToPublish[publishPosition]);
-               publishPosition = (publishPosition + 1) % queueCapacity;
-            }
-         }
-         finally
-         {
-            queueSize.decrementAndGet();
-         }
       }
    }
 }
