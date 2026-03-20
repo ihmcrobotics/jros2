@@ -54,8 +54,23 @@ jobs:
 
       - name: Run JUnit tests
         run: ./gradlew test
+  gradle-test-macos:
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run JUnit tests
+        run: ./gradlew test
   gradle-test-macos-intel:
-    runs-on: macos-15-intel
+    runs-on: macos-26-intel
     timeout-minutes: 10
     steps:
       - name: Checkout repository
