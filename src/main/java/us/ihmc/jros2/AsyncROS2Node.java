@@ -55,8 +55,6 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, fastddsTransports);
 
-      // LinkedBlockingQueue uses separate locks for put/take operations,
-      // providing better concurrency than ArrayBlockingQueue with multiple publishers
       tasks = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
 
       // Pre-allocate thread name during construction to avoid allocation during runtime
@@ -162,7 +160,6 @@ public class AsyncROS2Node extends ROS2Node
       {
          try
          {
-            // Try to get first task with short timeout to avoid expensive blocking on Windows
             Runnable task = tasks.poll(10, TimeUnit.MILLISECONDS);
             if (task != null)
             {
