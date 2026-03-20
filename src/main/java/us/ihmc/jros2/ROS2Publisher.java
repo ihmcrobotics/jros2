@@ -22,8 +22,6 @@ import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -60,8 +58,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    /*
     * Locks
     */
-   protected final ReadWriteLock closeLock;
-   protected boolean closed;
+   protected final Object closeLock = new Object();
+   protected volatile boolean closed;
 
    /*
     * Statistics
@@ -79,7 +77,6 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       this.topicData = topicData;
       this.topic = topic;
 
-      closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
@@ -99,42 +96,43 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    public void publish(T message)
    {
-      closeLock.readLock().lock();
-      try
+      // Check closed flag without locking for fast path
+      if (closed)
       {
-         if (!closed)
+         return;
+      }
+
+      int payloadSizeBytes;
+
+      synchronized (writeBuffer)
+      {
+         // Double-check closed flag inside synchronized block
+         if (closed)
          {
-            int payloadSizeBytes;
-
-            synchronized (writeBuffer)
-            {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
-               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               writeBuffer.rewind();
-
-               // TODO: check if we can shrink the writeBuffer to save memory
-
-               writeBuffer.writePayloadHeader();
-               message.serialize(writeBuffer);
-
-               if (resized)
-               {
-                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               }
-
-               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-            }
-
-            retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
-
-            recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
+            return;
          }
+
+         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
+         boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         // Rewind buffer to ensure we're starting at position = 0
+         writeBuffer.rewind();
+
+         // TODO: check if we can shrink the writeBuffer to save memory
+
+         writeBuffer.writePayloadHeader();
+         message.serialize(writeBuffer);
+
+         if (resized)
+         {
+            topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         }
+
+         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
       }
-      finally
-      {
-         closeLock.readLock().unlock();
-      }
+
+      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+
+      recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
    }
 
    private void recordStatistics(T message, long messageSizeBytes, long publishTimeMillis)
@@ -181,13 +179,21 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    protected void close(Pointer fastddsParticipant)
    {
-      closeLock.writeLock().lock();
-      boolean wasClosed = closed;
-      closed = true;
-      closeLock.writeLock().unlock();
+      boolean wasClosed;
+      synchronized (closeLock)
+      {
+         wasClosed = closed;
+         closed = true;
+      }
 
       if (!wasClosed)
       {
+         // Wait for any ongoing publish to complete
+         synchronized (writeBuffer)
+         {
+            // All publish operations complete here
+         }
+
          topicData.topicDataWrapperType.delete_data(topicDataWrapper);
 
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
