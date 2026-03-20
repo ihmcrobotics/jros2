@@ -27,7 +27,7 @@ import java.util.StringJoiner;
  */
 public class ROS2TestTools
 {
-   public static String ROS_DISTRO = System.getenv().getOrDefault("ROS_DISTRO", "humble");
+   public static String ROS_DISTRO = System.getenv().getOrDefault("ROS_DISTRO", "jazzy");
 
    /**
     * Launches {@code ros2 subCommand}
