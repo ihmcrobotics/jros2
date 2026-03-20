@@ -41,11 +41,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ROS2PublishSubscribeTest
 {
-   static
-   {
-      System.setProperty("fastdds.intraprocess.delivery", "true");
-   }
-
    private static final Random RANDOM = new Random(1881108);
 
    @Test

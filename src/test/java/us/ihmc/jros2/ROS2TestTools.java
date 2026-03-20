@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.StringJoiner;
@@ -39,7 +40,16 @@ public class ROS2TestTools
     */
    public static Process launchROS2Process(int domainId, String subCommand, Redirect outputRedirect, Redirect errorRedirect) throws IOException
    {
-      String sourceROS2 = " source /opt/ros/" + ROS_DISTRO + "/setup.bash ";
+      String setupPath = "/opt/ros/" + ROS_DISTRO + "/setup.bash";
+      File setupFile = new File(setupPath);
+
+      if (!setupFile.exists())
+      {
+         throw new IOException("ROS 2 setup file not found at: " + setupPath + ". Please check that ROS_DISTRO '" + ROS_DISTRO
+                               + "' is installed correctly. Or set ROS_DISTRO environment variable to a valid value.");
+      }
+
+      String sourceROS2 = " source " + setupPath + " ";
       String ros2Command = " ros2 " + subCommand + " ";
 
       ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", sourceROS2 + "&&" + ros2Command);

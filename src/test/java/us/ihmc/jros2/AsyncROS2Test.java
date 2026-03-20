@@ -39,11 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings({"ConstantValue", "ExtractMethodRecommender", "StringConcatenationInsideStringBufferAppend"})
 public class AsyncROS2Test
 {
-   static
-   {
-      System.setProperty("fastdds.intraprocess.delivery", "true");
-   }
-
    @Test
    @EnabledOnOs(OS.LINUX)
    public void testAsyncROS2Publisher() throws IOException, InterruptedException
