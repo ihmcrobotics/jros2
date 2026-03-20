@@ -168,17 +168,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      try
                      {
                         callback.onMessage(ROS2Subscription.this);
-
-                        int unreadCountAfterCallback = fastddsjava_datareader_get_unread_count(fastddsDataReader);
-                        if (unreadCountAfterCallback == unreadCount)
-                        {
-                           /*
-                            * The Java callback did not read any data. We can read it here and discard the sample.
-                            * This prevents infinite loops if the callback does not read the sample.
-                            */
-                           read(null);
-                        }
-                        unreadCount = unreadCountAfterCallback;
                      }
                      catch (Throwable e)
                      {
@@ -186,6 +175,17 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                         e.printStackTrace();
                         throw e;
                      }
+
+                     int unreadCountAfterCallback = fastddsjava_datareader_get_unread_count(fastddsDataReader);
+                     if (unreadCountAfterCallback == unreadCount)
+                     {
+                        /*
+                         * The Java callback did not read any data. We can read it here and discard the sample.
+                         * This prevents infinite loops if the callback does not read the sample.
+                         */
+                        read(null);
+                     }
+                     unreadCount = unreadCountAfterCallback;
                   }
                }
             }

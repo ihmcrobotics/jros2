@@ -15,6 +15,7 @@
  */
 package us.ihmc.jros2;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -64,7 +65,7 @@ public class AsyncROS2Test
       asyncNode.close();
    }
 
-   @Test
+   @RepeatedTest(3)
    public void testPublishingManyMessages() throws InterruptedException
    {
       final int messagesToPublish = 100000;
