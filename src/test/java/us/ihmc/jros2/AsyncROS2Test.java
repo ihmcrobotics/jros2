@@ -77,7 +77,7 @@ public class AsyncROS2Test
       qoSProfile.reliability(Reliability.RELIABLE);
       qoSProfile.history(History.KEEP_ALL);
       qoSProfile.depth(messagesToPublish);
-      ROS2Publisher<example_interfaces.Empty> publisher = asyncNode.createPublisher(topic, qoSProfile);
+      ROS2Publisher<example_interfaces.Empty> publisher = asyncNode.createPublisher(topic, qoSProfile, messagesToPublish);
 
       asyncNode.createSubscription(topic, reader ->
       {
