@@ -21,9 +21,9 @@ import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.log.LogTools;
 
-import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
@@ -40,12 +40,14 @@ public class AsyncROS2Node extends ROS2Node
    }
 
    private static final int QUEUE_CAPACITY = 256;
+   private static final AtomicLong publisherIdCounter = new AtomicLong(0);
 
    /*
     * Publish thread
     */
    private final Thread publishThread;
    private final BlockingQueue<Runnable> tasks;
+   private final String threadName;
 
    public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
@@ -53,7 +55,9 @@ public class AsyncROS2Node extends ROS2Node
 
       tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, false); // Unfair for better performance
 
-      publishThread = new Thread(this::publishLoop, "AsyncROS2NodePublishThread-" + name);
+      // Pre-allocate thread name during construction to avoid allocation during runtime
+      threadName = "AsyncROS2NodePublishThread-" + name;
+      publishThread = new Thread(this::publishLoop, threadName);
       publishThread.setPriority(Thread.NORM_PRIORITY + 1); // Slightly higher priority
       publishThread.start();
    }
@@ -77,7 +81,11 @@ public class AsyncROS2Node extends ROS2Node
          {
             ProfilesXML profilesXML = new ProfilesXML();
             PublisherProfileType publisherProfile = new PublisherProfileType();
-            String publisherProfileName = UUID.randomUUID().toString();
+
+            // Prefix with "apub_" to ensure valid XML identifier
+            long publisherId = publisherIdCounter.getAndIncrement();
+            String publisherProfileName = "apub_" + publisherId;
+
             publisherProfile.setProfileName(publisherProfileName);
             profilesXML.addPublisherProfile(publisherProfile);
 
