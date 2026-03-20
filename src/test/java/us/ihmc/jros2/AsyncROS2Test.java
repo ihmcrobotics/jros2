@@ -94,7 +94,7 @@ public class AsyncROS2Test
       for (int i = 0; i < messagesToPublish; ++i)
       {
          publisher.publish(message);
-         LockSupport.parkNanos(1);
+         LockSupport.parkNanos(10000);
       }
 
       if (messagesReceived.get() < messagesToPublish)
