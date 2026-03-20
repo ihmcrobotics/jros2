@@ -148,8 +148,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          {
             synchronized (callbackSampleData)
             {
+               int unreadCount = fastddsjava_datareader_get_unread_count(fastddsDataReader);
                int ret; // Keep for debugging
-               while (!closed && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo)))
+               while (!closed && unreadCount > 0 && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader,
+                                                                                                         callbackSampleData,
+                                                                                                         fastddsCallbackSampleInfo)))
                {
                   flagHadData = true;
 
@@ -160,6 +163,17 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      try
                      {
                         callback.onMessage(ROS2Subscription.this);
+
+                        int unreadCountAfterCallback = fastddsjava_datareader_get_unread_count(fastddsDataReader);
+                        if (unreadCountAfterCallback == unreadCount)
+                        {
+                           /*
+                            * The Java callback did not read any data. We can read it here and discard the sample.
+                            * This prevents infinite loops if the callback does not read the sample.
+                            */
+                           read(null);
+                        }
+                        unreadCount = unreadCountAfterCallback;
                      }
                      catch (Throwable e)
                      {
@@ -214,9 +228,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                   // Copy sample from native memory to Java heap memory
                   userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
 
-                  // Deserialize sample into Java ROS2Message
+                  // Deserialize sample into Java ROS2Message if not null
                   readBuffer.readPayloadHeader();
-                  data.deserialize(readBuffer);
+                  if (data != null)
+                  {
+                     data.deserialize(readBuffer);
+                  }
 
                   read = true;
                }
@@ -276,9 +293,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                   // Copy sample from native memory to Java heap memory
                   userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
 
-                  // Deserialize sample into Java ROS2Message
+                  // Deserialize sample into Java ROS2Message if not null
                   readBuffer.readPayloadHeader();
-                  data.deserialize(readBuffer);
+                  if (data != null)
+                  {
+                     data.deserialize(readBuffer);
+                  }
                }
             }
          }

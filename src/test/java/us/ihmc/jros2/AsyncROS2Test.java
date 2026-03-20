@@ -19,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
+import us.ihmc.jros2.ROS2QoSProfile.History;
+import us.ihmc.jros2.ROS2QoSProfile.Reliability;
 import us.ihmc.log.LogTools;
 
 import java.io.File;
@@ -27,7 +29,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.BiFunction;
@@ -66,22 +67,20 @@ public class AsyncROS2Test
    @Test
    public void testPublishingManyMessages() throws InterruptedException
    {
-      int messagesToPublish = 1000;
+      final int messagesToPublish = 100000;
       AtomicInteger messagesReceived = new AtomicInteger(0);
-      boolean publish = true;
-      AtomicBoolean expectedValue = new AtomicBoolean(publish);
-      final String topicName = "/ihmc/test_bool";
 
-      AsyncROS2Node asyncNode = new AsyncROS2Node("test_async_node");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
+      AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
+      ROS2Topic<example_interfaces.Empty> topic = new ROS2Topic<>("/test_topic", example_interfaces.Empty.class);
+      ROS2QoSProfile qoSProfile = new ROS2QoSProfile();
+      qoSProfile.reliability(Reliability.RELIABLE);
+      qoSProfile.history(History.KEEP_ALL);
+      qoSProfile.depth(messagesToPublish);
+      ROS2Publisher<example_interfaces.Empty> publisher = asyncNode.createPublisher(topic, qoSProfile);
 
       asyncNode.createSubscription(topic, reader ->
       {
-         example_interfaces.Bool value = reader.read();
-         assertEquals(expectedValue.get(), value.getData());
-         expectedValue.set(!expectedValue.get());
-
-         if (messagesReceived.incrementAndGet() >= messagesToPublish)
+         if (messagesReceived.getAndIncrement() >= messagesToPublish)
          {
             synchronized (messagesReceived)
             {
@@ -90,20 +89,16 @@ public class AsyncROS2Test
          }
       });
 
-      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
-
-      example_interfaces.Bool bool = new example_interfaces.Bool();
+      example_interfaces.Empty message = new example_interfaces.Empty();
       for (int i = 0; i < messagesToPublish; ++i)
       {
-         bool.setData(publish);
-         publisher.publish(bool);
-         publish = !publish;
-         LockSupport.parkNanos(100000); // park for 0.1ms
+         publisher.publish(message);
+         LockSupport.parkNanos(1);
       }
 
-      synchronized (messagesReceived)
+      if (messagesReceived.get() < messagesToPublish)
       {
-         if (messagesReceived.get() < messagesToPublish)
+         synchronized (messagesReceived)
          {
             messagesReceived.wait(1000);
          }
@@ -241,7 +236,7 @@ public class AsyncROS2Test
       // Ensure async publisher is faster and more consistent
       assertTrue(asyncPublisherStatistics.getAverage() < standardPublisherStatistics.getAverage());
       // Ideally this should not be commented, but things can happen on the system which cause it to be unreliable.
-//      assertTrue(asyncPublisherStatistics.getStandardDeviation() < standardPublisherStatistics.getStandardDeviation());
+      //      assertTrue(asyncPublisherStatistics.getStandardDeviation() < standardPublisherStatistics.getStandardDeviation());
 
       // Cleanup
       ros2Node.close();
