@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -101,7 +102,7 @@ public class ROS2Node implements Closeable
    /*
     * Locks
     */
-   protected final Object closeLock;
+   protected final ReentrantLock closeLock;
    protected volatile boolean closed;
 
    /**
@@ -178,7 +179,7 @@ public class ROS2Node implements Closeable
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
 
-      closeLock = new Object();
+      closeLock = new ReentrantLock();
       closed = false;
    }
 
@@ -271,7 +272,8 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          if (!closed)
          {
@@ -305,9 +307,13 @@ public class ROS2Node implements Closeable
 
             return publisher;
          }
-      }
 
-      return null;
+         return null;
+      }
+      finally
+      {
+         closeLock.unlock();
+      }
    }
 
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic)
@@ -360,7 +366,8 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
    {
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          if (!closed)
          {
@@ -394,9 +401,13 @@ public class ROS2Node implements Closeable
 
             return subscription;
          }
-      }
 
-      return null;
+         return null;
+      }
+      finally
+      {
+         closeLock.unlock();
+      }
    }
 
    /**
@@ -599,10 +610,15 @@ public class ROS2Node implements Closeable
    public void close()
    {
       final boolean wasClosed;
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          wasClosed = closed;
          closed = true;
+      }
+      finally
+      {
+         closeLock.unlock();
       }
 
       if (!wasClosed)

@@ -24,6 +24,7 @@ import us.ihmc.log.LogTools;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -85,7 +86,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /*
     * Locks
     */
-   private final Object closeLock;
+   private final ReentrantLock closeLock;
    private boolean closed;
 
    /**
@@ -126,7 +127,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
 
-      closeLock = new Object();
+      closeLock = new ReentrantLock();
       closed = false;
    }
 
@@ -145,7 +146,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       @Override
       public void call()
       {
-         synchronized (closeLock)
+         closeLock.lock();
+         try
          {
             if (!closed)
             {
@@ -190,6 +192,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                }
             }
          }
+         finally
+         {
+            closeLock.unlock();
+         }
       }
    }
 
@@ -210,7 +216,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    {
       boolean read = false;
 
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          if (!closed && hasHadData())
          {
@@ -241,9 +248,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                }
             }
          }
-      }
 
-      return read;
+         return read;
+      }
+      finally
+      {
+         closeLock.unlock();
+      }
    }
 
    /**
@@ -267,7 +278,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    {
       int totalRead = 0;
 
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          if (!closed && hasHadData())
          {
@@ -299,9 +311,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                }
             }
          }
-      }
 
-      return totalRead;
+         return totalRead;
+      }
+      finally
+      {
+         closeLock.unlock();
+      }
    }
 
    /**
@@ -323,10 +339,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    protected void close(Pointer fastddsParticipant)
    {
       final boolean wasClosed;
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          wasClosed = closed;
          closed = true;
+      }
+      finally
+      {
+         closeLock.unlock();
       }
 
       if (!wasClosed)

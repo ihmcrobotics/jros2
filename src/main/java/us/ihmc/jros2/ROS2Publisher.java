@@ -22,6 +22,7 @@ import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
@@ -66,7 +67,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    /*
     * Locks
     */
-   protected final Object closeLock;
+   protected final ReentrantLock closeLock;
    protected volatile boolean closed;
 
    /**
@@ -92,7 +93,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       lastPublishTime = Long.MIN_VALUE;
 
       closed = false;
-      closeLock = new Object();
+      closeLock = new ReentrantLock();
    }
 
    public void publish(T message)
@@ -171,10 +172,15 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected void close(Pointer fastddsParticipant)
    {
       final boolean wasClosed;
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          wasClosed = closed;
          closed = true;
+      }
+      finally
+      {
+         closeLock.unlock();
       }
 
       if (!wasClosed)
