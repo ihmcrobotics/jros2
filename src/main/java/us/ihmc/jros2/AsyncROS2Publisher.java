@@ -127,7 +127,8 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
     */
    private void publishTask()
    {
-      synchronized (closeLock)
+      closeLock.lock();
+      try
       {
          if (!closed)
          {
@@ -141,6 +142,10 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
                queueSize.decrementAndGet();
             }
          }
+      }
+      finally
+      {
+         closeLock.unlock();
       }
    }
 }
