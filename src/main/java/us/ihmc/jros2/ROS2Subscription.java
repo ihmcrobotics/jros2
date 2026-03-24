@@ -273,7 +273,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          {
             synchronized (userSampleData)
             {
-               int ret;
+               int ret; // Keep for debugging
                while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo)))
                {
                   totalRead++;
