@@ -102,7 +102,6 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
          synchronized (writeBuffer)
          {
-            // Double-check closed flag inside synchronized block
             if (!closed)
             {
                payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);

@@ -74,47 +74,45 @@ public class AsyncROS2Node extends ROS2Node
 
    public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
    {
-      closeLock.readLock().lock();
-      try
+      if (!closed)
       {
-         if (!closed)
+         synchronized (closeLock)
          {
-            ProfilesXML profilesXML = new ProfilesXML();
-            PublisherProfileType publisherProfile = new PublisherProfileType();
-
-            // Prefix with "apub_" to ensure valid XML identifier
-            long publisherId = publisherIdCounter.getAndIncrement();
-            String publisherProfileName = "apub_" + publisherId;
-
-            publisherProfile.setProfileName(publisherProfileName);
-            profilesXML.addPublisherProfile(publisherProfile);
-
-            // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
-            QoSTools.translateQoS(qosProfile, publisherProfile);
-
-            try
+            if (!closed)
             {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               LogTools.error(e);
-            }
+               ProfilesXML profilesXML = new ProfilesXML();
+               PublisherProfileType publisherProfile = new PublisherProfileType();
 
-            TopicData topicData = getOrCreateTopicData(topic);
-            AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
+               // Prefix with "apub_" to ensure valid XML identifier
+               long publisherId = publisherIdCounter.getAndIncrement();
+               String publisherProfileName = "apub_" + publisherId;
 
-            synchronized (publishers)
-            {
-               publishers.add(publisher);
+               publisherProfile.setProfileName(publisherProfileName);
+               profilesXML.addPublisherProfile(publisherProfile);
+
+               // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
+               QoSTools.translateQoS(qosProfile, publisherProfile);
+
+               try
+               {
+                  profilesXML.load();
+               }
+               catch (fastddsjavaException e)
+               {
+                  LogTools.error(e);
+               }
+
+               TopicData topicData = getOrCreateTopicData(topic);
+               AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
+
+               synchronized (publishers)
+               {
+                  publishers.add(publisher);
+               }
+
+               return publisher;
             }
-
-            return publisher;
          }
-      }
-      finally
-      {
-         closeLock.readLock().unlock();
       }
 
       return null;
