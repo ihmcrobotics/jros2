@@ -179,7 +179,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                         if (unreadCountAfterCallback == unreadCount)
                         {
                            /*
-                            * The Java callback did not read any data. We can read it here and discard the sample.
+                            * The Java callback did not read any data, so we read it and discard the sample.
                             * This prevents infinite loops if the callback does not read the sample.
                             */
                            read(null);
