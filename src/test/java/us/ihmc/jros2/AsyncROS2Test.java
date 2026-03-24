@@ -68,7 +68,7 @@ public class AsyncROS2Test
    @RepeatedTest(3)
    public void testPublishingManyMessages() throws InterruptedException
    {
-      final int messagesToPublish = 10000;
+      final int messagesToPublish = 100000;
       AtomicInteger messagesReceived = new AtomicInteger(0);
 
       AsyncROS2Node asyncNode = new AsyncROS2Node("async_node");
