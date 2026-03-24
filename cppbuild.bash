@@ -43,7 +43,21 @@ INSTALL_DIR=$(pwd)
 
 COMPILER_ARGS=""
 JAVACPP_COMP_ARGS=""
-if [ "$LINUX_COMPILE_ARM64" == "1" ]; then
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  # Android cross-compilation
+  # Check if ANDROID_NDK is set
+  if [ -z "$ANDROID_NDK" ]; then
+    echo "Error: ANDROID_NDK environment variable is not set"
+    exit 1
+  fi
+  # Set ANDROID_ABI (default: arm64-v8a) and ANDROID_API_LEVEL (default: 24) if needed
+  ANDROID_ABI=${ANDROID_ABI:-arm64-v8a}
+  ANDROID_API_LEVEL=${ANDROID_API_LEVEL:-24}
+  # Set flags to disable deprecated literal operator and nonnull errors (for CMake builds)
+  CMAKE_ANDROID_FLAGS="-Wno-error=deprecated-literal-operator -Wno-error=nonnull"
+  COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ANDROID_ABI -DANDROID_PLATFORM=android-$ANDROID_API_LEVEL -DANDROID_NDK=$ANDROID_NDK"
+  JAVACPP_COMP_ARGS="-properties android-$ANDROID_ABI -Dplatform=android-$ANDROID_ABI"
+elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
 elif [ "$LINUX_COMPILE_ARMHF" == "1" ]; then
@@ -54,9 +68,22 @@ fi
 # Build foonathan_memory_vendor
 pushd .
 cd foonathan_memory_vendor-$FOONATHAN_MEMORY_VENDOR_VERSION
+
+# Patch foonathan_memory_vendor CMakeLists.txt to propagate CMAKE_ANDROID_FLAGS for Android
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  if ! grep -q "CMAKE_ANDROID_FLAGS_PATCH" CMakeLists.txt; then
+    sed -i "/list(APPEND extra_cmake_args -DCMAKE_POSITION_INDEPENDENT_CODE=\${CMAKE_POSITION_INDEPENDENT_CODE})/a\  # CMAKE_ANDROID_FLAGS_PATCH\n  list(APPEND extra_cmake_args \"-DCMAKE_CXX_FLAGS=$CMAKE_ANDROID_FLAGS\")" CMakeLists.txt
+  fi
+fi
+
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  # Modify CMakeCache to add warning suppression flags, then reconfigure
+  sed -i "s/CMAKE_CXX_FLAGS:STRING=/CMAKE_CXX_FLAGS:STRING=$CMAKE_ANDROID_FLAGS /" CMakeCache.txt
+  cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install
+fi
 cmake --build . --config Release --target install
 popd
 
@@ -65,7 +92,12 @@ pushd .
 cd Fast-CDR-$FASTCDR_VERSION
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  # Modify CMakeCache to add warning suppression flags, then reconfigure
+  sed -i "s/CMAKE_CXX_FLAGS:STRING=/CMAKE_CXX_FLAGS:STRING=$CMAKE_ANDROID_FLAGS /" CMakeCache.txt
+  cmake .. $COMPILER_ARGS -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install
+fi
 cmake --build . --config Release --target install
 popd
 
@@ -75,7 +107,14 @@ cd Fast-DDS-$FASTDDS_VERSION
 git submodule update --init --recursive
 mkdir -p build
 cd build
-cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install -Dfastcdr_DIR=$INSTALL_DIR/install/lib/cmake/fastcdr -Dfoonathan_memory_DIR=$INSTALL_DIR/install/lib/foonathan_memory/cmake
+  # Append warning suppression flags to CMAKE_CXX_FLAGS in the cache after initial configuration
+  sed -i "s/CMAKE_CXX_FLAGS:STRING=/CMAKE_CXX_FLAGS:STRING=$CMAKE_ANDROID_FLAGS /" CMakeCache.txt
+  cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install -Dfastcdr_DIR=$INSTALL_DIR/install/lib/cmake/fastcdr -Dfoonathan_memory_DIR=$INSTALL_DIR/install/lib/foonathan_memory/cmake
+else
+  cmake .. $COMPILER_ARGS -DQNX=OFF -DNO_TLS=ON -DSECURITY=OFF -DTHIRDPARTY_TinyXML2=FORCE -DTHIRDPARTY_Asio=FORCE -DCMAKE_INSTALL_PREFIX=$INSTALL_DIR/install -DCMAKE_PREFIX_PATH=$INSTALL_DIR/install
+fi
 cmake --build . --config Release --target install -j $(nproc 2>/dev/null || sysctl -n hw.logicalcpu)
 popd
 
@@ -109,7 +148,47 @@ java -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
 cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
 #### JNI compilation ####
-java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d javainstall
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  # For Android, we need to specify the compiler path and additional flags
+  ANDROID_TOOLCHAIN_BIN="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+  if [ "$ANDROID_ABI" == "arm64-v8a" ]; then
+    ANDROID_COMPILER_PREFIX="aarch64-linux-android"
+  elif [ "$ANDROID_ABI" == "armeabi-v7a" ]; then
+    ANDROID_COMPILER_PREFIX="armv7a-linux-androideabi"
+  elif [ "$ANDROID_ABI" == "x86_64" ]; then
+    ANDROID_COMPILER_PREFIX="x86_64-linux-android"
+  elif [ "$ANDROID_ABI" == "x86" ]; then
+    ANDROID_COMPILER_PREFIX="i686-linux-android"
+  fi
+  # Set environment for Android compilation
+  JAVACPP_CXX="${ANDROID_TOOLCHAIN_BIN}/${ANDROID_COMPILER_PREFIX}${ANDROID_API_LEVEL}-clang++"
+
+  # First generate the code
+  java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS \
+    -Dplatform.compiler="$JAVACPP_CXX" \
+    -Dplatform.includepath="${INSTALL_DIR}/install/include/" \
+    -Dplatform.linkpath="${INSTALL_DIR}/install/lib/" \
+    -d javainstall -nocompile
+
+  # Patch the generated code to replace char_traits<unsigned short> with char16_t workaround
+  for file in javainstall/jni*.cpp; do
+    if [ -f "$file" ]; then
+      # Replace std::char_traits<unsigned short>::length with a custom strlen implementation
+      sed -i 's/std::char_traits<unsigned short>::length(ptr)/([](const unsigned short* p){size_t len=0;while(p[len])len++;return len;}(ptr))/g' "$file"
+    fi
+  done
+
+  # Now compile with proper flags
+  cd javainstall
+  $JAVACPP_CXX -I${INSTALL_DIR}/install/include jnifastddsjava.cpp jnijavacpp.cpp \
+    -std=c++14 -fexceptions -frtti -O3 -Wall -fPIC -pthread -shared \
+    -o libjnifastddsjava.so -L${INSTALL_DIR}/install/lib \
+    -Wl,-rpath,${INSTALL_DIR}/install/lib \
+    -lfastdds -lfastcdr
+  cd ..
+else
+  java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d javainstall
+fi
 
 ##### Copy shared libs to resources ####
 # Linux
@@ -159,6 +238,24 @@ if [ -f "install/lib/libfastdds.3.2.2.dylib" ]; then
 fi
 if [ -f "javainstall/libjnifastddsjava.dylib" ]; then
   cp javainstall/libjnifastddsjava.dylib "$MACOS_GEN_PATH"
+fi
+# Android
+if [ "$ANDROID_COMPILE" == "1" ]; then
+  ANDROID_GEN_PATH="../src/main/resources/fastddsjava/native/android-$ANDROID_ABI"
+  mkdir -p "$ANDROID_GEN_PATH"
+  # Note: Android builds produce .so files without version numbers
+  if [ -f "install/lib/libfastcdr.so" ]; then
+    cp -f install/lib/libfastcdr.so "$ANDROID_GEN_PATH/libfastcdr.so.2.3.0"
+    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastcdr.so.2.3.0"
+  fi
+  if [ -f "install/lib/libfastdds.so" ]; then
+    cp -f install/lib/libfastdds.so "$ANDROID_GEN_PATH/libfastdds.so.3.2.2"
+    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastdds.so.3.2.2"
+  fi
+  if [ -f "javainstall/libjnifastddsjava.so" ]; then
+    cp -f javainstall/libjnifastddsjava.so "$ANDROID_GEN_PATH"
+    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libjnifastddsjava.so"
+  fi
 fi
 popd
 
