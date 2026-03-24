@@ -21,10 +21,8 @@ import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.log.LogTools;
 
-import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -55,7 +53,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, fastddsTransports);
 
-      tasks = new LinkedBlockingQueue<>(QUEUE_CAPACITY);
+      tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, false); // Unfair for better performance
 
       // Pre-allocate thread name during construction to avoid allocation during runtime
       threadName = "AsyncROS2NodePublishThread-" + name;
@@ -154,34 +152,17 @@ public class AsyncROS2Node extends ROS2Node
 
    private void publishLoop()
    {
-      ArrayList<Runnable> batch = new ArrayList<>(QUEUE_CAPACITY);
-
-      while (!publishThread.isInterrupted())
+      try
       {
-         try
+         while (!publishThread.isInterrupted())
          {
-            Runnable task = tasks.poll(10, TimeUnit.MILLISECONDS);
-            if (task != null)
-            {
-               batch.add(task);
-
-               // Drain any additional available tasks without blocking
-               tasks.drainTo(batch, QUEUE_CAPACITY - 1);
-
-               // Execute all tasks in batch
-               for (int i = 0; i < batch.size(); i++)
-               {
-                  batch.get(i).run();
-               }
-
-               batch.clear();
-            }
+            Runnable task = tasks.take();
+            task.run();
          }
-         catch (InterruptedException e)
-         {
-            // Thread interrupted during shutdown
-            break;
-         }
+      }
+      catch (InterruptedException ignored)
+      {
+         // Thread interrupted during shutdown
       }
    }
 }

@@ -127,9 +127,9 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
     */
    private void publishTask()
    {
+      closeLock.readLock().lock();
       try
       {
-         // Check closed flag without locking for fast path (volatile read)
          if (!closed)
          {
             super.publish(messagesToPublish[publishPosition]);
@@ -139,6 +139,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       finally
       {
          queueSize.decrementAndGet();
+         closeLock.readLock().unlock();
       }
    }
 }
