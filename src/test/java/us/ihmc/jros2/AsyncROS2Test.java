@@ -163,7 +163,7 @@ public class AsyncROS2Test
    @Test
    public void compareStandardAndAsyncPublisher() throws InterruptedException, IOException
    {
-      final boolean generateCSV = true;
+      final boolean generateCSV = false;
       final String fileDirectory = System.getProperty("user.home") + File.separator + "Documents" + File.separator;
 
       final int messagesToPublish = 10000;
