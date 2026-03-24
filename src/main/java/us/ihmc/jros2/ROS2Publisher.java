@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import std_msgs.Header;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.log.LogTools;
@@ -84,7 +85,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       writeBuffer = new CDRBuffer();
 
-      statisticsCalculatorCount = MessageMetadataType.values.length;
+      statisticsCalculatorCount = values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
       for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
@@ -96,43 +97,37 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    public void publish(T message)
    {
-      // Check closed flag without locking for fast path
-      if (closed)
+      if (!closed)
       {
-         return;
-      }
+         int payloadSizeBytes = 0;
 
-      int payloadSizeBytes;
-
-      synchronized (writeBuffer)
-      {
-         // Double-check closed flag inside synchronized block
-         if (closed)
+         synchronized (writeBuffer)
          {
-            return;
+            // Double-check closed flag inside synchronized block
+            if (!closed)
+            {
+               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
+               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               // Rewind buffer to ensure we're starting at position = 0
+               writeBuffer.rewind();
+
+               // TODO: Possibly check if we can shrink the writeBuffer to save memory
+               writeBuffer.writePayloadHeader();
+               message.serialize(writeBuffer);
+
+               if (resized)
+               {
+                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
+               }
+
+               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+            }
          }
 
-         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
-         boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-         // Rewind buffer to ensure we're starting at position = 0
-         writeBuffer.rewind();
+         retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
 
-         // TODO: check if we can shrink the writeBuffer to save memory
-
-         writeBuffer.writePayloadHeader();
-         message.serialize(writeBuffer);
-
-         if (resized)
-         {
-            topicDataWrapper.data_vector().resize(payloadSizeBytes);
-         }
-
-         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+         recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
       }
-
-      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
-
-      recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
    }
 
    private void recordStatistics(T message, long messageSizeBytes, long publishTimeMillis)
@@ -157,7 +152,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          {
             try
             {
-               std_msgs.Header header = (std_msgs.Header) getHeaderMethod.invoke(message);
+               Header header = (Header) getHeaderMethod.invoke(message);
                long timestampMillis = (1000L * header.getStamp().getSec()) + (header.getStamp().getNanosec() / 1000000L);
                statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
             }
@@ -189,9 +184,9 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       if (!wasClosed)
       {
          // Wait for any ongoing publish to complete
+         // noinspection EmptySynchronizedStatement
          synchronized (writeBuffer)
          {
-            // All publish operations complete here
          }
 
          topicData.topicDataWrapperType.delete_data(topicDataWrapper);

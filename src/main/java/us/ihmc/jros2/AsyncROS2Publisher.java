@@ -127,19 +127,23 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
     */
    private void publishTask()
    {
-      closeLock.readLock().lock();
-      try
+      if (!closed)
       {
-         if (!closed)
+         synchronized (closeLock)
          {
-            super.publish(messagesToPublish[publishPosition]);
-            publishPosition = (publishPosition + 1) % queueCapacity;
+            if (!closed)
+            {
+               try
+               {
+                  super.publish(messagesToPublish[publishPosition]);
+                  publishPosition = (publishPosition + 1) % queueCapacity;
+               }
+               finally
+               {
+                  queueSize.decrementAndGet();
+               }
+            }
          }
-      }
-      finally
-      {
-         queueSize.decrementAndGet();
-         closeLock.readLock().unlock();
       }
    }
 }
