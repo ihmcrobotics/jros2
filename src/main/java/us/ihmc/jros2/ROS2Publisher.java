@@ -16,7 +16,6 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
-import std_msgs.Header;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 import us.ihmc.log.LogTools;
@@ -152,7 +151,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          {
             try
             {
-               Header header = (Header) getHeaderMethod.invoke(message);
+               std_msgs.Header header = (std_msgs.Header) getHeaderMethod.invoke(message);
                long timestampMillis = (1000L * header.getStamp().getSec()) + (header.getStamp().getNanosec() / 1000000L);
                statisticsCalculators[AGE.ordinal()].record(publishTimeMillis - timestampMillis);
             }
