@@ -97,7 +97,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    public void publish(T message)
    {
-      int payloadSizeBytes = 0;
+      int payloadSizeBytes;
 
       synchronized (writeBuffer)
       {
