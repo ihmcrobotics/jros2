@@ -101,7 +101,7 @@ public class ROS2Node implements Closeable
    /*
     * Locks
     */
-   protected final Object closeLock = new Object();
+   protected final Object closeLock;
    protected volatile boolean closed;
 
    /**
@@ -178,6 +178,7 @@ public class ROS2Node implements Closeable
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
 
+      closeLock = new Object();
       closed = false;
    }
 
@@ -207,55 +208,52 @@ public class ROS2Node implements Closeable
     */
    <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
-      if (!closed)
+      synchronized (this.topicData)
       {
-         synchronized (this.topicData)
+         if (!closed)
          {
-            if (!closed)
+            if (this.topicData.containsKey(topic))
             {
-               if (this.topicData.containsKey(topic))
+               return this.topicData.get(topic);
+            }
+            else
+            {
+               ProfilesXML profilesXML = new ProfilesXML();
+               TopicProfileType topicProfile = new TopicProfileType();
+               // Prefix with "t_" to ensure valid XML identifier
+               long topicId = topicIdCounter.getAndIncrement();
+               String topicProfileName = "t_" + topicId;
+               topicProfile.setProfileName(topicProfileName);
+               profilesXML.addTopicProfile(topicProfile);
+
+               try
                {
-                  return this.topicData.get(topic);
+                  profilesXML.load();
                }
-               else
+               catch (fastddsjavaException e)
                {
-                  ProfilesXML profilesXML = new ProfilesXML();
-                  TopicProfileType topicProfile = new TopicProfileType();
-                  // Prefix with "t_" to ensure valid XML identifier
-                  long topicId = topicIdCounter.getAndIncrement();
-                  String topicProfileName = "t_" + topicId;
-                  topicProfile.setProfileName(topicProfileName);
-                  profilesXML.addTopicProfile(topicProfile);
-
-                  try
-                  {
-                     profilesXML.load();
-                  }
-                  catch (fastddsjavaException e)
-                  {
-                     LogTools.error(e);
-                  }
-
-                  /*
-                   * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
-                   * where {@code X} is determined by the subtype of the topic.
-                   * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
-                   * https://design.ros2.org/articles/topic_and_service_names.html
-                   */
-                  // TODO: Support other prefixes depending on ROS subsystem
-                  // Use concat method to avoid string allocation on hot path (though this still allocates)
-                  String prefixedTopicName = "rt".concat(topic.getName());
-                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
-                  fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-                  Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-                  fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, prefixedTopicName, topicProfileName);
-                  TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
-
-                  this.topicData.put(topic, topicData);
-
-                  return topicData;
+                  LogTools.error(e);
                }
+
+               /*
+                * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
+                * where {@code X} is determined by the subtype of the topic.
+                * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
+                * https://design.ros2.org/articles/topic_and_service_names.html
+                */
+               // TODO: Support other prefixes depending on ROS subsystem
+               // Use concat method to avoid string allocation on hot path (though this still allocates)
+               String prefixedTopicName = "rt".concat(topic.getName());
+               String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
+               fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+               Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+               fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+               Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, prefixedTopicName, topicProfileName);
+               TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
+
+               this.topicData.put(topic, topicData);
+
+               return topicData;
             }
          }
       }
@@ -273,42 +271,39 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
-      if (!closed)
+      synchronized (closeLock)
       {
-         synchronized (closeLock)
+         if (!closed)
          {
-            if (!closed)
+            ProfilesXML profilesXML = new ProfilesXML();
+            PublisherProfileType publisherProfile = new PublisherProfileType();
+            // Prefix with "pub_" to ensure valid XML identifier
+            long publisherId = publisherIdCounter.getAndIncrement();
+            String publisherProfileName = "pub_" + publisherId;
+            publisherProfile.setProfileName(publisherProfileName);
+            profilesXML.addPublisherProfile(publisherProfile);
+
+            // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
+            QoSTools.translateQoS(qosProfile, publisherProfile);
+
+            try
             {
-               ProfilesXML profilesXML = new ProfilesXML();
-               PublisherProfileType publisherProfile = new PublisherProfileType();
-               // Prefix with "pub_" to ensure valid XML identifier
-               long publisherId = publisherIdCounter.getAndIncrement();
-               String publisherProfileName = "pub_" + publisherId;
-               publisherProfile.setProfileName(publisherProfileName);
-               profilesXML.addPublisherProfile(publisherProfile);
-
-               // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
-               QoSTools.translateQoS(qosProfile, publisherProfile);
-
-               try
-               {
-                  profilesXML.load();
-               }
-               catch (fastddsjavaException e)
-               {
-                  LogTools.error(e);
-               }
-
-               TopicData topicData = getOrCreateTopicData(topic);
-               ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
-
-               synchronized (publishers)
-               {
-                  publishers.add(publisher);
-               }
-
-               return publisher;
+               profilesXML.load();
             }
+            catch (fastddsjavaException e)
+            {
+               LogTools.error(e);
+            }
+
+            TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
+
+            synchronized (publishers)
+            {
+               publishers.add(publisher);
+            }
+
+            return publisher;
          }
       }
 
@@ -365,42 +360,39 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
    {
-      if (!closed)
+      synchronized (closeLock)
       {
-         synchronized (closeLock)
+         if (!closed)
          {
-            if (!closed)
+            ProfilesXML profilesXML = new ProfilesXML();
+            SubscriberProfileType subscriberProfile = new SubscriberProfileType();
+            // Prefix with "sub_" to ensure valid XML identifier
+            long subscriberId = subscriberIdCounter.getAndIncrement();
+            String subscriberProfileName = "sub_" + subscriberId;
+            subscriberProfile.setProfileName(subscriberProfileName);
+            profilesXML.addSubscriberProfile(subscriberProfile);
+
+            // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
+            QoSTools.translateQoS(qosProfile, subscriberProfile);
+
+            try
             {
-               ProfilesXML profilesXML = new ProfilesXML();
-               SubscriberProfileType subscriberProfile = new SubscriberProfileType();
-               // Prefix with "sub_" to ensure valid XML identifier
-               long subscriberId = subscriberIdCounter.getAndIncrement();
-               String subscriberProfileName = "sub_" + subscriberId;
-               subscriberProfile.setProfileName(subscriberProfileName);
-               profilesXML.addSubscriberProfile(subscriberProfile);
-
-               // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
-               QoSTools.translateQoS(qosProfile, subscriberProfile);
-
-               try
-               {
-                  profilesXML.load();
-               }
-               catch (fastddsjavaException e)
-               {
-                  LogTools.error(e);
-               }
-
-               TopicData topicData = getOrCreateTopicData(topic);
-               ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
-
-               synchronized (subscriptions)
-               {
-                  subscriptions.add(subscription);
-               }
-
-               return subscription;
+               profilesXML.load();
             }
+            catch (fastddsjavaException e)
+            {
+               LogTools.error(e);
+            }
+
+            TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
+
+            synchronized (subscriptions)
+            {
+               subscriptions.add(subscription);
+            }
+
+            return subscription;
          }
       }
 
@@ -606,7 +598,7 @@ public class ROS2Node implements Closeable
    @Override
    public void close()
    {
-      boolean wasClosed;
+      final boolean wasClosed;
       synchronized (closeLock)
       {
          wasClosed = closed;

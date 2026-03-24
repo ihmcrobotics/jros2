@@ -56,18 +56,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final CDRBuffer writeBuffer;
 
    /*
-    * Locks
-    */
-   protected final Object closeLock = new Object();
-   protected volatile boolean closed;
-
-   /*
     * Statistics
     */
    private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
    private long lastPublishTime;
    private Method getHeaderMethod;
+
+   /*
+    * Locks
+    */
+   protected final Object closeLock;
+   protected volatile boolean closed;
 
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
@@ -76,8 +76,6 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    {
       this.topicData = topicData;
       this.topic = topic;
-
-      closed = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
@@ -92,39 +90,39 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
       getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastPublishTime = Long.MIN_VALUE;
+
+      closed = false;
+      closeLock = new Object();
    }
 
    public void publish(T message)
    {
-      if (!closed)
+      int payloadSizeBytes = 0;
+
+      synchronized (writeBuffer)
       {
-         int payloadSizeBytes = 0;
-
-         synchronized (writeBuffer)
+         if (!closed)
          {
-            if (!closed)
+            payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
+            boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+            // Rewind buffer to ensure we're starting at position = 0
+            writeBuffer.rewind();
+
+            // TODO: Possibly check if we can shrink the writeBuffer to save memory
+            writeBuffer.writePayloadHeader();
+            message.serialize(writeBuffer);
+
+            if (resized)
             {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
-               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               writeBuffer.rewind();
-
-               // TODO: Possibly check if we can shrink the writeBuffer to save memory
-               writeBuffer.writePayloadHeader();
-               message.serialize(writeBuffer);
-
-               if (resized)
-               {
-                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               }
-
-               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+               topicDataWrapper.data_vector().resize(payloadSizeBytes);
             }
+
+            topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+
+            retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+
+            recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
          }
-
-         retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
-
-         recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
       }
    }
 
@@ -172,7 +170,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    protected void close(Pointer fastddsParticipant)
    {
-      boolean wasClosed;
+      final boolean wasClosed;
       synchronized (closeLock)
       {
          wasClosed = closed;
