@@ -108,7 +108,7 @@ jobs:
           message: 'Rebuild natives for macOS'
           push: true
   build-natives-macos-intel:
-    runs-on: macos-13
+    runs-on: macos-15-intel
     needs: build-natives-macos-arm
     steps:
       - uses: actions/checkout@v4
