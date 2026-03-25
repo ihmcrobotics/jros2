@@ -119,6 +119,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
       lastReceiveTime = Long.MIN_VALUE;
 
+      closeLock = new ReentrantLock();
+      closed = false;
+
       // Initialize callbacks last to ensure the rest of the state of this class exists before they run
       fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
       listener = new fastddsjava_DataReaderListener();
@@ -126,9 +129,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
-
-      closeLock = new ReentrantLock();
-      closed = false;
    }
 
    /**
@@ -153,11 +153,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             {
                synchronized (callbackSampleData)
                {
-                  int unreadCount = fastddsjava_datareader_get_unread_count(fastddsDataReader);
                   int ret; // Keep for debugging
-                  while (!closed && unreadCount > 0 && OK == (ret = fastddsjava_datareader_read_next_custom(fastddsDataReader,
-                                                                                                            callbackSampleData,
-                                                                                                            fastddsCallbackSampleInfo)))
+                  while (!closed && OK == (ret = fastddsjava_datareader_read_next_sample(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo))
+                         && fastddsjava_sampleinfo_valid_data(fastddsCallbackSampleInfo))
                   {
                      flagHadData = true;
                      untakenMessageCount.incrementAndGet();
@@ -176,17 +174,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                            e.printStackTrace();
                            throw e;
                         }
-
-                        int unreadCountAfterCallback = fastddsjava_datareader_get_unread_count(fastddsDataReader);
-                        if (unreadCountAfterCallback == unreadCount)
-                        {
-                           /*
-                            * The Java callback did not read any data, so we read it and discard the sample.
-                            * This prevents infinite loops if the callback does not read the sample.
-                            */
-                           read(null);
-                        }
-                        unreadCount = unreadCountAfterCallback;
                      }
                   }
                }
