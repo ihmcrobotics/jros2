@@ -168,6 +168,24 @@ void fastddsjava_delete_sampleinfo(void* info_) {
     delete info;
 }
 
+uint16_t fastddsjava_sampleinfo_sample_state(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->sample_state;
+}
+
+uint16_t fastddsjava_sampleinfo_view_state(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->view_state;
+}
+
+uint16_t fastddsjava_sampleinfo_instance_state(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->instance_state;
+}
+
 int64_t fastddsjava_sampleinfo_source_timestamp_to_ns(void* info_) {
     eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
@@ -178,6 +196,12 @@ int64_t fastddsjava_sampleinfo_reception_timestamp_to_ns(void* info_) {
     eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
     return info->reception_timestamp.to_ns();
+}
+
+bool fastddsjava_sampleinfo_valid_data(void* info_) {
+    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
+
+    return info->valid_data;
 }
 
 /*
@@ -287,20 +311,7 @@ uint32_t fastddsjava_datareader_read_next_custom(void* reader_, void* data, void
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
     eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
-    eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
-    const_cast<void**>(data_values.buffer())[0] = data;
-    eprosima::fastdds::dds::LoanableSequence<eprosima::fastdds::dds::SampleInfo> sample_infos(1);
-
-    eprosima::fastdds::dds::ReturnCode_t ret = reader->read(data_values,
-                                                            sample_infos,
-                                                            1,
-                                                            eprosima::fastdds::dds::NOT_READ_SAMPLE_STATE,
-                                                            eprosima::fastdds::dds::ANY_VIEW_STATE,
-                                                            eprosima::fastdds::dds::ANY_INSTANCE_STATE);
-
-    if (eprosima::fastdds::dds::RETCODE_OK == ret) {
-        *info = sample_infos[0];
-    }
+    eprosima::fastdds::dds::ReturnCode_t ret = reader->read_next_sample(data, info);
 
     return ret;
 }
