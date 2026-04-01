@@ -52,6 +52,7 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   fi
   # Set ANDROID_ABI (default: arm64-v8a) and ANDROID_API_LEVEL (default: 24) if needed
   ANDROID_ABI=${ANDROID_ABI:-arm64-v8a}
+  ANDROID_ABI=x86_64
   ANDROID_API_LEVEL=${ANDROID_API_LEVEL:-24}
   # Set flags to disable deprecated literal operator and nonnull errors (for CMake builds)
   CMAKE_ANDROID_FLAGS="-Wno-error=deprecated-literal-operator -Wno-error=nonnull"
@@ -178,13 +179,14 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
     fi
   done
 
-  # Now compile with proper flags
+  # Now compile with proper flags (static libc++ to avoid runtime dependency)
   cd javainstall
   $JAVACPP_CXX -I${INSTALL_DIR}/install/include jnifastddsjava.cpp jnijavacpp.cpp \
     -std=c++14 -fexceptions -frtti -O3 -Wall -fPIC -pthread -shared \
+    -static-libstdc++ \
     -o libjnifastddsjava.so -L${INSTALL_DIR}/install/lib \
     -Wl,-rpath,${INSTALL_DIR}/install/lib \
-    -lfastdds -lfastcdr
+    -lfastdds -lfastcdr -llog
   cd ..
 else
   java -jar javacpp.jar us/ihmc/fastddsjava/pointers/*.java $JAVACPP_COMP_ARGS -d javainstall

@@ -16,7 +16,6 @@
 package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
-import us.ihmc.log.LogTools;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -169,7 +168,7 @@ public class jros2SettingsTest
                settingsList.add(new jros2SettingsDefault());
 
                permutationDescription.append("-----------------------------------------------\n");
-               LogTools.info("Testing permutation:\n{}", permutationDescription);
+//               LogTools.info("Testing permutation:\n{}", permutationDescription);
 
                ////////////////////
                //// START TEST ////

@@ -25,7 +25,7 @@ plugins {
 
 ihmc {
    group = "us.ihmc"
-   version = "1.1.6"
+   version = "1.1.996"
    vcsUrl = "https://github.com/ihmcrobotics/jros2"
    openSource = true
 
@@ -69,9 +69,6 @@ mainDependencies {
       isTransitive = true
    }
    api("us.ihmc:ihmc-native-library-loader:2.0.6") {
-      isTransitive = true
-   }
-   api("us.ihmc:log-tools:0.6.5") {
       isTransitive = true
    }
    // Match this version with YoVariables

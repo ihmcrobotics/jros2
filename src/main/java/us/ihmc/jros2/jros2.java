@@ -65,7 +65,22 @@ final class jros2 implements jros2Settings
    jros2(jros2Settings[] settingsSources)
    {
       this.settingsSources = settingsSources;
-      loaded = fastddsjavaNativeLibrary.load();
+
+      boolean android = System.getProperty("java.vendor").toLowerCase().contains("android");
+
+      if (android)
+      {
+         System.loadLibrary("fastcdr");
+         System.loadLibrary("fastdds");
+         System.loadLibrary("jnifastddsjava");
+
+         loaded = true;
+      }
+      else
+      {
+         loaded = fastddsjavaNativeLibrary.load();
+      }
+
       instance = this;
    }
 

@@ -19,7 +19,6 @@ import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
-import us.ihmc.log.LogTools;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -105,6 +104,6 @@ class ROS2NodePrintout
          printout.add("Intraprocess delivery enabled - https://github.com/ihmcrobotics/jros2/wiki/Intraprocess-Delivery");
       }
 
-      LogTools.info(printout);
+      System.out.println(printout);
    }
 }

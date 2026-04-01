@@ -18,7 +18,6 @@ package us.ihmc.jros2;
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
-import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -166,10 +165,10 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             catch (IllegalAccessException | InvocationTargetException e)
             {
                // Only log if logging is enabled to avoid allocation
-               if (LogTools.isErrorEnabled())
-               {
-                  LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
-               }
+//               if (LogTools.isErrorEnabled())
+//               {
+//                  LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
+//               }
                getHeaderMethod = null;
             }
          }
