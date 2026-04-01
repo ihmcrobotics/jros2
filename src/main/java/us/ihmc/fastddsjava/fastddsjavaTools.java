@@ -15,12 +15,14 @@
  */
 package us.ihmc.fastddsjava;
 
-import us.ihmc.log.LogTools;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public final class fastddsjavaTools
 {
+   private static final Logger LOGGER = Logger.getLogger("us.ihmc"); // log-tools
    private static final int OK = RETCODE_OK(); // Minor optimization
 
    public static String retcodeName(int ReturnCode_t)
@@ -76,7 +78,7 @@ public final class fastddsjavaTools
       }
       catch (fastddsjavaException e)
       {
-         LogTools.error(e);
+         LOGGER.log(Level.SEVERE, "Fast-DDS error", e);
       }
    }
 }

@@ -16,7 +16,6 @@
 package us.ihmc.jros2;
 
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
-import us.ihmc.log.LogTools;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -38,7 +37,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (NoSuchFieldException | IllegalAccessException e)
       {
-         LogTools.error(e);
+         jros2.logger().log(java.util.logging.Level.SEVERE, "Failed to get message name from class: " + topicType.getName(), e);
       }
 
       return null;
@@ -52,7 +51,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-         LogTools.error(e);
+         jros2.logger().log(java.util.logging.Level.SEVERE, "Failed to create instance of message class: " + topicType.getName(), e);
       }
 
       return null;

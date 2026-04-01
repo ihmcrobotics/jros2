@@ -17,15 +17,17 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
-import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @SuppressWarnings("unchecked")
 public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<IDLObjectSequence<T>> implements Iterable<T>
 {
+   private static final Logger LOGGER = Logger.getLogger("us.ihmc"); // log-tools
    private static final CDRSerializable[] EMPTY_ARRAY = new CDRSerializable[0];
 
    private final Class<T> clazz;
@@ -69,7 +71,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-         LogTools.error("Unable to create an instance of CDRSerializable class: " + clazz.getName());
+         LOGGER.log(Level.SEVERE, "Unable to create an instance of CDRSerializable class: " + clazz.getName(), e);
       }
 
       return null;

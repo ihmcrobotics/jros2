@@ -18,8 +18,11 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
+import java.util.logging.Logger;
+
 final class jros2 implements jros2Settings
 {
+   private static Logger LOGGER = Logger.getLogger("us.ihmc"); // log-tools
    private static final String SOURCE_NAME = "jros2.java";
    private static jros2 instance;
 
@@ -85,6 +88,11 @@ final class jros2 implements jros2Settings
       }
 
       return instance;
+   }
+
+   public static Logger logger()
+   {
+      return LOGGER;
    }
 
    boolean isLoaded()

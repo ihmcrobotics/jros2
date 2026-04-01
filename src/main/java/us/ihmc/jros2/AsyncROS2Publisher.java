@@ -16,7 +16,6 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
-import us.ihmc.log.LogTools;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -91,12 +90,10 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
             if (now - lastQueueOverflowWarnTimeNs > 1_000_000_000L)
             {
                // Only allocate strings when actually logging
-               if (LogTools.isWarnEnabled())
+               if (jros2.logger().isLoggable(java.util.logging.Level.WARNING))
                {
-                  LogTools.warn(
-                        "AsyncROS2Publisher ({}) has exceeded the queue capacity of {}. You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.",
-                        node.getName(),
-                        queueCapacity);
+                  jros2.logger().warning(
+                        "AsyncROS2Publisher (" + node.getName() + ") has exceeded the queue capacity of " + queueCapacity + ". You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.");
                }
 
                lastQueueOverflowWarnTimeNs = now;

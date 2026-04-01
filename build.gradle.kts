@@ -70,9 +70,8 @@ mainDependencies {
    }
    api("us.ihmc:ihmc-native-library-loader:2.0.6") {
       isTransitive = true
-   }
-   api("us.ihmc:log-tools:0.6.5") {
-      isTransitive = true
+
+      exclude("us.ihmc", "log-tools")
    }
    // Match this version with YoVariables
    api("com.sun.xml.bind:jaxb-impl:4.0.5") {

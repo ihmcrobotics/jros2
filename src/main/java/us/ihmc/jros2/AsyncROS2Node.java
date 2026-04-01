@@ -19,7 +19,6 @@ import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
-import us.ihmc.log.LogTools;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -98,7 +97,7 @@ public class AsyncROS2Node extends ROS2Node
             }
             catch (fastddsjavaException e)
             {
-               LogTools.error(e);
+               jros2.logger().log(java.util.logging.Level.SEVERE, "Failed to load publisher profile for async node", e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
@@ -138,7 +137,7 @@ public class AsyncROS2Node extends ROS2Node
       }
       catch (InterruptedException interruptedException)
       {
-         LogTools.error("Publish thread did not join.");
+         jros2.logger().log(java.util.logging.Level.SEVERE, "Publish thread did not join", interruptedException);
       }
 
       super.close();

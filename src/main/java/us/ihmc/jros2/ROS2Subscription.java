@@ -20,7 +20,6 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
-import us.ihmc.log.LogTools;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -169,7 +168,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      }
                      catch (Exception e)
                      {
-                        LogTools.error(e);
+                        jros2.logger().log(java.util.logging.Level.SEVERE, "Exception in subscription callback", e);
                      }
                   }
                }
