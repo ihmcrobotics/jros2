@@ -70,11 +70,17 @@ final class jros2 implements jros2Settings
 
       if (android)
       {
-         System.loadLibrary("fastcdr");
-         System.loadLibrary("fastdds");
-         System.loadLibrary("jnifastddsjava");
+         try
+         {
+            System.loadLibrary("fastcdr");
+            System.loadLibrary("fastdds");
+            System.loadLibrary("jnifastddsjava");
 
-         loaded = true;
+            loaded = true;
+         }
+         catch (UnsatisfiedLinkError ignored)
+         {
+         }
       }
       else
       {
