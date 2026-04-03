@@ -68,6 +68,8 @@ final class jros2 implements jros2Settings
 
       boolean android = System.getProperty("java.vendor").toLowerCase().contains("android");
 
+      boolean loaded = false;
+
       if (android)
       {
          try
@@ -86,6 +88,8 @@ final class jros2 implements jros2Settings
       {
          loaded = fastddsjavaNativeLibrary.load();
       }
+
+      this.loaded = loaded;
 
       instance = this;
    }
