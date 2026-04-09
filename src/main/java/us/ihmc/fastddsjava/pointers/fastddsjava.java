@@ -64,9 +64,17 @@ public static native Pointer fastddsjava_create_sampleinfo();
 
 public static native void fastddsjava_delete_sampleinfo(Pointer info_);
 
+public static native @Cast("uint16_t") short fastddsjava_sampleinfo_sample_state(Pointer info_);
+
+public static native @Cast("uint16_t") short fastddsjava_sampleinfo_view_state(Pointer info_);
+
+public static native @Cast("uint16_t") short fastddsjava_sampleinfo_instance_state(Pointer info_);
+
 public static native @Cast("int64_t") long fastddsjava_sampleinfo_source_timestamp_to_ns(Pointer info_);
 
 public static native @Cast("int64_t") long fastddsjava_sampleinfo_reception_timestamp_to_ns(Pointer info_);
+
+public static native @Cast("bool") boolean fastddsjava_sampleinfo_valid_data(Pointer info_);
 
 /*
  *  Returns eprosima::fastdds::dds::Publisher*
@@ -118,7 +126,7 @@ public static native @Cast("uint32_t") int fastddsjava_datawriter_write(Pointer 
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString String profile_name);
 
-public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_custom(Pointer reader_, Pointer data, Pointer info_);
+public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, Pointer info_);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_custom(Pointer reader_, Pointer data, Pointer info_);
 
