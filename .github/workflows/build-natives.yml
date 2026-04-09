@@ -44,7 +44,6 @@ jobs:
         with:
           name: natives-linux-${{ matrix.platform }}
           path: |
-            src/main/java/**/*.java
             src/main/resources/**/*.so
             src/main/resources/**/*.so.*
           retention-days: 1
@@ -213,7 +212,12 @@ jobs:
       - name: Commit all native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '.'
+          add: |
+            src/main/resources/**/*.so
+            src/main/resources/**/*.so.*
+            src/main/resources/**/*.dll
+            src/main/resources/**/*.dylib
+            android/src/main/jniLibs/**/*.so
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild all native libraries'
