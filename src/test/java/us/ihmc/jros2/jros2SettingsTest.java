@@ -168,7 +168,7 @@ public class jros2SettingsTest
                settingsList.add(new jros2SettingsDefault());
 
                permutationDescription.append("-----------------------------------------------\n");
-//               LogTools.info("Testing permutation:\n{}", permutationDescription);
+               jros2.getLogger().info("Testing permutation:\n" + permutationDescription);
 
                ////////////////////
                //// START TEST ////

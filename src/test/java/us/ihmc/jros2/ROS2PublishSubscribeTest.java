@@ -568,7 +568,7 @@ public class ROS2PublishSubscribeTest
       subscriberNode.close();
 
       long durationMillis = start.until(Instant.now(), ChronoUnit.MILLIS);
-//      LogTools.debug("Test Duration: {}s{}ms", durationMillis / 1000, durationMillis % 1000);
+      jros2.getLogger().fine("Test Duration: " + (durationMillis / 1000) + "s" + (durationMillis % 1000) + "ms");
    }
 
    @Test

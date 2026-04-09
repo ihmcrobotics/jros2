@@ -42,96 +42,92 @@ public class ROS2PerformanceBenchmark
 
    public static void main(String[] args) throws Exception
    {
-//      LogTools.info("Starting ROS2 Performance Benchmark");
-//      LogTools.info("Output directory: {}", OUTPUT_DIR);
+      jros2.getLogger().info("Starting ROS2 Performance Benchmark");
+      jros2.getLogger().info("Output directory: " + OUTPUT_DIR);
 
       new File(OUTPUT_DIR).mkdirs();
 
       ROS2PerformanceBenchmark benchmark = new ROS2PerformanceBenchmark();
 
       // Run benchmarks for different message types
-//      LogTools.info("\n=== Bool Message Benchmarks ===");
+      jros2.getLogger().info("\n=== Bool Message Benchmarks ===");
       benchmark.runBoolBenchmark();
 
-//      LogTools.info("\n=== Float64 Message Benchmarks ===");
+      jros2.getLogger().info("\n=== Float64 Message Benchmarks ===");
       benchmark.runFloat64Benchmark();
 
-//      LogTools.info("\n=== String Message Benchmarks ===");
+      jros2.getLogger().info("\n=== String Message Benchmarks ===");
       benchmark.runStringBenchmark();
 
-//      LogTools.info("\n=== Multi-threaded Publisher Benchmarks ===");
+      jros2.getLogger().info("\n=== Multi-threaded Publisher Benchmarks ===");
       benchmark.runMultiThreadedBenchmark();
 
-//      LogTools.info("\nAll benchmarks complete! Check {} for CSV files", OUTPUT_DIR);
+      jros2.getLogger().info("\nAll benchmarks complete! Check " + OUTPUT_DIR + " for CSV files");
    }
 
    public void runBoolBenchmark() throws Exception
    {
-//      LogTools.info("Running Bool message benchmark...");
+      jros2.getLogger().info("Running Bool message benchmark...");
 
       // Standard ROS2Node benchmark
       BenchmarkResult standardResult = benchmarkStandardNode(example_interfaces.Bool.class, "/benchmark/bool/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Standard Node - Bool: {}", standardResult);
+      jros2.getLogger().info("Standard Node - Bool: " + standardResult);
 
       // Async ROS2Node benchmark
       BenchmarkResult asyncResult = benchmarkAsyncNode(example_interfaces.Bool.class, "/benchmark/bool/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Async Node - Bool:    {}", asyncResult);
+      jros2.getLogger().info("Async Node - Bool:    " + asyncResult);
 
       // Write CSV
       writeBenchmarkCSV("bool_benchmark", standardResult, asyncResult);
 
-//      LogTools.info("Bool benchmark complete - Async is {:.2f}x faster",
-//                    standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs);
+      jros2.getLogger().info("Bool benchmark complete - Async is " + String.format("%.2f", standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs) + "x faster");
    }
 
    public void runFloat64Benchmark() throws Exception
    {
-//      LogTools.info("Running Float64 message benchmark...");
+      jros2.getLogger().info("Running Float64 message benchmark...");
 
       BenchmarkResult standardResult = benchmarkStandardNode(example_interfaces.Float64.class, "/benchmark/float64/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Standard Node - Float64: {}", standardResult);
+      jros2.getLogger().info("Standard Node - Float64: " + standardResult);
 
       BenchmarkResult asyncResult = benchmarkAsyncNode(example_interfaces.Float64.class, "/benchmark/float64/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Async Node - Float64:    {}", asyncResult);
+      jros2.getLogger().info("Async Node - Float64:    " + asyncResult);
 
       writeBenchmarkCSV("float64_benchmark", standardResult, asyncResult);
 
-//      LogTools.info("Float64 benchmark complete - Async is {:.2f}x faster",
-//                    standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs);
+      jros2.getLogger().info("Float64 benchmark complete - Async is " + String.format("%.2f", standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs) + "x faster");
    }
 
    public void runStringBenchmark() throws Exception
    {
-//      LogTools.info("Running String message benchmark...");
+      jros2.getLogger().info("Running String message benchmark...");
 
       BenchmarkResult standardResult = benchmarkStandardNode(std_msgs.String.class, "/benchmark/string/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Standard Node - String: {}", standardResult);
+      jros2.getLogger().info("Standard Node - String: " + standardResult);
 
       BenchmarkResult asyncResult = benchmarkAsyncNode(std_msgs.String.class, "/benchmark/string/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
-//      LogTools.info("Async Node - String:    {}", asyncResult);
+      jros2.getLogger().info("Async Node - String:    " + asyncResult);
 
       writeBenchmarkCSV("string_benchmark", standardResult, asyncResult);
 
-//      LogTools.info("String benchmark complete - Async is {:.2f}x faster",
-//                    standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs);
+      jros2.getLogger().info("String benchmark complete - Async is " + String.format("%.2f", standardResult.averageLatencyNs / (double) asyncResult.averageLatencyNs) + "x faster");
    }
 
    public void runMultiThreadedBenchmark() throws Exception
    {
-//      LogTools.info("Running multi-threaded publisher benchmark...");
+      jros2.getLogger().info("Running multi-threaded publisher benchmark...");
 
       int[] threadCounts = {1, 2, 4, 8, 16};
       List<MultiThreadBenchmarkResult> results = new ArrayList<>();
 
       for (int threadCount : threadCounts)
       {
-//         LogTools.info("Testing with {} threads...", threadCount);
+         jros2.getLogger().info("Testing with " + threadCount + " threads...");
 
          MultiThreadBenchmarkResult standardResult = benchmarkStandardNodeMultiThreaded(threadCount, BENCHMARK_MESSAGES / threadCount);
          MultiThreadBenchmarkResult asyncResult = benchmarkAsyncNodeMultiThreaded(threadCount, BENCHMARK_MESSAGES / threadCount);
 
-//         LogTools.info("  Standard: {:.2f} msg/s, Async: {:.2f} msg/s",
-//                      standardResult.throughputMsgPerSecond, asyncResult.throughputMsgPerSecond);
+         jros2.getLogger().info("  Standard: " + String.format("%.2f", standardResult.throughputMsgPerSecond) + " msg/s, Async: " + String.format("%.2f", asyncResult.throughputMsgPerSecond) + " msg/s");
 
          results.add(standardResult);
          results.add(asyncResult);
@@ -420,7 +416,7 @@ public class ROS2PerformanceBenchmark
                .append(java.lang.String.valueOf(async.totalTimeNs / 1_000_000.0)).append("\n");
       }
 
-//      LogTools.info("Wrote benchmark results to: {}", filename);
+      jros2.getLogger().info("Wrote benchmark results to: " + filename);
    }
 
    private void writeMultiThreadedBenchmarkCSV(java.lang.String name, List<MultiThreadBenchmarkResult> results) throws IOException
@@ -443,7 +439,7 @@ public class ROS2PerformanceBenchmark
          }
       }
 
-//      LogTools.info("Wrote multi-threaded benchmark results to: {}", filename);
+      jros2.getLogger().info("Wrote multi-threaded benchmark results to: " + filename);
    }
 
    private static class BenchmarkResult

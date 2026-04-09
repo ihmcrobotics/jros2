@@ -220,18 +220,18 @@ public class AsyncROS2Test
       Thread asyncPublisherThread = new Thread(runnableProvider.apply(asyncPublisher, asyncPublisherStatistics));
 
       // Start both threads
-//      LogTools.info("Starting publish threads...");
+      jros2.getLogger().info("Starting publish threads...");
       standardPublisherThread.start();
       asyncPublisherThread.start();
 
       // Wait until they finish
       standardPublisherThread.join();
       asyncPublisherThread.join();
-//      LogTools.info("Publish threads finished");
+      jros2.getLogger().info("Publish threads finished");
 
       // Log statistics
-//      LogTools.info("Standard publisher statistics: {}", standardPublisherStatistics);
-//      LogTools.info("Async publisher statistics:    {}", asyncPublisherStatistics);
+      jros2.getLogger().info("Standard publisher statistics: " + standardPublisherStatistics);
+      jros2.getLogger().info("Async publisher statistics:    " + asyncPublisherStatistics);
 
       // Ensure both threads published all messages
       assertEquals(messagesToPublish, asyncPublisherStatistics.getCount());
