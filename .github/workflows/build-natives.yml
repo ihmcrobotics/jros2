@@ -166,23 +166,49 @@ jobs:
         with:
           path: artifacts
 
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing artifacts directory structure:"
+          find artifacts -type f
+
       - name: Copy artifacts to repository
         run: |
-          # Copy Linux natives
-          cp -r artifacts/natives-linux-arm64/* . || true
-          cp -r artifacts/natives-linux-armhf/* . || true
-          cp -r artifacts/natives-linux-x86_64/* . || true
+          # Copy Linux natives (preserving directory structure)
+          if [ -d "artifacts/natives-linux-arm64" ]; then
+            cp -rv artifacts/natives-linux-arm64/* .
+          fi
+          if [ -d "artifacts/natives-linux-armhf" ]; then
+            cp -rv artifacts/natives-linux-armhf/* .
+          fi
+          if [ -d "artifacts/natives-linux-x86_64" ]; then
+            cp -rv artifacts/natives-linux-x86_64/* .
+          fi
 
           # Copy Windows natives
-          cp -r artifacts/natives-windows/* . || true
+          if [ -d "artifacts/natives-windows" ]; then
+            cp -rv artifacts/natives-windows/* .
+          fi
 
           # Copy Android natives
-          cp -r artifacts/natives-android-arm64-v8a/* . || true
-          cp -r artifacts/natives-android-x86_64/* . || true
+          if [ -d "artifacts/natives-android-arm64-v8a" ]; then
+            cp -rv artifacts/natives-android-arm64-v8a/* .
+          fi
+          if [ -d "artifacts/natives-android-x86_64" ]; then
+            cp -rv artifacts/natives-android-x86_64/* .
+          fi
 
           # Copy macOS natives
-          cp -r artifacts/natives-macos-arm64/* . || true
-          cp -r artifacts/natives-macos-x86_64/* . || true
+          if [ -d "artifacts/natives-macos-arm64" ]; then
+            cp -rv artifacts/natives-macos-arm64/* .
+          fi
+          if [ -d "artifacts/natives-macos-x86_64" ]; then
+            cp -rv artifacts/natives-macos-x86_64/* .
+          fi
+
+      - name: Show what files changed
+        run: |
+          echo "Git status after copying artifacts:"
+          git status
 
       - name: Commit all native libraries
         uses: EndBug/add-and-commit@v9
