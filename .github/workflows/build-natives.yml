@@ -172,36 +172,44 @@ jobs:
 
       - name: Copy artifacts to repository
         run: |
-          # Copy Linux natives (preserving directory structure)
+          # Copy Linux natives to src/main/resources/
           if [ -d "artifacts/natives-linux-arm64" ]; then
-            cp -rv artifacts/natives-linux-arm64/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-arm64/* src/main/resources/
           fi
           if [ -d "artifacts/natives-linux-armhf" ]; then
-            cp -rv artifacts/natives-linux-armhf/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-armhf/* src/main/resources/
           fi
           if [ -d "artifacts/natives-linux-x86_64" ]; then
-            cp -rv artifacts/natives-linux-x86_64/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-x86_64/* src/main/resources/
           fi
 
-          # Copy Windows natives
+          # Copy Windows natives to src/main/resources/
           if [ -d "artifacts/natives-windows" ]; then
-            cp -rv artifacts/natives-windows/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-windows/* src/main/resources/
           fi
 
-          # Copy Android natives
+          # Copy Android natives to android/src/main/jniLibs/
           if [ -d "artifacts/natives-android-arm64-v8a" ]; then
-            cp -rv artifacts/natives-android-arm64-v8a/* .
+            mkdir -p android/src/main/jniLibs
+            cp -rv artifacts/natives-android-arm64-v8a/* android/src/main/jniLibs/
           fi
           if [ -d "artifacts/natives-android-x86_64" ]; then
-            cp -rv artifacts/natives-android-x86_64/* .
+            mkdir -p android/src/main/jniLibs
+            cp -rv artifacts/natives-android-x86_64/* android/src/main/jniLibs/
           fi
 
-          # Copy macOS natives
+          # Copy macOS natives to src/main/resources/
           if [ -d "artifacts/natives-macos-arm64" ]; then
-            cp -rv artifacts/natives-macos-arm64/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-macos-arm64/* src/main/resources/
           fi
           if [ -d "artifacts/natives-macos-x86_64" ]; then
-            cp -rv artifacts/natives-macos-x86_64/* .
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-macos-x86_64/* src/main/resources/
           fi
 
       - name: Show what files changed
