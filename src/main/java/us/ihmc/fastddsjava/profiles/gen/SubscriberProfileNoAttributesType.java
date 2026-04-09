@@ -1,12 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -40,13 +37,8 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "subscriberProfileNoAttributesType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
-@XmlSeeAlso({
-    SubscriberProfileType.class
-})
 public class SubscriberProfileNoAttributesType {
 
     protected TopicElementType topic;
@@ -54,14 +46,13 @@ public class SubscriberProfileNoAttributesType {
     protected ReaderTimesType times;
     protected LocatorListType unicastLocatorList;
     protected LocatorListType multicastLocatorList;
-    @XmlElement(name = "external_unicast_locators")
+    @JacksonXmlProperty(localName = "external_unicast_locators")
     protected ExternalLocatorListType externalUnicastLocators;
-    @XmlElement(name = "ignore_non_matching_locators")
+    @JacksonXmlProperty(localName = "ignore_non_matching_locators")
     protected Boolean ignoreNonMatchingLocators;
-    @XmlElement(name = "expects_inline_qos")
+    @JacksonXmlProperty(localName = "expects_inline_qos")
     protected Boolean expectsInlineQos;
-    @XmlSchemaType(name = "string")
-    protected HistoryMemoryPolicyType historyMemoryPolicy;
+        protected HistoryMemoryPolicyType historyMemoryPolicy;
     protected PropertyPolicyType propertiesPolicy;
     protected Short userDefinedID;
     protected Short entityID;

@@ -1,11 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -39,35 +37,28 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "builtinAttributesType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class BuiltinAttributesType {
 
-    @XmlElement(name = "discovery_config")
+    @JacksonXmlProperty(localName = "discovery_config")
     protected DiscoverySettingsType discoveryConfig;
-    @XmlElement(name = "avoid_builtin_multicast")
+    @JacksonXmlProperty(localName = "avoid_builtin_multicast")
     protected Boolean avoidBuiltinMulticast;
-    @XmlElement(name = "use_WriterLivelinessProtocol")
+    @JacksonXmlProperty(localName = "use_WriterLivelinessProtocol")
     protected Boolean useWriterLivelinessProtocol;
-    @XmlElement(name = "metatraffic_external_unicast_locators")
+    @JacksonXmlProperty(localName = "metatraffic_external_unicast_locators")
     protected ExternalLocatorListType metatrafficExternalUnicastLocators;
     protected LocatorListType metatrafficUnicastLocatorList;
     protected LocatorListType metatrafficMulticastLocatorList;
     protected LocatorListType initialPeersList;
-    @XmlSchemaType(name = "string")
-    protected HistoryMemoryPolicyType readerHistoryMemoryPolicy;
-    @XmlSchemaType(name = "string")
-    protected HistoryMemoryPolicyType writerHistoryMemoryPolicy;
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long readerPayloadSize;
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long writerPayloadSize;
-    @XmlElement(name = "mutation_tries")
-    @XmlSchemaType(name = "unsignedInt")
-    protected Long mutationTries;
-    @XmlElement(name = "flow_controller_name")
+        protected HistoryMemoryPolicyType readerHistoryMemoryPolicy;
+        protected HistoryMemoryPolicyType writerHistoryMemoryPolicy;
+        protected Long readerPayloadSize;
+        protected Long writerPayloadSize;
+    @JacksonXmlProperty(localName = "mutation_tries")
+        protected Long mutationTries;
+    @JacksonXmlProperty(localName = "flow_controller_name")
     protected String flowControllerName;
 
     /**

@@ -1,11 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -52,20 +50,17 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "udpv4ExternalLocatorType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class Udpv4ExternalLocatorType {
 
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer port;
+        protected Integer port;
     protected String address;
-    @XmlAttribute(name = "externality")
+    @JacksonXmlProperty(isAttribute = true, localName = "externality")
     protected Integer externality;
-    @XmlAttribute(name = "cost")
+    @JacksonXmlProperty(isAttribute = true, localName = "cost")
     protected Integer cost;
-    @XmlAttribute(name = "mask")
+    @JacksonXmlProperty(isAttribute = true, localName = "mask")
     protected Integer mask;
 
     /**

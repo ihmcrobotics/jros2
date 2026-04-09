@@ -1,8 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -20,8 +21,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "historyQosKindPolicyType")
-@XmlEnum
+
 public enum HistoryQosKindPolicyType {
 
     KEEP_LAST,

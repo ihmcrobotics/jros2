@@ -1,9 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -40,51 +40,50 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "IntPrimitiveTypes")
-@XmlEnum
+
 public enum IntPrimitiveTypes {
 
-    @XmlEnumValue("bool")
+    @JsonProperty("bool")
     BOOL("bool"),
-    @XmlEnumValue("char")
+    @JsonProperty("char")
     CHAR("char"),
-    @XmlEnumValue("char8")
+    @JsonProperty("char8")
     CHAR_8("char8"),
-    @XmlEnumValue("wchar")
+    @JsonProperty("wchar")
     WCHAR("wchar"),
-    @XmlEnumValue("char16")
+    @JsonProperty("char16")
     CHAR_16("char16"),
-    @XmlEnumValue("byte")
+    @JsonProperty("byte")
     BYTE("byte"),
-    @XmlEnumValue("octet")
+    @JsonProperty("octet")
     OCTET("octet"),
-    @XmlEnumValue("int8")
+    @JsonProperty("int8")
     INT_8("int8"),
-    @XmlEnumValue("uint8")
+    @JsonProperty("uint8")
     UINT_8("uint8"),
-    @XmlEnumValue("short")
+    @JsonProperty("short")
     SHORT("short"),
-    @XmlEnumValue("uShort")
+    @JsonProperty("uShort")
     U_SHORT("uShort"),
-    @XmlEnumValue("int16")
+    @JsonProperty("int16")
     INT_16("int16"),
-    @XmlEnumValue("uint16")
+    @JsonProperty("uint16")
     UINT_16("uint16"),
-    @XmlEnumValue("long")
+    @JsonProperty("long")
     LONG("long"),
-    @XmlEnumValue("uLong")
+    @JsonProperty("uLong")
     U_LONG("uLong"),
-    @XmlEnumValue("int32")
+    @JsonProperty("int32")
     INT_32("int32"),
-    @XmlEnumValue("uint32")
+    @JsonProperty("uint32")
     UINT_32("uint32"),
-    @XmlEnumValue("longLong")
+    @JsonProperty("longLong")
     LONG_LONG("longLong"),
-    @XmlEnumValue("uLongLong")
+    @JsonProperty("uLongLong")
     U_LONG_LONG("uLongLong"),
-    @XmlEnumValue("int64")
+    @JsonProperty("int64")
     INT_64("int64"),
-    @XmlEnumValue("uint64")
+    @JsonProperty("uint64")
     UINT_64("uint64");
     private final String value;
 

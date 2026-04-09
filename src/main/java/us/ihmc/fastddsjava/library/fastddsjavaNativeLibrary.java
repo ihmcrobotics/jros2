@@ -75,7 +75,7 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
       {
          case LINUX64 ->
          {
-            return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so.2.3.0", "libfastdds.so.3.2.2");
+            return NativeLibraryWithDependencies.fromFilename("libjnifastddsjava.so", "libfastcdr.so", "libfastdds.so");
          }
          case WIN64 ->
          {
@@ -99,5 +99,10 @@ public class fastddsjavaNativeLibrary implements NativeLibraryDescription
          loaded = NativeLibraryLoader.loadLibrary(lib);
       }
       return loaded;
+   }
+
+   public static void main(String[] args)
+   {
+      load();
    }
 }

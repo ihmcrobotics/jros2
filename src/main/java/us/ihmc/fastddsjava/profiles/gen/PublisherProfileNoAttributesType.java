@@ -1,12 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlSeeAlso;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -39,13 +36,8 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "publisherProfileNoAttributesType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
-@XmlSeeAlso({
-    PublisherProfileType.class
-})
 public class PublisherProfileNoAttributesType {
 
     protected TopicElementType topic;
@@ -53,12 +45,11 @@ public class PublisherProfileNoAttributesType {
     protected WriterTimesType times;
     protected LocatorListType unicastLocatorList;
     protected LocatorListType multicastLocatorList;
-    @XmlElement(name = "external_unicast_locators")
+    @JacksonXmlProperty(localName = "external_unicast_locators")
     protected ExternalLocatorListType externalUnicastLocators;
-    @XmlElement(name = "ignore_non_matching_locators")
+    @JacksonXmlProperty(localName = "ignore_non_matching_locators")
     protected Boolean ignoreNonMatchingLocators;
-    @XmlSchemaType(name = "string")
-    protected HistoryMemoryPolicyType historyMemoryPolicy;
+        protected HistoryMemoryPolicyType historyMemoryPolicy;
     protected PropertyPolicyType propertiesPolicy;
     protected Short userDefinedID;
     protected Short entityID;

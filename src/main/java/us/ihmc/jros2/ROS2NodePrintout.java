@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
@@ -75,12 +74,12 @@ class ROS2NodePrintout
             }
             else // Whitelist specified
             {
-               List<JAXBElement<?>> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
+               List<Object> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
                StringJoiner whitelistString = new StringJoiner(", ");
                for (int j = 0; j < whitelistElements.size(); ++j)
                {
                   // The value can either be a List<String> or String
-                  Object value = whitelistElements.get(j).getValue();
+                  Object value = whitelistElements.get(j);
                   if (value instanceof List<?> list)
                   {
                      for (int k = 0; k < list.size(); ++k)

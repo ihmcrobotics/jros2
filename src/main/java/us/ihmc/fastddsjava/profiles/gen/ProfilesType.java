@@ -1,14 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElementRef;
-import jakarta.xml.bind.annotation.XmlElementRefs;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -39,23 +36,12 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "profilesType", propOrder = {
-    "domainparticipantFactoryOrParticipantOrDataWriter"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class ProfilesType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "domainparticipant_factory", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "participant", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "data_writer", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "data_reader", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "transport_descriptors", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "topic", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "replier", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "requester", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<?>> domainparticipantFactoryOrParticipantOrDataWriter;
+    
+    protected List<Object> domainparticipantFactoryOrParticipantOrDataWriter;
 
     /**
      * Gets the value of the domainparticipantFactoryOrParticipantOrDataWriter property.
@@ -86,9 +72,9 @@ public class ProfilesType {
      * 
      * 
      */
-    public List<JAXBElement<?>> getDomainparticipantFactoryOrParticipantOrDataWriter() {
+    public List<Object> getDomainparticipantFactoryOrParticipantOrDataWriter() {
         if (domainparticipantFactoryOrParticipantOrDataWriter == null) {
-            domainparticipantFactoryOrParticipantOrDataWriter = new ArrayList<JAXBElement<?>>();
+            domainparticipantFactoryOrParticipantOrDataWriter = new ArrayList<Object>();
         }
         return this.domainparticipantFactoryOrParticipantOrDataWriter;
     }

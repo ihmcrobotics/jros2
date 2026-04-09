@@ -206,9 +206,19 @@ if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
   cp install/lib/libfastcdr.so.2.3.0 "$LINUX_GEN_PATH"
   strip "$LINUX_GEN_PATH/libfastcdr.so.2.3.0"
 fi
+# Copy unversioned .so if it exists (different from versioned)
+if [ -f "install/lib/libfastcdr.so" ]; then
+  cp install/lib/libfastcdr.so "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastcdr.so"
+fi
 if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
   cp install/lib/libfastdds.so.3.2.2 "$LINUX_GEN_PATH"
   strip "$LINUX_GEN_PATH/libfastdds.so.3.2.2"
+fi
+# Copy unversioned .so if it exists (different from versioned)
+if [ -f "install/lib/libfastdds.so" ]; then
+  cp install/lib/libfastdds.so "$LINUX_GEN_PATH"
+  strip "$LINUX_GEN_PATH/libfastdds.so"
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so "$LINUX_GEN_PATH"
@@ -265,21 +275,19 @@ popd
 pushd cppbuild
 
 if command -v xjc >/dev/null 2>&1 && xjc; then
+  echo "Generating Java classes from XSD with xjc..."
   xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java Fast-DDS-$FASTDDS_VERSION/resources/xsd/fastdds_profiles.xsd
 
-  find "../src/main/java/us/ihmc/fastddsjava/profiles/gen" -type f -name "*.java" -print0 | while IFS= read -r -d '' file; do
-    # Replace javax.xml.* with jakarta.xml.*, but ignore javax.xml.namespace.QName
-    # Replace @javax.xml.bind.annotation.* with @jakarta.xml.bind.annotation.*
-    sed -i '
-        /import javax\.xml\.namespace\.QName/!s/import javax\.xml\./import jakarta.xml./g
-        s/@javax\.xml\.bind\.annotation\./@jakarta.xml.bind.annotation./g
-        s/javax\.xml\.bind\.annotation\.XmlNsForm/jakarta.xml.bind.annotation.XmlNsForm/g
-    ' "$file"
+  echo "Converting JAXB annotations to Jackson annotations..."
+  python3 ../convert_jaxb_to_jackson.py ../src/main/java/us/ihmc/fastddsjava/profiles/gen
 
-    if command -v dos2unix &> /dev/null; then
-      dos2unix "$file"
-    fi
-  done
+  # Delete JAXB-specific files that are not needed with Jackson
+  rm -f ../src/main/java/us/ihmc/fastddsjava/profiles/gen/ObjectFactory.java
+  rm -f ../src/main/java/us/ihmc/fastddsjava/profiles/gen/package-info.java
+
+  if command -v dos2unix &> /dev/null; then
+    find "../src/main/java/us/ihmc/fastddsjava/profiles/gen" -type f -name "*.java" -exec dos2unix {} \;
+  fi
 else
     echo "xjc not found"
 fi

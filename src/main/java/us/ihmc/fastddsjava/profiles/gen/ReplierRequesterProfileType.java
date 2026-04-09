@@ -1,11 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -34,27 +32,25 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "replierRequesterProfileType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class ReplierRequesterProfileType {
 
-    @XmlElement(name = "request_topic_name")
+    @JacksonXmlProperty(localName = "request_topic_name")
     protected String requestTopicName;
-    @XmlElement(name = "reply_topic_name")
+    @JacksonXmlProperty(localName = "reply_topic_name")
     protected String replyTopicName;
-    @XmlElement(name = "data_writer")
+    @JacksonXmlProperty(localName = "data_writer")
     protected PublisherProfileNoAttributesType dataWriter;
-    @XmlElement(name = "data_reader")
+    @JacksonXmlProperty(localName = "data_reader")
     protected SubscriberProfileNoAttributesType dataReader;
-    @XmlAttribute(name = "profile_name", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "profile_name")
     protected String profileName;
-    @XmlAttribute(name = "service_name", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "service_name")
     protected String serviceName;
-    @XmlAttribute(name = "request_type", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "request_type")
     protected String requestType;
-    @XmlAttribute(name = "reply_type", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "reply_type")
     protected String replyType;
 
     /**

@@ -1,16 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElementRef;
-import jakarta.xml.bind.annotation.XmlElementRefs;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -88,25 +83,12 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "discoverySettingsType", propOrder = {
-    "discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class DiscoverySettingsType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "discoveryProtocol", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "discoveryServersList", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "ignoreParticipantFlags", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "EDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "simpleEDP", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "leaseDuration", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "leaseAnnouncement", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "initialAnnouncements", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "clientAnnouncementPeriod", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "static_edp_xml_config", namespace = "http://www.eprosima.com", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<?>> discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags;
+    
+    protected List<Object> discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags;
 
     /**
      * Gets the value of the discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags property.
@@ -139,9 +121,9 @@ public class DiscoverySettingsType {
      * 
      * 
      */
-    public List<JAXBElement<?>> getDiscoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags() {
+    public List<Object> getDiscoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags() {
         if (discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags == null) {
-            discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags = new ArrayList<JAXBElement<?>>();
+            discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags = new ArrayList<Object>();
         }
         return this.discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags;
     }
@@ -167,14 +149,11 @@ public class DiscoverySettingsType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-
-    })
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class InitialAnnouncements {
 
-        @XmlSchemaType(name = "unsignedInt")
-        protected Long count;
+                protected Long count;
         protected DurationType period;
 
         /**
@@ -248,15 +227,13 @@ public class DiscoverySettingsType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-
-    })
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class SimpleEDP {
 
-        @XmlElement(name = "PUBWRITER_SUBREADER")
+        @JacksonXmlProperty(localName = "PUBWRITER_SUBREADER")
         protected Boolean pubwritersubreader;
-        @XmlElement(name = "PUBREADER_SUBWRITER")
+        @JacksonXmlProperty(localName = "PUBREADER_SUBWRITER")
         protected Boolean pubreadersubwriter;
 
         /**

@@ -1,10 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -35,23 +34,23 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "typedefDcl")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class TypedefDcl {
 
-    @XmlAttribute(name = "name", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @XmlAttribute(name = "type", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "type")
     protected String type;
-    @XmlAttribute(name = "nonBasicTypeName")
+    @JacksonXmlProperty(isAttribute = true, localName = "nonBasicTypeName")
     protected String nonBasicTypeName;
-    @XmlAttribute(name = "arrayDimensions")
+    @JacksonXmlProperty(isAttribute = true, localName = "arrayDimensions")
     protected String arrayDimensions;
-    @XmlAttribute(name = "sequenceMaxLength")
+    @JacksonXmlProperty(isAttribute = true, localName = "sequenceMaxLength")
     protected Integer sequenceMaxLength;
-    @XmlAttribute(name = "mapMaxLength")
+    @JacksonXmlProperty(isAttribute = true, localName = "mapMaxLength")
     protected Integer mapMaxLength;
-    @XmlAttribute(name = "key_type")
+    @JacksonXmlProperty(isAttribute = true, localName = "key_type")
     protected String keyType;
 
     /**

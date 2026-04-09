@@ -1,9 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -28,23 +28,22 @@ import jakarta.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "builtinTransportKind")
-@XmlEnum
+
 public enum BuiltinTransportKind {
 
     NONE("NONE"),
     DEFAULT("DEFAULT"),
-    @XmlEnumValue("DEFAULTv6")
+    @JsonProperty("DEFAULTv6")
     DEFAUL_TV_6("DEFAULTv6"),
     SHM("SHM"),
-    @XmlEnumValue("UDPv4")
+    @JsonProperty("UDPv4")
     UD_PV_4("UDPv4"),
-    @XmlEnumValue("UDPv6")
+    @JsonProperty("UDPv6")
     UD_PV_6("UDPv6"),
     LARGE_DATA("LARGE_DATA"),
-    @XmlEnumValue("LARGE_DATAv6")
+    @JsonProperty("LARGE_DATAv6")
     LARGE_DAT_AV_6("LARGE_DATAv6"),
-    @XmlEnumValue("P2P")
+    @JsonProperty("P2P")
     P_2_P("P2P");
     private final String value;
 

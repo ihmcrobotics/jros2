@@ -1,13 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -48,17 +46,15 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "bitsetDcl", propOrder = {
-    "bitfield"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class BitsetDcl {
 
-    @XmlElement(required = true)
+    
     protected List<BitsetDcl.Bitfield> bitfield;
-    @XmlAttribute(name = "name", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @XmlAttribute(name = "baseType")
+    @JacksonXmlProperty(isAttribute = true, localName = "baseType")
     protected String baseType;
 
     /**
@@ -165,15 +161,15 @@ public class BitsetDcl {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class Bitfield {
 
-        @XmlAttribute(name = "name")
+        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-        @XmlAttribute(name = "type")
+        @JacksonXmlProperty(isAttribute = true, localName = "type")
         protected IntPrimitiveTypes type;
-        @XmlAttribute(name = "bit_bound", required = true)
+        @JacksonXmlProperty(isAttribute = true, localName = "bit_bound")
         protected short bitBound;
 
         /**

@@ -1,10 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlSchemaType;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -33,28 +32,18 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "portType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class PortType {
 
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer portBase;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer domainIDGain;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer participantIDGain;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer offsetd0;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer offsetd1;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer offsetd2;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer offsetd3;
-    @XmlSchemaType(name = "unsignedShort")
-    protected Integer offsetd4;
+        protected Integer portBase;
+        protected Integer domainIDGain;
+        protected Integer participantIDGain;
+        protected Integer offsetd0;
+        protected Integer offsetd1;
+        protected Integer offsetd2;
+        protected Integer offsetd3;
+        protected Integer offsetd4;
 
     /**
      * Gets the value of the portBase property.

@@ -1,10 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -28,17 +27,15 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "domainParticipantFactoryQosPoliciesType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class DomainParticipantFactoryQosPoliciesType {
 
-    @XmlElement(name = "entity_factory")
+    @JacksonXmlProperty(localName = "entity_factory")
     protected EntityFactoryQosPolicyType entityFactory;
-    @XmlElement(name = "shm_watchdog_thread")
+    @JacksonXmlProperty(localName = "shm_watchdog_thread")
     protected ThreadSettingsType shmWatchdogThread;
-    @XmlElement(name = "file_watch_threads")
+    @JacksonXmlProperty(localName = "file_watch_threads")
     protected ThreadSettingsType fileWatchThreads;
 
     /**

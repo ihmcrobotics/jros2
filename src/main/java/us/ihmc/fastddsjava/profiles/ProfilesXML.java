@@ -15,10 +15,8 @@
  */
 package us.ihmc.fastddsjava.profiles;
 
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Marshaller;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.fastddsjavaTools;
 import us.ihmc.fastddsjava.pointers.fastddsjava;
@@ -33,7 +31,6 @@ import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TypesType;
 
-import javax.xml.namespace.QName;
 import java.io.StringWriter;
 
 // https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/making_xml_profiles.html
@@ -62,10 +59,23 @@ public class ProfilesXML
       intraprocessDelivery = value;
    }
 
+   private static class ProfileElement
+   {
+      String elementName;
+      Object profile;
+
+      ProfileElement(String elementName, Object profile)
+      {
+         this.elementName = elementName;
+         this.profile = profile;
+      }
+   }
+
    private final ProfilesType profilesType;
    private final LibrarySettingsType librarySettingsType;
    private final LogType logType;
    private final TypesType typesType;
+   private final java.util.List<ProfileElement> profileElements;
 
    public ProfilesXML()
    {
@@ -73,6 +83,7 @@ public class ProfilesXML
       librarySettingsType = new LibrarySettingsType();
       logType = new LogType();
       typesType = new TypesType();
+      profileElements = new java.util.ArrayList<>();
 
       librarySettingsType.setIntraprocessDelivery(intraprocessDelivery);
    }
@@ -111,34 +122,27 @@ public class ProfilesXML
 
    public void addParticipantProfile(ParticipantProfileType participantProfileType)
    {
-      profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "participant"), ParticipantProfileType.class, participantProfileType));
+      profileElements.add(new ProfileElement("participant", participantProfileType));
    }
 
    public void addPublisherProfile(PublisherProfileType publisherProfileType)
    {
-      profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_writer"), PublisherProfileType.class, publisherProfileType));
+      profileElements.add(new ProfileElement("data_writer", publisherProfileType));
    }
 
    public void addSubscriberProfile(SubscriberProfileType subscriberProfileType)
    {
-      profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "data_reader"), SubscriberProfileType.class, subscriberProfileType));
+      profileElements.add(new ProfileElement("data_reader", subscriberProfileType));
    }
 
    public void addTopicProfile(TopicProfileType topicProfileType)
    {
-      profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "topic"), TopicProfileType.class, topicProfileType));
+      profileElements.add(new ProfileElement("topic", topicProfileType));
    }
 
    public void addTransportDescriptorsProfile(TransportDescriptorListType transportDescriptorListType)
    {
-      profilesType.getDomainparticipantFactoryOrParticipantOrDataWriter()
-                  .add(new JAXBElement<>(new QName(FAST_DDS_NAMESPACE_URI, "transport_descriptors"),
-                                         TransportDescriptorListType.class,
-                                         transportDescriptorListType));
+      profileElements.add(new ProfileElement("transport_descriptors", transportDescriptorListType));
    }
 
    public String marshall()
@@ -153,22 +157,71 @@ public class ProfilesXML
       return marshall(dds);
    }
 
-   private static String marshall(Dds dds)
+   private String marshall(Dds dds)
    {
-      StringWriter writer = new StringWriter();
+      StringBuilder xml = new StringBuilder();
+      xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
+      xml.append("<dds xmlns=\"").append(FAST_DDS_NAMESPACE_URI).append("\">\n");
 
-      try
+      // Add profiles
+      if (!profileElements.isEmpty())
       {
-         JAXBContext context = JAXBContext.newInstance(Dds.class);
-         Marshaller m = context.createMarshaller();
-         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-         m.marshal(dds, writer);
+         xml.append("    <profiles>\n");
+
+         XmlMapper xmlMapper = new XmlMapper();
+         xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
+         xmlMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
+         xmlMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY);
+
+         for (ProfileElement element : profileElements)
+         {
+            try
+            {
+               // Serialize the profile object to XML
+               String profileXml = xmlMapper.writeValueAsString(element.profile);
+
+               // Remove XML declaration if present
+               profileXml = profileXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
+
+               // Replace the root element name with the correct element name
+               profileXml = profileXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<" + element.elementName);
+               profileXml = profileXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</" + element.elementName + ">");
+
+               // Add proper indentation (2 levels: 8 spaces)
+               String[] lines = profileXml.split("\n");
+               for (String line : lines)
+               {
+                  if (!line.trim().isEmpty())
+                  {
+                     xml.append("        ").append(line).append("\n");
+                  }
+               }
+            }
+            catch (Exception e)
+            {
+               e.printStackTrace();
+            }
+         }
+         xml.append("    </profiles>\n");
       }
-      catch (JAXBException e)
+      else
       {
-         e.printStackTrace();
+         xml.append("    <profiles/>\n");
       }
 
-      return writer.toString();
+      // Add types (always empty)
+      xml.append("    <types/>\n");
+
+      // Add log (always empty)
+      xml.append("    <log/>\n");
+
+      // Add library settings
+      xml.append("    <library_settings>\n");
+      xml.append("        <intraprocess_delivery>").append(librarySettingsType.getIntraprocessDelivery()).append("</intraprocess_delivery>\n");
+      xml.append("    </library_settings>\n");
+
+      xml.append("</dds>\n");
+
+      return xml.toString();
    }
 }

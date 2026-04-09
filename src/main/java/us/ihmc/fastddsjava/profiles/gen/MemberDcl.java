@@ -1,10 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
+
 
 
 /**
@@ -37,27 +36,27 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "memberDcl")
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class MemberDcl {
 
-    @XmlAttribute(name = "name", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @XmlAttribute(name = "type", required = true)
+    @JacksonXmlProperty(isAttribute = true, localName = "type")
     protected String type;
-    @XmlAttribute(name = "nonBasicTypeName")
+    @JacksonXmlProperty(isAttribute = true, localName = "nonBasicTypeName")
     protected String nonBasicTypeName;
-    @XmlAttribute(name = "stringMaxLength")
+    @JacksonXmlProperty(isAttribute = true, localName = "stringMaxLength")
     protected String stringMaxLength;
-    @XmlAttribute(name = "sequenceMaxLength")
+    @JacksonXmlProperty(isAttribute = true, localName = "sequenceMaxLength")
     protected Integer sequenceMaxLength;
-    @XmlAttribute(name = "arrayDimensions")
+    @JacksonXmlProperty(isAttribute = true, localName = "arrayDimensions")
     protected String arrayDimensions;
-    @XmlAttribute(name = "key_type")
+    @JacksonXmlProperty(isAttribute = true, localName = "key_type")
     protected String keyType;
-    @XmlAttribute(name = "key")
+    @JacksonXmlProperty(isAttribute = true, localName = "key")
     protected String key;
-    @XmlAttribute(name = "mapMaxLength")
+    @JacksonXmlProperty(isAttribute = true, localName = "mapMaxLength")
     protected Integer mapMaxLength;
 
     /**

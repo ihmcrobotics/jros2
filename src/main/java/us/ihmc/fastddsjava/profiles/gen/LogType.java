@@ -1,13 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlElements;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -33,17 +31,11 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "logType", propOrder = {
-    "useDefaultOrConsumerOrThreadSettings"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class LogType {
 
-    @XmlElements({
-        @XmlElement(name = "use_default", type = String.class),
-        @XmlElement(name = "consumer", type = LogConsumerType.class),
-        @XmlElement(name = "thread_settings", type = ThreadSettingsType.class)
-    })
+    
     protected List<Object> useDefaultOrConsumerOrThreadSettings;
 
     /**

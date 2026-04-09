@@ -1,11 +1,9 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlType;
-import jakarta.xml.bind.annotation.XmlValue;
+
 
 
 /**
@@ -28,21 +26,19 @@ import jakarta.xml.bind.annotation.XmlValue;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "builtinTransportsType", propOrder = {
-    "value"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class BuiltinTransportsType {
 
-    @XmlValue
+    @JacksonXmlText
     protected BuiltinTransportKind value;
-    @XmlAttribute(name = "max_msg_size")
+    @JacksonXmlProperty(isAttribute = true, localName = "max_msg_size")
     protected String maxMsgSize;
-    @XmlAttribute(name = "sockets_size")
+    @JacksonXmlProperty(isAttribute = true, localName = "sockets_size")
     protected String socketsSize;
-    @XmlAttribute(name = "non_blocking")
+    @JacksonXmlProperty(isAttribute = true, localName = "non_blocking")
     protected Boolean nonBlocking;
-    @XmlAttribute(name = "tcp_negotiation_timeout")
+    @JacksonXmlProperty(isAttribute = true, localName = "tcp_negotiation_timeout")
     protected Long tcpNegotiationTimeout;
 
     /**

@@ -71,8 +71,11 @@ mainDependencies {
    api("us.ihmc:ihmc-native-library-loader:2.0.6") {
       isTransitive = true
    }
-   // Match this version with YoVariables
-   api("com.sun.xml.bind:jaxb-impl:4.0.5") {
+   // Jackson for XML marshalling (works on all platforms)
+   api("com.fasterxml.jackson.core:jackson-databind:2.18.1") {
+      isTransitive = true
+   }
+   api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1") {
       isTransitive = true
    }
 }

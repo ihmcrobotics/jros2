@@ -1,13 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -46,13 +44,11 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "allowlistType", propOrder = {
-    "_interface"
-})
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class AllowlistType {
 
-    @XmlElement(name = "interface")
+    @JacksonXmlProperty(localName = "interface")
     protected List<AllowlistType.Interface> _interface;
 
     /**
@@ -111,13 +107,13 @@ public class AllowlistType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "")
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class Interface {
 
-        @XmlAttribute(name = "name", required = true)
+        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-        @XmlAttribute(name = "netmask_filter")
+        @JacksonXmlProperty(isAttribute = true, localName = "netmask_filter")
         protected String netmaskFilter;
 
         /**

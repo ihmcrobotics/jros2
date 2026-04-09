@@ -1,12 +1,11 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.dataformat.xml.annotation.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 
 /**
@@ -101,35 +100,33 @@ import jakarta.xml.bind.annotation.XmlType;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "tlsConfigType", propOrder = {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-})
 public class TlsConfigType {
 
     protected String password;
-    @XmlElement(name = "private_key_file")
+    @JacksonXmlProperty(localName = "private_key_file")
     protected String privateKeyFile;
-    @XmlElement(name = "rsa_private_key_file")
+    @JacksonXmlProperty(localName = "rsa_private_key_file")
     protected String rsaPrivateKeyFile;
-    @XmlElement(name = "cert_chain_file")
+    @JacksonXmlProperty(localName = "cert_chain_file")
     protected String certChainFile;
-    @XmlElement(name = "tmp_dh_file")
+    @JacksonXmlProperty(localName = "tmp_dh_file")
     protected String tmpDhFile;
-    @XmlElement(name = "verify_file")
+    @JacksonXmlProperty(localName = "verify_file")
     protected String verifyFile;
-    @XmlElement(name = "verify_mode")
+    @JacksonXmlProperty(localName = "verify_mode")
     protected TlsConfigType.VerifyMode verifyMode;
-    @XmlElement(name = "verify_paths")
+    @JacksonXmlProperty(localName = "verify_paths")
     protected TlsConfigType.VerifyPaths verifyPaths;
-    @XmlElement(name = "verify_depth")
+    @JacksonXmlProperty(localName = "verify_depth")
     protected Integer verifyDepth;
-    @XmlElement(name = "default_verify_path")
+    @JacksonXmlProperty(localName = "default_verify_path")
     protected Boolean defaultVerifyPath;
     protected TlsConfigType.Options options;
-    @XmlElement(name = "handshake_role")
+    @JacksonXmlProperty(localName = "handshake_role")
     protected String handshakeRole;
-    @XmlElement(name = "server_name")
+    @JacksonXmlProperty(localName = "server_name")
     protected String serverName;
 
     /**
@@ -478,10 +475,8 @@ public class TlsConfigType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "option"
-    })
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class Options {
 
         protected List<String> option;
@@ -546,10 +541,8 @@ public class TlsConfigType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "verify"
-    })
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class VerifyMode {
 
         protected List<String> verify;
@@ -605,13 +598,11 @@ public class TlsConfigType {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "verifyPath"
-    })
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+    
     public static class VerifyPaths {
 
-        @XmlElement(name = "verify_path")
+        @JacksonXmlProperty(localName = "verify_path")
         protected List<String> verifyPath;
 
         /**
