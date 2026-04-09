@@ -37,7 +37,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (NoSuchFieldException | IllegalAccessException e)
       {
-         e.printStackTrace();
+         jros2.logError(e);
       }
 
       return null;
@@ -51,7 +51,7 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-         e.printStackTrace();
+         jros2.logError(e);
       }
 
       return null;

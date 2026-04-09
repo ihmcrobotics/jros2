@@ -167,7 +167,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      }
                      catch (Exception e)
                      {
-                        e.printStackTrace();
+                        jros2.logError(e);
                      }
                   }
                }
