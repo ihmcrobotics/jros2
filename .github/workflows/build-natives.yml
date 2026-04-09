@@ -5,27 +5,21 @@ on:
 
 jobs:
   build-natives-linux:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         platform: [arm64, armhf, x86_64]
       max-parallel: 1
-    container:
-      image: ubuntu:20.04
-      env:
-        TZ: "America/Chicago"
-        DEBIAN_FRONTEND: noninteractive
     steps:
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk jaxb
+          sudo apt-get update
+          sudo apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk
           # Install newer version of cmake
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
-          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
-          apt-get -y purge libssl-dev -y
 
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,20 +32,22 @@ jobs:
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM64=1 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-arm64.bash
+
       - name: Compile native library (armhf)
         if: matrix.platform == 'armhf'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARMHF=1 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-armhf.bash
+
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
 
       - name: Commit generated Java and native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.java *.so *.so.*' # Only commit generated java from Linux
+          add: '*.java *.so *.so.*'
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for Linux'
@@ -78,14 +74,67 @@ jobs:
       - name: Commit native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.dll' # Only commit generated java from Linux
+          add: '*.dll'
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for Windows'
           push: true
+  build-natives-android:
+    runs-on: ubuntu-22.04
+    needs: build-natives-windows
+    strategy:
+      matrix:
+        platform: [arm64-v8a, x86_64]
+      max-parallel: 1
+    steps:
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install build-essential git curl wget unzip openjdk-17-jdk
+          # Install newer version of cmake
+          wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
+          tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
+          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          rm -rf cmake-4.0.2-linux-x86_64.tar.gz
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android NDK
+        run: |
+          sdkmanager --install "ndk;26.1.10909125"
+          echo "ANDROID_NDK=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull repo
+        run: |
+          git reset --hard
+          git pull
+
+      - name: Compile native library (arm64-v8a)
+        if: matrix.platform == 'arm64-v8a'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-arm64.bash
+
+      - name: Compile native library (x86_64)
+        if: matrix.platform == 'x86_64'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
+
+      - name: Commit native libraries
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'android/src/main/jniLibs/**/*.so'
+          author_name: ihmc-rosie
+          author_email: rosie@ihmc.us
+          message: 'Rebuild natives for Android'
+          push: true
+
   build-natives-macos-arm:
     runs-on: macos-14
-    needs: build-natives-windows
+    needs: build-natives-android
     steps:
       - uses: actions/checkout@v4
       - name: Pull repo
@@ -102,13 +151,14 @@ jobs:
       - name: Commit native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.dylib' # Only commit generated java from Linux
+          add: '*.dylib'
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for macOS'
           push: true
+
   build-natives-macos-intel:
-    runs-on: macos-13
+    runs-on: macos-14
     needs: build-natives-macos-arm
     steps:
       - uses: actions/checkout@v4
@@ -126,7 +176,7 @@ jobs:
       - name: Commit native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.dylib' # Only commit generated java from Linux
+          add: '*.dylib'
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild natives for macOS'
