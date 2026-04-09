@@ -1,10 +1,16 @@
+import java.util.Properties
+
 plugins {
    id("com.android.library")
    id("maven-publish")
 }
 
+// Read version from parent project's gradle.properties
+val parentProperties = Properties()
+file("../gradle.properties").inputStream().use { parentProperties.load(it) }
+
 group = "us.ihmc"
-version = "1.1.589"
+version = parentProperties.getProperty("version")
 
 android {
    namespace = "us.ihmc.jros2"
@@ -48,11 +54,9 @@ android {
 dependencies {
    api("org.bytedeco:javacpp:1.5.11")
    api("us.ihmc:ihmc-native-library-loader:2.0.6")
-
-   // Jackson for XML marshalling (works on all platforms including Android)
+   // Match Jackson version with ihmc-robot-data-logger
    api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
-
    // StAX API and implementation for Android (javax.xml.stream package)
    api("javax.xml.stream:stax-api:1.0-2")
    api("com.fasterxml.woodstox:woodstox-core:6.7.0")

@@ -25,7 +25,7 @@ plugins {
 
 ihmc {
    group = "us.ihmc"
-   version = "1.1.996"
+   version = project.property("version").toString()
    vcsUrl = "https://github.com/ihmcrobotics/jros2"
    openSource = true
 
@@ -65,19 +65,11 @@ sourceSets {
 }
 
 mainDependencies {
-   api("org.bytedeco:javacpp:1.5.11") {
-      isTransitive = true
-   }
-   api("us.ihmc:ihmc-native-library-loader:2.0.6") {
-      isTransitive = true
-   }
-   // Jackson for XML marshalling (works on all platforms)
-   api("com.fasterxml.jackson.core:jackson-databind:2.18.1") {
-      isTransitive = true
-   }
-   api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1") {
-      isTransitive = true
-   }
+   api("org.bytedeco:javacpp:1.5.11")
+   api("us.ihmc:ihmc-native-library-loader:2.0.6")
+   // Match Jackson version with ihmc-robot-data-logger
+   api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+   api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
 }
 
 parserDependencies {
