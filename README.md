@@ -16,7 +16,7 @@ Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
 - Windows (Windows 10+ x86_64)
 - macOS (macOS 13+ Intel, Apple Silicon)
-- (soon) Android
+- Android (Android 12+ x86_64, arm64-v8a)
 
 Works on NVIDIA Jetson and all versions of Raspberry Pi!
 

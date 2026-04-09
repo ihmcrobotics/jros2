@@ -202,23 +202,14 @@ else
   LINUX_GEN_PATH="../src/main/resources/fastddsjava/native/linux-x86_64"
 fi
 mkdir -p "$LINUX_GEN_PATH"
+# Linux desktop platforms use versioned library names
 if [ -f "install/lib/libfastcdr.so.2.3.0" ]; then
   cp install/lib/libfastcdr.so.2.3.0 "$LINUX_GEN_PATH"
   strip "$LINUX_GEN_PATH/libfastcdr.so.2.3.0"
 fi
-# Copy unversioned .so if it exists (different from versioned)
-if [ -f "install/lib/libfastcdr.so" ]; then
-  cp install/lib/libfastcdr.so "$LINUX_GEN_PATH"
-  strip "$LINUX_GEN_PATH/libfastcdr.so"
-fi
 if [ -f "install/lib/libfastdds.so.3.2.2" ]; then
   cp install/lib/libfastdds.so.3.2.2 "$LINUX_GEN_PATH"
   strip "$LINUX_GEN_PATH/libfastdds.so.3.2.2"
-fi
-# Copy unversioned .so if it exists (different from versioned)
-if [ -f "install/lib/libfastdds.so" ]; then
-  cp install/lib/libfastdds.so "$LINUX_GEN_PATH"
-  strip "$LINUX_GEN_PATH/libfastdds.so"
 fi
 if [ -f "javainstall/libjnifastddsjava.so" ]; then
   cp javainstall/libjnifastddsjava.so "$LINUX_GEN_PATH"

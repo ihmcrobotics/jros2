@@ -9,7 +9,6 @@ jobs:
     strategy:
       matrix:
         platform: [arm64, armhf, x86_64]
-      max-parallel: 1
     steps:
       - name: Install dependencies
         run: |
@@ -23,11 +22,6 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
 
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
@@ -44,23 +38,19 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
 
-      - name: Commit generated Java and native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.java *.so *.so.*'
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Linux'
-          push: true
+          name: natives-linux-${{ matrix.platform }}
+          path: |
+            src/main/java/**/*.java
+            src/main/resources/**/*.so
+            src/main/resources/**/*.so.*
+          retention-days: 1
   build-natives-windows:
     runs-on: windows-2022
-    needs: build-natives-linux
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           vsversion: 2022
@@ -71,21 +61,17 @@ jobs:
       - name: Compile native library
         run: |
           bash.exe cppbuild.bash
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.dll'
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Windows'
-          push: true
+          name: natives-windows
+          path: src/main/resources/**/*.dll
+          retention-days: 1
   build-natives-android:
     runs-on: ubuntu-22.04
-    needs: build-natives-windows
     strategy:
       matrix:
         platform: [arm64-v8a, x86_64]
-      max-parallel: 1
     steps:
       - name: Install dependencies
         run: |
@@ -108,11 +94,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
-
       - name: Compile native library (arm64-v8a)
         if: matrix.platform == 'arm64-v8a'
         run: |
@@ -123,24 +104,17 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
 
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: 'android/src/main/jniLibs/**/*.so'
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Android'
-          push: true
+          name: natives-android-${{ matrix.platform }}
+          path: android/src/main/jniLibs/**/*.so
+          retention-days: 1
 
   build-natives-macos-arm:
     runs-on: macos-14
-    needs: build-natives-android
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -148,24 +122,17 @@ jobs:
       - name: Compile native library (arm64)
         run: |
           MAC_COMPILE_ARM64=1 bash cppbuild.bash
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.dylib'
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS'
-          push: true
+          name: natives-macos-arm64
+          path: src/main/resources/**/*.dylib
+          retention-days: 1
 
   build-natives-macos-intel:
     runs-on: macos-14
-    needs: build-natives-macos-arm
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -173,11 +140,53 @@ jobs:
       - name: Compile native library (x86_64)
         run: |
           bash cppbuild.bash
-      - name: Commit native libraries
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: natives-macos-x86_64
+          path: src/main/resources/**/*.dylib
+          retention-days: 1
+
+  commit-all-natives:
+    runs-on: ubuntu-22.04
+    needs: [build-natives-linux, build-natives-windows, build-natives-android, build-natives-macos-arm, build-natives-macos-intel]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Copy artifacts to repository
+        run: |
+          # Copy Linux natives
+          cp -r artifacts/natives-linux-arm64/* . || true
+          cp -r artifacts/natives-linux-armhf/* . || true
+          cp -r artifacts/natives-linux-x86_64/* . || true
+
+          # Copy Windows natives
+          cp -r artifacts/natives-windows/* . || true
+
+          # Copy Android natives
+          cp -r artifacts/natives-android-arm64-v8a/* . || true
+          cp -r artifacts/natives-android-x86_64/* . || true
+
+          # Copy macOS natives
+          cp -r artifacts/natives-macos-arm64/* . || true
+          cp -r artifacts/natives-macos-x86_64/* . || true
+
+      - name: Commit all native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.dylib'
+          add: |
+            src/main/java/**/*.java
+            src/main/resources/**/*.so
+            src/main/resources/**/*.so.*
+            src/main/resources/**/*.dll
+            src/main/resources/**/*.dylib
+            android/src/main/jniLibs/**/*.so
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS'
+          message: 'Rebuild all native libraries'
           push: true
