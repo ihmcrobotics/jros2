@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "us.ihmc"
-version = "1.1.597"
+version = "1.1.589"
 
 android {
    namespace = "us.ihmc.jros2"
@@ -36,6 +36,7 @@ android {
    }
 
    packaging {
+      resources.excludes.add("**/fastddsjava/native/**")
       jniLibs {
          pickFirsts.add("**/libfastcdr.so*")
          pickFirsts.add("**/libfastdds.so*")
@@ -57,30 +58,40 @@ dependencies {
    api("com.fasterxml.woodstox:woodstox-core:6.7.0")
 }
 
-tasks.register("copyNativeLibs") {
+tasks.register("copyLibcppShared") {
    doLast {
       val jniLibsDir = file("src/main/jniLibs")
       jniLibsDir.mkdirs()
 
-      listOf("android-arm64-v8a" to "arm64-v8a", "android-x86_64" to "x86_64").forEach { (src, dst) ->
-         val srcDir = file("../src/main/resources/fastddsjava/native/$src")
-         val dstDir = file("$jniLibsDir/$dst")
-         dstDir.mkdirs()
+      // Find NDK directory
+      val sdkDir = android.sdkDirectory
+      val ndkDir = file("$sdkDir/ndk").listFiles()?.maxByOrNull { it.name } // Get latest NDK version
 
-         srcDir.listFiles()?.forEach { file ->
-            val targetName = file.name.replaceFirst(Regex("\\.so\\..*"), ".so")
-            copy {
-               from(file)
-               into(dstDir)
-               rename { targetName }
+      if (ndkDir != null && ndkDir.exists()) {
+         println("Found NDK: $ndkDir")
+         // Copy libc++_shared.so for each ABI
+         listOf("arm64-v8a" to "aarch64-linux-android", "x86_64" to "x86_64-linux-android").forEach { (abi, triple) ->
+            val libcppPath = file("$ndkDir/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$triple/libc++_shared.so")
+            if (libcppPath.exists()) {
+               val abiDir = file("$jniLibsDir/$abi")
+               abiDir.mkdirs()
+               copy {
+                  from(libcppPath)
+                  into(abiDir)
+               }
+               println("Copied libc++_shared.so for $abi from $libcppPath")
+            } else {
+               println("libc++_shared.so not found at $libcppPath")
             }
          }
+      } else {
+         println("NDK not found in $sdkDir/ndk")
       }
    }
 }
 
 tasks.named("preBuild") {
-   dependsOn("copyNativeLibs")
+   dependsOn("copyLibcppShared")
 }
 
 afterEvaluate {

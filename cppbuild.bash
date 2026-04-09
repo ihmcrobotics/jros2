@@ -52,7 +52,7 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   fi
   # Set ANDROID_ABI (default: arm64-v8a) and ANDROID_API_LEVEL (default: 24) if needed
   ANDROID_ABI=${ANDROID_ABI:-arm64-v8a}
-  ANDROID_ABI=x86_64
+  # ANDROID_ABI=x86_64  # Commented out - use ANDROID_ABI env var or default arm64-v8a
   ANDROID_API_LEVEL=${ANDROID_API_LEVEL:-24}
   # Set flags to disable deprecated literal operator and nonnull errors (for CMake builds)
   CMAKE_ANDROID_FLAGS="-Wno-error=deprecated-literal-operator -Wno-error=nonnull"
@@ -253,19 +253,27 @@ if [ -f "javainstall/libjnifastddsjava.dylib" ]; then
 fi
 # Android
 if [ "$ANDROID_COMPILE" == "1" ]; then
-  ANDROID_GEN_PATH="../src/main/resources/fastddsjava/native/android-$ANDROID_ABI"
+  # Map ANDROID_ABI to Android jniLibs directory naming
+  if [ "$ANDROID_ABI" == "arm64-v8a" ]; then
+    ANDROID_GEN_PATH="../android/src/main/jniLibs/arm64-v8a"
+  elif [ "$ANDROID_ABI" == "x86_64" ]; then
+    ANDROID_GEN_PATH="../android/src/main/jniLibs/x86_64"
+  else
+    echo "Unsupported ANDROID_ABI: $ANDROID_ABI"
+    exit 1
+  fi
   mkdir -p "$ANDROID_GEN_PATH"
-  # Note: Android builds produce .so files without version numbers
+  # Android libraries without version numbers
   if [ -f "install/lib/libfastcdr.so" ]; then
-    cp -f install/lib/libfastcdr.so "$ANDROID_GEN_PATH/libfastcdr.so.2.3.0"
-    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastcdr.so.2.3.0"
+    cp -f install/lib/libfastcdr.so "$ANDROID_GEN_PATH/libfastcdr.so"
+    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastcdr.so"
   fi
   if [ -f "install/lib/libfastdds.so" ]; then
-    cp -f install/lib/libfastdds.so "$ANDROID_GEN_PATH/libfastdds.so.3.2.2"
-    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastdds.so.3.2.2"
+    cp -f install/lib/libfastdds.so "$ANDROID_GEN_PATH/libfastdds.so"
+    ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libfastdds.so"
   fi
   if [ -f "javainstall/libjnifastddsjava.so" ]; then
-    cp -f javainstall/libjnifastddsjava.so "$ANDROID_GEN_PATH"
+    cp -f javainstall/libjnifastddsjava.so "$ANDROID_GEN_PATH/libjnifastddsjava.so"
     ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libjnifastddsjava.so"
   fi
 fi

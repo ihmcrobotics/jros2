@@ -74,6 +74,8 @@ final class jros2 implements jros2Settings
       {
          try
          {
+            System.loadLibrary("log"); // Android logging library
+            System.loadLibrary("c++_shared"); // C++ STL
             System.loadLibrary("fastcdr");
             System.loadLibrary("fastdds");
             System.loadLibrary("jnifastddsjava");
