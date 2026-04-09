@@ -73,6 +73,9 @@ jobs:
       matrix:
         platform: [arm64-v8a, x86_64]
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -83,16 +86,13 @@ jobs:
           sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install Android NDK
+      - name: Setup Android NDK
         run: |
-          sdkmanager --install "ndk;26.1.10909125"
-          echo "ANDROID_NDK=$ANDROID_HOME/ndk/26.1.10909125" >> $GITHUB_ENV
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
+          # Download and install Android NDK directly
+          wget https://dl.google.com/android/repository/android-ndk-r26d-linux.zip
+          unzip -q android-ndk-r26d-linux.zip
+          sudo mv android-ndk-r26d /opt/android-ndk
+          echo "ANDROID_NDK=/opt/android-ndk" >> $GITHUB_ENV
 
       - name: Compile native library (arm64-v8a)
         if: matrix.platform == 'arm64-v8a'
