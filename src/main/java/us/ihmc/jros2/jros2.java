@@ -18,9 +18,19 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 final class jros2 implements jros2Settings
 {
    private static final String SOURCE_NAME = "jros2.java";
+
+   /**
+    * IHMC root logger. This is the same logger name used by log-tools ("us.ihmc").
+    * All IHMC code logs through this logger for consistent configuration.
+    */
+   private static final Logger LOGGER = Logger.getLogger("us.ihmc");
+
    private static jros2 instance;
 
    /**
@@ -112,6 +122,40 @@ final class jros2 implements jros2Settings
       }
 
       return instance;
+   }
+
+   /**
+    * Get the IHMC root logger for jros2.
+    * This logger uses the name "us.ihmc", the same as log-tools.
+    *
+    * @return The IHMC logger instance
+    */
+   public static Logger getLogger()
+   {
+      return LOGGER;
+   }
+
+   /**
+    * Log an exception with a message at SEVERE level.
+    * Replacement for LogTools.error(Throwable).
+    *
+    * @param throwable The exception to log
+    */
+   public static void logError(Throwable throwable)
+   {
+      LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable);
+   }
+
+   /**
+    * Log an exception with a custom message at SEVERE level.
+    * Replacement for LogTools.error(String, Throwable).
+    *
+    * @param message Custom message
+    * @param throwable The exception to log
+    */
+   public static void logError(String message, Throwable throwable)
+   {
+      LOGGER.log(Level.SEVERE, message, throwable);
    }
 
    boolean isLoaded()

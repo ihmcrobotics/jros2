@@ -74,7 +74,7 @@ class jros2SettingsFile implements jros2Settings
       }
       else
       {
-//         LogTools.error("There was an issue creating the jros2 settings file: {}", filePath.toFile().getAbsolutePath());
+         jros2.getLogger().severe("There was an issue creating the jros2 settings file: " + filePath.toFile().getAbsolutePath());
 
          fileExists = false;
       }
@@ -157,7 +157,7 @@ class jros2SettingsFile implements jros2Settings
          }
          catch (NumberFormatException numberFormatException)
          {
-//            LogTools.warn("Found RTPSDomainID in {}, but failed to parse the value ({}).", compatibilityFilePath.getFileName(), rtpsDomainId);
+            jros2.getLogger().warning("Found RTPSDomainID in " + compatibilityFilePath.getFileName() + ", but failed to parse the value (" + rtpsDomainId + ").");
          }
       }
    }

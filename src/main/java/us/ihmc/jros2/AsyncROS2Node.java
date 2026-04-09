@@ -97,7 +97,7 @@ public class AsyncROS2Node extends ROS2Node
             }
             catch (fastddsjavaException e)
             {
-               e.printStackTrace();
+               jros2.logError(e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
@@ -137,7 +137,7 @@ public class AsyncROS2Node extends ROS2Node
       }
       catch (InterruptedException interruptedException)
       {
-//         LogTools.error("Publish thread did not join.");
+         jros2.logError("Publish thread did not join.", interruptedException);
       }
 
       super.close();

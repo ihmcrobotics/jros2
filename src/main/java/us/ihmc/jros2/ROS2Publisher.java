@@ -164,11 +164,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             }
             catch (IllegalAccessException | InvocationTargetException e)
             {
-               // Only log if logging is enabled to avoid allocation
-//               if (LogTools.isErrorEnabled())
-//               {
-//                  LogTools.error("Failed to get the message header. Not recording message age statistics from now on.");
-//               }
+               jros2.logError("Failed to get the message header. Not recording message age statistics from now on.", e);
                getHeaderMethod = null;
             }
          }
