@@ -213,13 +213,7 @@ jobs:
       - name: Commit all native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: |
-            src/main/java/**/*.java
-            src/main/resources/**/*.so
-            src/main/resources/**/*.so.*
-            src/main/resources/**/*.dll
-            src/main/resources/**/*.dylib
-            android/src/main/jniLibs/**/*.so
+          add: '.'
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
           message: 'Rebuild all native libraries'
