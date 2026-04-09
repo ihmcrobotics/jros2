@@ -137,7 +137,6 @@ final class jros2 implements jros2Settings
 
    /**
     * Log an exception with a message at SEVERE level.
-    * Replacement for LogTools.error(Throwable).
     *
     * @param throwable The exception to log
     */
@@ -148,7 +147,6 @@ final class jros2 implements jros2Settings
 
    /**
     * Log an exception with a custom message at SEVERE level.
-    * Replacement for LogTools.error(String, Throwable).
     *
     * @param message Custom message
     * @param throwable The exception to log
