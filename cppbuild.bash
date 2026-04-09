@@ -38,6 +38,9 @@ tar -xvf Fast-CDR-$FASTCDR_VERSION.tar.gz
 FASTDDS_VERSION=3.2.2
 # Using git for libtinyxml and libasio submodules
 git clone https://github.com/eProsima/Fast-DDS.git -b v$FASTDDS_VERSION Fast-DDS-$FASTDDS_VERSION
+cd Fast-DDS-$FASTDDS_VERSION
+git submodule update --init --recursive
+cd ..
 
 INSTALL_DIR=$(pwd)
 
@@ -54,8 +57,6 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   ANDROID_ABI=${ANDROID_ABI:-arm64-v8a}
   # ANDROID_ABI=x86_64  # Commented out - use ANDROID_ABI env var or default arm64-v8a
   ANDROID_API_LEVEL=${ANDROID_API_LEVEL:-24}
-  # Set flags to disable deprecated literal operator and nonnull errors (for CMake builds)
-  CMAKE_ANDROID_FLAGS="-Wno-error=deprecated-literal-operator -Wno-error=nonnull"
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ANDROID_ABI -DANDROID_PLATFORM=android-$ANDROID_API_LEVEL -DANDROID_NDK=$ANDROID_NDK"
   JAVACPP_COMP_ARGS="-properties android-$ANDROID_ABI -Dplatform=android-$ANDROID_ABI"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
