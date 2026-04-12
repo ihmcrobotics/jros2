@@ -58,6 +58,9 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   ANDROID_CXX_FLAGS="-Wno-error=gnu-offsetof-extensions"
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ANDROID_ABI -DANDROID_PLATFORM=android-$ANDROID_API_LEVEL -DANDROID_NDK=$ANDROID_NDK -DCMAKE_CXX_FLAGS=\"$ANDROID_CXX_FLAGS\""
   JAVACPP_COMP_ARGS="-properties android-$ANDROID_ABI -Dplatform=android-$ANDROID_ABI"
+elif [ "$MAC_COMPILE_X86_64" == "1" ]; then
+  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
+  JAVACPP_COMP_ARGS="-properties macosx-x86_64 -Dplatform=macosx-x86_64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"

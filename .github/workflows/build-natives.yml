@@ -145,7 +145,7 @@ jobs:
           java-version: '17'
       - name: Compile native library (x86_64)
         run: |
-          bash cppbuild.bash
+          MAC_COMPILE_X86_64=1 bash cppbuild.bash
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
