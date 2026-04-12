@@ -228,7 +228,7 @@ jobs:
               return
             fi
             local info
-            info=$(file "$path")
+            info=$(file -b "$path")
             if echo "$info" | grep -qE "$arch_pattern"; then
               echo "OK [$label]: $path"
             else

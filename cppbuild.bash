@@ -59,6 +59,9 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$ANDROID_NDK/build/cmake/android.toolchain.cmake -DANDROID_ABI=$ANDROID_ABI -DANDROID_PLATFORM=android-$ANDROID_API_LEVEL -DANDROID_NDK=$ANDROID_NDK -DCMAKE_CXX_FLAGS=\"$ANDROID_CXX_FLAGS\""
   JAVACPP_COMP_ARGS="-properties android-$ANDROID_ABI -Dplatform=android-$ANDROID_ABI"
 elif [ "$MAC_COMPILE_X86_64" == "1" ]; then
+  # Export compiler flags so cmake and all subproject builds pick up the target arch
+  export CFLAGS="-arch x86_64"
+  export CXXFLAGS="-arch x86_64"
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
   JAVACPP_COMP_ARGS="-properties macosx-x86_64 -Dplatform=macosx-x86_64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
