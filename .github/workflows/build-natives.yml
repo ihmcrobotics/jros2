@@ -212,6 +212,81 @@ jobs:
             cp -rv artifacts/natives-macos-x86_64/* src/main/resources/
           fi
 
+      - name: Verify native library architectures
+        run: |
+          FAIL=0
+          BASE="src/main/resources/fastddsjava/native"
+          ANDROID_BASE="android/src/main/jniLibs"
+
+          check_file() {
+            local path="$1"
+            local arch_pattern="$2"
+            local label="$3"
+            if [ ! -f "$path" ]; then
+              echo "MISSING [$label]: $path"
+              FAIL=1
+              return
+            fi
+            local info
+            info=$(file "$path")
+            if echo "$info" | grep -qE "$arch_pattern"; then
+              echo "OK [$label]: $path"
+            else
+              echo "WRONG ARCH [$label]: $path"
+              echo "  Expected pattern: $arch_pattern"
+              echo "  Got: $info"
+              FAIL=1
+            fi
+          }
+
+          # Linux arm64
+          check_file "$BASE/linux-arm64/libfastcdr.so.2.3.0"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libfastdds.so.3.2.2"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libjnifastddsjava.so"      "aarch64"  "linux-arm64"
+
+          # Linux armhf (32-bit ARM, EABI5)
+          check_file "$BASE/linux-armhf/libfastcdr.so.2.3.0"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libfastdds.so.3.2.2"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libjnifastddsjava.so"      "EABI5"    "linux-armhf"
+
+          # Linux x86_64
+          check_file "$BASE/linux-x86_64/libfastcdr.so.2.3.0"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libfastdds.so.3.2.2"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libjnifastddsjava.so"     "x86-64"   "linux-x86_64"
+
+          # Windows x86_64
+          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64"   "windows-x86_64"
+          check_file "$BASE/windows-x86_64/fastdds-3.2.dll"        "x86-64"   "windows-x86_64"
+          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64"   "windows-x86_64"
+
+          # macOS arm64
+          check_file "$BASE/macos-arm64/libfastcdr.2.3.0.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libfastdds.3.2.2.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libjnifastddsjava.dylib"   "arm64"    "macos-arm64"
+
+          # macOS x86_64
+          check_file "$BASE/macos-x86_64/libfastcdr.2.3.0.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libfastdds.3.2.2.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libjnifastddsjava.dylib"  "x86_64"   "macos-x86_64"
+
+          # Android arm64-v8a
+          check_file "$ANDROID_BASE/arm64-v8a/libfastcdr.so"       "aarch64"  "android-arm64-v8a"
+          check_file "$ANDROID_BASE/arm64-v8a/libfastdds.so"       "aarch64"  "android-arm64-v8a"
+          check_file "$ANDROID_BASE/arm64-v8a/libjnifastddsjava.so" "aarch64" "android-arm64-v8a"
+
+          # Android x86_64
+          check_file "$ANDROID_BASE/x86_64/libfastcdr.so"          "x86-64"   "android-x86_64"
+          check_file "$ANDROID_BASE/x86_64/libfastdds.so"          "x86-64"   "android-x86_64"
+          check_file "$ANDROID_BASE/x86_64/libjnifastddsjava.so"   "x86-64"   "android-x86_64"
+
+          if [ $FAIL -ne 0 ]; then
+            echo ""
+            echo "One or more native libraries are missing or have the wrong architecture. Aborting."
+            exit 1
+          fi
+          echo ""
+          echo "All native libraries verified."
+
       - name: Show what files changed
         run: |
           echo "Git status after copying artifacts:"
