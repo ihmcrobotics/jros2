@@ -137,7 +137,7 @@ final class jros2 implements jros2Settings
    {
       if (logger == null)
       {
-         logger = Logger.getLogger("us.ihmc");
+         logger = Logger.getLogger("jros2");
       }
 
       return logger;
