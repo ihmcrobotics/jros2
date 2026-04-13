@@ -31,8 +31,6 @@ import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TypesType;
 
-import java.io.StringWriter;
-
 // https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/making_xml_profiles.html
 public class ProfilesXML
 {
@@ -199,7 +197,7 @@ public class ProfilesXML
             }
             catch (Exception e)
             {
-               e.printStackTrace();
+               throw new RuntimeException("Failed to serialize profile: " + element.profile, e);
             }
          }
          xml.append("    </profiles>\n");

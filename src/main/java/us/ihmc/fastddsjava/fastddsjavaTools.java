@@ -74,7 +74,7 @@ public final class fastddsjavaTools
       }
       catch (fastddsjavaException e)
       {
-         e.printStackTrace();
+         System.err.println("Fast-DDS error: %s".formatted(e.getMessage()));
       }
    }
 }
