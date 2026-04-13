@@ -30,11 +30,9 @@ final class jros2 implements jros2Settings
     */
    private static jros2 instance;
    /**
-    * IHMC root logger. This is the same logger name used by log-tools ("us.ihmc").
-    * All IHMC code logs through this logger for a consistent configuration.
-    * Late load to let IHMC log-tools initialize first (if it exists).
+    * Logger for jros2.
     */
-   private static Logger logger;
+   private static final Logger LOGGER = Logger.getLogger("jros2");
 
    /**
     * Array of settings sources to query for setting values, in order of priority:
@@ -128,19 +126,13 @@ final class jros2 implements jros2Settings
    }
 
    /**
-    * Get the IHMC root logger for jros2.
-    * This logger uses the name "us.ihmc", the same as log-tools.
+    * Get the logger for jros2.
     *
-    * @return The IHMC logger instance
+    * @return The logger for jros2.
     */
    public static Logger getLogger()
    {
-      if (logger == null)
-      {
-         logger = Logger.getLogger("jros2");
-      }
-
-      return logger;
+      return LOGGER;
    }
 
    /**
@@ -156,7 +148,7 @@ final class jros2 implements jros2Settings
    /**
     * Log an exception with a custom message at SEVERE level.
     *
-    * @param message Custom message
+    * @param message   Custom message
     * @param throwable The exception to log
     */
    public static void logError(String message, Throwable throwable)
