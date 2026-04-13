@@ -81,6 +81,10 @@ final class jros2 implements jros2Settings
 
       boolean loaded = false;
 
+      /*
+       * Attempt to load native libraries for Android if the current platform is Android.
+       * Otherwise, attempt to load the native libraries using the fastddsjavaNativeLibrary (ihmc-native-library-loader) class.
+       */
       if (android)
       {
          try
