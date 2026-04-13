@@ -49,7 +49,7 @@ public class ROS2MessageGenerator
       }
       catch (IOException e)
       {
-         e.printStackTrace();
+         throw new RuntimeException(e);
       }
 
       if (template == null)

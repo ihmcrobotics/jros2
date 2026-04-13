@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import us.ihmc.log.LogTools;
 
 /**
  * Represents a ROS 2 topic which has a name and the message type sent over it.
@@ -96,7 +95,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
       {
          if (!topicName.startsWith("/"))
          {
-            LogTools.warn("Possible invalid topic name ({}). Topics must start with a leading forward slash (/).", topicName);
+            jros2.getLogger().warning("Possible invalid topic name (" + topicName + "). Topics must start with a leading forward slash (/).");
          }
          this.topicName = topicName;
          numberOfTokens = topicName.split("/").length - 1;
@@ -181,7 +180,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
       // Sanity check
       if (!tokens[0].equals(""))
       {
-         LogTools.error("Malformed topic name: {}. Failed to insert token at position {}.", topicName, position);
+         jros2.getLogger().severe("Malformed topic name: " + topicName + ". Failed to insert token at position " + position + ".");
          return this;
       }
 

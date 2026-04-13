@@ -1,6 +1,5 @@
 package us.ihmc.fastddsjava.profiles;
 
-import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
@@ -81,8 +80,7 @@ public final class TransportDescriptorTypeTools
          for (int i = 0; i < addressOrInterfaceNames.length; i++)
          {
             String addressOrInterfaceName = addressOrInterfaceNames[i];
-            JAXBElement<String> element = new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "address"), String.class, addressOrInterfaceName);
-            interfaceWhiteList.getAddressOrInterface().add(element);
+            interfaceWhiteList.getAddressOrInterface().add(addressOrInterfaceName);
          }
 
          transportDescriptorType.setInterfaceWhiteList(interfaceWhiteList);

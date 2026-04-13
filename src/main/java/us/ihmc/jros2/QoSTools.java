@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import jakarta.xml.bind.JAXBElement;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
 import us.ihmc.fastddsjava.profiles.gen.DataWriterQosPoliciesType;
@@ -31,7 +30,6 @@ import us.ihmc.fastddsjava.profiles.gen.ReliabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicElementType;
 
-import javax.xml.namespace.QName;
 import java.time.Duration;
 
 final class QoSTools
@@ -79,18 +77,18 @@ final class QoSTools
       Duration deadline = qosProfile.getDeadline();
       DurationType deadlineDurationType = new DurationType();
       deadlineDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(deadline.getNano())));
+                          .add(Integer.toString(deadline.getNano()));
       deadlineDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(deadline.getSeconds())));
+                          .add(Long.toString(deadline.getSeconds()));
       deadlineQosPolicyType.setPeriod(deadlineDurationType);
 
       // Lifespan
       Duration lifespan = qosProfile.getLifespan();
       DurationType lifespanDurationType = new DurationType();
       lifespanDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(lifespan.getNano())));
+                          .add(Integer.toString(lifespan.getNano()));
       lifespanDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(lifespan.getSeconds())));
+                          .add(Long.toString(lifespan.getSeconds()));
       lifespanQosPolicyType.setDuration(lifespanDurationType);
 
       // Liveliness
@@ -103,12 +101,8 @@ final class QoSTools
       // Lease duration
       Duration leaseDuration = qosProfile.getLeaseDuration();
       DurationType leaseDurationType = new DurationType();
-      leaseDurationType.getSecOrNanosec()
-                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"),
-                                              String.class,
-                                              Integer.toString(leaseDuration.getNano())));
-      leaseDurationType.getSecOrNanosec()
-                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(leaseDuration.getSeconds())));
+      leaseDurationType.getSecOrNanosec().add(Integer.toString(leaseDuration.getNano()));
+      leaseDurationType.getSecOrNanosec().add(Long.toString(leaseDuration.getSeconds()));
       livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
 
       DataWriterQosPoliciesType dataWriterQosPoliciesType = new DataWriterQosPoliciesType();
@@ -168,18 +162,18 @@ final class QoSTools
       Duration deadline = qosProfile.getDeadline();
       DurationType deadlineDurationType = new DurationType();
       deadlineDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(deadline.getNano())));
+                          .add(Integer.toString(deadline.getNano()));
       deadlineDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(deadline.getSeconds())));
+                          .add(Long.toString(deadline.getSeconds()));
       deadlineQosPolicyType.setPeriod(deadlineDurationType);
 
       // Lifespan
       Duration lifespan = qosProfile.getLifespan();
       DurationType lifespanDurationType = new DurationType();
       lifespanDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"), String.class, Integer.toString(lifespan.getNano())));
+                          .add(Integer.toString(lifespan.getNano()));
       lifespanDurationType.getSecOrNanosec()
-                          .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(lifespan.getSeconds())));
+                          .add(Long.toString(lifespan.getSeconds()));
       lifespanQosPolicyType.setDuration(lifespanDurationType);
 
       // Liveliness
@@ -192,12 +186,8 @@ final class QoSTools
       // Lease duration
       Duration leaseDuration = qosProfile.getLeaseDuration();
       DurationType leaseDurationType = new DurationType();
-      leaseDurationType.getSecOrNanosec()
-                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "nanosec"),
-                                              String.class,
-                                              Integer.toString(leaseDuration.getNano())));
-      leaseDurationType.getSecOrNanosec()
-                       .add(new JAXBElement<>(new QName(ProfilesXML.FAST_DDS_NAMESPACE_URI, "sec"), String.class, Long.toString(leaseDuration.getSeconds())));
+      leaseDurationType.getSecOrNanosec().add(Integer.toString(leaseDuration.getNano()));
+      leaseDurationType.getSecOrNanosec().add(Long.toString(leaseDuration.getSeconds()));
       livelinessQosPolicyType.setLeaseDuration(leaseDurationType);
 
       DataReaderQosPoliciesType dataReaderQosPoliciesType = new DataReaderQosPoliciesType();

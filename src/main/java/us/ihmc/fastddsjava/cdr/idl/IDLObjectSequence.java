@@ -17,7 +17,6 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
-import us.ihmc.log.LogTools;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -69,10 +68,8 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-         LogTools.error("Unable to create an instance of CDRSerializable class: " + clazz.getName());
+         throw new RuntimeException("Unable to create an instance of CDRSerializable class: " + clazz.getName(), e);
       }
-
-      return null;
    }
 
    @Override

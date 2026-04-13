@@ -18,10 +18,21 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 final class jros2 implements jros2Settings
 {
    private static final String SOURCE_NAME = "jros2.java";
+
+   /**
+    * Singleton instance of jros2.
+    */
    private static jros2 instance;
+   /**
+    * Logger for jros2.
+    */
+   private static final Logger LOGGER = Logger.getLogger("jros2");
 
    /**
     * Array of settings sources to query for setting values, in order of priority:
@@ -65,7 +76,38 @@ final class jros2 implements jros2Settings
    jros2(jros2Settings[] settingsSources)
    {
       this.settingsSources = settingsSources;
-      loaded = fastddsjavaNativeLibrary.load();
+
+      boolean android = System.getProperty("java.vendor").toLowerCase().contains("android");
+
+      boolean loaded = false;
+
+      /*
+       * Attempt to load native libraries for Android if the current platform is Android.
+       * Otherwise, attempt to load the native libraries using the fastddsjavaNativeLibrary (ihmc-native-library-loader) class.
+       */
+      if (android)
+      {
+         try
+         {
+            System.loadLibrary("log"); // Android logging library
+            System.loadLibrary("c++_shared"); // C++ STL
+            System.loadLibrary("fastcdr");
+            System.loadLibrary("fastdds");
+            System.loadLibrary("jnifastddsjava");
+
+            loaded = true;
+         }
+         catch (UnsatisfiedLinkError ignored)
+         {
+         }
+      }
+      else
+      {
+         loaded = fastddsjavaNativeLibrary.load();
+      }
+
+      this.loaded = loaded;
+
       instance = this;
    }
 
@@ -85,6 +127,37 @@ final class jros2 implements jros2Settings
       }
 
       return instance;
+   }
+
+   /**
+    * Get the logger for jros2.
+    *
+    * @return The logger for jros2.
+    */
+   public static Logger getLogger()
+   {
+      return LOGGER;
+   }
+
+   /**
+    * Log an exception with a message at SEVERE level.
+    *
+    * @param throwable The exception to log
+    */
+   public static void logError(Throwable throwable)
+   {
+      getLogger().log(Level.SEVERE, throwable.getMessage(), throwable);
+   }
+
+   /**
+    * Log an exception with a custom message at SEVERE level.
+    *
+    * @param message   Custom message
+    * @param throwable The exception to log
+    */
+   public static void logError(String message, Throwable throwable)
+   {
+      getLogger().log(Level.SEVERE, message, throwable);
    }
 
    boolean isLoaded()

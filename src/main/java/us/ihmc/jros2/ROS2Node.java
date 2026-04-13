@@ -28,7 +28,6 @@ import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
-import us.ihmc.log.LogTools;
 
 import java.io.Closeable;
 import java.util.ArrayList;
@@ -172,7 +171,7 @@ public class ROS2Node implements Closeable
       }
       catch (fastddsjavaException e)
       {
-         LogTools.error(e);
+         jros2.logError(e);
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
@@ -237,7 +236,7 @@ public class ROS2Node implements Closeable
                   }
                   catch (fastddsjavaException e)
                   {
-                     LogTools.error(e);
+                     jros2.logError(e);
                   }
 
                   /*
@@ -303,7 +302,7 @@ public class ROS2Node implements Closeable
             }
             catch (fastddsjavaException e)
             {
-               LogTools.error(e);
+               jros2.logError(e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
@@ -405,7 +404,7 @@ public class ROS2Node implements Closeable
             }
             catch (fastddsjavaException e)
             {
-               LogTools.error(e);
+               jros2.logError(e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
@@ -712,8 +711,8 @@ public class ROS2Node implements Closeable
 
          if (shmEnabled)
          {
-            LogTools.error("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
-            LogTools.error("Try restarting the process after deleting the directory.");
+            jros2.getLogger().severe("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
+            jros2.getLogger().severe("Try restarting the process after deleting the directory.");
          }
       }
    }

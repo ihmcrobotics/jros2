@@ -42,6 +42,7 @@ public class jros2GenTask extends DefaultTask
    public jros2GenTask()
    {
       typeToClass = new HashMap<>();
+      getOutputs().cacheIf(task -> false);
    }
 
    @Input

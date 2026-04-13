@@ -5,66 +5,53 @@ on:
 
 jobs:
   build-natives-linux:
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
     strategy:
       matrix:
         platform: [arm64, armhf, x86_64]
-      max-parallel: 1
-    container:
-      image: ubuntu:20.04
-      env:
-        TZ: "America/Chicago"
-        DEBIAN_FRONTEND: noninteractive
     steps:
       - name: Install dependencies
         run: |
-          apt-get update
-          apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk jaxb
+          sudo apt-get update
+          sudo apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk
           # Install newer version of cmake
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
-          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
-          apt-get -y purge libssl-dev -y
 
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
-
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARM64=1 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-arm64.bash
+
       - name: Compile native library (armhf)
         if: matrix.platform == 'armhf'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH LINUX_COMPILE_ARMHF=1 bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-armhf.bash
+
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash cppbuild.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
 
-      - name: Commit generated Java and native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.java *.so *.so.*' # Only commit generated java from Linux
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Linux'
-          push: true
+          name: natives-linux-${{ matrix.platform }}
+          path: |
+            src/main/resources/**/*.so
+            src/main/resources/**/*.so.*
+          retention-days: 1
   build-natives-windows:
     runs-on: windows-2022
-    needs: build-natives-linux
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           vsversion: 2022
@@ -75,23 +62,64 @@ jobs:
       - name: Compile native library
         run: |
           bash.exe cppbuild.bash
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.dll' # Only commit generated java from Linux
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for Windows'
-          push: true
+          name: natives-windows
+          path: src/main/resources/**/*.dll
+          retention-days: 1
+  build-natives-android:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        platform: [arm64-v8a, x86_64]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install build-essential git curl wget unzip openjdk-17-jdk
+          # Install newer version of cmake
+          wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
+          tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
+          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          rm -rf cmake-4.0.2-linux-x86_64.tar.gz
+
+      - name: Setup Android NDK
+        run: |
+          # Download and install Android NDK r27c (latest stable available for direct download)
+          wget https://dl.google.com/android/repository/android-ndk-r27c-linux.zip
+          unzip -q android-ndk-r27c-linux.zip
+          sudo mv android-ndk-r27c /opt/android-ndk
+          echo "ANDROID_NDK=/opt/android-ndk" >> $GITHUB_ENV
+
+      - name: Compile native library (arm64-v8a)
+        if: matrix.platform == 'arm64-v8a'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-arm64.bash
+
+      - name: Compile native library (x86_64)
+        if: matrix.platform == 'x86_64'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: natives-android-${{ matrix.platform }}
+          path: android/src/main/jniLibs/**/*.so
+          retention-days: 1
+
   build-natives-macos-arm:
     runs-on: macos-14
-    needs: build-natives-windows
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -99,35 +127,181 @@ jobs:
       - name: Compile native library (arm64)
         run: |
           MAC_COMPILE_ARM64=1 bash cppbuild.bash
-      - name: Commit native libraries
-        uses: EndBug/add-and-commit@v9
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          add: '*.dylib' # Only commit generated java from Linux
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS'
-          push: true
+          name: natives-macos-arm64
+          path: src/main/resources/**/*.dylib
+          retention-days: 1
+
   build-natives-macos-intel:
-    runs-on: macos-15-intel
-    needs: build-natives-macos-arm
+    runs-on: macos-14
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Pull repo
-        run: |
-          git reset --hard
-          git pull
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Compile native library (x86_64)
         run: |
-          bash cppbuild.bash
-      - name: Commit native libraries
+          MAC_COMPILE_X86_64=1 bash cppbuild.bash
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: natives-macos-x86_64
+          path: src/main/resources/**/*.dylib
+          retention-days: 1
+
+  commit-all-natives:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 10
+    needs: [build-natives-linux, build-natives-windows, build-natives-android, build-natives-macos-arm, build-natives-macos-intel]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing artifacts directory structure:"
+          find artifacts -type f
+
+      - name: Copy artifacts to repository
+        run: |
+          # Copy Linux natives to src/main/resources/
+          if [ -d "artifacts/natives-linux-arm64" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-arm64/* src/main/resources/
+          fi
+          if [ -d "artifacts/natives-linux-armhf" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-armhf/* src/main/resources/
+          fi
+          if [ -d "artifacts/natives-linux-x86_64" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-linux-x86_64/* src/main/resources/
+          fi
+
+          # Copy Windows natives to src/main/resources/
+          if [ -d "artifacts/natives-windows" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-windows/* src/main/resources/
+          fi
+
+          # Copy Android natives to android/src/main/jniLibs/
+          if [ -d "artifacts/natives-android-arm64-v8a" ]; then
+            mkdir -p android/src/main/jniLibs
+            cp -rv artifacts/natives-android-arm64-v8a/* android/src/main/jniLibs/
+          fi
+          if [ -d "artifacts/natives-android-x86_64" ]; then
+            mkdir -p android/src/main/jniLibs
+            cp -rv artifacts/natives-android-x86_64/* android/src/main/jniLibs/
+          fi
+
+          # Copy macOS natives to src/main/resources/
+          if [ -d "artifacts/natives-macos-arm64" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-macos-arm64/* src/main/resources/
+          fi
+          if [ -d "artifacts/natives-macos-x86_64" ]; then
+            mkdir -p src/main/resources
+            cp -rv artifacts/natives-macos-x86_64/* src/main/resources/
+          fi
+
+      - name: Verify native library architectures
+        run: |
+          FAIL=0
+          BASE="src/main/resources/fastddsjava/native"
+          ANDROID_BASE="android/src/main/jniLibs"
+
+          check_file() {
+            local path="$1"
+            local arch_pattern="$2"
+            local label="$3"
+            if [ ! -f "$path" ]; then
+              echo "MISSING [$label]: $path"
+              FAIL=1
+              return
+            fi
+            local info
+            info=$(file -b "$path")
+            if echo "$info" | grep -qE "$arch_pattern"; then
+              echo "OK [$label]: $path"
+            else
+              echo "WRONG ARCH [$label]: $path"
+              echo "  Expected pattern: $arch_pattern"
+              echo "  Got: $info"
+              FAIL=1
+            fi
+          }
+
+          # Linux arm64
+          check_file "$BASE/linux-arm64/libfastcdr.so.2.3.0"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libfastdds.so.3.2.2"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libjnifastddsjava.so"      "aarch64"  "linux-arm64"
+
+          # Linux armhf (32-bit ARM, EABI5)
+          check_file "$BASE/linux-armhf/libfastcdr.so.2.3.0"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libfastdds.so.3.2.2"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libjnifastddsjava.so"      "EABI5"    "linux-armhf"
+
+          # Linux x86_64
+          check_file "$BASE/linux-x86_64/libfastcdr.so.2.3.0"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libfastdds.so.3.2.2"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libjnifastddsjava.so"     "x86-64"   "linux-x86_64"
+
+          # Windows x86_64
+          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64"   "windows-x86_64"
+          check_file "$BASE/windows-x86_64/fastdds-3.2.dll"        "x86-64"   "windows-x86_64"
+          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64"   "windows-x86_64"
+
+          # macOS arm64
+          check_file "$BASE/macos-arm64/libfastcdr.2.3.0.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libfastdds.3.2.2.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libjnifastddsjava.dylib"   "arm64"    "macos-arm64"
+
+          # macOS x86_64
+          check_file "$BASE/macos-x86_64/libfastcdr.2.3.0.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libfastdds.3.2.2.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libjnifastddsjava.dylib"  "x86_64"   "macos-x86_64"
+
+          # Android arm64-v8a
+          check_file "$ANDROID_BASE/arm64-v8a/libfastcdr.so"       "aarch64"  "android-arm64-v8a"
+          check_file "$ANDROID_BASE/arm64-v8a/libfastdds.so"       "aarch64"  "android-arm64-v8a"
+          check_file "$ANDROID_BASE/arm64-v8a/libjnifastddsjava.so" "aarch64" "android-arm64-v8a"
+
+          # Android x86_64
+          check_file "$ANDROID_BASE/x86_64/libfastcdr.so"          "x86-64"   "android-x86_64"
+          check_file "$ANDROID_BASE/x86_64/libfastdds.so"          "x86-64"   "android-x86_64"
+          check_file "$ANDROID_BASE/x86_64/libjnifastddsjava.so"   "x86-64"   "android-x86_64"
+
+          if [ $FAIL -ne 0 ]; then
+            echo ""
+            echo "One or more native libraries are missing or have the wrong architecture. Aborting."
+            exit 1
+          fi
+          echo ""
+          echo "All native libraries verified."
+
+      - name: Show what files changed
+        run: |
+          echo "Git status after copying artifacts:"
+          git status
+
+      - name: Commit all native libraries
         uses: EndBug/add-and-commit@v9
         with:
-          add: '*.dylib' # Only commit generated java from Linux
+          add: |
+            src/main/resources/**/*.so
+            src/main/resources/**/*.so.*
+            src/main/resources/**/*.dll
+            src/main/resources/**/*.dylib
+            android/src/main/jniLibs/**/*.so
           author_name: ihmc-rosie
           author_email: rosie@ihmc.us
-          message: 'Rebuild natives for macOS'
+          message: 'Rebuild all native libraries'
           push: true

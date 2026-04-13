@@ -15,8 +15,6 @@
  */
 package us.ihmc.fastddsjava;
 
-import us.ihmc.log.LogTools;
-
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 public final class fastddsjavaTools
@@ -76,7 +74,7 @@ public final class fastddsjavaTools
       }
       catch (fastddsjavaException e)
       {
-         LogTools.error(e);
+         System.err.println("Fast-DDS error: %s".formatted(e.getMessage()));
       }
    }
 }
