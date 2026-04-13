@@ -26,12 +26,15 @@ final class jros2 implements jros2Settings
    private static final String SOURCE_NAME = "jros2.java";
 
    /**
-    * IHMC root logger. This is the same logger name used by log-tools ("us.ihmc").
-    * All IHMC code logs through this logger for consistent configuration.
+    * Singleton instance of jros2.
     */
-   private static final Logger LOGGER = Logger.getLogger("us.ihmc");
-
    private static jros2 instance;
+   /**
+    * IHMC root logger. This is the same logger name used by log-tools ("us.ihmc").
+    * All IHMC code logs through this logger for a consistent configuration.
+    * Late load to let IHMC log-tools initialize first (if it exists).
+    */
+   private static Logger logger;
 
    /**
     * Array of settings sources to query for setting values, in order of priority:
@@ -132,7 +135,12 @@ final class jros2 implements jros2Settings
     */
    public static Logger getLogger()
    {
-      return LOGGER;
+      if (logger == null)
+      {
+         logger = Logger.getLogger("us.ihmc");
+      }
+
+      return logger;
    }
 
    /**
@@ -142,7 +150,7 @@ final class jros2 implements jros2Settings
     */
    public static void logError(Throwable throwable)
    {
-      LOGGER.log(Level.SEVERE, throwable.getMessage(), throwable);
+      getLogger().log(Level.SEVERE, throwable.getMessage(), throwable);
    }
 
    /**
@@ -153,7 +161,7 @@ final class jros2 implements jros2Settings
     */
    public static void logError(String message, Throwable throwable)
    {
-      LOGGER.log(Level.SEVERE, message, throwable);
+      getLogger().log(Level.SEVERE, message, throwable);
    }
 
    boolean isLoaded()
