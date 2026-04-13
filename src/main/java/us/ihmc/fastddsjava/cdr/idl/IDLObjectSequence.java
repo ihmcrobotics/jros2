@@ -68,10 +68,8 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
-//         LogTools.error("Unable to create an instance of CDRSerializable class: " + clazz.getName());
+         throw new RuntimeException("Unable to create an instance of CDRSerializable class: " + clazz.getName(), e);
       }
-
-      return null;
    }
 
    @Override
