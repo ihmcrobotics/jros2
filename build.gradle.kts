@@ -142,12 +142,26 @@ tasks.register<Exec>("testInterfaceWhitelistDocker") {
    group = "verification"
 
    workingDir = projectDir
-   commandLine = listOf("bash", "src/test/docker/test-interface-whitelist.sh")
 
-   // Make test script executable
+   // Detect OS and use appropriate bash command
+   val isWindows = System.getProperty("os.name").lowercase().contains("windows")
+   commandLine = if (isWindows) {
+      // On Windows, try Git Bash or WSL bash
+      val gitBash = File("C:\\Program Files\\Git\\bin\\bash.exe")
+      val gitBash32 = File("C:\\Program Files (x86)\\Git\\bin\\bash.exe")
+      when {
+         gitBash.exists() -> listOf(gitBash.absolutePath, "src/test/docker/test-interface-whitelist.sh")
+         gitBash32.exists() -> listOf(gitBash32.absolutePath, "src/test/docker/test-interface-whitelist.sh")
+         else -> listOf("bash", "src/test/docker/test-interface-whitelist.sh") // Try bash in PATH (WSL or other)
+      }
+   } else {
+      listOf("bash", "src/test/docker/test-interface-whitelist.sh")
+   }
+
+   // Make test script executable (Unix-like systems)
    doFirst {
       val testScript = projectDir.resolve("src/test/docker/test-interface-whitelist.sh")
-      if (testScript.exists()) {
+      if (testScript.exists() && !isWindows) {
          testScript.setExecutable(true)
       }
    }

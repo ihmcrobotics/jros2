@@ -21,6 +21,19 @@ check_docker() {
         echo "Start Docker daemon to run these tests."
         exit 0
     fi
+
+    # Check if we're on Windows and Docker networking is available
+    if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ -n "$WINDIR" ]]; then
+        # Try to create a test network to verify Docker networking works
+        if ! docker network create test-network-check &> /dev/null; then
+            echo "WARNING: Docker networking not available on Windows. Skipping interface whitelist integration tests."
+            echo "These tests require Docker with Linux container support."
+            exit 0
+        fi
+        docker network rm test-network-check &> /dev/null || true
+
+        echo "NOTE: Running Docker tests on Windows. Docker networking behavior may differ from Linux."
+    fi
 }
 
 # Cleanup function
