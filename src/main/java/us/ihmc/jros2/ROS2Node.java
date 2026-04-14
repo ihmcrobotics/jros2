@@ -138,16 +138,44 @@ public class ROS2Node implements Closeable
       Rtps rtps = new Rtps();
       rtps.setName(name);
 
+      // Get interface whitelist from settings
+      String[] interfaceWhitelist = jros2.get().interfaceWhitelist();
+      boolean hasInterfaceWhitelist = interfaceWhitelist != null && interfaceWhitelist.length > 0;
+
       boolean useCustomTransports = fastddsTransports != null && fastddsTransports.length != 0;
-      rtps.setUseBuiltinTransports(!useCustomTransports);
+
+      // Track the actual transports being used for printout
+      TransportDescriptorType[] actualTransports = fastddsTransports;
+
       if (useCustomTransports)
       {
+         // Custom transports provided - use them and apply whitelist if configured
          rtps.setUseBuiltinTransports(false);
          TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         for (int i = 0; i < fastddsTransports.length; ++i)
+
+         // Apply interface whitelist to all provided transports
+         if (hasInterfaceWhitelist)
          {
-            transportDescriptorListType.getTransportDescriptor().add(fastddsTransports[i]);
+            for (int i = 0; i < fastddsTransports.length; ++i)
+            {
+               TransportDescriptorType transport = fastddsTransports[i];
+               // Only apply whitelist to UDP/TCP transports (not SHM)
+               if (!transport.getType().equals("SHM"))
+               {
+                  TransportDescriptorTypeTools.setInterfacesWhitelist(transport, interfaceWhitelist);
+               }
+               transportDescriptorListType.getTransportDescriptor().add(transport);
+            }
          }
+         else
+         {
+            // No whitelist - use transports as-is
+            for (int i = 0; i < fastddsTransports.length; ++i)
+            {
+               transportDescriptorListType.getTransportDescriptor().add(fastddsTransports[i]);
+            }
+         }
+
          profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
          ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
@@ -157,13 +185,47 @@ public class ROS2Node implements Closeable
          }
          rtps.setUserTransports(userTransports);
       }
+      else if (hasInterfaceWhitelist)
+      {
+         // No custom transports but interface whitelist configured - create default transports with whitelist
+         rtps.setUseBuiltinTransports(false);
+         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+
+         // Create UDPv4 transport with interface whitelist
+         TransportDescriptorType udpv4Transport = TransportDescriptorTypeTools.createUDPv4Transport(interfaceWhitelist);
+         transportDescriptorListType.getTransportDescriptor().add(udpv4Transport);
+
+         // Create UDPv6 transport with interface whitelist
+         TransportDescriptorType udpv6Transport = TransportDescriptorTypeTools.createUDPv6Transport(interfaceWhitelist);
+         transportDescriptorListType.getTransportDescriptor().add(udpv6Transport);
+
+         // Create SHM transport (no interface whitelist needed for shared memory)
+         TransportDescriptorType shmTransport = TransportDescriptorTypeTools.createSHMTransport();
+         transportDescriptorListType.getTransportDescriptor().add(shmTransport);
+
+         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
+
+         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
+         userTransports.getTransportId().add(udpv4Transport.getTransportId());
+         userTransports.getTransportId().add(udpv6Transport.getTransportId());
+         userTransports.getTransportId().add(shmTransport.getTransportId());
+         rtps.setUserTransports(userTransports);
+
+         // Update actualTransports for printout
+         actualTransports = new TransportDescriptorType[] { udpv4Transport, udpv6Transport, shmTransport };
+      }
+      else
+      {
+         // No custom transports and no interface whitelist - use builtin transports
+         rtps.setUseBuiltinTransports(true);
+      }
 
       checkSHMAvailabilityWindows(rtps, fastddsTransports);
 
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
-      ROS2NodePrintout.print(getClass(), participantProfile, fastddsTransports);
+      ROS2NodePrintout.print(getClass(), participantProfile, actualTransports);
 
       try
       {

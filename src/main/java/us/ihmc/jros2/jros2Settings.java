@@ -33,7 +33,7 @@ interface jros2Settings
    /**
     * @return true if intraprocess delivery should be enabled. Using intraprocess delivery means publishers will directly
     *       call the receive-method of subscriptions. Please note that any operations the subscriptions perform in
-    *       the {@link ROS2SubscriptionReader} will block the publish method of the {@link ROS2Publisher}. Do not enable
+    *       the {@link ROS2MessageReader} will block the publish method of the {@link ROS2Publisher}. Do not enable
     *       in performance critical loops without using {@link AsyncROS2Publisher}.
     *       See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/intraprocess.html">Intra-process delivery</a>
     */

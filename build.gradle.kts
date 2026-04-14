@@ -126,3 +126,41 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
     )
     outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }
+
+// Copy runtime dependencies for Docker integration tests
+tasks.register<Copy>("copyDockerDependencies") {
+   description = "Copy runtime dependencies for Docker integration tests"
+   group = "build"
+
+   from(configurations.runtimeClasspath)
+   into(layout.buildDirectory.dir("docker-libs"))
+}
+
+// Docker integration test for interface whitelisting
+tasks.register<Exec>("testInterfaceWhitelistDocker") {
+   description = "Run Docker-based integration tests for interface whitelisting"
+   group = "verification"
+
+   workingDir = projectDir
+   commandLine = listOf("bash", "src/test/docker/test-interface-whitelist.sh")
+
+   // Make test script executable
+   doFirst {
+      val testScript = projectDir.resolve("src/test/docker/test-interface-whitelist.sh")
+      if (testScript.exists()) {
+         testScript.setExecutable(true)
+      }
+   }
+
+   // Don't fail build if Docker not available - test script handles that
+   isIgnoreExitValue = false
+
+   // Show output
+   standardOutput = System.out
+   errorOutput = System.err
+}
+
+// Run Docker integration tests as part of test task
+tasks.named("test") {
+   finalizedBy("testInterfaceWhitelistDocker")
+}

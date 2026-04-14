@@ -29,6 +29,7 @@ import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TypesType;
 
 // https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/making_xml_profiles.html
@@ -175,15 +176,57 @@ public class ProfilesXML
          {
             try
             {
-               // Serialize the profile object to XML
-               String profileXml = xmlMapper.writeValueAsString(element.profile);
+               String profileXml;
 
-               // Remove XML declaration if present
-               profileXml = profileXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
+               // Special handling for TransportDescriptorListType
+               if (element.profile instanceof TransportDescriptorListType)
+               {
+                  TransportDescriptorListType transportList = (TransportDescriptorListType) element.profile;
+                  StringBuilder transportXml = new StringBuilder();
+                  transportXml.append("<").append(element.elementName).append(">\n");
 
-               // Replace the root element name with the correct element name
-               profileXml = profileXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<" + element.elementName);
-               profileXml = profileXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</" + element.elementName + ">");
+                  // Serialize each transport descriptor individually
+                  for (TransportDescriptorType descriptor : transportList.getTransportDescriptor())
+                  {
+                     String descriptorXml = xmlMapper.writeValueAsString(descriptor);
+                     descriptorXml = descriptorXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
+                     descriptorXml = descriptorXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<transport_descriptor");
+                     descriptorXml = descriptorXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</transport_descriptor>");
+
+                     // Fix interfaceWhiteList structure - remove double nesting of addressOrInterface
+                     descriptorXml = descriptorXml.replaceAll("<addressOrInterface>\\s*<addressOrInterface>", "<address>");
+                     descriptorXml = descriptorXml.replaceAll("</addressOrInterface>\\s*</addressOrInterface>", "</address>");
+
+                     // Indent descriptor XML (1 extra level)
+                     String[] descriptorLines = descriptorXml.split("\n");
+                     for (String line : descriptorLines)
+                     {
+                        if (!line.trim().isEmpty())
+                        {
+                           transportXml.append("  ").append(line).append("\n");
+                        }
+                     }
+                  }
+
+                  transportXml.append("</").append(element.elementName).append(">");
+                  profileXml = transportXml.toString();
+               }
+               else
+               {
+                  // Normal serialization for other profile types
+                  profileXml = xmlMapper.writeValueAsString(element.profile);
+
+                  // Remove XML declaration if present
+                  profileXml = profileXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
+
+                  // Replace the root element name with the correct element name
+                  profileXml = profileXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<" + element.elementName);
+                  profileXml = profileXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</" + element.elementName + ">");
+
+                  // Fix double-nested transport_id elements in userTransports
+                  profileXml = profileXml.replaceAll("<transport_id>\\s*<transport_id>", "<transport_id>");
+                  profileXml = profileXml.replaceAll("</transport_id>\\s*</transport_id>", "</transport_id>");
+               }
 
                // Add proper indentation (2 levels: 8 spaces)
                String[] lines = profileXml.split("\n");

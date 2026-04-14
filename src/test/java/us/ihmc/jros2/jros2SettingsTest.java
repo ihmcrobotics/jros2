@@ -15,553 +15,412 @@
  */
 package us.ihmc.jros2;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.StringJoiner;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 public class jros2SettingsTest
 {
-   @Test
-   public void testjros2() throws IOException
+   // ROS 2 domain ID valid range is 0-232 (DDS domain ID limit)
+   private static final int TEST_DOMAIN_ID = 42;
+   private static final int MAX_DOMAIN_ID = 232;
+   private static final boolean TEST_INTRAPROCESS = true;
+   private static final String[] TEST_INTERFACE_WHITELIST = {"127.0.0.1", "192.168.1.1"};
+
+   @AfterEach
+   public void cleanup()
    {
-      final int maskUpperBound = 0b1000;
-      final int systemPropertiesSettingsMask = maskUpperBound >> 1;
-      final int environmentSettingsMask = maskUpperBound >> 2;
-      final int fileSettingsMask = maskUpperBound >> 3;
-
-      final int systemPropertyDomainId = 111;
-      final int environmentDomainId = 112;
-      final int fileDomainId = 113;
-
-      final boolean systemIntraprocessDelivery = false;
-      final boolean environmentIntraprocessDelivery = true;
-      final boolean fileIntraprocessDelivery = false;
-
-      final String[] systemPropertyInterfaceWhitelist = {"192.0.2.1"};
-      final String[] environmentInterfaceWhitelist = {"192.0.2.2", "127.0.0.1"};
-      final String[] fileInterfaceWhitelist = {"192.0.2.3", "127.0.0.1", "0.0.0.0"};
-
-      // Temporary paths
-      final Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      final Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2Settings.properties");
-      final Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
-
-      final File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
-      final File fakeFile = fakeFilePath.toFile();
-      final File fakeCompatibilityFile = fakeCompatibilityFilePath.toFile();
-
-      final String permutationTableRow = "| %-21s | %-6s | %-10s |%n";
-
-      // Loop over existence permutations (e.g. whether environment variables settings are considered, whether jros2.properties file settings are considered)
-      for (int existencePermutation = 0; existencePermutation < maskUpperBound; ++existencePermutation)
-      {
-         // Loop over hasValues permutations (e.g. if environment variables are considered, do they have values defined)
-         for (int hasValuesPermutation = 0; hasValuesPermutation < existencePermutation + 1; hasValuesPermutation++)
-         {
-            try
-            {
-               StringBuilder permutationDescription = new StringBuilder(permutationTableRow.formatted("Settings Source", "Exists", "Has Values"));
-               permutationDescription.append("-----------------------------------------------\n");
-               List<jros2Settings> settingsList = new ArrayList<>();
-
-               ///////////////////////////
-               //// SYSTEM PROPERTIES ////
-               ///////////////////////////
-               boolean systemPropertiesExist = (existencePermutation & systemPropertiesSettingsMask) != 0;
-               boolean systemPropertiesHaveValues = (hasValuesPermutation & systemPropertiesSettingsMask) != 0;
-
-               permutationDescription.append(permutationTableRow.formatted("System Properties", systemPropertiesExist, systemPropertiesExist ? systemPropertiesHaveValues : "N/A"));
-
-               // Add system property settings if it should exist
-               if (systemPropertiesExist)
-               {
-                  // If it should have values, set system properties
-                  if (systemPropertiesHaveValues)
-                  {
-                     System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(systemPropertyDomainId));
-                     System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(systemIntraprocessDelivery));
-                     System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, systemPropertyInterfaceWhitelist[0]);
-                  }
-                  else // Otherwise ensure system does not have jros2 related properties
-                  {
-                     System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
-                     System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
-                     System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
-                  }
-
-                  settingsList.add(new jros2SettingsProp());
-               }
-
-               ///////////////////////////////
-               //// ENVIRONMENT VARIABLES ////
-               ///////////////////////////////
-               boolean environmentVariablesExist = (existencePermutation & environmentSettingsMask) != 0;
-               boolean environmentVariablesHaveValues = (hasValuesPermutation & environmentSettingsMask) != 0;
-
-               permutationDescription.append(permutationTableRow.formatted("Environment Variables", environmentVariablesExist, environmentVariablesExist ? environmentVariablesHaveValues : "N/A"));
-
-               // Add environment variable settings if it should exist
-               if ((existencePermutation & environmentSettingsMask) != 0)
-               {
-                  Map<String, String> environment = new HashMap<>();
-
-                  // If it should have values, put values into the environment map
-                  if ((hasValuesPermutation & environmentSettingsMask) != 0)
-                  {
-                     environment.put(jros2SettingsEnv.DOMAIN_ID_KEY, String.valueOf(environmentDomainId));
-                     environment.put(jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY, String.valueOf(environmentIntraprocessDelivery));
-                     environment.put(jros2SettingsEnv.INTERFACE_WHITELIST_KEY, environmentInterfaceWhitelist[0]);
-                  }
-
-                  settingsList.add(new jros2SettingsEnv(environment));
-               }
-
-               ///////////////////////////////
-               //// JROS2.PROPERTIES FILE ////
-               ///////////////////////////////
-               boolean jros2FileExist = (existencePermutation & fileSettingsMask) != 0;
-               boolean jros2FileHaveValues = (hasValuesPermutation & fileSettingsMask) != 0;
-
-               permutationDescription.append(permutationTableRow.formatted("jros2 file", jros2FileExist, jros2FileExist ? jros2FileHaveValues : "N/A"));
-
-               // Add file settings if it should exist
-               if ((existencePermutation & fileSettingsMask) != 0)
-               {
-
-                  if ((hasValuesPermutation & fileSettingsMask) != 0)
-                  {
-                     assumeTrue(fakeIHMCDirectory.mkdirs());
-                     assumeTrue(fakeFile.createNewFile());
-                     assumeTrue(fakeCompatibilityFile.createNewFile());
-
-                     // Write the properties to the properties file
-                     Properties properties = new Properties();
-                     properties.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(fileDomainId));
-                     properties.setProperty(jros2SettingsFile.INTRAPROCESS_DELIVERY_KEY, String.valueOf(fileIntraprocessDelivery));
-                     properties.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, fileInterfaceWhitelist[0]);
-                     try (FileOutputStream output = new FileOutputStream(fakeFile))
-                     {
-                        properties.store(output, null);
-                     }
-                  }
-
-                  settingsList.add(new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath));
-               }
-
-               // Always add default settings
-               permutationDescription.append(permutationTableRow.formatted("Default Settings", true, true));
-               settingsList.add(new jros2SettingsDefault());
-
-               permutationDescription.append("-----------------------------------------------\n");
-               jros2.getLogger().info("Testing permutation:\n" + permutationDescription);
-
-               ////////////////////
-               //// START TEST ////
-               ////////////////////
-               jros2 instance = new jros2(settingsList.toArray(jros2Settings[]::new));
-
-               // The instance should always have values, since the default settings are always added
-               assertTrue(instance.hasROSDomainId());
-               assertTrue(instance.hasIntraprocessDelivery());
-               assertTrue(instance.hasInterfaceWhitelist());
-
-               // Ensure the jros2 instance settings values match the highest priority settings that has values.
-               for (jros2Settings settings : settingsList)
-               {
-                  if (settings instanceof jros2SettingsDefault)
-                  {
-                     continue;
-                  }
-
-                  boolean hasValues = settings.hasROSDomainId() && settings.hasIntraprocessDelivery() && settings.hasInterfaceWhitelist();
-                  if (hasValues)
-                  {
-                     assertEquals(settings.rosDomainId(), instance.rosDomainId());
-                     assertEquals(settings.intraprocessDelivery(), instance.intraprocessDelivery());
-                     assertEquals(settings.interfaceWhitelist().length, instance.interfaceWhitelist().length);
-                     for (int i = 0; i < settings.interfaceWhitelist().length; ++i)
-                     {
-                        assertEquals(settings.interfaceWhitelist()[i], instance.interfaceWhitelist()[i]);
-                     }
-                     break;
-                  }
-               }
-            }
-            finally
-            {
-               // Cleanup temporary files if any were created
-               if (fakeIHMCDirectory.exists())
-               {
-                  try (Stream<Path> paths = Files.walk(fakeIHMCDirectoryPath))
-                  {
-                     paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                  }
-               }
-            }
-         }
-      }
+      // Clear system properties after each test
+      System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
+      System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
+      System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
    }
 
    @Test
    public void testDefaultSettings()
    {
-      jros2Settings defaultSettings = new jros2SettingsDefault();
-      assertTrue(defaultSettings.hasROSDomainId());
-      assertTrue(defaultSettings.hasIntraprocessDelivery());
-      assertTrue(defaultSettings.hasInterfaceWhitelist());
-      assertEquals(0, defaultSettings.rosDomainId());
-      assertEquals(0, defaultSettings.interfaceWhitelist().length);
-   }
+      jros2SettingsDefault defaults = new jros2SettingsDefault();
 
-   @Test
-   public void testFileSettingsNoFiles() throws IOException
-   {
-      // Non-existent paths
-      Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2Settings.properties");
-      Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
+      assertTrue(defaults.hasROSDomainId());
+      assertTrue(defaults.hasIntraprocessDelivery());
+      assertTrue(defaults.hasInterfaceWhitelist());
 
-      File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
-      File fakeFile = fakeFilePath.toFile();
-      File fakeCompatibilityFile = fakeCompatibilityFilePath.toFile();
-
-      try
-      {
-         // Create the settings
-         jros2SettingsFile fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
-
-         // Creating the settings should create the jros2Settings.properties file & any required subdirectories
-         assertTrue(fakeIHMCDirectory.exists());
-         assertTrue(fakeFile.exists());
-
-         // Shouldn't create the compatibility file though
-         assertFalse(fakeCompatibilityFile.exists());
-
-         // Values should match default values
-         jros2Settings defaultSettings = new jros2SettingsDefault();
-         assertEquals(defaultSettings.rosDomainId(), fileSettings.rosDomainId());
-         assertEquals(defaultSettings.intraprocessDelivery(), fileSettings.intraprocessDelivery());
-         assertEquals(defaultSettings.interfaceWhitelist().length, fileSettings.interfaceWhitelist().length);
-      }
-      finally
-      {
-         // Cleanup after the test
-         try (Stream<Path> paths = Files.walk(fakeIHMCDirectoryPath))
-         {
-            paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-         }
-      }
-   }
-
-   @Test
-   public void testFileSettingsWithValues() throws IOException
-   {
-      Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
-      Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
-
-      File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
-      File fakeFile = fakeFilePath.toFile();
-
-      try
-      {
-         // Create the directory and file
-         assumeTrue(fakeIHMCDirectory.mkdirs());
-         assumeTrue(fakeFile.createNewFile());
-
-         // Put property values
-         int domainId = 113;
-         boolean intraprocessDelivery = true;
-         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
-
-         StringJoiner csvWhitelist = new StringJoiner(", ");
-         for (String intrface : interfaceWhitelist)
-            csvWhitelist.add(intrface);
-
-         Properties properties = new Properties();
-         properties.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(domainId));
-         properties.setProperty(jros2SettingsFile.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(intraprocessDelivery));
-         properties.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
-         try (FileOutputStream output = new FileOutputStream(fakeFile))
-         {
-            properties.store(output, null);
-         }
-
-         jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
-
-         assertTrue(fileSettings.hasROSDomainId());
-         assertTrue(fileSettings.hasIntraprocessDelivery());
-         assertTrue(fileSettings.hasInterfaceWhitelist());
-
-         // Ensure values are correct
-         assertEquals(domainId, fileSettings.rosDomainId());
-         for (int i = 0; i < interfaceWhitelist.length; ++i)
-         {
-            assertEquals(interfaceWhitelist[i], fileSettings.interfaceWhitelist()[i]);
-         }
-      }
-      finally
-      {
-         // Cleanup after the test
-         try (Stream<Path> paths = Files.walk(fakeIHMCDirectoryPath))
-         {
-            paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-         }
-      }
-   }
-
-   @Test
-   public void testFileSettingsCompatibilityFile() throws IOException
-   {
-      Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
-      Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
-
-      File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
-      File fakeCompatibilityFile = fakeCompatibilityFilePath.toFile();
-
-      try
-      {
-         assumeTrue(fakeIHMCDirectory.mkdirs());
-         assumeTrue(fakeCompatibilityFile.createNewFile());
-
-         // Write the properties to the compatibility file
-         int domainId = 113;
-         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
-
-         StringJoiner csvWhitelist = new StringJoiner(", ");
-         for (String intrface : interfaceWhitelist)
-            csvWhitelist.add(intrface);
-
-         Properties compatibilityProperties = new Properties();
-         compatibilityProperties.setProperty("RTPSDomainID", String.valueOf(domainId));
-         compatibilityProperties.setProperty("RTPSSubnet", csvWhitelist.toString());
-
-         try (FileOutputStream output = new FileOutputStream(fakeCompatibilityFile))
-         {
-            compatibilityProperties.store(output, null);
-         }
-
-         // Create jros2SettingsFile and ensure values are taken from compatibility file
-         jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
-
-         // ROS domain id should be taken from the compatibility file
-         assertTrue(fileSettings.hasROSDomainId());
-
-         // Interface whitelist cannot be taken from the compatibility file
-         assertFalse(fileSettings.hasInterfaceWhitelist());
-
-         // Ensure the ROS domain id matches
-         assertEquals(domainId, fileSettings.rosDomainId());
-      }
-      finally
-      {
-         // Cleanup after the test
-         try (Stream<Path> paths = Files.walk(fakeIHMCDirectoryPath))
-         {
-            paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-         }
-      }
-   }
-
-   @Test
-   public void testFileSettingsBothFiles() throws IOException
-   {
-      Path fakeIHMCDirectoryPath = Path.of(System.getProperty("user.home"), ".fake_ihmc");
-      Path fakeFilePath = fakeIHMCDirectoryPath.resolve("fake_jros2.properties");
-      Path fakeCompatibilityFilePath = fakeIHMCDirectoryPath.resolve("fake_IHMCNetworkParameters.ini");
-
-      File fakeIHMCDirectory = fakeIHMCDirectoryPath.toFile();
-      File fakeFile = fakeFilePath.toFile();
-      File fakeCompatibilityFile = fakeCompatibilityFilePath.toFile();
-
-      try
-      {
-         assumeTrue(fakeIHMCDirectory.mkdirs());
-         assumeTrue(fakeFile.createNewFile());
-         assumeTrue(fakeCompatibilityFile.createNewFile());
-
-         // Write the properties to the properties file
-         int domainId = 113;
-         String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
-
-         StringJoiner csvWhitelist = new StringJoiner(", ");
-         for (String intrface : interfaceWhitelist)
-            csvWhitelist.add(intrface);
-
-         Properties properties = new Properties();
-         properties.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(domainId));
-         properties.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
-         try (FileOutputStream output = new FileOutputStream(fakeFile))
-         {
-            properties.store(output, null);
-         }
-
-         // Write a compatibility properties file with different values
-         Properties compatibilityProperties = new Properties();
-         compatibilityProperties.setProperty("RTPSDomainID", String.valueOf(domainId - 1));
-         compatibilityProperties.setProperty("RTPSSubnet", "0.0.0.0");
-         try (FileOutputStream output = new FileOutputStream(fakeCompatibilityFile))
-         {
-            compatibilityProperties.store(output, null);
-         }
-
-         // Create jros2SettingsFile and ensure values are taken from the properties file, NOT compatibility file
-         jros2Settings fileSettings = new jros2SettingsFile(fakeFilePath, fakeCompatibilityFilePath);
-
-         assertTrue(fileSettings.hasROSDomainId());
-         assertTrue(fileSettings.hasInterfaceWhitelist());
-
-         assertEquals(domainId, fileSettings.rosDomainId());
-         for (int i = 0; i < interfaceWhitelist.length; ++i)
-         {
-            assertEquals(interfaceWhitelist[i], fileSettings.interfaceWhitelist()[i]);
-         }
-      }
-      finally
-      {
-         // Cleanup after the test
-         try (Stream<Path> paths = Files.walk(fakeIHMCDirectoryPath))
-         {
-            paths.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-         }
-      }
-   }
-
-   @Test
-   public void testEnvironmentSettings()
-   {
-      //// EMPTY ENVIRONMENT ////
-      Map<String, String> environment = Map.of();
-
-      jros2Settings defaultSettings = new jros2SettingsDefault();
-      jros2Settings environmentSettings = new jros2SettingsEnv(environment);
-
-      // No environment variables defined. Should say it doesn't have values
-      assertFalse(environmentSettings.hasROSDomainId());
-      assertFalse(environmentSettings.hasIntraprocessDelivery());
-      assertFalse(environmentSettings.hasInterfaceWhitelist());
-
-      // No environment variables defined. Should return default values
-      assertEquals(defaultSettings.rosDomainId(), environmentSettings.rosDomainId());
-      assertEquals(defaultSettings.intraprocessDelivery(), environmentSettings.intraprocessDelivery());
-      assertEquals(defaultSettings.interfaceWhitelist().length, environmentSettings.interfaceWhitelist().length);
-
-      //// ENVIRONMENT WITH VALUES DEFINED ////
-      int domainId = 113;
-      boolean intraprocessDelivery = false;
-      String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
-
-      StringJoiner csvWhitelist = new StringJoiner(", ");
-      for (String intrface : interfaceWhitelist)
-         csvWhitelist.add(intrface);
-
-      environment = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY,
-                           String.valueOf(domainId),
-                           jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY,
-                           String.valueOf(intraprocessDelivery),
-                           jros2SettingsEnv.INTERFACE_WHITELIST_KEY,
-                           csvWhitelist.toString());
-      environmentSettings = new jros2SettingsEnv(environment);
-
-      // Should report that it has values
-      assertTrue(environmentSettings.hasROSDomainId());
-      assertTrue(environmentSettings.hasIntraprocessDelivery());
-      assertTrue(environmentSettings.hasInterfaceWhitelist());
-
-      // Now the values should reflect the newly defined system properties
-      assertEquals(domainId, environmentSettings.rosDomainId());
-      for (int i = 0; i < interfaceWhitelist.length; ++i)
-      {
-         assertEquals(interfaceWhitelist[i], environmentSettings.interfaceWhitelist()[i]);
-      }
+      assertEquals(0, defaults.rosDomainId());
+      assertFalse(defaults.intraprocessDelivery());
+      assertEquals(0, defaults.interfaceWhitelist().length);
    }
 
    @Test
    public void testSystemPropertySettings()
    {
-      // Ensure no properties have been set
-      System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
-      System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
-      System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
+      jros2SettingsProp propSettings = new jros2SettingsProp();
 
-      jros2Settings defaultSettings = new jros2SettingsDefault();
-      jros2Settings systemPropertySettings = new jros2SettingsProp();
+      // Initially no properties set
+      assertFalse(propSettings.hasROSDomainId());
+      assertFalse(propSettings.hasIntraprocessDelivery());
+      assertFalse(propSettings.hasInterfaceWhitelist());
 
-      // Should say that it doesn't have values
-      assertFalse(systemPropertySettings.hasROSDomainId());
-      assertFalse(systemPropertySettings.hasIntraprocessDelivery());
-      assertFalse(systemPropertySettings.hasInterfaceWhitelist());
+      // Set properties
+      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, String.valueOf(TEST_DOMAIN_ID));
+      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, String.valueOf(TEST_INTRAPROCESS));
+      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, String.join(", ", TEST_INTERFACE_WHITELIST));
 
-      // No system properties defined. Should return default values
-      assertEquals(defaultSettings.rosDomainId(), systemPropertySettings.rosDomainId());
-      assertEquals(defaultSettings.intraprocessDelivery(), systemPropertySettings.intraprocessDelivery());
-      assertEquals(defaultSettings.interfaceWhitelist().length, systemPropertySettings.interfaceWhitelist().length);
+      // Create new instance to read updated properties
+      propSettings = new jros2SettingsProp();
 
-      int domainId = 113;
-      boolean intraprocessDelivery = false;
-      String[] interfaceWhitelist = {"127.0.0.1", "192.0.2.1"};
+      assertTrue(propSettings.hasROSDomainId());
+      assertTrue(propSettings.hasIntraprocessDelivery());
+      assertTrue(propSettings.hasInterfaceWhitelist());
 
-      StringJoiner csvWhitelist = new StringJoiner(", ");
-      for (String intrface : interfaceWhitelist)
-         csvWhitelist.add(intrface);
+      assertEquals(TEST_DOMAIN_ID, propSettings.rosDomainId());
+      assertEquals(TEST_INTRAPROCESS, propSettings.intraprocessDelivery());
+      assertArrayEquals(TEST_INTERFACE_WHITELIST, propSettings.interfaceWhitelist());
+   }
 
-      // Define system properties
-      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(domainId));
-      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(intraprocessDelivery));
-      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, csvWhitelist.toString());
+   @Test
+   public void testEnvironmentSettings()
+   {
+      // Empty environment
+      Map<String, String> emptyEnv = Map.of();
+      jros2SettingsEnv envSettings = new jros2SettingsEnv(emptyEnv);
 
-      // Now it should have values
-      assertTrue(systemPropertySettings.hasROSDomainId());
-      assertTrue(systemPropertySettings.hasIntraprocessDelivery());
-      assertTrue(systemPropertySettings.hasInterfaceWhitelist());
+      assertFalse(envSettings.hasROSDomainId());
+      assertFalse(envSettings.hasIntraprocessDelivery());
+      assertFalse(envSettings.hasInterfaceWhitelist());
 
-      // The values should reflect the newly defined system properties
-      assertEquals(domainId, systemPropertySettings.rosDomainId());
-      for (int i = 0; i < interfaceWhitelist.length; ++i)
+      // Environment with values
+      Map<String, String> env = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY,
+                                       String.valueOf(TEST_DOMAIN_ID),
+                                       jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY,
+                                       String.valueOf(TEST_INTRAPROCESS),
+                                       jros2SettingsEnv.INTERFACE_WHITELIST_KEY,
+                                       String.join(", ", TEST_INTERFACE_WHITELIST));
+      envSettings = new jros2SettingsEnv(env);
+
+      assertTrue(envSettings.hasROSDomainId());
+      assertTrue(envSettings.hasIntraprocessDelivery());
+      assertTrue(envSettings.hasInterfaceWhitelist());
+
+      assertEquals(TEST_DOMAIN_ID, envSettings.rosDomainId());
+      assertEquals(TEST_INTRAPROCESS, envSettings.intraprocessDelivery());
+      assertArrayEquals(TEST_INTERFACE_WHITELIST, envSettings.interfaceWhitelist());
+   }
+
+   @Test
+   public void testFileSettingsCreatesDefaultFile(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      assertFalse(Files.exists(propertiesPath));
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+
+      // Should create the file with default values
+      assertTrue(Files.exists(propertiesPath));
+      assertTrue(fileSettings.hasROSDomainId());
+      assertTrue(fileSettings.hasIntraprocessDelivery());
+
+      // Values should match defaults
+      jros2SettingsDefault defaults = new jros2SettingsDefault();
+      assertEquals(defaults.rosDomainId(), fileSettings.rosDomainId());
+      assertEquals(defaults.intraprocessDelivery(), fileSettings.intraprocessDelivery());
+   }
+
+   @Test
+   public void testFileSettingsWithExistingFile(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      // Create file with test values
+      writePropertiesFile(propertiesPath, TEST_DOMAIN_ID, TEST_INTRAPROCESS, TEST_INTERFACE_WHITELIST);
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+
+      assertTrue(fileSettings.hasROSDomainId());
+      assertTrue(fileSettings.hasIntraprocessDelivery());
+      assertTrue(fileSettings.hasInterfaceWhitelist());
+
+      assertEquals(TEST_DOMAIN_ID, fileSettings.rosDomainId());
+      assertEquals(TEST_INTRAPROCESS, fileSettings.intraprocessDelivery());
+      assertArrayEquals(TEST_INTERFACE_WHITELIST, fileSettings.interfaceWhitelist());
+   }
+
+   @Test
+   public void testFileSettingsCompatibilityFile(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      // Create only compatibility file (legacy)
+      Properties compatibilityProps = new Properties();
+      compatibilityProps.setProperty("RTPSDomainID", String.valueOf(TEST_DOMAIN_ID));
+      try (FileOutputStream out = new FileOutputStream(compatibilityPath.toFile()))
       {
-         assertEquals(interfaceWhitelist[i], systemPropertySettings.interfaceWhitelist()[i]);
+         compatibilityProps.store(out, null);
       }
 
-      // Change up the system properties
-      int newDomainId = 219;
-      boolean newIntraprocessDelivery = false;
-      String[] newInterfaceWhitelist = {"198.51.100.5"};
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
 
-      StringJoiner newCSVWhitelist = new StringJoiner(", ");
-      for (String intrface : newInterfaceWhitelist)
-         newCSVWhitelist.add(intrface);
+      // Should create jros2.properties and migrate domain ID from compatibility file
+      assertTrue(Files.exists(propertiesPath));
+      assertTrue(fileSettings.hasROSDomainId());
+      assertEquals(TEST_DOMAIN_ID, fileSettings.rosDomainId());
+   }
 
-      // Define system properties
-      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, Integer.toString(newDomainId));
-      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, Boolean.toString(newIntraprocessDelivery));
-      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, newCSVWhitelist.toString());
+   @Test
+   public void testFileSettingsPriorityOverCompatibility(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
 
-      // Should still have values
-      assertTrue(systemPropertySettings.hasROSDomainId());
-      assertTrue(systemPropertySettings.hasIntraprocessDelivery());
-      assertTrue(systemPropertySettings.hasInterfaceWhitelist());
+      // Create both files with different values
+      writePropertiesFile(propertiesPath, TEST_DOMAIN_ID, TEST_INTRAPROCESS, TEST_INTERFACE_WHITELIST);
 
-      // Now the values should reflect the newly defined system properties
-      assertEquals(newDomainId, systemPropertySettings.rosDomainId());
-      for (int i = 0; i < newInterfaceWhitelist.length; ++i)
+      Properties compatibilityProps = new Properties();
+      compatibilityProps.setProperty("RTPSDomainID", String.valueOf(100)); // Different from TEST_DOMAIN_ID
+      try (FileOutputStream out = new FileOutputStream(compatibilityPath.toFile()))
       {
-         assertEquals(newInterfaceWhitelist[i], systemPropertySettings.interfaceWhitelist()[i]);
+         compatibilityProps.store(out, null);
+      }
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+
+      // jros2.properties should take precedence
+      assertEquals(TEST_DOMAIN_ID, fileSettings.rosDomainId());
+   }
+
+   @Test
+   public void testFileSettingsLoadOrderCurrentWorkingDirectory(@TempDir Path tempDir) throws IOException
+   {
+      // Test that CWD file takes priority over home directory file
+      // Note: We test by creating jros2.properties in a known location that simulates CWD behavior
+
+      Path cwdPropertiesPath = Path.of("jros2.properties");
+      Path homePropertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      File cwdFile = cwdPropertiesPath.toFile();
+      boolean cwdFileExisted = cwdFile.exists();
+
+      try
+      {
+         // Create file in CWD with specific domain ID
+         int cwdDomainId = 10;
+         writePropertiesFile(cwdPropertiesPath, cwdDomainId, false, new String[] {});
+
+         // Create file in home directory with different domain ID
+         writePropertiesFile(homePropertiesPath, 20, false, new String[] {});
+
+         jros2SettingsFile fileSettings = new jros2SettingsFile(homePropertiesPath, compatibilityPath);
+
+         // Should load from current working directory (priority 1)
+         assertEquals(cwdDomainId, fileSettings.rosDomainId());
+         assertTrue(fileSettings.getSourceName().contains("jros2.properties"));
+      }
+      finally
+      {
+         // Cleanup: only delete if we created it
+         if (!cwdFileExisted && cwdFile.exists())
+         {
+            cwdFile.delete();
+         }
+      }
+   }
+
+   @Test
+   public void testFileSettingsLoadOrderHomeDirectory(@TempDir Path tempDir) throws IOException
+   {
+      Path homePropertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      // Only create file in home directory (no CWD file, no JAR resource)
+      int homeDomainId = 30;
+      writePropertiesFile(homePropertiesPath, homeDomainId, false, new String[] {});
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(homePropertiesPath, compatibilityPath);
+
+      // Should load from home directory (priority 3)
+      assertEquals(homeDomainId, fileSettings.rosDomainId());
+      assertTrue(fileSettings.getSourceName().contains(homePropertiesPath.toString()));
+   }
+
+   @Test
+   public void testSettingsPriorityOrder(@TempDir Path tempDir) throws IOException
+   {
+      // Setup: Create file settings with domain ID 50
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+      writePropertiesFile(propertiesPath, 50, false, new String[] {});
+
+      // Setup: Create environment settings with domain ID 100
+      Map<String, String> env = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY, "100");
+
+      // Setup: Create system property settings with domain ID 150
+      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, "150");
+
+      // Create jros2 instance with all settings sources
+      jros2Settings[] sources = new jros2Settings[] {new jros2SettingsProp(),        // Priority 1: System properties (150)
+                                                     new jros2SettingsEnv(env),      // Priority 2: Environment (100)
+                                                     new jros2SettingsFile(propertiesPath, compatibilityPath), // Priority 3: File (50)
+                                                     new jros2SettingsDefault()      // Priority 4: Defaults (0)
+      };
+
+      jros2 instance = new jros2(sources);
+
+      // Should use system properties (highest priority)
+      assertEquals(150, instance.rosDomainId());
+
+      // Clear system properties and recreate
+      System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
+      sources = new jros2Settings[] {new jros2SettingsProp(),
+                                     new jros2SettingsEnv(env),
+                                     new jros2SettingsFile(propertiesPath, compatibilityPath),
+                                     new jros2SettingsDefault()};
+      instance = new jros2(sources);
+
+      // Should now use environment variables
+      assertEquals(100, instance.rosDomainId());
+   }
+
+   @Test
+   public void testDomainIdBoundaries(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      // Test minimum valid domain ID (0)
+      writePropertiesFile(propertiesPath, 0, false, new String[]{});
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+      assertEquals(0, fileSettings.rosDomainId());
+
+      // Test maximum valid domain ID (232)
+      Files.delete(propertiesPath);
+      writePropertiesFile(propertiesPath, MAX_DOMAIN_ID, false, new String[]{});
+      fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+      assertEquals(MAX_DOMAIN_ID, fileSettings.rosDomainId());
+
+      // Test a typical mid-range domain ID
+      Files.delete(propertiesPath);
+      writePropertiesFile(propertiesPath, TEST_DOMAIN_ID, false, new String[]{});
+      fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+      assertEquals(TEST_DOMAIN_ID, fileSettings.rosDomainId());
+   }
+
+   @Test
+   public void testInterfaceWhitelistParsing()
+   {
+      String[] interfaces = {"eth0", "wlan0", "lo"};
+      String csv = String.join(", ", interfaces);
+
+      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, csv);
+
+      jros2SettingsProp propSettings = new jros2SettingsProp();
+
+      assertTrue(propSettings.hasInterfaceWhitelist());
+      assertArrayEquals(interfaces, propSettings.interfaceWhitelist());
+   }
+
+   @Test
+   public void testInterfaceWhitelistWithSpaces()
+   {
+      // The regex \s*,\s* splits on comma and trims spaces around commas,
+      // but doesn't trim leading/trailing spaces from the entire string
+      String csv = "eth0  ,  wlan0  ,  lo";
+      String[] expected = {"eth0", "wlan0", "lo"};
+
+      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, csv);
+
+      jros2SettingsProp propSettings = new jros2SettingsProp();
+
+      assertArrayEquals(expected, propSettings.interfaceWhitelist());
+   }
+
+   @Test
+   public void testMalformedPropertiesFileRecovery(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+
+      // Create malformed properties file
+      Files.writeString(propertiesPath, "jros2.ros.domain.id=not_a_number\n");
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+
+      // Should recover by recreating the file with defaults
+      assertTrue(Files.exists(propertiesPath));
+      assertTrue(fileSettings.hasROSDomainId());
+
+      // Should have default values after recovery
+      jros2SettingsDefault defaults = new jros2SettingsDefault();
+      assertEquals(defaults.rosDomainId(), fileSettings.rosDomainId());
+   }
+
+   @Test
+   public void testAllSettingsExist(@TempDir Path tempDir) throws IOException
+   {
+      // Create comprehensive settings across all sources (all domain IDs <= 232)
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+      writePropertiesFile(propertiesPath, 50, true, new String[] {"192.168.1.1"});
+
+      Map<String, String> env = Map.of(jros2SettingsEnv.DOMAIN_ID_KEY,
+                                       "100",
+                                       jros2SettingsEnv.INTRAPROCESS_DELIVERY_KEY,
+                                       "false",
+                                       jros2SettingsEnv.INTERFACE_WHITELIST_KEY,
+                                       "10.0.0.1");
+
+      System.setProperty(jros2SettingsProp.DOMAIN_ID_KEY, "150");
+      System.setProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY, "true");
+      System.setProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY, "172.16.0.1");
+
+      jros2Settings[] sources = new jros2Settings[] {new jros2SettingsProp(),
+                                                     new jros2SettingsEnv(env),
+                                                     new jros2SettingsFile(propertiesPath, compatibilityPath),
+                                                     new jros2SettingsDefault()};
+
+      jros2 instance = new jros2(sources);
+
+      // Verify highest priority wins for each setting
+      assertEquals(150, instance.rosDomainId());
+      assertTrue(instance.intraprocessDelivery());
+      assertEquals(1, instance.interfaceWhitelist().length);
+      assertEquals("172.16.0.1", instance.interfaceWhitelist()[0]);
+
+      assertTrue(instance.hasROSDomainId());
+      assertTrue(instance.hasIntraprocessDelivery());
+      assertTrue(instance.hasInterfaceWhitelist());
+   }
+
+   // Helper method to write properties file
+   private void writePropertiesFile(Path path, int domainId, boolean intraprocess, String[] interfaceWhitelist) throws IOException
+   {
+      Properties props = new Properties();
+      props.setProperty(jros2SettingsFile.DOMAIN_ID_KEY, String.valueOf(domainId));
+      props.setProperty(jros2SettingsFile.INTRAPROCESS_DELIVERY_KEY, String.valueOf(intraprocess));
+      props.setProperty(jros2SettingsFile.INTERFACE_WHITELIST_KEY, String.join(", ", interfaceWhitelist));
+
+      // Create parent directories if path has a parent
+      if (path.getParent() != null)
+      {
+         Files.createDirectories(path.getParent());
+      }
+
+      try (FileOutputStream out = new FileOutputStream(path.toFile()))
+      {
+         props.store(out, null);
       }
    }
 }

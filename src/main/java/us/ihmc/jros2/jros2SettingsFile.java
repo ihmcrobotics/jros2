@@ -19,12 +19,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * Settings for jros2, parsed from $HOME/.ihmc/jros2.properties
+ * Settings for jros2, parsed from jros2.properties file.
+ * Searches for jros2.properties in the following order:
+ * <ol>
+ *    <li>Current working directory (./jros2.properties)</li>
+ *    <li>JAR resources (/jros2.properties)</li>
+ *    <li>User home directory ($HOME/.ihmc/jros2.properties)</li>
+ * </ol>
  */
 class jros2SettingsFile implements jros2Settings
 {
@@ -44,7 +51,8 @@ class jros2SettingsFile implements jros2Settings
    private boolean intraprocessDelivery;
    private String[] interfaceWhitelist;
 
-   private final boolean fileExists;
+   private boolean fileExists;
+   private String loadedFrom;
 
    jros2SettingsFile()
    {
@@ -59,6 +67,8 @@ class jros2SettingsFile implements jros2Settings
       rosDomainId = DEFAULTS.rosDomainId();
       intraprocessDelivery = DEFAULTS.intraprocessDelivery();
       interfaceWhitelist = DEFAULTS.interfaceWhitelist();
+      fileExists = false;
+      loadedFrom = null;
 
       try
       {
@@ -68,15 +78,9 @@ class jros2SettingsFile implements jros2Settings
       {
       }
 
-      if (filePath.toFile().exists())
+      if (!fileExists)
       {
-         fileExists = true;
-      }
-      else
-      {
-         jros2.getLogger().severe("There was an issue creating the jros2 settings file: " + filePath.toFile().getAbsolutePath());
-
-         fileExists = false;
+         jros2.getLogger().fine("No jros2.properties file found in current directory, JAR resources, or " + filePath.toFile().getAbsolutePath());
       }
    }
 
@@ -109,32 +113,92 @@ class jros2SettingsFile implements jros2Settings
 
    private void load() throws IOException
    {
-      File file = filePath.toFile();
-
-      if (!file.exists())
-      {
-         createNewSettingsFile();
-      }
-
       Properties properties = new Properties();
+      boolean loaded = false;
 
-      try (FileInputStream input = new FileInputStream(file))
+      // 1. Try loading from current working directory
+      File cwdFile = new File("jros2.properties");
+      if (cwdFile.exists())
       {
-         properties.load(input);
+         try (FileInputStream input = new FileInputStream(cwdFile))
+         {
+            properties.load(input);
+            loaded = true;
+            fileExists = true;
+            loadedFrom = cwdFile.getAbsolutePath();
+            jros2.getLogger().fine("Loaded jros2.properties from current working directory: " + loadedFrom);
+         }
+         catch (IOException e)
+         {
+            jros2.getLogger().warning("Found jros2.properties in current directory but failed to load: " + e.getMessage());
+         }
       }
 
-      try
+      // 2. Try loading from JAR resources
+      if (!loaded)
       {
-         rosDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
-         intraprocessDelivery = Boolean.parseBoolean(properties.getProperty(INTRAPROCESS_DELIVERY_KEY));
-         interfaceWhitelist = jros2Settings.splitInterfaceWhitelistFromCSV(properties.getProperty(INTERFACE_WHITELIST_KEY));
+         try (InputStream resourceStream = jros2SettingsFile.class.getResourceAsStream("/jros2.properties"))
+         {
+            if (resourceStream != null)
+            {
+               properties.load(resourceStream);
+               loaded = true;
+               fileExists = true;
+               loadedFrom = "JAR resources (/jros2.properties)";
+               jros2.getLogger().fine("Loaded jros2.properties from JAR resources");
+            }
+         }
+         catch (IOException e)
+         {
+            jros2.getLogger().warning("Found jros2.properties in JAR resources but failed to load: " + e.getMessage());
+         }
       }
-      catch (Exception e)
+
+      // 3. Try loading from user home directory (~/.ihmc/jros2.properties)
+      if (!loaded)
       {
-         // Possibly malformed keys or values, reset the file content
-         if (deleteRetries++ < 10 && file.delete())
+         File file = filePath.toFile();
+
+         if (!file.exists())
          {
             createNewSettingsFile();
+         }
+
+         try (FileInputStream input = new FileInputStream(file))
+         {
+            properties.load(input);
+            loaded = true;
+            fileExists = true;
+            loadedFrom = file.getAbsolutePath();
+            jros2.getLogger().fine("Loaded jros2.properties from: " + loadedFrom);
+         }
+      }
+
+      // Parse properties if any file was loaded
+      if (loaded)
+      {
+         try
+         {
+            rosDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
+            intraprocessDelivery = Boolean.parseBoolean(properties.getProperty(INTRAPROCESS_DELIVERY_KEY));
+            interfaceWhitelist = jros2Settings.splitInterfaceWhitelistFromCSV(properties.getProperty(INTERFACE_WHITELIST_KEY));
+         }
+         catch (Exception e)
+         {
+            // Possibly malformed keys or values
+            // Only attempt to recreate if it was the user home directory file
+            if (loadedFrom != null && loadedFrom.equals(filePath.toFile().getAbsolutePath()))
+            {
+               File file = filePath.toFile();
+               if (deleteRetries++ < 10 && file.delete())
+               {
+                  createNewSettingsFile();
+               }
+            }
+            else
+            {
+               jros2.getLogger().warning("Failed to parse jros2.properties from " + loadedFrom + ": " + e.getMessage());
+            }
          }
       }
    }
@@ -165,7 +229,7 @@ class jros2SettingsFile implements jros2Settings
    @Override
    public String getSourceName()
    {
-      return SOURCE_NAME;
+      return loadedFrom != null ? loadedFrom : SOURCE_NAME;
    }
 
    @Override
