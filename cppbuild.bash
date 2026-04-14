@@ -66,7 +66,7 @@ elif [ "$MAC_COMPILE_X86_64" == "1" ]; then
   export LDFLAGS="$ARCH_FLAGS"
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
   # Tell JavaCPP to pass arch flag by wrapping compiler with explicit flags
-  JAVACPP_COMP_ARGS="-Dplatform.compiler=g++ $ARCH_FLAGS -Dplatform.link=g++ $ARCH_FLAGS"
+  JAVACPP_COMP_ARGS="-Dplatform.compiler=\"g++ $ARCH_FLAGS\" -Dplatform.link=\"g++ $ARCH_FLAGS\""
 elif [ "$MAC_COMPILE_ARM64" == "1" ]; then
   # Export compiler flags so cmake and all subproject builds pick up the target arch
   ARCH_FLAGS="-arch arm64"
@@ -75,7 +75,7 @@ elif [ "$MAC_COMPILE_ARM64" == "1" ]; then
   export LDFLAGS="$ARCH_FLAGS"
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64"
   # Tell JavaCPP to pass arch flag by wrapping compiler with explicit flags
-  JAVACPP_COMP_ARGS="-Dplatform.compiler=g++ $ARCH_FLAGS -Dplatform.link=g++ $ARCH_FLAGS"
+  JAVACPP_COMP_ARGS="-Dplatform.compiler=\"g++ $ARCH_FLAGS\" -Dplatform.link=\"g++ $ARCH_FLAGS\""
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
