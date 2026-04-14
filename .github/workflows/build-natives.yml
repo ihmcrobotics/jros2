@@ -134,7 +134,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: natives-macos-${{ matrix.platform }}
-          path: src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}/**/*.dylib
+          path: src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}/*.dylib
           retention-days: 1
 
   commit-all-natives:
@@ -188,12 +188,12 @@ jobs:
 
           # Copy macOS natives to src/main/resources/
           if [ -d "artifacts/natives-macos-arm64" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-macos-arm64/* src/main/resources/
+            mkdir -p src/main/resources/fastddsjava/native/macos-arm64
+            cp -rv artifacts/natives-macos-arm64/* src/main/resources/fastddsjava/native/macos-arm64/
           fi
           if [ -d "artifacts/natives-macos-x86_64" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-macos-x86_64/* src/main/resources/
+            mkdir -p src/main/resources/fastddsjava/native/macos-x86_64
+            cp -rv artifacts/natives-macos-x86_64/* src/main/resources/fastddsjava/native/macos-x86_64/
           fi
 
       - name: Verify native library architectures
