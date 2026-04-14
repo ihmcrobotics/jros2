@@ -127,6 +127,10 @@ public class ROS2Node implements Closeable
       }
       this.domainId = domainId;
 
+      // Configure transports based on custom transports and interface whitelist
+      TransportDescriptorTypeTools.TransportConfiguration transportConfig = TransportDescriptorTypeTools.configureTransports(fastddsTransports,
+                                                                                                                             jros2.get().interfaceWhitelist());
+
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
@@ -138,32 +142,38 @@ public class ROS2Node implements Closeable
       Rtps rtps = new Rtps();
       rtps.setName(name);
 
-      boolean useCustomTransports = fastddsTransports != null && fastddsTransports.length != 0;
-      rtps.setUseBuiltinTransports(!useCustomTransports);
-      if (useCustomTransports)
+      // Configure RTPS transports
+      rtps.setUseBuiltinTransports(transportConfig.shouldUseBuiltinTransports());
+
+      if (!transportConfig.shouldUseBuiltinTransports())
       {
-         rtps.setUseBuiltinTransports(false);
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
-         for (int i = 0; i < fastddsTransports.length; ++i)
+         TransportDescriptorType[] transports = transportConfig.getTransports();
+
+         // Only add transports to XML profile if they haven't been added before (to avoid duplicate transport IDs)
+         if (transportConfig.shouldAddToXml())
          {
-            transportDescriptorListType.getTransportDescriptor().add(fastddsTransports[i]);
+            TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+            for (TransportDescriptorType transport : transports)
+            {
+               transportDescriptorListType.getTransportDescriptor().add(transport);
+            }
+            profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
          }
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
          ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         for (int i = 0; i < fastddsTransports.length; ++i)
+         for (TransportDescriptorType transport : transports)
          {
-            userTransports.getTransportId().add(fastddsTransports[i].getTransportId());
+            userTransports.getTransportId().add(transport.getTransportId());
          }
          rtps.setUserTransports(userTransports);
       }
 
-      checkSHMAvailabilityWindows(rtps, fastddsTransports);
+      checkSHMAvailabilityWindows(rtps, transportConfig.getTransports());
 
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
-      ROS2NodePrintout.print(getClass(), participantProfile, fastddsTransports);
+      ROS2NodePrintout.print(getClass(), participantProfile, transportConfig.getTransports());
 
       try
       {
