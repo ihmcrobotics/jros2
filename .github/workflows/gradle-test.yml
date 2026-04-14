@@ -1,4 +1,4 @@
-name: Gradle test
+name: Test
 
 on:
   workflow_dispatch:
@@ -10,62 +10,103 @@ on:
   #   - cron: '0 */8 * * *'
 
 jobs:
-  gradle-test-linux:
+  test-linux:
+    name: Linux (ROS 2 ${{ matrix.ros_distro }})
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       matrix:
         ros_distro: [humble, jazzy, kilted]
     container:
       image: osrf/ros:${{ matrix.ros_distro }}-desktop
     steps:
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get install -y wget curl unzip
-
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run JUnit tests
+      - name: Run tests
         run: ROS_DISTRO=${{ matrix.ros_distro }} ./gradlew test
 
-      - name: Print any error report files
-        if: always()
+      - name: Print error logs
+        if: failure()
         run: find . -name 'hs_err*' -type f -exec cat {} +
-  gradle-test-windows:
+
+  test-docker:
+    name: Docker Integration Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build JAR
+        run: ./gradlew jar
+
+      - name: Run Docker integration tests
+        run: ROS_DISTRO=jazzy ./gradlew testInterfaceWhitelistDocker
+
+  test-windows:
+    name: Windows
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run JUnit tests
+      - name: Run tests
+        shell: bash
         run: ./gradlew test
-  gradle-test-macos-intel:
-    runs-on: macos-15-intel
+
+  test-macos-intel:
+    name: macOS (Intel)
+    runs-on: macos-26-intel
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup JDK
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run JUnit tests
+      - name: Run tests
+        run: ./gradlew test
+
+  test-macos-arm:
+    name: macOS (ARM)
+    runs-on: macos-26
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run tests
         run: ./gradlew test
