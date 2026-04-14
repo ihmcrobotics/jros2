@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Representation of a ROS 2 interface. Possible implementations:
@@ -33,6 +34,16 @@ import java.util.Map;
  */
 public abstract class InterfaceContext
 {
+   private static final Set<String> JAVA_LANG_CLASSES = Set.of(
+      "Boolean", "Byte", "Character", "Class", "ClassLoader", "ClassValue",
+      "Compiler", "Double", "Enum", "Float", "InheritableThreadLocal",
+      "Integer", "Long", "Math", "Number", "Object", "Package", "Process",
+      "ProcessBuilder", "Runtime", "RuntimePermission", "SecurityManager",
+      "Short", "StackTraceElement", "StrictMath", "String", "StringBuffer",
+      "StringBuilder", "System", "Thread", "ThreadGroup", "ThreadLocal",
+      "Throwable", "Void"
+   );
+
    private final String schema;
    private final Map<String, InterfaceField> fields;
 
@@ -72,7 +83,15 @@ public abstract class InterfaceContext
       packageName = package0Resource1[0];
       resourceName = package0Resource1[1];
       javaPackageName = packageName;
-      javaClassName = resourceName.split("\\.")[0]; // TODO: Possibly add sanitation
+      javaClassName = resourceName.split("\\.")[0];
+
+      // Append _ if the name conflicts with java.lang classes
+      if (JAVA_LANG_CLASSES.contains(javaClassName))
+      {
+         System.out.println(javaClassName + " is a java.lang class, appending _ to class name");
+
+         javaClassName = javaClassName + "_";
+      }
    }
 
    public String getPackageResourceName()
