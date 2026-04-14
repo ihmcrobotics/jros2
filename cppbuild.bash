@@ -64,6 +64,12 @@ elif [ "$MAC_COMPILE_X86_64" == "1" ]; then
   export CXXFLAGS="-arch x86_64"
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
   JAVACPP_COMP_ARGS="-properties macosx-x86_64 -Dplatform=macosx-x86_64"
+elif [ "$MAC_COMPILE_ARM64" == "1" ]; then
+  # Export compiler flags so cmake and all subproject builds pick up the target arch
+  export CFLAGS="-arch arm64"
+  export CXXFLAGS="-arch arm64"
+  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64"
+  JAVACPP_COMP_ARGS="-properties macosx-arm64 -Dplatform=macosx-arm64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
