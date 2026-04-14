@@ -141,6 +141,16 @@ tasks.register<Exec>("testInterfaceWhitelistDocker") {
    description = "Run Docker-based integration tests for interface whitelisting (Linux only)"
    group = "verification"
 
+   val isLinux = System.getProperty("os.name").lowercase().contains("linux")
+
+   // Only run on Linux
+   onlyIf {
+      if (!isLinux) {
+         println("INFO: Docker interface whitelist tests only run on Linux. Skipping on ${System.getProperty("os.name")}.")
+      }
+      isLinux
+   }
+
    workingDir = projectDir
    commandLine = listOf("bash", "src/test/docker/test-interface-whitelist.sh")
 
@@ -151,9 +161,6 @@ tasks.register<Exec>("testInterfaceWhitelistDocker") {
          testScript.setExecutable(true)
       }
    }
-
-   // Don't fail build - test script handles platform detection and graceful skipping
-   isIgnoreExitValue = false
 
    // Show output
    standardOutput = System.out

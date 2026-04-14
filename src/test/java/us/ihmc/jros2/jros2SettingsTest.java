@@ -56,7 +56,9 @@ public class jros2SettingsTest
       assertTrue(defaults.hasInterfaceWhitelist());
 
       assertEquals(0, defaults.rosDomainId());
-      assertFalse(defaults.intraprocessDelivery());
+      // Intraprocess delivery is enabled in GitHub CI, disabled otherwise
+      boolean isCI = System.getenv().containsKey("GITHUB_ACTIONS");
+      assertEquals(isCI, defaults.intraprocessDelivery());
       assertEquals(0, defaults.interfaceWhitelist().length);
    }
 
