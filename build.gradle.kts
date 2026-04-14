@@ -136,37 +136,23 @@ tasks.register<Copy>("copyDockerDependencies") {
    into(layout.buildDirectory.dir("docker-libs"))
 }
 
-// Docker integration test for interface whitelisting
+// Docker integration test for interface whitelisting (Linux only)
 tasks.register<Exec>("testInterfaceWhitelistDocker") {
-   description = "Run Docker-based integration tests for interface whitelisting"
+   description = "Run Docker-based integration tests for interface whitelisting (Linux only)"
    group = "verification"
 
    workingDir = projectDir
+   commandLine = listOf("bash", "src/test/docker/test-interface-whitelist.sh")
 
-   // Detect OS and use appropriate bash command
-   val isWindows = System.getProperty("os.name").lowercase().contains("windows")
-   commandLine = if (isWindows) {
-      // On Windows, try Git Bash or WSL bash
-      val gitBash = File("C:\\Program Files\\Git\\bin\\bash.exe")
-      val gitBash32 = File("C:\\Program Files (x86)\\Git\\bin\\bash.exe")
-      when {
-         gitBash.exists() -> listOf(gitBash.absolutePath, "src/test/docker/test-interface-whitelist.sh")
-         gitBash32.exists() -> listOf(gitBash32.absolutePath, "src/test/docker/test-interface-whitelist.sh")
-         else -> listOf("bash", "src/test/docker/test-interface-whitelist.sh") // Try bash in PATH (WSL or other)
-      }
-   } else {
-      listOf("bash", "src/test/docker/test-interface-whitelist.sh")
-   }
-
-   // Make test script executable (Unix-like systems)
+   // Make test script executable
    doFirst {
       val testScript = projectDir.resolve("src/test/docker/test-interface-whitelist.sh")
-      if (testScript.exists() && !isWindows) {
+      if (testScript.exists()) {
          testScript.setExecutable(true)
       }
    }
 
-   // Don't fail build if Docker not available - test script handles that
+   // Don't fail build - test script handles platform detection and graceful skipping
    isIgnoreExitValue = false
 
    // Show output

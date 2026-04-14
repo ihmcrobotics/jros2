@@ -38,7 +38,7 @@ jobs:
   test-windows:
     name: Windows
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -56,7 +56,7 @@ jobs:
   test-macos-intel:
     name: macOS (Intel)
     runs-on: macos-26-intel
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -66,12 +66,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Docker
-        run: |
-          brew install docker colima
-          colima start
-          docker version
 
       - name: Run tests
         run: ./gradlew test
@@ -79,7 +73,7 @@ jobs:
   test-macos-arm:
     name: macOS (ARM)
     runs-on: macos-26
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -89,12 +83,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Setup Docker
-        run: |
-          brew install docker colima
-          colima start
-          docker version
 
       - name: Run tests
         run: ./gradlew test

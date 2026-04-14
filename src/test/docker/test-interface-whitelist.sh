@@ -3,10 +3,20 @@ set -e
 
 # Interface whitelist integration test using Docker
 # Tests that interface whitelisting correctly restricts network communication
+# NOTE: These tests only run on Linux due to Docker networking requirements
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 IMAGE_NAME="jros2-test:latest"
+
+# Check if running on Linux
+check_platform() {
+    if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+        echo "INFO: Docker interface whitelist tests only run on Linux."
+        echo "Skipping tests on $OSTYPE platform."
+        exit 0
+    fi
+}
 
 # Check if Docker is installed and running
 check_docker() {
@@ -20,19 +30,6 @@ check_docker() {
         echo "WARNING: Docker daemon not running. Skipping interface whitelist integration tests."
         echo "Start Docker daemon to run these tests."
         exit 0
-    fi
-
-    # Check if we're on Windows and Docker networking is available
-    if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]] || [[ -n "$WINDIR" ]]; then
-        # Try to create a test network to verify Docker networking works
-        if ! docker network create test-network-check &> /dev/null; then
-            echo "WARNING: Docker networking not available on Windows. Skipping interface whitelist integration tests."
-            echo "These tests require Docker with Linux container support."
-            exit 0
-        fi
-        docker network rm test-network-check &> /dev/null || true
-
-        echo "NOTE: Running Docker tests on Windows. Docker networking behavior may differ from Linux."
     fi
 }
 
@@ -221,6 +218,9 @@ test_loopback_only_blocks_containers() {
 # Main test execution
 main() {
     echo "=== jros2 Interface Whitelist Integration Tests ==="
+
+    # Check platform
+    check_platform
 
     # Check Docker availability
     check_docker
