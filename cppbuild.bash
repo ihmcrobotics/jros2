@@ -156,7 +156,7 @@ if [ ! -f javacpp.jar ]; then
   unzip -j javacpp-platform-$JAVACPP_VERSION-bin.zip
 fi
 
-java -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java
+java -jar javacpp.jar us/ihmc/fastddsjava/pointers/fastddsjavaInfoMapper.java $JAVACPP_COMP_ARGS
 
 cp us/ihmc/fastddsjava/pointers/*.java ../src/main/java/us/ihmc/fastddsjava/pointers/
 
