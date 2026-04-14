@@ -74,6 +74,11 @@ public final class TransportDescriptorTypeTools
     */
    private static final Map<String, TransportDescriptorType> descriptorCache = new HashMap<>();
 
+   /*
+    * Track which transport IDs have been registered in XML profiles to avoid duplicates
+    */
+   private static final java.util.Set<String> registeredTransportIds = new java.util.HashSet<>();
+
    /**
     * Create a UDPv4 transport descriptor.
     *
@@ -239,7 +244,22 @@ public final class TransportDescriptorTypeTools
                }
             }
          }
-         return new TransportConfiguration(customTransports, false, true);
+
+         // Check if these transports need to be added to XML
+         boolean shouldAddToXml = false;
+         synchronized (registeredTransportIds)
+         {
+            for (TransportDescriptorType transport : customTransports)
+            {
+               if (!registeredTransportIds.contains(transport.getTransportId()))
+               {
+                  shouldAddToXml = true;
+                  registeredTransportIds.add(transport.getTransportId());
+               }
+            }
+         }
+
+         return new TransportConfiguration(customTransports, false, shouldAddToXml);
       }
 
       // Whitelist without custom transports - create separate transport per interface
@@ -279,6 +299,15 @@ public final class TransportDescriptorTypeTools
 
             cachedTransports = transports.toArray(new TransportDescriptorType[0]);
             cachedWhitelistKey = whitelistKey;
+
+            // Register these transport IDs
+            synchronized (registeredTransportIds)
+            {
+               for (TransportDescriptorType transport : cachedTransports)
+               {
+                  registeredTransportIds.add(transport.getTransportId());
+               }
+            }
          }
 
          return new TransportConfiguration(cachedTransports, false, isFirstTime);

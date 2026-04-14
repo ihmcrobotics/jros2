@@ -41,6 +41,7 @@ final class ROS2NodePrintout
 
    /**
     * Prints the configuration details of a ROS2 node to the logger.
+    * Can be disabled by setting the system property "jros2.node.printout" to "false".
     *
     * @param nodeClass            The class of the ROS2 node being created
     * @param participantProfile   The participant profile containing domain ID and RTPS configuration
@@ -48,6 +49,12 @@ final class ROS2NodePrintout
     */
    static void print(Class<? extends ROS2Node> nodeClass, ParticipantProfileType participantProfile, TransportDescriptorType... transportDescriptors)
    {
+      // Check if printout is disabled via system property
+      if ("false".equalsIgnoreCase(System.getProperty("jros2.node.printout")))
+      {
+         return;
+      }
+
       StringBuilder printout = PRINTOUT.get();
       printout.setLength(0);
       printout.append('\n').append('\t');
