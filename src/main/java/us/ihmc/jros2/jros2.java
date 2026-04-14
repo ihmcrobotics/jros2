@@ -18,8 +18,11 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
+import java.util.logging.Formatter;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
 
 final class jros2 implements jros2Settings
 {
@@ -33,6 +36,33 @@ final class jros2 implements jros2Settings
     * Logger for jros2.
     */
    private static final Logger LOGGER = Logger.getLogger("jros2");
+
+   static
+   {
+      LOGGER.setUseParentHandlers(false);
+      StreamHandler handler = new StreamHandler(System.out, new Formatter()
+      {
+         private final java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+         @Override
+         public String format(LogRecord record)
+         {
+            String timestamp = dateFormat.format(new java.util.Date(record.getMillis()));
+            String method = record.getSourceClassName() + "." + record.getSourceMethodName();
+            return String.format("%s [%s] %s: %s%n", timestamp, method, record.getLevel(), record.getMessage());
+         }
+      })
+      {
+         @Override
+         public synchronized void publish(LogRecord record)
+         {
+            super.publish(record);
+            flush();
+         }
+      };
+      handler.setLevel(Level.ALL);
+      LOGGER.addHandler(handler);
+   }
 
    /**
     * Array of settings sources to query for setting values, in order of priority:

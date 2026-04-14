@@ -127,6 +127,10 @@ public class ROS2Node implements Closeable
       }
       this.domainId = domainId;
 
+      // Configure transports based on custom transports and interface whitelist
+      TransportDescriptorTypeTools.TransportConfiguration transportConfig = TransportDescriptorTypeTools.configureTransports(fastddsTransports,
+                                                                                                                             jros2.get().interfaceWhitelist());
+
       ProfilesXML profilesXML = new ProfilesXML();
 
       ParticipantProfileType participantProfile = new ParticipantProfileType();
@@ -138,94 +142,38 @@ public class ROS2Node implements Closeable
       Rtps rtps = new Rtps();
       rtps.setName(name);
 
-      // Get interface whitelist from settings
-      String[] interfaceWhitelist = jros2.get().interfaceWhitelist();
-      boolean hasInterfaceWhitelist = interfaceWhitelist != null && interfaceWhitelist.length > 0;
+      // Configure RTPS transports
+      rtps.setUseBuiltinTransports(transportConfig.shouldUseBuiltinTransports());
 
-      boolean useCustomTransports = fastddsTransports != null && fastddsTransports.length != 0;
-
-      // Track the actual transports being used for printout
-      TransportDescriptorType[] actualTransports = fastddsTransports;
-
-      if (useCustomTransports)
+      if (!transportConfig.shouldUseBuiltinTransports())
       {
-         // Custom transports provided - use them and apply whitelist if configured
-         rtps.setUseBuiltinTransports(false);
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+         TransportDescriptorType[] transports = transportConfig.getTransports();
 
-         // Apply interface whitelist to all provided transports
-         if (hasInterfaceWhitelist)
+         // Only add transports to XML profile if they haven't been added before (to avoid duplicate transport IDs)
+         if (transportConfig.shouldAddToXml())
          {
-            for (int i = 0; i < fastddsTransports.length; ++i)
+            TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
+            for (TransportDescriptorType transport : transports)
             {
-               TransportDescriptorType transport = fastddsTransports[i];
-               // Only apply whitelist to UDP/TCP transports (not SHM)
-               if (!transport.getType().equals("SHM"))
-               {
-                  TransportDescriptorTypeTools.setInterfacesWhitelist(transport, interfaceWhitelist);
-               }
                transportDescriptorListType.getTransportDescriptor().add(transport);
             }
+            profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
          }
-         else
-         {
-            // No whitelist - use transports as-is
-            for (int i = 0; i < fastddsTransports.length; ++i)
-            {
-               transportDescriptorListType.getTransportDescriptor().add(fastddsTransports[i]);
-            }
-         }
-
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
 
          ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         for (int i = 0; i < fastddsTransports.length; ++i)
+         for (TransportDescriptorType transport : transports)
          {
-            userTransports.getTransportId().add(fastddsTransports[i].getTransportId());
+            userTransports.getTransportId().add(transport.getTransportId());
          }
          rtps.setUserTransports(userTransports);
       }
-      else if (hasInterfaceWhitelist)
-      {
-         // No custom transports but interface whitelist configured - create default transports with whitelist
-         rtps.setUseBuiltinTransports(false);
-         TransportDescriptorListType transportDescriptorListType = new TransportDescriptorListType();
 
-         // Create UDPv4 transport with interface whitelist
-         TransportDescriptorType udpv4Transport = TransportDescriptorTypeTools.createUDPv4Transport(interfaceWhitelist);
-         transportDescriptorListType.getTransportDescriptor().add(udpv4Transport);
-
-         // Create UDPv6 transport with interface whitelist
-         TransportDescriptorType udpv6Transport = TransportDescriptorTypeTools.createUDPv6Transport(interfaceWhitelist);
-         transportDescriptorListType.getTransportDescriptor().add(udpv6Transport);
-
-         // Create SHM transport (no interface whitelist needed for shared memory)
-         TransportDescriptorType shmTransport = TransportDescriptorTypeTools.createSHMTransport();
-         transportDescriptorListType.getTransportDescriptor().add(shmTransport);
-
-         profilesXML.addTransportDescriptorsProfile(transportDescriptorListType);
-
-         ParticipantProfileType.Rtps.UserTransports userTransports = new UserTransports();
-         userTransports.getTransportId().add(udpv4Transport.getTransportId());
-         userTransports.getTransportId().add(udpv6Transport.getTransportId());
-         userTransports.getTransportId().add(shmTransport.getTransportId());
-         rtps.setUserTransports(userTransports);
-
-         // Update actualTransports for printout
-         actualTransports = new TransportDescriptorType[] { udpv4Transport, udpv6Transport, shmTransport };
-      }
-      else
-      {
-         // No custom transports and no interface whitelist - use builtin transports
-         rtps.setUseBuiltinTransports(true);
-      }
-
-      checkSHMAvailabilityWindows(rtps, fastddsTransports);
+      checkSHMAvailabilityWindows(rtps, transportConfig.getTransports());
 
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
-      ROS2NodePrintout.print(getClass(), participantProfile, actualTransports);
+      ROS2NodePrintout.print(getClass(), participantProfile, transportConfig.getTransports());
 
       try
       {

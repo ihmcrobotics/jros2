@@ -20,22 +20,41 @@ import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
 import java.util.List;
-import java.util.StringJoiner;
 
-class ROS2NodePrintout
+/**
+ * Utility class for printing ROS2 node configuration information.
+ * <p>
+ * This class generates formatted output describing the configuration of a ROS2 node,
+ * including its domain ID, transport descriptors, interface whitelists, and intraprocess delivery settings.
+ * <p>
+ * Uses thread-local {@link StringBuilder}s to avoid generating garbage during string construction.
+ */
+final class ROS2NodePrintout
 {
+   private static final ThreadLocal<StringBuilder> PRINTOUT = ThreadLocal.withInitial(() -> new StringBuilder(512));
+   private static final ThreadLocal<StringBuilder> WHITELIST = ThreadLocal.withInitial(() -> new StringBuilder(256));
+
    static
    {
       jros2.load();
    }
 
-   public static void print(Class<? extends ROS2Node> nodeClass, ParticipantProfileType participantProfile, TransportDescriptorType... transportDescriptors)
+   /**
+    * Prints the configuration details of a ROS2 node to the logger.
+    *
+    * @param nodeClass            The class of the ROS2 node being created
+    * @param participantProfile   The participant profile containing domain ID and RTPS configuration
+    * @param transportDescriptors Optional transport descriptors specifying custom transports and interface whitelists
+    */
+   static void print(Class<? extends ROS2Node> nodeClass, ParticipantProfileType participantProfile, TransportDescriptorType... transportDescriptors)
    {
-      StringJoiner printout = new StringJoiner("\n\t", "\n\t", "");
+      StringBuilder printout = PRINTOUT.get();
+      printout.setLength(0);
+      printout.append('\n').append('\t');
 
       // Get the name
       String nodeName = participantProfile.getRtps().getName();
-      printout.add("Created %s: %s".formatted(nodeClass.getSimpleName(), nodeName));
+      printout.append("Created ").append(nodeClass.getSimpleName()).append(": ").append(nodeName);
 
       // Get the domain id and its source
       int domainId = participantProfile.getDomainId();
@@ -49,17 +68,17 @@ class ROS2NodePrintout
             break;
          }
       }
-      printout.add("DomainID: %d (Specified by: %s)".formatted(domainId, domainIdSource));
+      printout.append('\n').append('\t').append("DomainID: ").append(domainId).append(" (Specified by: ").append(domainIdSource).append(')');
 
       // Check if we're using builtin transports
       boolean usingBuiltinTransports = participantProfile.getRtps().isUseBuiltinTransports();
       if (usingBuiltinTransports) // If so, default builtin transports are UDPv4 and SHM
       {
-         printout.add("Using builtin transports: UDPv4, SHM");
+         printout.append('\n').append('\t').append("Using builtin transports: UDPv4, SHM");
       }
       else if (transportDescriptors != null) // Otherwise we must be using custom transports specified by the descriptors
       {
-         printout.add("Using custom transports:");
+         printout.append('\n').append('\t').append("Using custom transports:");
 
          for (int i = 0; i < transportDescriptors.length; ++i)
          {
@@ -69,38 +88,57 @@ class ROS2NodePrintout
             // See if an interface whitelist is specified for this transport
             InterfaceWhiteList interfaceWhiteList = transportDescriptors[i].getInterfaceWhiteList();
             if (interfaceWhiteList == null || interfaceWhiteList.getAddressOrInterface().isEmpty())
-            {  // No whitelist. Transport is available on all interfaces
-               printout.add("\t%s: on all interfaces".formatted(type));
+            {
+               // SHM uses shared memory, not network interfaces
+               if (type.equals("SHM"))
+               {
+                  printout.append('\n').append('\t').append('\t').append(type).append(": local only");
+               }
+               else
+               {
+                  printout.append('\n').append('\t').append('\t').append(type).append(": on all interfaces");
+               }
             }
             else // Whitelist specified
             {
                List<Object> whitelistElements = transportDescriptors[i].getInterfaceWhiteList().getAddressOrInterface();
-               StringJoiner whitelistString = new StringJoiner(", ");
+               StringBuilder whitelistString = WHITELIST.get();
+               whitelistString.setLength(0);
+
                for (int j = 0; j < whitelistElements.size(); ++j)
                {
+                  if (j > 0)
+                  {
+                     whitelistString.append(", ");
+                  }
+
                   // The value can either be a List<String> or String
                   Object value = whitelistElements.get(j);
                   if (value instanceof List<?> list)
                   {
                      for (int k = 0; k < list.size(); ++k)
                      {
-                        whitelistString.add(list.get(k).toString());
+                        if (k > 0)
+                        {
+                           whitelistString.append(", ");
+                        }
+                        whitelistString.append(list.get(k));
                      }
                   }
                   else if (value instanceof String string)
                   {
-                     whitelistString.add(string);
+                     whitelistString.append(string);
                   }
                }
 
-               printout.add("\t%s: on %s".formatted(type, whitelistString));
+               printout.append('\n').append('\t').append('\t').append(type).append(": on ").append(whitelistString);
             }
          }
       }
 
       if (jros2.get().intraprocessDelivery())
       {
-         printout.add("Intraprocess delivery enabled - https://github.com/ihmcrobotics/jros2/wiki/Intraprocess-Delivery");
+         printout.append('\n').append('\t').append("Intraprocess delivery enabled - https://github.com/ihmcrobotics/jros2/wiki/Intraprocess-Delivery");
       }
 
       jros2.getLogger().info(printout.toString());
