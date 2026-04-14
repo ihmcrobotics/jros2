@@ -6,8 +6,6 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
-  # schedule:
-  #   - cron: '0 */8 * * *'
 
 jobs:
   test-linux:
@@ -51,16 +49,13 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Verify Docker
-        run: docker version
-
       - name: Run tests
         shell: bash
         run: ./gradlew test
 
   test-macos-intel:
     name: macOS (Intel)
-    runs-on: macos-15-large
+    runs-on: macos-26-intel
     timeout-minutes: 20
     steps:
       - name: Checkout
@@ -83,7 +78,7 @@ jobs:
 
   test-macos-arm:
     name: macOS (ARM)
-    runs-on: macos-15
+    runs-on: macos-26
     timeout-minutes: 20
     steps:
       - name: Checkout
