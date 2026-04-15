@@ -38,7 +38,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class <context.javaClassName> implements ROS2Message\<<context.javaClassName>>
 {
-   public static final java.lang.String name = "<context.packageName>::msg::dds_::<context.javaClassName>_";
+   public static final java.lang.String name = "<context.DDSName>";
 
    <context.fieldList:{ field |
 <if(field.headerComment)>/**

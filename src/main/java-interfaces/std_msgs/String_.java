@@ -25,7 +25,7 @@ string data
 */
 public class String_ implements ROS2Message<String_>
 {
-   public static final java.lang.String name = "std_msgs::msg::dds_::String__";
+   public static final java.lang.String name = "std_msgs::msg::dds_::String_";
 
    private final StringBuilder data_;
 

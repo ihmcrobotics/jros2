@@ -134,6 +134,12 @@ public abstract class InterfaceContext
       return javaPackageName;
    }
 
+   public String getDDSName()
+   {
+      String javaClassNameSanitized = javaClassName.replace("_", "");
+      return packageName + "::msg::dds_::" + javaClassNameSanitized + "_";
+   }
+
    @Override
    public String toString()
    {

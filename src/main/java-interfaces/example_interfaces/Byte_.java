@@ -20,7 +20,7 @@ byte data
 */
 public class Byte_ implements ROS2Message<Byte_>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::Byte__";
+   public static final java.lang.String name = "example_interfaces::msg::dds_::Byte_";
 
    /**
       This is an example message of using a primitive datatype, byte.

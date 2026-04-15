@@ -20,7 +20,7 @@ string data
 */
 public class String_ implements ROS2Message<String_>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::String__";
+   public static final java.lang.String name = "example_interfaces::msg::dds_::String_";
 
    /**
       This is an example message of using a primitive datatype, string.

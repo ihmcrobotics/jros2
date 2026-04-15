@@ -25,7 +25,7 @@ byte data
 */
 public class Byte_ implements ROS2Message<Byte_>
 {
-   public static final java.lang.String name = "std_msgs::msg::dds_::Byte__";
+   public static final java.lang.String name = "std_msgs::msg::dds_::Byte_";
 
    private byte data_;
 
