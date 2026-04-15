@@ -96,8 +96,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * description_.length()) + 1; // description_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (name_.length() + 1)); // name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (description_.length() + 1)); // description_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
       currentAlignment += menu_entries_.calculateSizeBytes(currentAlignment);
       currentAlignment += controls_.calculateSizeBytes(currentAlignment);

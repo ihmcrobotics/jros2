@@ -38,7 +38,7 @@ public class LoadMap_Request implements ROS2Message<LoadMap_Request>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * map_url_.length()) + 1; // map_url_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * map_url_.length()) + 1; // map_url_
 
       return currentAlignment - initialAlignment;
    }

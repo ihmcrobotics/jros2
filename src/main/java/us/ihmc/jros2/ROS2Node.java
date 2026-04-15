@@ -117,9 +117,17 @@ public class ROS2Node implements Closeable
     */
    private final List<ROS2ActionServer<?, ?, ?>> actionServers;
    /**
+    * A list of {@link ROS2ParameterClient}\s managed by this node.
+    */
+   private final List<ROS2ParameterClient> parameterClients;
+   /**
     * A map of parameters managed by this node (name -> parameter).
     */
    private final Map<String, ROS2Parameter> parameters;
+   /**
+    * Publisher for parameter events (publishes to /parameter_events topic).
+    */
+   private ROS2Publisher<rcl_interfaces.ParameterEvent> parameterEventPublisher;
 
    /*
     * Locks
@@ -215,10 +223,15 @@ public class ROS2Node implements Closeable
       serviceServers = new ArrayList<>();
       actionClients = new ArrayList<>();
       actionServers = new ArrayList<>();
+      parameterClients = new ArrayList<>();
       parameters = new ConcurrentHashMap<>();
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
+
+      // Create parameter event publisher (must be after closeLock is initialized)
+      // Note: Creating publisher after all initialization to avoid circular dependencies
+      parameterEventPublisher = null; // Will be created lazily on first parameter operation
    }
 
    /**
@@ -844,6 +857,83 @@ public class ROS2Node implements Closeable
    }
 
    /**
+    * Create a parameter client for interacting with parameters on a remote node.
+    *
+    * @param nodeName The name of the remote node
+    * @return A new parameter client
+    */
+   public ROS2ParameterClient createParameterClient(String nodeName)
+   {
+      return createParameterClient(nodeName, ROS2QoSProfile.SERVICES_DEFAULT);
+   }
+
+   /**
+    * Create a parameter client for interacting with parameters on a remote node.
+    *
+    * @param nodeName   The name of the remote node
+    * @param qosProfile The QoS profile for the parameter services
+    * @return A new parameter client
+    */
+   public ROS2ParameterClient createParameterClient(String nodeName, ROS2QoSProfile qosProfile)
+   {
+      ROS2ParameterClient client = null;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            client = new ROS2ParameterClient(this, nodeName, qosProfile);
+
+            synchronized (parameterClients)
+            {
+               parameterClients.add(client);
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return client;
+   }
+
+   /**
+    * Destroy a parameter client and release its resources.
+    *
+    * @param client The parameter client to destroy
+    * @return true if the client was successfully removed
+    */
+   public boolean destroyParameterClient(ROS2ParameterClient client)
+   {
+      boolean removed = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (parameterClients)
+            {
+               removed = parameterClients.remove(client);
+            }
+
+            if (removed)
+            {
+               client.close();
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return removed;
+   }
+
+   /**
     * Create an action client for sending action goals.
     *
     * @param actionName   The name of the action
@@ -971,13 +1061,16 @@ public class ROS2Node implements Closeable
    /**
     * Declare a parameter with a default value.
     * If the parameter already exists, it will be updated with the new value.
+    * Publishes a parameter event.
     *
     * @param parameter The parameter to declare
     * @return The declared parameter
     */
    public ROS2Parameter declareParameter(ROS2Parameter parameter)
    {
+      boolean isNew = !parameters.containsKey(parameter.getName());
       parameters.put(parameter.getName(), parameter);
+      publishParameterEvent(parameter, isNew);
       return parameter;
    }
 
@@ -1037,6 +1130,7 @@ public class ROS2Node implements Closeable
 
    /**
     * Set a parameter value. The parameter must be declared first.
+    * Publishes a parameter event if successful.
     *
     * @param parameter The parameter to set
     * @return true if the parameter was set successfully
@@ -1046,6 +1140,7 @@ public class ROS2Node implements Closeable
       if (parameters.containsKey(parameter.getName()))
       {
          parameters.put(parameter.getName(), parameter);
+         publishParameterEvent(parameter, false);
          return true;
       }
       return false;
@@ -1059,6 +1154,118 @@ public class ROS2Node implements Closeable
    public Map<String, ROS2Parameter> getParameters()
    {
       return Collections.unmodifiableMap(parameters);
+   }
+
+   /**
+    * Publish a parameter event to the /parameter_events topic.
+    *
+    * @param parameter The parameter that changed
+    * @param isNew     True if this is a new parameter, false if it's a change
+    */
+   private void publishParameterEvent(ROS2Parameter parameter, boolean isNew)
+   {
+      // Lazily create parameter event publisher
+      if (parameterEventPublisher == null && !closed)
+      {
+         parameterEventPublisher = createPublisher(new ROS2Topic<>("/parameter_events", rcl_interfaces.ParameterEvent.class), ROS2QoSProfile.PARAMETER_EVENTS);
+      }
+
+      if (parameterEventPublisher != null && !closed)
+      {
+         rcl_interfaces.ParameterEvent event = new rcl_interfaces.ParameterEvent();
+
+         // Set timestamp (using current time in milliseconds)
+         long currentTimeMillis = System.currentTimeMillis();
+         event.getStamp().setSec((int) (currentTimeMillis / 1000L));
+         event.getStamp().setNanosec((int) ((currentTimeMillis % 1000L) * 1_000_000L));
+
+         // Set node name
+         event.setNode(name);
+
+         // Convert ROS2Parameter to rcl_interfaces.Parameter
+         rcl_interfaces.Parameter rosParam = convertToRclParameter(parameter);
+
+         // Add to appropriate list
+         if (isNew)
+         {
+            event.getNewParameters().add(rosParam);
+         }
+         else
+         {
+            event.getChangedParameters().add(rosParam);
+         }
+
+         parameterEventPublisher.publish(event);
+      }
+   }
+
+   /**
+    * Convert ROS2Parameter to rcl_interfaces.Parameter.
+    */
+   private rcl_interfaces.Parameter convertToRclParameter(ROS2Parameter param)
+   {
+      rcl_interfaces.Parameter rosParam = new rcl_interfaces.Parameter();
+      rosParam.setName(param.getName());
+
+      rcl_interfaces.ParameterValue value = rosParam.getValue();
+      switch (param.getType())
+      {
+         case PARAMETER_NOT_SET:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_NOT_SET);
+            break;
+         case PARAMETER_BOOL:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_BOOL);
+            value.setBoolValue(param.asBool());
+            break;
+         case PARAMETER_INTEGER:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_INTEGER);
+            value.setIntegerValue(param.asLong());
+            break;
+         case PARAMETER_DOUBLE:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_DOUBLE);
+            value.setDoubleValue(param.asDouble());
+            break;
+         case PARAMETER_STRING:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_STRING);
+            value.setStringValue(param.asString());
+            break;
+         case PARAMETER_BYTE_ARRAY:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_BYTE_ARRAY);
+            for (byte b : param.asByteArray())
+            {
+               value.getByteArrayValue().add(b);
+            }
+            break;
+         case PARAMETER_BOOL_ARRAY:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_BOOL_ARRAY);
+            for (boolean b : param.asBoolArray())
+            {
+               value.getBoolArrayValue().add(b);
+            }
+            break;
+         case PARAMETER_INTEGER_ARRAY:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_INTEGER_ARRAY);
+            for (long l : param.asLongArray())
+            {
+               value.getIntegerArrayValue().add(l);
+            }
+            break;
+         case PARAMETER_DOUBLE_ARRAY:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_DOUBLE_ARRAY);
+            for (double d : param.asDoubleArray())
+            {
+               value.getDoubleArrayValue().add(d);
+            }
+            break;
+         case PARAMETER_STRING_ARRAY:
+            value.setType(rcl_interfaces.ParameterType.PARAMETER_STRING_ARRAY);
+            for (String s : param.asStringArray())
+            {
+               value.getStringArrayValue().add(s);
+            }
+            break;
+      }
+      return rosParam;
    }
 
    /**
@@ -1192,6 +1399,16 @@ public class ROS2Node implements Closeable
                server.close(fastddsParticipant);
             }
             actionServers.clear();
+         }
+
+         synchronized (parameterClients)
+         {
+            // Delete parameter clients
+            for (ROS2ParameterClient client : parameterClients)
+            {
+               client.close();
+            }
+            parameterClients.clear();
          }
 
          // Clear parameters

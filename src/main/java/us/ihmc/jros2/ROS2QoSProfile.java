@@ -35,6 +35,12 @@ public class ROS2QoSProfile
     */
    public static final ROS2QoSProfile SERVICES_DEFAULT = new ROS2QoSProfile();
 
+   /**
+    * Default QoS profile for parameter events.
+    * Parameter events use reliable delivery, volatile durability, and larger depth.
+    */
+   public static final ROS2QoSProfile PARAMETER_EVENTS = new ROS2QoSProfile();
+
    static
    {
       // Services use reliable, volatile QoS by default in ROS 2
@@ -42,6 +48,12 @@ public class ROS2QoSProfile
       SERVICES_DEFAULT.durability(Durability.VOLATILE);
       SERVICES_DEFAULT.history(History.KEEP_LAST);
       SERVICES_DEFAULT.depth(10);
+
+      // Parameter events use reliable, volatile QoS with larger depth
+      PARAMETER_EVENTS.reliability(Reliability.RELIABLE);
+      PARAMETER_EVENTS.durability(Durability.VOLATILE);
+      PARAMETER_EVENTS.history(History.KEEP_LAST);
+      PARAMETER_EVENTS.depth(1000);
    }
 
    public enum History

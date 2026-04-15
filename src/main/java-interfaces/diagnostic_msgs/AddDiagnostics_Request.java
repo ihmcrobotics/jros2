@@ -63,7 +63,7 @@ public class AddDiagnostics_Request implements ROS2Message<AddDiagnostics_Reques
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * load_namespace_.length()) + 1; // load_namespace_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * load_namespace_.length()) + 1; // load_namespace_
 
       return currentAlignment - initialAlignment;
    }

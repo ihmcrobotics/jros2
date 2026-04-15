@@ -34,7 +34,7 @@ public class SetCameraInfo_Response implements ROS2Message<SetCameraInfo_Respons
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // success_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * status_message_.length()) + 1; // status_message_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * status_message_.length()) + 1; // status_message_
 
       return currentAlignment - initialAlignment;
    }

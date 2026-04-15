@@ -85,11 +85,12 @@ public final class BuiltinTools
          case "int64":
          case "uint64":
             return 8;
-         // For strings, return the character size. See https://design.ros2.org/articles/wide_strings.html
+         // For strings, return the Java character size (chars are 2 bytes in Java UTF-16)
+         // Note: This differs from the ROS2 spec which defines string as 1-byte chars and wstring as 4-byte chars
+         // but in Java all chars are 2 bytes, so we use 2 for both string and wstring
          case "string":
-            return 1;
          case "wstring":
-            return 4;
+            return 2;
          default:
             return -1;
       }

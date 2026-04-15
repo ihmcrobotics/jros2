@@ -136,22 +136,22 @@ public class TestMsg implements ROS2Message<TestMsg>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string_.length()) + 1; // my_string_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (my_string_.length() + 1)); // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // five_integers_array_
       currentAlignment += up_to_five_integers_array_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * string_of_unbounded_size_.length()) + 1; // string_of_unbounded_size_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * up_to_ten_characters_string_.length()) + 1; // up_to_ten_characters_string_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (string_of_unbounded_size_.length() + 1)); // string_of_unbounded_size_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (up_to_ten_characters_string_.length() + 1)); // up_to_ten_characters_string_
       currentAlignment += up_to_five_unbounded_strings_.calculateSizeBytes(currentAlignment);
       currentAlignment += unbounded_array_of_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += up_to_five_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // x_
       currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (full_name_.length() + 1)); // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
-      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_
-      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_each_max_length_of_five_chars_
+      currentAlignment += (3 * 2) + CDRBuffer.alignment(currentAlignment, (3 * 2)); // three_strings_
+      currentAlignment += (3 * 2) + CDRBuffer.alignment(currentAlignment, (3 * 2)); // three_strings_each_max_length_of_five_chars_
       for (int i = 0; i < three_images_.length; ++i)
       {
          currentAlignment += three_images_[i].calculateSizeBytes(currentAlignment);
