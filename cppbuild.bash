@@ -60,10 +60,22 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   JAVACPP_COMP_ARGS="-properties android-$ANDROID_ABI -Dplatform=android-$ANDROID_ABI"
 elif [ "$MAC_COMPILE_X86_64" == "1" ]; then
   # Export compiler flags so cmake and all subproject builds pick up the target arch
-  export CFLAGS="-arch x86_64"
-  export CXXFLAGS="-arch x86_64"
+  ARCH_FLAGS="-arch x86_64"
+  export CFLAGS="$ARCH_FLAGS"
+  export CXXFLAGS="$ARCH_FLAGS"
+  export LDFLAGS="$ARCH_FLAGS"
   COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=x86_64"
-  JAVACPP_COMP_ARGS="-properties macosx-x86_64 -Dplatform=macosx-x86_64"
+  # Tell JavaCPP to pass arch flags using -Xcompiler
+  JAVACPP_COMP_ARGS="-Xcompiler -arch -Xcompiler x86_64"
+elif [ "$MAC_COMPILE_ARM64" == "1" ]; then
+  # Export compiler flags so cmake and all subproject builds pick up the target arch
+  ARCH_FLAGS="-arch arm64"
+  export CFLAGS="$ARCH_FLAGS"
+  export CXXFLAGS="$ARCH_FLAGS"
+  export LDFLAGS="$ARCH_FLAGS"
+  COMPILER_ARGS="-DCMAKE_OSX_ARCHITECTURES=arm64"
+  # Tell JavaCPP to pass arch flags using -Xcompiler
+  JAVACPP_COMP_ARGS="-Xcompiler -arch -Xcompiler arm64"
 elif [ "$LINUX_COMPILE_ARM64" == "1" ]; then
   COMPILER_ARGS="-DCMAKE_TOOLCHAIN_FILE=$INSTALL_DIR/../linux-aarch64-toolchain.cmake"
   JAVACPP_COMP_ARGS="-properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ -Dplatform.c.compiler=aarch64-linux-gnu-gcc -Dplatform=linux-arm64"
