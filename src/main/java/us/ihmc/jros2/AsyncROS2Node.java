@@ -97,7 +97,8 @@ public class AsyncROS2Node extends ROS2Node
             }
             catch (fastddsjavaException e)
             {
-               jros2.logError(e);
+               jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
+               throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);

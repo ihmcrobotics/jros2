@@ -181,7 +181,8 @@ public class ROS2Node implements Closeable
       }
       catch (fastddsjavaException e)
       {
-         jros2.logError(e);
+         jros2.logError("Failed to load participant profile '" + participantProfileName + "' for node '" + name + "'", e);
+         throw new RuntimeException("Failed to load participant profile: " + participantProfileName, e);
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
@@ -246,7 +247,8 @@ public class ROS2Node implements Closeable
                   }
                   catch (fastddsjavaException e)
                   {
-                     jros2.logError(e);
+                     jros2.logError("Failed to load topic profile '" + topicProfileName + "' for topic '" + topic.getName() + "'", e);
+                     throw new RuntimeException("Failed to load topic profile: " + topicProfileName, e);
                   }
 
                   /*
@@ -312,7 +314,8 @@ public class ROS2Node implements Closeable
             }
             catch (fastddsjavaException e)
             {
-               jros2.logError(e);
+               jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
+               throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
@@ -414,7 +417,8 @@ public class ROS2Node implements Closeable
             }
             catch (fastddsjavaException e)
             {
-               jros2.logError(e);
+               jros2.logError("Failed to load subscriber profile '" + subscriberProfileName + "' for topic '" + topic.getName() + "'", e);
+               throw new RuntimeException("Failed to load subscriber profile: " + subscriberProfileName, e);
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
