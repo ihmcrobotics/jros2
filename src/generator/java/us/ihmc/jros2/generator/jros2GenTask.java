@@ -20,8 +20,12 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
+import us.ihmc.jros2.parser.ActionContext;
+import us.ihmc.jros2.parser.ActionParser;
 import us.ihmc.jros2.parser.MsgContext;
 import us.ihmc.jros2.parser.MsgParser;
+import us.ihmc.jros2.parser.SrvContext;
+import us.ihmc.jros2.parser.SrvParser;
 import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 import java.io.IOException;
@@ -95,6 +99,8 @@ public class jros2GenTask extends DefaultTask
          Path packagePath = Path.of(packagePathStr);
          Path packageXmlPath = packagePath.resolve("package.xml");
          Path msgDirPath = packagePath.resolve("msg");
+         Path srvDirPath = packagePath.resolve("srv");
+         Path actionDirPath = packagePath.resolve("action");
 
          if (!Files.exists(packageXmlPath))
          {
@@ -102,6 +108,7 @@ public class jros2GenTask extends DefaultTask
             continue;
          }
 
+         // Process .msg files
          if (Files.exists(msgDirPath) && Files.isDirectory(msgDirPath))
          {
             DirectoryStream.Filter<Path> msgFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".msg");
@@ -130,6 +137,126 @@ public class jros2GenTask extends DefaultTask
                      outputFilePath.toFile().getParentFile().mkdirs();
                      Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
                      System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
+                  }
+                  catch (InterfaceFieldParsingException e)
+                  {
+                     System.err.println(e.getMessage());
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
+
+         // Process .srv files
+         if (Files.exists(srvDirPath) && Files.isDirectory(srvDirPath))
+         {
+            DirectoryStream.Filter<Path> srvFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".srv");
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(srvDirPath, srvFileFilter))
+            {
+               for (Path srvFile : stream)
+               {
+                  try
+                  {
+                     String packageResourceName = packagePath.getFileName().toString() + "/" + srvFile.getFileName().toString().replace(".srv", "");
+                     if (typeToClass.containsKey(packageResourceName))
+                     {
+                        System.out.println("Not generating for " + packageResourceName + ". It is mapped to: " + typeToClass.get(packageResourceName));
+                        continue;
+                     }
+                     String srvFileContent = Files.readString(srvFile).replaceAll("\\*+/", "");
+                     SrvContext context = SrvParser.parseSrv(srvFileContent, packageResourceName);
+                     String[] classContents = ROS2ServiceGenerator.generateJavaClassContents(context, typeToClass);
+
+                     // Generate Request class
+                     Path requestOutputPath = outputDirPath.resolve(context.getRequestContext().getJavaPackageName().replace(".", "/") + "/"
+                                                                    + context.getRequestContext().getJavaClassName() + ".java");
+                     if (requestOutputPath.toFile().exists())
+                     {
+                        requestOutputPath.toFile().delete();
+                     }
+                     requestOutputPath.toFile().getParentFile().mkdirs();
+                     Files.writeString(requestOutputPath, classContents[0], StandardCharsets.UTF_8);
+                     System.out.printf("%-40s | %s%n", packageResourceName + "_Request", requestOutputPath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
+
+                     // Generate Response class
+                     Path responseOutputPath = outputDirPath.resolve(context.getResponseContext().getJavaPackageName().replace(".", "/") + "/"
+                                                                     + context.getResponseContext().getJavaClassName() + ".java");
+                     if (responseOutputPath.toFile().exists())
+                     {
+                        responseOutputPath.toFile().delete();
+                     }
+                     responseOutputPath.toFile().getParentFile().mkdirs();
+                     Files.writeString(responseOutputPath, classContents[1], StandardCharsets.UTF_8);
+                     System.out.printf("%-40s | %s%n", packageResourceName + "_Response", responseOutputPath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
+                  }
+                  catch (InterfaceFieldParsingException e)
+                  {
+                     System.err.println(e.getMessage());
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
+
+         // Process .action files
+         if (Files.exists(actionDirPath) && Files.isDirectory(actionDirPath))
+         {
+            DirectoryStream.Filter<Path> actionFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".action");
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(actionDirPath, actionFileFilter))
+            {
+               for (Path actionFile : stream)
+               {
+                  try
+                  {
+                     String packageResourceName = packagePath.getFileName().toString() + "/" + actionFile.getFileName().toString().replace(".action", "");
+                     if (typeToClass.containsKey(packageResourceName))
+                     {
+                        System.out.println("Not generating for " + packageResourceName + ". It is mapped to: " + typeToClass.get(packageResourceName));
+                        continue;
+                     }
+                     String actionFileContent = Files.readString(actionFile).replaceAll("\\*+/", "");
+                     ActionContext context = ActionParser.parseAction(actionFileContent, packageResourceName);
+                     String[] classContents = ROS2ActionGenerator.generateJavaClassContents(context, typeToClass);
+
+                     // Generate Goal class
+                     Path goalOutputPath = outputDirPath.resolve(context.getGoalContext().getJavaPackageName().replace(".", "/") + "/"
+                                                                 + context.getGoalContext().getJavaClassName() + ".java");
+                     if (goalOutputPath.toFile().exists())
+                     {
+                        goalOutputPath.toFile().delete();
+                     }
+                     goalOutputPath.toFile().getParentFile().mkdirs();
+                     Files.writeString(goalOutputPath, classContents[0], StandardCharsets.UTF_8);
+                     System.out.printf("%-40s | %s%n", packageResourceName + "_Goal", goalOutputPath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
+
+                     // Generate Result class
+                     Path resultOutputPath = outputDirPath.resolve(context.getResultContext().getJavaPackageName().replace(".", "/") + "/"
+                                                                   + context.getResultContext().getJavaClassName() + ".java");
+                     if (resultOutputPath.toFile().exists())
+                     {
+                        resultOutputPath.toFile().delete();
+                     }
+                     resultOutputPath.toFile().getParentFile().mkdirs();
+                     Files.writeString(resultOutputPath, classContents[1], StandardCharsets.UTF_8);
+                     System.out.printf("%-40s | %s%n", packageResourceName + "_Result", resultOutputPath.toFile().getAbsolutePath());
+                     totalInterfacesGenerated++;
+
+                     // Generate Feedback class
+                     Path feedbackOutputPath = outputDirPath.resolve(context.getFeedbackContext().getJavaPackageName().replace(".", "/") + "/"
+                                                                     + context.getFeedbackContext().getJavaClassName() + ".java");
+                     if (feedbackOutputPath.toFile().exists())
+                     {
+                        feedbackOutputPath.toFile().delete();
+                     }
+                     feedbackOutputPath.toFile().getParentFile().mkdirs();
+                     Files.writeString(feedbackOutputPath, classContents[2], StandardCharsets.UTF_8);
+                     System.out.printf("%-40s | %s%n", packageResourceName + "_Feedback", feedbackOutputPath.toFile().getAbsolutePath());
                      totalInterfacesGenerated++;
                   }
                   catch (InterfaceFieldParsingException e)

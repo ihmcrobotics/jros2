@@ -29,6 +29,21 @@ public class ROS2QoSProfile
 
    public static final ROS2QoSProfile DEFAULT = new ROS2QoSProfile();
 
+   /**
+    * Default QoS profile for ROS 2 services and actions.
+    * Services typically use reliable delivery and volatile durability.
+    */
+   public static final ROS2QoSProfile SERVICES_DEFAULT = new ROS2QoSProfile();
+
+   static
+   {
+      // Services use reliable, volatile QoS by default in ROS 2
+      SERVICES_DEFAULT.reliability(Reliability.RELIABLE);
+      SERVICES_DEFAULT.durability(Durability.VOLATILE);
+      SERVICES_DEFAULT.history(History.KEEP_LAST);
+      SERVICES_DEFAULT.depth(10);
+   }
+
    public enum History
    {
       SYSTEM_DEFAULT, KEEP_LAST, KEEP_ALL

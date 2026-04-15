@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -43,7 +44,8 @@ import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
 import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 
 /**
- * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
+ * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions,
+ * services, actions, and parameters.
  * Uses Fast-DDS middleware via the {@link us.ihmc.fastddsjava} package. Fully thread-safe.
  */
 public class ROS2Node implements Closeable
@@ -98,6 +100,26 @@ public class ROS2Node implements Closeable
     * A list of {@link ROS2Subscription}\s managed by this node.
     */
    private final List<ROS2Subscription<?>> subscriptions;
+   /**
+    * A list of {@link ROS2ServiceClient}\s managed by this node.
+    */
+   private final List<ROS2ServiceClient<?, ?>> serviceClients;
+   /**
+    * A list of {@link ROS2ServiceServer}\s managed by this node.
+    */
+   private final List<ROS2ServiceServer<?, ?>> serviceServers;
+   /**
+    * A list of {@link ROS2ActionClient}\s managed by this node.
+    */
+   private final List<ROS2ActionClient<?, ?, ?>> actionClients;
+   /**
+    * A list of {@link ROS2ActionServer}\s managed by this node.
+    */
+   private final List<ROS2ActionServer<?, ?, ?>> actionServers;
+   /**
+    * A map of parameters managed by this node (name -> parameter).
+    */
+   private final Map<String, ROS2Parameter> parameters;
 
    /*
     * Locks
@@ -189,6 +211,11 @@ public class ROS2Node implements Closeable
       topicData = new HashMap<>();
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
+      serviceClients = new ArrayList<>();
+      serviceServers = new ArrayList<>();
+      actionClients = new ArrayList<>();
+      actionServers = new ArrayList<>();
+      parameters = new ConcurrentHashMap<>();
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
@@ -569,19 +596,469 @@ public class ROS2Node implements Closeable
       return removed;
    }
 
-   public Object createService(Class<?> serviceType, String serviceName, Object callback)
+   /**
+    * Create a service client for calling a ROS 2 service.
+    *
+    * @param serviceName  The name of the service
+    * @param requestType  The service request message class
+    * @param responseType The service response message class
+    * @param qosProfile   The QoS profile for the service client
+    * @return The service client instance
+    */
+   public <Request extends ROS2Message<Request>, Response extends ROS2Message<Response>> ROS2ServiceClient<Request, Response> createServiceClient(String serviceName,
+                                                                                                                                                  Class<Request> requestType,
+                                                                                                                                                  Class<Response> responseType,
+                                                                                                                                                  ROS2QoSProfile qosProfile)
    {
-      throw new RuntimeException("Not yet implemented");
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            // Create topics for request and response
+            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
+
+            ROS2ServiceClient<Request, Response> client = new ROS2ServiceClient<>(this, serviceName, requestTopic, responseTopic, qosProfile);
+
+            synchronized (serviceClients)
+            {
+               serviceClients.add(client);
+            }
+
+            return client;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
    }
 
-   public Object declareParameter(String name, Object value)
+   /**
+    * Create a service client with default QoS profile.
+    */
+   public <Request extends ROS2Message<Request>, Response extends ROS2Message<Response>> ROS2ServiceClient<Request, Response> createServiceClient(String serviceName,
+                                                                                                                                                  Class<Request> requestType,
+                                                                                                                                                  Class<Response> responseType)
    {
-      throw new RuntimeException("Not yet implemented");
+      return createServiceClient(serviceName, requestType, responseType, ROS2QoSProfile.SERVICES_DEFAULT);
    }
 
-   public Object getParameter(String name)
+   /**
+    * Create a service server for handling service requests.
+    *
+    * @param serviceName  The name of the service
+    * @param requestType  The service request message class
+    * @param responseType The service response message class
+    * @param callback     The callback to handle incoming requests
+    * @param qosProfile   The QoS profile for the service server
+    * @return The service server instance
+    */
+   public <Request extends ROS2Message<Request>, Response extends ROS2Message<Response>> ROS2ServiceServer<Request, Response> createServiceServer(String serviceName,
+                                                                                                                                                  Class<Request> requestType,
+                                                                                                                                                  Class<Response> responseType,
+                                                                                                                                                  ROS2ServiceCallback<Request, Response> callback,
+                                                                                                                                                  ROS2QoSProfile qosProfile)
    {
-      throw new RuntimeException("Not yet implemented");
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            // Create topics for request and response
+            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
+
+            ROS2ServiceServer<Request, Response> server = new ROS2ServiceServer<>(this,
+                                                                                  serviceName,
+                                                                                  requestTopic,
+                                                                                  responseTopic,
+                                                                                  callback,
+                                                                                  responseType,
+                                                                                  qosProfile);
+
+            synchronized (serviceServers)
+            {
+               serviceServers.add(server);
+            }
+
+            return server;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
+   }
+
+   /**
+    * Create a service server with default QoS profile.
+    */
+   public <Request extends ROS2Message<Request>, Response extends ROS2Message<Response>> ROS2ServiceServer<Request, Response> createServiceServer(String serviceName,
+                                                                                                                                                  Class<Request> requestType,
+                                                                                                                                                  Class<Response> responseType,
+                                                                                                                                                  ROS2ServiceCallback<Request, Response> callback)
+   {
+      return createServiceServer(serviceName, requestType, responseType, callback, ROS2QoSProfile.SERVICES_DEFAULT);
+   }
+
+   /**
+    * Destroy a service client and release its resources.
+    *
+    * @param client The service client to destroy
+    * @return true if the client was successfully removed
+    */
+   public boolean destroyServiceClient(ROS2ServiceClient<?, ?> client)
+   {
+      boolean removed = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (serviceClients)
+            {
+               removed = serviceClients.remove(client);
+            }
+
+            if (removed)
+            {
+               client.close(fastddsParticipant);
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return removed;
+   }
+
+   /**
+    * Destroy a service server and release its resources.
+    *
+    * @param server The service server to destroy
+    * @return true if the server was successfully removed
+    */
+   public boolean destroyServiceServer(ROS2ServiceServer<?, ?> server)
+   {
+      boolean removed = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (serviceServers)
+            {
+               removed = serviceServers.remove(server);
+            }
+
+            if (removed)
+            {
+               server.close(fastddsParticipant);
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return removed;
+   }
+
+   /**
+    * Destroy an action client and release its resources.
+    *
+    * @param client The action client to destroy
+    * @return true if the client was successfully removed
+    */
+   public boolean destroyActionClient(ROS2ActionClient<?, ?, ?> client)
+   {
+      boolean removed = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (actionClients)
+            {
+               removed = actionClients.remove(client);
+            }
+
+            if (removed)
+            {
+               client.close(fastddsParticipant);
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return removed;
+   }
+
+   /**
+    * Destroy an action server and release its resources.
+    *
+    * @param server The action server to destroy
+    * @return true if the server was successfully removed
+    */
+   public boolean destroyActionServer(ROS2ActionServer<?, ?, ?> server)
+   {
+      boolean removed = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (actionServers)
+            {
+               removed = actionServers.remove(server);
+            }
+
+            if (removed)
+            {
+               server.close(fastddsParticipant);
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return removed;
+   }
+
+   /**
+    * Create an action client for sending action goals.
+    *
+    * @param actionName   The name of the action
+    * @param goalType     The action goal message class
+    * @param resultType   The action result message class
+    * @param feedbackType The action feedback message class
+    * @param qosProfile   The QoS profile for the action client
+    * @return The action client instance
+    */
+   public <Goal extends ROS2Message<Goal>, Result extends ROS2Message<Result>, Feedback extends ROS2Message<Feedback>> ROS2ActionClient<Goal, Result, Feedback> createActionClient(
+         String actionName,
+         Class<Goal> goalType,
+         Class<Result> resultType,
+         Class<Feedback> feedbackType,
+         ROS2QoSProfile qosProfile)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            // Create topics for goal, result, and feedback
+            ROS2Topic<Goal> goalTopic = new ROS2Topic<>("/" + actionName + "_action/goal", goalType);
+            ROS2Topic<Result> resultTopic = new ROS2Topic<>("/" + actionName + "_action/result", resultType);
+            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>("/" + actionName + "_action/feedback", feedbackType);
+
+            ROS2ActionClient<Goal, Result, Feedback> client = new ROS2ActionClient<>(this, actionName, goalTopic, resultTopic, feedbackTopic, qosProfile);
+
+            synchronized (actionClients)
+            {
+               actionClients.add(client);
+            }
+
+            return client;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
+   }
+
+   /**
+    * Create an action client with default QoS profile.
+    */
+   public <Goal extends ROS2Message<Goal>, Result extends ROS2Message<Result>, Feedback extends ROS2Message<Feedback>> ROS2ActionClient<Goal, Result, Feedback> createActionClient(
+         String actionName,
+         Class<Goal> goalType,
+         Class<Result> resultType,
+         Class<Feedback> feedbackType)
+   {
+      return createActionClient(actionName, goalType, resultType, feedbackType, ROS2QoSProfile.DEFAULT);
+   }
+
+   /**
+    * Create an action server for executing action goals.
+    *
+    * @param actionName   The name of the action
+    * @param goalType     The action goal message class
+    * @param resultType   The action result message class
+    * @param feedbackType The action feedback message class
+    * @param callback     The callback to handle incoming goals
+    * @param qosProfile   The QoS profile for the action server
+    * @return The action server instance
+    */
+   public <Goal extends ROS2Message<Goal>, Result extends ROS2Message<Result>, Feedback extends ROS2Message<Feedback>> ROS2ActionServer<Goal, Result, Feedback> createActionServer(
+         String actionName,
+         Class<Goal> goalType,
+         Class<Result> resultType,
+         Class<Feedback> feedbackType,
+         ROS2ActionGoalCallback<Goal, Result, Feedback> callback,
+         ROS2QoSProfile qosProfile)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            // Create topics for goal, result, and feedback
+            ROS2Topic<Goal> goalTopic = new ROS2Topic<>("/" + actionName + "_action/goal", goalType);
+            ROS2Topic<Result> resultTopic = new ROS2Topic<>("/" + actionName + "_action/result", resultType);
+            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>("/" + actionName + "_action/feedback", feedbackType);
+
+            ROS2ActionServer<Goal, Result, Feedback> server = new ROS2ActionServer<>(this,
+                                                                                     actionName,
+                                                                                     goalTopic,
+                                                                                     resultTopic,
+                                                                                     feedbackTopic,
+                                                                                     callback,
+                                                                                     resultType,
+                                                                                     feedbackType,
+                                                                                     qosProfile);
+
+            synchronized (actionServers)
+            {
+               actionServers.add(server);
+            }
+
+            return server;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
+   }
+
+   /**
+    * Create an action server with default QoS profile.
+    */
+   public <Goal extends ROS2Message<Goal>, Result extends ROS2Message<Result>, Feedback extends ROS2Message<Feedback>> ROS2ActionServer<Goal, Result, Feedback> createActionServer(
+         String actionName,
+         Class<Goal> goalType,
+         Class<Result> resultType,
+         Class<Feedback> feedbackType,
+         ROS2ActionGoalCallback<Goal, Result, Feedback> callback)
+   {
+      return createActionServer(actionName, goalType, resultType, feedbackType, callback, ROS2QoSProfile.DEFAULT);
+   }
+
+   /**
+    * Declare a parameter with a default value.
+    * If the parameter already exists, it will be updated with the new value.
+    *
+    * @param parameter The parameter to declare
+    * @return The declared parameter
+    */
+   public ROS2Parameter declareParameter(ROS2Parameter parameter)
+   {
+      parameters.put(parameter.getName(), parameter);
+      return parameter;
+   }
+
+   /**
+    * Declare a boolean parameter.
+    */
+   public ROS2Parameter declareParameter(String name, boolean value)
+   {
+      return declareParameter(new ROS2Parameter(name, value));
+   }
+
+   /**
+    * Declare an integer parameter.
+    */
+   public ROS2Parameter declareParameter(String name, long value)
+   {
+      return declareParameter(new ROS2Parameter(name, value));
+   }
+
+   /**
+    * Declare a double parameter.
+    */
+   public ROS2Parameter declareParameter(String name, double value)
+   {
+      return declareParameter(new ROS2Parameter(name, value));
+   }
+
+   /**
+    * Declare a string parameter.
+    */
+   public ROS2Parameter declareParameter(String name, String value)
+   {
+      return declareParameter(new ROS2Parameter(name, value));
+   }
+
+   /**
+    * Get a parameter by name.
+    *
+    * @param name The parameter name
+    * @return The parameter, or null if not found
+    */
+   public ROS2Parameter getParameter(String name)
+   {
+      return parameters.get(name);
+   }
+
+   /**
+    * Check if a parameter exists.
+    *
+    * @param name The parameter name
+    * @return true if the parameter exists
+    */
+   public boolean hasParameter(String name)
+   {
+      return parameters.containsKey(name);
+   }
+
+   /**
+    * Set a parameter value. The parameter must be declared first.
+    *
+    * @param parameter The parameter to set
+    * @return true if the parameter was set successfully
+    */
+   public boolean setParameter(ROS2Parameter parameter)
+   {
+      if (parameters.containsKey(parameter.getName()))
+      {
+         parameters.put(parameter.getName(), parameter);
+         return true;
+      }
+      return false;
+   }
+
+   /**
+    * Get all parameters managed by this node.
+    *
+    * @return An unmodifiable map of parameters
+    */
+   public Map<String, ROS2Parameter> getParameters()
+   {
+      return Collections.unmodifiableMap(parameters);
    }
 
    /**
@@ -636,13 +1113,15 @@ public class ROS2Node implements Closeable
    }
 
    /**
-    * Release resources and mark this node as inoperable. After close() has been called, this node will be unable to create new publishers or subscriptions.
+    * Release resources and mark this node as inoperable. After close() has been called, this node will be unable to create new publishers, subscriptions,
+    * services, actions, or parameters.
     * This method will block and wait for:
     * 1. any currently executing {@link ROS2Publisher#publish(ROS2Message)}
     * 2. any currently executing {@link ROS2Subscription} callback
     * 3. any currently executing {@link ROS2Subscription#read()} (or other read(T), readLatest(), readLatest(T))
+    * 4. any currently executing service or action callbacks
     * This is to ensure memory safety and guaranteed order of close operations.
-    * All publishers and subscriptions will be destroyed if close() has not been called already.
+    * All publishers, subscriptions, services, actions, and parameters will be destroyed if close() has not been called already.
     */
    @Override
    public void close()
@@ -674,6 +1153,49 @@ public class ROS2Node implements Closeable
             }
             subscriptions.clear();
          }
+
+         synchronized (serviceClients)
+         {
+            // Delete service clients
+            for (ROS2ServiceClient<?, ?> client : serviceClients)
+            {
+               client.close(fastddsParticipant);
+            }
+            serviceClients.clear();
+         }
+
+         synchronized (serviceServers)
+         {
+            // Delete service servers
+            for (ROS2ServiceServer<?, ?> server : serviceServers)
+            {
+               server.close(fastddsParticipant);
+            }
+            serviceServers.clear();
+         }
+
+         synchronized (actionClients)
+         {
+            // Delete action clients
+            for (ROS2ActionClient<?, ?, ?> client : actionClients)
+            {
+               client.close(fastddsParticipant);
+            }
+            actionClients.clear();
+         }
+
+         synchronized (actionServers)
+         {
+            // Delete action servers
+            for (ROS2ActionServer<?, ?, ?> server : actionServers)
+            {
+               server.close(fastddsParticipant);
+            }
+            actionServers.clear();
+         }
+
+         // Clear parameters
+         parameters.clear();
 
          synchronized (topicData)
          {
