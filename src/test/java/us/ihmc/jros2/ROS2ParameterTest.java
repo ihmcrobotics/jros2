@@ -152,4 +152,156 @@ public class ROS2ParameterTest
 
       subscriber.close();
    }
+
+   @Test
+   public void testByteArrayParameter()
+   {
+      byte[] data = {1, 2, 3, 4, 5};
+      ROS2Parameter param = new ROS2Parameter("byte_data", data);
+      node.declareParameter(param);
+
+      ROS2Parameter retrieved = node.getParameter("byte_data");
+      assertNotNull(retrieved);
+      assertArrayEquals(data, retrieved.asByteArray());
+      assertEquals(ROS2Parameter.ParameterType.PARAMETER_BYTE_ARRAY, retrieved.getType());
+   }
+
+   @Test
+   public void testBoolArrayParameter()
+   {
+      boolean[] flags = {true, false, true, true};
+      ROS2Parameter param = new ROS2Parameter("flags", flags);
+      node.declareParameter(param);
+
+      ROS2Parameter retrieved = node.getParameter("flags");
+      assertNotNull(retrieved);
+      assertArrayEquals(flags, retrieved.asBoolArray());
+      assertEquals(ROS2Parameter.ParameterType.PARAMETER_BOOL_ARRAY, retrieved.getType());
+   }
+
+   @Test
+   public void testLongArrayParameter()
+   {
+      long[] numbers = {100L, 200L, 300L};
+      ROS2Parameter param = new ROS2Parameter("numbers", numbers);
+      node.declareParameter(param);
+
+      ROS2Parameter retrieved = node.getParameter("numbers");
+      assertNotNull(retrieved);
+      assertArrayEquals(numbers, retrieved.asLongArray());
+      assertEquals(ROS2Parameter.ParameterType.PARAMETER_INTEGER_ARRAY, retrieved.getType());
+   }
+
+   @Test
+   public void testDoubleArrayParameter()
+   {
+      double[] values = {1.1, 2.2, 3.3};
+      ROS2Parameter param = new ROS2Parameter("values", values);
+      node.declareParameter(param);
+
+      ROS2Parameter retrieved = node.getParameter("values");
+      assertNotNull(retrieved);
+      assertArrayEquals(values, retrieved.asDoubleArray(), 0.0001);
+      assertEquals(ROS2Parameter.ParameterType.PARAMETER_DOUBLE_ARRAY, retrieved.getType());
+   }
+
+   @Test
+   public void testStringArrayParameter()
+   {
+      String[] names = {"Alice", "Bob", "Charlie"};
+      ROS2Parameter param = new ROS2Parameter("names", names);
+      node.declareParameter(param);
+
+      ROS2Parameter retrieved = node.getParameter("names");
+      assertNotNull(retrieved);
+      assertArrayEquals(names, retrieved.asStringArray());
+      assertEquals(ROS2Parameter.ParameterType.PARAMETER_STRING_ARRAY, retrieved.getType());
+   }
+
+   @Test
+   public void testNullParameterNameThrows()
+   {
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter(null, true));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter(null, 123L));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter(null, 3.14));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter(null, "value"));
+   }
+
+   @Test
+   public void testEmptyParameterNameThrows()
+   {
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter("", true));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter("", 123L));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter("", 3.14));
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter("", "value"));
+   }
+
+   @Test
+   public void testNullParameterObjectThrows()
+   {
+      assertThrows(IllegalArgumentException.class, () -> node.declareParameter(null));
+   }
+
+   @Test
+   public void testParameterUpdateEvent() throws InterruptedException
+   {
+      ROS2Node subscriber = new ROS2Node("subscriber_node");
+      CountDownLatch latch = new CountDownLatch(1);
+      AtomicReference<ParameterEvent> receivedEvent = new AtomicReference<>();
+
+      // Subscribe to parameter events BEFORE declaring the parameter
+      subscriber.createSubscription(new ROS2Topic<>("/parameter_events", ParameterEvent.class), (eventReader) ->
+      {
+         ParameterEvent event = new ParameterEvent();
+         eventReader.read(event);
+
+         if (event.getNodeAsString().equals("test_node") && event.getChangedParameters().size() > 0)
+         {
+            receivedEvent.set(event);
+            latch.countDown();
+         }
+      });
+
+      Thread.sleep(500); // Give more time for subscription to establish
+
+      // Declare initial parameter
+      node.declareParameter("counter", 0L);
+
+      // Update the parameter (should trigger changed event)
+      node.setParameter(new ROS2Parameter("counter", 10L));
+
+      // Wait for event with longer timeout
+      boolean received = latch.await(3, TimeUnit.SECONDS);
+      assertTrue(received, "Should receive parameter changed event");
+
+      ParameterEvent event = receivedEvent.get();
+      assertNotNull(event);
+      assertEquals(1, event.getChangedParameters().size());
+      assertEquals("counter", event.getChangedParameters().get(0).getNameAsString());
+
+      subscriber.close();
+   }
+
+   @Test
+   public void testHasParameter()
+   {
+      assertFalse(node.hasParameter("nonexistent"));
+
+      node.declareParameter("exists", 42L);
+      assertTrue(node.hasParameter("exists"));
+   }
+
+   @Test
+   public void testGetAllParameters()
+   {
+      node.declareParameter("param1", true);
+      node.declareParameter("param2", 123L);
+      node.declareParameter("param3", "test");
+
+      var allParams = node.getParameters();
+      assertEquals(3, allParams.size());
+      assertTrue(allParams.containsKey("param1"));
+      assertTrue(allParams.containsKey("param2"));
+      assertTrue(allParams.containsKey("param3"));
+   }
 }

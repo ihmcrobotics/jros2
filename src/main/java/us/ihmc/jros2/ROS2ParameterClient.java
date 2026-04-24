@@ -53,6 +53,7 @@ import java.util.List;
 public class ROS2ParameterClient implements Closeable
 {
    private final String nodeName;
+   private final ROS2Node node;
    private final ROS2ServiceClient<GetParameters_Request, GetParameters_Response> getParametersClient;
    private final ROS2ServiceClient<SetParameters_Request, SetParameters_Response> setParametersClient;
    private final ROS2ServiceClient<ListParameters_Request, ListParameters_Response> listParametersClient;
@@ -61,6 +62,7 @@ public class ROS2ParameterClient implements Closeable
 
    ROS2ParameterClient(ROS2Node node, String nodeName, ROS2QoSProfile qosProfile)
    {
+      this.node = node;
       this.nodeName = nodeName;
       String prefix = "/" + nodeName + "/";
 
@@ -315,11 +317,12 @@ public class ROS2ParameterClient implements Closeable
    @Override
    public void close()
    {
-      getParametersClient.close();
-      setParametersClient.close();
-      listParametersClient.close();
-      describeParametersClient.close();
-      getParameterTypesClient.close();
+      // Properly destroy service clients through the node
+      node.destroyServiceClient(getParametersClient);
+      node.destroyServiceClient(setParametersClient);
+      node.destroyServiceClient(listParametersClient);
+      node.destroyServiceClient(describeParametersClient);
+      node.destroyServiceClient(getParameterTypesClient);
    }
 
    /**

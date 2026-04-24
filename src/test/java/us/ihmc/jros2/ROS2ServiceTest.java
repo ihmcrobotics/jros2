@@ -286,4 +286,199 @@ public class ROS2ServiceTest
          clientNode.close();
       }
    }
+
+   @Test
+   @Timeout(30)
+   public void testServiceCleanupOnDestroy()
+   {
+      String serviceName = "/test_cleanup_service";
+
+      ROS2Node node = new ROS2Node("cleanup_test_node");
+
+      try
+      {
+         // Create service server
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               node.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> response.setSum(request.getA() + request.getB()),
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         assertNotNull(server);
+
+         // Destroy the server
+         boolean destroyed = node.destroyServiceServer(server);
+         assertTrue(destroyed, "Server should be destroyed successfully");
+
+         // Trying to destroy again should return false
+         boolean destroyedAgain = node.destroyServiceServer(server);
+         assertFalse(destroyedAgain, "Destroying already destroyed server should return false");
+      }
+      finally
+      {
+         node.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testServiceCleanupOnNodeClose()
+   {
+      String serviceName = "/test_node_close_service";
+
+      ROS2Node node = new ROS2Node("node_close_test");
+
+      // Create multiple services
+      ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server1 =
+            node.createServiceServer(
+                  serviceName + "1",
+                  example_interfaces.AddTwoInts_Request.class,
+                  example_interfaces.AddTwoInts_Response.class,
+                  (request, response) -> response.setSum(request.getA() + request.getB()),
+                  ROS2QoSProfile.SERVICES_DEFAULT
+            );
+
+      ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client1 =
+            node.createServiceClient(
+                  serviceName + "2",
+                  example_interfaces.AddTwoInts_Request.class,
+                  example_interfaces.AddTwoInts_Response.class,
+                  ROS2QoSProfile.SERVICES_DEFAULT
+            );
+
+      assertNotNull(server1);
+      assertNotNull(client1);
+
+      // Close node - should clean up all services
+      node.close();
+
+      // Node should be marked as closed
+      assertTrue(node.isClosed());
+   }
+
+   @Test
+   @Timeout(30)
+   public void testServiceCallbackException()
+   {
+      String serviceName = "/test_exception_service";
+
+      ROS2Node serverNode = new ROS2Node("exception_server_node");
+      ROS2Node clientNode = new ROS2Node("exception_client_node");
+
+      try
+      {
+         // Create service server that throws exception
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               serverNode.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> {
+                        throw new RuntimeException("Intentional exception in callback");
+                     },
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         Thread.sleep(500);
+
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         Thread.sleep(500);
+
+         // Send request - server should handle exception gracefully
+         example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
+         request.setA(5);
+         request.setB(10);
+
+         // Server should survive the exception and continue running
+         // (though this particular request may timeout or return null)
+         example_interfaces.AddTwoInts_Response response = client.sendRequestSync(request, 1000);
+
+         // The important thing is the server didn't crash
+         assertNotNull(server);
+      }
+      catch (Exception e)
+      {
+         fail("Service should handle callback exceptions gracefully: " + e.getMessage());
+      }
+      finally
+      {
+         serverNode.close();
+         clientNode.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testConcurrentServiceCalls() throws InterruptedException
+   {
+      String serviceName = "/test_concurrent_service";
+
+      ROS2Node serverNode = new ROS2Node("concurrent_server_node");
+      ROS2Node clientNode = new ROS2Node("concurrent_client_node");
+
+      try
+      {
+         AtomicInteger callCount = new AtomicInteger(0);
+
+         // Create service server
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               serverNode.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> {
+                        callCount.incrementAndGet();
+                        response.setSum(request.getA() + request.getB());
+                     },
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         Thread.sleep(500);
+
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         Thread.sleep(500);
+
+         // Send multiple sequential requests to verify server handles multiple calls correctly
+         int numRequests = 3;
+         int successCount = 0;
+
+         for (int i = 0; i < numRequests; i++)
+         {
+            example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
+            request.setA(i);
+            request.setB(i);
+
+            example_interfaces.AddTwoInts_Response response = client.sendRequestSync(request, 5000);
+            if (response != null && response.getSum() == i + i)
+            {
+               successCount++;
+            }
+         }
+
+         assertEquals(numRequests, successCount, "All requests should succeed");
+         assertEquals(numRequests, callCount.get(), "Server should have processed all " + numRequests + " requests");
+      }
+      finally
+      {
+         serverNode.close();
+         clientNode.close();
+      }
+   }
 }

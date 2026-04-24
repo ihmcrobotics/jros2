@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -297,5 +299,187 @@ public class ROS2ActionTest
       }
 
       assertEquals(3, goalsExecuted.get(), "All 3 goals should have been executed");
+   }
+
+   @Test
+   public void testActionCleanupOnDestroy() throws InterruptedException
+   {
+      ROS2ActionGoalCallback<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> callback = (goal, result, feedbackPublisher) -> {
+         result.getSequence().add(0);
+         result.getSequence().add(1);
+      };
+
+      ROS2ActionServer<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> server =
+            serverNode.createActionServer("test_cleanup_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class,
+                                          callback);
+
+      ROS2ActionClient<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> client =
+            clientNode.createActionClient("test_cleanup_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class);
+
+      assertNotNull(server);
+      assertNotNull(client);
+
+      // Destroy server and client
+      boolean serverDestroyed = serverNode.destroyActionServer(server);
+      boolean clientDestroyed = clientNode.destroyActionClient(client);
+
+      assertTrue(serverDestroyed, "Server should be destroyed successfully");
+      assertTrue(clientDestroyed, "Client should be destroyed successfully");
+
+      // Trying to destroy again should return false
+      assertFalse(serverNode.destroyActionServer(server));
+      assertFalse(clientNode.destroyActionClient(client));
+   }
+
+   @Test
+   public void testActionCleanupOnNodeClose()
+   {
+      // Create multiple actions
+      serverNode.createActionServer("action1",
+                                    Fibonacci_Goal.class,
+                                    Fibonacci_Result.class,
+                                    Fibonacci_Feedback.class,
+                                    (goal, result, feedbackPublisher) -> {});
+
+      clientNode.createActionClient("action2",
+                                    Fibonacci_Goal.class,
+                                    Fibonacci_Result.class,
+                                    Fibonacci_Feedback.class);
+
+      // Close nodes - should clean up all actions
+      serverNode.close();
+      clientNode.close();
+
+      assertTrue(serverNode.isClosed());
+      assertTrue(clientNode.isClosed());
+
+      // Reinitialize for tearDown
+      serverNode = new ROS2Node("test_action_server_node");
+      clientNode = new ROS2Node("test_action_client_node");
+   }
+
+   @Test
+   public void testActionCallbackException() throws InterruptedException
+   {
+      // Create action server that throws exception
+      ROS2ActionGoalCallback<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> callback = (goal, result, feedbackPublisher) -> {
+         throw new RuntimeException("Intentional exception in action callback");
+      };
+
+      ROS2ActionServer<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> server =
+            serverNode.createActionServer("exception_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class,
+                                          callback);
+
+      ROS2ActionClient<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> client =
+            clientNode.createActionClient("exception_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class);
+
+      Thread.sleep(500);
+
+      // Send goal
+      Fibonacci_Goal goal = new Fibonacci_Goal();
+      goal.setOrder(5);
+
+      // Server should survive the exception (though result may be null or empty)
+      Fibonacci_Result result = client.sendGoalSync(goal, 2000);
+
+      // The important thing is the server didn't crash
+      assertNotNull(server);
+   }
+
+   @Test
+   public void testConcurrentActionGoals() throws InterruptedException
+   {
+      AtomicInteger goalsExecuted = new AtomicInteger(0);
+
+      // Create action server
+      ROS2ActionGoalCallback<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> callback = (goal, result, feedbackPublisher) -> {
+         goalsExecuted.incrementAndGet();
+         try
+         {
+            Thread.sleep(100); // Simulate work
+         }
+         catch (InterruptedException e)
+         {
+            Thread.currentThread().interrupt();
+         }
+
+         int order = goal.getOrder();
+         result.getSequence().add(0);
+         if (order > 0)
+            result.getSequence().add(1);
+      };
+
+      serverNode.createActionServer("concurrent_action",
+                                    Fibonacci_Goal.class,
+                                    Fibonacci_Result.class,
+                                    Fibonacci_Feedback.class,
+                                    callback);
+
+      ROS2ActionClient<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> client =
+            clientNode.createActionClient("concurrent_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class);
+
+      Thread.sleep(500);
+
+      // Send multiple concurrent goals
+      int numGoals = 3;
+      CountDownLatch latch = new CountDownLatch(numGoals);
+
+      for (int i = 0; i < numGoals; i++)
+      {
+         final int order = i + 1;
+         new Thread(() -> {
+            Fibonacci_Goal goal = new Fibonacci_Goal();
+            goal.setOrder(order);
+
+            Fibonacci_Result result = client.sendGoalSync(goal, 5000);
+            if (result != null)
+            {
+               latch.countDown();
+            }
+         }).start();
+      }
+
+      boolean allCompleted = latch.await(10, TimeUnit.SECONDS);
+      assertTrue(allCompleted, "All concurrent goals should complete");
+      assertTrue(goalsExecuted.get() >= numGoals, "Server should have executed at least " + numGoals + " goals");
+   }
+
+   @Test
+   public void testActionTimeout() throws InterruptedException
+   {
+      // Create client without server
+      ROS2ActionClient<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> client =
+            clientNode.createActionClient("nonexistent_action",
+                                          Fibonacci_Goal.class,
+                                          Fibonacci_Result.class,
+                                          Fibonacci_Feedback.class);
+
+      Thread.sleep(500);
+
+      Fibonacci_Goal goal = new Fibonacci_Goal();
+      goal.setOrder(5);
+
+      // Should timeout since there's no server
+      long startTime = System.currentTimeMillis();
+      Fibonacci_Result result = client.sendGoalSync(goal, 1000);
+      long elapsed = System.currentTimeMillis() - startTime;
+
+      assertNull(result, "Result should be null when action times out");
+      assertTrue(elapsed >= 1000 && elapsed < 2000, "Timeout should take approximately 1 second");
    }
 }

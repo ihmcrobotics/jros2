@@ -207,10 +207,21 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
       {
          if (!closed)
          {
-            executorService.shutdown();
+            closed = true;
+            executorService.shutdownNow();
+            try
+            {
+               if (!executorService.awaitTermination(1, TimeUnit.SECONDS))
+               {
+                  jros2.logError("ExecutorService did not terminate in time for service client: " + serviceName, null);
+               }
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+            }
             requestPublisher.close(fastddsParticipant);
             responseSubscription.close(fastddsParticipant);
-            closed = true;
          }
       }
       finally

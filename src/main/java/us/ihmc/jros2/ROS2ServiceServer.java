@@ -20,6 +20,7 @@ import org.bytedeco.javacpp.Pointer;
 import java.io.Closeable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -145,7 +146,7 @@ public class ROS2ServiceServer<Request extends ROS2Message<Request>, Response ex
     */
    private void handleRequests()
    {
-      while (running.get())
+      while (running.get() && !Thread.currentThread().isInterrupted())
       {
          try
          {
@@ -180,9 +181,15 @@ public class ROS2ServiceServer<Request extends ROS2Message<Request>, Response ex
                Thread.sleep(1);
             }
          }
+         catch (InterruptedException e)
+         {
+            // Thread was interrupted, exit gracefully
+            Thread.currentThread().interrupt();
+            break;
+         }
          catch (Exception e)
          {
-            if (running.get())
+            if (running.get() && !Thread.currentThread().isInterrupted())
             {
                jros2.logError("Error handling service request for " + serviceName, e);
             }
@@ -228,10 +235,21 @@ public class ROS2ServiceServer<Request extends ROS2Message<Request>, Response ex
          if (!closed)
          {
             running.set(false);
-            executorService.shutdown();
+            closed = true;
+            executorService.shutdownNow();
+            try
+            {
+               if (!executorService.awaitTermination(2, TimeUnit.SECONDS))
+               {
+                  jros2.logError("ExecutorService did not terminate in time for service server: " + serviceName, null);
+               }
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+            }
             requestSubscription.close(fastddsParticipant);
             responsePublisher.close(fastddsParticipant);
-            closed = true;
          }
       }
       finally

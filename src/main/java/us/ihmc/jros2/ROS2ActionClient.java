@@ -260,11 +260,22 @@ public class ROS2ActionClient<Goal extends ROS2Message<Goal>, Result extends ROS
       {
          if (!closed)
          {
-            executorService.shutdown();
+            closed = true;
+            executorService.shutdownNow();
+            try
+            {
+               if (!executorService.awaitTermination(1, TimeUnit.SECONDS))
+               {
+                  jros2.logError("ExecutorService did not terminate in time for action client: " + actionName, null);
+               }
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+            }
             goalPublisher.close(fastddsParticipant);
             resultSubscription.close(fastddsParticipant);
             feedbackSubscription.close(fastddsParticipant);
-            closed = true;
          }
       }
       finally

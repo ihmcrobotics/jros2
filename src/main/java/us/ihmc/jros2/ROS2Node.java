@@ -229,9 +229,9 @@ public class ROS2Node implements Closeable
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
-      // Create parameter event publisher (must be after closeLock is initialized)
-      // Note: Creating publisher after all initialization to avoid circular dependencies
-      parameterEventPublisher = null; // Will be created lazily on first parameter operation
+      // Note: Parameter event publisher is created lazily on first parameter operation
+      // It will be tracked separately and cleaned up in close()
+      parameterEventPublisher = null;
    }
 
    /**
@@ -629,6 +629,7 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
+            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
             ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
             ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
 
@@ -682,6 +683,7 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
+            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
             ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
             ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
 
@@ -956,9 +958,11 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for goal, result, and feedback
-            ROS2Topic<Goal> goalTopic = new ROS2Topic<>("/" + actionName + "_action/goal", goalType);
-            ROS2Topic<Result> resultTopic = new ROS2Topic<>("/" + actionName + "_action/result", resultType);
-            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>("/" + actionName + "_action/feedback", feedbackType);
+            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
+            String actionPrefix = actionName.startsWith("/") ? actionName : "/" + actionName;
+            ROS2Topic<Goal> goalTopic = new ROS2Topic<>(actionPrefix + "/_action/send_goal", goalType);
+            ROS2Topic<Result> resultTopic = new ROS2Topic<>(actionPrefix + "/_action/get_result", resultType);
+            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>(actionPrefix + "/_action/feedback", feedbackType);
 
             ROS2ActionClient<Goal, Result, Feedback> client = new ROS2ActionClient<>(this, actionName, goalTopic, resultTopic, feedbackTopic, qosProfile);
 
@@ -1015,9 +1019,11 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for goal, result, and feedback
-            ROS2Topic<Goal> goalTopic = new ROS2Topic<>("/" + actionName + "_action/goal", goalType);
-            ROS2Topic<Result> resultTopic = new ROS2Topic<>("/" + actionName + "_action/result", resultType);
-            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>("/" + actionName + "_action/feedback", feedbackType);
+            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
+            String actionPrefix = actionName.startsWith("/") ? actionName : "/" + actionName;
+            ROS2Topic<Goal> goalTopic = new ROS2Topic<>(actionPrefix + "/_action/send_goal", goalType);
+            ROS2Topic<Result> resultTopic = new ROS2Topic<>(actionPrefix + "/_action/get_result", resultType);
+            ROS2Topic<Feedback> feedbackTopic = new ROS2Topic<>(actionPrefix + "/_action/feedback", feedbackType);
 
             ROS2ActionServer<Goal, Result, Feedback> server = new ROS2ActionServer<>(this,
                                                                                      actionName,
@@ -1065,9 +1071,19 @@ public class ROS2Node implements Closeable
     *
     * @param parameter The parameter to declare
     * @return The declared parameter
+    * @throws IllegalArgumentException if parameter or parameter name is null or empty
     */
    public ROS2Parameter declareParameter(ROS2Parameter parameter)
    {
+      if (parameter == null)
+      {
+         throw new IllegalArgumentException("parameter cannot be null when declaring a parameter");
+      }
+      if (parameter.getName() == null || parameter.getName().isEmpty())
+      {
+         throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
+      }
+
       boolean isNew = !parameters.containsKey(parameter.getName());
       parameters.put(parameter.getName(), parameter);
       publishParameterEvent(parameter, isNew);
@@ -1076,33 +1092,69 @@ public class ROS2Node implements Closeable
 
    /**
     * Declare a boolean parameter.
+    *
+    * @param name  The parameter name
+    * @param value The boolean value
+    * @return The declared parameter
+    * @throws IllegalArgumentException if name is null or empty
     */
    public ROS2Parameter declareParameter(String name, boolean value)
    {
+      if (name == null || name.isEmpty())
+      {
+         throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
+      }
       return declareParameter(new ROS2Parameter(name, value));
    }
 
    /**
     * Declare an integer parameter.
+    *
+    * @param name  The parameter name
+    * @param value The integer value
+    * @return The declared parameter
+    * @throws IllegalArgumentException if name is null or empty
     */
    public ROS2Parameter declareParameter(String name, long value)
    {
+      if (name == null || name.isEmpty())
+      {
+         throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
+      }
       return declareParameter(new ROS2Parameter(name, value));
    }
 
    /**
     * Declare a double parameter.
+    *
+    * @param name  The parameter name
+    * @param value The double value
+    * @return The declared parameter
+    * @throws IllegalArgumentException if name is null or empty
     */
    public ROS2Parameter declareParameter(String name, double value)
    {
+      if (name == null || name.isEmpty())
+      {
+         throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
+      }
       return declareParameter(new ROS2Parameter(name, value));
    }
 
    /**
     * Declare a string parameter.
+    *
+    * @param name  The parameter name
+    * @param value The string value
+    * @return The declared parameter
+    * @throws IllegalArgumentException if name is null or empty
     */
    public ROS2Parameter declareParameter(String name, String value)
    {
+      if (name == null || name.isEmpty())
+      {
+         throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
+      }
       return declareParameter(new ROS2Parameter(name, value));
    }
 
@@ -1168,6 +1220,8 @@ public class ROS2Node implements Closeable
       if (parameterEventPublisher == null && !closed)
       {
          parameterEventPublisher = createPublisher(new ROS2Topic<>("/parameter_events", rcl_interfaces.ParameterEvent.class), ROS2QoSProfile.PARAMETER_EVENTS);
+         // Note: The parameter event publisher is tracked in the publishers list via createPublisher(),
+         // so it will be properly cleaned up in close()
       }
 
       if (parameterEventPublisher != null && !closed)

@@ -85,12 +85,12 @@ public final class BuiltinTools
          case "int64":
          case "uint64":
             return 8;
-         // For strings, return the Java character size (chars are 2 bytes in Java UTF-16)
-         // Note: This differs from the ROS2 spec which defines string as 1-byte chars and wstring as 4-byte chars
-         // but in Java all chars are 2 bytes, so we use 2 for both string and wstring
+         // For strings, return the ROS2 spec size for serialization
+         // string uses 1-byte chars (UTF-8), wstring uses 4-byte chars (UTF-32)
          case "string":
+            return 1;
          case "wstring":
-            return 2;
+            return 4;
          default:
             return -1;
       }
@@ -173,8 +173,8 @@ public final class BuiltinTools
             return "IDLIntSequence";
          case "float64":
             return "IDLDoubleSequence";
-         case "uint64":
          case "int64":
+         case "uint64":
             return "IDLLongSequence";
          case "string":
             return "IDLStringSequence";
