@@ -31,6 +31,7 @@ setup(
             'test_service_client = jros2_interop_tests.test_service_client:main',
             'test_action_server = jros2_interop_tests.test_action_server:main',
             'test_action_client = jros2_interop_tests.test_action_client:main',
+            'test_parameter_client = jros2_interop_tests.test_parameter_client:main',
         ],
     },
 )

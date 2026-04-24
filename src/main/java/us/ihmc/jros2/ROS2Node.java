@@ -128,6 +128,10 @@ public class ROS2Node implements Closeable
     * Publisher for parameter events (publishes to /parameter_events topic).
     */
    private ROS2Publisher<rcl_interfaces.ParameterEvent> parameterEventPublisher;
+   /**
+    * Parameter service manager (creates 6 parameter services for remote access).
+    */
+   private ROS2ParameterService parameterService;
 
    /*
     * Locks
@@ -232,6 +236,27 @@ public class ROS2Node implements Closeable
       // Note: Parameter event publisher is created lazily on first parameter operation
       // It will be tracked separately and cleaned up in close()
       parameterEventPublisher = null;
+
+      // Parameter services are created lazily when first parameter is declared
+      parameterService = null;
+   }
+
+   /**
+    * Ensures parameter services are initialized for remote parameter access.
+    * Called lazily when the first parameter is declared.
+    */
+   private void ensureParameterServicesInitialized()
+   {
+      if (parameterService == null && !closed)
+      {
+         synchronized (this)
+         {
+            if (parameterService == null && !closed)
+            {
+               parameterService = new ROS2ParameterService(this);
+            }
+         }
+      }
    }
 
    /**
@@ -259,6 +284,27 @@ public class ROS2Node implements Closeable
     * For managing native Fast-DDS topic memory. For internal-use only.
     */
    <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
+   {
+      // Detect service topics by checking if name ends with "Request" or "Reply"
+      // and use appropriate DDS topic prefix: rq for requests, rr for replies, rt for regular topics
+      String topicName = topic.getName();
+      String prefix;
+      if (topicName.endsWith("Request"))
+      {
+         prefix = "rq";
+      }
+      else if (topicName.endsWith("Reply"))
+      {
+         prefix = "rr";
+      }
+      else
+      {
+         prefix = "rt";
+      }
+      return getOrCreateTopicData(topic, prefix);
+   }
+
+   <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic, String prefix)
    {
       closeLock.readLock().lock();
       try
@@ -296,10 +342,10 @@ public class ROS2Node implements Closeable
                    * where {@code X} is determined by the subtype of the topic.
                    * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
                    * https://design.ros2.org/articles/topic_and_service_names.html
+                   * rt = ROS topic, rq = service request, rr = service reply
                    */
-                  // TODO: Support other prefixes depending on ROS subsystem
                   // Use concat method to avoid string allocation on hot path (though this still allocates)
-                  String prefixedTopicName = "rt".concat(topic.getName());
+                  String prefixedTopicName = prefix.concat(topic.getName());
                   String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
@@ -629,9 +675,9 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
-            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
+            // Topic names ending with "Request" and "Reply" will automatically get "rq" and "rr" DDS prefixes
             ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
-            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Reply", responseType);
 
             ROS2ServiceClient<Request, Response> client = new ROS2ServiceClient<>(this, serviceName, requestTopic, responseTopic, qosProfile);
 
@@ -683,9 +729,12 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
-            // Note: These will get 'rt' prefix added by getOrCreateTopicData()
-            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
-            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Response", responseType);
+            // Topic names ending with "Request" and "Reply" will automatically get "rq" and "rr" DDS prefixes
+            // See getOrCreateTopicData() for prefix logic
+            String requestTopicName = serviceName + "Request";
+            String responseTopicName = serviceName + "Reply";
+            ROS2Topic<Request> requestTopic = new ROS2Topic<>(requestTopicName, requestType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(responseTopicName, responseType);
 
             ROS2ServiceServer<Request, Response> server = new ROS2ServiceServer<>(this,
                                                                                   serviceName,
@@ -1084,6 +1133,10 @@ public class ROS2Node implements Closeable
          throw new IllegalArgumentException("parameter name cannot be null or empty when declaring a parameter");
       }
 
+      // Initialize parameter services on first parameter declaration
+      // This allows the Fast-DDS participant to be fully initialized before creating services
+      ensureParameterServicesInitialized();
+
       boolean isNew = !parameters.containsKey(parameter.getName());
       parameters.put(parameter.getName(), parameter);
       publishParameterEvent(parameter, isNew);
@@ -1463,6 +1516,12 @@ public class ROS2Node implements Closeable
                client.close();
             }
             parameterClients.clear();
+         }
+
+         // Delete parameter services
+         if (parameterService != null)
+         {
+            parameterService.close(fastddsParticipant);
          }
 
          // Clear parameters

@@ -208,13 +208,34 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      // We treat each character as 1 byte (8 bits) in a standard string
-      return elements[i].length() + CDRBuffer.alignment(currentAlignment, elements[i].length());
+      // CDR string serialization format:
+      // - 4 bytes for length prefix (int)
+      // - string characters (1 byte each)
+      // - 1 byte for null terminator
+      int stringLength = elements[i].length();
+      int lengthPrefixSize = 4; // writeInt for length
+      int nullTerminatorSize = 1; // writeChar('\0')
+      int stringDataSize = stringLength; // Each char is 1 byte in CDR
+
+      // Total size = length prefix + string data + null terminator
+      int totalSize = lengthPrefixSize + stringDataSize + nullTerminatorSize;
+
+      // Add alignment padding if needed (strings are aligned to 4-byte boundaries for the length prefix)
+      int alignment = CDRBuffer.alignment(currentAlignment, lengthPrefixSize);
+
+      return alignment + totalSize;
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
+      // Initialize StringBuilder if needed
+      if (elements[position] == null)
+      {
+         int capacity = defaultStringLength > 0 ? defaultStringLength : DEFAULT_MAX_STRING_LENGTH;
+         elements[position] = new StringBuilder(capacity);
+      }
+
       StringBuilder element = elements[position++];
       buffer.readString(element);
    }

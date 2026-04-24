@@ -20,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import rcl_interfaces.ParameterEvent;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -303,5 +304,90 @@ public class ROS2ParameterTest
       assertTrue(allParams.containsKey("param1"));
       assertTrue(allParams.containsKey("param2"));
       assertTrue(allParams.containsKey("param3"));
+   }
+
+   @Test
+   public void testParameterClientGetParameter() throws InterruptedException
+   {
+      // Create a separate node for the client
+      ROS2Node clientNode = new ROS2Node("client_node");
+
+      // Main node declares parameters
+      node.declareParameter("target_speed", 5.0);
+      node.declareParameter("max_accel", 2.5);
+
+      // Client reads parameters from the main node
+      ROS2ParameterClient client = clientNode.createParameterClient("test_node");
+
+      // Allow time for service discovery
+      Thread.sleep(500);
+
+      ROS2Parameter speedParam = client.getParameter("target_speed", 1000);
+      assertNotNull(speedParam, "Should be able to read parameter via client");
+      assertEquals(5.0, speedParam.asDouble(), 0.001);
+
+      ROS2Parameter accelParam = client.getParameter("max_accel", 1000);
+      assertNotNull(accelParam);
+      assertEquals(2.5, accelParam.asDouble(), 0.001);
+
+      clientNode.destroyParameterClient(client);
+      clientNode.close();
+   }
+
+   @Test
+   public void testParameterClientSetParameter() throws InterruptedException
+   {
+      // Create a separate node for the client
+      ROS2Node clientNode = new ROS2Node("client_node");
+
+      // Main node declares a parameter
+      node.declareParameter("mode", "auto");
+
+      // Client modifies the parameter remotely
+      ROS2ParameterClient client = clientNode.createParameterClient("test_node");
+
+      // Allow time for service discovery
+      Thread.sleep(500);
+
+      ROS2Parameter newMode = new ROS2Parameter("mode", "manual");
+      boolean success = client.setParameter(newMode, 1000);
+      assertTrue(success, "Client should be able to set parameter");
+
+      // Verify the node's parameter was actually changed
+      ROS2Parameter nodeParam = node.getParameter("mode");
+      assertEquals("manual", nodeParam.asString());
+
+      clientNode.destroyParameterClient(client);
+      clientNode.close();
+   }
+
+   @Test
+   public void testParameterClientGetMultipleParameters() throws InterruptedException
+   {
+      // Create a separate node for the client
+      ROS2Node clientNode = new ROS2Node("client_node");
+
+      // Main node declares multiple parameters
+      node.declareParameter("enabled", true);
+      node.declareParameter("count", 10L);
+      node.declareParameter("name", "robot1");
+
+      // Client reads multiple parameters at once
+      ROS2ParameterClient client = clientNode.createParameterClient("test_node");
+
+      // Allow time for service discovery
+      Thread.sleep(500);
+
+      String[] paramNames = {"enabled", "count", "name"};
+      List<ROS2Parameter> params = client.getParameters(paramNames, 1000);
+
+      assertNotNull(params);
+      assertEquals(3, params.size());
+      assertTrue(params.get(0).asBool());
+      assertEquals(10L, params.get(1).asLong());
+      assertEquals("robot1", params.get(2).asString());
+
+      clientNode.destroyParameterClient(client);
+      clientNode.close();
    }
 }

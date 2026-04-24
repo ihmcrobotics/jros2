@@ -103,7 +103,7 @@ tasks.register<Exec>("testROS2Integration") {
         source /opt/ros/$rosDistro/setup.bash
         source install/setup.bash
         export ROS_DOMAIN_ID=200
-        timeout 30s ros2 launch jros2_interop_tests all_tests.launch.py || true
+        timeout 40s ros2 launch jros2_interop_tests all_tests.launch.py || true
     """.trimIndent()
 
     commandLine = listOf("bash", "-c", testScript)

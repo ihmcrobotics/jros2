@@ -1,0 +1,37 @@
+#!/bin/bash
+# Java parameter test executable
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# When installed, script is at: install/jros2_interop_tests/lib/jros2_interop_tests/
+# Need to go up to workspace root: ../../../..
+WORKSPACE_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+
+# Build directory contains the compiled Java classes
+BUILD_DIR="$WORKSPACE_ROOT/build"
+
+# jros2 libraries from parent project (4 levels up from workspace)
+JROS2_ROOT="$WORKSPACE_ROOT/../../../../"
+JROS2_LIBS="$JROS2_ROOT/build/libs"
+JROS2_DOCKER_LIBS="$JROS2_ROOT/build/docker-libs"
+
+# Set classpath - need to explicitly list all dependency JARs
+CLASSPATH="$BUILD_DIR/classes/java/main"
+if [ -d "$JROS2_LIBS" ]; then
+    for jar in "$JROS2_LIBS"/*.jar; do
+        [ -f "$jar" ] && CLASSPATH="$CLASSPATH:$jar"
+    done
+fi
+if [ -d "$JROS2_DOCKER_LIBS" ]; then
+    for jar in "$JROS2_DOCKER_LIBS"/*.jar; do
+        [ -f "$jar" ] && CLASSPATH="$CLASSPATH:$jar"
+    done
+fi
+
+# Set library path for native libraries
+LIBRARY_PATH="$JROS2_LIBS/native"
+
+# Run the Java test
+exec java -cp "$CLASSPATH" \
+    -Djava.library.path="$LIBRARY_PATH" \
+    us.ihmc.jros2.interop.JavaParameterTest \
+    "$@"

@@ -81,4 +81,16 @@ def generate_launch_description():
                 ),
             ]
         ),
+
+        # Test 7: Java parameter test (after 30s)
+        TimerAction(
+            period=30.0,
+            actions=[
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource([
+                        PathJoinSubstitution([pkg_share, 'launch', 'parameter_test.launch.py'])
+                    ]),
+                ),
+            ]
+        ),
     ])
