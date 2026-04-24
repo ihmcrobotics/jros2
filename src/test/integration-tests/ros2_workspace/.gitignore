@@ -1,0 +1,20 @@
+# ROS2 workspace build artifacts
+build/
+install/
+log/
+
+# Generated setup script
+setup_workspace.sh
+
+# Gradle build artifacts
+src/jros2_interop_tests/build/
+src/jros2_interop_tests/.gradle/
+src/jros2_interop_tests/gradlew
+src/jros2_interop_tests/gradlew.bat
+src/jros2_interop_tests/gradle/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/

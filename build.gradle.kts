@@ -167,7 +167,40 @@ tasks.register<Exec>("testInterfaceWhitelistDocker") {
    errorOutput = System.err
 }
 
-// Run Docker integration tests as part of test task
+// Run ROS2 workspace integration tests
+tasks.register<Exec>("testROS2Integration") {
+   description = "Run ROS2 workspace integration tests"
+   group = "verification"
+
+   val rosDistro = System.getenv("ROS_DISTRO")
+   val hasRos = rosDistro != null && File("/opt/ros/$rosDistro").exists()
+   val ros2Workspace = File(projectDir, "src/test/integration-tests/ros2_workspace")
+   val gradlewScript = File(ros2Workspace, "gradlew")
+
+   onlyIf {
+      if (!hasRos) {
+         println("Skipping ROS2 integration tests: ROS2 not found. Set ROS_DISTRO environment variable.")
+         return@onlyIf false
+      }
+      if (!gradlewScript.exists()) {
+         println("Skipping ROS2 integration tests: Gradle wrapper not found in ros2_workspace")
+         return@onlyIf false
+      }
+      true
+   }
+
+   workingDir = ros2Workspace
+   commandLine = listOf("./gradlew", "test")
+
+   environment("ROS_DISTRO", rosDistro ?: "")
+
+   standardOutput = System.out
+   errorOutput = System.err
+
+   dependsOn("jar")
+}
+
+// Run Docker integration tests and ROS2 integration tests as part of test task
 tasks.named("test") {
-   finalizedBy("testInterfaceWhitelistDocker")
+   finalizedBy("testInterfaceWhitelistDocker", "testROS2Integration")
 }

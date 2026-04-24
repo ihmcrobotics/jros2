@@ -51,3 +51,6 @@ hs_err*
 
 **/build
 **/out
+# Python
+__pycache__/
+*.py[cod]
