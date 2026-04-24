@@ -146,28 +146,28 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
       // Wait for response in background
       executorService.submit(() ->
       {
-      try
-      {
-         long startTime = System.nanoTime();
-         long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(5000);
-         Response response = null;
-
-         while (System.nanoTime() - startTime < timeoutNanos && !closed)
+         try
          {
-            response = responseSubscription.read();
-            if (response != null)
-            {
-               break;
-            }
-            Thread.sleep(1);
-         }
+            long startTime = System.nanoTime();
+            long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(5000);
+            Response response = null;
 
-         future.complete(response);
-      }
-      catch (Exception e)
-      {
-         future.completeExceptionally(e);
-      }
+            while (System.nanoTime() - startTime < timeoutNanos && !closed)
+            {
+               response = responseSubscription.read();
+               if (response != null)
+               {
+                  break;
+               }
+               Thread.sleep(1);
+            }
+
+            future.complete(response);
+         }
+         catch (Exception e)
+         {
+            future.completeExceptionally(e);
+         }
       });
 
       return future;
