@@ -34,15 +34,15 @@ public final class BuiltinTools
       {
          case "bool":
          case "byte":
-         case "char":
-         case "float32":
-         case "float64":
          case "int8":
          case "uint8":
          case "int16":
+         case "char":
+         case "float32":
          case "uint16":
          case "int32":
          case "uint32":
+         case "float64":
          case "int64":
          case "uint64":
          case "string":
@@ -68,24 +68,29 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
+         // 1 bit
          case "bool":
+         // 1 byte
          case "byte":
-         case "char":
          case "int8":
+         // 2 bytes
          case "uint8":
-            return 1;
          case "int16":
-         case "uint16":
-            return 2;
+         // 2 bytes (unsigned)
+         case "char":
+            return 1;
+         // 4 bytes
          case "float32":
+         case "uint16":
          case "int32":
          case "uint32":
             return 4;
+         // 8 bytes
          case "float64":
          case "int64":
          case "uint64":
             return 8;
-         // For strings, return the ROS2 spec size for serialization
+         // Variable length strings
          // string uses 1-byte chars (UTF-8), wstring uses 4-byte chars (UTF-32)
          case "string":
             return 1;
@@ -111,27 +116,36 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
+         // 1 bit
          case "bool":
             return "boolean";
+         // 1 byte
          case "byte":
          case "int8":
-         case "uint8":
             return "byte";
+         // 2 bytes
+         case "uint8":
+         case "int16":
+            return "short";
+         // 2 bytes (unsigned)
          case "char":
             return "char";
-         case "int16":
-         case "uint16":
-            return "short";
+         // 4 bytes
          case "float32":
             return "float";
+         // 4 bytes
+         case "uint16":
          case "int32":
          case "uint32":
             return "int";
+         // 8 bytes
          case "float64":
             return "double";
+         // 8 bytes
          case "int64":
          case "uint64":
             return "long";
+         // Variable length strings
          case "string":
          case "wstring":
             return "StringBuilder";
@@ -155,27 +169,36 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
+         // 1 bit
          case "bool":
             return "IDLBoolSequence";
+         // 1 byte
          case "byte":
          case "int8":
-         case "uint8":
             return "IDLByteSequence";
+         // 2 bytes
+         case "uint8":
+         case "int16":
+            return "IDLShortSequence";
+         // 2 bytes (unsigned)
          case "char":
             return "IDLCharSequence";
-         case "int16":
-         case "uint16":
-            return "IDLShortSequence";
+         // 4 bytes
          case "float32":
             return "IDLFloatSequence";
+         // 4 bytes
+         case "uint16":
          case "int32":
          case "uint32":
             return "IDLIntSequence";
+         // 8 bytes
          case "float64":
             return "IDLDoubleSequence";
+         // 8 bytes
          case "int64":
          case "uint64":
             return "IDLLongSequence";
+         // Variable length strings
          case "string":
             return "IDLStringSequence";
          case "wstring":
@@ -200,27 +223,36 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
+         // 1 bit
          case "bool":
             return "writeBoolean";
+         // 1 byte
          case "byte":
          case "int8":
-         case "uint8":
             return "writeByte";
+         // 2 bytes
+         case "uint8":
+         case "int16":
+            return "writeShort";
+         // 2 bytes (unsigned)
          case "char":
             return "writeChar";
-         case "int16":
-         case "uint16":
-            return "writeShort";
+         // 4 bytes
          case "float32":
             return "writeFloat";
+         // 4 bytes
+         case "uint16":
          case "int32":
          case "uint32":
             return "writeInt";
+         // 8 bytes
          case "float64":
             return "writeDouble";
+         // 8 bytes
          case "int64":
          case "uint64":
             return "writeLong";
+         // Variable length strings
          case "string":
             return "writeString";
          case "wstring":
@@ -245,27 +277,36 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
+         // 1 bit
          case "bool":
             return "readBoolean";
+         // 1 byte
          case "byte":
          case "int8":
-         case "uint8":
             return "readByte";
+         // 2 bytes
+         case "uint8":
+         case "int16":
+            return "readShort";
+         // 2 bytes (unsigned)
          case "char":
             return "readChar";
-         case "int16":
-         case "uint16":
-            return "readShort";
+         // 4 bytes
          case "float32":
             return "readFloat";
+         // 4 bytes
+         case "uint16":
          case "int32":
          case "uint32":
             return "readInt";
+         // 8 bytes
          case "float64":
             return "readDouble";
+         // 8 bytes
          case "int64":
          case "uint64":
             return "readLong";
+         // Variable length strings
          case "string":
             return "readString";
          case "wstring":

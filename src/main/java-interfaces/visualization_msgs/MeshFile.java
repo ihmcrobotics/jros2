@@ -34,12 +34,12 @@ public class MeshFile implements ROS2Message<MeshFile>
    /**
       This stores the raw text of the mesh file.
    */
-   private final IDLByteSequence data_;
+   private final IDLShortSequence data_;
 
    public MeshFile()
    {
       filename_ = new StringBuilder();
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
 
    }
 
@@ -48,7 +48,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (filename_.length() + 1)); // filename_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (filename_.length() + 1)); // filename_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -94,7 +94,7 @@ public class MeshFile implements ROS2Message<MeshFile>
       this.filename_.delete(0, this.filename_.length());
       this.filename_.insert(0, s);
    }
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

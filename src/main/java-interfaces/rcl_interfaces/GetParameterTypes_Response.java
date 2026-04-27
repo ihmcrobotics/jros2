@@ -27,11 +27,11 @@ public class GetParameterTypes_Response implements ROS2Message<GetParameterTypes
       The type enum is defined in ParameterType.msg. ParameterType.PARAMETER_NOT_SET
       indicates that the parameter is not currently set.
    */
-   private final IDLByteSequence types_;
+   private final IDLShortSequence types_;
 
    public GetParameterTypes_Response()
    {
-      types_ = new IDLByteSequence();
+      types_ = new IDLShortSequence();
 
    }
 
@@ -66,7 +66,7 @@ public class GetParameterTypes_Response implements ROS2Message<GetParameterTypes
 
    }
 
-   public IDLByteSequence getTypes()
+   public IDLShortSequence getTypes()
    {
       return types_;
    }

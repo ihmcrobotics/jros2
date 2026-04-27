@@ -41,7 +41,7 @@ public class String_ implements ROS2Message<String_>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (data_.length() + 1)); // data_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (data_.length() + 1)); // data_
 
       return currentAlignment - initialAlignment;
    }

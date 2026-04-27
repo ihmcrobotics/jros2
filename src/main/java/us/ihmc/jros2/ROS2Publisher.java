@@ -17,6 +17,7 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.pointers.PublicationMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,6 +51,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
+   private final PublicationMatchedStatus publicationMatchedStatus;
 
    /*
     * Write buffer
@@ -75,15 +77,17 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
-      this.topicData = topicData;
       this.topic = topic;
+      this.topicData = topicData;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      publicationMatchedStatus = new us.ihmc.fastddsjava.pointers.PublicationMatchedStatus();
       fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+
       writeBuffer = new CDRBuffer();
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
@@ -183,9 +187,13 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       if (!wasClosed)
       {
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
-
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
+
+         publicationMatchedStatus.close();
+
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         topicDataWrapper.close();
+
          retcodePrintOnError(fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher));
       }
    }
@@ -228,5 +236,38 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    public String getTopicName()
    {
       return topic.getName();
+   }
+
+   /**
+    * Get the current number of matched subscribers for this publisher.
+    *
+    * @return The number of subscribers currently matched to this publisher
+    */
+   public int getPublicationMatchedStatus()
+   {
+      int count;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (closed)
+         {
+            count = 0;
+         }
+         else
+         {
+            synchronized (publicationMatchedStatus)
+            {
+               fastddsjava_datawriter_get_publication_matched_status(fastddsDataWriter, publicationMatchedStatus);
+               count = publicationMatchedStatus.current_count();
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return count;
    }
 }

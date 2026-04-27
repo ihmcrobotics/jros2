@@ -367,7 +367,7 @@ class ROS2ParameterService implements Closeable
    {
       String name = param.getNameAsString();
       ParameterValue value = param.getValue();
-      byte type = value.getType();
+      short type = value.getType();
 
       // Type codes: 0=NOT_SET, 1=BOOL, 2=INTEGER, 3=DOUBLE, 4=STRING, 5=BYTE_ARRAY,
       //             6=BOOL_ARRAY, 7=INTEGER_ARRAY, 8=DOUBLE_ARRAY, 9=STRING_ARRAY

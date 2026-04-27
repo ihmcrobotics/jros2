@@ -136,8 +136,6 @@ public class ROS2ParameterTest
          }
       });
 
-      Thread.sleep(100); // Let subscription establish
-
       // Declare a parameter (should trigger event)
       node.declareParameter("test_param", 123L);
 
@@ -263,8 +261,6 @@ public class ROS2ParameterTest
          }
       });
 
-      Thread.sleep(500); // Give more time for subscription to establish
-
       // Declare initial parameter
       node.declareParameter("counter", 0L);
 
@@ -319,8 +315,8 @@ public class ROS2ParameterTest
       // Client reads parameters from the main node
       ROS2ParameterClient client = clientNode.createParameterClient("test_node");
 
-      // Allow time for service discovery
-      Thread.sleep(500);
+      // Wait for parameter server to be discovered
+      assertTrue(client.waitForServer(5000), "Should discover parameter server");
 
       ROS2Parameter speedParam = client.getParameter("target_speed", 1000);
       assertNotNull(speedParam, "Should be able to read parameter via client");
@@ -346,8 +342,8 @@ public class ROS2ParameterTest
       // Client modifies the parameter remotely
       ROS2ParameterClient client = clientNode.createParameterClient("test_node");
 
-      // Allow time for service discovery
-      Thread.sleep(500);
+      // Wait for parameter server to be discovered
+      assertTrue(client.waitForServer(5000), "Should discover parameter server");
 
       ROS2Parameter newMode = new ROS2Parameter("mode", "manual");
       boolean success = client.setParameter(newMode, 1000);
@@ -375,8 +371,8 @@ public class ROS2ParameterTest
       // Client reads multiple parameters at once
       ROS2ParameterClient client = clientNode.createParameterClient("test_node");
 
-      // Allow time for service discovery
-      Thread.sleep(500);
+      // Wait for parameter server to be discovered
+      assertTrue(client.waitForServer(5000), "Should discover parameter server");
 
       String[] paramNames = {"enabled", "count", "name"};
       List<ROS2Parameter> params = client.getParameters(paramNames, 1000);

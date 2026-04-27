@@ -37,7 +37,14 @@ public class IDLWStringSequence extends IDLStringSequence
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return (elements[i].length() * 4) + CDRBuffer.alignment(currentAlignment, elements[i].length() * 4); // 4 bytes per character
+      // CDR wstring serialization format:
+      // - Alignment padding (to 4-byte boundary)
+      // - 4 bytes for length prefix (int)
+      // - wstring characters (4 bytes each for UTF-32)
+      // - 4 bytes for null terminator
+      int stringLength = elements[i].length();
+      int alignment = CDRBuffer.alignment(currentAlignment, 4);
+      return alignment + 4 + (stringLength * 4) + 4;
    }
 
    @Override

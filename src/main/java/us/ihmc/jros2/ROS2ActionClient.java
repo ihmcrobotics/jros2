@@ -89,6 +89,18 @@ public class ROS2ActionClient<Goal extends ROS2Message<Goal>, Result extends ROS
     */
    private boolean closed;
 
+   /*
+    * Discovery
+    */
+   /**
+    * Lock for server discovery synchronization.
+    */
+   private final Object discoveryLock;
+   /**
+    * Flag indicating whether an action server has been discovered.
+    */
+   private boolean serverDiscovered;
+
    /**
     * Package-private constructor. Use {@link ROS2Node#createActionClient} to create instances.
     *
@@ -114,6 +126,81 @@ public class ROS2ActionClient<Goal extends ROS2Message<Goal>, Result extends ROS
       this.executorService = Executors.newCachedThreadPool();
       this.closeLock = new ReentrantReadWriteLock(true);
       this.closed = false;
+      this.discoveryLock = new Object();
+      this.serverDiscovered = false;
+
+      // Set up discovery callback
+      resultSubscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         synchronized (discoveryLock)
+         {
+            serverDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+      });
+
+      // Check if server is already matched
+      synchronized (discoveryLock)
+      {
+         if (resultSubscription.getSubscriptionMatchedStatus() > 0 && goalPublisher.getPublicationMatchedStatus() > 0)
+         {
+            serverDiscovered = true;
+         }
+      }
+   }
+
+   /**
+    * Wait for an action server to be discovered.
+    * <p>
+    * This method blocks until an action server is discovered or the timeout expires.
+    * Bidirectional discovery is ensured: both the client's goal publisher and result
+    * subscription must be matched to the server.
+    *
+    * @param timeoutMs Timeout in milliseconds to wait for server discovery
+    * @return true if a server was discovered, false if timeout occurred
+    */
+   public boolean waitForServer(long timeoutMs)
+   {
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         while (!closed)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               return false;
+            }
+
+            // Check both directions: result subscription and goal publisher
+            if (resultSubscription.getSubscriptionMatchedStatus() > 0 && goalPublisher.getPublicationMatchedStatus() > 0)
+            {
+               serverDiscovered = true;
+               return true;
+            }
+
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
+            {
+               return false;
+            }
+
+            try
+            {
+               discoveryLock.wait(Math.min(remainingMs, 10));
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return false;
+            }
+         }
+
+         return false;
+      }
    }
 
    /**

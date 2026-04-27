@@ -34,7 +34,7 @@ public class SetBool_Response implements ROS2Message<SetBool_Response>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // success_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * message_.length()) + 1; // message_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * message_.length()) + 1; // message_
 
       return currentAlignment - initialAlignment;
    }

@@ -62,7 +62,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    /**
       The type of this parameter, which corresponds to the appropriate field below.
    */
-   private byte type_;
+   private short type_;
    /**
       Boolean value, can be either true or false.
    */
@@ -122,7 +122,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_value_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // integer_value_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // double_value_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (string_value_.length() + 1)); // string_value_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (string_value_.length() + 1)); // string_value_
       currentAlignment += byte_array_value_.calculateSizeBytes(currentAlignment);
       currentAlignment += bool_array_value_.calculateSizeBytes(currentAlignment);
       currentAlignment += integer_array_value_.calculateSizeBytes(currentAlignment);
@@ -135,7 +135,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(type_);
+      buffer.writeShort(type_);
       buffer.writeBoolean(bool_value_);
       buffer.writeLong(integer_value_);
       buffer.writeDouble(double_value_);
@@ -151,7 +151,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      type_ = buffer.readByte();
+      type_ = buffer.readShort();
       bool_value_ = buffer.readBoolean();
       integer_value_ = buffer.readLong();
       double_value_ = buffer.readDouble();
@@ -181,12 +181,12 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    }
 
-   public byte getType()
+   public short getType()
    {
       return type_;
    }
 
-   public void setType(byte type_)
+   public void setType(short type_)
    {
       this.type_ = type_;
    }

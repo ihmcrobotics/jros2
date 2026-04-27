@@ -32,6 +32,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",
                   "fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
+                  "fastdds/dds/core/status/PublicationMatchedStatus.hpp",
 
                   "fastdds/dds/subscriber/SampleState.hpp",
                   "fastdds/dds/subscriber/ViewState.hpp",

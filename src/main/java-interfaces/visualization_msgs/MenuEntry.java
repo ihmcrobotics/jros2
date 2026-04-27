@@ -126,10 +126,10 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       ROSRUN: execute "rosrun" with arguments given in the command field (above).
       ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
    */
-   public static final byte FEEDBACK = 0;
-   public static final byte ROSRUN = 1;
-   public static final byte ROSLAUNCH = 2;
-   private byte command_type_;
+   public static final short FEEDBACK = 0;
+   public static final short ROSRUN = 1;
+   public static final short ROSLAUNCH = 2;
+   private short command_type_;
 
    public MenuEntry()
    {
@@ -145,8 +145,8 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // parent_id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (title_.length() + 1)); // title_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (command_.length() + 1)); // command_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (title_.length() + 1)); // title_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (command_.length() + 1)); // command_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // command_type_
 
       return currentAlignment - initialAlignment;
@@ -159,7 +159,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       buffer.writeInt(parent_id_);
       buffer.writeString(title_);
       buffer.writeString(command_);
-      buffer.writeByte(command_type_);
+      buffer.writeShort(command_type_);
 
    }
 
@@ -170,7 +170,7 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       parent_id_ = buffer.readInt();
       buffer.readString(title_);
       buffer.readString(command_);
-      command_type_ = buffer.readByte();
+      command_type_ = buffer.readShort();
 
    }
 
@@ -237,12 +237,12 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       this.command_.delete(0, this.command_.length());
       this.command_.insert(0, s);
    }
-   public byte getCommandType()
+   public short getCommandType()
    {
       return command_type_;
    }
 
-   public void setCommandType(byte command_type_)
+   public void setCommandType(short command_type_)
    {
       this.command_type_ = command_type_;
    }

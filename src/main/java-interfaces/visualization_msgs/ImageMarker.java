@@ -92,7 +92,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    /**
       Whether or not to fill in the shape with color.
    */
-   private byte filled_;
+   private short filled_;
    /**
       Fill color; in the range: [0.0-1.0]
    */
@@ -130,7 +130,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (ns_.length() + 1)); // ns_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (ns_.length() + 1)); // ns_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
@@ -157,7 +157,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       position_.serialize(buffer);
       buffer.writeFloat(scale_);
       outline_color_.serialize(buffer);
-      buffer.writeByte(filled_);
+      buffer.writeShort(filled_);
       fill_color_.serialize(buffer);
       lifetime_.serialize(buffer);
       points_.serialize(buffer);
@@ -176,7 +176,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       position_.deserialize(buffer);
       scale_ = buffer.readFloat();
       outline_color_.deserialize(buffer);
-      filled_ = buffer.readByte();
+      filled_ = buffer.readShort();
       fill_color_.deserialize(buffer);
       lifetime_.deserialize(buffer);
       points_.deserialize(buffer);
@@ -274,12 +274,12 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       return outline_color_;
    }
 
-   public byte getFilled()
+   public short getFilled()
    {
       return filled_;
    }
 
-   public void setFilled(byte filled_)
+   public void setFilled(short filled_)
    {
       this.filled_ = filled_;
    }

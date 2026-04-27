@@ -27,7 +27,7 @@ public class UInt16 implements ROS2Message<UInt16>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt16_";
 
-   private short data_;
+   private int data_;
 
    public UInt16()
    {
@@ -38,7 +38,7 @@ public class UInt16 implements ROS2Message<UInt16>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // data_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -46,14 +46,14 @@ public class UInt16 implements ROS2Message<UInt16>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeShort(data_);
+      buffer.writeInt(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readShort();
+      data_ = buffer.readInt();
 
    }
 
@@ -64,12 +64,12 @@ public class UInt16 implements ROS2Message<UInt16>
 
    }
 
-   public short getData()
+   public int getData()
    {
       return data_;
    }
 
-   public void setData(short data_)
+   public void setData(int data_)
    {
       this.data_ = data_;
    }

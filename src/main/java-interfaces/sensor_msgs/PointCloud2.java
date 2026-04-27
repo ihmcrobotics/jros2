@@ -68,7 +68,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    private boolean is_bigendian_; // Is this data bigendian?
    private int point_step_; // Length of a point in bytes
    private int row_step_; // Length of a row in bytes
-   private final IDLByteSequence data_; // Actual point data, size is (row_step*height)
+   private final IDLShortSequence data_; // Actual point data, size is (row_step*height)
    private boolean is_dense_; // True if there are no invalid points
 
    public PointCloud2()
@@ -76,7 +76,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       header_ = new std_msgs.Header();
       fields_ = new IDLObjectSequence<sensor_msgs.PointField>(sensor_msgs.PointField.class);
       is_bigendian_ = (boolean) false;
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
       is_dense_ = (boolean) false;
 
    }
@@ -204,7 +204,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       this.row_step_ = row_step_;
    }
 
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

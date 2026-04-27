@@ -76,7 +76,7 @@ public class TestMsg implements ROS2Message<TestMsg>
    // Note: The length of each string in this sequence should not exceed 10 characters.
    // This is not strictly enforced in Java / jros2.
    private final IDLStringSequence up_to_five_strings_up_to_ten_characters_each_;
-   private byte x_;
+   private short x_;
    private short y_;
    private final StringBuilder full_name_;
    private final IDLIntSequence samples_;
@@ -103,7 +103,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_ = new IDLStringSequence(5);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
       up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5, 5, 10);
-      x_ = (byte) 42;
+      x_ = (short) 42;
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
       samples_ = new IDLIntSequence();
@@ -136,22 +136,22 @@ public class TestMsg implements ROS2Message<TestMsg>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (my_string_.length() + 1)); // my_string_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (my_string_.length() + 1)); // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // five_integers_array_
       currentAlignment += up_to_five_integers_array_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (string_of_unbounded_size_.length() + 1)); // string_of_unbounded_size_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (up_to_ten_characters_string_.length() + 1)); // up_to_ten_characters_string_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (string_of_unbounded_size_.length() + 1)); // string_of_unbounded_size_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (up_to_ten_characters_string_.length() + 1)); // up_to_ten_characters_string_
       currentAlignment += up_to_five_unbounded_strings_.calculateSizeBytes(currentAlignment);
       currentAlignment += unbounded_array_of_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += up_to_five_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // x_
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (full_name_.length() + 1)); // full_name_
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // y_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (full_name_.length() + 1)); // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
-      currentAlignment += (3 * 2) + CDRBuffer.alignment(currentAlignment, (3 * 2)); // three_strings_
-      currentAlignment += (3 * 2) + CDRBuffer.alignment(currentAlignment, (3 * 2)); // three_strings_each_max_length_of_five_chars_
+      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_
+      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_each_max_length_of_five_chars_
       for (int i = 0; i < three_images_.length; ++i)
       {
          currentAlignment += three_images_[i].calculateSizeBytes(currentAlignment);
@@ -177,7 +177,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.serialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.serialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.serialize(buffer);
-      buffer.writeByte(x_);
+      buffer.writeShort(x_);
       buffer.writeShort(y_);
       buffer.writeString(full_name_);
       samples_.serialize(buffer);
@@ -217,7 +217,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       up_to_five_unbounded_strings_.deserialize(buffer);
       unbounded_array_of_strings_up_to_ten_characters_each_.deserialize(buffer);
       up_to_five_strings_up_to_ten_characters_each_.deserialize(buffer);
-      x_ = buffer.readByte();
+      x_ = buffer.readShort();
       y_ = buffer.readShort();
       buffer.readString(full_name_);
       samples_.deserialize(buffer);
@@ -374,12 +374,12 @@ public class TestMsg implements ROS2Message<TestMsg>
       return up_to_five_strings_up_to_ten_characters_each_;
    }
 
-   public byte getX()
+   public short getX()
    {
       return x_;
    }
 
-   public void setX(byte x_)
+   public void setX(short x_)
    {
       this.x_ = x_;
    }

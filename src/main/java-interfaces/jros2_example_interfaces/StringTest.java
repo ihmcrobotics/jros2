@@ -94,27 +94,27 @@ public class StringTest implements ROS2Message<StringTest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str1_.length() + 1)); // str1_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str2_.length() + 1)); // str2_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str3_.length() + 1)); // str3_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str4_.length() + 1)); // str4_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str5_.length() + 1)); // str5_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str6_.length() + 1)); // str6_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str7_.length() + 1)); // str7_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str8_.length() + 1)); // str8_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (str9_.length() + 1)); // str9_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (stra_.length() + 1)); // stra_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strb_.length() + 1)); // strb_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strc_.length() + 1)); // strc_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strd_.length() + 1)); // strd_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (stre_.length() + 1)); // stre_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strf_.length() + 1)); // strf_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strg_.length() + 1)); // strg_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strh_.length() + 1)); // strh_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (stri_.length() + 1)); // stri_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strj_.length() + 1)); // strj_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strk_.length() + 1)); // strk_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (strl_.length() + 1)); // strl_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str1_.length() + 1)); // str1_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str2_.length() + 1)); // str2_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str3_.length() + 1)); // str3_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str4_.length() + 1)); // str4_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str5_.length() + 1)); // str5_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str6_.length() + 1)); // str6_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str7_.length() + 1)); // str7_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str8_.length() + 1)); // str8_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (str9_.length() + 1)); // str9_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (stra_.length() + 1)); // stra_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strb_.length() + 1)); // strb_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strc_.length() + 1)); // strc_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strd_.length() + 1)); // strd_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (stre_.length() + 1)); // stre_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strf_.length() + 1)); // strf_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strg_.length() + 1)); // strg_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strh_.length() + 1)); // strh_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (stri_.length() + 1)); // stri_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strj_.length() + 1)); // strj_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strk_.length() + 1)); // strk_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (strl_.length() + 1)); // strl_
 
       return currentAlignment - initialAlignment;
    }

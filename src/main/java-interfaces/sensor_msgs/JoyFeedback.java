@@ -34,15 +34,15 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    /**
       Declare of the type of feedback
    */
-   public static final byte TYPE_LED = 0;
-   public static final byte TYPE_RUMBLE = 1;
-   public static final byte TYPE_BUZZER = 2;
-   private byte type_;
+   public static final short TYPE_LED = 0;
+   public static final short TYPE_RUMBLE = 1;
+   public static final short TYPE_BUZZER = 2;
+   private short type_;
    /**
       This will hold an id number for each type of each feedback.
       Example, the first led would be id=0, the second would be id=1
    */
-   private byte id_;
+   private short id_;
    /**
       Intensity of the feedback, from 0.0 to 1.0, inclusive.  If device is
       actually binary, driver should treat 0<=x<0.5 as off, 0.5<=x<=1 as on.
@@ -68,8 +68,8 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(type_);
-      buffer.writeByte(id_);
+      buffer.writeShort(type_);
+      buffer.writeShort(id_);
       buffer.writeFloat(intensity_);
 
    }
@@ -77,8 +77,8 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      type_ = buffer.readByte();
-      id_ = buffer.readByte();
+      type_ = buffer.readShort();
+      id_ = buffer.readShort();
       intensity_ = buffer.readFloat();
 
    }
@@ -92,22 +92,22 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
 
    }
 
-   public byte getType()
+   public short getType()
    {
       return type_;
    }
 
-   public void setType(byte type_)
+   public void setType(short type_)
    {
       this.type_ = type_;
    }
 
-   public byte getId()
+   public short getId()
    {
       return id_;
    }
 
-   public void setId(byte id_)
+   public void setId(short id_)
    {
       this.id_ = id_;
    }

@@ -35,7 +35,7 @@ public class SelfTest_Response implements ROS2Message<SelfTest_Response>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * id_.length()) + 1; // id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * id_.length()) + 1; // id_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // passed_
       currentAlignment += status_.calculateSizeBytes(currentAlignment);
 

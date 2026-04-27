@@ -612,4 +612,213 @@ public class ROS2PublishSubscribeTest
 
       ros2Node.close();
    }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionMatchedCallback() throws InterruptedException
+   {
+      final String topicName = "/ihmc/test_matched_callback";
+
+      // Create subscriber node first
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+
+      // Track when publisher is discovered
+      AtomicInteger matchedCount = new AtomicInteger(0);
+      final Object sync = new Object();
+
+      // Create subscription with matched callback
+      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      subscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         int count = matchedCount.incrementAndGet();
+         synchronized (sync)
+         {
+            sync.notify();
+         }
+      });
+
+      // Initially, no publishers should be matched
+      assertEquals(0, matchedCount.get(), "No publishers should be matched initially");
+
+      // Now create a publisher - this should trigger the callback
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+
+      // Wait for the callback to be invoked
+      synchronized (sync)
+      {
+         if (matchedCount.get() == 0)
+         {
+            sync.wait(5000); // Wait up to 5 seconds
+         }
+      }
+
+      // Callback should have been invoked at least once
+      assertTrue(matchedCount.get() > 0, "Subscription matched callback should have been invoked when publisher was created");
+
+      publisherNode.close();
+      subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionMatchedCallbackMultiplePublishers() throws InterruptedException
+   {
+      final String topicName = "/ihmc/test_multiple_matched";
+
+      // Create subscriber node first
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
+
+      // Track callback invocations
+      AtomicInteger matchedCount = new AtomicInteger(0);
+      final Object sync = new Object();
+
+      // Create subscription with matched callback
+      ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      subscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         matchedCount.incrementAndGet();
+         synchronized (sync)
+         {
+            sync.notifyAll();
+         }
+      });
+
+      // Create multiple publishers
+      ROS2Node publisherNode1 = new ROS2Node("publisher_node1");
+      ROS2Node publisherNode2 = new ROS2Node("publisher_node2");
+      ROS2Node publisherNode3 = new ROS2Node("publisher_node3");
+
+      ROS2Publisher<example_interfaces.Bool> publisher1 = publisherNode1.createPublisher(topic);
+
+      // Wait for first match
+      synchronized (sync)
+      {
+         if (matchedCount.get() < 1)
+         {
+            sync.wait(2000);
+         }
+      }
+      assertTrue(matchedCount.get() >= 1, "Should have matched first publisher");
+
+      ROS2Publisher<example_interfaces.Bool> publisher2 = publisherNode2.createPublisher(topic);
+
+      // Wait for second match
+      synchronized (sync)
+      {
+         if (matchedCount.get() < 2)
+         {
+            sync.wait(2000);
+         }
+      }
+      assertTrue(matchedCount.get() >= 2, "Should have matched second publisher");
+
+      ROS2Publisher<example_interfaces.Bool> publisher3 = publisherNode3.createPublisher(topic);
+
+      // Wait for third match
+      synchronized (sync)
+      {
+         if (matchedCount.get() < 3)
+         {
+            sync.wait(2000);
+         }
+      }
+      assertTrue(matchedCount.get() >= 3, "Should have matched all three publishers");
+
+      publisherNode1.close();
+      publisherNode2.close();
+      publisherNode3.close();
+      subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionMatchedCallbackBeforePublisher() throws InterruptedException
+   {
+      final String topicName = "/ihmc/test_callback_before_publisher";
+
+      // Create both nodes
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+
+      // Create subscription BEFORE publisher exists
+      AtomicInteger matchedCount = new AtomicInteger(0);
+      final Object sync = new Object();
+
+      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      subscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         matchedCount.incrementAndGet();
+         synchronized (sync)
+         {
+            sync.notify();
+         }
+      });
+
+      // Verify no matches yet
+      Thread.sleep(100);
+      assertEquals(0, matchedCount.get(), "Should not match before publisher exists");
+
+      // Now create publisher - should trigger callback
+      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+
+      // Wait for callback
+      synchronized (sync)
+      {
+         if (matchedCount.get() == 0)
+         {
+            sync.wait(5000);
+         }
+      }
+
+      assertTrue(matchedCount.get() > 0, "Callback should fire when publisher is created after subscription");
+
+      publisherNode.close();
+      subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionMatchedCallbackAfterPublisher() throws InterruptedException
+   {
+      final String topicName = "/ihmc/test_callback_after_publisher";
+
+      // Create publisher FIRST
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+
+      // Now create subscription with callback - publisher already exists
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      AtomicInteger matchedCount = new AtomicInteger(0);
+      final Object sync = new Object();
+
+      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      subscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         matchedCount.incrementAndGet();
+         synchronized (sync)
+         {
+            sync.notify();
+         }
+      });
+
+      // Wait for callback
+      synchronized (sync)
+      {
+         if (matchedCount.get() == 0)
+         {
+            sync.wait(2000);
+         }
+      }
+
+      // This test checks if callback fires when publisher exists before subscription
+      assertTrue(matchedCount.get() > 0, "Callback should fire even when publisher exists before subscription");
+
+      publisherNode.close();
+      subscriberNode.close();
+   }
 }

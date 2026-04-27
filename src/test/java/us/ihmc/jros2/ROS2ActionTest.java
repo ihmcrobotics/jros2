@@ -20,6 +20,7 @@ import example_interfaces.Fibonacci_Goal;
 import example_interfaces.Fibonacci_Result;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -114,8 +115,7 @@ public class ROS2ActionTest
 
       assertNotNull(client);
 
-      // Give time for discovery
-      Thread.sleep(500);
+      client.waitForServer(5000);
 
       // Send goal synchronously
       Fibonacci_Goal goal = new Fibonacci_Goal();
@@ -182,8 +182,6 @@ public class ROS2ActionTest
                                                                                                                       Fibonacci_Result.class,
                                                                                                                       Fibonacci_Feedback.class);
 
-      Thread.sleep(500);
-
       // Send goal with feedback callback
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(5);
@@ -233,8 +231,6 @@ public class ROS2ActionTest
                                                                                                                       Fibonacci_Result.class,
                                                                                                                       Fibonacci_Feedback.class);
 
-      Thread.sleep(500);
-
       // Send goal asynchronously
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(7);
@@ -248,7 +244,7 @@ public class ROS2ActionTest
       assertEquals(13, result.getSequence().get(7));
    }
 
-   @Test
+   @RepeatedTest(200)
    public void testMultipleGoals() throws InterruptedException
    {
       AtomicInteger goalsExecuted = new AtomicInteger(0);
@@ -284,7 +280,8 @@ public class ROS2ActionTest
                                                                                                                       Fibonacci_Result.class,
                                                                                                                       Fibonacci_Feedback.class);
 
-      Thread.sleep(500);
+      // Wait for server to be discovered
+      assertTrue(client.waitForServer(5000), "Should discover action server");
 
       // Send multiple goals
       for (int i = 1; i <= 3; i++)
@@ -385,8 +382,6 @@ public class ROS2ActionTest
                                           Fibonacci_Result.class,
                                           Fibonacci_Feedback.class);
 
-      Thread.sleep(500);
-
       // Send goal
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(5);
@@ -433,8 +428,6 @@ public class ROS2ActionTest
                                           Fibonacci_Result.class,
                                           Fibonacci_Feedback.class);
 
-      Thread.sleep(500);
-
       // Send multiple concurrent goals
       int numGoals = 3;
       CountDownLatch latch = new CountDownLatch(numGoals);
@@ -468,8 +461,6 @@ public class ROS2ActionTest
                                           Fibonacci_Goal.class,
                                           Fibonacci_Result.class,
                                           Fibonacci_Feedback.class);
-
-      Thread.sleep(500);
 
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(5);

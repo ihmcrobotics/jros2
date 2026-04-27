@@ -112,7 +112,7 @@ public class Log implements ROS2Message<Log>
    /**
       Corresponding log level, see above definitions.
    */
-   private byte level_;
+   private short level_;
    /**
       The name representing the logger this message came from.
    */
@@ -151,10 +151,10 @@ public class Log implements ROS2Message<Log>
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // level_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (name_.length() + 1)); // name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (msg_.length() + 1)); // msg_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (file_.length() + 1)); // file_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (function_.length() + 1)); // function_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (name_.length() + 1)); // name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (msg_.length() + 1)); // msg_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (file_.length() + 1)); // file_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (function_.length() + 1)); // function_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // line_
 
       return currentAlignment - initialAlignment;
@@ -164,7 +164,7 @@ public class Log implements ROS2Message<Log>
    public void serialize(CDRBuffer buffer)
    {
       stamp_.serialize(buffer);
-      buffer.writeByte(level_);
+      buffer.writeShort(level_);
       buffer.writeString(name_);
       buffer.writeString(msg_);
       buffer.writeString(file_);
@@ -177,7 +177,7 @@ public class Log implements ROS2Message<Log>
    public void deserialize(CDRBuffer buffer)
    {
       stamp_.deserialize(buffer);
-      level_ = buffer.readByte();
+      level_ = buffer.readShort();
       buffer.readString(name_);
       buffer.readString(msg_);
       buffer.readString(file_);
@@ -208,12 +208,12 @@ public class Log implements ROS2Message<Log>
       return stamp_;
    }
 
-   public byte getLevel()
+   public short getLevel()
    {
       return level_;
    }
 
-   public void setLevel(byte level_)
+   public void setLevel(short level_)
    {
       this.level_ = level_;
    }

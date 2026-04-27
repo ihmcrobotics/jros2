@@ -80,6 +80,17 @@ public class ROS2ParameterClient implements Closeable
    }
 
    /**
+    * Wait for the parameter service server to become available.
+    *
+    * @param timeoutMs Maximum time to wait in milliseconds
+    * @return true if server was discovered within timeout, false otherwise
+    */
+   public boolean waitForServer(long timeoutMs)
+   {
+      return getParametersClient.waitForServer(timeoutMs);
+   }
+
+   /**
     * Get a single parameter by name.
     *
     * @param name      The parameter name
@@ -216,7 +227,7 @@ public class ROS2ParameterClient implements Closeable
     * @param timeoutMs Maximum time to wait for the response in milliseconds
     * @return List of parameter type bytes, or null if timeout
     */
-   public List<Byte> getParameterTypes(String[] names, long timeoutMs)
+   public List<Short> getParameterTypes(String[] names, long timeoutMs)
    {
       GetParameterTypes_Request request = new GetParameterTypes_Request();
       for (String name : names)
@@ -230,7 +241,7 @@ public class ROS2ParameterClient implements Closeable
          return null;
       }
 
-      List<Byte> result = new ArrayList<>();
+      List<Short> result = new ArrayList<>();
       for (int i = 0; i < response.getTypes().size(); i++)
       {
          result.add(response.getTypes().get(i));
@@ -399,7 +410,7 @@ public class ROS2ParameterClient implements Closeable
     */
    private ROS2Parameter convertFromParameterValue(String name, ParameterValue value)
    {
-      byte type = value.getType();
+      short type = value.getType();
       if (type == ParameterType.PARAMETER_NOT_SET)
       {
          return new ROS2Parameter(name);

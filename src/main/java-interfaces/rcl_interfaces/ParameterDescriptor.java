@@ -61,7 +61,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       Enum values are defined in the `ParameterType.msg` message.
    */
-   private byte type_;
+   private short type_;
    /**
       Description of the parameter, visible from introspection tools.
    */
@@ -108,10 +108,10 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (name_.length() + 1)); // name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (name_.length() + 1)); // name_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (description_.length() + 1)); // description_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (additional_constraints_.length() + 1)); // additional_constraints_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (description_.length() + 1)); // description_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (additional_constraints_.length() + 1)); // additional_constraints_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // read_only_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // dynamic_typing_
       currentAlignment += floating_point_range_.calculateSizeBytes(currentAlignment);
@@ -124,7 +124,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(name_);
-      buffer.writeByte(type_);
+      buffer.writeShort(type_);
       buffer.writeString(description_);
       buffer.writeString(additional_constraints_);
       buffer.writeBoolean(read_only_);
@@ -138,7 +138,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(name_);
-      type_ = buffer.readByte();
+      type_ = buffer.readShort();
       buffer.readString(description_);
       buffer.readString(additional_constraints_);
       read_only_ = buffer.readBoolean();
@@ -180,12 +180,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       this.name_.delete(0, this.name_.length());
       this.name_.insert(0, s);
    }
-   public byte getType()
+   public short getType()
    {
       return type_;
    }
 
-   public void setType(byte type_)
+   public void setType(short type_)
    {
       this.type_ = type_;
    }

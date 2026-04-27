@@ -29,12 +29,12 @@ public class UInt8MultiArray implements ROS2Message<UInt8MultiArray>
    public static final java.lang.String name = "example_interfaces::msg::dds_::UInt8MultiArray_";
 
    private final example_interfaces.MultiArrayLayout layout_; // specification of data layout
-   private final IDLByteSequence data_; // array of data
+   private final IDLShortSequence data_; // array of data
 
    public UInt8MultiArray()
    {
       layout_ = new example_interfaces.MultiArrayLayout();
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
 
    }
 
@@ -78,7 +78,7 @@ public class UInt8MultiArray implements ROS2Message<UInt8MultiArray>
       return layout_;
    }
 
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

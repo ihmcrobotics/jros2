@@ -52,19 +52,26 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinTypeSize()
    {
+      // 1 bit
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("bool"));
+      // 1 byte
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("byte"));
-      assertEquals(1, BuiltinTools.getBuiltinTypeSize("char"));
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("int8"));
+      // 2 bytes
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("uint8"));
-      assertEquals(2, BuiltinTools.getBuiltinTypeSize("int16"));
-      assertEquals(2, BuiltinTools.getBuiltinTypeSize("uint16"));
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("int16"));
+      // 2 bytes (unsigned)
+      assertEquals(1, BuiltinTools.getBuiltinTypeSize("char"));
+      // 4 bytes
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("float32"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("uint16"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("int32"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("uint32"));
+      // 8 bytes
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("float64"));
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("int64"));
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("uint64"));
+      // Variable length strings
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("string"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("wstring"));
 
@@ -77,19 +84,26 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinTypeJavaType()
    {
+      // 1 bit
       assertEquals("boolean", BuiltinTools.getBuiltinTypeJavaType("bool"));
+      // 1 byte
       assertEquals("byte", BuiltinTools.getBuiltinTypeJavaType("byte"));
       assertEquals("byte", BuiltinTools.getBuiltinTypeJavaType("int8"));
-      assertEquals("char", BuiltinTools.getBuiltinTypeJavaType("char"));
-      assertEquals("byte", BuiltinTools.getBuiltinTypeJavaType("uint8"));
+      // 2 bytes
+      assertEquals("short", BuiltinTools.getBuiltinTypeJavaType("uint8"));
       assertEquals("short", BuiltinTools.getBuiltinTypeJavaType("int16"));
+      // 2 bytes (unsigned)
+      assertEquals("char", BuiltinTools.getBuiltinTypeJavaType("char"));
+      // 4 bytes
       assertEquals("float", BuiltinTools.getBuiltinTypeJavaType("float32"));
-      assertEquals("short", BuiltinTools.getBuiltinTypeJavaType("uint16"));
+      assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("uint16"));
       assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("int32"));
-      assertEquals("double", BuiltinTools.getBuiltinTypeJavaType("float64"));
       assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("uint32"));
+      // 8 bytes
+      assertEquals("double", BuiltinTools.getBuiltinTypeJavaType("float64"));
       assertEquals("long", BuiltinTools.getBuiltinTypeJavaType("int64"));
       assertEquals("long", BuiltinTools.getBuiltinTypeJavaType("uint64"));
+      // Variable length strings
       assertEquals("StringBuilder", BuiltinTools.getBuiltinTypeJavaType("string"));
       assertEquals("StringBuilder", BuiltinTools.getBuiltinTypeJavaType("wstring"));
 
@@ -102,18 +116,26 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinTypeIDLSequenceType()
    {
+      // 1 bit
       assertEquals("IDLBoolSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("bool"));
+      // 1 byte
       assertEquals("IDLByteSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("byte"));
       assertEquals("IDLByteSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("int8"));
-      assertEquals("IDLCharSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("char"));
-      assertEquals("IDLByteSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint8"));
+      // 2 bytes
+      assertEquals("IDLShortSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint8"));
       assertEquals("IDLShortSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("int16"));
+      // 2 bytes (unsigned)
+      assertEquals("IDLCharSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("char"));
+      // 4 bytes
       assertEquals("IDLFloatSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("float32"));
-      assertEquals("IDLShortSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint16"));
+      assertEquals("IDLIntSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint16"));
       assertEquals("IDLIntSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("int32"));
       assertEquals("IDLIntSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint32"));
+      // 8 bytes
+      assertEquals("IDLDoubleSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("float64"));
       assertEquals("IDLLongSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("int64"));
       assertEquals("IDLLongSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("uint64"));
+      // Variable length strings
       assertEquals("IDLStringSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("string"));
       assertEquals("IDLWStringSequence", BuiltinTools.getBuiltinTypeIDLSequenceType("wstring"));
 
@@ -126,19 +148,26 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinCDRBufferWriteMethod()
    {
+      // 1 bit
       assertEquals("writeBoolean", BuiltinTools.getBuiltinCDRBufferWriteMethod("bool"));
+      // 1 byte
       assertEquals("writeByte", BuiltinTools.getBuiltinCDRBufferWriteMethod("byte"));
       assertEquals("writeByte", BuiltinTools.getBuiltinCDRBufferWriteMethod("int8"));
-      assertEquals("writeChar", BuiltinTools.getBuiltinCDRBufferWriteMethod("char"));
-      assertEquals("writeByte", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint8"));
+      // 2 bytes
+      assertEquals("writeShort", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint8"));
       assertEquals("writeShort", BuiltinTools.getBuiltinCDRBufferWriteMethod("int16"));
+      // 2 bytes (unsigned)
+      assertEquals("writeChar", BuiltinTools.getBuiltinCDRBufferWriteMethod("char"));
+      // 4 bytes
       assertEquals("writeFloat", BuiltinTools.getBuiltinCDRBufferWriteMethod("float32"));
-      assertEquals("writeShort", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint16"));
+      assertEquals("writeInt", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint16"));
       assertEquals("writeInt", BuiltinTools.getBuiltinCDRBufferWriteMethod("int32"));
-      assertEquals("writeDouble", BuiltinTools.getBuiltinCDRBufferWriteMethod("float64"));
       assertEquals("writeInt", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint32"));
+      // 8 bytes
+      assertEquals("writeDouble", BuiltinTools.getBuiltinCDRBufferWriteMethod("float64"));
       assertEquals("writeLong", BuiltinTools.getBuiltinCDRBufferWriteMethod("int64"));
       assertEquals("writeLong", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint64"));
+      // Variable length strings
       assertEquals("writeString", BuiltinTools.getBuiltinCDRBufferWriteMethod("string"));
       assertEquals("writeWString", BuiltinTools.getBuiltinCDRBufferWriteMethod("wstring"));
 
@@ -151,19 +180,26 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinCDRBufferReadMethod()
    {
+      // 1 bit
       assertEquals("readBoolean", BuiltinTools.getBuiltinCDRBufferReadMethod("bool"));
+      // 1 byte
       assertEquals("readByte", BuiltinTools.getBuiltinCDRBufferReadMethod("byte"));
       assertEquals("readByte", BuiltinTools.getBuiltinCDRBufferReadMethod("int8"));
-      assertEquals("readChar", BuiltinTools.getBuiltinCDRBufferReadMethod("char"));
-      assertEquals("readByte", BuiltinTools.getBuiltinCDRBufferReadMethod("uint8"));
+      // 2 bytes
+      assertEquals("readShort", BuiltinTools.getBuiltinCDRBufferReadMethod("uint8"));
       assertEquals("readShort", BuiltinTools.getBuiltinCDRBufferReadMethod("int16"));
+      // 2 bytes (unsigned)
+      assertEquals("readChar", BuiltinTools.getBuiltinCDRBufferReadMethod("char"));
+      // 4 bytes
       assertEquals("readFloat", BuiltinTools.getBuiltinCDRBufferReadMethod("float32"));
-      assertEquals("readShort", BuiltinTools.getBuiltinCDRBufferReadMethod("uint16"));
+      assertEquals("readInt", BuiltinTools.getBuiltinCDRBufferReadMethod("uint16"));
       assertEquals("readInt", BuiltinTools.getBuiltinCDRBufferReadMethod("int32"));
-      assertEquals("readDouble", BuiltinTools.getBuiltinCDRBufferReadMethod("float64"));
       assertEquals("readInt", BuiltinTools.getBuiltinCDRBufferReadMethod("uint32"));
+      // 8 bytes
+      assertEquals("readDouble", BuiltinTools.getBuiltinCDRBufferReadMethod("float64"));
       assertEquals("readLong", BuiltinTools.getBuiltinCDRBufferReadMethod("int64"));
       assertEquals("readLong", BuiltinTools.getBuiltinCDRBufferReadMethod("uint64"));
+      // Variable length strings
       assertEquals("readString", BuiltinTools.getBuiltinCDRBufferReadMethod("string"));
       assertEquals("readWString", BuiltinTools.getBuiltinCDRBufferReadMethod("wstring"));
 

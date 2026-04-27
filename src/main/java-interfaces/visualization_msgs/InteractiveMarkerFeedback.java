@@ -79,13 +79,13 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       BUTTON_CLICK: a button control has been clicked
       POSE_UPDATE: the pose has been changed using one of the controls
    */
-   public static final byte KEEP_ALIVE = 0;
-   public static final byte POSE_UPDATE = 1;
-   public static final byte MENU_SELECT = 2;
-   public static final byte BUTTON_CLICK = 3;
-   public static final byte MOUSE_DOWN = 4;
-   public static final byte MOUSE_UP = 5;
-   private byte event_type_;
+   public static final short KEEP_ALIVE = 0;
+   public static final short POSE_UPDATE = 1;
+   public static final short MENU_SELECT = 2;
+   public static final short BUTTON_CLICK = 3;
+   public static final short MOUSE_DOWN = 4;
+   public static final short MOUSE_UP = 5;
+   private short event_type_;
    /**
       Current pose of the marker
       Note: Has to be valid for all feedback types.
@@ -123,9 +123,9 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (client_id_.length() + 1)); // client_id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (marker_name_.length() + 1)); // marker_name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (control_name_.length() + 1)); // control_name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (client_id_.length() + 1)); // client_id_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (marker_name_.length() + 1)); // marker_name_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (control_name_.length() + 1)); // control_name_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
@@ -142,7 +142,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.writeString(client_id_);
       buffer.writeString(marker_name_);
       buffer.writeString(control_name_);
-      buffer.writeByte(event_type_);
+      buffer.writeShort(event_type_);
       pose_.serialize(buffer);
       buffer.writeInt(menu_entry_id_);
       mouse_point_.serialize(buffer);
@@ -157,7 +157,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.readString(client_id_);
       buffer.readString(marker_name_);
       buffer.readString(control_name_);
-      event_type_ = buffer.readByte();
+      event_type_ = buffer.readShort();
       pose_.deserialize(buffer);
       menu_entry_id_ = buffer.readInt();
       mouse_point_.deserialize(buffer);
@@ -233,12 +233,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       this.control_name_.delete(0, this.control_name_.length());
       this.control_name_.insert(0, s);
    }
-   public byte getEventType()
+   public short getEventType()
    {
       return event_type_;
    }
 
-   public void setEventType(byte event_type_)
+   public void setEventType(short event_type_)
    {
       this.event_type_ = event_type_;
    }

@@ -70,9 +70,9 @@ public class Range implements ROS2Message<Range>
       Radiation type enums
       If you want a value added to this list, send an email to the ros-users list
    */
-   public static final byte ULTRASOUND = 0;
-   public static final byte INFRARED = 1;
-   private byte radiation_type_; // the type of radiation used by the sensor
+   public static final short ULTRASOUND = 0;
+   public static final short INFRARED = 1;
+   private short radiation_type_; // the type of radiation used by the sensor
    private float field_of_view_; // the size of the arc that the distance reading is
    private float min_range_; // minimum range value [m]
    private float max_range_; // maximum range value [m]
@@ -103,7 +103,7 @@ public class Range implements ROS2Message<Range>
    public void serialize(CDRBuffer buffer)
    {
       header_.serialize(buffer);
-      buffer.writeByte(radiation_type_);
+      buffer.writeShort(radiation_type_);
       buffer.writeFloat(field_of_view_);
       buffer.writeFloat(min_range_);
       buffer.writeFloat(max_range_);
@@ -115,7 +115,7 @@ public class Range implements ROS2Message<Range>
    public void deserialize(CDRBuffer buffer)
    {
       header_.deserialize(buffer);
-      radiation_type_ = buffer.readByte();
+      radiation_type_ = buffer.readShort();
       field_of_view_ = buffer.readFloat();
       min_range_ = buffer.readFloat();
       max_range_ = buffer.readFloat();
@@ -140,12 +140,12 @@ public class Range implements ROS2Message<Range>
       return header_;
    }
 
-   public byte getRadiationType()
+   public short getRadiationType()
    {
       return radiation_type_;
    }
 
-   public void setRadiationType(byte radiation_type_)
+   public void setRadiationType(short radiation_type_)
    {
       this.radiation_type_ = radiation_type_;
    }

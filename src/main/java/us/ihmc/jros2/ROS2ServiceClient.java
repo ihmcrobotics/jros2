@@ -85,6 +85,15 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
     */
    private boolean closed;
 
+   /*
+    * Discovery
+    */
+   /**
+    * Flag indicating whether a service server has been discovered.
+    */
+   private volatile boolean serverDiscovered;
+   private final Object discoveryLock = new Object();
+
    /**
     * Package-private constructor. Use {@link ROS2Node#createServiceClient} to create instances.
     *
@@ -103,6 +112,81 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
       this.executorService = Executors.newCachedThreadPool();
       this.closeLock = new ReentrantReadWriteLock(true);
       this.closed = false;
+      this.serverDiscovered = false;
+
+      // Set up discovery callback to detect when service server becomes available
+      responseSubscription.setOnSubscriptionMatchedCallback(() ->
+      {
+         synchronized (discoveryLock)
+         {
+            serverDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+      });
+
+      // Check if server is already matched (handles case where server existed before client)
+      // If a publisher matched during subscription creation but before callback was set,
+      // the callback won't have fired, so we need to check the current match status
+      synchronized (discoveryLock)
+      {
+         if (responseSubscription.getSubscriptionMatchedStatus() > 0 && requestPublisher.getPublicationMatchedStatus() > 0)
+         {
+            serverDiscovered = true;
+         }
+      }
+   }
+
+   /**
+    * Wait for a service server to become available.
+    * <p>
+    * Bidirectional discovery is ensured: both the client's request publisher and response
+    * subscription must be matched to the server.
+    *
+    * @param timeoutMs Maximum time to wait in milliseconds
+    * @return true if server was discovered within timeout, false otherwise
+    */
+   public boolean waitForServer(long timeoutMs)
+   {
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         while (!closed)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               return false;
+            }
+
+            // Check both directions: response subscription and request publisher
+            if (responseSubscription.getSubscriptionMatchedStatus() > 0 && requestPublisher.getPublicationMatchedStatus() > 0)
+            {
+               serverDiscovered = true;
+               return true;
+            }
+
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
+            {
+               return false;
+            }
+
+            try
+            {
+               discoveryLock.wait(Math.min(remainingMs, 10));
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return false;
+            }
+         }
+
+         return false;
+      }
    }
 
    /**

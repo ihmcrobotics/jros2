@@ -46,15 +46,15 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    /**
       Constant for uninitialized
    */
-   public static final byte STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
+   public static final short STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
    /**
       Allowed values
    */
-   public static final byte STATISTICS_DATA_TYPE_AVERAGE = 1;
-   public static final byte STATISTICS_DATA_TYPE_MINIMUM = 2;
-   public static final byte STATISTICS_DATA_TYPE_MAXIMUM = 3;
-   public static final byte STATISTICS_DATA_TYPE_STDDEV = 4;
-   public static final byte STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5;
+   public static final short STATISTICS_DATA_TYPE_AVERAGE = 1;
+   public static final short STATISTICS_DATA_TYPE_MINIMUM = 2;
+   public static final short STATISTICS_DATA_TYPE_MAXIMUM = 3;
+   public static final short STATISTICS_DATA_TYPE_STDDEV = 4;
+   public static final short STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5;
 
    public StatisticDataType()
    {

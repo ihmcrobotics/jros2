@@ -15,6 +15,7 @@
  */
 package us.ihmc.jros2;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -62,7 +63,7 @@ public class AsyncROS2Test
       asyncNode.close();
    }
 
-   @Test
+   @RepeatedTest(50)
    public void testPublishingManyMessages() throws InterruptedException
    {
       int messagesToPublish = 1000;
@@ -89,7 +90,7 @@ public class AsyncROS2Test
          }
       });
 
-      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
+      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic, ROS2QoSProfile.DEFAULT, messagesToPublish);
 
       example_interfaces.Bool bool = new example_interfaces.Bool();
       for (int i = 0; i < messagesToPublish; ++i)

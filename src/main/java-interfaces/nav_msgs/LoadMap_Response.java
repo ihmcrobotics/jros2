@@ -29,16 +29,16 @@ public class LoadMap_Response implements ROS2Message<LoadMap_Response>
    /**
       Result code defintions
    */
-   public static final byte RESULT_SUCCESS = 0;
-   public static final byte RESULT_MAP_DOES_NOT_EXIST = 1;
-   public static final byte RESULT_INVALID_MAP_DATA = 2;
-   public static final byte RESULT_INVALID_MAP_METADATA = 3;
-   public static final byte RESULT_UNDEFINED_FAILURE = (byte) 255;
+   public static final short RESULT_SUCCESS = 0;
+   public static final short RESULT_MAP_DOES_NOT_EXIST = 1;
+   public static final short RESULT_INVALID_MAP_DATA = 2;
+   public static final short RESULT_INVALID_MAP_METADATA = 3;
+   public static final short RESULT_UNDEFINED_FAILURE = 255;
    /**
       Returned map is only valid if result equals RESULT_SUCCESS
    */
    private final nav_msgs.OccupancyGrid map_;
-   private byte result_;
+   private short result_;
 
    public LoadMap_Response()
    {
@@ -61,7 +61,7 @@ public class LoadMap_Response implements ROS2Message<LoadMap_Response>
    public void serialize(CDRBuffer buffer)
    {
       map_.serialize(buffer);
-      buffer.writeByte(result_);
+      buffer.writeShort(result_);
 
    }
 
@@ -69,7 +69,7 @@ public class LoadMap_Response implements ROS2Message<LoadMap_Response>
    public void deserialize(CDRBuffer buffer)
    {
       map_.deserialize(buffer);
-      result_ = buffer.readByte();
+      result_ = buffer.readShort();
 
    }
 
@@ -86,12 +86,12 @@ public class LoadMap_Response implements ROS2Message<LoadMap_Response>
       return map_;
    }
 
-   public byte getResult()
+   public short getResult()
    {
       return result_;
    }
 
-   public void setResult(byte result_)
+   public void setResult(short result_)
    {
       this.result_ = result_;
    }

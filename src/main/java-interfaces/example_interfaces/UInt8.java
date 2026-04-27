@@ -28,7 +28,7 @@ public class UInt8 implements ROS2Message<UInt8>
       it into a system you should create a semantically meaningful message type.
       If you want to embed it in another message, use the primitive data type instead.
    */
-   private byte data_;
+   private short data_;
 
    public UInt8()
    {
@@ -47,14 +47,14 @@ public class UInt8 implements ROS2Message<UInt8>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      buffer.writeByte(data_);
+      buffer.writeShort(data_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      data_ = buffer.readByte();
+      data_ = buffer.readShort();
 
    }
 
@@ -65,12 +65,12 @@ public class UInt8 implements ROS2Message<UInt8>
 
    }
 
-   public byte getData()
+   public short getData()
    {
       return data_;
    }
 
-   public void setData(byte data_)
+   public void setData(short data_)
    {
       this.data_ = data_;
    }

@@ -256,7 +256,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (distortion_model_.length() + 1)); // distortion_model_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (distortion_model_.length() + 1)); // distortion_model_
       currentAlignment += d_.calculateSizeBytes(currentAlignment);
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // k_
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // r_

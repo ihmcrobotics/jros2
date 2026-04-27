@@ -53,9 +53,6 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         // Give the server time to advertise
-         Thread.sleep(500);
-
          // Create service client
          ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
                clientNode.createServiceClient(
@@ -65,8 +62,8 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         // Give client time to discover server
-         Thread.sleep(500);
+         // Wait for server to be discovered
+         assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Test synchronous service call
          example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
@@ -128,8 +125,6 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
-
          ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
                clientNode.createServiceClient(
                      serviceName,
@@ -138,7 +133,8 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
+         // Wait for server to be discovered
+         assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Make multiple service calls
          for (int i = 0; i < 10; i++)
@@ -237,8 +233,6 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
-
          ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
                clientNode.createServiceClient(
                      serviceName,
@@ -247,7 +241,8 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
+         // Wait for server to be discovered
+         assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Test async service call
          example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
@@ -382,8 +377,6 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
-
          ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
                clientNode.createServiceClient(
                      serviceName,
@@ -392,7 +385,8 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
+         // Wait for server to be discovered
+         assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Send request - server should handle exception gracefully
          example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
@@ -443,8 +437,6 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
-
          ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
                clientNode.createServiceClient(
                      serviceName,
@@ -453,7 +445,8 @@ public class ROS2ServiceTest
                      ROS2QoSProfile.SERVICES_DEFAULT
                );
 
-         Thread.sleep(500);
+         // Wait for server to be discovered
+         assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Send multiple sequential requests to verify server handles multiple calls correctly
          int numRequests = 3;
@@ -474,6 +467,194 @@ public class ROS2ServiceTest
 
          assertEquals(numRequests, successCount, "All requests should succeed");
          assertEquals(numRequests, callCount.get(), "Server should have processed all " + numRequests + " requests");
+      }
+      finally
+      {
+         serverNode.close();
+         clientNode.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testWaitForServerWithExistingServer() throws InterruptedException
+   {
+      String serviceName = "/test_wait_for_existing_server";
+
+      ROS2Node serverNode = new ROS2Node("wait_server_node");
+      ROS2Node clientNode = new ROS2Node("wait_client_node");
+
+      try
+      {
+         // Create server first
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               serverNode.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> response.setSum(request.getA() + request.getB()),
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // Create client - server already exists
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // waitForServer should discover server (discovery happens shortly after subscription creation)
+         boolean found = client.waitForServer(10000);
+         assertTrue(found, "Should discover existing server");
+
+         // Verify we can actually call the service
+         example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
+         request.setA(10);
+         request.setB(32);
+         example_interfaces.AddTwoInts_Response response = client.sendRequestSync(request, 1000);
+
+         assertNotNull(response);
+         assertEquals(42, response.getSum());
+
+         serverNode.destroyServiceServer(server);
+         clientNode.destroyServiceClient(client);
+      }
+      finally
+      {
+         serverNode.close();
+         clientNode.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testWaitForServerBeforeServerStarts() throws InterruptedException
+   {
+      String serviceName = "/test_wait_before_server";
+
+      ROS2Node clientNode = new ROS2Node("wait_client_node");
+      ROS2Node serverNode = new ROS2Node("late_server_node");
+
+      try
+      {
+         // Create client BEFORE server exists
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // Start waiting in a separate thread
+         AtomicInteger waitResult = new AtomicInteger(-1);
+         Thread waitThread = new Thread(() ->
+         {
+            boolean found = client.waitForServer(10000);
+            waitResult.set(found ? 1 : 0);
+         });
+         waitThread.start();
+
+         // Now create the server - should trigger discovery
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               serverNode.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> response.setSum(request.getA() + request.getB()),
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // Wait for the wait thread to complete
+         waitThread.join(10000);
+
+         assertEquals(1, waitResult.get(), "Should discover server after it starts");
+
+         serverNode.destroyServiceServer(server);
+         clientNode.destroyServiceClient(client);
+      }
+      finally
+      {
+         serverNode.close();
+         clientNode.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testWaitForServerTimeout()
+   {
+      String serviceName = "/test_wait_timeout";
+
+      ROS2Node clientNode = new ROS2Node("timeout_client_node");
+
+      try
+      {
+         // Create client WITHOUT creating a server
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // waitForServer should timeout and return false
+         long startTime = System.currentTimeMillis();
+         boolean found = client.waitForServer(1000);
+         long elapsed = System.currentTimeMillis() - startTime;
+
+         assertFalse(found, "Should not find server when none exists");
+         assertTrue(elapsed >= 990 && elapsed < 2000,
+                    "Timeout should take approximately 1 second, took " + elapsed + "ms");
+
+         clientNode.destroyServiceClient(client);
+      }
+      finally
+      {
+         clientNode.close();
+      }
+   }
+
+   @Test
+   @Timeout(30)
+   public void testWaitForServerMultipleCalls() throws InterruptedException
+   {
+      String serviceName = "/test_wait_multiple";
+
+      ROS2Node serverNode = new ROS2Node("multi_wait_server_node");
+      ROS2Node clientNode = new ROS2Node("multi_wait_client_node");
+
+      try
+      {
+         // Create server
+         ROS2ServiceServer<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> server =
+               serverNode.createServiceServer(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     (request, response) -> response.setSum(request.getA() + request.getB()),
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // Create client
+         ROS2ServiceClient<example_interfaces.AddTwoInts_Request, example_interfaces.AddTwoInts_Response> client =
+               clientNode.createServiceClient(
+                     serviceName,
+                     example_interfaces.AddTwoInts_Request.class,
+                     example_interfaces.AddTwoInts_Response.class,
+                     ROS2QoSProfile.SERVICES_DEFAULT
+               );
+
+         // Multiple waitForServer calls should all succeed (discovery happens shortly after subscription creation)
+         assertTrue(client.waitForServer(5000), "First wait should succeed");
+         assertTrue(client.waitForServer(5000), "Second wait should succeed immediately");
+         assertTrue(client.waitForServer(5000), "Third wait should succeed immediately");
+
+         serverNode.destroyServiceServer(server);
+         clientNode.destroyServiceClient(client);
       }
       finally
       {

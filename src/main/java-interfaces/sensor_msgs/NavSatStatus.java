@@ -49,11 +49,11 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public static final byte STATUS_SBAS_FIX = 1; // with satellite-based augmentation
    public static final byte STATUS_GBAS_FIX = 2; // with ground-based augmentation
    private byte status_;
-   public static final short SERVICE_GPS = 1;
-   public static final short SERVICE_GLONASS = 2;
-   public static final short SERVICE_COMPASS = 4; // includes BeiDou.
-   public static final short SERVICE_GALILEO = 8;
-   private short service_;
+   public static final int SERVICE_GPS = 1;
+   public static final int SERVICE_GLONASS = 2;
+   public static final int SERVICE_COMPASS = 4; // includes BeiDou.
+   public static final int SERVICE_GALILEO = 8;
+   private int service_;
 
    public NavSatStatus()
    {
@@ -65,7 +65,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // status_
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // service_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // service_
 
       return currentAlignment - initialAlignment;
    }
@@ -74,7 +74,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(status_);
-      buffer.writeShort(service_);
+      buffer.writeInt(service_);
 
    }
 
@@ -82,7 +82,7 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    public void deserialize(CDRBuffer buffer)
    {
       status_ = buffer.readByte();
-      service_ = buffer.readShort();
+      service_ = buffer.readInt();
 
    }
 
@@ -104,12 +104,12 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
       this.status_ = status_;
    }
 
-   public short getService()
+   public int getService()
    {
       return service_;
    }
 
-   public void setService(short service_)
+   public void setService(int service_)
    {
       this.service_ = service_;
    }

@@ -101,11 +101,11 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       Beware: this coordinate system exhibits singularities at the poles.
    */
    private final double[] position_covariance_;
-   public static final byte COVARIANCE_TYPE_UNKNOWN = 0;
-   public static final byte COVARIANCE_TYPE_APPROXIMATED = 1;
-   public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
-   public static final byte COVARIANCE_TYPE_KNOWN = 3;
-   private byte position_covariance_type_;
+   public static final short COVARIANCE_TYPE_UNKNOWN = 0;
+   public static final short COVARIANCE_TYPE_APPROXIMATED = 1;
+   public static final short COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
+   public static final short COVARIANCE_TYPE_KNOWN = 3;
+   private short position_covariance_type_;
 
    public NavSatFix()
    {
@@ -143,7 +143,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       {
          buffer.writeDouble(position_covariance_[i]);
       }
-      buffer.writeByte(position_covariance_type_);
+      buffer.writeShort(position_covariance_type_);
 
    }
 
@@ -159,7 +159,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       {
          position_covariance_[i] = buffer.readDouble();
       }
-      position_covariance_type_ = buffer.readByte();
+      position_covariance_type_ = buffer.readShort();
 
    }
 
@@ -224,12 +224,12 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       return position_covariance_;
    }
 
-   public byte getPositionCovarianceType()
+   public short getPositionCovarianceType()
    {
       return position_covariance_type_;
    }
 
-   public void setPositionCovarianceType(byte position_covariance_type_)
+   public void setPositionCovarianceType(short position_covariance_type_)
    {
       this.position_covariance_type_ = position_covariance_type_;
    }

@@ -49,15 +49,15 @@ public class Image implements ROS2Message<Image>
    private int height_; // image height, that is, number of rows
    private int width_; // image width, that is, number of columns
    private final StringBuilder encoding_; // Encoding of pixels -- channel meaning, ordering, size
-   private byte is_bigendian_; // is this data bigendian?
+   private short is_bigendian_; // is this data bigendian?
    private int step_; // Full row length in bytes
-   private final IDLByteSequence data_; // actual matrix data, size is (step * rows)
+   private final IDLShortSequence data_; // actual matrix data, size is (step * rows)
 
    public Image()
    {
       header_ = new std_msgs.Header();
       encoding_ = new StringBuilder();
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
 
    }
 
@@ -69,7 +69,7 @@ public class Image implements ROS2Message<Image>
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (encoding_.length() + 1)); // encoding_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (encoding_.length() + 1)); // encoding_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_bigendian_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // step_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
@@ -84,7 +84,7 @@ public class Image implements ROS2Message<Image>
       buffer.writeInt(height_);
       buffer.writeInt(width_);
       buffer.writeString(encoding_);
-      buffer.writeByte(is_bigendian_);
+      buffer.writeShort(is_bigendian_);
       buffer.writeInt(step_);
       data_.serialize(buffer);
 
@@ -97,7 +97,7 @@ public class Image implements ROS2Message<Image>
       height_ = buffer.readInt();
       width_ = buffer.readInt();
       buffer.readString(encoding_);
-      is_bigendian_ = buffer.readByte();
+      is_bigendian_ = buffer.readShort();
       step_ = buffer.readInt();
       data_.deserialize(buffer);
 
@@ -157,12 +157,12 @@ public class Image implements ROS2Message<Image>
       this.encoding_.delete(0, this.encoding_.length());
       this.encoding_.insert(0, s);
    }
-   public byte getIsBigendian()
+   public short getIsBigendian()
    {
       return is_bigendian_;
    }
 
-   public void setIsBigendian(byte is_bigendian_)
+   public void setIsBigendian(short is_bigendian_)
    {
       this.is_bigendian_ = is_bigendian_;
    }
@@ -177,7 +177,7 @@ public class Image implements ROS2Message<Image>
       this.step_ = step_;
    }
 
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }

@@ -34,13 +34,13 @@ public class CompressedImage implements ROS2Message<CompressedImage>
 
    private final std_msgs.Header header_; // Header timestamp should be acquisition time of image
    private final StringBuilder format_; // Specifies the format of the data
-   private final IDLByteSequence data_; // Compressed image buffer
+   private final IDLShortSequence data_; // Compressed image buffer
 
    public CompressedImage()
    {
       header_ = new std_msgs.Header();
       format_ = new StringBuilder();
-      data_ = new IDLByteSequence();
+      data_ = new IDLShortSequence();
 
    }
 
@@ -50,7 +50,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (2 * (format_.length() + 1)); // format_
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (format_.length() + 1)); // format_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -104,7 +104,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       this.format_.delete(0, this.format_.length());
       this.format_.insert(0, s);
    }
-   public IDLByteSequence getData()
+   public IDLShortSequence getData()
    {
       return data_;
    }
