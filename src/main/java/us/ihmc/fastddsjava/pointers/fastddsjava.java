@@ -128,6 +128,8 @@ public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, 
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, Pointer info_);
 
+public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_custom(Pointer reader_, Pointer data, Pointer info_);
+
 public static native @Cast("uint32_t") int fastddsjava_datareader_take_next_custom(Pointer reader_, Pointer data, Pointer info_);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_set_listener(Pointer reader_, fastddsjava_DataReaderListener listener/*=nullptr*/);

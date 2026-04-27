@@ -36,6 +36,7 @@ import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageReader<T>, MessageStatisticsProvider
 {
    private static final int OK = RETCODE_OK();
+   private static volatile boolean preferReadNextSample = true;
 
    static
    {
@@ -143,6 +144,41 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    private class fastddsjava_OnDataCallbackImpl extends fastddsjava_OnDataCallback
    {
+      private int readNextCallbackSample()
+      {
+         if (preferReadNextSample)
+         {
+            try
+            {
+               return fastddsjava_datareader_read_next_sample(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo);
+            }
+            catch (UnsatisfiedLinkError ignored)
+            {
+               preferReadNextSample = false;
+            }
+         }
+
+         return fastddsjava_datareader_read_next_custom(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo);
+      }
+
+      private boolean preferSampleInfoValidData = true;
+
+      private boolean checkSampleInfoValidData()
+      {
+         if (preferSampleInfoValidData)
+         {
+            try
+            {
+               return fastddsjava_sampleinfo_valid_data(fastddsCallbackSampleInfo);
+            }
+            catch (UnsatisfiedLinkError ignored)
+            {
+               preferSampleInfoValidData = false;
+            }
+         }
+         return true; // Fallback: if we are here and read returned OK, assume valid data
+      }
+
       @Override
       public void call()
       {
@@ -152,8 +188,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (callbackSampleData)
             {
                int ret; // Keep for debugging
-               while (!closed && OK == (ret = fastddsjava_datareader_read_next_sample(fastddsDataReader, callbackSampleData, fastddsCallbackSampleInfo))
-                      && fastddsjava_sampleinfo_valid_data(fastddsCallbackSampleInfo))
+               while (!closed && OK == (ret = readNextCallbackSample())
+                      && checkSampleInfoValidData())
                {
                   flagHadData = true;
                   untakenMessageCount.incrementAndGet();
@@ -337,13 +373,35 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
    }
 
+   private boolean preferSampleInfoTimestamps = true;
+
    private void recordStatistics()
    {
-      // Time when the sample was published
-      long sourceTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_source_timestamp_to_ns(fastddsCallbackSampleInfo));
+      long sourceTimestampMs = 0;
+      long receptionTimestampMs = 0;
 
-      // Time when the sample was received
-      long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_reception_timestamp_to_ns(fastddsCallbackSampleInfo));
+      if (preferSampleInfoTimestamps)
+      {
+         try
+         {
+            // Time when the sample was published
+            sourceTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_source_timestamp_to_ns(fastddsCallbackSampleInfo));
+
+            // Time when the sample was received
+            receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava_sampleinfo_reception_timestamp_to_ns(fastddsCallbackSampleInfo));
+         }
+         catch (UnsatisfiedLinkError ignored)
+         {
+            preferSampleInfoTimestamps = false;
+         }
+      }
+
+      if (!preferSampleInfoTimestamps)
+      {
+         // Fallback to system time if JNI methods are missing
+         sourceTimestampMs = System.currentTimeMillis();
+         receptionTimestampMs = System.currentTimeMillis();
+      }
 
       // The size of the entire payload (including the header) in bytes
       int payloadSizeBytes = (int) callbackSampleData.data_vector().size();
