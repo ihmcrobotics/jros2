@@ -81,6 +81,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private boolean closed;
 
    /*
+    * Discovery
+    */
+   private final Object discoveryLock;
+   private volatile boolean publisherDiscovered;
+
+   /*
     * Flags
     */
    private boolean flagHadData;
@@ -105,6 +111,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
+
+      discoveryLock = new Object();
+      publisherDiscovered = false;
 
       callbackSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       fastddsCallbackSampleInfo = fastddsjava_create_sampleinfo();
@@ -133,6 +142,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
+
+      // Check if publisher is already matched (outside of discovery lock to avoid nested synchronization)
+      if (getSubscriptionMatchedStatus() > 0)
+      {
+         synchronized (discoveryLock)
+         {
+            publisherDiscovered = true;
+         }
+      }
    }
 
    /**
@@ -190,6 +208,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       @Override
       public void call()
       {
+         synchronized (discoveryLock)
+         {
+            publisherDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+
          closeLock.readLock().lock();
          try
          {
@@ -254,6 +278,51 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
 
       return count;
+   }
+
+   /**
+    * Wait for a publisher to be discovered.
+    * <p>
+    * This method blocks until a publisher is discovered or the timeout expires.
+    *
+    * @param timeoutMs Timeout in milliseconds to wait for publisher discovery
+    * @return true if a publisher was discovered, false if timeout occurred
+    */
+   public boolean waitForPublisher(long timeoutMs)
+   {
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         while (!publisherDiscovered && !closed)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               return false;
+            }
+
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
+            {
+               return false;
+            }
+
+            try
+            {
+               discoveryLock.wait(remainingMs);
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return false;
+            }
+         }
+
+         return publisherDiscovered;
+      }
    }
 
    /**
@@ -396,13 +465,20 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       if (!wasClosed)
       {
+         // Clear listener from datareader to prevent further callbacks
          fastddsjava_datareader_set_listener(fastddsDataReader, null);
 
+         // Delete the datareader to ensure Fast-DDS stops using the listener
          retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
-         listener.close();
-         fastddsDataCallback.close();
-         fastddsSubscriptionMatchedCallback.close();
+         // Note: We intentionally do NOT close the listener and callback objects here.
+         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datareader.
+         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
+         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
+         // listener.close();
+         // fastddsDataCallback.close();
+         // fastddsSubscriptionMatchedCallback.close();
+
          subscriptionMatchedStatus.close();
 
          topicData.topicDataWrapperType.delete_data(callbackSampleData);

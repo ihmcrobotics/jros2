@@ -22,6 +22,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -51,7 +52,15 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
-   private final PublicationMatchedStatus publicationMatchedStatus;
+   private final us.ihmc.fastddsjava.pointers.PublicationMatchedStatus publicationMatchedStatus;
+   private final us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener listener;
+   private final us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
+
+   /*
+    * Discovery
+    */
+   private final Object discoveryLock;
+   private volatile boolean subscriberDiscovered;
 
    /*
     * Write buffer
@@ -83,10 +92,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
+      discoveryLock = new Object();
+      subscriberDiscovered = false;
+
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       publicationMatchedStatus = new us.ihmc.fastddsjava.pointers.PublicationMatchedStatus();
-      fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
-      fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
 
       writeBuffer = new CDRBuffer();
 
@@ -98,6 +108,23 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
       getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastPublishTime = Long.MIN_VALUE;
+
+      // Initialize callback and listener last to ensure the rest of the state exists before they run
+      fastddsPublicationMatchedCallback = new fastddsjava_OnPublicationMatchedCallbackImpl();
+      listener = new us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener();
+      listener.set_on_publication_callback(fastddsPublicationMatchedCallback);
+      fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
+      fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+      fastddsjava_datawriter_set_listener(fastddsDataWriter, listener);
+
+      // Check if subscriber is already matched (outside of discovery lock to avoid nested synchronization)
+      if (getPublicationMatchedStatus() > 0)
+      {
+         synchronized (discoveryLock)
+         {
+            subscriberDiscovered = true;
+         }
+      }
    }
 
    public void publish(T message)
@@ -175,6 +202,19 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
    }
 
+   private class fastddsjava_OnPublicationMatchedCallbackImpl extends us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnPublicationCallback
+   {
+      @Override
+      public void call()
+      {
+         synchronized (discoveryLock)
+         {
+            subscriberDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+      }
+   }
+
    /**
     * Use {@link ROS2Node#destroyPublisher(ROS2Publisher)}
     */
@@ -187,7 +227,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       if (!wasClosed)
       {
+         // Clear listener from datawriter to prevent further callbacks
+         fastddsjava_datawriter_set_listener(fastddsDataWriter, null);
+
+         // Delete the datawriter to ensure Fast-DDS stops using the listener
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
+
+         // Note: We intentionally do NOT close the listener and callback objects here.
+         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datawriter.
+         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
+         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
+         // listener.close();
+         // fastddsPublicationMatchedCallback.close();
 
          publicationMatchedStatus.close();
 
@@ -269,5 +320,50 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
 
       return count;
+   }
+
+   /**
+    * Wait for a subscriber to be discovered.
+    * <p>
+    * This method blocks until a subscriber is discovered or the timeout expires.
+    *
+    * @param timeoutMs Timeout in milliseconds to wait for subscriber discovery
+    * @return true if a subscriber was discovered, false if timeout occurred
+    */
+   public boolean waitForSubscriber(long timeoutMs)
+   {
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         while (!subscriberDiscovered && !closed)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               return false;
+            }
+
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
+            {
+               return false;
+            }
+
+            try
+            {
+               discoveryLock.wait(remainingMs);
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               return false;
+            }
+         }
+
+         return subscriberDiscovered;
+      }
    }
 }

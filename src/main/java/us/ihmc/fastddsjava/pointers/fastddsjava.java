@@ -44,6 +44,9 @@ public static final short PL_CDR_LE = (short) 0x0003; // SerializedPayload.hpp
 // Targeting fastddsjava_DataReaderListener.java
 
 
+// Targeting fastddsjava_DataWriterListener.java
+
+
 
 public static native @Cast("uint32_t") int fastddsjava_load_xml_profiles_string(@StdString BytePointer xml);
 public static native @Cast("uint32_t") int fastddsjava_load_xml_profiles_string(@StdString String xml);
@@ -138,6 +141,9 @@ public static native @Cast("uint32_t") int fastddsjava_datareader_get_unread_cou
 public static native @Cast("uint32_t") int fastddsjava_datareader_get_subscription_matched_status(Pointer reader_, @ByRef SubscriptionMatchedStatus status);
 
 public static native @Cast("uint32_t") int fastddsjava_datawriter_get_publication_matched_status(Pointer writer_, @ByRef PublicationMatchedStatus status);
+
+public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(Pointer writer_, fastddsjava_DataWriterListener listener/*=nullptr*/);
+public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(Pointer writer_);
 
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
 

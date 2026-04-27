@@ -17,6 +17,7 @@ package us.ihmc.jros2;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import rcl_interfaces.ParameterEvent;
 
@@ -116,27 +117,35 @@ public class ROS2ParameterTest
       assertFalse(success, "Setting undeclared parameter should fail");
    }
 
-   @Test
+   @RepeatedTest(100)
    public void testParameterEventPublishing() throws InterruptedException
    {
       ROS2Node subscriber = new ROS2Node("subscriber_node");
       CountDownLatch latch = new CountDownLatch(1);
       AtomicReference<ParameterEvent> receivedEvent = new AtomicReference<>();
 
-      // Subscribe to parameter events
-      subscriber.createSubscription(new ROS2Topic<>("/parameter_events", ParameterEvent.class), (eventReader) ->
+      // Declare a dummy parameter first to create the parameter event publisher
+      node.declareParameter("_init", 0L);
+
+      // Subscribe to parameter events AFTER publisher is created
+      ROS2Subscription<ParameterEvent> subscription = subscriber.createSubscription(new ROS2Topic<>("/parameter_events", ParameterEvent.class), (reader) ->
       {
          ParameterEvent event = new ParameterEvent();
-         eventReader.read(event);
+         reader.read(event);
 
-         if (event.getNodeAsString().equals("test_node"))
+         if (event.getNodeAsString().equals("test_node") &&
+             event.getNewParameters().size() > 0 &&
+             event.getNewParameters().get(0).getNameAsString().equals("test_param"))
          {
             receivedEvent.set(event);
             latch.countDown();
          }
       });
 
-      // Declare a parameter (should trigger event)
+      // Wait for subscription to discover the parameter event publisher
+      assertTrue(subscription.waitForPublisher(5000), "Should discover parameter event publisher");
+
+      // Now declare the test parameter (event should be received)
       node.declareParameter("test_param", 123L);
 
       // Wait for event

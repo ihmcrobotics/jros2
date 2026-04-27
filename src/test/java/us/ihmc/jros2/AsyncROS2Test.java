@@ -92,6 +92,9 @@ public class AsyncROS2Test
 
       ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic, ROS2QoSProfile.DEFAULT, messagesToPublish);
 
+      // Wait for publisher and subscription to discover each other
+      assertTrue(publisher.waitForSubscriber(5000), "Publisher should discover subscription");
+
       example_interfaces.Bool bool = new example_interfaces.Bool();
       for (int i = 0; i < messagesToPublish; ++i)
       {
