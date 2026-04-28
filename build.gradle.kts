@@ -77,12 +77,8 @@ parserDependencies {
 
 generatorDependencies {
    api(gradleApi())
-
    api(ihmc.sourceSetProject("parser"))
-
-   api("org.antlr:ST4:4.3.4") {
-      isTransitive = true
-   }
+   api("org.antlr:ST4:4.3.4")
 }
 
 testDependencies {

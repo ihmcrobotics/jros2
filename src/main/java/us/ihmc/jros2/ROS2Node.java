@@ -237,15 +237,15 @@ public class ROS2Node implements Closeable
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
-      // Note: Parameter event publisher is created lazily on first parameter operation
-      // It will be tracked separately and cleaned up in close()
+      // Parameter event publisher is created lazily on first parameter operation.
+      // Tracked separately and cleaned up in close().
       parameterEventPublisher = null;
 
-      // Parameter services are created lazily when first parameter is declared
+      // Parameter services are created lazily when first parameter is declared.
       parameterService = null;
 
-      // Initialize discovery publisher for ROS2 discovery protocol
-      // Periodic publishing starts automatically after 2 seconds
+      // Discovery publisher for ROS2 discovery protocol.
+      // Periodic publishing starts automatically after 2 seconds.
       discoveryPublisher = new ROS2DiscoveryPublisher(this, fastddsParticipant, name, "/");
    }
 
@@ -356,9 +356,24 @@ public class ROS2Node implements Closeable
                    * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
                    * https://design.ros2.org/articles/topic_and_service_names.html
                    * rt = ROS topic, rq = service request, rr = service reply
+                   *
+                   * Service topics must also have the appropriate suffix:
+                   * - Request topics: rq/<service_name>Request
+                   * - Response topics: rr/<service_name>Reply
                    */
+                  String messageTypeName = topic.getType().getSimpleName();
+                  String suffix = "";
+                  if (messageTypeName.endsWith("_Request"))
+                  {
+                     suffix = "Request";
+                  }
+                  else if (messageTypeName.endsWith("_Response"))
+                  {
+                     suffix = "Reply";
+                  }
+
                   // Use concat method to avoid string allocation on hot path (though this still allocates)
-                  String prefixedTopicName = prefix.concat(topic.getName());
+                  String prefixedTopicName = prefix.concat(topic.getName()).concat(suffix);
                   String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
 
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
@@ -1643,7 +1658,14 @@ public class ROS2Node implements Closeable
    }
 
    /**
-    * Check if SHM is usable on Windows (sometimes the SHM directory can lose write permissions)
+    * Check if SHM is usable on Windows and log a warning if it's enabled but unavailable.
+    * <p>
+    * On Windows, the SHM directory (C:\ProgramData\eprosima\fastdds_interprocess) can sometimes
+    * lose write permissions, making SHM transport unavailable. This method detects that condition
+    * and logs a severe warning with recovery instructions.
+    *
+    * @param rtps RTPS configuration containing transport settings
+    * @param fastddsTransports optional array of custom transport descriptors
     */
    private static void checkSHMAvailabilityWindows(Rtps rtps, TransportDescriptorType... fastddsTransports)
    {
