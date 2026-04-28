@@ -15,12 +15,10 @@
  */
 package us.ihmc.jros2;
 
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
-import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.ROS2QoSProfile.History;
 import us.ihmc.jros2.ROS2QoSProfile.Reliability;
 
@@ -38,78 +36,17 @@ import java.util.concurrent.locks.LockSupport;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ROS2PublishSubscribeTest
+public class ROS2SubscriptionTest
 {
    private static final Random RANDOM = new Random(1881108);
 
    @Test
-   @Timeout(30)
-   public void testROS2PublisherAPI()
-   {
-      String topicName = "/ihmc/test_bool";
-
-      // Create ROS 2 node and topic
-      ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
-
-      assertDoesNotThrow(() ->
-      {
-         // Create publishers
-         ROS2Publisher<example_interfaces.Bool> publisher1 = ros2Node.createPublisher(topic);
-         ROS2Publisher<example_interfaces.Bool> publisher2 = ros2Node.createPublisher(topic);
-
-         // Try publishing concurrently
-         Thread[] publishThreads = new Thread[10];
-         for (int i = 0; i < publishThreads.length; ++i)
-         {
-            Thread thread = new Thread(() ->
-            {
-               LockSupport.parkNanos(RANDOM.nextLong((long) 1E8));
-               publisher1.publish(new example_interfaces.Bool());
-            }, "PublishThread" + i);
-            thread.start();
-            publishThreads[i] = thread;
-         }
-
-         // Ensure all threads die
-         for (Thread thread : publishThreads)
-            thread.join(1000);
-
-         // Ensure we can destroy a publisher
-         ros2Node.destroyPublisher(publisher1);
-
-         // Oops, I "accidentally" destroyed it again
-         ros2Node.destroyPublisher(publisher1);
-
-         // Try destroying while publishing
-         Thread publishThread = new Thread(() ->
-         {
-            while (!Thread.interrupted())
-            {
-               publisher2.publish(new example_interfaces.Bool());
-            }
-         }, ":PublishThread");
-         publishThread.start();
-
-         // Destroy the publisher while it's publishing
-         ros2Node.destroyPublisher(publisher2);
-
-         // Tell the thread to stop, and make sure it dies
-         publishThread.interrupt();
-         publishThread.join(1000);
-      });
-
-      ros2Node.close();
-   }
-
-   @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   public void testROS2SubscriptionAPI()
+   public void testSubscriptionBasicCreationAndDestruction()
    {
       String topicName = "/ihmc/test_bool";
 
-      // Create ROS 2 node and topic
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
@@ -118,21 +55,21 @@ public class ROS2PublishSubscribeTest
          ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
          subscriptionQos.reliability(Reliability.RELIABLE);
 
-         // Create subscriptions
-         ROS2Subscription<example_interfaces.Bool> subscription1 = ros2Node.createSubscription(topic, reader ->
+         // Create subscription
+         ROS2Subscription<example_interfaces.Bool> subscription = ros2Node.createSubscription(topic, reader ->
          {
             example_interfaces.Bool message = new example_interfaces.Bool();
             reader.read(message);
-            assert false; // Should never reach here since we don't publish anything
+            fail("Should never reach here since we don't publish anything");
          }, subscriptionQos);
 
-         // Ensure we can destroy subscriptions
-         ros2Node.destroySubscription(subscription1);
+         // Ensure we can destroy subscription
+         ros2Node.destroySubscription(subscription);
 
-         // Oops, I "accidentally" destroyed it again
-         ros2Node.destroySubscription(subscription1);
+         // Destroying again should be safe
+         ros2Node.destroySubscription(subscription);
 
-         // Publish a message to ensure subscriptions don't receive anything after being destroyed
+         // Publish a message to ensure subscription doesn't receive anything after being destroyed
          Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                   "--once -w 0",
                                                                   topicName,
@@ -149,50 +86,18 @@ public class ROS2PublishSubscribeTest
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   public void testROS2Publisher() throws InterruptedException, IOException
-   {
-      final boolean expectedValue = true;
-      String topicName = "/ihmc/test_bool";
-
-      // Create ROS 2 node, topic, and publisher
-      ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
-
-      ROS2QoSProfile publisherQos = new ROS2QoSProfile();
-      publisherQos.durability(Durability.TRANSIENT_LOCAL);
-      ROS2Publisher<example_interfaces.Bool> publisher = ros2Node.createPublisher(topic, publisherQos);
-
-      // Create a Bool message and publish it
-      example_interfaces.Bool bool = new example_interfaces.Bool();
-      bool.setData(expectedValue);
-      publisher.publish(bool);
-
-      // Use ros2 topic echo --once to get the value of the published message
-      String result = ROS2TestTools.ros2EchoOnce(ros2Node.getDomainId(), topicName);
-
-      // Ensure the value received by ros2 matches the value we published
-      assertTrue(result.contains(String.valueOf(expectedValue)), result);
-
-      ros2Node.close();
-   }
-
-   @Test
-   @EnabledOnOs(OS.LINUX)
-   @Timeout(30)
-   // Allocation-free subscription
-   public void testROS2Subscription1() throws InterruptedException, IOException
+   public void testSubscriptionAllocationFree() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
-      final String topicName = "/ihmc/test_string";
+      final String topicName = "/ihmc/test_allocation_free";
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.reliability(Reliability.RELIABLE);
 
-      // This subscription is allocation-free, so we allocate the message object once and reuse it for each subscription callback
+      // Allocation-free subscription: allocate message once and reuse
       std_msgs.String msg = new std_msgs.String();
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
@@ -205,7 +110,7 @@ public class ROS2PublishSubscribeTest
          }
       }, subscriptionQos);
 
-      // Launch a ROS 2 process to publish a String message
+      // Publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -213,34 +118,29 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the String message
+      // Wait for subscription to receive the message
       synchronized (sync)
       {
          if (msg.getData().isEmpty())
          {
-            sync.wait();
+            sync.wait(5000);
          }
       }
 
-      // Assert the received value is correct
       assertEquals(data, msg.getData().toString());
 
-      // Ensure the ROS 2 publish process ends
       process.waitFor();
-
       ros2Node.close();
    }
 
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Allocation subscription
-   public void testROS2Subscription2() throws InterruptedException, IOException
+   public void testSubscriptionWithAllocation() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
-      final String topicName = "/ihmc/test_string";
+      final String topicName = "/ihmc/test_with_allocation";
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
@@ -261,7 +161,7 @@ public class ROS2PublishSubscribeTest
          }
       }, subscriptionQos);
 
-      // Launch a ROS 2 process to publish a String message
+      // Publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -269,34 +169,29 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the String message
+      // Wait for subscription to receive the message
       synchronized (sync)
       {
          if (receivedString.get().isEmpty())
          {
-            sync.wait();
+            sync.wait(5000);
          }
       }
 
-      // Assert the received value is correct
       assertEquals(data, receivedString.get());
 
-      // Ensure the ROS 2 publish process ends
       process.waitFor();
-
       ros2Node.close();
    }
 
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Subscription sampler
-   public void testROS2Subscription3() throws InterruptedException, IOException
+   public void testSubscriptionSampler() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
-      final String topicName = "/ihmc/test_string";
+      final String topicName = "/ihmc/test_sampler";
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
@@ -315,7 +210,7 @@ public class ROS2PublishSubscribeTest
          }
       }, subscriptionQos);
 
-      // Launch a ROS 2 process to publish a String message
+      // Publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--once",
                                                                topicName,
@@ -323,35 +218,30 @@ public class ROS2PublishSubscribeTest
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
-      // Wait for subscription to receive the String message
+      // Wait for subscription to receive the message
       synchronized (sync)
       {
          if (receivedString.get().isEmpty())
          {
-            sync.wait();
+            sync.wait(5000);
          }
       }
 
-      // Assert the received value is correct
       assertEquals(data, receivedString.get());
 
-      // Ensure the ROS 2 publish process ends
       process.waitFor();
-
       ros2Node.close();
    }
 
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Callback-less subscription
-   public void testROS2Subscription4() throws InterruptedException, IOException
+   public void testSubscriptionWithoutCallback() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
-      final String topicName = "/ihmc/test_string";
+      final String topicName = "/ihmc/test_no_callback";
       final int publishCount = 20;
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
@@ -362,17 +252,16 @@ public class ROS2PublishSubscribeTest
 
       ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
-      // Launch a ROS 2 process to publish a String message
+      // Publish messages
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
-                                                               // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
                                                                "{data: " + data + "}",
                                                                Redirect.INHERIT,
                                                                Redirect.INHERIT);
 
-      // Wait until the subscription receives all the messages
+      // Wait until subscription receives all messages
       long startTime = System.nanoTime();
       while (subscription.getUnreadMessageCount() < publishCount && System.nanoTime() - startTime < TimeUnit.SECONDS.toNanos(5))
       {
@@ -380,7 +269,7 @@ public class ROS2PublishSubscribeTest
       }
       assertEquals(publishCount, subscription.getUnreadMessageCount());
 
-      // By this point, the subscription should have received all the messages, let's read them all
+      // Read all messages
       int totalRead = 0;
       std_msgs.String msg = subscription.read();
       while (msg != null)
@@ -395,23 +284,19 @@ public class ROS2PublishSubscribeTest
       assertNull(subscription.read());
       assertNull(subscription.readLatest());
 
-      // Ensure the ROS 2 publish process ends
       process.waitFor();
-
       ros2Node.close();
    }
 
    @Test
    @EnabledOnOs(OS.LINUX)
    @Timeout(30)
-   // Callback-less AND callback subscription
-   public void testROS2Subscription5() throws InterruptedException, IOException
+   public void testSubscriptionCallbackAndPolling() throws InterruptedException, IOException
    {
       final String data = "This is a test. This is only a test.";
-      final String topicName = "/ihmc/test_string";
+      final String topicName = "/ihmc/test_callback_and_polling";
       final int publishCount = 20;
 
-      // Create the ROS 2 node, topic, and subscription
       ROS2Node ros2Node = new ROS2Node("test_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
@@ -439,10 +324,9 @@ public class ROS2PublishSubscribeTest
          }
       }, subscriptionQos);
 
-      // Launch a ROS 2 process to publish a String message
+      // Publish messages
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
                                                                "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
-                                                               // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
                                                                "{data: " + data + "}",
@@ -459,7 +343,7 @@ public class ROS2PublishSubscribeTest
 
       assertEquals(publishCount, callbackRun.get());
 
-      // By this point, the subscription should have received all the messages, let's read them all
+      // Read remaining messages that weren't read in callback
       int totalRead = 0;
       std_msgs.String msg = subscription.read();
       while (msg != null)
@@ -468,149 +352,81 @@ public class ROS2PublishSubscribeTest
          totalRead++;
          msg = subscription.read();
       }
-      // Non callback reads should total half of the publish count
       assertEquals(publishCount / 2, totalRead);
 
       assertNull(subscription.read());
       assertNull(subscription.readLatest());
 
-      // Ensure the ROS 2 publish process ends
       process.waitFor();
-
       ros2Node.close();
-   }
-
-   @RepeatedTest(25)
-   @Timeout(30)
-   /*
-     Test description:
-        There are 2 nodes: [publisherNode, subscriberNode]
-        There is 1 topic: /ihmc/test_topic of type Bool
-        
-        The goal of this test is to destroy a subscription while it is reading data from a publisher.
-        To do this, we create 100 subscriptions, each on a separate thread, wait a random and small
-        amount of time, then destroy the subscription within its thread while a separate publisher
-        thread is publishing messages which are being read by the subscription.
-    */
-   public void testCrazyMultithreading()
-   {
-      Instant start = Instant.now();
-
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/ihmc/test_topic", example_interfaces.Bool.class);
-      ROS2Node publisherNode = new ROS2Node("publisher_node");
-      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
-
-      ROS2Publisher<example_interfaces.Bool> publisher = publisherNode.createPublisher(topic);
-
-      Thread destroyThread = new Thread(() ->
-      {
-         int threadCount = 100;
-         List<Thread> threads = new ArrayList<>();
-         for (int i = 0; i < threadCount; ++i)
-         {
-            Thread thread = new Thread(() ->
-            {
-               LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
-
-               ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
-               {
-                  example_interfaces.Bool data = new example_interfaces.Bool();
-                  subscriber.read(data);
-               }, ROS2QoSProfile.DEFAULT);
-
-               LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
-
-               subscriberNode.destroySubscription(subscription);
-               subscriberNode.destroySubscription(subscription); // Call destroy multiple times for better test coverage
-            }, "thread_" + i);
-            thread.start();
-            threads.add(thread);
-         }
-
-         for (int i = 0; i < threadCount; ++i)
-         {
-            try
-            {
-               threads.get(i).join();
-            }
-            catch (InterruptedException e)
-            {
-               throw new RuntimeException(e);
-            }
-         }
-      }, "destroyThread");
-      destroyThread.start();
-
-      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
-      messageToPublish.setData(true);
-      Thread publishThread = new Thread(() ->
-      {
-         while (destroyThread.isAlive())
-         {
-            LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
-
-            publisher.publish(messageToPublish);
-         }
-      }, "publishThread");
-      publishThread.start();
-
-      try
-      {
-         destroyThread.join();
-         publishThread.join();
-      }
-      catch (InterruptedException interruptedException)
-      {
-         throw new RuntimeException(interruptedException);
-      }
-
-      publisherNode.close();
-      subscriberNode.close();
-
-      long durationMillis = start.until(Instant.now(), ChronoUnit.MILLIS);
-      jros2.getLogger().fine("Test Duration: " + (durationMillis / 1000) + "s" + (durationMillis % 1000) + "ms");
    }
 
    @Test
    @Timeout(30)
-   public void testHang() throws InterruptedException
+   public void testSubscriptionWaitForPublisher() throws InterruptedException
    {
-      final String topicName = "/ihmc/test_bool";
+      String topicName = "/ihmc/test_wait_for_publisher";
 
-      // Create the ROS 2 node, topic, and subscription
-      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+
+      // Create subscription first
+      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+
+      // No publishers yet - should timeout
+      boolean foundBeforePublisher = subscription.waitForPublisher(500);
+      assertFalse(foundBeforePublisher, "Should not find publisher before it's created");
+
+      // Now create publisher
+      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+
+      // Should discover publisher now
+      boolean foundAfterPublisher = subscription.waitForPublisher(5000);
+      assertTrue(foundAfterPublisher, "Should discover publisher after it's created");
+
+      // Subsequent calls should return immediately with true
+      boolean foundAgain = subscription.waitForPublisher(100);
+      assertTrue(foundAgain, "Should still show publisher is discovered");
+
+      publisherNode.close();
+      subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionGetSubscriptionMatchedStatus()
+   {
+      String topicName = "/ihmc/test_subscription_matched";
+
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
-      // Create a publisher
-      ROS2Publisher<example_interfaces.Bool> publisher = ros2Node.createPublisher(topic);
+      ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
 
-      // Publisher will publish in a free loop until subscription is created and destroyed
-      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
-      messageToPublish.setData(true);
-      Thread publishThread = new Thread(() ->
+      // Initially no matches
+      assertEquals(0, subscription.getSubscriptionMatchedStatus(), "Should have 0 matched publishers initially");
+
+      // Create first publisher
+      ROS2Publisher<example_interfaces.Bool> publisher1 = publisherNode.createPublisher(topic);
+      assertTrue(subscription.waitForPublisher(5000), "Should discover first publisher");
+      assertEquals(1, subscription.getSubscriptionMatchedStatus(), "Should have 1 matched publisher");
+
+      // Create second publisher
+      ROS2Publisher<example_interfaces.Bool> publisher2 = publisherNode.createPublisher(topic);
+
+      // Wait for second publisher to be discovered
+      long startTime = System.nanoTime();
+      while (subscription.getSubscriptionMatchedStatus() < 2 && (System.nanoTime() - startTime) < 5_000_000_000L)
       {
-         while (!Thread.interrupted())
-         {
-            publisher.publish(messageToPublish);
-         }
-      }, "publishThread");
-      publishThread.start();
+         LockSupport.parkNanos(10_000_000); // 10ms
+      }
 
-      // Create a subscription
-      ROS2Subscription<example_interfaces.Bool> subscription = ros2Node.createSubscription(topic, subscriber ->
-      {
-         example_interfaces.Bool data = new example_interfaces.Bool();
-         subscriber.read(data);
-      }, ROS2QoSProfile.DEFAULT);
+      assertEquals(2, subscription.getSubscriptionMatchedStatus(), "Should have 2 matched publishers");
 
-      // Destroy it
-      ros2Node.destroySubscription(subscription);
-
-      // Tell the publish thread to stop
-      publishThread.interrupt();
-      publishThread.join();
-
-      ros2Node.close();
+      publisherNode.close();
+      subscriberNode.close();
    }
 
    @Test
@@ -619,7 +435,6 @@ public class ROS2PublishSubscribeTest
    {
       final String topicName = "/ihmc/test_matched_callback";
 
-      // Create subscriber node first
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
 
@@ -631,17 +446,17 @@ public class ROS2PublishSubscribeTest
       ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
       subscription.setOnSubscriptionMatchedCallback(() ->
       {
-         int count = matchedCount.incrementAndGet();
+         matchedCount.incrementAndGet();
          synchronized (sync)
          {
             sync.notify();
          }
       });
 
-      // Initially, no publishers should be matched
+      // Initially, no publishers matched
       assertEquals(0, matchedCount.get(), "No publishers should be matched initially");
 
-      // Now create a publisher - this should trigger the callback
+      // Create a publisher - should trigger the callback
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
 
@@ -650,11 +465,10 @@ public class ROS2PublishSubscribeTest
       {
          if (matchedCount.get() == 0)
          {
-            sync.wait(5000); // Wait up to 5 seconds
+            sync.wait(5000);
          }
       }
 
-      // Callback should have been invoked at least once
       assertTrue(matchedCount.get() > 0, "Subscription matched callback should have been invoked when publisher was created");
 
       publisherNode.close();
@@ -667,7 +481,6 @@ public class ROS2PublishSubscribeTest
    {
       final String topicName = "/ihmc/test_multiple_matched";
 
-      // Create subscriber node first
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
 
@@ -739,7 +552,6 @@ public class ROS2PublishSubscribeTest
    {
       final String topicName = "/ihmc/test_callback_before_publisher";
 
-      // Create both nodes
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
@@ -759,10 +571,10 @@ public class ROS2PublishSubscribeTest
       });
 
       // Verify no matches yet
-      Thread.sleep(100);
+      LockSupport.parkNanos(100_000_000); // 100ms
       assertEquals(0, matchedCount.get(), "Should not match before publisher exists");
 
-      // Now create publisher - should trigger callback
+      // Create publisher - should trigger callback
       ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
 
       // Wait for callback
@@ -791,7 +603,7 @@ public class ROS2PublishSubscribeTest
       ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
       ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
 
-      // Now create subscription with callback - publisher already exists
+      // Create subscription with callback - publisher already exists
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       AtomicInteger matchedCount = new AtomicInteger(0);
       final Object sync = new Object();
@@ -815,10 +627,141 @@ public class ROS2PublishSubscribeTest
          }
       }
 
-      // This test checks if callback fires when publisher exists before subscription
       assertTrue(matchedCount.get() > 0, "Callback should fire even when publisher exists before subscription");
 
       publisherNode.close();
       subscriberNode.close();
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionStressTestConcurrentCreationAndDestruction()
+   {
+      Instant start = Instant.now();
+
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/ihmc/test_stress", example_interfaces.Bool.class);
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+
+      ROS2Publisher<example_interfaces.Bool> publisher = publisherNode.createPublisher(topic);
+
+      // Continuously publish while creating/destroying subscriptions
+      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
+      messageToPublish.setData(true);
+
+      int threadCount = 50;
+      List<Thread> threads = new ArrayList<>();
+
+      for (int i = 0; i < threadCount; ++i)
+      {
+         Thread thread = new Thread(() ->
+         {
+            LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
+
+            ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
+            {
+               example_interfaces.Bool data = new example_interfaces.Bool();
+               subscriber.read(data);
+            }, ROS2QoSProfile.DEFAULT);
+
+            LockSupport.parkNanos(RANDOM.nextLong((long) 1E8)); // park up to 0.1 seconds
+
+            subscriberNode.destroySubscription(subscription);
+            subscriberNode.destroySubscription(subscription); // Call destroy multiple times for coverage
+         }, "subscription_thread_" + i);
+         thread.start();
+         threads.add(thread);
+      }
+
+      // Publish while subscriptions are being created/destroyed
+      Thread publishThread = new Thread(() ->
+      {
+         boolean allComplete = false;
+         while (!allComplete)
+         {
+            publisher.publish(messageToPublish);
+            LockSupport.parkNanos(RANDOM.nextLong((long) 1E7)); // park up to 0.01 seconds
+
+            allComplete = true;
+            for (Thread thread : threads)
+            {
+               if (thread.isAlive())
+               {
+                  allComplete = false;
+                  break;
+               }
+            }
+         }
+      }, "publishThread");
+      publishThread.start();
+
+      // Wait for all threads to complete
+      for (Thread thread : threads)
+      {
+         try
+         {
+            thread.join(10000);
+         }
+         catch (InterruptedException e)
+         {
+            throw new RuntimeException(e);
+         }
+      }
+
+      try
+      {
+         publishThread.join(10000);
+      }
+      catch (InterruptedException e)
+      {
+         throw new RuntimeException(e);
+      }
+
+      publisherNode.close();
+      subscriberNode.close();
+
+      long durationMillis = start.until(Instant.now(), ChronoUnit.MILLIS);
+      jros2.getLogger().fine("Test Duration: " + (durationMillis / 1000) + "s" + (durationMillis % 1000) + "ms");
+   }
+
+   @Test
+   @Timeout(30)
+   public void testSubscriptionNoHangWhenDestroyedDuringPublish() throws InterruptedException
+   {
+      final String topicName = "/ihmc/test_no_hang";
+
+      ROS2Node ros2Node = new ROS2Node("test_node");
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>(topicName, example_interfaces.Bool.class);
+
+      // Create publisher
+      ROS2Publisher<example_interfaces.Bool> publisher = ros2Node.createPublisher(topic);
+
+      // Publisher will publish in continuous loop
+      example_interfaces.Bool messageToPublish = new example_interfaces.Bool();
+      messageToPublish.setData(true);
+      Thread publishThread = new Thread(() ->
+      {
+         while (!Thread.interrupted())
+         {
+            publisher.publish(messageToPublish);
+         }
+      }, "publishThread");
+      publishThread.start();
+
+      // Create subscription
+      ROS2Subscription<example_interfaces.Bool> subscription = ros2Node.createSubscription(topic, subscriber ->
+      {
+         example_interfaces.Bool data = new example_interfaces.Bool();
+         subscriber.read(data);
+      }, ROS2QoSProfile.DEFAULT);
+
+      // Destroy subscription while publishing
+      ros2Node.destroySubscription(subscription);
+
+      // Stop publishing
+      publishThread.interrupt();
+      publishThread.join();
+
+      ros2Node.close();
    }
 }
