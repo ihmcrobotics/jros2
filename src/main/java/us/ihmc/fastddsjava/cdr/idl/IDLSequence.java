@@ -121,7 +121,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // Length header
 
-      for (int i = 0; i < size(); i++)
+      for (int i = 0; i < size(); ++i)
       {
          int elementSizeBytes = elementSizeBytes(currentAlignment, i);
 
@@ -138,7 +138,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       buffer.writeInt(elements);
 
-      for (int i = 0; i < elements; i++)
+      for (int i = 0; i < elements; ++i)
       {
          writeElement(i, buffer);
       }
@@ -151,7 +151,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       ensureMinCapacity(elements);
 
-      for (int i = 0; i < elements; i++)
+      for (int i = 0; i < elements; ++i)
       {
          readElement(buffer);
       }

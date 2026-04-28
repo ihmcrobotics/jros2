@@ -19,7 +19,7 @@ public class TestPublisher
 
       System.out.println("Publishing messages every second...");
 
-      for (int i = 0; i < 30; i++)
+      for (int i = 0; i < 30; ++i)
       {
          message.setData("Test message " + i);
          publisher.publish(message);

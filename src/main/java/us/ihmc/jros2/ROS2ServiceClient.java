@@ -147,46 +147,54 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
     */
    public boolean waitForServer(long timeoutMs)
    {
+      boolean discovered = false;
       long startTime = System.nanoTime();
       long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
 
       synchronized (discoveryLock)
       {
-         while (!closed)
+         boolean timedOut = false;
+         while (!closed && !discovered && !timedOut)
          {
             long elapsedNanos = System.nanoTime() - startTime;
             if (elapsedNanos >= timeoutNanos)
             {
-               return false;
+               timedOut = true;
             }
-
-            // Check both directions: response subscription and request publisher
-            if (responseSubscription.getSubscriptionMatchedStatus() > 0 && requestPublisher.getPublicationMatchedStatus() > 0)
+            else
             {
-               serverDiscovered = true;
-               return true;
-            }
-
-            long remainingNanos = timeoutNanos - elapsedNanos;
-            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
-            if (remainingMs <= 0)
-            {
-               return false;
-            }
-
-            try
-            {
-               discoveryLock.wait(Math.min(remainingMs, 10));
-            }
-            catch (InterruptedException e)
-            {
-               Thread.currentThread().interrupt();
-               return false;
+               // Check both directions: response subscription and request publisher
+               if (responseSubscription.getSubscriptionMatchedStatus() > 0 && requestPublisher.getPublicationMatchedStatus() > 0)
+               {
+                  serverDiscovered = true;
+                  discovered = true;
+               }
+               else
+               {
+                  long remainingNanos = timeoutNanos - elapsedNanos;
+                  long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+                  if (remainingMs <= 0)
+                  {
+                     timedOut = true;
+                  }
+                  else
+                  {
+                     try
+                     {
+                        discoveryLock.wait(Math.min(remainingMs, 10));
+                     }
+                     catch (InterruptedException e)
+                     {
+                        Thread.currentThread().interrupt();
+                        timedOut = true;
+                     }
+                  }
+               }
             }
          }
-
-         return false;
       }
+
+      return discovered;
    }
 
    /**

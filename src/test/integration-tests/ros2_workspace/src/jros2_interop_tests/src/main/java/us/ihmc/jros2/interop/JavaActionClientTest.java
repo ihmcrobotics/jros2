@@ -43,7 +43,7 @@ public class JavaActionClientTest
          if (result.getSequence().size() > 0)
          {
             System.out.print("Fibonacci sequence: ");
-            for (int i = 0; i < result.getSequence().size(); i++)
+            for (int i = 0; i < result.getSequence().size(); ++i)
             {
                System.out.print(result.getSequence().get(i));
                if (i < result.getSequence().size() - 1)

@@ -95,7 +95,7 @@ class ROS2ParameterService implements Closeable
     */
    private void handleGetParameters(GetParameters_Request request, GetParameters_Response response)
    {
-      for (int i = 0; i < request.getNames().size(); i++)
+      for (int i = 0; i < request.getNames().size(); ++i)
       {
          String paramName = request.getNames().get(i).toString();
          ROS2Parameter param = node.getParameter(paramName);
@@ -119,7 +119,7 @@ class ROS2ParameterService implements Closeable
     */
    private void handleSetParameters(SetParameters_Request request, SetParameters_Response response)
    {
-      for (int i = 0; i < request.getParameters().size(); i++)
+      for (int i = 0; i < request.getParameters().size(); ++i)
       {
          Parameter param = request.getParameters().get(i);
          SetParametersResult result = new SetParametersResult();
@@ -157,7 +157,7 @@ class ROS2ParameterService implements Closeable
       // First, convert all parameters and save original values for rollback
       try
       {
-         for (int i = 0; i < request.getParameters().size(); i++)
+         for (int i = 0; i < request.getParameters().size(); ++i)
          {
             Parameter param = request.getParameters().get(i);
             ROS2Parameter ros2Param = convertFromParameter(param);
@@ -187,7 +187,7 @@ class ROS2ParameterService implements Closeable
          else
          {
             // Rollback - restore original values
-            for (int i = 0; i < originalNames.size(); i++)
+            for (int i = 0; i < originalNames.size(); ++i)
             {
                if (originalValues.get(i) != null)
                {
@@ -201,7 +201,7 @@ class ROS2ParameterService implements Closeable
       catch (Exception e)
       {
          // Rollback on exception
-         for (int i = 0; i < originalNames.size(); i++)
+         for (int i = 0; i < originalNames.size(); ++i)
          {
             if (originalValues.get(i) != null)
             {
@@ -223,7 +223,7 @@ class ROS2ParameterService implements Closeable
 
       // Get prefixes to filter by
       List<String> prefixes = new ArrayList<>();
-      for (int i = 0; i < request.getPrefixes().size(); i++)
+      for (int i = 0; i < request.getPrefixes().size(); ++i)
       {
          prefixes.add(request.getPrefixes().get(i).toString());
       }
@@ -253,7 +253,7 @@ class ROS2ParameterService implements Closeable
     */
    private void handleDescribeParameters(DescribeParameters_Request request, DescribeParameters_Response response)
    {
-      for (int i = 0; i < request.getNames().size(); i++)
+      for (int i = 0; i < request.getNames().size(); ++i)
       {
          String paramName = request.getNames().get(i).toString();
          ROS2Parameter param = node.getParameter(paramName);
@@ -279,7 +279,7 @@ class ROS2ParameterService implements Closeable
     */
    private void handleGetParameterTypes(GetParameterTypes_Request request, GetParameterTypes_Response response)
    {
-      for (int i = 0; i < request.getNames().size(); i++)
+      for (int i = 0; i < request.getNames().size(); ++i)
       {
          String paramName = request.getNames().get(i).toString();
          ROS2Parameter param = node.getParameter(paramName);
@@ -383,35 +383,35 @@ class ROS2ParameterService implements Closeable
             return new ROS2Parameter(name, value.getStringValueAsString());
          case 5: // PARAMETER_BYTE_ARRAY
             byte[] bytes = new byte[value.getByteArrayValue().size()];
-            for (int i = 0; i < bytes.length; i++)
+            for (int i = 0; i < bytes.length; ++i)
             {
                bytes[i] = value.getByteArrayValue().get(i);
             }
             return new ROS2Parameter(name, bytes);
          case 6: // PARAMETER_BOOL_ARRAY
             boolean[] bools = new boolean[value.getBoolArrayValue().size()];
-            for (int i = 0; i < bools.length; i++)
+            for (int i = 0; i < bools.length; ++i)
             {
                bools[i] = value.getBoolArrayValue().get(i);
             }
             return new ROS2Parameter(name, bools);
          case 7: // PARAMETER_INTEGER_ARRAY
             long[] longs = new long[value.getIntegerArrayValue().size()];
-            for (int i = 0; i < longs.length; i++)
+            for (int i = 0; i < longs.length; ++i)
             {
                longs[i] = value.getIntegerArrayValue().get(i);
             }
             return new ROS2Parameter(name, longs);
          case 8: // PARAMETER_DOUBLE_ARRAY
             double[] doubles = new double[value.getDoubleArrayValue().size()];
-            for (int i = 0; i < doubles.length; i++)
+            for (int i = 0; i < doubles.length; ++i)
             {
                doubles[i] = value.getDoubleArrayValue().get(i);
             }
             return new ROS2Parameter(name, doubles);
          case 9: // PARAMETER_STRING_ARRAY
             String[] strings = new String[value.getStringArrayValue().size()];
-            for (int i = 0; i < strings.length; i++)
+            for (int i = 0; i < strings.length; ++i)
             {
                strings[i] = value.getStringArrayValue().get(i).toString();
             }

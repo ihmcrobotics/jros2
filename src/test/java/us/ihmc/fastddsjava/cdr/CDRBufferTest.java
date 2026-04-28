@@ -684,7 +684,7 @@ public class CDRBufferTest
    public void testLargeString()
    {
       StringBuilder largeString = new StringBuilder();
-      for (int i = 0; i < 1000; i++)
+      for (int i = 0; i < 1000; ++i)
       {
          largeString.append("A");
       }
@@ -708,7 +708,7 @@ public class CDRBufferTest
    public void testSequentialWrites()
    {
       // Write many values sequentially
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 100; ++i)
       {
          buffer.writeInt(i);
       }
@@ -716,7 +716,7 @@ public class CDRBufferTest
       buffer.rewind();
       buffer.readPayloadHeader();
 
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 100; ++i)
       {
          assertEquals(i, buffer.readInt(), "Value at index " + i + " should match");
       }
@@ -730,7 +730,7 @@ public class CDRBufferTest
       autoBuffer.writePayloadHeader();
 
       // Write more data than initial capacity
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 100; ++i)
       {
          autoBuffer.ensureRemainingCapacity(8); // Ensure space for alignment + int
          autoBuffer.writeInt(i);
@@ -739,7 +739,7 @@ public class CDRBufferTest
       autoBuffer.rewind();
       autoBuffer.readPayloadHeader();
 
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 100; ++i)
       {
          assertEquals(i, autoBuffer.readInt());
       }

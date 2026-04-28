@@ -105,7 +105,7 @@ public class TransportDescriptorTypeToolsTest
 
       // Create multiple descriptors with unique whitelists to avoid caching
       // This tests that the ID counter is working properly
-      for (int i = 0; i < 100; i++)
+      for (int i = 0; i < 100; ++i)
       {
          String uniqueInterface = "test_if_" + System.nanoTime() + "_" + i;
          TransportDescriptorType descriptor = TransportDescriptorTypeTools.createUDPv4Transport(uniqueInterface);

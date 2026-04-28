@@ -18,6 +18,7 @@ package us.ihmc.jros2;
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.PublicationMatchedStatus;
+import us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.lang.reflect.InvocationTargetException;
@@ -52,9 +53,9 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
-   private final us.ihmc.fastddsjava.pointers.PublicationMatchedStatus publicationMatchedStatus;
-   private final us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener listener;
-   private final us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
+   private final PublicationMatchedStatus publicationMatchedStatus;
+   private final fastddsjava_DataWriterListener listener;
+   private final fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
 
    /*
     * Discovery
@@ -96,7 +97,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       subscriberDiscovered = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-      publicationMatchedStatus = new us.ihmc.fastddsjava.pointers.PublicationMatchedStatus();
+      publicationMatchedStatus = new PublicationMatchedStatus();
 
       writeBuffer = new CDRBuffer();
 
@@ -111,7 +112,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       // Initialize callback and listener last to ensure the rest of the state exists before they run
       fastddsPublicationMatchedCallback = new fastddsjava_OnPublicationMatchedCallbackImpl();
-      listener = new us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener();
+      listener = new fastddsjava_DataWriterListener();
       listener.set_on_publication_callback(fastddsPublicationMatchedCallback);
       fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
@@ -202,7 +203,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
    }
 
-   private class fastddsjava_OnPublicationMatchedCallbackImpl extends us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnPublicationCallback
+   private class fastddsjava_OnPublicationMatchedCallbackImpl extends fastddsjava_OnPublicationCallback
    {
       @Override
       public void call()
@@ -332,38 +333,46 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    public boolean waitForSubscriber(long timeoutMs)
    {
+      boolean discovered = false;
       long startTime = System.nanoTime();
       long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
 
       synchronized (discoveryLock)
       {
-         while (!subscriberDiscovered && !closed)
+         boolean timedOut = false;
+         while (!subscriberDiscovered && !closed && !timedOut)
          {
             long elapsedNanos = System.nanoTime() - startTime;
             if (elapsedNanos >= timeoutNanos)
             {
-               return false;
+               timedOut = true;
             }
-
-            long remainingNanos = timeoutNanos - elapsedNanos;
-            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
-            if (remainingMs <= 0)
+            else
             {
-               return false;
-            }
-
-            try
-            {
-               discoveryLock.wait(remainingMs);
-            }
-            catch (InterruptedException e)
-            {
-               Thread.currentThread().interrupt();
-               return false;
+               long remainingNanos = timeoutNanos - elapsedNanos;
+               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+               if (remainingMs <= 0)
+               {
+                  timedOut = true;
+               }
+               else
+               {
+                  try
+                  {
+                     discoveryLock.wait(remainingMs);
+                  }
+                  catch (InterruptedException e)
+                  {
+                     Thread.currentThread().interrupt();
+                     timedOut = true;
+                  }
+               }
             }
          }
 
-         return subscriberDiscovered;
+         discovered = subscriberDiscovered;
       }
+
+      return discovered;
    }
 }

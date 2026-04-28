@@ -137,7 +137,7 @@ public class ROS2ServiceTest
          assertTrue(client.waitForServer(5000), "Should discover service server");
 
          // Make multiple service calls
-         for (int i = 0; i < 10; i++)
+         for (int i = 0; i < 10; ++i)
          {
             example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
             request.setA(i);
@@ -452,7 +452,7 @@ public class ROS2ServiceTest
          int numRequests = 3;
          int successCount = 0;
 
-         for (int i = 0; i < numRequests; i++)
+         for (int i = 0; i < numRequests; ++i)
          {
             example_interfaces.AddTwoInts_Request request = new example_interfaces.AddTwoInts_Request();
             request.setA(i);

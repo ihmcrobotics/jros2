@@ -46,7 +46,7 @@ public class ByteVector extends Pointer {
 
     public byte[] get() {
         byte[] array = new byte[size() < Integer.MAX_VALUE ? (int)size() : Integer.MAX_VALUE];
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; ++i) {
             array[i] = get(i);
         }
         return array;
@@ -72,7 +72,7 @@ public class ByteVector extends Pointer {
     }
     public ByteVector put(byte ... array) {
         if (size() != array.length) { resize(array.length); }
-        for (int i = 0; i < array.length; i++) {
+        for (int i = 0; i < array.length; ++i) {
             put(i, array[i]);
         }
         return this;

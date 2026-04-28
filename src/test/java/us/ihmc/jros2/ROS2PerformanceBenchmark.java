@@ -158,7 +158,7 @@ public class ROS2PerformanceBenchmark
       setMessageData(message);
 
       // Warmup
-      for (int i = 0; i < warmupMessages; i++)
+      for (int i = 0; i < warmupMessages; ++i)
       {
          publisher.publish(message);
          LockSupport.parkNanos(PUBLISH_DELAY_NS);
@@ -168,7 +168,7 @@ public class ROS2PerformanceBenchmark
       long[] latencies = new long[benchmarkMessages];
       long startTime = System.nanoTime();
 
-      for (int i = 0; i < benchmarkMessages; i++)
+      for (int i = 0; i < benchmarkMessages; ++i)
       {
          long publishStart = System.nanoTime();
          publisher.publish(message);
@@ -208,7 +208,7 @@ public class ROS2PerformanceBenchmark
       setMessageData(message);
 
       // Warmup
-      for (int i = 0; i < warmupMessages; i++)
+      for (int i = 0; i < warmupMessages; ++i)
       {
          publisher.publish(message);
          LockSupport.parkNanos(PUBLISH_DELAY_NS);
@@ -218,7 +218,7 @@ public class ROS2PerformanceBenchmark
       long[] latencies = new long[benchmarkMessages];
       long startTime = System.nanoTime();
 
-      for (int i = 0; i < benchmarkMessages; i++)
+      for (int i = 0; i < benchmarkMessages; ++i)
       {
          long publishStart = System.nanoTime();
          publisher.publish(message);
@@ -253,7 +253,7 @@ public class ROS2PerformanceBenchmark
       Thread[] threads = new Thread[threadCount];
       long[] threadTimes = new long[threadCount];
 
-      for (int i = 0; i < threadCount; i++)
+      for (int i = 0; i < threadCount; ++i)
       {
          final int threadIndex = i;
          threads[i] = new Thread(() -> {
@@ -265,7 +265,7 @@ public class ROS2PerformanceBenchmark
             try { startLatch.await(); } catch (InterruptedException e) { return; }
 
             long start = System.nanoTime();
-            for (int j = 0; j < messagesPerThread; j++)
+            for (int j = 0; j < messagesPerThread; ++j)
             {
                publisher.publish(message);
                LockSupport.parkNanos(PUBLISH_DELAY_NS);
@@ -312,7 +312,7 @@ public class ROS2PerformanceBenchmark
       Thread[] threads = new Thread[threadCount];
       long[] threadTimes = new long[threadCount];
 
-      for (int i = 0; i < threadCount; i++)
+      for (int i = 0; i < threadCount; ++i)
       {
          final int threadIndex = i;
          threads[i] = new Thread(() -> {
@@ -324,7 +324,7 @@ public class ROS2PerformanceBenchmark
             try { startLatch.await(); } catch (InterruptedException e) { return; }
 
             long start = System.nanoTime();
-            for (int j = 0; j < messagesPerThread; j++)
+            for (int j = 0; j < messagesPerThread; ++j)
             {
                publisher.publish(message);
                LockSupport.parkNanos(PUBLISH_DELAY_NS);
@@ -383,7 +383,7 @@ public class ROS2PerformanceBenchmark
 
          // Data rows
          int maxLength = Math.max(standard.latencies.length, async.latencies.length);
-         for (int i = 0; i < maxLength; i++)
+         for (int i = 0; i < maxLength; ++i)
          {
             writer.append(java.lang.String.valueOf(i));
             writer.append(",");

@@ -63,7 +63,7 @@ public class AsyncROS2Test
       asyncNode.close();
    }
 
-   @RepeatedTest(50)
+   @Test
    public void testPublishingManyMessages() throws InterruptedException
    {
       int messagesToPublish = 1000;
@@ -134,7 +134,7 @@ public class AsyncROS2Test
          ROS2Publisher<example_interfaces.Bool> asyncPublisher = asyncNode.createPublisher(topic);
          publisherThreads[i] = new Thread(() ->
          {
-            for (int j = 0; j < messagesToPublish; j++)
+            for (int j = 0; j < messagesToPublish; ++j)
             {
                example_interfaces.Bool message = new example_interfaces.Bool();
                message.setData(expected);

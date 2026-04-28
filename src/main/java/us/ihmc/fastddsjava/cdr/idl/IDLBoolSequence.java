@@ -263,7 +263,7 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
 
       public BooleanBufferWrapper put(int dstIndex, BooleanBufferWrapper src, int srcIndex, int length)
       {
-         for (int i = 0; i < length; i++)
+         for (int i = 0; i < length; ++i)
          {
             byteBuffer.put(dstIndex + i, src.byteBuffer.get(srcIndex + i));
          }

@@ -26,7 +26,7 @@ public class JavaPublisherTest
 
       System.out.println("Publishers created, starting to publish...");
 
-      for (int i = 0; i < 10; i++)
+      for (int i = 0; i < 10; ++i)
       {
          String_ stringMsg = new String_();
          stringMsg.setData("Java message " + i);

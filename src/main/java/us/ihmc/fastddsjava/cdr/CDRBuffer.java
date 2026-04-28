@@ -253,7 +253,7 @@ public final class CDRBuffer
       int charLength = value.length();
       writeWchar(charLength);
 
-      for (int i = 0; i < charLength; i++)
+      for (int i = 0; i < charLength; ++i)
       {
          writeInt(value.codePointAt(i));
       }

@@ -60,7 +60,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final SubscriptionMatchedStatus subscriptionMatchedStatus;
    private final fastddsjava_DataReaderListener listener;
    private final fastddsjava_OnDataCallback fastddsDataCallback;
-   private final us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback;
+   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback;
    private final TopicData topicData;
 
    /*
@@ -203,7 +203,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
    }
 
-   private class fastddsjava_OnSubscriptionMatchedCallbackImpl extends us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnSubscriptionCallback
+   private class fastddsjava_OnSubscriptionMatchedCallbackImpl extends fastddsjava_OnSubscriptionCallback
    {
       @Override
       public void call()
@@ -290,39 +290,47 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    public boolean waitForPublisher(long timeoutMs)
    {
+      boolean discovered = false;
       long startTime = System.nanoTime();
       long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
 
       synchronized (discoveryLock)
       {
-         while (!publisherDiscovered && !closed)
+         boolean timedOut = false;
+         while (!publisherDiscovered && !closed && !timedOut)
          {
             long elapsedNanos = System.nanoTime() - startTime;
             if (elapsedNanos >= timeoutNanos)
             {
-               return false;
+               timedOut = true;
             }
-
-            long remainingNanos = timeoutNanos - elapsedNanos;
-            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
-            if (remainingMs <= 0)
+            else
             {
-               return false;
-            }
-
-            try
-            {
-               discoveryLock.wait(remainingMs);
-            }
-            catch (InterruptedException e)
-            {
-               Thread.currentThread().interrupt();
-               return false;
+               long remainingNanos = timeoutNanos - elapsedNanos;
+               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+               if (remainingMs <= 0)
+               {
+                  timedOut = true;
+               }
+               else
+               {
+                  try
+                  {
+                     discoveryLock.wait(remainingMs);
+                  }
+                  catch (InterruptedException e)
+                  {
+                     Thread.currentThread().interrupt();
+                     timedOut = true;
+                  }
+               }
             }
          }
 
-         return publisherDiscovered;
+         discovered = publisherDiscovered;
       }
+
+      return discovered;
    }
 
    /**

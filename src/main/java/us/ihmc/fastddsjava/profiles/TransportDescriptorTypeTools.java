@@ -467,7 +467,7 @@ public final class TransportDescriptorTypeTools
 
    private static boolean isInRange(byte[] address, byte[] network, byte[] mask)
    {
-      for (int i = 0; i < 4; i++)
+      for (int i = 0; i < 4; ++i)
       {
          if ((network[i] & mask[i]) != (address[i] & mask[i]))
          {

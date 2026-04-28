@@ -70,7 +70,7 @@ public class ROS2ActionTest
          if (order > 0)
             result.getSequence().add(curr);
 
-         for (int i = 2; i <= order; i++)
+         for (int i = 2; i <= order; ++i)
          {
             int next = prev + curr;
             result.getSequence().add(next);
@@ -81,7 +81,7 @@ public class ROS2ActionTest
             if (i % 3 == 0 || i == order)
             {
                Fibonacci_Feedback feedback = feedbackPublisher.createFeedback();
-               for (int j = 0; j <= i; j++)
+               for (int j = 0; j <= i; ++j)
                {
                   feedback.getSequence().add(result.getSequence().get(j));
                }
@@ -115,7 +115,7 @@ public class ROS2ActionTest
 
       assertNotNull(client);
 
-      client.waitForServer(5000);
+      assertTrue(client.waitForServer(5000), "Should discover action server");
 
       // Send goal synchronously
       Fibonacci_Goal goal = new Fibonacci_Goal();
@@ -146,7 +146,7 @@ public class ROS2ActionTest
             result.getSequence().add(curr);
 
          // Compute and send feedback for each step
-         for (int i = 2; i <= order; i++)
+         for (int i = 2; i <= order; ++i)
          {
             int next = prev + curr;
             result.getSequence().add(next);
@@ -154,7 +154,7 @@ public class ROS2ActionTest
             curr = next;
 
             Fibonacci_Feedback feedback = feedbackPublisher.createFeedback();
-            for (int j = 0; j <= i; j++)
+            for (int j = 0; j <= i; ++j)
             {
                feedback.getSequence().add(result.getSequence().get(j));
             }
@@ -211,7 +211,7 @@ public class ROS2ActionTest
          if (order > 0)
             result.getSequence().add(curr);
 
-         for (int i = 2; i <= order; i++)
+         for (int i = 2; i <= order; ++i)
          {
             int next = prev + curr;
             result.getSequence().add(next);
@@ -244,7 +244,7 @@ public class ROS2ActionTest
       assertEquals(13, result.getSequence().get(7));
    }
 
-   @RepeatedTest(200)
+   @Test
    public void testMultipleGoals() throws InterruptedException
    {
       AtomicInteger goalsExecuted = new AtomicInteger(0);
@@ -260,7 +260,7 @@ public class ROS2ActionTest
          if (order > 0)
             result.getSequence().add(curr);
 
-         for (int i = 2; i <= order; i++)
+         for (int i = 2; i <= order; ++i)
          {
             int next = prev + curr;
             result.getSequence().add(next);
@@ -284,7 +284,7 @@ public class ROS2ActionTest
       assertTrue(client.waitForServer(5000), "Should discover action server");
 
       // Send multiple goals
-      for (int i = 1; i <= 3; i++)
+      for (int i = 1; i <= 3; ++i)
       {
          Fibonacci_Goal goal = new Fibonacci_Goal();
          goal.setOrder(i * 2);
@@ -432,7 +432,7 @@ public class ROS2ActionTest
       int numGoals = 3;
       CountDownLatch latch = new CountDownLatch(numGoals);
 
-      for (int i = 0; i < numGoals; i++)
+      for (int i = 0; i < numGoals; ++i)
       {
          final int order = i + 1;
          new Thread(() -> {

@@ -25,7 +25,7 @@ public class JavaActionServerTest
          if (order > 0)
             result.getSequence().add(curr);
 
-         for (int i = 2; i <= order; i++)
+         for (int i = 2; i <= order; ++i)
          {
             int next = prev + curr;
             result.getSequence().add(next);
@@ -35,7 +35,7 @@ public class JavaActionServerTest
             if (i % 3 == 0 || i == order)
             {
                Fibonacci_Feedback feedback = feedbackPublisher.createFeedback();
-               for (int j = 0; j <= i; j++)
+               for (int j = 0; j <= i; ++j)
                {
                   feedback.getSequence().add(result.getSequence().get(j));
                }

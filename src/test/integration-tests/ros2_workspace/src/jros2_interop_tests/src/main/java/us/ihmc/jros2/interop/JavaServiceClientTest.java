@@ -26,7 +26,7 @@ public class JavaServiceClientTest
 
       System.out.println("Making test calls...");
 
-      for (int i = 0; i < 5; i++)
+      for (int i = 0; i < 5; ++i)
       {
          AddTwoInts_Request request = new AddTwoInts_Request();
          request.setA(i * 10);

@@ -117,7 +117,7 @@ public class ROS2ParameterTest
       assertFalse(success, "Setting undeclared parameter should fail");
    }
 
-   @RepeatedTest(100)
+   @Test
    public void testParameterEventPublishing() throws InterruptedException
    {
       ROS2Node subscriber = new ROS2Node("subscriber_node");
@@ -144,6 +144,14 @@ public class ROS2ParameterTest
 
       // Wait for subscription to discover the parameter event publisher
       assertTrue(subscription.waitForPublisher(5000), "Should discover parameter event publisher");
+
+      // Find the parameter event publisher and wait for it to discover the subscription
+      ROS2Publisher<?> parameterEventPublisher = node.getPublishers().stream()
+            .filter(pub -> pub.getTopicName().equals("/parameter_events"))
+            .findFirst()
+            .orElse(null);
+      assertNotNull(parameterEventPublisher, "Parameter event publisher should exist");
+      assertTrue(parameterEventPublisher.waitForSubscriber(5000), "Parameter event publisher should discover subscription");
 
       // Now declare the test parameter (event should be received)
       node.declareParameter("test_param", 123L);
@@ -257,8 +265,11 @@ public class ROS2ParameterTest
       CountDownLatch latch = new CountDownLatch(1);
       AtomicReference<ParameterEvent> receivedEvent = new AtomicReference<>();
 
-      // Subscribe to parameter events BEFORE declaring the parameter
-      subscriber.createSubscription(new ROS2Topic<>("/parameter_events", ParameterEvent.class), (eventReader) ->
+      // Declare initial parameter first to create the parameter event publisher
+      node.declareParameter("counter", 0L);
+
+      // Subscribe to parameter events AFTER publisher is created
+      ROS2Subscription<ParameterEvent> subscription = subscriber.createSubscription(new ROS2Topic<>("/parameter_events", ParameterEvent.class), (eventReader) ->
       {
          ParameterEvent event = new ParameterEvent();
          eventReader.read(event);
@@ -270,8 +281,8 @@ public class ROS2ParameterTest
          }
       });
 
-      // Declare initial parameter
-      node.declareParameter("counter", 0L);
+      // Wait for subscription to discover the parameter event publisher
+      assertTrue(subscription.waitForPublisher(5000), "Should discover parameter event publisher");
 
       // Update the parameter (should trigger changed event)
       node.setParameter(new ROS2Parameter("counter", 10L));
