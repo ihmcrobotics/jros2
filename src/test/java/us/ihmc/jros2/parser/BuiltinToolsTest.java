@@ -52,26 +52,25 @@ public class BuiltinToolsTest
    @Test
    public void testGetBuiltinTypeSize()
    {
-      // 1 bit
+      // 1 byte
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("bool"));
       // 1 byte
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("byte"));
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("int8"));
-      // 2 bytes
-      assertEquals(1, BuiltinTools.getBuiltinTypeSize("uint8"));
-      assertEquals(1, BuiltinTools.getBuiltinTypeSize("int16"));
-      // 2 bytes (unsigned)
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("char"));
+      // 2 bytes
+      assertEquals(2, BuiltinTools.getBuiltinTypeSize("uint8"));
+      assertEquals(2, BuiltinTools.getBuiltinTypeSize("int16"));
       // 4 bytes
-      assertEquals(4, BuiltinTools.getBuiltinTypeSize("float32"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("uint16"));
+      assertEquals(4, BuiltinTools.getBuiltinTypeSize("float32"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("int32"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("uint32"));
       // 8 bytes
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("float64"));
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("int64"));
       assertEquals(8, BuiltinTools.getBuiltinTypeSize("uint64"));
-      // Variable length strings
+      // Variable length strings (returns size of length prefix)
       assertEquals(1, BuiltinTools.getBuiltinTypeSize("string"));
       assertEquals(4, BuiltinTools.getBuiltinTypeSize("wstring"));
 

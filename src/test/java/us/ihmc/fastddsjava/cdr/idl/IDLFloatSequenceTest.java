@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,6 +149,6 @@ public class IDLFloatSequenceTest
       IDLFloatSequence sequence = new IDLFloatSequence(INITIAL_CAPACITY);
       sequence.add(42.0f);
 
-      assertEquals(Float.BYTES, sequence.elementSizeBytes(0, 0));
+      assertEquals(Float.BYTES, sequence.elementSizeBytes(CDRBuffer.PAYLOAD_HEADER.length, 0));
    }
 }

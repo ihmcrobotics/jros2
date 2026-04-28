@@ -181,17 +181,17 @@ public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(P
 
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
 
-// Get participant GUID as 24-byte array
+// Get participant GUID as 16-byte array
 public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") BytePointer guid_out);
 public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") ByteBuffer guid_out);
 public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") byte[] guid_out);
 
-// Get DataWriter GUID as 24-byte array
+// Get DataWriter GUID as 16-byte array
 public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") BytePointer guid_out);
 public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") ByteBuffer guid_out);
 public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") byte[] guid_out);
 
-// Get DataReader GUID as 24-byte array
+// Get DataReader GUID as 16-byte array
 public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") BytePointer guid_out);
 public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") ByteBuffer guid_out);
 public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") byte[] guid_out);

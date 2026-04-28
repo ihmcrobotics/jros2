@@ -429,7 +429,7 @@ public class ROS2Node implements Closeable
             // Notify discovery publisher
             if (!topic.getName().equals("ros_discovery_info"))
             {
-               discoveryPublisher.addWriter(publisher.getWriterPointer());
+               discoveryPublisher.addWriter(publisher.fastddsDataWriter);
             }
 
             return publisher;
@@ -491,7 +491,7 @@ public class ROS2Node implements Closeable
             // Don't notify discovery publisher for discovery topic itself
             if (!topic.getName().equals("ros_discovery_info"))
             {
-               discoveryPublisher.addWriter(publisher.getWriterPointer());
+               discoveryPublisher.addWriter(publisher.fastddsDataWriter);
             }
 
             return publisher;
@@ -558,6 +558,13 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
    {
+      // Warn if subscribing to /parameter_events without matching QoS profile
+      if (topic.getName().equals("/parameter_events") && qosProfile != ROS2QoSProfile.PARAMETER_EVENTS)
+      {
+         jros2.getLogger().warning("Creating subscription to /parameter_events with non-standard QoS profile. " +
+                                   "Consider using ROS2QoSProfile.PARAMETER_EVENTS to ensure compatibility with parameter event publishers.");
+      }
+
       closeLock.readLock().lock();
       try
       {

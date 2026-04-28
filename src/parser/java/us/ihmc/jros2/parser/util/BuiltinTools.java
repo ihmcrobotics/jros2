@@ -68,7 +68,7 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
-         // 1 bit
+         // 1 byte
          case "bool":
          // 1 byte
          case "byte":
@@ -117,7 +117,7 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
-         // 1 bit
+         // 1 byte
          case "bool":
             return "boolean";
          // 1 byte
@@ -170,7 +170,7 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
-         // 1 bit
+         // 1 byte
          case "bool":
             return "IDLBoolSequence";
          // 1 byte
@@ -224,7 +224,7 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
-         // 1 bit
+         // 1 byte
          case "bool":
             return "writeBoolean";
          // 1 byte
@@ -278,7 +278,7 @@ public final class BuiltinTools
 
       switch (builtinType)
       {
-         // 1 bit
+         // 1 byte
          case "bool":
             return "readBoolean";
          // 1 byte

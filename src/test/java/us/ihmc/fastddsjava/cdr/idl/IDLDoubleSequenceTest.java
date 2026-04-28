@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,6 +149,7 @@ public class IDLDoubleSequenceTest
       IDLDoubleSequence sequence = new IDLDoubleSequence(INITIAL_CAPACITY);
       sequence.add(42.0);
 
-      assertEquals(Double.BYTES, sequence.elementSizeBytes(0, 0));
+      // Element size at properly aligned position (after 4-byte header, already aligned for 8-byte double)
+      assertEquals(Double.BYTES, sequence.elementSizeBytes(CDRBuffer.PAYLOAD_HEADER.length, 0));
    }
 }

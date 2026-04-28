@@ -182,6 +182,8 @@ public class ROS2ActionTest
                                                                                                                       Fibonacci_Result.class,
                                                                                                                       Fibonacci_Feedback.class);
 
+      assertTrue(client.waitForServer(5000), "Should discover action server");
+
       // Send goal with feedback callback
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(5);
@@ -231,13 +233,15 @@ public class ROS2ActionTest
                                                                                                                       Fibonacci_Result.class,
                                                                                                                       Fibonacci_Feedback.class);
 
+      assertTrue(client.waitForServer(5000), "Should discover action server");
+
       // Send goal asynchronously
       Fibonacci_Goal goal = new Fibonacci_Goal();
       goal.setOrder(7);
 
       CompletableFuture<Fibonacci_Result> future = client.sendGoalAsync(goal);
 
-      Fibonacci_Result result = future.get();
+      Fibonacci_Result result = future.get(5, TimeUnit.SECONDS);
 
       assertNotNull(result);
       assertEquals(8, result.getSequence().size());

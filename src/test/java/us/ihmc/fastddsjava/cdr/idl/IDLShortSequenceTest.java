@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -148,6 +149,6 @@ public class IDLShortSequenceTest
       IDLShortSequence sequence = new IDLShortSequence(INITIAL_CAPACITY);
       sequence.add((short) 42);
 
-      assertEquals(Short.BYTES, sequence.elementSizeBytes(0, 0));
+      assertEquals(Short.BYTES, sequence.elementSizeBytes(CDRBuffer.PAYLOAD_HEADER.length, 0));
    }
 }

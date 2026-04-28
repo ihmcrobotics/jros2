@@ -50,7 +50,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Fast-DDS pointers
     */
    private final Pointer fastddsPublisher;
-   private final Pointer fastddsDataWriter;
+   protected final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final PublicationMatchedStatus publicationMatchedStatus;
@@ -333,7 +333,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    public boolean waitForSubscriber(long timeoutMs)
    {
-      boolean discovered = false;
+      boolean discovered;
       long startTime = System.nanoTime();
       long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
 
@@ -374,14 +374,5 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
 
       return discovered;
-   }
-
-   /**
-    * Get the FastDDS DataWriter pointer for discovery purposes.
-    * Package-private for use by ROS2DiscoveryPublisher.
-    */
-   Pointer getWriterPointer()
-   {
-      return fastddsDataWriter;
    }
 }

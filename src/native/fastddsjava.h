@@ -460,32 +460,28 @@ uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
     return subscriber->delete_datareader(reader);
 }
 
-// Get participant GUID as 24-byte array
+// Get participant GUID as 16-byte array
 void fastddsjava_get_participant_guid(void* participant_, uint8_t* guid_out) {
     eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
     eprosima::fastdds::rtps::GUID_t guid = participant->guid();
     memcpy(guid_out, guid.guidPrefix.value, 12);
     memcpy(guid_out + 12, guid.entityId.value, 4);
-    // Pad remaining 8 bytes with zeros
-    memset(guid_out + 16, 0, 8);
 }
 
-// Get DataWriter GUID as 24-byte array
+// Get DataWriter GUID as 16-byte array
 void fastddsjava_get_writer_guid(void* writer_, uint8_t* guid_out) {
     eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
     eprosima::fastdds::rtps::GUID_t guid = writer->guid();
     memcpy(guid_out, guid.guidPrefix.value, 12);
     memcpy(guid_out + 12, guid.entityId.value, 4);
-    memset(guid_out + 16, 0, 8);
 }
 
-// Get DataReader GUID as 24-byte array
+// Get DataReader GUID as 16-byte array
 void fastddsjava_get_reader_guid(void* reader_, uint8_t* guid_out) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
     eprosima::fastdds::rtps::GUID_t guid = reader->guid();
     memcpy(guid_out, guid.guidPrefix.value, 12);
     memcpy(guid_out + 12, guid.entityId.value, 4);
-    memset(guid_out + 16, 0, 8);
 }
 
 #endif // FASTDDSJAVA_H

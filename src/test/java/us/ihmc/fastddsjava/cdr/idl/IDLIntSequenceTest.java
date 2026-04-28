@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -228,6 +229,6 @@ public class IDLIntSequenceTest
       IDLIntSequence sequence = new IDLIntSequence(INITIAL_CAPACITY);
       sequence.add(42);
 
-      assertEquals(Integer.BYTES, sequence.elementSizeBytes(0, 0), "Element size should match int size");
+      assertEquals(Integer.BYTES, sequence.elementSizeBytes(CDRBuffer.PAYLOAD_HEADER.length, 0), "Element size should match int size");
    }
 }

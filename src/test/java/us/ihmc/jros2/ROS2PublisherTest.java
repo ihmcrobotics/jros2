@@ -262,12 +262,15 @@ public class ROS2PublisherTest
 
       // Create subscription that will receive from many publishers
       AtomicInteger messagesReceived = new AtomicInteger(0);
-      subscriberNode.createSubscription(topic, subscriber ->
+      ROS2Subscription<example_interfaces.Bool> subscription = subscriberNode.createSubscription(topic, subscriber ->
       {
          example_interfaces.Bool data = new example_interfaces.Bool();
          subscriber.read(data);
          messagesReceived.incrementAndGet();
       }, ROS2QoSProfile.DEFAULT);
+
+      // Wait for subscription to discover publisher before publishing
+      subscription.waitForPublisher(5000);
 
       // Create many publishers on separate threads and publish
       int publisherCount = 20;

@@ -580,27 +580,33 @@ public class CDRBufferTest
    @Test
    public void testAlignmentCalculation()
    {
-      // Test alignment calculation utility method
-      assertEquals(0, CDRBuffer.alignment(0, 4), "Already aligned position needs no offset");
-      assertEquals(3, CDRBuffer.alignment(1, 4), "Position 1 needs 3 bytes to align to 4");
-      assertEquals(2, CDRBuffer.alignment(2, 4), "Position 2 needs 2 bytes to align to 4");
-      assertEquals(1, CDRBuffer.alignment(3, 4), "Position 3 needs 1 byte to align to 4");
-      assertEquals(0, CDRBuffer.alignment(4, 4), "Position 4 is aligned");
+      // Test alignment calculation utility method for CDR serialization
+      // Positions are after the 4-byte payload header
+      int headerLen = CDRBuffer.PAYLOAD_HEADER.length; // 4 bytes
+      assertEquals(0, CDRBuffer.alignment(headerLen + 0, 4), "Already aligned position needs no offset");
+      assertEquals(3, CDRBuffer.alignment(headerLen + 1, 4), "Position 1 after header needs 3 bytes to align to 4");
+      assertEquals(2, CDRBuffer.alignment(headerLen + 2, 4), "Position 2 after header needs 2 bytes to align to 4");
+      assertEquals(1, CDRBuffer.alignment(headerLen + 3, 4), "Position 3 after header needs 1 byte to align to 4");
+      assertEquals(0, CDRBuffer.alignment(headerLen + 4, 4), "Position 4 after header is aligned");
    }
 
    @Test
    public void testAlignmentForVariousBoundaries()
    {
+      // Test alignment for various boundaries in CDR serialization context
+      // Positions are after the 4-byte payload header
+      int headerLen = CDRBuffer.PAYLOAD_HEADER.length; // 4 bytes
+
       // Test 2-byte alignment
-      assertEquals(0, CDRBuffer.alignment(0, 2));
-      assertEquals(1, CDRBuffer.alignment(1, 2));
-      assertEquals(0, CDRBuffer.alignment(2, 2));
+      assertEquals(0, CDRBuffer.alignment(headerLen + 0, 2));
+      assertEquals(1, CDRBuffer.alignment(headerLen + 1, 2));
+      assertEquals(0, CDRBuffer.alignment(headerLen + 2, 2));
 
       // Test 8-byte alignment
-      assertEquals(0, CDRBuffer.alignment(0, 8));
-      assertEquals(7, CDRBuffer.alignment(1, 8));
-      assertEquals(2, CDRBuffer.alignment(6, 8));
-      assertEquals(0, CDRBuffer.alignment(8, 8));
+      assertEquals(0, CDRBuffer.alignment(headerLen + 0, 8));
+      assertEquals(7, CDRBuffer.alignment(headerLen + 1, 8));
+      assertEquals(2, CDRBuffer.alignment(headerLen + 6, 8));
+      assertEquals(0, CDRBuffer.alignment(headerLen + 8, 8));
    }
 
    // ========== Buffer Management Tests ==========
