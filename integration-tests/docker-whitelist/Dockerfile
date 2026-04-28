@@ -12,8 +12,8 @@ COPY build/libs/jros2-*.jar /app/jros2.jar
 COPY build/docker-libs/*.jar /app/libs/
 
 # Copy test source files
-COPY src/test/docker/TestPublisher.java /app/
-COPY src/test/docker/TestSubscriber.java /app/
+COPY integration-tests/docker-whitelist/TestPublisher.java /app/
+COPY integration-tests/docker-whitelist/TestSubscriber.java /app/
 
 # Compile test programs inside the container
 RUN javac -cp "/app/jros2.jar:/app/libs/*" TestPublisher.java TestSubscriber.java

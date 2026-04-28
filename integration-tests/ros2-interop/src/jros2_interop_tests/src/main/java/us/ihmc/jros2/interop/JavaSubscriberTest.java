@@ -42,7 +42,21 @@ public class JavaSubscriberTest
          System.out.println("Received Bool: " + message.getData() + " (count: " + boolCount + ")");
       });
 
-      System.out.println("Subscriptions created, waiting for messages...");
+      System.out.println("Subscriptions created, waiting for publishers...");
+
+      // Wait for publishers to be discovered
+      boolean stringDiscovered = stringSubscription.waitForPublisher(5000);
+      boolean int32Discovered = int32Subscription.waitForPublisher(5000);
+      boolean boolDiscovered = boolSubscription.waitForPublisher(5000);
+
+      System.out.println("Discovery status - String: " + stringDiscovered + ", Int32: " + int32Discovered + ", Bool: " + boolDiscovered);
+
+      if (!stringDiscovered || !int32Discovered || !boolDiscovered)
+      {
+         System.err.println("WARNING: Not all publishers discovered");
+      }
+
+      System.out.println("Waiting for messages...");
 
       long startTime = System.currentTimeMillis();
       while (System.currentTimeMillis() - startTime < 30000)

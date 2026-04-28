@@ -104,7 +104,7 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
     packagePaths = listOf(
         projectDir.resolve("ros2_interfaces").resolve("example_interfaces").absolutePath,
 
-        // rcl_interfaces used as dependency to common_interfaces; we include it here
+        // rcl_interfaces used as a dependency to common_interfaces; we include it here
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
@@ -126,81 +126,3 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
     )
     outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }
-
-//// Copy runtime dependencies for Docker integration tests
-//tasks.register<Copy>("copyDockerDependencies") {
-//   description = "Copy runtime dependencies for Docker integration tests"
-//   group = "build"
-//
-//   from(configurations.runtimeClasspath)
-//   into(layout.buildDirectory.dir("docker-libs"))
-//}
-//
-//// Docker integration test for interface whitelisting (Linux only)
-//tasks.register<Exec>("testInterfaceWhitelistDocker") {
-//   description = "Run Docker-based integration tests for interface whitelisting (Linux only)"
-//   group = "verification"
-//
-//   val isLinux = System.getProperty("os.name").lowercase().contains("linux")
-//
-//   // Only run on Linux
-//   onlyIf {
-//      if (!isLinux) {
-//         println("INFO: Docker interface whitelist tests only run on Linux. Skipping on ${System.getProperty("os.name")}.")
-//      }
-//      isLinux
-//   }
-//
-//   workingDir = projectDir
-//   commandLine = listOf("bash", "src/test/docker/test-interface-whitelist.sh")
-//
-//   // Make test script executable
-//   doFirst {
-//      val testScript = projectDir.resolve("src/test/docker/test-interface-whitelist.sh")
-//      if (testScript.exists()) {
-//         testScript.setExecutable(true)
-//      }
-//   }
-//
-//   // Show output
-//   standardOutput = System.out
-//   errorOutput = System.err
-//}
-//
-//// Run ROS2 workspace integration tests
-//tasks.register<Exec>("testROS2Integration") {
-//   description = "Run ROS2 workspace integration tests"
-//   group = "verification"
-//
-//   val rosDistro = System.getenv("ROS_DISTRO")
-//   val hasRos = rosDistro != null && File("/opt/ros/$rosDistro").exists()
-//   val ros2Workspace = File(projectDir, "src/test/integration-tests/ros2_workspace")
-//   val gradlewScript = File(ros2Workspace, "gradlew")
-//
-//   onlyIf {
-//      if (!hasRos) {
-//         println("Skipping ROS2 integration tests: ROS2 not found. Set ROS_DISTRO environment variable.")
-//         return@onlyIf false
-//      }
-//      if (!gradlewScript.exists()) {
-//         println("Skipping ROS2 integration tests: Gradle wrapper not found in ros2_workspace")
-//         return@onlyIf false
-//      }
-//      true
-//   }
-//
-//   workingDir = ros2Workspace
-//   commandLine = listOf("./gradlew", "test")
-//
-//   environment("ROS_DISTRO", rosDistro ?: "")
-//
-//   standardOutput = System.out
-//   errorOutput = System.err
-//
-//   dependsOn("jar")
-//}
-//
-//// Run Docker integration tests and ROS2 integration tests as part of test task
-//tasks.named("test") {
-//   finalizedBy("testInterfaceWhitelistDocker", "testROS2Integration")
-//}

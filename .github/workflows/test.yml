@@ -11,7 +11,7 @@ on:
 
 jobs:
   test-linux:
-    name: Linux (ROS 2 ${{ matrix.ros_distro }})
+    name: Linux Unit Tests (ROS 2 ${{ matrix.ros_distro }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -29,17 +29,17 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run tests
+      - name: Run unit tests
         run: ROS_DISTRO=${{ matrix.ros_distro }} ./gradlew test
 
       - name: Print error logs
         if: failure()
         run: find . -name 'hs_err*' -type f -exec cat {} +
 
-  test-docker:
-    name: Docker Integration Tests
+  test-docker-whitelist:
+    name: Docker Integration Tests (Interface Whitelist)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,14 +53,53 @@ jobs:
       - name: Setup Docker
         uses: docker/setup-buildx-action@v3
 
-      - name: Build JAR
-        run: ./gradlew jar
+      - name: Run Docker whitelist integration tests
+        run: cd integration-tests/docker-whitelist && ./gradlew test
 
-      - name: Run Docker integration tests
-        run: ROS_DISTRO=jazzy ./gradlew testInterfaceWhitelistDocker
+      - name: Print error logs
+        if: failure()
+        run: find integration-tests/docker-whitelist -name '*.log' -type f -exec cat {} +
+
+  test-ros2-interop:
+    name: ROS2 Integration Tests (Python Interop)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    container:
+      image: osrf/ros:humble-desktop
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Install ROS2 dependencies
+        run: |
+          apt-get update
+          apt-get install -y python3-colcon-common-extensions python3-rosdep
+          rosdep update
+          cd integration-tests/ros2-interop
+          rosdep install --from-paths src --ignore-src -r -y
+
+      - name: Run ROS2 interop integration tests
+        run: |
+          export ROS_DISTRO=humble
+          cd integration-tests/ros2-interop
+          ./gradlew test
+
+      - name: Print error logs
+        if: failure()
+        run: |
+          find integration-tests/ros2-interop -name '*.log' -type f -exec cat {} +
+          find integration-tests/ros2-interop/log -type f -exec echo "=== {} ===" \; -exec cat {} \;
 
   test-windows:
-    name: Windows
+    name: Windows Unit Tests
     runs-on: windows-latest
     timeout-minutes: 10
     steps:
@@ -73,12 +112,12 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run tests
+      - name: Run unit tests
         shell: bash
         run: ./gradlew test
 
   test-macos-intel:
-    name: macOS (Intel)
+    name: macOS Unit Tests (Intel)
     runs-on: macos-26-intel
     timeout-minutes: 10
     steps:
@@ -91,11 +130,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run tests
+      - name: Run unit tests
         run: ./gradlew test
 
   test-macos-arm:
-    name: macOS (ARM)
+    name: macOS Unit Tests (ARM)
     runs-on: macos-26
     timeout-minutes: 10
     steps:
@@ -108,5 +147,5 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run tests
+      - name: Run unit tests
         run: ./gradlew test

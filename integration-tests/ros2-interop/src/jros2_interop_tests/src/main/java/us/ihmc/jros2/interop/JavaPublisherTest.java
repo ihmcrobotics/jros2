@@ -24,7 +24,21 @@ public class JavaPublisherTest
       ROS2Publisher<Int32> int32Publisher = node.createPublisher(int32Topic);
       ROS2Publisher<Bool> boolPublisher = node.createPublisher(boolTopic);
 
-      System.out.println("Publishers created, starting to publish...");
+      System.out.println("Publishers created, waiting for subscribers...");
+
+      // Wait for subscribers to discover publishers
+      boolean stringDiscovered = stringPublisher.waitForSubscriber(5000);
+      boolean int32Discovered = int32Publisher.waitForSubscriber(5000);
+      boolean boolDiscovered = boolPublisher.waitForSubscriber(5000);
+
+      System.out.println("Discovery status - String: " + stringDiscovered + ", Int32: " + int32Discovered + ", Bool: " + boolDiscovered);
+
+      if (!stringDiscovered || !int32Discovered || !boolDiscovered)
+      {
+         System.err.println("WARNING: Not all subscribers discovered");
+      }
+
+      System.out.println("Starting to publish...");
 
       for (int i = 0; i < 10; ++i)
       {

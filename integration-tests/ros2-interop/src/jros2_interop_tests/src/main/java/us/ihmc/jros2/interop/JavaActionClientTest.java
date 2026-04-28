@@ -26,7 +26,14 @@ public class JavaActionClientTest
          );
 
       System.out.println("Action client created, waiting for server...");
-      Thread.sleep(2000);
+
+      boolean serverDiscovered = actionClient.waitForServer(5000);
+      System.out.println("Server discovery: " + serverDiscovered);
+
+      if (!serverDiscovered)
+      {
+         System.err.println("WARNING: Action server not discovered");
+      }
 
       System.out.println("Sending action goal...");
 

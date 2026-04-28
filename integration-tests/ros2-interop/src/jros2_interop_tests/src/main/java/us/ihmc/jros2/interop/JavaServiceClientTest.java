@@ -22,7 +22,14 @@ public class JavaServiceClientTest
          );
 
       System.out.println("Service client created, waiting for service...");
-      Thread.sleep(2000);
+
+      boolean serverDiscovered = serviceClient.waitForServer(5000);
+      System.out.println("Server discovery: " + serverDiscovered);
+
+      if (!serverDiscovered)
+      {
+         System.err.println("WARNING: Service server not discovered");
+      }
 
       System.out.println("Making test calls...");
 

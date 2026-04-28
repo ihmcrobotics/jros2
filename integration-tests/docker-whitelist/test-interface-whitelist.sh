@@ -6,7 +6,7 @@ set -e
 # NOTE: These tests only run on Linux due to Docker networking requirements
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 IMAGE_NAME="jros2-test:latest"
 
 # Check if running on Linux
@@ -58,7 +58,7 @@ build_test_image() {
     }
 
     # Build Docker image
-    docker build -t "$IMAGE_NAME" -f src/test/docker/Dockerfile . > /dev/null 2>&1
+    docker build -t "$IMAGE_NAME" -f integration-tests/docker-whitelist/Dockerfile . > /dev/null 2>&1
 
     if [ $? -eq 0 ]; then
         echo "Docker image built successfully"
