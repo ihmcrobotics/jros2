@@ -91,7 +91,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       int initialAlignment = currentAlignment;
 
       currentAlignment += goal_id_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // status_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // status_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (text_.length() + 1)); // text_
 
       return currentAlignment - initialAlignment;

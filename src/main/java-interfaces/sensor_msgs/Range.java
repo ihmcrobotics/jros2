@@ -90,7 +90,7 @@ public class Range implements ROS2Message<Range>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // radiation_type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // radiation_type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // field_of_view_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // min_range_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // max_range_

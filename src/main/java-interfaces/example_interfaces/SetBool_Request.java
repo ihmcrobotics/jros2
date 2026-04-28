@@ -22,7 +22,7 @@ bool data # e.g. for hardware enabling / disabling}</pre>
 */
 public class SetBool_Request implements ROS2Message<SetBool_Request>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::SetBoolRequest_";
+   public static final java.lang.String name = "example_interfaces::srv::dds_::SetBoolRequest_";
 
    private boolean data_; // e.g. for hardware enabling / disabling
 

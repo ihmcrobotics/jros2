@@ -37,9 +37,10 @@ public final class SrvParser
       String requestSchema = sections[0].trim();
       String responseSchema = sections[1].trim();
 
-      // Parse request and response as messages
-      MsgContext requestContext = MsgParser.parseMsg(requestSchema, packageResourceName + "_Request");
-      MsgContext responseContext = MsgParser.parseMsg(responseSchema, packageResourceName + "_Response");
+      // Parse request and response using service-specific contexts
+      // These ensure the correct DDS type name (::srv::dds_::) instead of (::msg::dds_::)
+      SrvRequestContext requestContext = MsgParser.parseMsgInto(new SrvRequestContext(requestSchema), requestSchema, packageResourceName + "_Request");
+      SrvResponseContext responseContext = MsgParser.parseMsgInto(new SrvResponseContext(responseSchema), responseSchema, packageResourceName + "_Response");
 
       // Create the service context
       SrvContext srvContext = new SrvContext(schema, requestContext, responseContext);

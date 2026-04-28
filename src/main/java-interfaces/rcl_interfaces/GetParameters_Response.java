@@ -18,7 +18,7 @@ ParameterValue[] values}</pre>
 */
 public class GetParameters_Response implements ROS2Message<GetParameters_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::GetParametersResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::GetParametersResponse_";
 
    /**
       List of values which is the same length and order as the provided names. If a

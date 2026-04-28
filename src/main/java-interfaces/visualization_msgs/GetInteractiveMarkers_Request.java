@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GetInteractiveMarkers_Request implements ROS2Message<GetInteractiveMarkers_Request>
 {
-   public static final java.lang.String name = "visualization_msgs::msg::dds_::GetInteractiveMarkersRequest_";
+   public static final java.lang.String name = "visualization_msgs::srv::dds_::GetInteractiveMarkersRequest_";
 
    public GetInteractiveMarkers_Request()
    {

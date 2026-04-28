@@ -30,7 +30,7 @@ sensor_msgs/CameraInfo camera_info # The camera_info to store}</pre>
 */
 public class SetCameraInfo_Request implements ROS2Message<SetCameraInfo_Request>
 {
-   public static final java.lang.String name = "sensor_msgs::msg::dds_::SetCameraInfoRequest_";
+   public static final java.lang.String name = "sensor_msgs::srv::dds_::SetCameraInfoRequest_";
 
    private final sensor_msgs.CameraInfo camera_info_; // The camera_info to store
 

@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GetState_Request implements ROS2Message<GetState_Request>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetStateRequest_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetStateRequest_";
 
    public GetState_Request()
    {

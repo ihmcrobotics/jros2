@@ -26,7 +26,7 @@ float32 tolerance}</pre>
 */
 public class GetPlan_Request implements ROS2Message<GetPlan_Request>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::GetPlanRequest_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::GetPlanRequest_";
 
    /**
       The start pose for the plan

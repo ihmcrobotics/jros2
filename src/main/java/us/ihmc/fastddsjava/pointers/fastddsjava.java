@@ -119,6 +119,21 @@ public static native @Cast("uint32_t") int fastddsjava_delete_topic(Pointer part
 public static native Pointer fastddsjava_create_datawriter(Pointer publisher_, Pointer topic_, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datawriter(Pointer publisher_, Pointer topic_, @StdString String profile_name);
 
+/*
+ *  Create DataWriter with RMW-compatible settings for discovery interop with Python
+ *  Returns eprosima::fastdds::dds::DataWriter*
+ */
+public static native Pointer fastddsjava_create_datawriter_with_rmw_options(
+    Pointer publisher_,
+    Pointer topic_,
+    @StdString BytePointer profile_name,
+    @Cast("bool") boolean provide_unique_network_flow);
+public static native Pointer fastddsjava_create_datawriter_with_rmw_options(
+    Pointer publisher_,
+    Pointer topic_,
+    @StdString String profile_name,
+    @Cast("bool") boolean provide_unique_network_flow);
+
 public static native @Cast("uint32_t") int fastddsjava_delete_datawriter(Pointer publisher_, Pointer writer_);
 
 public static native @Cast("uint32_t") int fastddsjava_datawriter_write(Pointer writer_, fastddsjava_TopicDataWrapper data);
@@ -128,6 +143,25 @@ public static native @Cast("uint32_t") int fastddsjava_datawriter_write(Pointer 
  */
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString BytePointer profile_name);
 public static native Pointer fastddsjava_create_datareader(Pointer subscriber_, Pointer topic_, fastddsjava_DataReaderListener listener, @StdString String profile_name);
+
+/*
+ *  Create DataReader with RMW-compatible settings for discovery interop with Python
+ *  Returns eprosima::fastdds::dds::DataReader*
+ */
+public static native Pointer fastddsjava_create_datareader_with_rmw_options(
+    Pointer subscriber_,
+    Pointer topic_,
+    fastddsjava_DataReaderListener listener,
+    @StdString BytePointer profile_name,
+    @Cast("bool") boolean ignore_local_publications,
+    int unique_network_flow_endpoints);
+public static native Pointer fastddsjava_create_datareader_with_rmw_options(
+    Pointer subscriber_,
+    Pointer topic_,
+    fastddsjava_DataReaderListener listener,
+    @StdString String profile_name,
+    @Cast("bool") boolean ignore_local_publications,
+    int unique_network_flow_endpoints);
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_read_next_sample(Pointer reader_, Pointer data, Pointer info_);
 
@@ -146,6 +180,21 @@ public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(P
 public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(Pointer writer_);
 
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
+
+// Get participant GUID as 24-byte array
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") byte[] guid_out);
+
+// Get DataWriter GUID as 24-byte array
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") byte[] guid_out);
+
+// Get DataReader GUID as 24-byte array
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") byte[] guid_out);
 
 // #endif // FASTDDSJAVA_H
 

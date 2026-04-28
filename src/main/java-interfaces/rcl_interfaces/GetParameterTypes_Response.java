@@ -19,7 +19,7 @@ uint8[] types}</pre>
 */
 public class GetParameterTypes_Response implements ROS2Message<GetParameterTypes_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::GetParameterTypesResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::GetParameterTypesResponse_";
 
    /**
       List of types which is the same length and order as the provided names.

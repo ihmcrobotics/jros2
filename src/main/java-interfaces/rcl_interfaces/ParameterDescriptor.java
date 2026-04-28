@@ -109,7 +109,7 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       int initialAlignment = currentAlignment;
 
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (name_.length() + 1)); // name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // type_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (description_.length() + 1)); // description_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (additional_constraints_.length() + 1)); // additional_constraints_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // read_only_

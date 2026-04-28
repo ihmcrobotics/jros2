@@ -69,9 +69,31 @@ ros2 launch jros2_interop_tests all_tests.launch.py
 
 # Run individual tests
 ros2 launch jros2_interop_tests pubsub_test.launch.py
+ros2 launch jros2_interop_tests pubsub_reverse_test.launch.py
 ros2 launch jros2_interop_tests service_test.launch.py
+ros2 launch jros2_interop_tests service_reverse_test.launch.py
 ros2 launch jros2_interop_tests action_test.launch.py
+ros2 launch jros2_interop_tests action_reverse_test.launch.py
+ros2 launch jros2_interop_tests parameter_test.launch.py
 ```
+
+## Test Status
+
+| Test | Direction | Status | Notes |
+|------|-----------|--------|-------|
+| Pub/Sub | Python → Java | ✅ PASS | Topic communication works |
+| Pub/Sub Reverse | Java → Python | ✅ PASS | Topic communication works |
+| Service | Python → Java | ❌ FAIL | Java client can't discover Python server |
+| Service Reverse | Java → Python | ✅ PASS | Python client discovers Java server |
+| Action | Python → Java | ❌ FAIL | Java client can't discover Python server |
+| Action Reverse | Java → Python | ❌ FAIL | Python client can't discover Java server |
+| Parameter | Java ↔ Python | ❌ FAIL | Python client can't discover Java services |
+
+**Known Issues:**
+- Service/action discovery from Java clients to Python servers fails consistently
+- Action interoperability doesn't work in either direction
+- Parameter service discovery fails
+- These appear to be limitations in jros2's implementation of ROS2 service/action discovery protocols
 
 ## Package Structure
 
@@ -87,7 +109,7 @@ src/jros2_interop_tests/
 
 ## Requirements
 
-- ROS2 (Jazzy, Humble, or Iron)
+- ROS2 (Jazzy or newer)
 - Java 17+
 - Python 3.8+
 - ROS2 packages: rclpy, std_msgs, example_interfaces

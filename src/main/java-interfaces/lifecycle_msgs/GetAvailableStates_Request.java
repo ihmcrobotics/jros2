@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GetAvailableStates_Request implements ROS2Message<GetAvailableStates_Request>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetAvailableStatesRequest_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetAvailableStatesRequest_";
 
    public GetAvailableStates_Request()
    {

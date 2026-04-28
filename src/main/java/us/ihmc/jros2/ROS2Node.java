@@ -125,6 +125,10 @@ public class ROS2Node implements Closeable
     */
    private final Map<String, ROS2Parameter> parameters;
    /**
+    * Discovery publisher for ROS2 discovery protocol.
+    */
+   private final ROS2DiscoveryPublisher discoveryPublisher;
+   /**
     * Publisher for parameter events (publishes to /parameter_events topic).
     */
    private ROS2Publisher<rcl_interfaces.ParameterEvent> parameterEventPublisher;
@@ -239,6 +243,10 @@ public class ROS2Node implements Closeable
 
       // Parameter services are created lazily when first parameter is declared
       parameterService = null;
+
+      // Initialize discovery publisher for ROS2 discovery protocol
+      // Periodic publishing starts automatically after 2 seconds
+      discoveryPublisher = new ROS2DiscoveryPublisher(this, fastddsParticipant, name, "/");
    }
 
    /**
@@ -285,17 +293,22 @@ public class ROS2Node implements Closeable
     */
    <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
-      // Detect service topics by checking if name ends with "Request" or "Reply"
+      // Detect service topics by checking if message type ends with "_Request" or "_Response"
       // and use appropriate DDS topic prefix: rq for requests, rr for replies, rt for regular topics
-      String topicName = topic.getName();
+      String messageTypeName = topic.getType().getSimpleName();
       String prefix;
-      if (topicName.endsWith("Request"))
+      if (messageTypeName.endsWith("_Request"))
       {
          prefix = "rq";
       }
-      else if (topicName.endsWith("Reply"))
+      else if (messageTypeName.endsWith("_Response"))
       {
          prefix = "rr";
+      }
+      else if (messageTypeName.equals("ParticipantEntitiesInfo"))
+      {
+         // Discovery topic uses no prefix (avoid_ros_namespace_conventions = true)
+         prefix = "";
       }
       else
       {
@@ -347,6 +360,7 @@ public class ROS2Node implements Closeable
                   // Use concat method to avoid string allocation on hot path (though this still allocates)
                   String prefixedTopicName = prefix.concat(topic.getName());
                   String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
+
                   fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
                   Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
                   fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
@@ -412,6 +426,12 @@ public class ROS2Node implements Closeable
                publishers.add(publisher);
             }
 
+            // Notify discovery publisher
+            if (!topic.getName().equals("ros_discovery_info"))
+            {
+               discoveryPublisher.addWriter(publisher.getWriterPointer());
+            }
+
             return publisher;
          }
       }
@@ -426,6 +446,63 @@ public class ROS2Node implements Closeable
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic)
    {
       return createPublisher(topic, ROS2QoSProfile.DEFAULT);
+   }
+
+   /**
+    * Package-private method to create a publisher with RMW-compatible options.
+    * Used by ROS2DiscoveryPublisher to enable Python interop.
+    */
+   <T extends ROS2Message<T>> ROS2Publisher<T> createPublisherWithRmwOptions(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            ProfilesXML profilesXML = new ProfilesXML();
+            PublisherProfileType publisherProfile = new PublisherProfileType();
+            // Prefix with "pub_" to ensure valid XML identifier
+            long publisherId = publisherIdCounter.getAndIncrement();
+            String publisherProfileName = "pub_" + publisherId;
+            publisherProfile.setProfileName(publisherProfileName);
+            profilesXML.addPublisherProfile(publisherProfile);
+
+            // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
+            QoSTools.translateQoS(qosProfile, publisherProfile);
+
+            try
+            {
+               profilesXML.load();
+            }
+            catch (fastddsjavaException e)
+            {
+               jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
+               throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
+            }
+
+            TopicData topicData = getOrCreateTopicData(topic);
+            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
+
+            synchronized (publishers)
+            {
+               publishers.add(publisher);
+            }
+
+            // Don't notify discovery publisher for discovery topic itself
+            if (!topic.getName().equals("ros_discovery_info"))
+            {
+               discoveryPublisher.addWriter(publisher.getWriterPointer());
+            }
+
+            return publisher;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return null;
    }
 
    /**
@@ -513,6 +590,12 @@ public class ROS2Node implements Closeable
             synchronized (subscriptions)
             {
                subscriptions.add(subscription);
+            }
+
+            // Notify discovery publisher
+            if (!topic.getName().equals("ros_discovery_info"))
+            {
+               discoveryPublisher.addReader(subscription.getReaderPointer());
             }
 
             return subscription;
@@ -675,9 +758,9 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
-            // Topic names ending with "Request" and "Reply" will automatically get "rq" and "rr" DDS prefixes
-            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName + "Request", requestType);
-            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName + "Reply", responseType);
+            // Use service name directly - prefix will be added based on topic type
+            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName, requestType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName, responseType);
 
             ROS2ServiceClient<Request, Response> client = new ROS2ServiceClient<>(this, serviceName, requestTopic, responseTopic, qosProfile);
 
@@ -729,12 +812,10 @@ public class ROS2Node implements Closeable
          if (!closed)
          {
             // Create topics for request and response
-            // Topic names ending with "Request" and "Reply" will automatically get "rq" and "rr" DDS prefixes
+            // Use service name directly - prefix will be added based on message type
             // See getOrCreateTopicData() for prefix logic
-            String requestTopicName = serviceName + "Request";
-            String responseTopicName = serviceName + "Reply";
-            ROS2Topic<Request> requestTopic = new ROS2Topic<>(requestTopicName, requestType);
-            ROS2Topic<Response> responseTopic = new ROS2Topic<>(responseTopicName, responseType);
+            ROS2Topic<Request> requestTopic = new ROS2Topic<>(serviceName, requestType);
+            ROS2Topic<Response> responseTopic = new ROS2Topic<>(serviceName, responseType);
 
             ROS2ServiceServer<Request, Response> server = new ROS2ServiceServer<>(this,
                                                                                   serviceName,
@@ -1526,6 +1607,12 @@ public class ROS2Node implements Closeable
 
          // Clear parameters
          parameters.clear();
+
+         // Close discovery publisher
+         if (discoveryPublisher != null)
+         {
+            discoveryPublisher.close();
+         }
 
          synchronized (topicData)
          {

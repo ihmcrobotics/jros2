@@ -145,8 +145,8 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += up_to_five_unbounded_strings_.calculateSizeBytes(currentAlignment);
       currentAlignment += unbounded_array_of_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += up_to_five_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // x_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // y_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // x_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (full_name_.length() + 1)); // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_

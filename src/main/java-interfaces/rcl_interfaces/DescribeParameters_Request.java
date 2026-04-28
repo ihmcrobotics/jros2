@@ -16,7 +16,7 @@ string[] names}</pre>
 */
 public class DescribeParameters_Request implements ROS2Message<DescribeParameters_Request>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::DescribeParametersRequest_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::DescribeParametersRequest_";
 
    /**
       A list of parameters of which to get the descriptor.

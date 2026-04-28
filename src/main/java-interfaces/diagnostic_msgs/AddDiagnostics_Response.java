@@ -22,7 +22,7 @@ string message}</pre>
 */
 public class AddDiagnostics_Response implements ROS2Message<AddDiagnostics_Response>
 {
-   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::AddDiagnosticsResponse_";
+   public static final java.lang.String name = "diagnostic_msgs::srv::dds_::AddDiagnosticsResponse_";
 
    /**
       True if diagnostic aggregator was updated with new diagnostics, False

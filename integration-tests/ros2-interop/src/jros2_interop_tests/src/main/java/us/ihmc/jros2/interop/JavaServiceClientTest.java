@@ -14,6 +14,9 @@ public class JavaServiceClientTest
 
       ROS2Node node = new ROS2Node("java_service_client_test", domainId);
 
+      System.out.println("Request type: " + AddTwoInts_Request.class.getName());
+      System.out.println("Response type: " + AddTwoInts_Response.class.getName());
+
       ROS2ServiceClient<AddTwoInts_Request, AddTwoInts_Response> serviceClient =
          node.createServiceClient(
             "/test/add_two_ints",
@@ -21,15 +24,21 @@ public class JavaServiceClientTest
             AddTwoInts_Response.class
          );
 
-      System.out.println("Service client created, waiting for service...");
+      System.out.println("Service client created for: /test/add_two_ints");
+      System.out.println("Request topic would be: /test/add_two_intsRequest -> rq/test/add_two_intsRequest");
+      System.out.println("Response topic would be: /test/add_two_intsReply -> rr/test/add_two_intsReply");
+      System.out.println("Waiting for service...");
 
-      boolean serverDiscovered = serviceClient.waitForServer(5000);
+      boolean serverDiscovered = serviceClient.waitForServer(10000);
       System.out.println("Server discovery: " + serverDiscovered);
 
       if (!serverDiscovered)
       {
-         System.err.println("WARNING: Service server not discovered");
+         System.err.println("WARNING: Service server not discovered, but will try calls anyway");
       }
+
+      // Give a bit more time for discovery
+      Thread.sleep(1000);
 
       System.out.println("Making test calls...");
 

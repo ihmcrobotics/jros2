@@ -16,7 +16,7 @@ State current_state}</pre>
 */
 public class GetState_Response implements ROS2Message<GetState_Response>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetStateResponse_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetStateResponse_";
 
    /**
       The current state-machine state of the node.

@@ -22,7 +22,7 @@ geometry_msgs/PoseWithCovarianceStamped initial_pose}</pre>
 */
 public class SetMap_Request implements ROS2Message<SetMap_Request>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::SetMapRequest_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::SetMapRequest_";
 
    /**
       Requested 2D map to be set.

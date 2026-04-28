@@ -18,7 +18,7 @@ Transition transition}</pre>
 */
 public class ChangeState_Request implements ROS2Message<ChangeState_Request>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::ChangeStateRequest_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::ChangeStateRequest_";
 
    /**
       The requested transition.

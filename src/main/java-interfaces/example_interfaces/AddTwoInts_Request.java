@@ -16,7 +16,7 @@ int64 b}</pre>
 */
 public class AddTwoInts_Request implements ROS2Message<AddTwoInts_Request>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::AddTwoIntsRequest_";
+   public static final java.lang.String name = "example_interfaces::srv::dds_::AddTwoIntsRequest_";
 
    private long a_;
    private long b_;

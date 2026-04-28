@@ -18,7 +18,7 @@ string map_url}</pre>
 */
 public class LoadMap_Request implements ROS2Message<LoadMap_Request>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::LoadMapRequest_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::LoadMapRequest_";
 
    /**
       URL of map resource

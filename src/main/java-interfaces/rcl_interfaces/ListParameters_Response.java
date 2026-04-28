@@ -16,7 +16,7 @@ ListParametersResult result}</pre>
 */
 public class ListParameters_Response implements ROS2Message<ListParameters_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::ListParametersResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::ListParametersResponse_";
 
    /**
       The list of parameter names and their prefixes.

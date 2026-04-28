@@ -48,6 +48,12 @@ dependencies {
     implementation(fileTree(jros2BuildDir) {
         include(jros2JarPattern)
     })
+
+    // jros2's runtime dependencies (must match parent project's mainDependencies)
+    implementation("org.bytedeco:javacpp:1.5.11")
+    implementation("us.ihmc:ihmc-native-library-loader:2.0.6")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.18.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
 }
 
 // Include Java test sources

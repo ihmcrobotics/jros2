@@ -10,3 +10,6 @@
 	path = ros2_interfaces/example_interfaces
 	url = https://github.com/ros2/example_interfaces
 	branch = humble
+[submodule "ros2_interfaces/rmw_dds_common"]
+	path = ros2_interfaces/rmw_dds_common
+	url = https://github.com/ros2/rmw_dds_common.git

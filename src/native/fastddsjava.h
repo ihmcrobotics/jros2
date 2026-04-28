@@ -303,6 +303,35 @@ void* fastddsjava_create_datawriter(void* publisher_, void* topic_, const std::s
     return publisher->create_datawriter_with_profile(topic, profile_name);
 }
 
+/*
+ *  Create DataWriter with RMW-compatible settings for discovery interop with Python
+ *  Returns eprosima::fastdds::dds::DataWriter*
+ */
+void* fastddsjava_create_datawriter_with_rmw_options(
+    void* publisher_,
+    void* topic_,
+    const std::string profile_name,
+    bool provide_unique_network_flow) {
+
+    eprosima::fastdds::dds::Publisher* publisher = static_cast<eprosima::fastdds::dds::Publisher*>(publisher_);
+    eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
+
+    // Get QoS from profile
+    eprosima::fastdds::dds::DataWriterQos qos;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_profiles();
+    if (eprosima::fastdds::dds::RETCODE_OK != publisher->get_datawriter_qos_from_profile(profile_name, qos)) {
+        // Profile not found, use default publisher QoS
+        qos = publisher->get_default_datawriter_qos();
+    }
+
+    // Provide unique network flow endpoint to satisfy Python's requirement
+    if (provide_unique_network_flow) {
+        qos.properties().properties().emplace_back("fastdds.unique_network_flows", "1");
+    }
+
+    return publisher->create_datawriter(topic, qos);
+}
+
 uint32_t fastddsjava_delete_datawriter(void* publisher_, void* writer_) {
     eprosima::fastdds::dds::Publisher* publisher = static_cast<eprosima::fastdds::dds::Publisher*>(publisher_);
     eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
@@ -324,6 +353,43 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 
     return subscriber->create_datareader_with_profile(topic, profile_name, listener);
+}
+
+/*
+ *  Create DataReader with RMW-compatible settings for discovery interop with Python
+ *  Returns eprosima::fastdds::dds::DataReader*
+ */
+void* fastddsjava_create_datareader_with_rmw_options(
+    void* subscriber_,
+    void* topic_,
+    fastddsjava_DataReaderListener* listener,
+    const std::string profile_name,
+    bool ignore_local_publications,
+    int unique_network_flow_endpoints) {
+
+    eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
+    eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
+
+    // Get QoS from profile
+    eprosima::fastdds::dds::DataReaderQos qos;
+    eprosima::fastdds::dds::DomainParticipantFactory::get_instance()->load_profiles();
+    if (eprosima::fastdds::dds::RETCODE_OK != subscriber->get_datareader_qos_from_profile(profile_name, qos)) {
+        // Profile not found, use default subscriber QoS
+        qos = subscriber->get_default_datareader_qos();
+    }
+
+    // Apply RMW-compatible settings
+    if (ignore_local_publications) {
+        qos.reader_resource_limits().matched_publisher_allocation.initial = 0;
+        qos.reader_resource_limits().matched_publisher_allocation.maximum = 0;
+    }
+
+    // Set unique network flow endpoints (maps to RMW_UNIQUE_NETWORK_FLOW_ENDPOINTS_OPTIONALLY_REQUIRED)
+    if (unique_network_flow_endpoints > 0) {
+        qos.properties().properties().emplace_back("fastdds.unique_network_flows", std::to_string(unique_network_flow_endpoints));
+    }
+
+    return subscriber->create_datareader(topic, qos, listener);
 }
 
 uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, void* info_) {
@@ -392,6 +458,34 @@ uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
     return subscriber->delete_datareader(reader);
+}
+
+// Get participant GUID as 24-byte array
+void fastddsjava_get_participant_guid(void* participant_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::rtps::GUID_t guid = participant->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+    // Pad remaining 8 bytes with zeros
+    memset(guid_out + 16, 0, 8);
+}
+
+// Get DataWriter GUID as 24-byte array
+void fastddsjava_get_writer_guid(void* writer_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+    eprosima::fastdds::rtps::GUID_t guid = writer->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+    memset(guid_out + 16, 0, 8);
+}
+
+// Get DataReader GUID as 24-byte array
+void fastddsjava_get_reader_guid(void* reader_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+    eprosima::fastdds::rtps::GUID_t guid = reader->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+    memset(guid_out + 16, 0, 8);
 }
 
 #endif // FASTDDSJAVA_H

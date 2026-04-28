@@ -126,7 +126,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // longitude_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // altitude_
       currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // position_covariance_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // position_covariance_type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // position_covariance_type_
 
       return currentAlignment - initialAlignment;
    }

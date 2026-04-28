@@ -191,7 +191,6 @@ public class ROS2ServiceServer<Request extends ROS2Message<Request>, Response ex
          {
             if (running.get() && !Thread.currentThread().isInterrupted())
             {
-               System.err.println("DEBUG ROS2ServiceServer: Exception occurred:");
                e.printStackTrace();
                jros2.logError("Error handling service request for " + serviceName, e);
             }

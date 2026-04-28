@@ -35,7 +35,7 @@ string load_namespace}</pre>
 */
 public class AddDiagnostics_Request implements ROS2Message<AddDiagnostics_Request>
 {
-   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::AddDiagnosticsRequest_";
+   public static final java.lang.String name = "diagnostic_msgs::srv::dds_::AddDiagnosticsRequest_";
 
    /**
       The load_namespace parameter defines the namespace where parameters for the

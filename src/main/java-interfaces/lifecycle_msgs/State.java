@@ -150,7 +150,7 @@ public class State implements ROS2Message<State>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (label_.length() + 1)); // label_
 
       return currentAlignment - initialAlignment;

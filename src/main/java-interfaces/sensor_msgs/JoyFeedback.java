@@ -58,8 +58,8 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // intensity_
 
       return currentAlignment - initialAlignment;

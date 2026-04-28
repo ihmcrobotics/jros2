@@ -16,7 +16,7 @@ SetParametersResult result}</pre>
 */
 public class SetParametersAtomically_Response implements ROS2Message<SetParametersAtomically_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersAtomicallyResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::SetParametersAtomicallyResponse_";
 
    /**
       Indicates whether setting all of the parameters succeeded or not and why.

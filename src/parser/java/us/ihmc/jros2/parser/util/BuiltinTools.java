@@ -73,12 +73,13 @@ public final class BuiltinTools
          // 1 byte
          case "byte":
          case "int8":
-         // 2 bytes
-         case "uint8":
-         case "int16":
          // 2 bytes (unsigned)
          case "char":
             return 1;
+         // 2 bytes
+         case "uint8":
+         case "int16":
+            return 2;
          // 4 bytes
          case "float32":
          case "uint16":

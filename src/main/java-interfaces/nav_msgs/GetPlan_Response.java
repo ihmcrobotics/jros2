@@ -16,7 +16,7 @@ Path plan}</pre>
 */
 public class GetPlan_Response implements ROS2Message<GetPlan_Response>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::GetPlanResponse_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::GetPlanResponse_";
 
    /**
       Array of poses from start to goal if one was successfully found.

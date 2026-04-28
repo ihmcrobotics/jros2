@@ -16,7 +16,7 @@ SetParametersResult[] results}</pre>
 */
 public class SetParameters_Response implements ROS2Message<SetParameters_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::SetParametersResponse_";
 
    /**
       Indicates whether setting each parameter succeeded or not and why.

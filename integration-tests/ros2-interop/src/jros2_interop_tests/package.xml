@@ -4,7 +4,7 @@
   <name>jros2_interop_tests</name>
   <version>1.0.0</version>
   <description>Java and Python integration tests for jros2 interoperability</description>
-  <maintainer email="test@ihmc.us">IHMC Test</maintainer>
+  <maintainer email="danderson@ihmc.org">Dexton Anderson</maintainer>
   <license>Apache-2.0</license>
 
   <!-- Python scripts -->

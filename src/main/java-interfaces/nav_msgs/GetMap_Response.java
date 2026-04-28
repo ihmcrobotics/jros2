@@ -16,7 +16,7 @@ OccupancyGrid map}</pre>
 */
 public class GetMap_Response implements ROS2Message<GetMap_Response>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::GetMapResponse_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::GetMapResponse_";
 
    /**
       The current map hosted by this map service.

@@ -18,7 +18,7 @@ ParameterDescriptor[] descriptors}</pre>
 */
 public class DescribeParameters_Response implements ROS2Message<DescribeParameters_Response>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::DescribeParametersResponse_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::DescribeParametersResponse_";
 
    /**
       A list of the descriptors of all parameters requested in the same order

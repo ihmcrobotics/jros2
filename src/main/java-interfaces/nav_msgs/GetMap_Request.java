@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GetMap_Request implements ROS2Message<GetMap_Request>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::GetMapRequest_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::GetMapRequest_";
 
    public GetMap_Request()
    {

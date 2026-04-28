@@ -17,7 +17,7 @@ DiagnosticStatus[] status}</pre>
 */
 public class SelfTest_Response implements ROS2Message<SelfTest_Response>
 {
-   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::SelfTestResponse_";
+   public static final java.lang.String name = "diagnostic_msgs::srv::dds_::SelfTestResponse_";
 
    private final StringBuilder id_;
    private byte passed_;

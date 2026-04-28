@@ -16,7 +16,7 @@ string status_message                    # Used to give details about success}</
 */
 public class SetCameraInfo_Response implements ROS2Message<SetCameraInfo_Response>
 {
-   public static final java.lang.String name = "sensor_msgs::msg::dds_::SetCameraInfoResponse_";
+   public static final java.lang.String name = "sensor_msgs::srv::dds_::SetCameraInfoResponse_";
 
    private boolean success_; // True if the call succeeded
    private final StringBuilder status_message_; // Used to give details about success

@@ -24,7 +24,7 @@ uint8 result}</pre>
 */
 public class LoadMap_Response implements ROS2Message<LoadMap_Response>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::LoadMapResponse_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::LoadMapResponse_";
 
    /**
       Result code defintions
@@ -52,7 +52,7 @@ public class LoadMap_Response implements ROS2Message<LoadMap_Response>
       int initialAlignment = currentAlignment;
 
       currentAlignment += map_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // result_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // result_
 
       return currentAlignment - initialAlignment;
    }

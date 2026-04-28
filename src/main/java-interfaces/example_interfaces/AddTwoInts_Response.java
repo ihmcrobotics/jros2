@@ -15,7 +15,7 @@ int64 sum}</pre>
 */
 public class AddTwoInts_Response implements ROS2Message<AddTwoInts_Response>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::AddTwoIntsResponse_";
+   public static final java.lang.String name = "example_interfaces::srv::dds_::AddTwoIntsResponse_";
 
    private long sum_;
 

@@ -93,7 +93,8 @@ public class ROS2Topic<T extends ROS2Message<T>>
       }
       else
       {
-         if (!topicName.startsWith("/"))
+         // Special case: ros_discovery_info is a ROS2 internal topic that doesn't use a leading slash
+         if (!topicName.startsWith("/") && !topicName.equals("ros_discovery_info"))
          {
             jros2.getLogger().warning("Possible invalid topic name (" + topicName + "). Topics must start with a leading forward slash (/).");
          }
@@ -237,5 +238,49 @@ public class ROS2Topic<T extends ROS2Message<T>>
    public Class<T> getType()
    {
       return topicType;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null || getClass() != obj.getClass())
+         return false;
+
+      ROS2Topic<?> other = (ROS2Topic<?>) obj;
+
+      // Topics are equal if they have the same name and type
+      if (topicName == null)
+      {
+         if (other.topicName != null)
+            return false;
+      }
+      else if (!topicName.equals(other.topicName))
+      {
+         return false;
+      }
+
+      if (topicType == null)
+      {
+         if (other.topicType != null)
+            return false;
+      }
+      else if (!topicType.equals(other.topicType))
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((topicName == null) ? 0 : topicName.hashCode());
+      result = prime * result + ((topicType == null) ? 0 : topicType.hashCode());
+      return result;
    }
 }

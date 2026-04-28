@@ -118,7 +118,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // type_
       currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_value_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // integer_value_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // double_value_

@@ -274,7 +274,12 @@ public final class CDRBuffer
 
    public static int alignment(int currentAlignment, int bytes)
    {
-      return (bytes - (currentAlignment % bytes)) & (bytes - 1);
+      // Must match alignBuffer() logic which aligns relative to position after header
+      int alignmentRelativeToHeader = currentAlignment - PAYLOAD_HEADER.length;
+      int adv = alignmentRelativeToHeader % bytes;
+      if (adv == 0)
+         return 0;
+      return bytes - adv;
    }
 
    public static ByteOrder byteOrder(short encapsulation)

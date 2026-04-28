@@ -111,7 +111,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // type_
       currentAlignment += dimensions_.calculateSizeBytes(currentAlignment);
       currentAlignment += polygon_.calculateSizeBytes(currentAlignment);
 

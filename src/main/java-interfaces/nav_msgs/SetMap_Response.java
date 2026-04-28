@@ -16,7 +16,7 @@ bool success}</pre>
 */
 public class SetMap_Response implements ROS2Message<SetMap_Response>
 {
-   public static final java.lang.String name = "nav_msgs::msg::dds_::SetMapResponse_";
+   public static final java.lang.String name = "nav_msgs::srv::dds_::SetMapResponse_";
 
    /**
       True if the map was successfully set, false otherwise.

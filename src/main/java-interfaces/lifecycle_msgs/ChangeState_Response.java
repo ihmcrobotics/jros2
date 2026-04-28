@@ -16,7 +16,7 @@ bool success}</pre>
 */
 public class ChangeState_Response implements ROS2Message<ChangeState_Response>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::ChangeStateResponse_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::ChangeStateResponse_";
 
    /**
       Indicates whether the service was able to initiate the state transition

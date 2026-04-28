@@ -375,4 +375,13 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       return discovered;
    }
+
+   /**
+    * Get the FastDDS DataWriter pointer for discovery purposes.
+    * Package-private for use by ROS2DiscoveryPublisher.
+    */
+   Pointer getWriterPointer()
+   {
+      return fastddsDataWriter;
+   }
 }

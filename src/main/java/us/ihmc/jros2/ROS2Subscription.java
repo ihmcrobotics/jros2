@@ -582,4 +582,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    {
       return untakenMessageCount.get();
    }
+
+   /**
+    * Get the FastDDS DataReader pointer for discovery purposes.
+    * Package-private for use by ROS2DiscoveryPublisher.
+    */
+   Pointer getReaderPointer()
+   {
+      return fastddsDataReader;
+   }
 }

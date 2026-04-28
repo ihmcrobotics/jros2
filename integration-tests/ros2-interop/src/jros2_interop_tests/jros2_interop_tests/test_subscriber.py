@@ -21,11 +21,11 @@ class TestSubscriber(Node):
 
         # Create subscribers
         self.string_sub = self.create_subscription(
-            String, '/test/string_topic', self.string_callback, 10)
+            String, '/test/string', self.string_callback, 10)
         self.int_sub = self.create_subscription(
-            Int32, '/test/int_topic', self.int_callback, 10)
+            Int32, '/test/int32', self.int_callback, 10)
         self.bool_sub = self.create_subscription(
-            Bool, '/test/bool_topic', self.bool_callback, 10)
+            Bool, '/test/bool', self.bool_callback, 10)
 
         # Timer to check if we received enough messages
         self.check_timer = self.create_timer(1.0, self.check_completion)

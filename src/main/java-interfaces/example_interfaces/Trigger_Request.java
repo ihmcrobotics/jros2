@@ -17,7 +17,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class Trigger_Request implements ROS2Message<Trigger_Request>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::TriggerRequest_";
+   public static final java.lang.String name = "example_interfaces::srv::dds_::TriggerRequest_";
 
    public Trigger_Request()
    {

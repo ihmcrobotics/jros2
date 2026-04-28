@@ -16,7 +16,7 @@ Parameter[] parameters}</pre>
 */
 public class SetParameters_Request implements ROS2Message<SetParameters_Request>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersRequest_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::SetParametersRequest_";
 
    /**
       A list of parameters to set.

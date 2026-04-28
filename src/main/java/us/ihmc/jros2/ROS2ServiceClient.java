@@ -164,7 +164,10 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
             else
             {
                // Check both directions: response subscription and request publisher
-               if (responseSubscription.getSubscriptionMatchedStatus() > 0 && requestPublisher.getPublicationMatchedStatus() > 0)
+               int responseMatched = responseSubscription.getSubscriptionMatchedStatus();
+               int requestMatched = requestPublisher.getPublicationMatchedStatus();
+
+               if (responseMatched > 0 && requestMatched > 0)
                {
                   serverDiscovered = true;
                   discovered = true;
@@ -181,7 +184,7 @@ public class ROS2ServiceClient<Request extends ROS2Message<Request>, Response ex
                   {
                      try
                      {
-                        discoveryLock.wait(Math.min(remainingMs, 10));
+                        discoveryLock.wait(Math.min(remainingMs, 100));  // Increased from 10ms to 100ms
                      }
                      catch (InterruptedException e)
                      {

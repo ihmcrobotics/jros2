@@ -18,7 +18,7 @@ Parameter[] parameters}</pre>
 */
 public class SetParametersAtomically_Request implements ROS2Message<SetParametersAtomically_Request>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersAtomicallyRequest_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::SetParametersAtomicallyRequest_";
 
    /**
       A list of parameters to set atomically.

@@ -26,6 +26,15 @@ public final class MsgParser
    public static MsgContext parseMsg(String schema, String packageResourceName) throws InterfaceFieldParsingException
    {
       MsgContext msgContext = new MsgContext(schema);
+      return parseMsgInto(msgContext, schema, packageResourceName);
+   }
+
+   /**
+    * Parse message schema into a provided MsgContext (or subclass).
+    * This allows parsing service request/response into SrvRequestContext/SrvResponseContext.
+    */
+   public static <T extends MsgContext> T parseMsgInto(T msgContext, String schema, String packageResourceName) throws InterfaceFieldParsingException
+   {
       msgContext.setPackageResourceName(packageResourceName);
 
       StringJoiner commentLines = new StringJoiner("\n");

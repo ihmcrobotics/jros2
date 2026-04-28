@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class GetAvailableTransitions_Request implements ROS2Message<GetAvailableTransitions_Request>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetAvailableTransitionsRequest_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetAvailableTransitionsRequest_";
 
    public GetAvailableTransitions_Request()
    {

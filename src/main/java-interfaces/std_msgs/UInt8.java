@@ -38,7 +38,7 @@ public class UInt8 implements ROS2Message<UInt8>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // data_
 
       return currentAlignment - initialAlignment;
    }

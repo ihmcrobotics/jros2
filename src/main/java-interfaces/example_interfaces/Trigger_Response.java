@@ -16,7 +16,7 @@ string message # informational, e.g. for error messages.}</pre>
 */
 public class Trigger_Response implements ROS2Message<Trigger_Response>
 {
-   public static final java.lang.String name = "example_interfaces::msg::dds_::TriggerResponse_";
+   public static final java.lang.String name = "example_interfaces::srv::dds_::TriggerResponse_";
 
    private boolean success_; // indicate successful run of triggered service
    private final StringBuilder message_; // informational, e.g. for error messages.

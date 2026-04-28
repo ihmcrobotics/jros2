@@ -24,7 +24,7 @@ uint64 depth}</pre>
 */
 public class ListParameters_Request implements ROS2Message<ListParameters_Request>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::ListParametersRequest_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::ListParametersRequest_";
 
    /**
       Recursively get parameters with unlimited depth.

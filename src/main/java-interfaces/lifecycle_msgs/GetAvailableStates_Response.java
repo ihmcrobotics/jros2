@@ -16,7 +16,7 @@ State[] available_states}</pre>
 */
 public class GetAvailableStates_Response implements ROS2Message<GetAvailableStates_Response>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetAvailableStatesResponse_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetAvailableStatesResponse_";
 
    /**
       Array of possible states that can be transitioned to.

@@ -14,9 +14,9 @@ class TestPublisher(Node):
         super().__init__('python_test_publisher')
 
         # Create publishers
-        self.string_pub = self.create_publisher(String, '/test/string_topic', 10)
-        self.int_pub = self.create_publisher(Int32, '/test/int_topic', 10)
-        self.bool_pub = self.create_publisher(Bool, '/test/bool_topic', 10)
+        self.string_pub = self.create_publisher(String, '/test/string', 10)
+        self.int_pub = self.create_publisher(Int32, '/test/int32', 10)
+        self.bool_pub = self.create_publisher(Bool, '/test/bool', 10)
 
         # Create timer to publish messages
         self.timer = self.create_timer(0.5, self.timer_callback)

@@ -22,7 +22,7 @@ InteractiveMarker[] markers}</pre>
 */
 public class GetInteractiveMarkers_Response implements ROS2Message<GetInteractiveMarkers_Response>
 {
-   public static final java.lang.String name = "visualization_msgs::msg::dds_::GetInteractiveMarkersResponse_";
+   public static final java.lang.String name = "visualization_msgs::srv::dds_::GetInteractiveMarkersResponse_";
 
    /**
       Sequence number.

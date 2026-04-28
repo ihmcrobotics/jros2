@@ -75,7 +75,7 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // data_type_
       currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // data_
 
       return currentAlignment - initialAlignment;

@@ -123,6 +123,9 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
 
         projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
+
+        // rmw_dds_common for discovery protocol
+        projectDir.resolve("ros2_interfaces").resolve("rmw_dds_common").resolve("rmw_dds_common").absolutePath,
     )
     outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }

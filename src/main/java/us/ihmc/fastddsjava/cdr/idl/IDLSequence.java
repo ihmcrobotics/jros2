@@ -123,9 +123,7 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
 
       for (int i = 0; i < size(); ++i)
       {
-         int elementSizeBytes = elementSizeBytes(currentAlignment, i);
-
-         currentAlignment += elementSizeBytes + CDRBuffer.alignment(currentAlignment, elementSizeBytes);
+         currentAlignment += elementSizeBytes(currentAlignment, i);
       }
 
       return currentAlignment - initialAlignment;

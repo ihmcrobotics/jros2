@@ -17,7 +17,7 @@ string[] names}</pre>
 */
 public class GetParameterTypes_Request implements ROS2Message<GetParameterTypes_Request>
 {
-   public static final java.lang.String name = "rcl_interfaces::msg::dds_::GetParameterTypesRequest_";
+   public static final java.lang.String name = "rcl_interfaces::srv::dds_::GetParameterTypesRequest_";
 
    /**
       A list of parameter names.

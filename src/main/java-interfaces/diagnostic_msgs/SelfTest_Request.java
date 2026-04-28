@@ -15,7 +15,7 @@ import us.ihmc.jros2.ROS2Message;
 */
 public class SelfTest_Request implements ROS2Message<SelfTest_Request>
 {
-   public static final java.lang.String name = "diagnostic_msgs::msg::dds_::SelfTestRequest_";
+   public static final java.lang.String name = "diagnostic_msgs::srv::dds_::SelfTestRequest_";
 
    public SelfTest_Request()
    {

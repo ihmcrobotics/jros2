@@ -126,7 +126,7 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (client_id_.length() + 1)); // client_id_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (marker_name_.length() + 1)); // marker_name_
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * (control_name_.length() + 1)); // control_name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
+      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // event_type_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
       currentAlignment += mouse_point_.calculateSizeBytes(currentAlignment);

@@ -16,7 +16,7 @@ TransitionDescription[] available_transitions}</pre>
 */
 public class GetAvailableTransitions_Response implements ROS2Message<GetAvailableTransitions_Response>
 {
-   public static final java.lang.String name = "lifecycle_msgs::msg::dds_::GetAvailableTransitionsResponse_";
+   public static final java.lang.String name = "lifecycle_msgs::srv::dds_::GetAvailableTransitionsResponse_";
 
    /**
       An array of the possible start_state-goal_state transitions
