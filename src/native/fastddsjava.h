@@ -130,6 +130,25 @@ private:
     fastddsjava_OnSubscriptionCallback on_subscription_callback;
 };
 
+class fastddsjava_DataWriterListener : public eprosima::fastdds::dds::DataWriterListener {
+public:
+    // Do not accept anything in the callback functions so that in JNI, we do not create new Pointer objects, which generate garbage
+    typedef std::function<void()> fastddsjava_OnPublicationCallback;
+
+    void set_on_publication_callback(fastddsjava_OnPublicationCallback callback) {
+        this->on_publication_callback = callback;
+    }
+
+    JAVACPP_SKIP void on_publication_matched(eprosima::fastdds::dds::DataWriter* writer,
+                                               const eprosima::fastdds::dds::PublicationMatchedStatus& info) override {
+        if (on_publication_callback)
+            on_publication_callback();
+    }
+
+private:
+    fastddsjava_OnPublicationCallback on_publication_callback;
+};
+
 uint32_t fastddsjava_load_xml_profiles_string(const std::string xml) {
     auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 
@@ -360,6 +379,12 @@ uint32_t fastddsjava_datawriter_get_publication_matched_status(void* writer_, ep
     eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
 
     return writer->get_publication_matched_status(status);
+}
+
+uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener = nullptr) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+    return writer->set_listener(listener);
 }
 
 uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
