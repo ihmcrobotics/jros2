@@ -11,7 +11,7 @@ import us.ihmc.jros2.ROS2Message;
 /**
 <p>Source (rmw_dds_common/Gid):
 <pre>{@code
-char[24] data
+char[16] data
 }</pre>
 */
 public class Gid implements ROS2Message<Gid>
@@ -22,7 +22,7 @@ public class Gid implements ROS2Message<Gid>
 
    public Gid()
    {
-      data_ = new char[24];
+      data_ = new char[16];
 
    }
 
@@ -31,7 +31,7 @@ public class Gid implements ROS2Message<Gid>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (24 * 1) + CDRBuffer.alignment(currentAlignment, (24 * 1)); // data_
+      currentAlignment += (16 * 1) + CDRBuffer.alignment(currentAlignment, (16 * 1)); // data_
 
       return currentAlignment - initialAlignment;
    }

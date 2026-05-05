@@ -50,7 +50,7 @@ class ROS2DiscoveryPublisher
       this.nodeNamespace = nodeNamespace;
 
       // Create discovery topic with proper QoS
-      ROS2Topic<ParticipantEntitiesInfo> discoveryTopic = new ROS2Topic<>("ros_discovery_info", ParticipantEntitiesInfo.class);
+      ROS2Topic<ParticipantEntitiesInfo> discoveryTopic = new ROS2Topic<>("/ros_discovery_info", ParticipantEntitiesInfo.class);
       ROS2QoSProfile qos = new ROS2QoSProfile();
       qos.reliability(ROS2QoSProfile.Reliability.RELIABLE);
       qos.durability(ROS2QoSProfile.Durability.TRANSIENT_LOCAL);
@@ -69,6 +69,10 @@ class ROS2DiscoveryPublisher
          return t;
       });
 
+      // Publish immediately on startup
+      publishDiscoveryInfo();
+
+      // Then publish periodically every 2 seconds
       periodicPublisher.scheduleAtFixedRate(() -> {
          if (!closed) {
             publishDiscoveryInfo();
@@ -127,8 +131,8 @@ class ROS2DiscoveryPublisher
    {
       ParticipantEntitiesInfo msg = new ParticipantEntitiesInfo();
 
-      // Set participant GUID (ROS2 uses 16-byte GUIDs)
-      byte[] participantGuid = new byte[24];
+      // Set participant GUID (ROS2 uses 16-byte GUIDs: 12-byte prefix + 4-byte entityId)
+      byte[] participantGuid = new byte[16];
       fastddsjava.fastddsjava_get_participant_guid(participantPointer, participantGuid);
       Gid participantGid = msg.getGid();
       for (int i = 0; i < 16; i++)
@@ -146,7 +150,7 @@ class ROS2DiscoveryPublisher
       {
          for (Pointer readerPointer : readerPointers)
          {
-            byte[] readerGuid = new byte[24];
+            byte[] readerGuid = new byte[16];
             fastddsjava.fastddsjava_get_reader_guid(readerPointer, readerGuid);
             Gid gid = new Gid();
             for (int i = 0; i < 16; i++)
@@ -162,7 +166,7 @@ class ROS2DiscoveryPublisher
       {
          for (Pointer writerPointer : writerPointers)
          {
-            byte[] writerGuid = new byte[24];
+            byte[] writerGuid = new byte[16];
             fastddsjava.fastddsjava_get_writer_guid(writerPointer, writerGuid);
             Gid gid = new Gid();
             for (int i = 0; i < 16; i++)

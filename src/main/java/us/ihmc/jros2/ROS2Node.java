@@ -208,6 +208,21 @@ public class ROS2Node implements Closeable
 
       checkSHMAvailabilityWindows(rtps, transportConfig.getTransports());
 
+      // Set participant user data for ROS2 node discovery in QoS (must be set before participant creation)
+      // Format: "enclave=/;" converted to dot-separated hex (Fast-DDS XML format)
+      // NOTE: Due to JAXB/Jackson serialization issues, directly setting userData doesn't work
+      // So we set it via native call after participant creation
+      // String userDataString = "enclave=/;";
+      // StringBuilder hexString = new StringBuilder();
+      // byte[] bytes = userDataString.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+      // for (int i = 0; i < bytes.length; i++) {
+      //    if (i > 0) hexString.append(".");
+      //    hexString.append(String.format("%02x", bytes[i] & 0xFF));
+      // }
+      // us.ihmc.fastddsjava.profiles.gen.OctectVectorQosPolicyType userDataPolicy = new us.ihmc.fastddsjava.profiles.gen.OctectVectorQosPolicyType();
+      // userDataPolicy.getValue().add(hexString.toString());
+      // rtps.setUserData(userDataPolicy);
+
       participantProfile.setRtps(rtps);
       profilesXML.addParticipantProfile(participantProfile);
 
@@ -224,6 +239,7 @@ public class ROS2Node implements Closeable
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
+
       topicData = new HashMap<>();
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
@@ -442,7 +458,7 @@ public class ROS2Node implements Closeable
             }
 
             // Notify discovery publisher
-            if (!topic.getName().equals("ros_discovery_info"))
+            if (!topic.getName().equals("/ros_discovery_info"))
             {
                discoveryPublisher.addWriter(publisher.fastddsDataWriter);
             }
@@ -504,7 +520,7 @@ public class ROS2Node implements Closeable
             }
 
             // Don't notify discovery publisher for discovery topic itself
-            if (!topic.getName().equals("ros_discovery_info"))
+            if (!topic.getName().equals("/ros_discovery_info"))
             {
                discoveryPublisher.addWriter(publisher.fastddsDataWriter);
             }
@@ -615,7 +631,7 @@ public class ROS2Node implements Closeable
             }
 
             // Notify discovery publisher
-            if (!topic.getName().equals("ros_discovery_info"))
+            if (!topic.getName().equals("/ros_discovery_info"))
             {
                discoveryPublisher.addReader(subscription.getReaderPointer());
             }
