@@ -154,7 +154,7 @@ public class IDLShortSequence extends IDLSequence<IDLShortSequence> implements I
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 2 + CDRBuffer.alignment(currentAlignment, 2);
+      return 2; // Size of short element (alignment added by caller)
    }
 
    @Override

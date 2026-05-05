@@ -17,10 +17,13 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.pointers.PublicationMatchedStatus;
+import us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -47,9 +50,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Fast-DDS pointers
     */
    private final Pointer fastddsPublisher;
-   private final Pointer fastddsDataWriter;
+   protected final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
+   private final PublicationMatchedStatus publicationMatchedStatus;
+   private final fastddsjava_DataWriterListener listener;
+   private final fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
+
+   /*
+    * Discovery
+    */
+   private final Object discoveryLock;
+   private volatile boolean subscriberDiscovered;
 
    /*
     * Write buffer
@@ -75,15 +87,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
-      this.topicData = topicData;
       this.topic = topic;
+      this.topicData = topicData;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
+      discoveryLock = new Object();
+      subscriberDiscovered = false;
+
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-      fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
-      fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+      publicationMatchedStatus = new PublicationMatchedStatus();
+
       writeBuffer = new CDRBuffer();
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
@@ -94,6 +109,23 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
       getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastPublishTime = Long.MIN_VALUE;
+
+      // Initialize callback and listener last to ensure the rest of the state exists before they run
+      fastddsPublicationMatchedCallback = new fastddsjava_OnPublicationMatchedCallbackImpl();
+      listener = new fastddsjava_DataWriterListener();
+      listener.set_on_publication_callback(fastddsPublicationMatchedCallback);
+      fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
+      fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+      fastddsjava_datawriter_set_listener(fastddsDataWriter, listener);
+
+      // Check if subscriber is already matched (outside of discovery lock to avoid nested synchronization)
+      if (getPublicationMatchedStatus() > 0)
+      {
+         synchronized (discoveryLock)
+         {
+            subscriberDiscovered = true;
+         }
+      }
    }
 
    public void publish(T message)
@@ -171,6 +203,19 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
    }
 
+   private class fastddsjava_OnPublicationMatchedCallbackImpl extends fastddsjava_OnPublicationCallback
+   {
+      @Override
+      public void call()
+      {
+         synchronized (discoveryLock)
+         {
+            subscriberDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+      }
+   }
+
    /**
     * Use {@link ROS2Node#destroyPublisher(ROS2Publisher)}
     */
@@ -183,9 +228,24 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       if (!wasClosed)
       {
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         // Clear listener from datawriter to prevent further callbacks
+         fastddsjava_datawriter_set_listener(fastddsDataWriter, null);
 
+         // Delete the datawriter to ensure Fast-DDS stops using the listener
          retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
+
+         // Note: We intentionally do NOT close the listener and callback objects here.
+         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datawriter.
+         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
+         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
+         // listener.close();
+         // fastddsPublicationMatchedCallback.close();
+
+         publicationMatchedStatus.close();
+
+         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
+         topicDataWrapper.close();
+
          retcodePrintOnError(fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher));
       }
    }
@@ -228,5 +288,91 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    public String getTopicName()
    {
       return topic.getName();
+   }
+
+   /**
+    * Get the current number of matched subscribers for this publisher.
+    *
+    * @return The number of subscribers currently matched to this publisher
+    */
+   public int getPublicationMatchedStatus()
+   {
+      int count;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (closed)
+         {
+            count = 0;
+         }
+         else
+         {
+            synchronized (publicationMatchedStatus)
+            {
+               fastddsjava_datawriter_get_publication_matched_status(fastddsDataWriter, publicationMatchedStatus);
+               count = publicationMatchedStatus.current_count();
+            }
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return count;
+   }
+
+   /**
+    * Wait for a subscriber to be discovered.
+    * <p>
+    * This method blocks until a subscriber is discovered or the timeout expires.
+    *
+    * @param timeoutMs Timeout in milliseconds to wait for subscriber discovery
+    * @return true if a subscriber was discovered, false if timeout occurred
+    */
+   public boolean waitForSubscriber(long timeoutMs)
+   {
+      boolean discovered;
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         boolean timedOut = false;
+         while (!subscriberDiscovered && !closed && !timedOut)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               timedOut = true;
+            }
+            else
+            {
+               long remainingNanos = timeoutNanos - elapsedNanos;
+               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+               if (remainingMs <= 0)
+               {
+                  timedOut = true;
+               }
+               else
+               {
+                  try
+                  {
+                     discoveryLock.wait(remainingMs);
+                  }
+                  catch (InterruptedException e)
+                  {
+                     Thread.currentThread().interrupt();
+                     timedOut = true;
+                  }
+               }
+            }
+         }
+
+         discovered = subscriberDiscovered;
+      }
+
+      return discovered;
    }
 }

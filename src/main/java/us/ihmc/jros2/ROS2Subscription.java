@@ -17,6 +17,7 @@ package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
@@ -56,14 +57,17 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final Pointer fastddsCallbackSampleInfo;
    protected final fastddsjava_TopicDataWrapper userSampleData;
    protected final Pointer fastddsUserSampleInfo;
+   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
    private final fastddsjava_DataReaderListener listener;
    private final fastddsjava_OnDataCallback fastddsDataCallback;
+   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback;
    private final TopicData topicData;
 
    /*
     * Callback
     */
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
+   private volatile Runnable subscriptionMatchedCallback; // User callback for subscription matched events
 
    /*
     * Read buffer
@@ -75,6 +79,12 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    private final ReadWriteLock closeLock;
    private boolean closed;
+
+   /*
+    * Discovery
+    */
+   private final Object discoveryLock;
+   private volatile boolean publisherDiscovered;
 
    /*
     * Flags
@@ -92,11 +102,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   ROS2Subscription(Pointer fastddsParticipant,
-                    String subscriberProfileName,
-                    ROS2SubscriptionCallback<T> callback, // May be null
-                    ROS2Topic<T> topic,
-                    TopicData topicData)
+   ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, // May be null
+                    ROS2Topic<T> topic, TopicData topicData)
    {
       this.callback = callback;
       this.topic = topic;
@@ -105,10 +112,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
+      discoveryLock = new Object();
+      publisherDiscovered = false;
+
       callbackSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       fastddsCallbackSampleInfo = fastddsjava_create_sampleinfo();
       userSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       fastddsUserSampleInfo = fastddsjava_create_sampleinfo();
+      subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
       readBuffer = new CDRBuffer();
 
@@ -124,11 +135,22 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       // Initialize callbacks last to ensure the rest of the state of this class exists before they run
       fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
+      fastddsSubscriptionMatchedCallback = new fastddsjava_OnSubscriptionMatchedCallbackImpl();
       listener = new fastddsjava_DataReaderListener();
       listener.set_on_data_available_callback(fastddsDataCallback);
+      listener.set_on_subscription_callback(fastddsSubscriptionMatchedCallback);
       fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
       fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
       fastddsjava_datareader_set_listener(fastddsDataReader, listener);
+
+      // Check if publisher is already matched (outside of discovery lock to avoid nested synchronization)
+      if (getSubscriptionMatchedStatus() > 0)
+      {
+         synchronized (discoveryLock)
+         {
+            publisherDiscovered = true;
+         }
+      }
    }
 
    /**
@@ -166,9 +188,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      {
                         callback.onMessage(ROS2Subscription.this);
                      }
-                     catch (Exception e)
+                     catch (Throwable e)
                      {
-                        jros2.logError(e);
+                        jros2.logError("Exception thrown in ROS2Subscription callback", e);
+                        throw e;
                      }
                   }
                }
@@ -179,6 +202,136 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             closeLock.readLock().unlock();
          }
       }
+   }
+
+   private class fastddsjava_OnSubscriptionMatchedCallbackImpl extends fastddsjava_OnSubscriptionCallback
+   {
+      @Override
+      public void call()
+      {
+         synchronized (discoveryLock)
+         {
+            publisherDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+
+         closeLock.readLock().lock();
+         try
+         {
+            if (!closed && subscriptionMatchedCallback != null)
+            {
+               try
+               {
+                  subscriptionMatchedCallback.run();
+               }
+               catch (Exception e)
+               {
+                  jros2.logError(e);
+               }
+            }
+         }
+         finally
+         {
+            closeLock.readLock().unlock();
+         }
+      }
+   }
+
+   /**
+    * Set a callback to be invoked when a publisher is matched to this subscription.
+    * This is useful for detecting when service servers become available.
+    *
+    * @param callback The callback to invoke when a publisher matches, or null to clear
+    */
+   void setOnSubscriptionMatchedCallback(Runnable callback)
+   {
+      this.subscriptionMatchedCallback = callback;
+   }
+
+   /**
+    * Get the current number of matched publishers for this subscription.
+    *
+    * @return The number of publishers currently matched to this subscription
+    */
+   int getSubscriptionMatchedStatus()
+   {
+      int count;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            synchronized (subscriptionMatchedStatus)
+            {
+               fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
+               count = subscriptionMatchedStatus.current_count();
+            }
+         }
+         else
+         {
+            count = 0;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return count;
+   }
+
+   /**
+    * Wait for a publisher to be discovered.
+    * <p>
+    * This method blocks until a publisher is discovered or the timeout expires.
+    *
+    * @param timeoutMs Timeout in milliseconds to wait for publisher discovery
+    * @return true if a publisher was discovered, false if timeout occurred
+    */
+   public boolean waitForPublisher(long timeoutMs)
+   {
+      boolean discovered = false;
+      long startTime = System.nanoTime();
+      long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+
+      synchronized (discoveryLock)
+      {
+         boolean timedOut = false;
+         while (!publisherDiscovered && !closed && !timedOut)
+         {
+            long elapsedNanos = System.nanoTime() - startTime;
+            if (elapsedNanos >= timeoutNanos)
+            {
+               timedOut = true;
+            }
+            else
+            {
+               long remainingNanos = timeoutNanos - elapsedNanos;
+               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+               if (remainingMs <= 0)
+               {
+                  timedOut = true;
+               }
+               else
+               {
+                  try
+                  {
+                     discoveryLock.wait(remainingMs);
+                  }
+                  catch (InterruptedException e)
+                  {
+                     Thread.currentThread().interrupt();
+                     timedOut = true;
+                  }
+               }
+            }
+         }
+
+         discovered = publisherDiscovered;
+      }
+
+      return discovered;
    }
 
    /**
@@ -321,10 +474,21 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       if (!wasClosed)
       {
+         // Clear listener from datareader to prevent further callbacks
+         fastddsjava_datareader_set_listener(fastddsDataReader, null);
+
+         // Delete the datareader to ensure Fast-DDS stops using the listener
          retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
 
-         listener.close();
-         fastddsDataCallback.close();
+         // Note: We intentionally do NOT close the listener and callback objects here.
+         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datareader.
+         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
+         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
+         // listener.close();
+         // fastddsDataCallback.close();
+         // fastddsSubscriptionMatchedCallback.close();
+
+         subscriptionMatchedStatus.close();
 
          topicData.topicDataWrapperType.delete_data(callbackSampleData);
          fastddsjava_delete_sampleinfo(fastddsCallbackSampleInfo);
@@ -418,5 +582,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    public int getUnreadMessageCount()
    {
       return untakenMessageCount.get();
+   }
+
+   /**
+    * Get the FastDDS DataReader pointer for discovery purposes.
+    * Package-private for use by ROS2DiscoveryPublisher.
+    */
+   Pointer getReaderPointer()
+   {
+      return fastddsDataReader;
    }
 }
