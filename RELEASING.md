@@ -1,5 +1,5 @@
 # Making a release
-Increment ihmc.version in build.gradle.kts
+Increment ihmc.version in gradle.properties
 
 Publish the parser and generator Gradle plugin
 ./gradlew publishGenerator -PpublishUrl=robotlabfiles
