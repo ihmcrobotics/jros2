@@ -304,29 +304,22 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          while (!publisherDiscovered && !closed && !timedOut)
          {
             long elapsedNanos = System.nanoTime() - startTime;
-            if (elapsedNanos >= timeoutNanos)
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
             {
                timedOut = true;
             }
             else
             {
-               long remainingNanos = timeoutNanos - elapsedNanos;
-               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
-               if (remainingMs <= 0)
+               try
                {
-                  timedOut = true;
+                  discoveryLock.wait(remainingMs);
                }
-               else
+               catch (InterruptedException e)
                {
-                  try
-                  {
-                     discoveryLock.wait(remainingMs);
-                  }
-                  catch (InterruptedException e)
-                  {
-                     Thread.currentThread().interrupt();
-                     timedOut = true;
-                  }
+                  Thread.currentThread().interrupt();
+                  timedOut = true;
                }
             }
          }

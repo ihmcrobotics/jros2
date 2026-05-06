@@ -61,7 +61,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Discovery
     */
    private final Object discoveryLock;
-   private volatile boolean subscriberDiscovered;
+   private volatile boolean subscriptionDiscovered;
 
    /*
     * Write buffer
@@ -94,7 +94,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       closed = false;
 
       discoveryLock = new Object();
-      subscriberDiscovered = false;
+      subscriptionDiscovered = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
       publicationMatchedStatus = new PublicationMatchedStatus();
@@ -118,12 +118,12 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
       fastddsjava_datawriter_set_listener(fastddsDataWriter, listener);
 
-      // Check if subscriber is already matched (outside of discovery lock to avoid nested synchronization)
+      // Check if subscription is already matched (outside of discovery lock to avoid nested synchronization)
       if (getPublicationMatchedStatus() > 0)
       {
          synchronized (discoveryLock)
          {
-            subscriberDiscovered = true;
+            subscriptionDiscovered = true;
          }
       }
    }
@@ -210,7 +210,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          synchronized (discoveryLock)
          {
-            subscriberDiscovered = true;
+            subscriptionDiscovered = true;
             discoveryLock.notifyAll();
          }
       }
@@ -291,9 +291,9 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    }
 
    /**
-    * Get the current number of matched subscribers for this publisher.
+    * Get the current number of matched subscriptions for this publisher.
     *
-    * @return The number of subscribers currently matched to this publisher
+    * @return The number of subscriptions currently matched to this publisher
     */
    public int getPublicationMatchedStatus()
    {
@@ -324,14 +324,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    }
 
    /**
-    * Wait for a subscriber to be discovered.
+    * Wait for a subscription to be discovered.
     * <p>
-    * This method blocks until a subscriber is discovered or the timeout expires.
+    * This method blocks until a subscription is discovered or the timeout expires.
     *
-    * @param timeoutMs Timeout in milliseconds to wait for subscriber discovery
-    * @return true if a subscriber was discovered, false if timeout occurred
+    * @param timeoutMs Timeout in milliseconds to wait for subscription discovery
+    * @return true if a subscription was discovered, false if timeout occurred
     */
-   public boolean waitForSubscriber(long timeoutMs)
+   public boolean waitForSubscription(long timeoutMs)
    {
       boolean discovered;
       long startTime = System.nanoTime();
@@ -340,37 +340,30 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       synchronized (discoveryLock)
       {
          boolean timedOut = false;
-         while (!subscriberDiscovered && !closed && !timedOut)
+         while (!subscriptionDiscovered && !closed && !timedOut)
          {
             long elapsedNanos = System.nanoTime() - startTime;
-            if (elapsedNanos >= timeoutNanos)
+            long remainingNanos = timeoutNanos - elapsedNanos;
+            long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
+            if (remainingMs <= 0)
             {
                timedOut = true;
             }
             else
             {
-               long remainingNanos = timeoutNanos - elapsedNanos;
-               long remainingMs = TimeUnit.NANOSECONDS.toMillis(remainingNanos);
-               if (remainingMs <= 0)
+               try
                {
-                  timedOut = true;
+                  discoveryLock.wait(remainingMs);
                }
-               else
+               catch (InterruptedException e)
                {
-                  try
-                  {
-                     discoveryLock.wait(remainingMs);
-                  }
-                  catch (InterruptedException e)
-                  {
-                     Thread.currentThread().interrupt();
-                     timedOut = true;
-                  }
+                  Thread.currentThread().interrupt();
+                  timedOut = true;
                }
             }
          }
 
-         discovered = subscriberDiscovered;
+         discovered = subscriptionDiscovered;
       }
 
       return discovered;

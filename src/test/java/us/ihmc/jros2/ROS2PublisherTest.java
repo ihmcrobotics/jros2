@@ -159,7 +159,7 @@ public class ROS2PublisherTest
 
    @Test
    @Timeout(30)
-   public void testPublisherWaitForSubscriber() throws InterruptedException
+   public void testPublisherWaitForSubscription() throws InterruptedException
    {
       String topicName = "/ihmc/test_wait_for_subscriber";
 
@@ -171,18 +171,18 @@ public class ROS2PublisherTest
       ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
 
       // No subscribers yet - should timeout
-      boolean foundBeforeSubscriber = publisher.waitForSubscriber(500);
+      boolean foundBeforeSubscriber = publisher.waitForSubscription(500);
       assertFalse(foundBeforeSubscriber, "Should not find subscriber before it's created");
 
       // Now create subscriber
       ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
 
       // Should discover subscriber now
-      boolean foundAfterSubscriber = publisher.waitForSubscriber(5000);
+      boolean foundAfterSubscriber = publisher.waitForSubscription(5000);
       assertTrue(foundAfterSubscriber, "Should discover subscriber after it's created");
 
       // Subsequent calls should return immediately with true
-      boolean foundAgain = publisher.waitForSubscriber(100);
+      boolean foundAgain = publisher.waitForSubscription(100);
       assertTrue(foundAgain, "Should still show subscriber is discovered");
 
       publisherNode.close();
@@ -206,7 +206,7 @@ public class ROS2PublisherTest
 
       // Create first subscription
       ROS2Subscription<example_interfaces.Bool> subscription1 = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
-      assertTrue(publisher.waitForSubscriber(5000), "Should discover first subscription");
+      assertTrue(publisher.waitForSubscription(5000), "Should discover first subscription");
       assertEquals(1, publisher.getPublicationMatchedStatus(), "Should have 1 matched subscription");
 
       // Create second subscription
@@ -285,7 +285,7 @@ public class ROS2PublisherTest
             ROS2Publisher<example_interfaces.Bool> publisher = publisherNode.createPublisher(topic);
 
             // Wait for subscription to be discovered
-            publisher.waitForSubscriber(5000);
+            publisher.waitForSubscription(5000);
 
             // Publish a few messages
             for (int j = 0; j < 5; ++j)
