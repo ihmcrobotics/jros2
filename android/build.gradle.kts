@@ -165,6 +165,19 @@ afterEvaluate {
             }
          }
       }
+
+      repositories {
+         maven {
+            url = uri("https://robotlabfiles.ihmc.us/repository/")
+            credentials(PasswordCredentials::class) {
+               username = project.findProperty("publishUsername") as String?
+               password = project.findProperty("publishPassword") as String?
+            }
+            authentication {
+               create("basic", BasicAuthentication::class)
+            }
+         }
+      }
    }
 
    tasks.named("publishReleasePublicationToMavenLocal") {
