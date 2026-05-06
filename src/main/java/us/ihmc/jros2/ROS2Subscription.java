@@ -294,7 +294,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    public boolean waitForPublisher(long timeoutMs)
    {
-      boolean discovered = false;
+      boolean discovered;
       long startTime = System.nanoTime();
       long timeoutNanos = TimeUnit.MILLISECONDS.toNanos(timeoutMs);
 
@@ -420,7 +420,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          {
             synchronized (userSampleData)
             {
-               int ret;
+               int ret; // Keep for debugging
                while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, fastddsUserSampleInfo)))
                {
                   totalRead++;
