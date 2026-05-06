@@ -323,7 +323,8 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 
-    return subscriber->create_datareader_with_profile(topic, profile_name, listener);
+    // Use StatusMask::all() to enable all status notifications, and nullptr for default payload pool
+    return subscriber->create_datareader_with_profile(topic, profile_name, listener, eprosima::fastdds::dds::StatusMask::all());
 }
 
 uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, void* info_) {
