@@ -249,6 +249,19 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    void setOnSubscriptionMatchedCallback(Runnable callback)
    {
       this.subscriptionMatchedCallback = callback;
+
+      // If a publisher is already matched, fire the callback immediately
+      if (callback != null && getSubscriptionMatchedStatus() > 0)
+      {
+         try
+         {
+            callback.run();
+         }
+         catch (Exception e)
+         {
+            jros2.logError(e);
+         }
+      }
    }
 
    /**
