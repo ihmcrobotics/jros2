@@ -37,6 +37,10 @@ public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
    private static final Object loadLock = new Object();
+   public static Object getLoadLock()
+   {
+      return loadLock;
+   }
    private static String intraprocessDelivery = "OFF"; // Default to intraprocess delivery OFF
 
    /**
