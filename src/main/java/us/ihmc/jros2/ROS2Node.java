@@ -308,18 +308,25 @@ public class ROS2Node implements Closeable
             // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
             QoSTools.translateQoS(qosProfile, publisherProfile);
 
-            try
-            {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
-               throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
-            }
-
             TopicData topicData = getOrCreateTopicData(topic);
-            ROS2Publisher<T> publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
+
+            // Synchronize profile loading and publisher creation to prevent race condition where
+            // Fast-DDS hasn't finished loading the profile when create_datawriter_with_profile is called.
+            ROS2Publisher<T> publisher;
+            synchronized (ProfilesXML.getLoadLock())
+            {
+               try
+               {
+                  profilesXML.load();
+               }
+               catch (fastddsjavaException e)
+               {
+                  jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
+                  throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
+               }
+
+               publisher = new ROS2Publisher<>(fastddsParticipant, publisherProfileName, topic, topicData);
+            }
 
             synchronized (publishers)
             {
@@ -411,18 +418,25 @@ public class ROS2Node implements Closeable
             // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
             QoSTools.translateQoS(qosProfile, subscriberProfile);
 
-            try
-            {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               jros2.logError("Failed to load subscriber profile '" + subscriberProfileName + "' for topic '" + topic.getName() + "'", e);
-               throw new RuntimeException("Failed to load subscriber profile: " + subscriberProfileName, e);
-            }
-
             TopicData topicData = getOrCreateTopicData(topic);
-            ROS2Subscription<T> subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
+
+            // Synchronize profile loading and subscription creation to prevent race condition where
+            // Fast-DDS hasn't finished loading the profile when create_datareader_with_profile is called.
+            ROS2Subscription<T> subscription;
+            synchronized (ProfilesXML.getLoadLock())
+            {
+               try
+               {
+                  profilesXML.load();
+               }
+               catch (fastddsjavaException e)
+               {
+                  jros2.logError("Failed to load subscriber profile '" + subscriberProfileName + "' for topic '" + topic.getName() + "'", e);
+                  throw new RuntimeException("Failed to load subscriber profile: " + subscriberProfileName, e);
+               }
+
+               subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
+            }
 
             synchronized (subscriptions)
             {

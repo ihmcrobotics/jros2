@@ -154,7 +154,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 4 + CDRBuffer.alignment(currentAlignment, 4);
+      return 4; // Size of int/float element (alignment added by caller)
    }
 
    @Override

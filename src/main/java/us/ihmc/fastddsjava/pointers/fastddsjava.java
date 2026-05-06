@@ -44,6 +44,9 @@ public static final short PL_CDR_LE = (short) 0x0003; // SerializedPayload.hpp
 // Targeting fastddsjava_DataReaderListener.java
 
 
+// Targeting fastddsjava_DataWriterListener.java
+
+
 
 public static native @Cast("uint32_t") int fastddsjava_load_xml_profiles_string(@StdString BytePointer xml);
 public static native @Cast("uint32_t") int fastddsjava_load_xml_profiles_string(@StdString String xml);
@@ -137,7 +140,27 @@ public static native @Cast("uint32_t") int fastddsjava_datareader_get_unread_cou
 
 public static native @Cast("uint32_t") int fastddsjava_datareader_get_subscription_matched_status(Pointer reader_, @ByRef SubscriptionMatchedStatus status);
 
+public static native @Cast("uint32_t") int fastddsjava_datawriter_get_publication_matched_status(Pointer writer_, @ByRef PublicationMatchedStatus status);
+
+public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(Pointer writer_, fastddsjava_DataWriterListener listener/*=nullptr*/);
+public static native @Cast("uint32_t") int fastddsjava_datawriter_set_listener(Pointer writer_);
+
 public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer subscriber_, Pointer reader_);
+
+// Get participant GUID as 16-byte array
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_participant_guid(Pointer participant_, @Cast("uint8_t*") byte[] guid_out);
+
+// Get DataWriter GUID as 16-byte array
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_writer_guid(Pointer writer_, @Cast("uint8_t*") byte[] guid_out);
+
+// Get DataReader GUID as 16-byte array
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") BytePointer guid_out);
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") ByteBuffer guid_out);
+public static native void fastddsjava_get_reader_guid(Pointer reader_, @Cast("uint8_t*") byte[] guid_out);
 
 // #endif // FASTDDSJAVA_H
 
@@ -291,6 +314,43 @@ public static native @Cast("uint32_t") int fastddsjava_delete_datareader(Pointer
  // namespace eprosima
 
 // #endif //_SUBCRIPTION_MATCHED_STATUS_HPP_
+
+
+// Parsed from fastdds/dds/core/status/PublicationMatchedStatus.hpp
+
+// Copyright 2019 Proyectos y Sistemas de Mantenimiento SL (eProsima).
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+/**
+ * \file PublicationMatchedStatus.hpp
+ */
+
+// #ifndef FASTDDS_DDS_CORE_STATUS__PUBLICATIONMATCHEDSTATUS_HPP
+// #define FASTDDS_DDS_CORE_STATUS__PUBLICATIONMATCHEDSTATUS_HPP
+
+// #include <cstdint>
+// #include <fastdds/dds/core/status/MatchedStatus.hpp>
+// #include <fastdds/dds/common/InstanceHandle.hpp>
+// Targeting PublicationMatchedStatus.java
+
+
+
+ // namespace dds
+ // namespace fastdds
+ // namespace eprosima
+
+// #endif //FASTDDS_DDS_CORE_STATUS__PUBLICATIONMATCHEDSTATUS_HPP
 
 
 // Parsed from fastdds/dds/subscriber/SampleState.hpp

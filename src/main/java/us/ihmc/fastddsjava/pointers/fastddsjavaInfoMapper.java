@@ -32,6 +32,7 @@ import org.bytedeco.javacpp.tools.InfoMapper;
                   "fastdds/dds/core/detail/DDSReturnCode.hpp",
                   "fastdds/dds/core/status/MatchedStatus.hpp",
                   "fastdds/dds/core/status/SubscriptionMatchedStatus.hpp",
+                  "fastdds/dds/core/status/PublicationMatchedStatus.hpp",
 
                   "fastdds/dds/subscriber/SampleState.hpp",
                   "fastdds/dds/subscriber/ViewState.hpp",
@@ -74,6 +75,7 @@ public class fastddsjavaInfoMapper implements InfoMapper
 
       infoMap.put(new Info("eprosima::fastdds::dds::TopicDataType").pointerTypes("Pointer"));
       infoMap.put(new Info("eprosima::fastdds::dds::DataReaderListener").pointerTypes("Pointer"));
+      infoMap.put(new Info("eprosima::fastdds::dds::DataWriterListener").pointerTypes("Pointer"));
 
       infoMap.put(new Info("std::vector<uint8_t>").pointerTypes("ByteVector").define());
 
@@ -83,6 +85,7 @@ public class fastddsjavaInfoMapper implements InfoMapper
       // Callbacks
       infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnDataCallback").pointerTypes("fastddsjava_OnDataCallback"));
       infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnSubscriptionCallback").pointerTypes("fastddsjava_OnSubscriptionCallback"));
+      infoMap.put(new Info("fastddsjava_DataWriterListener::fastddsjava_OnPublicationCallback").pointerTypes("fastddsjava_OnPublicationCallback"));
    }
 
    public static class fastddsjava_OnDataCallback extends FunctionPointer
@@ -97,6 +100,14 @@ public class fastddsjavaInfoMapper implements InfoMapper
    {
       public    fastddsjava_OnSubscriptionCallback(Pointer p) { super(p); }
       protected fastddsjava_OnSubscriptionCallback() { allocate(); }
+      private native void allocate();
+      public native void call();
+   }
+
+   public static class fastddsjava_OnPublicationCallback extends FunctionPointer
+   {
+      public    fastddsjava_OnPublicationCallback(Pointer p) { super(p); }
+      protected fastddsjava_OnPublicationCallback() { allocate(); }
       private native void allocate();
       public native void call();
    }

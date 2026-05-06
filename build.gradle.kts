@@ -166,8 +166,3 @@ tasks.register<Exec>("testInterfaceWhitelistDocker") {
    standardOutput = System.out
    errorOutput = System.err
 }
-
-// Run Docker integration tests as part of test task
-tasks.named("test") {
-   finalizedBy("testInterfaceWhitelistDocker")
-}

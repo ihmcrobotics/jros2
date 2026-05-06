@@ -130,6 +130,25 @@ private:
     fastddsjava_OnSubscriptionCallback on_subscription_callback;
 };
 
+class fastddsjava_DataWriterListener : public eprosima::fastdds::dds::DataWriterListener {
+public:
+    // Do not accept anything in the callback functions so that in JNI, we do not create new Pointer objects, which generate garbage
+    typedef std::function<void()> fastddsjava_OnPublicationCallback;
+
+    void set_on_publication_callback(fastddsjava_OnPublicationCallback callback) {
+        this->on_publication_callback = callback;
+    }
+
+    JAVACPP_SKIP void on_publication_matched(eprosima::fastdds::dds::DataWriter* writer,
+                                               const eprosima::fastdds::dds::PublicationMatchedStatus& info) override {
+        if (on_publication_callback)
+            on_publication_callback();
+    }
+
+private:
+    fastddsjava_OnPublicationCallback on_publication_callback;
+};
+
 uint32_t fastddsjava_load_xml_profiles_string(const std::string xml) {
     auto factory = eprosima::fastdds::dds::DomainParticipantFactory::get_instance();
 
@@ -304,7 +323,8 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::Topic* topic = static_cast<eprosima::fastdds::dds::Topic*>(topic_);
 
-    return subscriber->create_datareader_with_profile(topic, profile_name, listener);
+    // Use StatusMask::all() to enable all status notifications, and nullptr for default payload pool
+    return subscriber->create_datareader_with_profile(topic, profile_name, listener, eprosima::fastdds::dds::StatusMask::all());
 }
 
 uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, void* info_) {
@@ -356,11 +376,47 @@ uint32_t fastddsjava_datareader_get_subscription_matched_status(void* reader_, e
     return reader->get_subscription_matched_status(status);
 }
 
+uint32_t fastddsjava_datawriter_get_publication_matched_status(void* writer_, eprosima::fastdds::dds::PublicationMatchedStatus& status) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+    return writer->get_publication_matched_status(status);
+}
+
+uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener = nullptr) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+    return writer->set_listener(listener);
+}
+
 uint32_t fastddsjava_delete_datareader(void* subscriber_, void* reader_) {
     eprosima::fastdds::dds::Subscriber* subscriber = static_cast<eprosima::fastdds::dds::Subscriber*>(subscriber_);
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
 
     return subscriber->delete_datareader(reader);
+}
+
+// Get participant GUID as 16-byte array
+void fastddsjava_get_participant_guid(void* participant_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DomainParticipant* participant = static_cast<eprosima::fastdds::dds::DomainParticipant*>(participant_);
+    eprosima::fastdds::rtps::GUID_t guid = participant->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+}
+
+// Get DataWriter GUID as 16-byte array
+void fastddsjava_get_writer_guid(void* writer_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DataWriter* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+    eprosima::fastdds::rtps::GUID_t guid = writer->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+}
+
+// Get DataReader GUID as 16-byte array
+void fastddsjava_get_reader_guid(void* reader_, uint8_t* guid_out) {
+    eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
+    eprosima::fastdds::rtps::GUID_t guid = reader->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
 }
 
 #endif // FASTDDSJAVA_H

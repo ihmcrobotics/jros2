@@ -154,7 +154,7 @@ public class IDLLongSequence extends IDLSequence<IDLLongSequence> implements Ite
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 8 + CDRBuffer.alignment(currentAlignment, 8);
+      return 8; // Size of long/double element (alignment added by caller)
    }
 
    @Override
