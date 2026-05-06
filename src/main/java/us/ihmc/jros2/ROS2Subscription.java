@@ -102,8 +102,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   ROS2Subscription(Pointer fastddsParticipant, String subscriberProfileName, ROS2SubscriptionCallback<T> callback, // May be null
-                    ROS2Topic<T> topic, TopicData topicData)
+   ROS2Subscription(Pointer fastddsParticipant,
+                    String subscriberProfileName,
+                    ROS2SubscriptionCallback<T> callback, // May be null
+                    ROS2Topic<T> topic,
+                    TopicData topicData)
    {
       this.callback = callback;
       this.topic = topic;
