@@ -58,9 +58,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    protected final fastddsjava_TopicDataWrapper userSampleData;
    protected final Pointer fastddsUserSampleInfo;
    private final SubscriptionMatchedStatus subscriptionMatchedStatus;
-   private final fastddsjava_DataReaderListener listener;
-   private final fastddsjava_OnDataCallback fastddsDataCallback;
-   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback;
+   private final fastddsjava_DataReaderListener listener; // Keep as a field to avoid GC
+   private final fastddsjava_OnDataCallback fastddsDataCallback; // Keep as a field to avoid GC
+   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback; // Keep as a field to avoid GC
    private final TopicData topicData;
 
    /*
@@ -585,14 +585,5 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    public int getUnreadMessageCount()
    {
       return untakenMessageCount.get();
-   }
-
-   /**
-    * Get the FastDDS DataReader pointer for discovery purposes.
-    * Package-private for use by ROS2DiscoveryPublisher.
-    */
-   Pointer getReaderPointer()
-   {
-      return fastddsDataReader;
    }
 }

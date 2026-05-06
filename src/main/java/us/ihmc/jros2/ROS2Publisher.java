@@ -50,7 +50,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Fast-DDS pointers
     */
    private final Pointer fastddsPublisher;
-   protected final Pointer fastddsDataWriter;
+   private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
    private final PublicationMatchedStatus publicationMatchedStatus;
