@@ -82,6 +82,33 @@ Add the dependency:
 </dependencies>
 ```
 
+### Android
+
+jros2 fully supports Android! Add the repository and dependency in your Android project:
+
+Add the repository in `settings.gradle.kts`:
+```kotlin
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://robotlabfiles.ihmc.us/repository/")
+        }
+    }
+}
+```
+
+Add the dependency in your app's `build.gradle.kts`:
+```kotlin
+dependencies {
+    implementation("us.ihmc:jros2-android:1.2.1")
+}
+```
+
+See the [Android Support Wiki](https://github.com/ihmcrobotics/jros2/wiki/Android-Support) for complete setup instructions and examples.
+
 ### Here's the basics:
 
 Create a ROS2Node:
