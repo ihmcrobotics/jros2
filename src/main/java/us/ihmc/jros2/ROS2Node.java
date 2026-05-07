@@ -192,6 +192,9 @@ public class ROS2Node implements Closeable
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
+
+      // Create a shutdown hook to ensure the node is closed when the JVM exits.
+      Runtime.getRuntime().addShutdownHook(new Thread(this::close, "ROS2NodeShutdownHook-" + name));
    }
 
    /**
