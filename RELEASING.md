@@ -21,7 +21,11 @@ Publish jros2-android
 ```
 cd android
 ./gradlew publish
+cd ..
 ```
+
+Ensure all the new versions are showing up at https://robotlabfiles.ihmc.us/repository
+
 Commit the version bump with message ":bookmark: VERSION"
 
 Create a tag with the version e.g. `git tag VERSION`
