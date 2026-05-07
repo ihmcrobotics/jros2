@@ -2,7 +2,7 @@ package us.ihmc;
 
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import sensor_msgs.msg.dds.Image;
+import sensor_msgs.Image;
 import us.ihmc.jros2.ROS2Node;
 import us.ihmc.jros2.ROS2Publisher;
 import us.ihmc.jros2.ROS2Topic;

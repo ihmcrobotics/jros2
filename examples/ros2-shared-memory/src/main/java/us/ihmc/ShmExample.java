@@ -15,7 +15,7 @@
  */
 package us.ihmc;
 
-import example_interfaces.msg.dds.Empty;
+import example_interfaces.Empty;
 import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.jros2.ROS2Node;

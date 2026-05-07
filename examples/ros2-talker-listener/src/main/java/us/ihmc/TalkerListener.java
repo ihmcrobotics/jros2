@@ -28,12 +28,12 @@ import java.util.concurrent.locks.LockSupport;
  */
 public class TalkerListener
 {
-   public static void main(String[] args) throws InterruptedException
+   public static void main(java.lang.String[] args) throws InterruptedException
    {
       /*
        * Create a topic with type example_interfaces/String
        */
-      ROS2Topic<example_interfaces.msg.dds.String> topic = new ROS2Topic<>("/chatter", example_interfaces.msg.dds.String.class);
+      ROS2Topic<example_interfaces.String_> topic = new ROS2Topic<>("/chatter", example_interfaces.String_.class);
 
       /*
        * Set up the subscription
@@ -51,7 +51,7 @@ public class TalkerListener
        */
       ROS2Node publisherNode = new ROS2Node("minimal_publisher", 0); // Make sure to .close() the ROS2Node when done using it!
       Runtime.getRuntime().addShutdownHook(new Thread(publisherNode::close, "PublisherShutdown"));
-      ROS2Publisher<example_interfaces.msg.dds.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<example_interfaces.String_> publisher = publisherNode.createPublisher(topic);
       Thread publishThread = new Thread(new Runnable()
       {
          private int count;
@@ -61,7 +61,7 @@ public class TalkerListener
          {
             while (!publisherNode.isClosed())
             {
-               example_interfaces.msg.dds.String message = new example_interfaces.msg.dds.String();
+               example_interfaces.String_ message = new example_interfaces.String_();
                message.getData().append("Hello world: ").append(count++);
                System.out.printf("Publishing: '%s'%n", message.getData());
 

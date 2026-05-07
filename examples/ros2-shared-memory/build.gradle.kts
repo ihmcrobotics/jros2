@@ -8,13 +8,13 @@ version = "1.0.0"
 
 repositories {
    mavenCentral()
-   maven { url = uri("https://robotlabfiles.ihmc.us/repository") }
+   maven { url = uri("https://robotlabfiles.ihmc.us/repository/") }
 }
 
 dependencies {
-    implementation("us.ihmc:jros2:1.1.3")
+    implementation("us.ihmc:jros2:1.2.1")
 }
 
 application {
-    mainClass.set("us.ihmc.TalkerListener")
+    mainClass.set("us.ihmc.ShmExample")
 }

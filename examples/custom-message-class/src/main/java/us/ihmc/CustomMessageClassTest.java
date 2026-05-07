@@ -1,6 +1,6 @@
 package us.ihmc;
 
-import my_interfaces.msg.dds.MyPoint3DList;
+import my_interfaces.MyPoint3DList;
 import us.ihmc.jros2.ROS2Node;
 import us.ihmc.jros2.ROS2Publisher;
 import us.ihmc.jros2.ROS2Topic;
