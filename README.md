@@ -39,18 +39,45 @@ Works on NVIDIA Jetson and all versions of Raspberry Pi!
 Read in-depth documentation on the [Wiki](https://github.com/ihmcrobotics/jros2/wiki)!
 
 ### Gradle
-```
-dependencies {
-  implementation("us.ihmc:jros2:1.2.0")
+
+Add the repository in `settings.gradle.kts`:
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        maven {
+            url = uri("https://robotlabfiles.ihmc.us/repository/")
+        }
+    }
 }
 ```
-### Maven
+
+Add the dependency in `build.gradle.kts`:
+```kotlin
+dependencies {
+  implementation("us.ihmc:jros2:1.2.1")
+}
 ```
+
+### Maven
+
+Add the repository in `pom.xml`:
+```xml
+<repositories>
+  <repository>
+    <id>ihmc-repo</id>
+    <url>https://robotlabfiles.ihmc.us/repository/</url>
+  </repository>
+</repositories>
+```
+
+Add the dependency:
+```xml
 <dependencies>
   <dependency>
     <groupId>us.ihmc</groupId>
     <artifactId>jros2</artifactId>
-    <version>1.2.0</version>
+    <version>1.2.1</version>
   </dependency>
 </dependencies>
 ```
