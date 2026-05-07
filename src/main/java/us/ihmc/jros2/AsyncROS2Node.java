@@ -57,6 +57,7 @@ public class AsyncROS2Node extends ROS2Node
       // Pre-allocate thread name during construction to avoid allocation during runtime
       threadName = "AsyncROS2NodePublishThread-" + name;
       publishThread = new Thread(this::publishLoop, threadName);
+      publishThread.setDaemon(true); // Allow JVM to exit even if this thread is running
       publishThread.setPriority(Thread.NORM_PRIORITY + 1); // Slightly higher priority
       publishThread.start();
    }
