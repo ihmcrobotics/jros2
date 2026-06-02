@@ -162,8 +162,13 @@ public class AsyncROS2Node extends ROS2Node
       try
       {
          if (rejectTasks || closed)
+         {
             return false;
-         return tasks.offer(task);
+         }
+         else
+         {
+            return tasks.offer(task);
+         }
       }
       finally
       {
