@@ -168,6 +168,13 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
    }
 
+   /**
+    * Invokes {@link ROS2SubscriptionMatchedCallback} for publishers already matched when this subscription is created.
+    * <p>
+    * Fast-DDS does not retroactively deliver subscription-matched events for endpoints that were matched before the
+    * listener was registered, so this is called from the constructor when {@link #getSubscriptionMatchedStatus()} is
+    * already greater than zero.
+    */
    private void notifySubscriptionMatchedInfoForExistingMatches()
    {
       if (subscriptionMatchedInfoCallback == null || closed)
@@ -256,7 +263,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       @Override
       public void call()
       {
-         Boolean matched = null;
+         boolean hasMatchChange = false;
+         boolean matched = false;
          if (!closed)
          {
             synchronized (subscriptionMatchedStatus)
@@ -265,14 +273,16 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                int currentCount = subscriptionMatchedStatus.current_count();
                if (currentCount > previousMatchedPublicationCount)
                {
+                  hasMatchChange = true;
                   matched = true;
                }
                else if (currentCount < previousMatchedPublicationCount)
                {
+                  hasMatchChange = true;
                   matched = false;
                }
 
-               if (matched != null)
+               if (hasMatchChange)
                {
                   fastddsjava_subscription_matched_status_last_publication_guid(subscriptionMatchedStatus,
                                                                                 subscriptionMatchedGuid.getValue());
@@ -305,7 +315,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                   }
                }
 
-               if (matched != null && subscriptionMatchedInfoCallback != null)
+               if (hasMatchChange && subscriptionMatchedInfoCallback != null)
                {
                   try
                   {

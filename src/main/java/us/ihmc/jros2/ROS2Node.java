@@ -443,15 +443,19 @@ public class ROS2Node implements Closeable
          {
             ProfilesXML profilesXML = new ProfilesXML();
             SubscriberProfileType subscriberProfile = new SubscriberProfileType();
+            // Prefix with "sub_" to ensure valid XML identifier
             long subscriberId = subscriberIdCounter.getAndIncrement();
             String subscriberProfileName = "sub_" + subscriberId;
             subscriberProfile.setProfileName(subscriberProfileName);
             profilesXML.addSubscriberProfile(subscriberProfile);
 
+            // Translate the ROS2QoSProfile into Fast-DDS subscriber profile XML
             QoSTools.translateQoS(qosProfile, subscriberProfile);
 
             TopicData topicData = getOrCreateTopicData(topic);
 
+            // Synchronize profile loading and subscription creation to prevent race condition where
+            // Fast-DDS hasn't finished loading the profile when create_datareader_with_profile is called.
             ROS2Subscription<T> subscription;
             synchronized (ProfilesXML.getLoadLock())
             {
@@ -703,6 +707,7 @@ public class ROS2Node implements Closeable
    @Override
    public void close()
    {
+      // Wait until all readers are finished, then start closing
       closeLock.writeLock().lock();
       if (closed)
       {
