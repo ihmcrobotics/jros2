@@ -10,3 +10,11 @@
 	path = ros2_interfaces/example_interfaces
 	url = https://github.com/ros2/example_interfaces
 	branch = humble
+[submodule "ros2_interfaces/tf2_msgs_repo"]
+	path = ros2_interfaces/tf2_msgs_repo
+	url = https://github.com/ros2/geometry2.git
+	branch = humble
+[submodule "ros2_interfaces/geometry2"]
+	path = ros2_interfaces/geometry2
+	url = https://github.com/ros2/geometry2.git
+	branch = humble
