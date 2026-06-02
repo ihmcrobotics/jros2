@@ -23,9 +23,6 @@ import java.lang.reflect.Method;
 
 public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
 {
-   /**
-    * Deep-copy fields from another message of the same type. Generated message classes implement this.
-    */
    void set(T from);
 
    static <T extends ROS2Message<T>> String getNameFromMessageClass(Class<T> topicType)

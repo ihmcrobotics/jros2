@@ -47,6 +47,7 @@ public class AsyncROS2Node extends ROS2Node
    private final Thread publishThread;
    private final BlockingQueue<Runnable> tasks;
    private final String threadName;
+   private volatile boolean rejectTasks;
 
    public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
@@ -138,7 +139,7 @@ public class AsyncROS2Node extends ROS2Node
          closeLock.writeLock().unlock();
          return;
       }
-      closed = true;
+      rejectTasks = true;
       closeLock.writeLock().unlock();
 
       publishThread.interrupt();
@@ -160,7 +161,7 @@ public class AsyncROS2Node extends ROS2Node
       closeLock.readLock().lock();
       try
       {
-         if (closed)
+         if (rejectTasks || closed)
             return false;
          return tasks.offer(task);
       }

@@ -192,11 +192,6 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[index];
    }
 
-   public T getLast()
-   {
-      return elements[position];
-   }
-
    /**
     * {@inheritDoc}
     */
