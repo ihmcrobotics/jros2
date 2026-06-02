@@ -75,6 +75,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected boolean closed;
 
    /*
+    * GUID
+    */
+   private final Guid guid = new Guid();
+
+   /*
     * Statistics
     */
    private final StatisticsCalculator[] statisticsCalculators;
@@ -139,7 +144,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
             synchronized (writeBuffer)
             {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
+               // Size the body from alignment 0; serialize() writes the 4-byte payload header first, then the body.
+               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
                boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
                // Rewind buffer to ensure we're starting at position = 0
                writeBuffer.rewind();
@@ -214,6 +220,19 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             discoveryLock.notifyAll();
          }
       }
+   }
+
+   /**
+    * Get the GUID (Globally Unique Identifier) for this publisher.
+    * The GUID is assigned by Fast-DDS and uniquely identifies this publisher instance.
+    * <p>
+    * Returns a cached {@link Guid} instance owned by this publisher; its bytes are refreshed from DDS on each call.
+    * Copy with {@link Guid#set(Guid)} if you need an independent snapshot.
+    */
+   public Guid getGuid()
+   {
+      fastddsjava_get_writer_guid(fastddsDataWriter, guid.getValue());
+      return guid;
    }
 
    /**

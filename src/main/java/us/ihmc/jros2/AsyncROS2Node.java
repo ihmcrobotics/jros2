@@ -132,13 +132,23 @@ public class AsyncROS2Node extends ROS2Node
    @Override
    public void close()
    {
+      closeLock.writeLock().lock();
+      if (closed)
+      {
+         closeLock.writeLock().unlock();
+         return;
+      }
+      closed = true;
+      closeLock.writeLock().unlock();
+
       publishThread.interrupt();
       try
       {
-         publishThread.join(100);
+         publishThread.join(2000);
       }
       catch (InterruptedException interruptedException)
       {
+         Thread.currentThread().interrupt();
          jros2.logError("Publish thread did not join.", interruptedException);
       }
 
@@ -147,15 +157,24 @@ public class AsyncROS2Node extends ROS2Node
 
    protected boolean addTask(Runnable task)
    {
-      // TODO: Double check behavior
-      return tasks.offer(task);
+      closeLock.readLock().lock();
+      try
+      {
+         if (closed)
+            return false;
+         return tasks.offer(task);
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
    }
 
    private void publishLoop()
    {
       try
       {
-         while (!publishThread.isInterrupted())
+         while (!Thread.currentThread().isInterrupted())
          {
             Runnable task = tasks.take();
             task.run();
@@ -163,7 +182,7 @@ public class AsyncROS2Node extends ROS2Node
       }
       catch (InterruptedException ignored)
       {
-         // Thread interrupted during shutdown
+         Thread.currentThread().interrupt();
       }
    }
 }

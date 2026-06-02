@@ -136,6 +136,18 @@ public final class CDRBuffer
       return buffer.getShort();
    }
 
+   /** Reads a CDR uint16 value as an unsigned 16-bit integer in the range [0, 65535]. */
+   public int readUInt16()
+   {
+      return Short.toUnsignedInt(readShort());
+   }
+
+   /** Writes a CDR uint16 value. Values outside [0, 65535] are truncated to 16 bits. */
+   public void writeUInt16(int value)
+   {
+      writeShort((short) value);
+   }
+
    public void writeInt(int value)
    {
       alignBuffer(4);

@@ -84,7 +84,7 @@ public class BuiltinToolsTest
       assertEquals("byte", BuiltinTools.getBuiltinTypeJavaType("uint8"));
       assertEquals("short", BuiltinTools.getBuiltinTypeJavaType("int16"));
       assertEquals("float", BuiltinTools.getBuiltinTypeJavaType("float32"));
-      assertEquals("short", BuiltinTools.getBuiltinTypeJavaType("uint16"));
+      assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("uint16"));
       assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("int32"));
       assertEquals("double", BuiltinTools.getBuiltinTypeJavaType("float64"));
       assertEquals("int", BuiltinTools.getBuiltinTypeJavaType("uint32"));
@@ -133,7 +133,7 @@ public class BuiltinToolsTest
       assertEquals("writeByte", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint8"));
       assertEquals("writeShort", BuiltinTools.getBuiltinCDRBufferWriteMethod("int16"));
       assertEquals("writeFloat", BuiltinTools.getBuiltinCDRBufferWriteMethod("float32"));
-      assertEquals("writeShort", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint16"));
+      assertEquals("writeUInt16", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint16"));
       assertEquals("writeInt", BuiltinTools.getBuiltinCDRBufferWriteMethod("int32"));
       assertEquals("writeDouble", BuiltinTools.getBuiltinCDRBufferWriteMethod("float64"));
       assertEquals("writeInt", BuiltinTools.getBuiltinCDRBufferWriteMethod("uint32"));
@@ -158,7 +158,7 @@ public class BuiltinToolsTest
       assertEquals("readByte", BuiltinTools.getBuiltinCDRBufferReadMethod("uint8"));
       assertEquals("readShort", BuiltinTools.getBuiltinCDRBufferReadMethod("int16"));
       assertEquals("readFloat", BuiltinTools.getBuiltinCDRBufferReadMethod("float32"));
-      assertEquals("readShort", BuiltinTools.getBuiltinCDRBufferReadMethod("uint16"));
+      assertEquals("readUInt16", BuiltinTools.getBuiltinCDRBufferReadMethod("uint16"));
       assertEquals("readInt", BuiltinTools.getBuiltinCDRBufferReadMethod("int32"));
       assertEquals("readDouble", BuiltinTools.getBuiltinCDRBufferReadMethod("float64"));
       assertEquals("readInt", BuiltinTools.getBuiltinCDRBufferReadMethod("uint32"));

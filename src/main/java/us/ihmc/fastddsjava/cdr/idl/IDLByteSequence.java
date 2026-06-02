@@ -75,6 +75,18 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Ite
    }
 
    /**
+    * Appends all byte values from the array to the end of the sequence.
+    * This is a highly efficient bulk operation using NIO buffer operations.
+    *
+    * @param values the byte array to add
+    */
+   public void addAll(byte[] values)
+   {
+      ensureMinCapacity(buffer.position() + values.length);
+      buffer.put(values);
+   }
+
+   /**
     * Removes and returns the last element from the sequence.
     *
     * @return the last element in the sequence

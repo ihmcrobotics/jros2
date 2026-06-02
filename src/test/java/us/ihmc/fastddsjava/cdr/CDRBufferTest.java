@@ -744,4 +744,69 @@ public class CDRBufferTest
          assertEquals(i, autoBuffer.readInt());
       }
    }
+
+   /**
+    * Regression test for ROS2Publisher buffer sizing: calculateSizeBytes must use body alignment (0),
+    * not post-header alignment, or bool-then-double messages underestimate required space.
+    */
+   @Test
+   public void testPublishPayloadSizeMatchesSerializedLength()
+   {
+      CDRBuffer writeBuffer = new CDRBuffer();
+
+      int bodySizeWrong = calculateMixedBoolDoubleBodySize(CDRBuffer.PAYLOAD_HEADER.length);
+      int bodySizeCorrect = calculateMixedBoolDoubleBodySize(0);
+      assertTrue(bodySizeCorrect > bodySizeWrong, "Body size with header-based alignment should be smaller (incorrect)");
+
+      int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + bodySizeCorrect;
+      writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+      writeBuffer.rewind();
+      writeBuffer.writePayloadHeader();
+      serializeMixedBoolDoubleBody(writeBuffer);
+
+      assertEquals(payloadSizeBytes, writeBuffer.getBufferUnsafe().position(), "Allocated payload size should match serialized length");
+   }
+
+   private static int calculateMixedBoolDoubleBodySize(int initialAlignment)
+   {
+      int currentAlignment = initialAlignment;
+
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+
+      for (int i = 0; i < 13; i++)
+         currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8);
+
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1);
+
+      return currentAlignment - initialAlignment;
+   }
+
+   private static void serializeMixedBoolDoubleBody(CDRBuffer buffer)
+   {
+      buffer.writeBoolean(true);
+      buffer.writeBoolean(false);
+
+      for (int i = 0; i < 13; i++)
+         buffer.writeDouble(i);
+
+      buffer.writeBoolean(true);
+      buffer.writeBoolean(false);
+      buffer.writeBoolean(true);
+   }
+
+   @Test
+   public void testUInt16RoundTripAboveSignedShortMax()
+   {
+      int port = 60001;
+
+      buffer.writeUInt16(port);
+
+      buffer.rewind();
+      buffer.readPayloadHeader();
+
+      assertEquals(port, buffer.readUInt16());
+   }
 }

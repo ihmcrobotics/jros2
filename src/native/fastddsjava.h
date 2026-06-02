@@ -13,6 +13,8 @@
 #include <fastdds/dds/subscriber/SampleInfo.hpp>
 #include <fastdds/dds/subscriber/DataReader.hpp>
 #include <fastdds/dds/core/StackAllocatedSequence.hpp>
+#include <fastdds/dds/core/status/SubscriptionMatchedStatus.hpp>
+#include <fastdds/rtps/common/InstanceHandle.hpp>
 
 #define JAVACPP_SKIP
 
@@ -172,58 +174,6 @@ uint32_t fastddsjava_delete_participant(void* participant_) {
 }
 
 /*
- *  Returns eprosima::fastdds::dds::SampleInfo*
- *  Must free manually with fastddsjava_delete_sampleinfo(void*)
- */
-void* fastddsjava_create_sampleinfo() {
-    eprosima::fastdds::dds::SampleInfo* info = new eprosima::fastdds::dds::SampleInfo();
-
-    return info;
-}
-
-void fastddsjava_delete_sampleinfo(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    delete info;
-}
-
-uint16_t fastddsjava_sampleinfo_sample_state(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->sample_state;
-}
-
-uint16_t fastddsjava_sampleinfo_view_state(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->view_state;
-}
-
-uint16_t fastddsjava_sampleinfo_instance_state(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->instance_state;
-}
-
-int64_t fastddsjava_sampleinfo_source_timestamp_to_ns(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->source_timestamp.to_ns();
-}
-
-int64_t fastddsjava_sampleinfo_reception_timestamp_to_ns(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->reception_timestamp.to_ns();
-}
-
-bool fastddsjava_sampleinfo_valid_data(void* info_) {
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
-
-    return info->valid_data;
-}
-
-/*
  *  Returns eprosima::fastdds::dds::Publisher*
  */
 void* fastddsjava_create_publisher(void* participant_, const std::string profile_name) {
@@ -327,18 +277,16 @@ void* fastddsjava_create_datareader(void* subscriber_, void* topic_, fastddsjava
     return subscriber->create_datareader_with_profile(topic, profile_name, listener, eprosima::fastdds::dds::StatusMask::all());
 }
 
-uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, void* info_) {
+uint32_t fastddsjava_datareader_read_next_sample(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
     eprosima::fastdds::dds::ReturnCode_t ret = reader->read_next_sample(data, info);
 
     return ret;
 }
 
-uint32_t fastddsjava_datareader_take_next_custom(void* reader_, void* data, void* info_) {
+uint32_t fastddsjava_datareader_take_next_custom(void* reader_, void* data, eprosima::fastdds::dds::SampleInfo* info) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
-    eprosima::fastdds::dds::SampleInfo* info = static_cast<eprosima::fastdds::dds::SampleInfo*>(info_);
 
     eprosima::fastdds::dds::StackAllocatedSequence<void*, 1> data_values;
     const_cast<void**>(data_values.buffer())[0] = data;
@@ -415,6 +363,15 @@ void fastddsjava_get_writer_guid(void* writer_, uint8_t* guid_out) {
 void fastddsjava_get_reader_guid(void* reader_, uint8_t* guid_out) {
     eprosima::fastdds::dds::DataReader* reader = static_cast<eprosima::fastdds::dds::DataReader*>(reader_);
     eprosima::fastdds::rtps::GUID_t guid = reader->guid();
+    memcpy(guid_out, guid.guidPrefix.value, 12);
+    memcpy(guid_out + 12, guid.entityId.value, 4);
+}
+
+// Copy the GUID of the writer that last changed the subscription matched status.
+void fastddsjava_subscription_matched_status_last_publication_guid(
+        const eprosima::fastdds::dds::SubscriptionMatchedStatus& status, uint8_t* guid_out) {
+    eprosima::fastdds::rtps::GUID_t guid;
+    eprosima::fastdds::rtps::iHandle2GUID(guid, status.last_publication_handle);
     memcpy(guid_out, guid.guidPrefix.value, 12);
     memcpy(guid_out + 12, guid.entityId.value, 4);
 }

@@ -33,6 +33,16 @@ public interface ROS2MessageReader<T extends ROS2Message<T>>
    boolean read(T data);
 
    /**
+    * Reads the oldest unread sample, if available, and deserializes into {@param data}.
+    * Fills {@param sampleInfo} with metadata for the sample that was read.
+    *
+    * @param data the {@link ROS2Message} to pack the data into
+    * @param sampleInfo reusable sample metadata buffer
+    * @return true if data was available and read; false otherwise.
+    */
+   boolean read(T data, SampleInfo sampleInfo);
+
+   /**
     * Reads the oldest unread sample, if available, and deserializes into a new instance of the {@link ROS2Message} type.
     *
     * @return a new instance of the message if data was available and read; null otherwise.

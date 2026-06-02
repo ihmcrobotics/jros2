@@ -64,6 +64,14 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    public abstract int size();
 
    /**
+    * @return true if the sequence contains no elements.
+    */
+   public boolean isEmpty()
+   {
+      return size() == 0;
+   }
+
+   /**
     * @return The capacity of the sequence.
     */
    public abstract int capacity();
@@ -147,6 +155,8 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      clear();
+
       int elements = buffer.readInt();
 
       ensureMinCapacity(elements);

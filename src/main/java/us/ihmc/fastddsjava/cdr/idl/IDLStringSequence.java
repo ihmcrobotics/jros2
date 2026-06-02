@@ -18,6 +18,7 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<String>
@@ -93,6 +94,49 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       ensureMinCapacity(position + 1);
 
       elements[position++] = element;
+   }
+
+   /**
+    * Appends all String elements from the array to the end of the sequence.
+    * This is an efficient bulk operation.
+    *
+    * @param values the String array to add
+    */
+   public void addAll(String[] values)
+   {
+      ensureMinCapacity(position + values.length);
+      for (String value : values)
+      {
+         elements[position++] = new StringBuilder(value);
+      }
+   }
+
+   /**
+    * Appends all StringBuilder elements from the array to the end of the sequence.
+    * This is an efficient bulk operation using System.arraycopy.
+    *
+    * @param values the StringBuilder array to add
+    */
+   public void addAll(StringBuilder[] values)
+   {
+      ensureMinCapacity(position + values.length);
+      System.arraycopy(values, 0, elements, position, values.length);
+      position += values.length;
+   }
+
+   /**
+    * Appends all String elements from the collection to the end of the sequence.
+    * This is an efficient bulk operation.
+    *
+    * @param values the collection of Strings to add
+    */
+   public void addAll(Collection<String> values)
+   {
+      ensureMinCapacity(position + values.size());
+      for (String value : values)
+      {
+         elements[position++] = new StringBuilder(value);
+      }
    }
 
    /**
