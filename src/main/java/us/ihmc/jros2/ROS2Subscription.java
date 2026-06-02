@@ -221,7 +221,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                int ret; // Keep for debugging
                while (!closed && OK == (ret = fastddsjava_datareader_read_next_sample(fastddsDataReader,
                                                                                       callbackSampleData,
-                                                                                      callbackSampleInfo.getNativeInfo()))
+                                                                                      callbackSampleInfo.nativeInfo))
                       && callbackSampleInfo.hasValidData())
                {
                   flagHadData = true;
@@ -459,7 +459,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (userSampleData)
             {
                SampleInfo info = sampleInfo != null ? sampleInfo : userSampleInfo;
-               int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, info.getNativeInfo());
+               int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, info.nativeInfo);
                if (OK == ret)
                {
                   untakenMessageCount.decrementAndGet();
@@ -519,7 +519,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (userSampleData)
             {
                int ret; // Keep for debugging
-               while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo.getNativeInfo())))
+               while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo.nativeInfo)))
                {
                   totalRead++;
                }

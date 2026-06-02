@@ -18,13 +18,11 @@ package us.ihmc.jros2;
 import java.util.Arrays;
 
 /**
- * Represents a DDS-RTPS GUID (Globally Unique Identifier).
- * A GUID is a 16-byte identifier composed of a 12-byte prefix and a 4-byte entity ID.
- *
- * Based on the ihmc-ros2-library Guid class.
+ * A 16-byte DDS-RTPS GUID (Globally Unique Identifier): 12-byte participant prefix plus 4-byte entity ID.
  * <p>
- * Reusable buffer: {@link ROS2Publisher#getGuid()} and {@link ROS2Subscription#getGuid()} return a cached
- * instance; use {@link #set(Guid)} to copy into your own storage when a snapshot is needed.
+ * {@link ROS2Publisher#getGuid()} and {@link ROS2Subscription#getGuid()} return a cached instance owned by that
+ * endpoint. Its bytes are refreshed on each call. Copy with {@link #set(Guid)} or {@link #set(byte[])} if you
+ * need an independent snapshot (for example in a matched callback or a map key).
  */
 public class Guid
 {
@@ -42,7 +40,8 @@ public class Guid
    }
 
    /**
-    * Set the GUID from a 16-byte array.
+    * Copies a 16-byte GUID into this instance.
+    *
     * @param guid 16-byte array containing the GUID
     */
    public void set(byte[] guid)
@@ -55,8 +54,9 @@ public class Guid
    }
 
    /**
-    * Set the GUID from another Guid instance.
-    * @param other Guid to copy from
+    * Copies another {@link Guid} into this instance.
+    *
+    * @param other GUID to copy from
     */
    public void set(Guid other)
    {
@@ -64,9 +64,9 @@ public class Guid
    }
 
    /**
-    * Get direct access to the internal GUID byte array.
-    * WARNING: Modifications to this array will affect the GUID!
-    * @return 16-byte array containing the GUID
+    * Returns the internal 16-byte array. Modifications to the returned array update this GUID.
+    *
+    * @return 16-byte GUID storage
     */
    public byte[] getValue()
    {

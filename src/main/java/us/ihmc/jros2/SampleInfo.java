@@ -23,17 +23,12 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_SampleInfo;
  */
 public class SampleInfo implements AutoCloseable
 {
-   private final fastddsjava_SampleInfo nativeInfo;
+   final fastddsjava_SampleInfo nativeInfo;
    private boolean closed;
 
    public SampleInfo()
    {
       nativeInfo = new fastddsjava_SampleInfo();
-   }
-
-   fastddsjava_SampleInfo getNativeInfo()
-   {
-      return nativeInfo;
    }
 
    public boolean hasValidData()
