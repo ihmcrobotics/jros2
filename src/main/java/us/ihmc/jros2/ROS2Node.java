@@ -724,6 +724,7 @@ public class ROS2Node implements Closeable
 
          synchronized (publishers)
          {
+            // Delete publishers
             for (ROS2Publisher<?> publisher : publishers)
             {
                publisher.close(fastddsParticipant);
@@ -733,6 +734,7 @@ public class ROS2Node implements Closeable
 
          synchronized (subscriptions)
          {
+            // Delete subscriptions
             for (ROS2Subscription<?> subscription : subscriptions)
             {
                subscription.close(fastddsParticipant);
@@ -755,6 +757,7 @@ public class ROS2Node implements Closeable
 
                synchronized (topicDataByKey)
                {
+                  // Delete topics
                   for (TopicData topicData : topicDataByKey.values())
                   {
                      retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
@@ -763,6 +766,7 @@ public class ROS2Node implements Closeable
 
                   synchronized (typeRegistrationLock)
                   {
+                     // Unregister types
                      for (TypeRegistration typeRegistration : typeRegistrationsByName.values())
                      {
                         retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, typeRegistration.topicDataWrapperType.get_name()));
@@ -773,6 +777,7 @@ public class ROS2Node implements Closeable
                   }
                }
 
+               // Delete participant
                retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
                fastddsParticipant.setNull();
             }
