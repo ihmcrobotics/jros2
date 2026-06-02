@@ -193,6 +193,16 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    /**
+    * Returns the last element in the sequence.
+    *
+    * @return the last element
+    */
+   public T getLast()
+   {
+      return elements[position - 1];
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
