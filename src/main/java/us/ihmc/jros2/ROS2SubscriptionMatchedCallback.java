@@ -15,8 +15,16 @@
  */
 package us.ihmc.jros2;
 
+/**
+ * Callback invoked when a remote publisher is matched to or removed from a subscription.
+ */
 @FunctionalInterface
 public interface ROS2SubscriptionMatchedCallback
 {
-   void onSubscriptionMatched(ROS2Subscription<?> subscription, ROS2SubscriptionMatchedInfo info);
+   /**
+    * @param subscription the subscription that was matched or unmatched
+    * @param publicationGuid GUID of the remote publisher; owned by the subscription and refreshed on each call — copy with {@link Guid#set(Guid)} if you need to store it
+    * @param matched {@code true} when a publisher was matched, {@code false} when one was removed
+    */
+   void onSubscriptionMatched(ROS2Subscription<?> subscription, Guid publicationGuid, boolean matched);
 }

@@ -19,7 +19,7 @@ import us.ihmc.fastddsjava.pointers.fastddsjava_SampleInfo;
 
 /**
  * Metadata for a sample received by a {@link ROS2Subscription}.
- * Reuses a single native {@link fastddsjava_SampleInfo} allocation for garbage-free reads.
+ * Reuses a single native allocation for garbage-free reads.
  */
 public class SampleInfo implements AutoCloseable
 {

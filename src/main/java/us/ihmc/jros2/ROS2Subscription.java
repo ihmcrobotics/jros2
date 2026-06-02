@@ -69,7 +69,6 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
    private volatile Runnable subscriptionMatchedCallback; // User callback for subscription matched events
    private final ROS2SubscriptionMatchedCallback subscriptionMatchedInfoCallback;
-   private final ROS2SubscriptionMatchedInfo subscriptionMatchedInfo = new ROS2SubscriptionMatchedInfo();
    private final Guid subscriptionMatchedGuid = new Guid();
 
    /*
@@ -186,8 +185,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                previousMatchedPublicationCount = subscriptionMatchedStatus.current_count();
             }
 
-            subscriptionMatchedInfo.set(subscriptionMatchedGuid, ROS2SubscriptionMatchedStatus.MATCHED_MATCHING);
-            subscriptionMatchedInfoCallback.onSubscriptionMatched(this, subscriptionMatchedInfo);
+            subscriptionMatchedInfoCallback.onSubscriptionMatched(this, subscriptionMatchedGuid, true);
          }
       }
       catch (Exception e)
@@ -258,7 +256,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       @Override
       public void call()
       {
-         ROS2SubscriptionMatchedStatus matchedStatus = null;
+         Boolean matched = null;
          if (!closed)
          {
             synchronized (subscriptionMatchedStatus)
@@ -267,14 +265,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                int currentCount = subscriptionMatchedStatus.current_count();
                if (currentCount > previousMatchedPublicationCount)
                {
-                  matchedStatus = ROS2SubscriptionMatchedStatus.MATCHED_MATCHING;
+                  matched = true;
                }
                else if (currentCount < previousMatchedPublicationCount)
                {
-                  matchedStatus = ROS2SubscriptionMatchedStatus.REMOVED_MATCHING;
+                  matched = false;
                }
 
-               if (matchedStatus != null)
+               if (matched != null)
                {
                   fastddsjava_subscription_matched_status_last_publication_guid(subscriptionMatchedStatus,
                                                                                 subscriptionMatchedGuid.getValue());
@@ -307,12 +305,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                   }
                }
 
-               if (matchedStatus != null && subscriptionMatchedInfoCallback != null)
+               if (matched != null && subscriptionMatchedInfoCallback != null)
                {
                   try
                   {
-                     subscriptionMatchedInfo.set(subscriptionMatchedGuid, matchedStatus);
-                     subscriptionMatchedInfoCallback.onSubscriptionMatched(ROS2Subscription.this, subscriptionMatchedInfo);
+                     subscriptionMatchedInfoCallback.onSubscriptionMatched(ROS2Subscription.this, subscriptionMatchedGuid, matched);
                   }
                   catch (Exception e)
                   {
