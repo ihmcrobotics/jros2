@@ -259,8 +259,22 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      StringBuilder element = elements[position++];
+      StringBuilder element = elementAtCurrentPosition();
       buffer.readString(element);
+      position++;
+   }
+
+   /**
+    * Returns the {@link StringBuilder} at {@link #position}, creating one if the pre-allocated slot is still null.
+    */
+   protected StringBuilder elementAtCurrentPosition()
+   {
+      if (elements[position] == null)
+      {
+         elements[position] = new StringBuilder(defaultStringLength > 0 ? defaultStringLength : DEFAULT_MAX_STRING_LENGTH);
+      }
+
+      return elements[position];
    }
 
    @Override

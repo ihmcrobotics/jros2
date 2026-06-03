@@ -18,6 +18,8 @@ package us.ihmc.jros2;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -49,7 +51,17 @@ final class jros2 implements jros2Settings
          {
             String timestamp = dateFormat.format(new java.util.Date(record.getMillis()));
             String method = record.getSourceClassName() + "." + record.getSourceMethodName();
-            return String.format("%s [%s] %s: %s%n", timestamp, method, record.getLevel(), record.getMessage());
+            StringBuilder formatted = new StringBuilder();
+            formatted.append(String.format("%s [%s] %s: %s%n", timestamp, method, record.getLevel(), record.getMessage()));
+
+            if (record.getThrown() != null)
+            {
+               StringWriter stackTraceWriter = new StringWriter();
+               record.getThrown().printStackTrace(new PrintWriter(stackTraceWriter));
+               formatted.append(stackTraceWriter);
+            }
+
+            return formatted.toString();
          }
       })
       {
@@ -187,6 +199,35 @@ final class jros2 implements jros2Settings
     */
    public static void logError(String message, Throwable throwable)
    {
+      getLogger().log(Level.SEVERE, message, throwable);
+   }
+
+   /**
+    * Returns {@code className:lineNumber} for the top stack frame of {@code throwable}.
+    */
+   static String formatThrowSite(Throwable throwable)
+   {
+      StackTraceElement[] stackTrace = throwable.getStackTrace();
+      if (stackTrace.length == 0)
+      {
+         return throwable.getClass().getName();
+      }
+
+      StackTraceElement frame = stackTrace[0];
+      return frame.getClassName() + ":" + frame.getLineNumber();
+   }
+
+   /**
+    * Log a subscription callback exception with topic, message type, and throw site.
+    * Does not rethrow — exceptions must not propagate out of native DDS callbacks.
+    */
+   static void logSubscriptionCallbackError(String topicName, String messageTypeName, Throwable throwable)
+   {
+      String message = String.format("Exception in ROS2Subscription callback on topic '%s' (%s) at %s: %s",
+                                     topicName,
+                                     messageTypeName,
+                                     formatThrowSite(throwable),
+                                     throwable.getMessage());
       getLogger().log(Level.SEVERE, message, throwable);
    }
 

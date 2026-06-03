@@ -43,8 +43,9 @@ public class IDLWStringSequence extends IDLStringSequence
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      StringBuilder element = elements[position++];
+      StringBuilder element = elementAtCurrentPosition();
       buffer.readWString(element);
+      position++;
    }
 
    @Override

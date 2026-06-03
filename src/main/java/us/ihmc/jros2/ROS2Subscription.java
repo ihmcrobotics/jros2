@@ -244,8 +244,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      }
                      catch (Throwable e)
                      {
-                        jros2.logError("Exception thrown in ROS2Subscription callback", e);
-                        throw e;
+                        jros2.logSubscriptionCallbackError(topic.getName(), topic.getType().getSimpleName(), e);
                      }
                   }
                }

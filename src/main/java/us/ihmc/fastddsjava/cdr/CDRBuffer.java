@@ -213,6 +213,11 @@ public final class CDRBuffer
 
    public void readString(StringBuilder destination)
    {
+      if (destination == null)
+      {
+         throw new NullPointerException("CDRBuffer.readString destination StringBuilder is null");
+      }
+
       // Get the length of the string
       int length = readInt() - 1; // -1 to remove null terminator
 
@@ -247,6 +252,11 @@ public final class CDRBuffer
 
    public void readWString(StringBuilder destination)
    {
+      if (destination == null)
+      {
+         throw new NullPointerException("CDRBuffer.readWString destination StringBuilder is null");
+      }
+
       int charLength = readInt();
 
       // Clear the destination and read all characters into it
