@@ -81,7 +81,12 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
-      <if(field.array&&field.fixedSize)>
+      <if(field.array&&field.fixedSize&&field.builtinStringType)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.builtinTypeSize> * <field.javaName>[i].length())<if(!field.builtinWStringType)> + 1<endif>; // <field.javaName>[i]
+\}
+      <elseif(field.array&&field.fixedSize)>
 currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.javaName>
       <elseif(field.array&&!field.fixedSize)>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);

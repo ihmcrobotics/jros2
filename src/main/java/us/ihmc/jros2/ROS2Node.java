@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -62,6 +63,7 @@ public class ROS2Node implements Closeable
    private static final AtomicLong topicIdCounter = new AtomicLong(0);
    private static final AtomicLong publisherIdCounter = new AtomicLong(0);
    private static final AtomicLong subscriberIdCounter = new AtomicLong(0);
+   private static final CopyOnWriteArrayList<ROS2Node> activeNodes = new CopyOnWriteArrayList<>();
 
    /*
     * Node identification
@@ -200,6 +202,16 @@ public class ROS2Node implements Closeable
 
       shutdownHook = new Thread(this::close, "ROS2NodeShutdownHook-" + name);
       Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+      activeNodes.add(this);
+   }
+
+   /**
+    * Returns all nodes that have been constructed and not yet closed.
+    */
+   public static List<ROS2Node> getActiveNodes()
+   {
+      return activeNodes;
    }
 
    /**
@@ -715,6 +727,7 @@ public class ROS2Node implements Closeable
          return;
       }
       closed = true;
+      activeNodes.remove(this);
 
       try
       {
