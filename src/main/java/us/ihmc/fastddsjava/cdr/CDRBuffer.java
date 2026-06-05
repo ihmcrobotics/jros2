@@ -51,13 +51,13 @@ public final class CDRBuffer
 
    public boolean ensureRemainingCapacity(int capacity)
    {
-      int remainingCapacity = buffer.capacity() - buffer.position();
+      int requiredCapacity = buffer.position() + capacity;
 
-      if (remainingCapacity < capacity)
+      if (buffer.capacity() < requiredCapacity)
       {
          int oldPosition = buffer.position();
          ByteOrder oldOrder = buffer.order();
-         ByteBuffer newBuffer = ByteBuffer.allocate(oldPosition + capacity);
+         ByteBuffer newBuffer = ByteBuffer.allocate(requiredCapacity);
          newBuffer.order(oldOrder);
 
          buffer.flip();

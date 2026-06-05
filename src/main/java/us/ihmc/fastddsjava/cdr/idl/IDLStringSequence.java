@@ -257,8 +257,24 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      // We treat each character as 1 byte (8 bits) in a standard string
-      return elements[i].length() + CDRBuffer.alignment(currentAlignment, elements[i].length());
+      // Body of a CDR string excluding the 4-byte alignment padding before the length prefix.
+      return 4 + elements[i].length() + 1;
+   }
+
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // sequence length prefix
+
+      for (int i = 0; i < size(); i++)
+      {
+         currentAlignment += CDRBuffer.alignment(currentAlignment, 4); // align before string length
+         currentAlignment += 4 + elements[i].length() + 1; // length int + chars + null terminator
+      }
+
+      return currentAlignment - initialAlignment;
    }
 
    @Override

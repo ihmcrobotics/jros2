@@ -285,6 +285,26 @@ public class IDLStringSequenceTest
    }
 
    @Test
+   public void testCalculateSizeBytesMatchesSerialize()
+   {
+      IDLStringSequence sequence = new IDLStringSequence();
+      sequence.add("SpineYaw");
+      sequence.add("LeftShoulderPitch");
+      sequence.add("RightElbow");
+
+      int calculatedBytes = sequence.calculateSizeBytes(0);
+
+      CDRBuffer buffer = new CDRBuffer();
+      buffer.ensureRemainingCapacity(512);
+      buffer.writePayloadHeader();
+      int bodyStartPosition = buffer.getBufferUnsafe().position();
+      sequence.serialize(buffer);
+      int serializedBytes = buffer.getBufferUnsafe().position() - bodyStartPosition;
+
+      assertEquals(serializedBytes, calculatedBytes);
+   }
+
+   @Test
    public void testDeserializeGrowingReusedSequence()
    {
       IDLStringSequence sequence = new IDLStringSequence(INITIAL_CAPACITY);

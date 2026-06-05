@@ -76,6 +76,18 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence> implements I
    }
 
    /**
+    * Sets the element at {@code index} without requiring sequential {@link #add(float)} calls.
+    * Extends the logical {@link #size()} when {@code index} is at or beyond the current size.
+    */
+   public void putAt(int index, float value)
+   {
+      ensureMinCapacity(index + 1);
+      buffer.put(index, value);
+      if (buffer.position() <= index)
+         buffer.position(index + 1);
+   }
+
+   /**
     * Appends a float value to the end of the sequence.
     *
     * @param value the float value to add
