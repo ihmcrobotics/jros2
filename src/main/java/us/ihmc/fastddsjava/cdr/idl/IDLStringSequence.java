@@ -46,6 +46,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       ensureMinCapacity(capacity);
    }
 
+   public IDLStringSequence(int capacity, int maxSize)
+   {
+      this(capacity, maxSize, -1);
+   }
+
    public IDLStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
       super(capacity, maxSize);

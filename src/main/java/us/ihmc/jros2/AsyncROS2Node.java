@@ -38,7 +38,7 @@ public class AsyncROS2Node extends ROS2Node
       jros2.load();
    }
 
-   private static final int QUEUE_CAPACITY = 512;
+   private static final int QUEUE_CAPACITY = 256;
    private static final AtomicLong publisherIdCounter = new AtomicLong(0);
 
    /*
@@ -125,7 +125,7 @@ public class AsyncROS2Node extends ROS2Node
    @Override
    public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
-      int defaultQueueCapacity = 128;
+      int defaultQueueCapacity = 64;
 
       return createPublisher(topic, qosProfile, defaultQueueCapacity);
    }

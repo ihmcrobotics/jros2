@@ -29,6 +29,11 @@ public class IDLWStringSequence extends IDLStringSequence
       super(maxSize);
    }
 
+   public IDLWStringSequence(int capacity, int maxSize)
+   {
+      super(capacity, maxSize);
+   }
+
    public IDLWStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
       super(capacity, maxSize, defaultStringLength);

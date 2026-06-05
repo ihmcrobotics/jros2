@@ -146,7 +146,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             {
                // Size the body from alignment 0; serialize() writes the 4-byte payload header first, then the body.
                payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+               writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
                // Rewind buffer to ensure we're starting at position = 0
                writeBuffer.rewind();
 
@@ -155,11 +155,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
                writeBuffer.writePayloadHeader();
                message.serialize(writeBuffer);
 
-               if (resized)
-               {
-                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               }
-
+               topicDataWrapper.data_vector().resize(payloadSizeBytes);
                topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
             }
 
