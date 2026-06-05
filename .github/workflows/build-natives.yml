@@ -193,21 +193,22 @@ jobs:
             cp -a "$src/." "$dest/"
           }
 
-          # Linux: each matrix job uploads only its own platform directory
-          copy_artifact_dir artifacts/natives-linux-arm64/linux-arm64 src/main/resources/fastddsjava/native/linux-arm64
-          copy_artifact_dir artifacts/natives-linux-armhf/linux-armhf src/main/resources/fastddsjava/native/linux-armhf
-          copy_artifact_dir artifacts/natives-linux-x86_64/linux-x86_64 src/main/resources/fastddsjava/native/linux-x86_64
+          # Each upload-artifact job places library files at the artifact root
+          # (e.g. artifacts/natives-linux-arm64/*.so), not in a nested platform folder.
+          copy_artifact_dir artifacts/natives-linux-arm64 src/main/resources/fastddsjava/native/linux-arm64
+          copy_artifact_dir artifacts/natives-linux-armhf src/main/resources/fastddsjava/native/linux-armhf
+          copy_artifact_dir artifacts/natives-linux-x86_64 src/main/resources/fastddsjava/native/linux-x86_64
 
           # Windows
-          copy_artifact_dir artifacts/natives-windows/windows-x86_64 src/main/resources/fastddsjava/native/windows-x86_64
+          copy_artifact_dir artifacts/natives-windows src/main/resources/fastddsjava/native/windows-x86_64
 
-          # Android: each matrix job uploads only its ABI directory
-          copy_artifact_dir artifacts/natives-android-arm64-v8a/arm64-v8a android/src/main/jniLibs/arm64-v8a
-          copy_artifact_dir artifacts/natives-android-x86_64/x86_64 android/src/main/jniLibs/x86_64
+          # Android
+          copy_artifact_dir artifacts/natives-android-arm64-v8a android/src/main/jniLibs/arm64-v8a
+          copy_artifact_dir artifacts/natives-android-x86_64 android/src/main/jniLibs/x86_64
 
           # macOS
-          copy_artifact_dir artifacts/natives-macos-arm64/macos-arm64 src/main/resources/fastddsjava/native/macos-arm64
-          copy_artifact_dir artifacts/natives-macos-x86_64/macos-x86_64 src/main/resources/fastddsjava/native/macos-x86_64
+          copy_artifact_dir artifacts/natives-macos-arm64 src/main/resources/fastddsjava/native/macos-arm64
+          copy_artifact_dir artifacts/natives-macos-x86_64 src/main/resources/fastddsjava/native/macos-x86_64
 
       - name: Verify native library architectures
         run: |
