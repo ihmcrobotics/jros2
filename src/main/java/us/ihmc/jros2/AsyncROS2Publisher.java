@@ -16,7 +16,9 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -33,23 +35,15 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
    private final AsyncROS2Node node;
 
-   /*
-    * Message publish queue
-    */
    private final int queueCapacity;
    private final AtomicInteger queueSize;
    private int insertPosition;
    private int publishPosition;
    private final T[] messagesToPublish;
 
-   /*
-    * Pre-allocated message publish method lambda
-    */
    private final Runnable publishTask;
+   private final AtomicBoolean publishTaskScheduled = new AtomicBoolean(false);
 
-   /**
-    * Use {@link AsyncROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
-    */
    protected AsyncROS2Publisher(AsyncROS2Node node,
                                 Pointer fastddsParticipant,
                                 String publisherProfileName,
@@ -57,7 +51,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
                                 TopicData topicData,
                                 int queueCapacity)
    {
-      super(fastddsParticipant, publisherProfileName, topic, topicData);
+      super(fastddsParticipant, publisherProfileName, topic, topicData, false);
 
       this.node = node;
       this.queueCapacity = queueCapacity;
@@ -72,65 +66,73 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       }
 
       publishTask = this::publishTask;
-   }
 
-   private long lastQueueOverflowWarnTimeNs;
+      int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + messagesToPublish[0].calculateSizeBytes(0);
+      preallocateWriteBuffer(payloadSizeBytes);
+   }
 
    @Override
    public void publish(T message)
    {
       if (!closed)
       {
-         int currentSize = queueSize.get();
-         if (currentSize >= queueCapacity)
+         int sizeBefore = queueSize.getAndIncrement();
+         if (sizeBefore < queueCapacity)
          {
-            long now = System.nanoTime();
+            messagesToPublish[insertPosition].set(message);
 
-            // Print a warning every 1 second (avoid string formatting in hot path)
-            if (now - lastQueueOverflowWarnTimeNs > 1_000_000_000L)
+            try
             {
-               jros2.getLogger().warning("AsyncROS2Publisher (" + node.getName() + ") has exceeded the queue capacity of " + queueCapacity + ". You may be either publishing messages too fast or using intraprocess mode with a time-consuming subscription callback.");
-               lastQueueOverflowWarnTimeNs = now;
+               if (sizeBefore == 0)
+               {
+                  schedulePublishTaskIfNeeded();
+               }
+               insertPosition = (insertPosition + 1) % queueCapacity;
             }
-            return; // Drop message instead of failing
-         }
-
-         queueSize.incrementAndGet();
-
-         T messageToPublish = messagesToPublish[insertPosition];
-         messageToPublish.set(message);
-
-         if (node.addTask(publishTask))
-         {
-            insertPosition = (insertPosition + 1) % queueCapacity;
+            catch (RuntimeException runtimeException)
+            {
+               queueSize.decrementAndGet();
+               throw runtimeException;
+            }
          }
          else
          {
             queueSize.decrementAndGet();
+         }
+      }
+   }
 
+   private void schedulePublishTaskIfNeeded()
+   {
+      if (publishTaskScheduled.compareAndSet(false, true))
+      {
+         if (!node.addTask(publishTask))
+         {
+            publishTaskScheduled.set(false);
             throw new RuntimeException("AsyncROS2Node did not accept the task");
          }
       }
    }
 
-   /**
-    * Called from parent publish thread in {@link AsyncROS2Node}
-    */
    private void publishTask()
    {
-      closeLock.readLock().lock();
       try
       {
-         if (!closed)
+         while (!closed && queueSize.get() > 0)
          {
-            super.publish(messagesToPublish[publishPosition]);
+            publishAsync(messagesToPublish[publishPosition]);
             publishPosition = (publishPosition + 1) % queueCapacity;
+            queueSize.decrementAndGet();
          }
       }
       finally
       {
-         queueSize.decrementAndGet();
-         closeLock.readLock().unlock();
+         publishTaskScheduled.set(false);
+
+         if (!closed && queueSize.get() > 0)
+         {
+            schedulePublishTaskIfNeeded();
+         }
       }
    }
 }

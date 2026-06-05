@@ -708,6 +708,14 @@ public class ROS2Node implements Closeable
    }
 
    /**
+    * @return true if this node publishes asynchronously on a background thread.
+    */
+   public boolean isAsync()
+   {
+      return false;
+   }
+
+   /**
     * Release resources and mark this node as inoperable. After close() has been called, this node will be unable to create new publishers or subscriptions.
     * This method will block and wait for:
     * 1. any currently executing {@link ROS2Publisher#publish(ROS2Message)}

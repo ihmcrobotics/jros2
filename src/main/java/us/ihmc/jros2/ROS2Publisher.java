@@ -74,6 +74,8 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    protected final ReadWriteLock closeLock;
    protected boolean closed;
 
+   private final boolean recordStatistics;
+
    /*
     * GUID
     */
@@ -92,8 +94,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
+      this(fastddsParticipant, publisherProfileName, topic, topicData, true);
+   }
+
+   ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData, boolean recordStatistics)
+   {
       this.topic = topic;
       this.topicData = topicData;
+      this.recordStatistics = recordStatistics;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
@@ -140,31 +148,57 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          if (!closed)
          {
-            int payloadSizeBytes;
-
-            synchronized (writeBuffer)
-            {
-               writeBuffer.rewind();
-
-               // Size the body from alignment 0; serialize() writes the 4-byte payload header first, then the body.
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-               writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-
-               writeBuffer.writePayloadHeader();
-               message.serialize(writeBuffer);
-
-               topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-            }
-
-            retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
-
-            recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
+            writeAndPublish(message, recordStatistics);
          }
       }
       finally
       {
          closeLock.readLock().unlock();
+      }
+   }
+
+   /** Used by {@link AsyncROS2Publisher} on the deferred publish thread (no close lock, no statistics). */
+   protected void publishAsync(T message)
+   {
+      if (!closed)
+      {
+         writeAndPublish(message, false);
+      }
+   }
+
+   protected void preallocateWriteBuffer(int payloadSizeBytes)
+   {
+      synchronized (writeBuffer)
+      {
+         writeBuffer.rewind();
+         writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+      }
+   }
+
+   private void writeAndPublish(T message, boolean recordStatistics)
+   {
+      int payloadSizeBytes;
+
+      synchronized (writeBuffer)
+      {
+         writeBuffer.rewind();
+
+         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
+         writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+
+         writeBuffer.writePayloadHeader();
+         message.serialize(writeBuffer);
+
+         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+      }
+
+      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+
+      if (recordStatistics)
+      {
+         recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
       }
    }
 

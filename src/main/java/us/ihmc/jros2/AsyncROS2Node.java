@@ -75,6 +75,8 @@ public class AsyncROS2Node extends ROS2Node
 
    public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
    {
+      AsyncROS2Publisher<T> publisher = null;
+
       closeLock.readLock().lock();
       try
       {
@@ -104,14 +106,12 @@ public class AsyncROS2Node extends ROS2Node
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
-            AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
+            publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
 
             synchronized (publishers)
             {
                publishers.add(publisher);
             }
-
-            return publisher;
          }
       }
       finally
@@ -119,7 +119,13 @@ public class AsyncROS2Node extends ROS2Node
          closeLock.readLock().unlock();
       }
 
-      return null;
+      return publisher;
+   }
+
+   @Override
+   public boolean isAsync()
+   {
+      return true;
    }
 
    @Override
@@ -137,43 +143,35 @@ public class AsyncROS2Node extends ROS2Node
       if (closed)
       {
          closeLock.writeLock().unlock();
-         return;
       }
-      rejectTasks = true;
-      closeLock.writeLock().unlock();
-
-      publishThread.interrupt();
-      try
+      else
       {
-         publishThread.join(2000);
-      }
-      catch (InterruptedException interruptedException)
-      {
-         Thread.currentThread().interrupt();
-         jros2.logError("Publish thread did not join.", interruptedException);
-      }
+         rejectTasks = true;
+         closeLock.writeLock().unlock();
 
-      super.close();
+         publishThread.interrupt();
+         try
+         {
+            publishThread.join(2000);
+         }
+         catch (InterruptedException interruptedException)
+         {
+            Thread.currentThread().interrupt();
+            jros2.logError("Publish thread did not join.", interruptedException);
+         }
+
+         super.close();
+      }
    }
 
    protected boolean addTask(Runnable task)
    {
-      closeLock.readLock().lock();
-      try
+      boolean accepted = false;
+      if (!rejectTasks)
       {
-         if (rejectTasks || closed)
-         {
-            return false;
-         }
-         else
-         {
-            return tasks.offer(task);
-         }
+         accepted = tasks.offer(task);
       }
-      finally
-      {
-         closeLock.readLock().unlock();
-      }
+      return accepted;
    }
 
    private void publishLoop()
