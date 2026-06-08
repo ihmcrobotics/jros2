@@ -112,7 +112,10 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       ensureMinCapacity(position + values.length);
       for (String value : values)
       {
-         elements[position++] = new StringBuilder(value);
+         StringBuilder element = elementAtCurrentPosition();
+         element.setLength(0);
+         element.append(value);
+         position++;
       }
    }
 
@@ -131,16 +134,17 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
 
    /**
     * Appends all String elements from the collection to the end of the sequence.
-    * This is an efficient bulk operation.
-    *
-    * @param values the collection of Strings to add
+    * Reuses pre-allocated {@link StringBuilder} slots. Iterating a {@link Collection} may allocate an iterator.
     */
    public void addAll(Collection<String> values)
    {
       ensureMinCapacity(position + values.size());
       for (String value : values)
       {
-         elements[position++] = new StringBuilder(value);
+         StringBuilder element = elementAtCurrentPosition();
+         element.setLength(0);
+         element.append(value);
+         position++;
       }
    }
 

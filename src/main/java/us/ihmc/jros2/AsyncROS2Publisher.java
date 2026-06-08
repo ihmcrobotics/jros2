@@ -81,18 +81,13 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
          {
             messagesToPublish[insertPosition].set(message);
 
-            try
-            {
-               if (sizeBefore == 0)
-               {
-                  schedulePublishTaskIfNeeded();
-               }
-               insertPosition = (insertPosition + 1) % queueCapacity;
-            }
-            catch (RuntimeException runtimeException)
+            if (sizeBefore == 0 && !schedulePublishTaskIfNeeded())
             {
                queueSize.decrementAndGet();
-               throw runtimeException;
+            }
+            else
+            {
+               insertPosition = (insertPosition + 1) % queueCapacity;
             }
          }
          else
@@ -102,16 +97,18 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       }
    }
 
-   private void schedulePublishTaskIfNeeded()
+   private boolean schedulePublishTaskIfNeeded()
    {
       if (publishTaskScheduled.compareAndSet(false, true))
       {
          if (!node.addTask(publishTask))
          {
             publishTaskScheduled.set(false);
-            throw new RuntimeException("AsyncROS2Node did not accept the task");
+            return false;
          }
       }
+
+      return true;
    }
 
    private void publishTask()

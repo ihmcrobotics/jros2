@@ -67,6 +67,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Write buffer
     */
    private final CDRBuffer writeBuffer;
+   private int lastPayloadSizeBytes = -1;
 
    /*
     * Locks
@@ -173,6 +174,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          writeBuffer.rewind();
          writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
          topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         lastPayloadSizeBytes = payloadSizeBytes;
       }
    }
 
@@ -185,12 +187,20 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          writeBuffer.rewind();
 
          payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-         writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         if (payloadSizeBytes > writeBuffer.getBufferUnsafe().capacity())
+         {
+            writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         }
 
          writeBuffer.writePayloadHeader();
          message.serialize(writeBuffer);
 
-         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         if (payloadSizeBytes != lastPayloadSizeBytes)
+         {
+            topicDataWrapper.data_vector().resize(payloadSizeBytes);
+            lastPayloadSizeBytes = payloadSizeBytes;
+         }
+
          topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
       }
 

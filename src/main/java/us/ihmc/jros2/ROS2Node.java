@@ -92,7 +92,7 @@ public class ROS2Node implements Closeable
     * A helper map linking {@link ROS2Topic}\s to {@link TopicData}, where TopicData is a set of Fast-DDS pointers required
     * for creating and using a topic. For internal use only.
     */
-   private final Map<String, TopicData> topicDataByKey;
+   private final Map<String, Map<String, TopicData>> topicDataByNameAndType;
    private final Map<String, TypeRegistration> typeRegistrationsByName;
 
    /**
@@ -192,7 +192,7 @@ public class ROS2Node implements Closeable
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
-      topicDataByKey = new HashMap<>();
+      topicDataByNameAndType = new HashMap<>();
       typeRegistrationsByName = new HashMap<>();
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
@@ -235,14 +235,6 @@ public class ROS2Node implements Closeable
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   /*
-    * For managing native Fast-DDS topic memory. For internal-use only.
-    */
-   private static String topicDataKey(ROS2Topic<?> topic)
-   {
-      return topic.getName() + '\0' + ROS2Message.getNameFromMessageClass(topic.getType());
-   }
-
    <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       closeLock.readLock().lock();
@@ -250,70 +242,78 @@ public class ROS2Node implements Closeable
       {
          if (!closed)
          {
-            String topicKey = topicDataKey(topic);
+            String topicName = topic.getName();
+            String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
 
-            synchronized (this.topicDataByKey)
+            synchronized (this.topicDataByNameAndType)
             {
-               if (this.topicDataByKey.containsKey(topicKey))
+               Map<String, TopicData> topicDataByType = this.topicDataByNameAndType.get(topicName);
+               if (topicDataByType != null)
                {
-                  return this.topicDataByKey.get(topicKey);
+                  TopicData existingTopicData = topicDataByType.get(topicTypeName);
+                  if (existingTopicData != null)
+                  {
+                     return existingTopicData;
+                  }
                }
                else
                {
-                  ProfilesXML profilesXML = new ProfilesXML();
-                  TopicProfileType topicProfile = new TopicProfileType();
-                  // Prefix with "t_" to ensure valid XML identifier
-                  long topicId = topicIdCounter.getAndIncrement();
-                  String topicProfileName = "t_" + topicId;
-                  topicProfile.setProfileName(topicProfileName);
-                  profilesXML.addTopicProfile(topicProfile);
+                  topicDataByType = new HashMap<>();
+                  this.topicDataByNameAndType.put(topicName, topicDataByType);
+               }
 
-                  try
-                  {
-                     profilesXML.load();
-                  }
-                  catch (fastddsjavaException e)
-                  {
-                     jros2.logError("Failed to load topic profile '" + topicProfileName + "' for topic '" + topic.getName() + "'", e);
-                     throw new RuntimeException("Failed to load topic profile: " + topicProfileName, e);
-                  }
+               ProfilesXML profilesXML = new ProfilesXML();
+               TopicProfileType topicProfile = new TopicProfileType();
+               // Prefix with "t_" to ensure valid XML identifier
+               long topicId = topicIdCounter.getAndIncrement();
+               String topicProfileName = "t_" + topicId;
+               topicProfile.setProfileName(topicProfileName);
+               profilesXML.addTopicProfile(topicProfile);
 
-                  /*
-                   * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
-                   * where {@code X} is determined by the subtype of the topic.
-                   * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
-                   * https://design.ros2.org/articles/topic_and_service_names.html
-                   */
-                  // TODO: Support other prefixes depending on ROS subsystem
-                  // Use concat method to avoid string allocation on hot path (though this still allocates)
-                  String prefixedTopicName = "rt".concat(topic.getName());
-                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
-                  TypeRegistration typeRegistration = typeRegistrationsByName.get(topicTypeName);
-                  if (typeRegistration == null)
+               try
+               {
+                  profilesXML.load();
+               }
+               catch (fastddsjavaException e)
+               {
+                  jros2.logError("Failed to load topic profile '" + topicProfileName + "' for topic '" + topicName + "'", e);
+                  throw new RuntimeException("Failed to load topic profile: " + topicProfileName, e);
+               }
+
+               /*
+                * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
+                * where {@code X} is determined by the subtype of the topic.
+                * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
+                * https://design.ros2.org/articles/topic_and_service_names.html
+                */
+               // TODO: Support other prefixes depending on ROS subsystem
+               // Use concat method to avoid string allocation on hot path (though this still allocates)
+               String prefixedTopicName = "rt".concat(topicName);
+               TypeRegistration typeRegistration = typeRegistrationsByName.get(topicTypeName);
+               if (typeRegistration == null)
+               {
+                  synchronized (typeRegistrationLock)
                   {
-                     synchronized (typeRegistrationLock)
+                     typeRegistration = typeRegistrationsByName.get(topicTypeName);
+                     if (typeRegistration == null)
                      {
-                        typeRegistration = typeRegistrationsByName.get(topicTypeName);
-                        if (typeRegistration == null)
-                        {
-                           fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-                           Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-                           fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                           typeRegistration = new TypeRegistration(topicDataWrapperType, fastddsTypeSupport);
-                           typeRegistrationsByName.put(topicTypeName, typeRegistration);
-                        }
+                        fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+                        Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+                        fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+                        typeRegistration = new TypeRegistration(topicDataWrapperType, fastddsTypeSupport);
+                        typeRegistrationsByName.put(topicTypeName, typeRegistration);
                      }
                   }
-                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
-                                                                  typeRegistration.topicDataWrapperType,
-                                                                  prefixedTopicName,
-                                                                  topicProfileName);
-                  TopicData topicData = new TopicData(typeRegistration.topicDataWrapperType, typeRegistration.fastddsTypeSupport, fastddsTopic);
-
-                  this.topicDataByKey.put(topicKey, topicData);
-
-                  return topicData;
                }
+               Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
+                                                               typeRegistration.topicDataWrapperType,
+                                                               prefixedTopicName,
+                                                               topicProfileName);
+               TopicData topicData = new TopicData(typeRegistration.topicDataWrapperType, typeRegistration.fastddsTypeSupport, fastddsTopic);
+
+               topicDataByType.put(topicTypeName, topicData);
+
+               return topicData;
             }
          }
       }
@@ -781,14 +781,17 @@ public class ROS2Node implements Closeable
                   Thread.currentThread().interrupt();
                }
 
-               synchronized (topicDataByKey)
+               synchronized (topicDataByNameAndType)
                {
                   // Delete topics
-                  for (TopicData topicData : topicDataByKey.values())
+                  for (Map<String, TopicData> topicDataByType : topicDataByNameAndType.values())
                   {
-                     retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+                     for (TopicData topicData : topicDataByType.values())
+                     {
+                        retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+                     }
                   }
-                  topicDataByKey.clear();
+                  topicDataByNameAndType.clear();
 
                   synchronized (typeRegistrationLock)
                   {
