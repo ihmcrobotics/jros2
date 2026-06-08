@@ -240,8 +240,14 @@ public class AsyncROS2Test
       assertEquals(messagesToPublish, asyncPublisherStatistics.getCount());
       assertEquals(messagesToPublish, standardPublisherStatistics.getCount());
 
-      // Ensure async publisher is faster and more consistent
-      assertTrue(asyncPublisherStatistics.getAverage() < standardPublisherStatistics.getAverage());
+      // Ensure async publisher is faster on Linux where this benchmark is stable.
+      // On Windows, thread scheduling and timer resolution make this comparison unreliable.
+      if (System.getProperty("os.name").toLowerCase().contains("linux"))
+      {
+         assertTrue(asyncPublisherStatistics.getAverage() < standardPublisherStatistics.getAverage(),
+                    () -> "Async avg: " + asyncPublisherStatistics.getAverage()
+                          + ", standard avg: " + standardPublisherStatistics.getAverage());
+      }
       // Ideally this should not be commented, but things can happen on the system which cause it to be unreliable.
 //      assertTrue(asyncPublisherStatistics.getStandardDeviation() < standardPublisherStatistics.getStandardDeviation());
 
