@@ -3,7 +3,7 @@ import us.ihmc.jros2.generator.jros2GenTask
 plugins {
    id("java")
    id("application")
-   id("us.ihmc.jros2.generator") version "1.2.1"
+   id("us.ihmc.jros2.generator") version "1.3.0"
 }
 
 group = "us.ihmc"
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-   implementation("us.ihmc:jros2:1.2.1")
+   implementation("us.ihmc:jros2:1.3.0")
 }
 
 application {
