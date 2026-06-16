@@ -55,7 +55,7 @@ dependencyResolutionManagement {
 Add the dependency in `build.gradle.kts`:
 ```kotlin
 dependencies {
-  implementation("us.ihmc:jros2:1.2.1")
+  implementation("us.ihmc:jros2:1.3.0")
 }
 ```
 
@@ -77,7 +77,7 @@ Add the dependency:
   <dependency>
     <groupId>us.ihmc</groupId>
     <artifactId>jros2</artifactId>
-    <version>1.2.1</version>
+    <version>1.3.0</version>
   </dependency>
 </dependencies>
 ```
@@ -103,7 +103,7 @@ dependencyResolutionManagement {
 Add the dependency in your app's `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("us.ihmc:jros2-android:1.2.1")
+    implementation("us.ihmc:jros2-android:1.3.0")
 }
 ```
 
