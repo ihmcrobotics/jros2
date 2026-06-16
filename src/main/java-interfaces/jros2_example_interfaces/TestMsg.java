@@ -97,12 +97,12 @@ public class TestMsg implements ROS2Message<TestMsg>
       my_string_ = new StringBuilder();
       unbounded_integer_array_ = new IDLIntSequence();
       five_integers_array_ = new int[5];
-      up_to_five_integers_array_ = new IDLIntSequence(5);
+      up_to_five_integers_array_ = new IDLIntSequence(0, 5);
       string_of_unbounded_size_ = new StringBuilder();
       up_to_ten_characters_string_ = new StringBuilder(10);
-      up_to_five_unbounded_strings_ = new IDLStringSequence(5);
+      up_to_five_unbounded_strings_ = new IDLStringSequence(0);
       unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
-      up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(5, 5, 10);
+      up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(0, 5, 10);
       x_ = (byte) 42;
       y_ = (short) -2000;
       full_name_ = new StringBuilder("John Doe");
@@ -150,8 +150,14 @@ public class TestMsg implements ROS2Message<TestMsg>
       currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
       currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
-      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_
-      currentAlignment += (3 * 1) + CDRBuffer.alignment(currentAlignment, (3 * 1)); // three_strings_each_max_length_of_five_chars_
+      for (int i = 0; i < three_strings_.length; ++i)
+      {
+         currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * three_strings_[i].length()) + 1; // three_strings_[i]
+      }
+      for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
+      {
+         currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * three_strings_each_max_length_of_five_chars_[i].length()) + 1; // three_strings_each_max_length_of_five_chars_[i]
+      }
       for (int i = 0; i < three_images_.length; ++i)
       {
          currentAlignment += three_images_[i].calculateSizeBytes(currentAlignment);

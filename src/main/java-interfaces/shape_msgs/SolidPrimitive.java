@@ -101,7 +101,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    public SolidPrimitive()
    {
-      dimensions_ = new IDLDoubleSequence(3);
+      dimensions_ = new IDLDoubleSequence(0, 3);
       polygon_ = new geometry_msgs.Polygon();
 
    }

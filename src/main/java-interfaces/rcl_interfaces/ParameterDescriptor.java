@@ -98,8 +98,8 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       additional_constraints_ = new StringBuilder();
       read_only_ = (boolean) false;
       dynamic_typing_ = (boolean) false;
-      floating_point_range_ = new IDLObjectSequence<rcl_interfaces.FloatingPointRange>(1, rcl_interfaces.FloatingPointRange.class);
-      integer_range_ = new IDLObjectSequence<rcl_interfaces.IntegerRange>(1, rcl_interfaces.IntegerRange.class);
+      floating_point_range_ = new IDLObjectSequence<rcl_interfaces.FloatingPointRange>(0, 1, rcl_interfaces.FloatingPointRange.class);
+      integer_range_ = new IDLObjectSequence<rcl_interfaces.IntegerRange>(0, 1, rcl_interfaces.IntegerRange.class);
 
    }
 
