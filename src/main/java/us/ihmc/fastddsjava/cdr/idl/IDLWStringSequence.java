@@ -29,6 +29,11 @@ public class IDLWStringSequence extends IDLStringSequence
       super(maxSize);
    }
 
+   public IDLWStringSequence(int capacity, int maxSize)
+   {
+      super(capacity, maxSize);
+   }
+
    public IDLWStringSequence(int capacity, int maxSize, int defaultStringLength)
    {
       super(capacity, maxSize, defaultStringLength);
@@ -37,14 +42,41 @@ public class IDLWStringSequence extends IDLStringSequence
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return (elements[i].length() * 4) + CDRBuffer.alignment(currentAlignment, elements[i].length() * 4); // 4 bytes per character
+      int charLength = elements[i].length();
+      int size = 4; // length prefix
+      for (int c = 0; c < charLength; c++)
+         size += 4 + CDRBuffer.alignment(currentAlignment + size, 4);
+      return size;
+   }
+
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // sequence length prefix
+
+      for (int i = 0; i < size(); i++)
+      {
+         int charLength = elements[i].length();
+         currentAlignment += CDRBuffer.alignment(currentAlignment, 4);
+         currentAlignment += 4; // wstring length int
+         for (int c = 0; c < charLength; c++)
+         {
+            currentAlignment += CDRBuffer.alignment(currentAlignment, 4);
+            currentAlignment += 4;
+         }
+      }
+
+      return currentAlignment - initialAlignment;
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      StringBuilder element = elements[position++];
+      StringBuilder element = elementAtCurrentPosition();
       buffer.readWString(element);
+      position++;
    }
 
    @Override

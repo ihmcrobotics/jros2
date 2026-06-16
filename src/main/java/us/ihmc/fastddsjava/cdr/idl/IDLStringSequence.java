@@ -18,6 +18,7 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements Iterable<String>
@@ -43,6 +44,11 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       defaultStringLength = -1;
 
       ensureMinCapacity(capacity);
+   }
+
+   public IDLStringSequence(int capacity, int maxSize)
+   {
+      this(capacity, maxSize, -1);
    }
 
    public IDLStringSequence(int capacity, int maxSize, int defaultStringLength)
@@ -93,6 +99,53 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
       ensureMinCapacity(position + 1);
 
       elements[position++] = element;
+   }
+
+   /**
+    * Appends all String elements from the array to the end of the sequence.
+    * This is an efficient bulk operation.
+    *
+    * @param values the String array to add
+    */
+   public void addAll(String[] values)
+   {
+      ensureMinCapacity(position + values.length);
+      for (String value : values)
+      {
+         StringBuilder element = elementAtCurrentPosition();
+         element.setLength(0);
+         element.append(value);
+         position++;
+      }
+   }
+
+   /**
+    * Appends all StringBuilder elements from the array to the end of the sequence.
+    * This is an efficient bulk operation using System.arraycopy.
+    *
+    * @param values the StringBuilder array to add
+    */
+   public void addAll(StringBuilder[] values)
+   {
+      ensureMinCapacity(position + values.length);
+      System.arraycopy(values, 0, elements, position, values.length);
+      position += values.length;
+   }
+
+   /**
+    * Appends all String elements from the collection to the end of the sequence.
+    * Reuses pre-allocated {@link StringBuilder} slots. Iterating a {@link Collection} may allocate an iterator.
+    */
+   public void addAll(Collection<String> values)
+   {
+      ensureMinCapacity(position + values.size());
+      for (String value : values)
+      {
+         StringBuilder element = elementAtCurrentPosition();
+         element.setLength(0);
+         element.append(value);
+         position++;
+      }
    }
 
    /**
@@ -208,15 +261,45 @@ public class IDLStringSequence extends IDLSequence<IDLStringSequence> implements
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      // We treat each character as 1 byte (8 bits) in a standard string
-      return elements[i].length() + CDRBuffer.alignment(currentAlignment, elements[i].length());
+      // Body of a CDR string excluding the 4-byte alignment padding before the length prefix.
+      return 4 + elements[i].length() + 1;
+   }
+
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // sequence length prefix
+
+      for (int i = 0; i < size(); i++)
+      {
+         currentAlignment += CDRBuffer.alignment(currentAlignment, 4); // align before string length
+         currentAlignment += 4 + elements[i].length() + 1; // length int + chars + null terminator
+      }
+
+      return currentAlignment - initialAlignment;
    }
 
    @Override
    public void readElement(CDRBuffer buffer)
    {
-      StringBuilder element = elements[position++];
+      StringBuilder element = elementAtCurrentPosition();
       buffer.readString(element);
+      position++;
+   }
+
+   /**
+    * Returns the {@link StringBuilder} at {@link #position}, creating one if the pre-allocated slot is still null.
+    */
+   protected StringBuilder elementAtCurrentPosition()
+   {
+      if (elements[position] == null)
+      {
+         elements[position] = new StringBuilder(defaultStringLength > 0 ? defaultStringLength : DEFAULT_MAX_STRING_LENGTH);
+      }
+
+      return elements[position];
    }
 
    @Override

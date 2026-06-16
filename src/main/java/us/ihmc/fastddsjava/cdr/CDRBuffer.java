@@ -51,13 +51,13 @@ public final class CDRBuffer
 
    public boolean ensureRemainingCapacity(int capacity)
    {
-      int remainingCapacity = buffer.capacity() - buffer.position();
+      int requiredCapacity = buffer.position() + capacity;
 
-      if (remainingCapacity < capacity)
+      if (buffer.capacity() < requiredCapacity)
       {
          int oldPosition = buffer.position();
          ByteOrder oldOrder = buffer.order();
-         ByteBuffer newBuffer = ByteBuffer.allocate(oldPosition + capacity);
+         ByteBuffer newBuffer = ByteBuffer.allocate(requiredCapacity);
          newBuffer.order(oldOrder);
 
          buffer.flip();
@@ -136,6 +136,18 @@ public final class CDRBuffer
       return buffer.getShort();
    }
 
+   /** Reads a CDR uint16 value as an unsigned 16-bit integer in the range [0, 65535]. */
+   public int readUInt16()
+   {
+      return Short.toUnsignedInt(readShort());
+   }
+
+   /** Writes a CDR uint16 value. Values outside [0, 65535] are truncated to 16 bits. */
+   public void writeUInt16(int value)
+   {
+      writeShort((short) value);
+   }
+
    public void writeInt(int value)
    {
       alignBuffer(4);
@@ -201,6 +213,11 @@ public final class CDRBuffer
 
    public void readString(StringBuilder destination)
    {
+      if (destination == null)
+      {
+         throw new NullPointerException("CDRBuffer.readString destination StringBuilder is null");
+      }
+
       // Get the length of the string
       int length = readInt() - 1; // -1 to remove null terminator
 
@@ -235,6 +252,11 @@ public final class CDRBuffer
 
    public void readWString(StringBuilder destination)
    {
+      if (destination == null)
+      {
+         throw new NullPointerException("CDRBuffer.readWString destination StringBuilder is null");
+      }
+
       int charLength = readInt();
 
       // Clear the destination and read all characters into it

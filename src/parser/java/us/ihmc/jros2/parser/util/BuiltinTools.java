@@ -119,8 +119,9 @@ public final class BuiltinTools
          case "char":
             return "char";
          case "int16":
-         case "uint16":
             return "short";
+         case "uint16":
+            return "int";
          case "float32":
             return "float";
          case "int32":
@@ -208,8 +209,9 @@ public final class BuiltinTools
          case "char":
             return "writeChar";
          case "int16":
-         case "uint16":
             return "writeShort";
+         case "uint16":
+            return "writeUInt16";
          case "float32":
             return "writeFloat";
          case "int32":
@@ -253,8 +255,9 @@ public final class BuiltinTools
          case "char":
             return "readChar";
          case "int16":
-         case "uint16":
             return "readShort";
+         case "uint16":
+            return "readUInt16";
          case "float32":
             return "readFloat";
          case "int32":

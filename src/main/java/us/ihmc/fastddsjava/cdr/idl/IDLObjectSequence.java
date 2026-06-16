@@ -20,6 +20,7 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 
 @SuppressWarnings("unchecked")
@@ -103,6 +104,34 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    /**
+    * Appends all elements from the array to the end of the sequence.
+    * This is an efficient bulk operation using System.arraycopy.
+    *
+    * @param values the array of elements to add
+    */
+   public void addAll(T[] values)
+   {
+      ensureMinCapacity(position + values.length);
+      System.arraycopy(values, 0, elements, position, values.length);
+      position += values.length;
+   }
+
+   /**
+    * Appends all elements from the collection to the end of the sequence.
+    * This is an efficient bulk operation.
+    *
+    * @param values the collection of elements to add
+    */
+   public void addAll(Collection<? extends T> values)
+   {
+      ensureMinCapacity(position + values.size());
+      for (T value : values)
+      {
+         elements[position++] = value;
+      }
+   }
+
+   /**
     * Adds a new element to the end of the sequence, creating a new instance if necessary.
     *
     * @return the element at the new position (newly created or existing)
@@ -161,6 +190,16 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    public T get(int index)
    {
       return elements[index];
+   }
+
+   /**
+    * Returns the last element in the sequence.
+    *
+    * @return the last element
+    */
+   public T getLast()
+   {
+      return elements[position - 1];
    }
 
    /**

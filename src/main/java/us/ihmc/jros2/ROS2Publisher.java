@@ -67,12 +67,20 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Write buffer
     */
    private final CDRBuffer writeBuffer;
+   private int lastPayloadSizeBytes = -1;
 
    /*
     * Locks
     */
    protected final ReadWriteLock closeLock;
    protected boolean closed;
+
+   private final boolean recordStatistics;
+
+   /*
+    * GUID
+    */
+   private final Guid guid = new Guid();
 
    /*
     * Statistics
@@ -87,8 +95,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
+      this(fastddsParticipant, publisherProfileName, topic, topicData, true);
+   }
+
+   ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData, boolean recordStatistics)
+   {
       this.topic = topic;
       this.topicData = topicData;
+      this.recordStatistics = recordStatistics;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
@@ -135,36 +149,66 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          if (!closed)
          {
-            int payloadSizeBytes;
-
-            synchronized (writeBuffer)
-            {
-               payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(CDRBuffer.PAYLOAD_HEADER.length);
-               boolean resized = writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-               // Rewind buffer to ensure we're starting at position = 0
-               writeBuffer.rewind();
-
-               // TODO: check if we can shrink the writeBuffer to save memory
-
-               writeBuffer.writePayloadHeader();
-               message.serialize(writeBuffer);
-
-               if (resized)
-               {
-                  topicDataWrapper.data_vector().resize(payloadSizeBytes);
-               }
-
-               topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
-            }
-
-            retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
-
-            recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
+            writeAndPublish(message, recordStatistics);
          }
       }
       finally
       {
          closeLock.readLock().unlock();
+      }
+   }
+
+   /** Used by {@link AsyncROS2Publisher} on the deferred publish thread (no close lock, no statistics). */
+   protected void publishAsync(T message)
+   {
+      if (!closed)
+      {
+         writeAndPublish(message, false);
+      }
+   }
+
+   protected void preallocateWriteBuffer(int payloadSizeBytes)
+   {
+      synchronized (writeBuffer)
+      {
+         writeBuffer.rewind();
+         writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         lastPayloadSizeBytes = payloadSizeBytes;
+      }
+   }
+
+   private void writeAndPublish(T message, boolean recordStatistics)
+   {
+      int payloadSizeBytes;
+
+      synchronized (writeBuffer)
+      {
+         writeBuffer.rewind();
+
+         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
+         if (payloadSizeBytes > writeBuffer.getBufferUnsafe().capacity())
+         {
+            writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+         }
+
+         writeBuffer.writePayloadHeader();
+         message.serialize(writeBuffer);
+
+         if (payloadSizeBytes != lastPayloadSizeBytes)
+         {
+            topicDataWrapper.data_vector().resize(payloadSizeBytes);
+            lastPayloadSizeBytes = payloadSizeBytes;
+         }
+
+         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+      }
+
+      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+
+      if (recordStatistics)
+      {
+         recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
       }
    }
 
@@ -214,6 +258,19 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
             discoveryLock.notifyAll();
          }
       }
+   }
+
+   /**
+    * Get the GUID (Globally Unique Identifier) for this publisher.
+    * The GUID is assigned by Fast-DDS and uniquely identifies this publisher instance.
+    * <p>
+    * Returns a cached {@link Guid} instance owned by this publisher; its bytes are refreshed from DDS on each call.
+    * Copy with {@link Guid#set(Guid)} if you need an independent snapshot.
+    */
+   public Guid getGuid()
+   {
+      fastddsjava_get_writer_guid(fastddsDataWriter, guid.getValue());
+      return guid;
    }
 
    /**

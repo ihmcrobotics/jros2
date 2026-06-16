@@ -87,6 +87,18 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence> implements Ite
    }
 
    /**
+    * Appends all char values from the array to the end of the sequence.
+    * This is a highly efficient bulk operation using NIO buffer operations.
+    *
+    * @param values the char array to add
+    */
+   public void addAll(char[] values)
+   {
+      ensureMinCapacity(buffer.position() + values.length);
+      buffer.put(values);
+   }
+
+   /**
     * Removes and returns the last element from the sequence.
     *
     * @return the last element in the sequence

@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -57,9 +58,12 @@ public class ROS2Node implements Closeable
     * Atomic counters for garbage-free ID generation
     */
    private static final AtomicLong participantIdCounter = new AtomicLong(0);
+   private static final Object participantDestructionLock = new Object();
+   private static final Object typeRegistrationLock = new Object();
    private static final AtomicLong topicIdCounter = new AtomicLong(0);
    private static final AtomicLong publisherIdCounter = new AtomicLong(0);
    private static final AtomicLong subscriberIdCounter = new AtomicLong(0);
+   private static final CopyOnWriteArrayList<ROS2Node> activeNodes = new CopyOnWriteArrayList<>();
 
    /*
     * Node identification
@@ -88,7 +92,8 @@ public class ROS2Node implements Closeable
     * A helper map linking {@link ROS2Topic}\s to {@link TopicData}, where TopicData is a set of Fast-DDS pointers required
     * for creating and using a topic. For internal use only.
     */
-   private final Map<ROS2Topic<?>, TopicData> topicData;
+   private final Map<String, Map<String, TopicData>> topicDataByNameAndType;
+   private final Map<String, TypeRegistration> typeRegistrationsByName;
 
    /**
     * A list of {@link ROS2Publisher}\s managed by this node.
@@ -104,6 +109,7 @@ public class ROS2Node implements Closeable
     */
    protected final ReadWriteLock closeLock;
    protected boolean closed;
+   private final Thread shutdownHook;
 
    /**
     * Create a new ROS 2 Node for managing ROS 2-compatible publishers, subscriptions.
@@ -186,15 +192,26 @@ public class ROS2Node implements Closeable
       }
 
       fastddsParticipant = fastddsjava_create_participant(participantProfileName);
-      topicData = new HashMap<>();
+      topicDataByNameAndType = new HashMap<>();
+      typeRegistrationsByName = new HashMap<>();
       publishers = new ArrayList<>();
       subscriptions = new ArrayList<>();
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
-      // Create a shutdown hook to ensure the node is closed when the JVM exits.
-      Runtime.getRuntime().addShutdownHook(new Thread(this::close, "ROS2NodeShutdownHook-" + name));
+      shutdownHook = new Thread(this::close, "ROS2NodeShutdownHook-" + name);
+      Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+      activeNodes.add(this);
+   }
+
+   /**
+    * Returns all nodes that have been constructed and not yet closed.
+    */
+   public static List<ROS2Node> getActiveNodes()
+   {
+      return activeNodes;
    }
 
    /**
@@ -218,9 +235,6 @@ public class ROS2Node implements Closeable
       this(name, domainId, (TransportDescriptorType[]) null);
    }
 
-   /*
-    * For managing native Fast-DDS topic memory. For internal-use only.
-    */
    <T extends ROS2Message<T>> TopicData getOrCreateTopicData(ROS2Topic<T> topic)
    {
       closeLock.readLock().lock();
@@ -228,52 +242,78 @@ public class ROS2Node implements Closeable
       {
          if (!closed)
          {
-            synchronized (this.topicData)
+            String topicName = topic.getName();
+            String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
+
+            synchronized (this.topicDataByNameAndType)
             {
-               if (this.topicData.containsKey(topic))
+               Map<String, TopicData> topicDataByType = this.topicDataByNameAndType.get(topicName);
+               if (topicDataByType != null)
                {
-                  return this.topicData.get(topic);
+                  TopicData existingTopicData = topicDataByType.get(topicTypeName);
+                  if (existingTopicData != null)
+                  {
+                     return existingTopicData;
+                  }
                }
                else
                {
-                  ProfilesXML profilesXML = new ProfilesXML();
-                  TopicProfileType topicProfile = new TopicProfileType();
-                  // Prefix with "t_" to ensure valid XML identifier
-                  long topicId = topicIdCounter.getAndIncrement();
-                  String topicProfileName = "t_" + topicId;
-                  topicProfile.setProfileName(topicProfileName);
-                  profilesXML.addTopicProfile(topicProfile);
-
-                  try
-                  {
-                     profilesXML.load();
-                  }
-                  catch (fastddsjavaException e)
-                  {
-                     jros2.logError("Failed to load topic profile '" + topicProfileName + "' for topic '" + topic.getName() + "'", e);
-                     throw new RuntimeException("Failed to load topic profile: " + topicProfileName, e);
-                  }
-
-                  /*
-                   * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
-                   * where {@code X} is determined by the subtype of the topic.
-                   * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
-                   * https://design.ros2.org/articles/topic_and_service_names.html
-                   */
-                  // TODO: Support other prefixes depending on ROS subsystem
-                  // Use concat method to avoid string allocation on hot path (though this still allocates)
-                  String prefixedTopicName = "rt".concat(topic.getName());
-                  String topicTypeName = ROS2Message.getNameFromMessageClass(topic.getType());
-                  fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-                  Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-                  fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                  Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant, topicDataWrapperType, prefixedTopicName, topicProfileName);
-                  TopicData topicData = new TopicData(topicDataWrapperType, fastddsTypeSupport, fastddsTopic);
-
-                  this.topicData.put(topic, topicData);
-
-                  return topicData;
+                  topicDataByType = new HashMap<>();
+                  this.topicDataByNameAndType.put(topicName, topicDataByType);
                }
+
+               ProfilesXML profilesXML = new ProfilesXML();
+               TopicProfileType topicProfile = new TopicProfileType();
+               // Prefix with "t_" to ensure valid XML identifier
+               long topicId = topicIdCounter.getAndIncrement();
+               String topicProfileName = "t_" + topicId;
+               topicProfile.setProfileName(topicProfileName);
+               profilesXML.addTopicProfile(topicProfile);
+
+               try
+               {
+                  profilesXML.load();
+               }
+               catch (fastddsjavaException e)
+               {
+                  jros2.logError("Failed to load topic profile '" + topicProfileName + "' for topic '" + topicName + "'", e);
+                  throw new RuntimeException("Failed to load topic profile: " + topicProfileName, e);
+               }
+
+               /*
+                * All ROS topics are prefixed with {@code rX} to create the DDS topic name,
+                * where {@code X} is determined by the subtype of the topic.
+                * See "Mapping of ROS 2 Topic and Service Names to DDS Concepts" section of
+                * https://design.ros2.org/articles/topic_and_service_names.html
+                */
+               // TODO: Support other prefixes depending on ROS subsystem
+               // Use concat method to avoid string allocation on hot path (though this still allocates)
+               String prefixedTopicName = "rt".concat(topicName);
+               TypeRegistration typeRegistration = typeRegistrationsByName.get(topicTypeName);
+               if (typeRegistration == null)
+               {
+                  synchronized (typeRegistrationLock)
+                  {
+                     typeRegistration = typeRegistrationsByName.get(topicTypeName);
+                     if (typeRegistration == null)
+                     {
+                        fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
+                        Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
+                        fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
+                        typeRegistration = new TypeRegistration(topicDataWrapperType, fastddsTypeSupport);
+                        typeRegistrationsByName.put(topicTypeName, typeRegistration);
+                     }
+                  }
+               }
+               Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
+                                                               typeRegistration.topicDataWrapperType,
+                                                               prefixedTopicName,
+                                                               topicProfileName);
+               TopicData topicData = new TopicData(typeRegistration.topicDataWrapperType, typeRegistration.fastddsTypeSupport, fastddsTopic);
+
+               topicDataByType.put(topicTypeName, topicData);
+
+               return topicData;
             }
          }
       }
@@ -403,7 +443,10 @@ public class ROS2Node implements Closeable
     *                   them to communicate.
     * @return the subscription instance, you do not have to store this as a field or manage it in any way if you don't need to.
     */
-   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic,
+                                                                            ROS2SubscriptionCallback<T> callback,
+                                                                            ROS2SubscriptionMatchedCallback matchedCallback,
+                                                                            ROS2QoSProfile qosProfile)
    {
       closeLock.readLock().lock();
       try
@@ -438,7 +481,7 @@ public class ROS2Node implements Closeable
                   throw new RuntimeException("Failed to load subscriber profile: " + subscriberProfileName, e);
                }
 
-               subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, topic, topicData);
+               subscription = new ROS2Subscription<>(fastddsParticipant, subscriberProfileName, callback, matchedCallback, topic, topicData);
             }
 
             synchronized (subscriptions)
@@ -455,6 +498,18 @@ public class ROS2Node implements Closeable
       }
 
       return null;
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback, ROS2QoSProfile qosProfile)
+   {
+      return createSubscription(topic, callback, null, qosProfile);
+   }
+
+   public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic,
+                                                                            ROS2SubscriptionCallback<T> callback,
+                                                                            ROS2SubscriptionMatchedCallback matchedCallback)
+   {
+      return createSubscription(topic, callback, matchedCallback, ROS2QoSProfile.DEFAULT);
    }
 
    /**
@@ -653,6 +708,14 @@ public class ROS2Node implements Closeable
    }
 
    /**
+    * @return true if this node publishes asynchronously on a background thread.
+    */
+   public boolean isAsync()
+   {
+      return false;
+   }
+
+   /**
     * Release resources and mark this node as inoperable. After close() has been called, this node will be unable to create new publishers or subscriptions.
     * This method will block and wait for:
     * 1. any currently executing {@link ROS2Publisher#publish(ROS2Message)}
@@ -666,12 +729,25 @@ public class ROS2Node implements Closeable
    {
       // Wait until all readers are finished, then start closing
       closeLock.writeLock().lock();
-      boolean wasClosed = closed;
-      closed = true;
-      closeLock.writeLock().unlock();
-
-      if (!wasClosed)
+      if (closed)
       {
+         closeLock.writeLock().unlock();
+         return;
+      }
+      closed = true;
+      activeNodes.remove(this);
+
+      try
+      {
+         try
+         {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+         }
+         catch (IllegalStateException ignored)
+         {
+            // JVM shutdown already in progress
+         }
+
          synchronized (publishers)
          {
             // Delete publishers
@@ -692,24 +768,53 @@ public class ROS2Node implements Closeable
             subscriptions.clear();
          }
 
-         synchronized (topicData)
+         synchronized (participantDestructionLock)
          {
-            // Delete topics
-            for (ROS2Topic<?> topic : topicData.keySet())
+            synchronized (ProfilesXML.getLoadLock())
             {
-               TopicData topicData = this.topicData.get(topic);
+               try
+               {
+                  Thread.sleep(50);
+               }
+               catch (InterruptedException e)
+               {
+                  Thread.currentThread().interrupt();
+               }
 
-               retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
-               retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, topicData.topicDataWrapperType.get_name()));
+               synchronized (topicDataByNameAndType)
+               {
+                  // Delete topics
+                  for (Map<String, TopicData> topicDataByType : topicDataByNameAndType.values())
+                  {
+                     for (TopicData topicData : topicDataByType.values())
+                     {
+                        retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+                     }
+                  }
+                  topicDataByNameAndType.clear();
 
-               topicData.topicDataWrapperType.close();
-               topicData.fastddsTypeSupport.close();
+                  synchronized (typeRegistrationLock)
+                  {
+                     // Unregister types
+                     for (TypeRegistration typeRegistration : typeRegistrationsByName.values())
+                     {
+                        retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, typeRegistration.topicDataWrapperType.get_name()));
+                        typeRegistration.fastddsTypeSupport.close();
+                        typeRegistration.topicDataWrapperType.setNull();
+                     }
+                     typeRegistrationsByName.clear();
+                  }
+               }
+
+               // Delete participant
+               retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
+               fastddsParticipant.setNull();
             }
-            topicData.clear();
          }
-
-         // Delete participant
-         retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
+      }
+      finally
+      {
+         closeLock.writeLock().unlock();
       }
    }
 
@@ -745,6 +850,18 @@ public class ROS2Node implements Closeable
             jros2.getLogger().severe("Shared Memory Transport (SHM) is not available. Could not write to: C:\\ProgramData\\eprosima\\fastdds_interprocess");
             jros2.getLogger().severe("Try restarting the process after deleting the directory.");
          }
+      }
+   }
+
+   private static final class TypeRegistration
+   {
+      private final fastddsjava_TopicDataWrapperType topicDataWrapperType;
+      private final Pointer fastddsTypeSupport;
+
+      private TypeRegistration(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport)
+      {
+         this.topicDataWrapperType = topicDataWrapperType;
+         this.fastddsTypeSupport = fastddsTypeSupport;
       }
    }
 }

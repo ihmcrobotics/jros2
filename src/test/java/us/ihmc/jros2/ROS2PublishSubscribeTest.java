@@ -612,4 +612,62 @@ public class ROS2PublishSubscribeTest
 
       ros2Node.close();
    }
+
+   @Test
+   @Timeout(30)
+   public void testVariableSizeMessagesWithSubscriptionSampler()
+   {
+      String topicName = "/ihmc/test_variable_string";
+
+      ROS2Node publisherNode = new ROS2Node("publisher_node");
+      ROS2Node subscriberNode = new ROS2Node("subscriber_node");
+      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+
+      List<String> received = new ArrayList<>();
+      Object sync = new Object();
+
+      subscriberNode.createSubscriptionSampler(topic, message ->
+      {
+         synchronized (sync)
+         {
+            received.add(message.getDataAsString());
+            sync.notifyAll();
+         }
+      });
+
+      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      assertTrue(publisher.waitForSubscription(5000));
+
+      std_msgs.String largeMessage = new std_msgs.String();
+      largeMessage.setData("b".repeat(65536));
+      publisher.publish(largeMessage);
+
+      std_msgs.String smallMessage = new std_msgs.String();
+      smallMessage.setData("a".repeat(128));
+      publisher.publish(smallMessage);
+
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+      synchronized (sync)
+      {
+         while (received.size() < 2 && System.nanoTime() < deadline)
+         {
+            try
+            {
+               sync.wait(100);
+            }
+            catch (InterruptedException e)
+            {
+               Thread.currentThread().interrupt();
+               break;
+            }
+         }
+      }
+
+      assertEquals(2, received.size());
+      assertEquals(largeMessage.getDataAsString(), received.get(0));
+      assertEquals(smallMessage.getDataAsString(), received.get(1));
+
+      publisherNode.close();
+      subscriberNode.close();
+   }
 }

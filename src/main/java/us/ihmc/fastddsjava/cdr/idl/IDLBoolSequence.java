@@ -87,6 +87,18 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
    }
 
    /**
+    * Appends all boolean values from the array to the end of the sequence.
+    * This is an efficient bulk operation.
+    *
+    * @param values the boolean array to add
+    */
+   public void addAll(boolean[] values)
+   {
+      ensureMinCapacity(buffer.position() + values.length);
+      buffer.put(values);
+   }
+
+   /**
     * Removes and returns the last element from the sequence.
     *
     * @return the last element in the sequence
@@ -254,6 +266,14 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
       public void put(boolean value)
       {
          byteBuffer.put((byte) (value ? 1 : 0));
+      }
+
+      public void put(boolean[] values)
+      {
+         for (boolean value : values)
+         {
+            byteBuffer.put((byte) (value ? 1 : 0));
+         }
       }
 
       public boolean get()

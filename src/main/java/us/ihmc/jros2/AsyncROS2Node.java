@@ -47,6 +47,7 @@ public class AsyncROS2Node extends ROS2Node
    private final Thread publishThread;
    private final BlockingQueue<Runnable> tasks;
    private final String threadName;
+   private volatile boolean rejectTasks;
 
    public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
@@ -74,6 +75,8 @@ public class AsyncROS2Node extends ROS2Node
 
    public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
    {
+      AsyncROS2Publisher<T> publisher = null;
+
       closeLock.readLock().lock();
       try
       {
@@ -103,14 +106,12 @@ public class AsyncROS2Node extends ROS2Node
             }
 
             TopicData topicData = getOrCreateTopicData(topic);
-            AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
+            publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
 
             synchronized (publishers)
             {
                publishers.add(publisher);
             }
-
-            return publisher;
          }
       }
       finally
@@ -118,13 +119,19 @@ public class AsyncROS2Node extends ROS2Node
          closeLock.readLock().unlock();
       }
 
-      return null;
+      return publisher;
+   }
+
+   @Override
+   public boolean isAsync()
+   {
+      return true;
    }
 
    @Override
    public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
    {
-      int defaultQueueCapacity = 32;
+      int defaultQueueCapacity = 64;
 
       return createPublisher(topic, qosProfile, defaultQueueCapacity);
    }
@@ -132,30 +139,46 @@ public class AsyncROS2Node extends ROS2Node
    @Override
    public void close()
    {
-      publishThread.interrupt();
-      try
+      closeLock.writeLock().lock();
+      if (closed)
       {
-         publishThread.join(100);
+         closeLock.writeLock().unlock();
       }
-      catch (InterruptedException interruptedException)
+      else
       {
-         jros2.logError("Publish thread did not join.", interruptedException);
-      }
+         rejectTasks = true;
+         closeLock.writeLock().unlock();
 
-      super.close();
+         publishThread.interrupt();
+         try
+         {
+            publishThread.join(2000);
+         }
+         catch (InterruptedException interruptedException)
+         {
+            Thread.currentThread().interrupt();
+            jros2.logError("Publish thread did not join.", interruptedException);
+         }
+
+         super.close();
+      }
    }
 
    protected boolean addTask(Runnable task)
    {
-      // TODO: Double check behavior
-      return tasks.offer(task);
+      boolean accepted = false;
+      if (!rejectTasks)
+      {
+         accepted = tasks.offer(task);
+      }
+      return accepted;
    }
 
    private void publishLoop()
    {
       try
       {
-         while (!publishThread.isInterrupted())
+         while (!Thread.currentThread().isInterrupted())
          {
             Runnable task = tasks.take();
             task.run();
@@ -163,7 +186,7 @@ public class AsyncROS2Node extends ROS2Node
       }
       catch (InterruptedException ignored)
       {
-         // Thread interrupted during shutdown
+         Thread.currentThread().interrupt();
       }
    }
 }

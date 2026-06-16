@@ -10,6 +10,7 @@ group = "us.ihmc"
 version = "1.0.0"
 
 repositories {
+   mavenLocal()
    mavenCentral()
    maven { url = uri("https://robotlabfiles.ihmc.us/repository/") }
 }

@@ -56,7 +56,7 @@ public class <context.javaClassName> implements ROS2Message\<<context.javaClassN
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.array)>
-<field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><field.length><if(field.builtinStringType&&field.stringMaxLength)>, <field.length>, <field.stringLength><endif><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
+<field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><if(field.builtinStringType)><if(field.stringMaxLength)>0, <field.length>, <field.stringLength><else>0<endif><else>0, <field.length><endif><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
       <if(field.fixedSize&&(!field.builtinType||field.builtinStringType))>
 // <field.name> is defined as a fixed-size array, so it is pre-allocated.
 for (int i = 0; i \< <field.javaName>.length; ++i)
@@ -81,7 +81,12 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
-      <if(field.array&&field.fixedSize)>
+      <if(field.array&&field.fixedSize&&field.builtinStringType)>
+for (int i = 0; i \< <field.javaName>.length; ++i)
+{
+   currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.builtinTypeSize> * <field.javaName>[i].length())<if(!field.builtinWStringType)> + 1<endif>; // <field.javaName>[i]
+\}
+      <elseif(field.array&&field.fixedSize)>
 currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.javaName>
       <elseif(field.array&&!field.fixedSize)>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);

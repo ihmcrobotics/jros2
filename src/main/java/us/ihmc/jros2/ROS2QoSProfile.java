@@ -28,6 +28,17 @@ public class ROS2QoSProfile
    }
 
    public static final ROS2QoSProfile DEFAULT = new ROS2QoSProfile();
+   public static final ROS2QoSProfile RELIABLE;
+   public static final ROS2QoSProfile BEST_EFFORT;
+
+   static
+   {
+      RELIABLE = new ROS2QoSProfile();
+      RELIABLE.reliability(Reliability.RELIABLE);
+
+      BEST_EFFORT = new ROS2QoSProfile();
+      BEST_EFFORT.reliability(Reliability.BEST_EFFORT);
+   }
 
    public enum History
    {

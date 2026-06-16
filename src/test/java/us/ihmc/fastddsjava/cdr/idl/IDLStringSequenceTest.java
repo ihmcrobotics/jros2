@@ -1,6 +1,7 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -261,5 +262,76 @@ public class IDLStringSequenceTest
       assertEquals(INITIAL_CAPACITY + 1, sequence.size());
       assertTrue(sequence.capacity() > INITIAL_CAPACITY);
       assertEquals("Extra", sequence.getAsString(INITIAL_CAPACITY));
+   }
+
+   @Test
+   public void testDeserializeWithPreallocatedCapacity()
+   {
+      IDLStringSequence sequence = new IDLStringSequence(INITIAL_CAPACITY);
+      CDRBuffer buffer = new CDRBuffer();
+      buffer.ensureRemainingCapacity(256);
+      buffer.writePayloadHeader();
+      buffer.writeInt(2);
+      buffer.writeString(new StringBuilder("alpha"));
+      buffer.writeString(new StringBuilder("beta"));
+
+      buffer.rewind();
+      buffer.readPayloadHeader();
+      sequence.deserialize(buffer);
+
+      assertEquals(2, sequence.size());
+      assertEquals("alpha", sequence.getAsString(0));
+      assertEquals("beta", sequence.getAsString(1));
+   }
+
+   @Test
+   public void testCalculateSizeBytesMatchesSerialize()
+   {
+      IDLStringSequence sequence = new IDLStringSequence();
+      sequence.add("SpineYaw");
+      sequence.add("LeftShoulderPitch");
+      sequence.add("RightElbow");
+
+      int calculatedBytes = sequence.calculateSizeBytes(0);
+
+      CDRBuffer buffer = new CDRBuffer();
+      buffer.ensureRemainingCapacity(512);
+      buffer.writePayloadHeader();
+      int bodyStartPosition = buffer.getBufferUnsafe().position();
+      sequence.serialize(buffer);
+      int serializedBytes = buffer.getBufferUnsafe().position() - bodyStartPosition;
+
+      assertEquals(serializedBytes, calculatedBytes);
+   }
+
+   @Test
+   public void testDeserializeGrowingReusedSequence()
+   {
+      IDLStringSequence sequence = new IDLStringSequence(INITIAL_CAPACITY);
+      CDRBuffer buffer = new CDRBuffer();
+      buffer.ensureRemainingCapacity(256);
+      buffer.writePayloadHeader();
+      buffer.writeInt(1);
+      buffer.writeString(new StringBuilder("first"));
+
+      buffer.rewind();
+      buffer.readPayloadHeader();
+      sequence.deserialize(buffer);
+
+      buffer.rewind();
+      buffer.writePayloadHeader();
+      buffer.writeInt(3);
+      buffer.writeString(new StringBuilder("one"));
+      buffer.writeString(new StringBuilder("two"));
+      buffer.writeString(new StringBuilder("three"));
+
+      buffer.rewind();
+      buffer.readPayloadHeader();
+      sequence.deserialize(buffer);
+
+      assertEquals(3, sequence.size());
+      assertEquals("one", sequence.getAsString(0));
+      assertEquals("two", sequence.getAsString(1));
+      assertEquals("three", sequence.getAsString(2));
    }
 }

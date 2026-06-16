@@ -3,6 +3,9 @@ name: Build natives
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-natives-linux:
     runs-on: ubuntu-22.04
@@ -39,14 +42,18 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
 
+      - name: Stage Linux native libraries
+        run: |
+          mkdir -p "artifact/linux-${{ matrix.platform }}"
+          cp -a "src/main/resources/fastddsjava/native/linux-${{ matrix.platform }}/." "artifact/linux-${{ matrix.platform }}/"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: natives-linux-${{ matrix.platform }}
-          path: |
-            src/main/resources/**/*.so
-            src/main/resources/**/*.so.*
+          path: artifact/linux-${{ matrix.platform }}/
           retention-days: 1
+
   build-natives-windows:
     runs-on: windows-2022
     timeout-minutes: 30
@@ -62,12 +69,18 @@ jobs:
       - name: Compile native library
         run: |
           bash.exe cppbuild.bash
+      - name: Stage Windows native libraries
+        shell: bash
+        run: |
+          mkdir -p artifact/windows-x86_64
+          cp -a src/main/resources/fastddsjava/native/windows-x86_64/. artifact/windows-x86_64/
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: natives-windows
-          path: src/main/resources/**/*.dll
+          path: artifact/windows-x86_64/
           retention-days: 1
+
   build-natives-android:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
@@ -108,11 +121,16 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
 
+      - name: Stage Android native libraries
+        run: |
+          mkdir -p "artifact/${{ matrix.platform }}"
+          cp -a "android/src/main/jniLibs/${{ matrix.platform }}/." "artifact/${{ matrix.platform }}/"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: natives-android-${{ matrix.platform }}
-          path: android/src/main/jniLibs/**/*.so
+          path: artifact/${{ matrix.platform }}/
           retention-days: 1
 
   build-natives-macos:
@@ -130,11 +148,15 @@ jobs:
       - name: Compile native library (${{ matrix.platform }})
         run: |
           MAC_COMPILE_${{ matrix.platform == 'arm64' && 'ARM64' || 'X86_64' }}=1 bash cppbuild.bash
+      - name: Stage macOS native libraries
+        run: |
+          mkdir -p "artifact/macos-${{ matrix.platform }}"
+          cp -a "src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}/." "artifact/macos-${{ matrix.platform }}/"
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: natives-macos-${{ matrix.platform }}
-          path: src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}/*.dylib
+          path: artifact/macos-${{ matrix.platform }}/
           retention-days: 1
 
   commit-all-natives:
@@ -143,6 +165,8 @@ jobs:
     needs: [build-natives-linux, build-natives-windows, build-natives-android, build-natives-macos]
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -156,45 +180,41 @@ jobs:
 
       - name: Copy artifacts to repository
         run: |
-          # Copy Linux natives to src/main/resources/
-          if [ -d "artifacts/natives-linux-arm64" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-linux-arm64/* src/main/resources/
-          fi
-          if [ -d "artifacts/natives-linux-armhf" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-linux-armhf/* src/main/resources/
-          fi
-          if [ -d "artifacts/natives-linux-x86_64" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-linux-x86_64/* src/main/resources/
-          fi
+          set -euo pipefail
 
-          # Copy Windows natives to src/main/resources/
-          if [ -d "artifacts/natives-windows" ]; then
-            mkdir -p src/main/resources
-            cp -rv artifacts/natives-windows/* src/main/resources/
-          fi
+          # upload-artifact v4 places files at artifacts/<name>/ (flat).
+          # Fall back to artifacts/<name>/<subdir> for older staged layouts.
+          resolve_artifact_src() {
+            local artifact_root="$1"
+            local nested_subdir="$2"
+            if [ -d "$artifact_root/$nested_subdir" ]; then
+              echo "$artifact_root/$nested_subdir"
+            elif [ -d "$artifact_root" ] && [ -n "$(ls -A "$artifact_root" 2>/dev/null)" ]; then
+              echo "$artifact_root"
+            else
+              echo "Missing artifact directory: $artifact_root (also tried $artifact_root/$nested_subdir)" >&2
+              return 1
+            fi
+          }
 
-          # Copy Android natives to android/src/main/jniLibs/
-          if [ -d "artifacts/natives-android-arm64-v8a" ]; then
-            mkdir -p android/src/main/jniLibs
-            cp -rv artifacts/natives-android-arm64-v8a/* android/src/main/jniLibs/
-          fi
-          if [ -d "artifacts/natives-android-x86_64" ]; then
-            mkdir -p android/src/main/jniLibs
-            cp -rv artifacts/natives-android-x86_64/* android/src/main/jniLibs/
-          fi
+          copy_artifact_dir() {
+            local src="$1"
+            local dest="$2"
+            mkdir -p "$dest"
+            cp -a "$src/." "$dest/"
+          }
 
-          # Copy macOS natives to src/main/resources/
-          if [ -d "artifacts/natives-macos-arm64" ]; then
-            mkdir -p src/main/resources/fastddsjava/native/macos-arm64
-            cp -rv artifacts/natives-macos-arm64/* src/main/resources/fastddsjava/native/macos-arm64/
-          fi
-          if [ -d "artifacts/natives-macos-x86_64" ]; then
-            mkdir -p src/main/resources/fastddsjava/native/macos-x86_64
-            cp -rv artifacts/natives-macos-x86_64/* src/main/resources/fastddsjava/native/macos-x86_64/
-          fi
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-arm64 linux-arm64)" src/main/resources/fastddsjava/native/linux-arm64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-armhf linux-armhf)" src/main/resources/fastddsjava/native/linux-armhf
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-x86_64 linux-x86_64)" src/main/resources/fastddsjava/native/linux-x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows windows-x86_64)" src/main/resources/fastddsjava/native/windows-x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-arm64-v8a arm64-v8a)" android/src/main/jniLibs/arm64-v8a
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-x86_64 x86_64)" android/src/main/jniLibs/x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-arm64 macos-arm64)" src/main/resources/fastddsjava/native/macos-arm64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-x86_64 macos-x86_64)" src/main/resources/fastddsjava/native/macos-x86_64
 
       - name: Verify native library architectures
         run: |
@@ -274,18 +294,16 @@ jobs:
       - name: Show what files changed
         run: |
           echo "Git status after copying artifacts:"
-          git status
+          git status --short
 
       - name: Commit all native libraries
-        uses: EndBug/add-and-commit@v9
-        with:
-          add: |
-            src/main/resources/**/*.so
-            src/main/resources/**/*.so.*
-            src/main/resources/**/*.dll
-            src/main/resources/**/*.dylib
-            android/src/main/jniLibs/**/*.so
-          author_name: ihmc-rosie
-          author_email: rosie@ihmc.us
-          message: 'Rebuild all native libraries'
-          push: true
+        run: |
+          git config user.name "ihmc-rosie"
+          git config user.email "rosie@ihmc.us"
+          git add src/main/resources/fastddsjava/native android/src/main/jniLibs
+          if git diff --staged --quiet; then
+            echo "No native library changes to commit."
+            exit 0
+          fi
+          git commit -m "Rebuild all native libraries"
+          git push origin "HEAD:${{ github.ref_name }}"

@@ -76,6 +76,18 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence> implements
    }
 
    /**
+    * Sets the element at {@code index} without requiring sequential {@link #add(double)} calls.
+    * Extends the logical {@link #size()} when {@code index} is at or beyond the current size.
+    */
+   public void putAt(int index, double value)
+   {
+      ensureMinCapacity(index + 1);
+      buffer.put(index, value);
+      if (buffer.position() <= index)
+         buffer.position(index + 1);
+   }
+
+   /**
     * Appends a double value to the end of the sequence.
     *
     * @param value the double value to add
@@ -84,6 +96,18 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence> implements
    {
       ensureMinCapacity(buffer.position() + 1);
       buffer.put(value);
+   }
+
+   /**
+    * Appends all double values from the array to the end of the sequence.
+    * This is a highly efficient bulk operation using NIO buffer operations.
+    *
+    * @param values the double array to add
+    */
+   public void addAll(double[] values)
+   {
+      ensureMinCapacity(buffer.position() + values.length);
+      buffer.put(values);
    }
 
    /**

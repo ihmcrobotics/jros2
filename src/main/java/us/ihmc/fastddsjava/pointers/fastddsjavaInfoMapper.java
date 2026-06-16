@@ -36,7 +36,11 @@ import org.bytedeco.javacpp.tools.InfoMapper;
 
                   "fastdds/dds/subscriber/SampleState.hpp",
                   "fastdds/dds/subscriber/ViewState.hpp",
-                  "fastdds/dds/subscriber/InstanceState.hpp"
+                  "fastdds/dds/subscriber/InstanceState.hpp",
+                  "fastdds/dds/subscriber/SampleInfo.hpp",
+
+                  "fastdds/dds/core/Time_t.hpp",
+                  "fastdds/rtps/common/Time_t.hpp"
             },
             linkpath = "install/lib",
             preload = "jnifastddsjava",
@@ -79,8 +83,10 @@ public class fastddsjavaInfoMapper implements InfoMapper
 
       infoMap.put(new Info("std::vector<uint8_t>").pointerTypes("ByteVector").define());
 
-      infoMap.put(new Info("eprosima::fastdds::rtps::InstanceHandle_t", "InstanceHandle_t").skip());
       infoMap.put(new Info("eprosima::fastdds::rtps::SampleIdentity").skip());
+
+      infoMap.put(new Info("eprosima::fastdds::rtps::InstanceHandle_t", "InstanceHandle_t").skip());
+      infoMap.put(new Info("eprosima::fastdds::dds::SampleInfo").pointerTypes("fastddsjava_SampleInfo"));
 
       // Callbacks
       infoMap.put(new Info("fastddsjava_DataReaderListener::fastddsjava_OnDataCallback").pointerTypes("fastddsjava_OnDataCallback"));

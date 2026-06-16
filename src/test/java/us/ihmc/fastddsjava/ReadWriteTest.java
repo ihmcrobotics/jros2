@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Timeout;
 import us.ihmc.fastddsjava.library.fastddsjavaNativeLibrary;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.fastddsjava.pointers.fastddsjava_SampleInfo;
 import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.DataReaderQosPoliciesType;
@@ -125,7 +126,7 @@ public class ReadWriteTest
 
       // Add callback to listener
       fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Pointer sampleInfo = fastddsjava_create_sampleinfo();
+      fastddsjava_SampleInfo sampleInfo = new fastddsjava_SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          public void call()
@@ -168,7 +169,7 @@ public class ReadWriteTest
 
       // Delete / release all references
       topicDataWrapperType.delete_data(topicDataWrapperPublish);
-      fastddsjava_delete_sampleinfo(sampleInfo);
+      sampleInfo.close();
       topicDataWrapperType.delete_data(topicDataWrapperReceive);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -216,7 +217,7 @@ public class ReadWriteTest
 
       // Add callback to listener
       fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Pointer sampleInfo = fastddsjava_create_sampleinfo();
+      fastddsjava_SampleInfo sampleInfo = new fastddsjava_SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          public void call()
@@ -259,7 +260,7 @@ public class ReadWriteTest
 
       // Delete / release all references
       topicDataWrapperType.delete_data(topicDataWrapperPublish);
-      fastddsjava_delete_sampleinfo(sampleInfo);
+      sampleInfo.close();
       topicDataWrapperType.delete_data(topicDataWrapperReceive);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -306,7 +307,7 @@ public class ReadWriteTest
 
       // Add callback to listener
       fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Pointer sampleInfo = fastddsjava_create_sampleinfo();
+      fastddsjava_SampleInfo sampleInfo = new fastddsjava_SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
@@ -377,7 +378,7 @@ public class ReadWriteTest
 
       // Delete / release all references
       topicDataWrapperType.delete_data(topicDataWrapperPublish);
-      fastddsjava_delete_sampleinfo(sampleInfo);
+      sampleInfo.close();
       topicDataWrapperType.delete_data(topicDataWrapperReceive);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());
@@ -426,7 +427,7 @@ public class ReadWriteTest
 
       // Add callback to listener
       fastddsjava_TopicDataWrapper topicDataWrapperReceive = new fastddsjava_TopicDataWrapper(topicDataWrapperType.create_data());
-      Pointer sampleInfo = fastddsjava_create_sampleinfo();
+      fastddsjava_SampleInfo sampleInfo = new fastddsjava_SampleInfo();
       fastddsjava_OnDataCallback onDataCallback = new fastddsjava_OnDataCallback()
       {
          @Override
@@ -479,7 +480,7 @@ public class ReadWriteTest
 
       // Delete / release all references
       topicDataWrapperType.delete_data(topicDataWrapperWrite);
-      fastddsjava_delete_sampleinfo(sampleInfo);
+      sampleInfo.close();
       topicDataWrapperType.delete_data(topicDataWrapperReceive);
       retcodeThrowOnError(fastddsjava_delete_datareader(subscriber, dataReader));
       assertTrue(onDataCallback.releaseReference());

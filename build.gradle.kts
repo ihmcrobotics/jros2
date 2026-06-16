@@ -121,6 +121,7 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("stereo_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
+        projectDir.resolve("ros2_interfaces").resolve("geometry2").resolve("tf2_msgs").absolutePath,
 
         projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
     )
