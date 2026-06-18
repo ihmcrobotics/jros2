@@ -3,6 +3,9 @@
   <a href="https://github.com/ihmcrobotics/jros2/wiki">Wiki</a>
   <a href="https://github.com/ihmcrobotics/jros2/issues">Issues</a>
 </p>
+<p align="center">
+  <a href="https://www.paypal.com/donate/?hosted_button_id=DH22GB8B6TD84">Donate here to fund open-source robotics projects!</a>
+</p>
 
 -----------------
 
