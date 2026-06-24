@@ -389,7 +389,7 @@ public class ROS2Node implements Closeable
 
    public <T extends ROS2Message<T>> ROS2Publisher<T> createPublisher(ROS2Topic<T> topic)
    {
-      return createPublisher(topic, ROS2QoSProfile.DEFAULT);
+      return createPublisher(topic, topic.getQoS());
    }
 
    /**
@@ -509,7 +509,7 @@ public class ROS2Node implements Closeable
                                                                             ROS2SubscriptionCallback<T> callback,
                                                                             ROS2SubscriptionMatchedCallback matchedCallback)
    {
-      return createSubscription(topic, callback, matchedCallback, ROS2QoSProfile.DEFAULT);
+      return createSubscription(topic, callback, matchedCallback, topic.getQoS());
    }
 
    /**
@@ -527,7 +527,7 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic, ROS2SubscriptionCallback<T> callback)
    {
-      return createSubscription(topic, callback, ROS2QoSProfile.DEFAULT);
+      return createSubscription(topic, callback, topic.getQoS());
    }
 
    /**
@@ -554,7 +554,7 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscription(ROS2Topic<T> topic)
    {
-      return createSubscription(topic, null, ROS2QoSProfile.DEFAULT);
+      return createSubscription(topic, null, topic.getQoS());
    }
 
    /**
@@ -601,7 +601,7 @@ public class ROS2Node implements Closeable
     */
    public <T extends ROS2Message<T>> ROS2Subscription<T> createSubscriptionSampler(ROS2Topic<T> topic, ROS2SubscriptionCallbackSampler<T> sampler)
    {
-      return createSubscriptionSampler(topic, sampler, ROS2QoSProfile.DEFAULT);
+      return createSubscriptionSampler(topic, sampler, topic.getQoS());
    }
 
    /**
