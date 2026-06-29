@@ -39,6 +39,12 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 
    }
 
+   public MultiArrayDimension(MultiArrayDimension from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

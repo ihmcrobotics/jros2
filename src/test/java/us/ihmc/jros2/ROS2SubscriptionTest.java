@@ -92,13 +92,13 @@ public class ROS2SubscriptionTest
       final String topicName = "/ihmc/test_allocation_free";
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.reliability(Reliability.RELIABLE);
 
       // Allocation-free subscription: allocate message once and reuse
-      std_msgs.String msg = new std_msgs.String();
+      std_msgs.String_ msg = new std_msgs.String_();
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
@@ -142,7 +142,7 @@ public class ROS2SubscriptionTest
       final String topicName = "/ihmc/test_with_allocation";
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
@@ -152,7 +152,7 @@ public class ROS2SubscriptionTest
       final Object sync = new Object();
       ros2Node.createSubscription(topic, reader ->
       {
-         std_msgs.String msg = reader.read();
+         std_msgs.String_ msg = reader.read();
 
          synchronized (sync)
          {
@@ -193,7 +193,7 @@ public class ROS2SubscriptionTest
       final String topicName = "/ihmc/test_sampler";
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       AtomicReference<String> receivedString = new AtomicReference<>("");
 
@@ -243,14 +243,14 @@ public class ROS2SubscriptionTest
       final int publishCount = 20;
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
 
-      ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, subscriptionQos);
+      ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
       // Publish messages
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
@@ -271,7 +271,7 @@ public class ROS2SubscriptionTest
 
       // Read all messages
       int totalRead = 0;
-      std_msgs.String msg = subscription.read();
+      std_msgs.String_ msg = subscription.read();
       while (msg != null)
       {
          assertEquals(data, msg.getData().toString());
@@ -298,7 +298,7 @@ public class ROS2SubscriptionTest
       final int publishCount = 20;
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       ROS2QoSProfile subscriptionQos = new ROS2QoSProfile();
       subscriptionQos.history(History.KEEP_LAST);
@@ -306,7 +306,7 @@ public class ROS2SubscriptionTest
       subscriptionQos.reliability(Reliability.RELIABLE);
 
       AtomicInteger callbackRun = new AtomicInteger();
-      ROS2Subscription<std_msgs.String> subscription = ros2Node.createSubscription(topic, reader ->
+      ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, reader ->
       {
          // Only read in half of the callbacks
          int runNumber = callbackRun.getAndIncrement();
@@ -345,7 +345,7 @@ public class ROS2SubscriptionTest
 
       // Read remaining messages that weren't read in callback
       int totalRead = 0;
-      std_msgs.String msg = subscription.read();
+      std_msgs.String_ msg = subscription.read();
       while (msg != null)
       {
          assertEquals(data, msg.getData().toString());
@@ -369,17 +369,17 @@ public class ROS2SubscriptionTest
 
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       ROS2Node publisherNode = new ROS2Node("publisher_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       // Create subscription first
-      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
 
       // No publishers yet - should timeout
       boolean foundBeforePublisher = subscription.waitForPublisher(500);
       assertFalse(foundBeforePublisher, "Should not find publisher before it's created");
 
       // Now create publisher
-      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
 
       // Should discover publisher now
       boolean foundAfterPublisher = subscription.waitForPublisher(5000);
@@ -436,14 +436,14 @@ public class ROS2SubscriptionTest
       final String topicName = "/ihmc/test_matched_callback";
 
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       // Track when publisher is discovered
       AtomicInteger matchedCount = new AtomicInteger(0);
       final Object sync = new Object();
 
       // Create subscription with matched callback
-      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
       subscription.setOnSubscriptionMatchedCallback(() ->
       {
          matchedCount.incrementAndGet();
@@ -458,7 +458,7 @@ public class ROS2SubscriptionTest
 
       // Create a publisher - should trigger the callback
       ROS2Node publisherNode = new ROS2Node("publisher_node");
-      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
 
       // Wait for the callback to be invoked
       synchronized (sync)
@@ -554,13 +554,13 @@ public class ROS2SubscriptionTest
 
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       ROS2Node publisherNode = new ROS2Node("publisher_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       // Create subscription BEFORE publisher exists
       AtomicInteger matchedCount = new AtomicInteger(0);
       final Object sync = new Object();
 
-      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
       subscription.setOnSubscriptionMatchedCallback(() ->
       {
          matchedCount.incrementAndGet();
@@ -575,7 +575,7 @@ public class ROS2SubscriptionTest
       assertEquals(0, matchedCount.get(), "Should not match before publisher exists");
 
       // Create publisher - should trigger callback
-      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
 
       // Wait for callback
       synchronized (sync)
@@ -600,15 +600,15 @@ public class ROS2SubscriptionTest
 
       // Create publisher FIRST
       ROS2Node publisherNode = new ROS2Node("publisher_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
-      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
+      ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
 
       // Create subscription with callback - publisher already exists
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
       AtomicInteger matchedCount = new AtomicInteger(0);
       final Object sync = new Object();
 
-      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
       subscription.setOnSubscriptionMatchedCallback(() ->
       {
          matchedCount.incrementAndGet();

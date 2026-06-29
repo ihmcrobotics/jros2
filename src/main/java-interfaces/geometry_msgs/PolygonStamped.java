@@ -32,6 +32,12 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>
 
    }
 
+   public PolygonStamped(PolygonStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

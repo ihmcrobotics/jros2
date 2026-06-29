@@ -47,6 +47,12 @@ public class GoalID implements ROS2Message<GoalID>
 
    }
 
+   public GoalID(GoalID from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

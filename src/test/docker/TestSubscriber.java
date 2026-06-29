@@ -13,12 +13,12 @@ public class TestSubscriber
       System.out.println("Starting test subscriber...");
 
       ROS2Node node = new ROS2Node("test_subscriber");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>("/test", std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>("/test", std_msgs.String_.class);
 
       AtomicInteger messageCount = new AtomicInteger(0);
 
       node.createSubscription(topic, reader -> {
-         std_msgs.String msg = reader.read();
+         std_msgs.String_ msg = reader.read();
          if (msg != null)
          {
             int count = messageCount.incrementAndGet();

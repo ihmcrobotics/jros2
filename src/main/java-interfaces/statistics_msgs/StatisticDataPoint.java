@@ -70,6 +70,12 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
    }
 
+   public StatisticDataPoint(StatisticDataPoint from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

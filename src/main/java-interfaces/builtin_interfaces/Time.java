@@ -46,6 +46,12 @@ public class Time implements ROS2Message<Time>
    {
    }
 
+   public Time(Time from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

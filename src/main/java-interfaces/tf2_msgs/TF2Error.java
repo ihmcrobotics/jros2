@@ -43,6 +43,12 @@ public class TF2Error implements ROS2Message<TF2Error>
 
    }
 
+   public TF2Error(TF2Error from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -34,6 +34,12 @@ public class Clock implements ROS2Message<Clock>
 
    }
 
+   public Clock(Clock from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

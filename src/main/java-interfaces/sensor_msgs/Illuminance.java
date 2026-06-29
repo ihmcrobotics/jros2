@@ -60,6 +60,12 @@ public class Illuminance implements ROS2Message<Illuminance>
 
    }
 
+   public Illuminance(Illuminance from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

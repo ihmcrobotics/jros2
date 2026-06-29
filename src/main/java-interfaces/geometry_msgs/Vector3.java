@@ -37,6 +37,12 @@ public class Vector3 implements ROS2Message<Vector3>
    {
    }
 
+   public Vector3(Vector3 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

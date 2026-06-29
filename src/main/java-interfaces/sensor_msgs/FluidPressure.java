@@ -44,6 +44,12 @@ public class FluidPressure implements ROS2Message<FluidPressure>
 
    }
 
+   public FluidPressure(FluidPressure from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -33,6 +33,12 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
 
    }
 
+   public AccelWithCovarianceStamped(AccelWithCovarianceStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

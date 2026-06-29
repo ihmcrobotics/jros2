@@ -103,6 +103,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
 
    }
 
+   public ParameterDescriptor(ParameterDescriptor from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

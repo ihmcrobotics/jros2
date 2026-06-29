@@ -45,6 +45,12 @@ public class Header implements ROS2Message<Header>
 
    }
 
+   public Header(Header from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

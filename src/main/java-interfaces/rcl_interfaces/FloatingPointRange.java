@@ -81,6 +81,12 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
    }
 
+   public FloatingPointRange(FloatingPointRange from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -39,6 +39,12 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
 
    }
 
+   public ByteMultiArray(ByteMultiArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

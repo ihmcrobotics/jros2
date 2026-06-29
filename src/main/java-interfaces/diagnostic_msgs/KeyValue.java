@@ -37,6 +37,12 @@ public class KeyValue implements ROS2Message<KeyValue>
 
    }
 
+   public KeyValue(KeyValue from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -32,6 +32,12 @@ public class Twist implements ROS2Message<Twist>
 
    }
 
+   public Twist(Twist from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -59,6 +59,12 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
    }
 
+   public NavSatStatus(NavSatStatus from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -36,6 +36,12 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
 
    }
 
+   public Vector3Stamped(Vector3Stamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

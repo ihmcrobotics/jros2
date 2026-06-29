@@ -84,6 +84,12 @@ public class Range implements ROS2Message<Range>
 
    }
 
+   public Range(Range from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

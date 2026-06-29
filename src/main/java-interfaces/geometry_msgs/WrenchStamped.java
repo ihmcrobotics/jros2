@@ -32,6 +32,12 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>
 
    }
 
+   public WrenchStamped(WrenchStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

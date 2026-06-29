@@ -73,6 +73,12 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
       }>
    }
 
+   public <context.javaClassName>(<context.javaClassName> from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

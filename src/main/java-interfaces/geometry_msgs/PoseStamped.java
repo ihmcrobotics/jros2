@@ -32,6 +32,12 @@ public class PoseStamped implements ROS2Message<PoseStamped>
 
    }
 
+   public PoseStamped(PoseStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -74,6 +74,12 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 
    }
 
+   public DiagnosticStatus(DiagnosticStatus from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

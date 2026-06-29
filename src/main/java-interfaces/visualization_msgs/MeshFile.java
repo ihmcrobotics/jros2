@@ -43,6 +43,12 @@ public class MeshFile implements ROS2Message<MeshFile>
 
    }
 
+   public MeshFile(MeshFile from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

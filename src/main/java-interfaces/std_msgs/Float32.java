@@ -33,6 +33,12 @@ public class Float32 implements ROS2Message<Float32>
    {
    }
 
+   public Float32(Float32 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -61,6 +61,12 @@ public class Image implements ROS2Message<Image>
 
    }
 
+   public Image(Image from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

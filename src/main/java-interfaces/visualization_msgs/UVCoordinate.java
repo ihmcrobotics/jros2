@@ -32,6 +32,12 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
    }
 
+   public UVCoordinate(UVCoordinate from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

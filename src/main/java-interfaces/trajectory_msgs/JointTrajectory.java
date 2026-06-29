@@ -52,6 +52,12 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>
 
    }
 
+   public JointTrajectory(JointTrajectory from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -59,6 +59,12 @@ public class PointField implements ROS2Message<PointField>
 
    }
 
+   public PointField(PointField from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

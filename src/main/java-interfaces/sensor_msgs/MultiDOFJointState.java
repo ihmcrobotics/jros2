@@ -78,6 +78,12 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
 
    }
 
+   public MultiDOFJointState(MultiDOFJointState from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

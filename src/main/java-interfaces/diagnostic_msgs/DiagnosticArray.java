@@ -33,6 +33,12 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
 
    }
 
+   public DiagnosticArray(DiagnosticArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -40,6 +40,12 @@ public class Plane implements ROS2Message<Plane>
 
    }
 
+   public Plane(Plane from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

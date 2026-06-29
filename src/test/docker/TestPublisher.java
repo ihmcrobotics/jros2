@@ -11,10 +11,10 @@ public class TestPublisher
       System.out.println("Starting test publisher...");
 
       ROS2Node node = new ROS2Node("test_publisher");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>("/test", std_msgs.String.class);
-      ROS2Publisher<std_msgs.String> publisher = node.createPublisher(topic);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>("/test", std_msgs.String_.class);
+      ROS2Publisher<std_msgs.String_> publisher = node.createPublisher(topic);
 
-      std_msgs.String message = new std_msgs.String();
+      std_msgs.String_ message = new std_msgs.String_();
       message.setData("Hello from test publisher");
 
       System.out.println("Publishing messages every second...");

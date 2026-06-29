@@ -61,6 +61,12 @@ public class Odometry implements ROS2Message<Odometry>
 
    }
 
+   public Odometry(Odometry from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

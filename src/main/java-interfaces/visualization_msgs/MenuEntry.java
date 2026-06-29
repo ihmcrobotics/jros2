@@ -138,6 +138,12 @@ public class MenuEntry implements ROS2Message<MenuEntry>
 
    }
 
+   public MenuEntry(MenuEntry from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

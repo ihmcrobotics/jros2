@@ -43,6 +43,12 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
    }
 
+   public TwistWithCovariance(TwistWithCovariance from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

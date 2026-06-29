@@ -145,6 +145,12 @@ public class State implements ROS2Message<State>
 
    }
 
+   public State(State from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

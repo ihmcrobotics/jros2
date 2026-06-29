@@ -36,6 +36,12 @@ public class BoolTest implements ROS2Message<BoolTest>
 
    }
 
+   public BoolTest(BoolTest from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

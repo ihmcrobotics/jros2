@@ -60,6 +60,12 @@ public class Inertia implements ROS2Message<Inertia>
 
    }
 
+   public Inertia(Inertia from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

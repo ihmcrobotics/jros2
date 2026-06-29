@@ -39,6 +39,12 @@ public class Float64MultiArray implements ROS2Message<Float64MultiArray>
 
    }
 
+   public Float64MultiArray(Float64MultiArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

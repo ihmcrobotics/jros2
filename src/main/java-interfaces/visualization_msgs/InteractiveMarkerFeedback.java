@@ -117,6 +117,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
 
    }
 
+   public InteractiveMarkerFeedback(InteractiveMarkerFeedback from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

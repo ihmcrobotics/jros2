@@ -50,6 +50,12 @@ public class ParameterType implements ROS2Message<ParameterType>
    {
    }
 
+   public ParameterType(ParameterType from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

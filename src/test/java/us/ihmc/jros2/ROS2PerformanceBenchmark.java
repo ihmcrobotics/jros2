@@ -102,10 +102,10 @@ public class ROS2PerformanceBenchmark
    {
       jros2.getLogger().info("Running String message benchmark...");
 
-      BenchmarkResult standardResult = benchmarkStandardNode(std_msgs.String.class, "/benchmark/string/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult standardResult = benchmarkStandardNode(std_msgs.String_.class, "/benchmark/string/standard", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       jros2.getLogger().info("Standard Node - String: " + standardResult);
 
-      BenchmarkResult asyncResult = benchmarkAsyncNode(std_msgs.String.class, "/benchmark/string/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
+      BenchmarkResult asyncResult = benchmarkAsyncNode(std_msgs.String_.class, "/benchmark/string/async", WARMUP_MESSAGES, BENCHMARK_MESSAGES);
       jros2.getLogger().info("Async Node - String:    " + asyncResult);
 
       writeBenchmarkCSV("string_benchmark", standardResult, asyncResult);
@@ -365,9 +365,9 @@ public class ROS2PerformanceBenchmark
       {
          ((example_interfaces.Float64) message).setData(3.14159);
       }
-      else if (message instanceof std_msgs.String)
+      else if (message instanceof std_msgs.String_)
       {
-         ((std_msgs.String) message).setData("Benchmark test message with some data");
+         ((std_msgs.String_) message).setData("Benchmark test message with some data");
       }
    }
 

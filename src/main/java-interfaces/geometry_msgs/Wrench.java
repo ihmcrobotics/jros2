@@ -32,6 +32,12 @@ public class Wrench implements ROS2Message<Wrench>
 
    }
 
+   public Wrench(Wrench from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

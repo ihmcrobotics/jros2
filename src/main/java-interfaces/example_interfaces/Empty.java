@@ -23,6 +23,12 @@ public class Empty implements ROS2Message<Empty>
    {
    }
 
+   public Empty(Empty from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

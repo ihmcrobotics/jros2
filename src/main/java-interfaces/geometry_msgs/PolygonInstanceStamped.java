@@ -34,6 +34,12 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
 
    }
 
+   public PolygonInstanceStamped(PolygonInstanceStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

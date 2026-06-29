@@ -66,6 +66,12 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    }
 
+   public RegionOfInterest(RegionOfInterest from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

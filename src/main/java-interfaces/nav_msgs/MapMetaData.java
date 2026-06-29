@@ -64,6 +64,12 @@ public class MapMetaData implements ROS2Message<MapMetaData>
 
    }
 
+   public MapMetaData(MapMetaData from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

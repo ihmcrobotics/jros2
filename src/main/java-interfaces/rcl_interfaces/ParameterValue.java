@@ -113,6 +113,12 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    }
 
+   public ParameterValue(ParameterValue from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

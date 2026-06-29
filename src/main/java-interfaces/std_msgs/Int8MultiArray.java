@@ -39,6 +39,12 @@ public class Int8MultiArray implements ROS2Message<Int8MultiArray>
 
    }
 
+   public Int8MultiArray(Int8MultiArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

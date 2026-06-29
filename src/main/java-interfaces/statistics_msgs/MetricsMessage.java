@@ -95,6 +95,12 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
 
    }
 
+   public MetricsMessage(MetricsMessage from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

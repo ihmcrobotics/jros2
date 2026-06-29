@@ -32,6 +32,12 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
 
    }
 
+   public PoseWithCovarianceStamped(PoseWithCovarianceStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

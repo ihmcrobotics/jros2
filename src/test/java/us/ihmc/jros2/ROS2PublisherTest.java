@@ -165,17 +165,17 @@ public class ROS2PublisherTest
 
       ROS2Node publisherNode = new ROS2Node("publisher_node");
       ROS2Node subscriberNode = new ROS2Node("subscriber_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
       // Create publisher first
-      ROS2Publisher<std_msgs.String> publisher = publisherNode.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
 
       // No subscribers yet - should timeout
       boolean foundBeforeSubscriber = publisher.waitForSubscription(500);
       assertFalse(foundBeforeSubscriber, "Should not find subscriber before it's created");
 
       // Now create subscriber
-      ROS2Subscription<std_msgs.String> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscription(topic, ROS2QoSProfile.DEFAULT);
 
       // Should discover subscriber now
       boolean foundAfterSubscriber = publisher.waitForSubscription(5000);
@@ -328,9 +328,9 @@ public class ROS2PublisherTest
       String topicName = "/ihmc/test_topic_name";
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
-      ROS2Publisher<std_msgs.String> publisher = ros2Node.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = ros2Node.createPublisher(topic);
 
       assertEquals(topicName, publisher.getTopicName(), "Topic name should match");
 
@@ -344,11 +344,11 @@ public class ROS2PublisherTest
       String topicName = "/ihmc/test_topic_type";
 
       ROS2Node ros2Node = new ROS2Node("test_node");
-      ROS2Topic<std_msgs.String> topic = new ROS2Topic<>(topicName, std_msgs.String.class);
+      ROS2Topic<std_msgs.String_> topic = new ROS2Topic<>(topicName, std_msgs.String_.class);
 
-      ROS2Publisher<std_msgs.String> publisher = ros2Node.createPublisher(topic);
+      ROS2Publisher<std_msgs.String_> publisher = ros2Node.createPublisher(topic);
 
-      assertEquals(std_msgs.String.class, publisher.getTopicType(), "Topic type should match");
+      assertEquals(std_msgs.String_.class, publisher.getTopicType(), "Topic type should match");
 
       ros2Node.close();
    }

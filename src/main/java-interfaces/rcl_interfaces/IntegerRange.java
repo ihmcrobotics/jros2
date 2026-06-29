@@ -73,6 +73,12 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
    }
 
+   public IntegerRange(IntegerRange from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

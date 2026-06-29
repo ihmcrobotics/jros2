@@ -42,6 +42,12 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
 
    }
 
+   public SetParametersResult(SetParametersResult from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -33,6 +33,12 @@ public class UInt32 implements ROS2Message<UInt32>
    {
    }
 
+   public UInt32(UInt32 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

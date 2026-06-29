@@ -35,6 +35,12 @@ public class String_ implements ROS2Message<String_>
 
    }
 
+   public String_(String_ from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

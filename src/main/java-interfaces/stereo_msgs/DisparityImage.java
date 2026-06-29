@@ -91,6 +91,12 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
    }
 
+   public DisparityImage(DisparityImage from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
