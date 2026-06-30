@@ -137,6 +137,71 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Ite
    }
 
    /**
+    * Copies the sequence contents into the given array without allocating.
+    *
+    * @return number of bytes copied
+    * @throws IndexOutOfBoundsException if the destination is too small
+    */
+   public int copyTo(byte[] destination, int destinationOffset)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (destinationOffset < 0 || length > destination.length - destinationOffset)
+         throw new IndexOutOfBoundsException();
+
+      if (buffer.hasArray())
+         System.arraycopy(buffer.array(), buffer.arrayOffset(), destination, destinationOffset, length);
+      else
+         buffer.get(0, destination, destinationOffset, length);
+
+      return length;
+   }
+
+   /**
+    * Copies the sequence contents into the given buffer without allocating.
+    *
+    * @return number of bytes copied
+    * @throws IndexOutOfBoundsException if the destination does not have enough remaining space
+    */
+   public int copyTo(ByteBuffer destination)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (length > destination.remaining())
+         throw new IndexOutOfBoundsException();
+
+      if (buffer.hasArray())
+         destination.put(buffer.array(), buffer.arrayOffset(), length);
+      else
+      {
+         for (int i = 0; i < length; i++)
+            destination.put(buffer.get(i));
+      }
+
+      return length;
+   }
+
+   /**
+    * Returns a copy of the sequence contents as a byte array.
+    *
+    * @return a new byte array containing all elements in order
+    */
+   public byte[] toByteArray()
+   {
+      int length = size();
+      if (length == 0)
+         return new byte[0];
+
+      byte[] bytes = new byte[length];
+      copyTo(bytes, 0);
+      return bytes;
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
