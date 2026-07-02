@@ -57,6 +57,45 @@ public class IDLDoubleSequence extends IDLSequence<IDLDoubleSequence> implements
       return buffer;
    }
 
+   public int copyTo(double[] destination, int destinationOffset)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (destinationOffset < 0 || length > destination.length - destinationOffset)
+         throw new IndexOutOfBoundsException();
+
+      buffer.get(0, destination, destinationOffset, length);
+      return length;
+   }
+
+   public int copyTo(DoubleBuffer destination)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (length > destination.remaining())
+         throw new IndexOutOfBoundsException();
+
+      DoubleBuffer readView = buffer.duplicate();
+      readView.limit(length).position(0);
+      destination.put(readView);
+      return length;
+   }
+
+   public double[] toDoubleArray()
+   {
+      int length = size();
+      if (length == 0)
+         return new double[0];
+
+      double[] array = new double[length];
+      buffer.get(0, array, 0, length);
+      return array;
+   }
+
    @Override
    public int size()
    {

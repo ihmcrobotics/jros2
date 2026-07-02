@@ -57,6 +57,45 @@ public class IDLCharSequence extends IDLSequence<IDLCharSequence> implements Ite
       return buffer;
    }
 
+   public int copyTo(char[] destination, int destinationOffset)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (destinationOffset < 0 || length > destination.length - destinationOffset)
+         throw new IndexOutOfBoundsException();
+
+      buffer.get(0, destination, destinationOffset, length);
+      return length;
+   }
+
+   public int copyTo(CharBuffer destination)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (length > destination.remaining())
+         throw new IndexOutOfBoundsException();
+
+      CharBuffer readView = buffer.duplicate();
+      readView.limit(length).position(0);
+      destination.put(readView);
+      return length;
+   }
+
+   public char[] toCharArray()
+   {
+      int length = size();
+      if (length == 0)
+         return new char[0];
+
+      char[] array = new char[length];
+      buffer.get(0, array, 0, length);
+      return array;
+   }
+
    @Override
    public int size()
    {

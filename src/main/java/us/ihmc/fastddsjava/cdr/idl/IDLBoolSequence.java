@@ -57,6 +57,32 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
       return buffer;
    }
 
+   public int copyTo(boolean[] destination, int destinationOffset)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (destinationOffset < 0 || length > destination.length - destinationOffset)
+         throw new IndexOutOfBoundsException();
+
+      for (int i = 0; i < length; ++i)
+         destination[destinationOffset + i] = buffer.get(i);
+
+      return length;
+   }
+
+   public boolean[] toBooleanArray()
+   {
+      int length = size();
+      if (length == 0)
+         return new boolean[0];
+
+      boolean[] array = new boolean[length];
+      copyTo(array, 0);
+      return array;
+   }
+
    @Override
    public int size()
    {

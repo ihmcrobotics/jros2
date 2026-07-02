@@ -151,11 +151,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Ite
       if (destinationOffset < 0 || length > destination.length - destinationOffset)
          throw new IndexOutOfBoundsException();
 
-      if (buffer.hasArray())
-         System.arraycopy(buffer.array(), buffer.arrayOffset(), destination, destinationOffset, length);
-      else
-         buffer.get(0, destination, destinationOffset, length);
-
+      buffer.get(0, destination, destinationOffset, length);
       return length;
    }
 
@@ -174,14 +170,9 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Ite
       if (length > destination.remaining())
          throw new IndexOutOfBoundsException();
 
-      if (buffer.hasArray())
-         destination.put(buffer.array(), buffer.arrayOffset(), length);
-      else
-      {
-         for (int i = 0; i < length; i++)
-            destination.put(buffer.get(i));
-      }
-
+      ByteBuffer readView = buffer.duplicate();
+      readView.limit(length).position(0);
+      destination.put(readView);
       return length;
    }
 
@@ -197,7 +188,7 @@ public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Ite
          return new byte[0];
 
       byte[] bytes = new byte[length];
-      copyTo(bytes, 0);
+      buffer.get(0, bytes, 0, length);
       return bytes;
    }
 

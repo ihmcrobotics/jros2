@@ -57,6 +57,45 @@ public class IDLFloatSequence extends IDLSequence<IDLFloatSequence> implements I
       return buffer;
    }
 
+   public int copyTo(float[] destination, int destinationOffset)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (destinationOffset < 0 || length > destination.length - destinationOffset)
+         throw new IndexOutOfBoundsException();
+
+      buffer.get(0, destination, destinationOffset, length);
+      return length;
+   }
+
+   public int copyTo(FloatBuffer destination)
+   {
+      int length = size();
+      if (length == 0)
+         return 0;
+
+      if (length > destination.remaining())
+         throw new IndexOutOfBoundsException();
+
+      FloatBuffer readView = buffer.duplicate();
+      readView.limit(length).position(0);
+      destination.put(readView);
+      return length;
+   }
+
+   public float[] toFloatArray()
+   {
+      int length = size();
+      if (length == 0)
+         return new float[0];
+
+      float[] array = new float[length];
+      buffer.get(0, array, 0, length);
+      return array;
+   }
+
    @Override
    public int size()
    {
