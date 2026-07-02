@@ -57,45 +57,6 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
       return buffer;
    }
 
-   public int copyTo(int[] destination, int destinationOffset)
-   {
-      int length = size();
-      if (length == 0)
-         return 0;
-
-      if (destinationOffset < 0 || length > destination.length - destinationOffset)
-         throw new IndexOutOfBoundsException();
-
-      buffer.get(0, destination, destinationOffset, length);
-      return length;
-   }
-
-   public int copyTo(IntBuffer destination)
-   {
-      int length = size();
-      if (length == 0)
-         return 0;
-
-      if (length > destination.remaining())
-         throw new IndexOutOfBoundsException();
-
-      IntBuffer readView = buffer.duplicate();
-      readView.limit(length).position(0);
-      destination.put(readView);
-      return length;
-   }
-
-   public int[] toIntArray()
-   {
-      int length = size();
-      if (length == 0)
-         return new int[0];
-
-      int[] array = new int[length];
-      buffer.get(0, array, 0, length);
-      return array;
-   }
-
    @Override
    public int size()
    {

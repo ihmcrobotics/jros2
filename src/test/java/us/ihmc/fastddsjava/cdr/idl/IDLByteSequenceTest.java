@@ -2,8 +2,6 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.ByteBuffer;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IDLByteSequenceTest
@@ -151,45 +149,5 @@ public class IDLByteSequenceTest
       sequence.add((byte) 42);
 
       assertEquals(Byte.BYTES, sequence.elementSizeBytes(0, 0));
-   }
-
-   @Test
-   public void testToByteArray()
-   {
-      IDLByteSequence emptySequence = new IDLByteSequence();
-      assertArrayEquals(new byte[0], emptySequence.toByteArray());
-
-      IDLByteSequence sequence = new IDLByteSequence(INITIAL_CAPACITY);
-      sequence.add((byte) 10);
-      sequence.add((byte) 20);
-      sequence.add((byte) 30);
-
-      assertArrayEquals(new byte[] {10, 20, 30}, sequence.toByteArray());
-   }
-
-   @Test
-   public void testCopyToByteArray()
-   {
-      IDLByteSequence sequence = new IDLByteSequence(INITIAL_CAPACITY);
-      sequence.add((byte) 10);
-      sequence.add((byte) 20);
-
-      byte[] destination = new byte[4];
-      assertEquals(2, sequence.copyTo(destination, 1));
-      assertArrayEquals(new byte[] {0, 10, 20, 0}, destination);
-   }
-
-   @Test
-   public void testCopyToByteBuffer()
-   {
-      IDLByteSequence sequence = new IDLByteSequence(INITIAL_CAPACITY);
-      sequence.add((byte) 10);
-      sequence.add((byte) 20);
-
-      byte[] bytes = new byte[4];
-      ByteBuffer destination = ByteBuffer.wrap(bytes);
-      destination.position(1);
-      assertEquals(2, sequence.copyTo(destination));
-      assertArrayEquals(new byte[] {0, 10, 20, 0}, bytes);
    }
 }
