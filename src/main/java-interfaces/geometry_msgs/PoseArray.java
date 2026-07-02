@@ -33,6 +33,12 @@ public class PoseArray implements ROS2Message<PoseArray>
 
    }
 
+   public PoseArray(PoseArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

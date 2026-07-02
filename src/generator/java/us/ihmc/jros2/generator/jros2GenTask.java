@@ -30,14 +30,17 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class jros2GenTask extends DefaultTask
 {
    private List<String> packagePaths;
    private String outputDir;
    private Map<String, String> typeToClass;
+   private boolean cleanOutputDir;
 
    public jros2GenTask()
    {
@@ -82,13 +85,31 @@ public class jros2GenTask extends DefaultTask
       this.typeToClass = typeToClass;
    }
 
+   @Input
+   public boolean isCleanOutputDir()
+   {
+      return cleanOutputDir;
+   }
+
+   @Option(option = "cleanOutputDir", description = "Delete the entire output directory before generation. Use only when outputDir contains generated files exclusively.")
+   public void setCleanOutputDir(boolean cleanOutputDir)
+   {
+      this.cleanOutputDir = cleanOutputDir;
+   }
+
    @TaskAction
    public void run() throws IOException
    {
       long startTime = System.currentTimeMillis();
       int totalInterfacesGenerated = 0;
 
-      Path outputDirPath = Path.of(outputDir);
+      Path outputDirPath = Path.of(outputDir).toAbsolutePath().normalize();
+      Set<Path> generatedPaths = new HashSet<>();
+
+      if (cleanOutputDir)
+      {
+         GeneratedMessageFileCleanup.cleanOutputDirectory(outputDirPath);
+      }
 
       for (String packagePathStr : packagePaths)
       {
@@ -123,13 +144,10 @@ public class jros2GenTask extends DefaultTask
                      MsgContext context = MsgParser.parseMsg(msgFileContent, packageResourceName);
                      String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
                      Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
-                     if (outputFilePath.toFile().exists())
-                     {
-                        outputFilePath.toFile().delete();
-                     }
-                     outputFilePath.toFile().getParentFile().mkdirs();
+                     Files.createDirectories(outputFilePath.getParent());
                      Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
-                     System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toFile().getAbsolutePath());
+                     generatedPaths.add(outputFilePath.toAbsolutePath().normalize());
+                     System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toAbsolutePath());
                      totalInterfacesGenerated++;
                   }
                   catch (InterfaceFieldParsingException e)
@@ -142,10 +160,14 @@ public class jros2GenTask extends DefaultTask
          }
       }
 
+      int removedOrphans = GeneratedMessageFileCleanup.removeOrphanedGeneratedFiles(outputDirPath, generatedPaths);
+
       long endTime = System.currentTimeMillis();
       double runTimeSeconds = (endTime - startTime) / 1000.0;
 
       System.out.println();
       System.out.println(totalInterfacesGenerated + " interfaces generated in " + runTimeSeconds + "s");
+      if (removedOrphans > 0)
+         System.out.println(removedOrphans + " orphaned generated files removed");
    }
 }

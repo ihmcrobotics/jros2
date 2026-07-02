@@ -60,6 +60,12 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    {
    }
 
+   public StatisticDataType(StatisticDataType from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -93,6 +93,12 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
 
    }
 
+   public InteractiveMarkerUpdate(InteractiveMarkerUpdate from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

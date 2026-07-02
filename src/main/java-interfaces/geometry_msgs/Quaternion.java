@@ -38,6 +38,12 @@ public class Quaternion implements ROS2Message<Quaternion>
 
    }
 
+   public Quaternion(Quaternion from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -78,6 +78,12 @@ public class LaserScan implements ROS2Message<LaserScan>
 
    }
 
+   public LaserScan(LaserScan from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

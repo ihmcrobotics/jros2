@@ -32,6 +32,12 @@ public class Point implements ROS2Message<Point>
    {
    }
 
+   public Point(Point from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

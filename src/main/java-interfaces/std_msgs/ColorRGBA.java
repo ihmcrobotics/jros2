@@ -30,6 +30,12 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
    }
 
+   public ColorRGBA(ColorRGBA from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

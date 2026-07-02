@@ -124,6 +124,12 @@ public class ImageMarker implements ROS2Message<ImageMarker>
 
    }
 
+   public ImageMarker(ImageMarker from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

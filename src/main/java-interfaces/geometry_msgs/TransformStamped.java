@@ -67,6 +67,12 @@ public class TransformStamped implements ROS2Message<TransformStamped>
 
    }
 
+   public TransformStamped(TransformStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

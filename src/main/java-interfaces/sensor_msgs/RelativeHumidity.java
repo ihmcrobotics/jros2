@@ -43,6 +43,12 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
 
    }
 
+   public RelativeHumidity(RelativeHumidity from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

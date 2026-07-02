@@ -85,6 +85,12 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 
    }
 
+   public GoalStatus(GoalStatus from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

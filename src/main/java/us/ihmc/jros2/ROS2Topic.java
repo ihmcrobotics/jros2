@@ -17,11 +17,20 @@ package us.ihmc.jros2;
 
 
 /**
- * Represents a ROS 2 topic which has a name and the message type sent over it.
+ * Helper for describing a ROS 2 topic: its name, message type, and suggested QoS profile.
+ * <p>
+ * This is a jros2 convenience type for building topic definitions in Java. It is not a ROS 2
+ * concept and has no counterpart in client libraries such as
+ * <a href="https://docs.ros.org/en/humble/p/rclcpp/">rclcpp</a> or rclpy, where publishers and
+ * subscribers are created from a topic name string and message type directly (for example,
+ * {@code node->create_publisher<std_msgs::msg::String>("topic", qos)}). {@link ROS2Topic} exists
+ * so callers can define topics once — including name, type, and QoS — and pass them to
+ * {@link ROS2Node#createPublisher(ROS2Topic)} or {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback)}.
  * <p>
  * Names are composed of multiple tokens delimited by forward slashes ({@code /}).
  * This class provides methods for creating new {@link ROS2Topic} objects by
  * prepending, appending, or inserting tokens into the name of an existing topic object.
+ * QoS is propagated through those transforms unless overridden with {@link #withQoS(ROS2QoSProfile)}.
  * <p>
  * The following is example usage for creating topics for a camera that provides color and depth images:
  * <pre> {@code
@@ -51,6 +60,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
    private final Class<T> topicType;
    private final String topicName;
    private final int numberOfTokens;
+   private final ROS2QoSProfile qosProfile;
 
    /**
     * Creates a blank topic with an empty name and no type.
@@ -86,6 +96,18 @@ public class ROS2Topic<T extends ROS2Message<T>>
     */
    public ROS2Topic(String topicName, Class<T> topicType)
    {
+      this(topicName, topicType, ROS2QoSProfile.DEFAULT);
+   }
+
+   /**
+    * Creates a topic with a name, type, and QoS profile.
+    *
+    * @param topicName  The topic name.
+    * @param topicType  The message type sent over this topic.
+    * @param qosProfile The suggested QoS for publishers and subscriptions on this topic.
+    */
+   public ROS2Topic(String topicName, Class<T> topicType, ROS2QoSProfile qosProfile)
+   {
       if (topicName == null || topicName.isEmpty())
       {
          this.topicName = "";
@@ -102,6 +124,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
       }
 
       this.topicType = topicType;
+      this.qosProfile = qosProfile != null ? qosProfile : ROS2QoSProfile.DEFAULT;
    }
 
    /**
@@ -116,10 +139,10 @@ public class ROS2Topic<T extends ROS2Message<T>>
    {
       if (token == null || token.isEmpty())
       {
-         return new ROS2Topic<>(topicName, topicType);
+         return new ROS2Topic<>(topicName, topicType, qosProfile);
       }
 
-      return new ROS2Topic<>(topicName + "/" + token, topicType);
+      return new ROS2Topic<>(topicName + "/" + token, topicType, qosProfile);
    }
 
    /**
@@ -134,10 +157,10 @@ public class ROS2Topic<T extends ROS2Message<T>>
    {
       if (token == null || token.isEmpty())
       {
-         return new ROS2Topic<>(topicName, topicType);
+         return new ROS2Topic<>(topicName, topicType, qosProfile);
       }
 
-      return new ROS2Topic<>("/" + token + topicName, topicType);
+      return new ROS2Topic<>("/" + token + topicName, topicType, qosProfile);
    }
 
    /**
@@ -162,7 +185,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
       // If inserting nothing, we can return early
       if (token == null || token.isEmpty())
       {
-         return new ROS2Topic<>(topicName, topicType);
+         return new ROS2Topic<>(topicName, topicType, qosProfile);
       }
 
       // Faster options for some insertion positions
@@ -198,7 +221,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
          }
       }
 
-      return new ROS2Topic<>("/" + String.join("/", newTokens), getType());
+      return new ROS2Topic<>("/" + String.join("/", newTokens), getType(), qosProfile);
    }
 
    /**
@@ -212,7 +235,18 @@ public class ROS2Topic<T extends ROS2Message<T>>
    {
       assert topicType != null;
 
-      return new ROS2Topic<>(topicName, topicType);
+      return new ROS2Topic<>(topicName, topicType, qosProfile);
+   }
+
+   /**
+    * Creates a copy of this topic with the given QoS profile.
+    *
+    * @param qosProfile The suggested QoS for publishers and subscriptions on this topic.
+    * @return A new topic object with the given QoS profile.
+    */
+   public ROS2Topic<T> withQoS(ROS2QoSProfile qosProfile)
+   {
+      return new ROS2Topic<>(topicName, topicType, qosProfile);
    }
 
    /**
@@ -237,5 +271,13 @@ public class ROS2Topic<T extends ROS2Message<T>>
    public Class<T> getType()
    {
       return topicType;
+   }
+
+   /**
+    * @return The suggested QoS for publishers and subscriptions on this topic.
+    */
+   public ROS2QoSProfile getQoS()
+   {
+      return qosProfile;
    }
 }

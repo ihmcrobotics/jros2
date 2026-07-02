@@ -226,6 +226,12 @@ public class Marker implements ROS2Message<Marker>
 
    }
 
+   public Marker(Marker from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

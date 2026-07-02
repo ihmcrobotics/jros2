@@ -33,6 +33,12 @@ public class Accel implements ROS2Message<Accel>
 
    }
 
+   public Accel(Accel from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -42,6 +42,12 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
 
    }
 
+   public VelocityStamped(VelocityStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

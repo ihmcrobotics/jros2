@@ -38,6 +38,12 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
 
    }
 
+   public UInt64MultiArray(UInt64MultiArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

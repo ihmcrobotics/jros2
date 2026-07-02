@@ -24,6 +24,12 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    {
    }
 
+   public IllegalJava(IllegalJava from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

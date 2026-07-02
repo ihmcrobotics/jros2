@@ -81,6 +81,12 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
 
    }
 
+   public PointCloud2(PointCloud2 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -39,6 +39,12 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
 
    }
 
+   public ParameterEventDescriptors(ParameterEventDescriptors from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

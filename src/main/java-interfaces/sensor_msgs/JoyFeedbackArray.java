@@ -30,6 +30,12 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
 
    }
 
+   public JoyFeedbackArray(JoyFeedbackArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

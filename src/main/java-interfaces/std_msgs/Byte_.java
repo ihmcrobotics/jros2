@@ -33,6 +33,12 @@ public class Byte_ implements ROS2Message<Byte_>
    {
    }
 
+   public Byte_(Byte_ from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

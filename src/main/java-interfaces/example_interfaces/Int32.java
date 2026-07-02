@@ -34,6 +34,12 @@ public class Int32 implements ROS2Message<Int32>
    {
    }
 
+   public Int32(Int32 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

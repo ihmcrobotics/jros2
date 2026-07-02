@@ -49,6 +49,12 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
    }
 
+   public InteractiveMarkerPose(InteractiveMarkerPose from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

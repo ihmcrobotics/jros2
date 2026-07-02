@@ -33,6 +33,12 @@ public class AccelStamped implements ROS2Message<AccelStamped>
 
    }
 
+   public AccelStamped(AccelStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

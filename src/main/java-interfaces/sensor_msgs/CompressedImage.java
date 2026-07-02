@@ -44,6 +44,12 @@ public class CompressedImage implements ROS2Message<CompressedImage>
 
    }
 
+   public CompressedImage(CompressedImage from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -248,6 +248,12 @@ public class CameraInfo implements ROS2Message<CameraInfo>
 
    }
 
+   public CameraInfo(CameraInfo from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

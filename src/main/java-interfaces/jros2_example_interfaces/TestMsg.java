@@ -129,6 +129,12 @@ public class TestMsg implements ROS2Message<TestMsg>
 
    }
 
+   public TestMsg(TestMsg from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

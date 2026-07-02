@@ -49,6 +49,12 @@ public class Joy implements ROS2Message<Joy>
 
    }
 
+   public Joy(Joy from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

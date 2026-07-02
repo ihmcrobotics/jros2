@@ -36,6 +36,12 @@ public class Temperature implements ROS2Message<Temperature>
 
    }
 
+   public Temperature(Temperature from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

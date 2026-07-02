@@ -35,6 +35,12 @@ public class Bool implements ROS2Message<Bool>
 
    }
 
+   public Bool(Bool from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

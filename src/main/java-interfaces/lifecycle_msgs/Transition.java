@@ -210,6 +210,12 @@ public class Transition implements ROS2Message<Transition>
 
    }
 
+   public Transition(Transition from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

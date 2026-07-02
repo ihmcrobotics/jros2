@@ -48,6 +48,12 @@ public class Duration implements ROS2Message<Duration>
    {
    }
 
+   public Duration(Duration from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

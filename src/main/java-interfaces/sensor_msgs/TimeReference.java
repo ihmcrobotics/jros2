@@ -37,6 +37,12 @@ public class TimeReference implements ROS2Message<TimeReference>
 
    }
 
+   public TimeReference(TimeReference from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -45,6 +45,12 @@ public class Parameter implements ROS2Message<Parameter>
 
    }
 
+   public Parameter(Parameter from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

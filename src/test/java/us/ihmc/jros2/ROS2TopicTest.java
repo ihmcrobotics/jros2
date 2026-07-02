@@ -17,6 +17,7 @@ package us.ihmc.jros2;
 
 import example_interfaces.Bool;
 import org.junit.jupiter.api.Test;
+import std_msgs.Empty;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,6 +31,7 @@ public class ROS2TopicTest
       assertEquals(0, topic.numberOfTokens());
       assertEquals("", topic.getName());
       assertNull(topic.getType());
+      assertSame(ROS2QoSProfile.DEFAULT, topic.getQoS());
    }
 
    @Test
@@ -195,5 +197,40 @@ public class ROS2TopicTest
       ROS2Topic<Bool> boolType = noType.withType(Bool.class);
       assertEquals(Bool.class, boolType.getType());
       assertEquals("/test", boolType.getName());
+   }
+
+   @Test
+   public void testWithQoS()
+   {
+      ROS2Topic<?> topic = new ROS2Topic<>("/test").withQoS(ROS2QoSProfile.BEST_EFFORT);
+      assertSame(ROS2QoSProfile.BEST_EFFORT, topic.getQoS());
+   }
+
+   @Test
+   public void testQoSPropagatesOnAppend()
+   {
+      ROS2Topic<?> child = new ROS2Topic<>("/camera").withQoS(ROS2QoSProfile.RELIABLE).appendedWith("color");
+      assertSame(ROS2QoSProfile.RELIABLE, child.getQoS());
+   }
+
+   @Test
+   public void testQoSPropagatesOnPrepend()
+   {
+      ROS2Topic<?> child = new ROS2Topic<>("/camera").withQoS(ROS2QoSProfile.RELIABLE).prependedWith("robot");
+      assertSame(ROS2QoSProfile.RELIABLE, child.getQoS());
+   }
+
+   @Test
+   public void testQoSPropagatesOnInsert()
+   {
+      ROS2Topic<?> child = new ROS2Topic<>("/camera/color").withQoS(ROS2QoSProfile.RELIABLE).insert(1, "zed");
+      assertSame(ROS2QoSProfile.RELIABLE, child.getQoS());
+   }
+
+   @Test
+   public void testQoSPropagatesOnWithType()
+   {
+      ROS2Topic<Empty> typedTopic = new ROS2Topic<>("/test").withQoS(ROS2QoSProfile.BEST_EFFORT).withType(Empty.class);
+      assertSame(ROS2QoSProfile.BEST_EFFORT, typedTopic.getQoS());
    }
 }

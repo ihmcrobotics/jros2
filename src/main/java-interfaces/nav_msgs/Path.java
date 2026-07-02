@@ -41,6 +41,12 @@ public class Path implements ROS2Message<Path>
 
    }
 
+   public Path(Path from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

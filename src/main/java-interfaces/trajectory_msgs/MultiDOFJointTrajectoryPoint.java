@@ -54,6 +54,12 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
 
    }
 
+   public MultiDOFJointTrajectoryPoint(MultiDOFJointTrajectoryPoint from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

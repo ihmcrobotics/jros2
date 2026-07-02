@@ -26,6 +26,12 @@ public class MarkerArray implements ROS2Message<MarkerArray>
 
    }
 
+   public MarkerArray(MarkerArray from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

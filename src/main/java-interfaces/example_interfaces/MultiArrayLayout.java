@@ -79,6 +79,12 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 
    }
 
+   public MultiArrayLayout(MultiArrayLayout from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

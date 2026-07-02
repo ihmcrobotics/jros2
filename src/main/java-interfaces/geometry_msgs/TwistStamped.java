@@ -32,6 +32,12 @@ public class TwistStamped implements ROS2Message<TwistStamped>
 
    }
 
+   public TwistStamped(TwistStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

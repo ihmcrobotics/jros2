@@ -57,6 +57,12 @@ public class MagneticField implements ROS2Message<MagneticField>
 
    }
 
+   public MagneticField(MagneticField from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

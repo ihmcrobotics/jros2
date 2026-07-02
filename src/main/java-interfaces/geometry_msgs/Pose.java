@@ -32,6 +32,12 @@ public class Pose implements ROS2Message<Pose>
 
    }
 
+   public Pose(Pose from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

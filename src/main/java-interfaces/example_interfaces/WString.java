@@ -36,6 +36,12 @@ public class WString implements ROS2Message<WString>
 
    }
 
+   public WString(WString from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

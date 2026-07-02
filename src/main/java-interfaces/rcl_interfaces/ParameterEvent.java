@@ -69,6 +69,12 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
 
    }
 
+   public ParameterEvent(ParameterEvent from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

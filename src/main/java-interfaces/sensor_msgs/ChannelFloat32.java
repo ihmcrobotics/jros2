@@ -75,6 +75,12 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 
    }
 
+   public ChannelFloat32(ChannelFloat32 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

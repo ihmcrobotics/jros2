@@ -34,6 +34,12 @@ public class Float64 implements ROS2Message<Float64>
    {
    }
 
+   public Float64(Float64 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

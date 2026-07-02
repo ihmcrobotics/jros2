@@ -89,6 +89,12 @@ public class StringTest implements ROS2Message<StringTest>
 
    }
 
+   public StringTest(StringTest from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

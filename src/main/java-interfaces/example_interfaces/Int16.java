@@ -34,6 +34,12 @@ public class Int16 implements ROS2Message<Int16>
    {
    }
 
+   public Int16(Int16 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -41,6 +41,12 @@ public class Mesh implements ROS2Message<Mesh>
 
    }
 
+   public Mesh(Mesh from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

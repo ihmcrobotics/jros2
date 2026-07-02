@@ -32,6 +32,12 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
 
    }
 
+   public InertiaStamped(InertiaStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -33,6 +33,12 @@ public class Char implements ROS2Message<Char>
    {
    }
 
+   public Char(Char from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

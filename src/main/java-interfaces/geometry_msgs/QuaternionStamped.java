@@ -32,6 +32,12 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
 
    }
 
+   public QuaternionStamped(QuaternionStamped from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

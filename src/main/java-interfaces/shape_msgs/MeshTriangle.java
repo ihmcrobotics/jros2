@@ -29,6 +29,12 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 
    }
 
+   public MeshTriangle(MeshTriangle from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

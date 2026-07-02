@@ -28,6 +28,12 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    {
    }
 
+   public CapitalizationTest(CapitalizationTest from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

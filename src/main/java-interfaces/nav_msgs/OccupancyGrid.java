@@ -56,6 +56,12 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
 
    }
 
+   public OccupancyGrid(OccupancyGrid from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

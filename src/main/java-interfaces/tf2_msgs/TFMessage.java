@@ -26,6 +26,12 @@ public class TFMessage implements ROS2Message<TFMessage>
 
    }
 
+   public TFMessage(TFMessage from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

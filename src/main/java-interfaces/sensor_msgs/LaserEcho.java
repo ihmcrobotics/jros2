@@ -32,6 +32,12 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 
    }
 
+   public LaserEcho(LaserEcho from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

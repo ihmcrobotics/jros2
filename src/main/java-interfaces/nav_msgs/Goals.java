@@ -49,6 +49,12 @@ public class Goals implements ROS2Message<Goals>
 
    }
 
+   public Goals(Goals from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

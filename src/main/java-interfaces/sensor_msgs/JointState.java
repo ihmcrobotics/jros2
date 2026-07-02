@@ -76,6 +76,12 @@ public class JointState implements ROS2Message<JointState>
 
    }
 
+   public JointState(JointState from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

@@ -51,6 +51,12 @@ public class GridCells implements ROS2Message<GridCells>
 
    }
 
+   public GridCells(GridCells from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

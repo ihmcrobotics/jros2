@@ -46,6 +46,12 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
 
    }
 
+   public TransitionDescription(TransitionDescription from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

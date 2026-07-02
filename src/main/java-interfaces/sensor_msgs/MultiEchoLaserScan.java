@@ -82,6 +82,12 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>
 
    }
 
+   public MultiEchoLaserScan(MultiEchoLaserScan from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

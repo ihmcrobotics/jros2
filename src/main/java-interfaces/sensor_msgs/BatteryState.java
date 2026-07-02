@@ -137,6 +137,12 @@ public class BatteryState implements ROS2Message<BatteryState>
 
    }
 
+   public BatteryState(BatteryState from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

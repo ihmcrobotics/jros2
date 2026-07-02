@@ -144,6 +144,12 @@ public class Log implements ROS2Message<Log>
 
    }
 
+   public Log(Log from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

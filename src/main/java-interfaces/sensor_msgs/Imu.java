@@ -74,6 +74,12 @@ public class Imu implements ROS2Message<Imu>
 
    }
 
+   public Imu(Imu from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

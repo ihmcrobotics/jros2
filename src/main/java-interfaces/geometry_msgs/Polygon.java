@@ -29,6 +29,12 @@ public class Polygon implements ROS2Message<Polygon>
 
    }
 
+   public Polygon(Polygon from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

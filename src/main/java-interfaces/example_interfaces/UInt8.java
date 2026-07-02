@@ -34,6 +34,12 @@ public class UInt8 implements ROS2Message<UInt8>
    {
    }
 
+   public UInt8(UInt8 from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

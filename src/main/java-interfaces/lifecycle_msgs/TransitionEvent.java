@@ -53,6 +53,12 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
 
    }
 
+   public TransitionEvent(TransitionEvent from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

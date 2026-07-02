@@ -32,6 +32,12 @@ public class Transform implements ROS2Message<Transform>
 
    }
 
+   public Transform(Transform from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

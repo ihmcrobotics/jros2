@@ -33,6 +33,12 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
    }
 
+   public PolygonInstance(PolygonInstance from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {

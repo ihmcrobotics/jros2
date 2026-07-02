@@ -106,6 +106,12 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 
    }
 
+   public SolidPrimitive(SolidPrimitive from)
+   {
+      this();
+      set(from);
+   }
+
    @Override
    public int calculateSizeBytes(int currentAlignment)
    {
