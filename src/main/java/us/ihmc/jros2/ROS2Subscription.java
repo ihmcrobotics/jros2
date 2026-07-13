@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.TopicDataWrapperAccess;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
@@ -54,8 +55,10 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final Pointer fastddsSubscriber;
    private final Pointer fastddsDataReader;
    private final fastddsjava_TopicDataWrapper callbackSampleData;
+   private final TopicDataWrapperAccess callbackSampleDataAccess;
    private final SampleInfo callbackSampleInfo;
    protected final fastddsjava_TopicDataWrapper userSampleData;
+   private final TopicDataWrapperAccess userSampleDataAccess;
    protected final SampleInfo userSampleInfo;
    private final SubscriptionMatchedStatus subscriptionMatchedStatus;
    private final fastddsjava_DataReaderListener listener; // Keep as a field to avoid GC
@@ -122,15 +125,18 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       this.topic = topic;
       this.topicData = topicData;
 
-      closeLock = new ReentrantReadWriteLock(true);
+      // Unfair: fair RRWL allocates AQS waiter nodes under listener vs readLatest contention.
+      closeLock = new ReentrantReadWriteLock(false);
       closed = false;
 
       discoveryLock = new Object();
       publisherDiscovered = false;
 
       callbackSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      callbackSampleDataAccess = new TopicDataWrapperAccess(callbackSampleData);
       callbackSampleInfo = new SampleInfo();
       userSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      userSampleDataAccess = new TopicDataWrapperAccess(userSampleData);
       userSampleInfo = new SampleInfo();
       subscriptionMatchedStatus = new SubscriptionMatchedStatus();
 
@@ -473,14 +479,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                {
                   untakenMessageCount.decrementAndGet();
 
-                  long payloadSizeBytes = userSampleData.data_vector().size();
+                  long payloadSizeBytes = userSampleDataAccess.size();
 
                   // Resize Java heap buffer (if necessary) and rewind
                   readBuffer.ensureRemainingCapacity((int) payloadSizeBytes);
                   readBuffer.rewind();
 
-                  // Copy sample from native memory to Java heap memory
-                  userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
+                  // Copy sample from native memory to Java heap memory (allocation-free)
+                  userSampleDataAccess.copyToHeap(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message
                   readBuffer.readPayloadHeader();
@@ -535,14 +541,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
                if (totalRead > 0)
                {
-                  long payloadSizeBytes = userSampleData.data_vector().size();
+                  long payloadSizeBytes = userSampleDataAccess.size();
 
                   // Resize Java heap buffer (if necessary) and rewind
                   readBuffer.ensureRemainingCapacity((int) payloadSizeBytes);
                   readBuffer.rewind();
 
-                  // Copy sample from native memory to Java heap memory
-                  userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
+                  // Copy sample from native memory to Java heap memory (allocation-free)
+                  userSampleDataAccess.copyToHeap(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message
                   readBuffer.readPayloadHeader();
@@ -633,7 +639,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(callbackSampleInfo.getReceptionTimestampNanos());
 
       // The size of the entire payload (including the header) in bytes
-      int payloadSizeBytes = (int) callbackSampleData.data_vector().size();
+      int payloadSizeBytes = (int) callbackSampleDataAccess.size();
 
       synchronized (statisticsCalculators)
       {

@@ -16,6 +16,7 @@
 package us.ihmc.jros2;
 
 import org.bytedeco.javacpp.Pointer;
+import us.ihmc.fastddsjava.TopicDataWrapperAccess;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.pointers.PublicationMatchedStatus;
 import us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener;
@@ -53,6 +54,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final Pointer fastddsDataWriter;
    private final TopicData topicData;
    private final fastddsjava_TopicDataWrapper topicDataWrapper;
+   private final TopicDataWrapperAccess topicDataWrapperAccess;
    private final PublicationMatchedStatus publicationMatchedStatus;
    private final fastddsjava_DataWriterListener listener;
    private final fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
@@ -104,13 +106,15 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       this.topicData = topicData;
       this.recordStatistics = recordStatistics;
 
-      closeLock = new ReentrantReadWriteLock(true);
+      // Unfair: fair RRWL can allocate AQS waiter nodes under contention with close().
+      closeLock = new ReentrantReadWriteLock(false);
       closed = false;
 
       discoveryLock = new Object();
       subscriptionDiscovered = false;
 
       topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      topicDataWrapperAccess = new TopicDataWrapperAccess(topicDataWrapper);
       publicationMatchedStatus = new PublicationMatchedStatus();
 
       writeBuffer = new CDRBuffer();
@@ -173,7 +177,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          writeBuffer.rewind();
          writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         topicDataWrapperAccess.resize(payloadSizeBytes);
          lastPayloadSizeBytes = payloadSizeBytes;
       }
    }
@@ -197,11 +201,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
          if (payloadSizeBytes != lastPayloadSizeBytes)
          {
-            topicDataWrapper.data_vector().resize(payloadSizeBytes);
+            topicDataWrapperAccess.resize(payloadSizeBytes);
             lastPayloadSizeBytes = payloadSizeBytes;
          }
 
-         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+         topicDataWrapperAccess.copyFromHeap(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
       }
 
       retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
