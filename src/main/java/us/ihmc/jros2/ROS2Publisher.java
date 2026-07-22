@@ -186,14 +186,24 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          writeBuffer.rewind();
 
-         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-         if (payloadSizeBytes > writeBuffer.getBufferUnsafe().capacity())
+         // calculateSizeBytes is used here only to presize the buffer before writing - it is not trusted as the
+         // exact final payload length below. A CDRSerializable whose calculateSizeBytes() and serialize() ever
+         // drift out of sync (see the IDLObjectSequence#calculateSizeBytes fix, prompted by exactly this class of
+         // bug for messages containing an IDLObjectSequence of variable-size structs, e.g. tf2_msgs.TFMessage's
+         // TransformStamped[]) would otherwise have its miscount silently resized/copied as-is, shipping the wrong
+         // number of bytes - truncated or padded with garbage - as part of the message on the wire.
+         int estimatedSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
+         if (estimatedSizeBytes > writeBuffer.getBufferUnsafe().capacity())
          {
-            writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+            writeBuffer.ensureRemainingCapacity(estimatedSizeBytes);
          }
 
          writeBuffer.writePayloadHeader();
          message.serialize(writeBuffer);
+
+         // The buffer's position after serialize() is the ground truth for how many bytes were actually written,
+         // regardless of whether the estimate above was exact.
+         payloadSizeBytes = writeBuffer.getBufferUnsafe().position();
 
          if (payloadSizeBytes != lastPayloadSizeBytes)
          {
