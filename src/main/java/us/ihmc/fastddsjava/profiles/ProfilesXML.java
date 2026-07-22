@@ -17,6 +17,7 @@ package us.ihmc.fastddsjava.profiles;
 
 import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.fastddsjavaTools;
+import us.ihmc.fastddsjava.natives.fastddsjava;
 import us.ihmc.fastddsjava.profiles.gen.LibrarySettingsType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
@@ -85,7 +86,7 @@ public class ProfilesXML
       // to be fully thread-safe and can sometimes result in a native crash.
       synchronized (loadLock)
       {
-         fastddsjavaTools.retcodeThrowOnError(us.ihmc.fastddsjava.natives.fastddsjava.loadXmlProfilesString(xml));
+         fastddsjavaTools.retcodeThrowOnError(fastddsjava.loadXmlProfilesString(xml));
       }
    }
 

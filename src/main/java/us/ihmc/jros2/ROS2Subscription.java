@@ -33,8 +33,6 @@ import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
  */
 public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageReader<T>, MessageStatisticsProvider
 {
-   private static final int OK = RETCODE_OK;
-
    static
    {
       jros2.load();
@@ -241,7 +239,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
          synchronized (callbackSampleLock)
          {
             int ret; // Keep for debugging
-            while (!closed && OK == (ret = fastddsjava.dataReaderReadNextSample(fastddsDataReader, fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo))
+            while (!closed && RETCODE_OK == (ret = fastddsjava.dataReaderReadNextSample(fastddsDataReader, fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo))
                    && callbackSampleInfo.hasValidData())
             {
                flagHadData = true;
@@ -468,17 +466,17 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             {
                SampleInfo info = sampleInfo != null ? sampleInfo : userSampleInfo;
                int ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, info.fastddsSampleInfo);
-               if (OK == ret)
+               if (RETCODE_OK == ret)
                {
                   untakenMessageCount.decrementAndGet();
 
                   int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
 
-                  // Resize Java heap buffer (if necessary) and rewind
+                  // Resize CDR buffer (if necessary) and rewind
                   readBuffer.ensureRemainingCapacity(payloadSizeBytes);
                   readBuffer.rewind();
 
-                  // Copy sample from native memory to Java heap memory
+                  // Copy sample from native memory into the direct CDR buffer
                   fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message
@@ -527,7 +525,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
             synchronized (userSampleLock)
             {
                int ret; // Keep for debugging
-               while (OK == (ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, userSampleInfo.fastddsSampleInfo)))
+               while (RETCODE_OK == (ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, userSampleInfo.fastddsSampleInfo)))
                {
                   totalRead++;
                }
@@ -536,11 +534,11 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                {
                   int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
 
-                  // Resize Java heap buffer (if necessary) and rewind
+                  // Resize CDR buffer (if necessary) and rewind
                   readBuffer.ensureRemainingCapacity(payloadSizeBytes);
                   readBuffer.rewind();
 
-                  // Copy sample from native memory to Java heap memory
+                  // Copy sample from native memory into the direct CDR buffer
                   fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message

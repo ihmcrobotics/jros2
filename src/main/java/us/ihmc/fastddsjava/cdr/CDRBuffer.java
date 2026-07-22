@@ -41,10 +41,21 @@ public final class CDRBuffer
 
    public CDRBuffer()
    {
-      // Direct buffers allow zero-copy JNI via GetDirectBufferAddress.
+      // Must be direct: JNI topicData*Buffer uses GetDirectBufferAddress.
+      // Do not call ByteBuffer.array(); sequential get/put on this buffer is the supported path.
       buffer = ByteBuffer.allocateDirect(1);
    }
 
+   /**
+    * Returns the underlying CDR {@link ByteBuffer}.
+    * <p>
+    * The buffer is always direct ({@link ByteBuffer#isDirect()} is {@code true}).
+    * JNI publish/subscribe paths use {@code GetDirectBufferAddress}, which has no heap
+    * fallback, so callers must not replace this with a heap buffer or call
+    * {@link ByteBuffer#array()}. Use sequential {@code get}/{@code put} on this buffer.
+    *
+    * @return the live direct buffer; position, limit, and capacity are owned by this {@link CDRBuffer}
+    */
    public ByteBuffer getBufferUnsafe()
    {
       return buffer;
