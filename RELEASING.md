@@ -17,7 +17,7 @@ Publish the base library
 ```
 ./gradlew publish -PpublishUrl=robotlabfiles
 ```
-Publish jros2-android
+Publish jros2-android (from the android/ project; credentials come from `~/.gradle/gradle.properties` as `publishUsername` / `publishPassword`)
 ```
 cd android
 ./gradlew publish

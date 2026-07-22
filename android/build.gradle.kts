@@ -188,4 +188,8 @@ afterEvaluate {
    tasks.named("publishReleasePublicationToMavenLocal") {
       dependsOn("bundleReleaseAar")
    }
+
+   tasks.named("publishReleasePublicationToMavenRepository") {
+      dependsOn("bundleReleaseAar")
+   }
 }
