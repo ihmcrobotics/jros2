@@ -15,11 +15,9 @@
  */
 package us.ihmc.jros2;
 
-import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.pointers.PublicationMatchedStatus;
-import us.ihmc.fastddsjava.pointers.fastddsjava_DataWriterListener;
-import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.fastddsjava.natives.fastddsjava;
+import us.ihmc.fastddsjava.natives.fastddsjavaCallback;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,7 +26,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
 import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
@@ -47,15 +44,15 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private final ROS2Topic<T> topic;
 
    /*
-    * Fast-DDS pointers
+    * Settings
     */
-   private final Pointer fastddsPublisher;
-   private final Pointer fastddsDataWriter;
-   private final TopicData topicData;
-   private final fastddsjava_TopicDataWrapper topicDataWrapper;
-   private final PublicationMatchedStatus publicationMatchedStatus;
-   private final fastddsjava_DataWriterListener listener;
-   private final fastddsjava_OnPublicationCallback fastddsPublicationMatchedCallback;
+   private final boolean recordStatistics;
+
+   /*
+    * Locks
+    */
+   protected final ReadWriteLock closeLock;
+   protected boolean closed;
 
    /*
     * Discovery
@@ -64,44 +61,50 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
    private volatile boolean subscriptionDiscovered;
 
    /*
+    * Fast-DDS pointers
+    */
+   private final TopicData topicData;
+   private final long fastddsTopicData;
+
+   /*
     * Write buffer
     */
    private final CDRBuffer writeBuffer;
-   private int lastPayloadSizeBytes = -1;
-
-   /*
-    * Locks
-    */
-   protected final ReadWriteLock closeLock;
-   protected boolean closed;
-
-   private final boolean recordStatistics;
-
-   /*
-    * GUID
-    */
-   private final Guid guid = new Guid();
+   private int lastPayloadSizeBytes;
 
    /*
     * Statistics
     */
-   private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
-   private long lastPublishTime;
+   private final StatisticsCalculator[] statisticsCalculators;
    private Method getHeaderMethod;
+   private long lastPublishTime;
+
+   /*
+    * GUID
+    */
+   private final Guid guid;
+
+   /*
+    * Fast-DDS pointers (endpoints)
+    */
+   private final fastddsjavaCallback fastddsPublicationMatchedCallback;
+   private final long fastddsDataWriterListener;
+   private final long fastddsPublisher;
+   private final long fastddsDataWriter;
 
    /**
     * Use {@link ROS2Node#createPublisher(ROS2Topic, ROS2QoSProfile)}
     */
-   ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
+   ROS2Publisher(long fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData)
    {
-      this(fastddsParticipant, publisherProfileName, topic, topicData, true);
+      // Statistics recording is opt-in: it adds lock + reflective header access on the publish path.
+      this(fastddsParticipant, publisherProfileName, topic, topicData, false);
    }
 
-   ROS2Publisher(Pointer fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData, boolean recordStatistics)
+   ROS2Publisher(long fastddsParticipant, String publisherProfileName, ROS2Topic<T> topic, TopicData topicData, boolean recordStatistics)
    {
       this.topic = topic;
-      this.topicData = topicData;
       this.recordStatistics = recordStatistics;
 
       closeLock = new ReentrantReadWriteLock(true);
@@ -110,10 +113,17 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       discoveryLock = new Object();
       subscriptionDiscovered = false;
 
-      topicDataWrapper = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
-      publicationMatchedStatus = new PublicationMatchedStatus();
-
+      this.topicData = topicData;
+      fastddsTopicData = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
       writeBuffer = new CDRBuffer();
+
+      // Grow the write buffer once up front for the empty message size so steady-state
+      // fixed-size publishes do not allocate on first use.
+      T emptyMessage = ROS2Message.createInstance(topic.getType());
+      int initialPayloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + emptyMessage.calculateSizeBytes(0);
+      writeBuffer.ensureRemainingCapacity(initialPayloadSizeBytes);
+      fastddsjava.topicDataResize(fastddsTopicData, initialPayloadSizeBytes);
+      lastPayloadSizeBytes = initialPayloadSizeBytes;
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -124,13 +134,22 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       getHeaderMethod = ROS2Message.getHeaderMethod(topic.getType());
       lastPublishTime = Long.MIN_VALUE;
 
+      guid = new Guid();
+
       // Initialize callback and listener last to ensure the rest of the state exists before they run
-      fastddsPublicationMatchedCallback = new fastddsjava_OnPublicationMatchedCallbackImpl();
-      listener = new fastddsjava_DataWriterListener();
-      listener.set_on_publication_callback(fastddsPublicationMatchedCallback);
-      fastddsPublisher = fastddsjava_create_publisher(fastddsParticipant, publisherProfileName);
-      fastddsDataWriter = fastddsjava_create_datawriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
-      fastddsjava_datawriter_set_listener(fastddsDataWriter, listener);
+      fastddsPublicationMatchedCallback = () ->
+      {
+         synchronized (discoveryLock)
+         {
+            subscriptionDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+      };
+      fastddsDataWriterListener = fastddsjava.createDataWriterListener();
+      fastddsjava.dataWriterListenerSetOnPublicationMatched(fastddsDataWriterListener, fastddsPublicationMatchedCallback);
+      fastddsPublisher = fastddsjava.createPublisher(fastddsParticipant, publisherProfileName);
+      fastddsDataWriter = fastddsjava.createDataWriter(fastddsPublisher, topicData.fastddsTopic, publisherProfileName);
+      fastddsjava.dataWriterSetListener(fastddsDataWriter, fastddsDataWriterListener);
 
       // Check if subscription is already matched (outside of discovery lock to avoid nested synchronization)
       if (getPublicationMatchedStatus() > 0)
@@ -173,7 +192,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          writeBuffer.rewind();
          writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
-         topicDataWrapper.data_vector().resize(payloadSizeBytes);
+         fastddsjava.topicDataResize(fastddsTopicData, payloadSizeBytes);
          lastPayloadSizeBytes = payloadSizeBytes;
       }
    }
@@ -186,12 +205,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          writeBuffer.rewind();
 
-         // calculateSizeBytes is used here only to presize the buffer before writing - it is not trusted as the
-         // exact final payload length below. A CDRSerializable whose calculateSizeBytes() and serialize() ever
-         // drift out of sync (see the IDLObjectSequence#calculateSizeBytes fix, prompted by exactly this class of
-         // bug for messages containing an IDLObjectSequence of variable-size structs, e.g. tf2_msgs.TFMessage's
-         // TransformStamped[]) would otherwise have its miscount silently resized/copied as-is, shipping the wrong
-         // number of bytes - truncated or padded with garbage - as part of the message on the wire.
+         // Presize from calculateSizeBytes; actual payload length is the buffer position after serialize.
          int estimatedSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
          if (estimatedSizeBytes > writeBuffer.getBufferUnsafe().capacity())
          {
@@ -200,21 +214,18 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
          writeBuffer.writePayloadHeader();
          message.serialize(writeBuffer);
-
-         // The buffer's position after serialize() is the ground truth for how many bytes were actually written,
-         // regardless of whether the estimate above was exact.
          payloadSizeBytes = writeBuffer.getBufferUnsafe().position();
 
          if (payloadSizeBytes != lastPayloadSizeBytes)
          {
-            topicDataWrapper.data_vector().resize(payloadSizeBytes);
+            fastddsjava.topicDataResize(fastddsTopicData, payloadSizeBytes);
             lastPayloadSizeBytes = payloadSizeBytes;
          }
 
-         topicDataWrapper.data_ptr().put(writeBuffer.getBufferUnsafe().array(), 0, payloadSizeBytes);
+         fastddsjava.topicDataWriteBuffer(fastddsTopicData, writeBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
       }
 
-      retcodePrintOnError(fastddsjava_datawriter_write(fastddsDataWriter, topicDataWrapper));
+      retcodePrintOnError(fastddsjava.dataWriterWrite(fastddsDataWriter, fastddsTopicData));
 
       if (recordStatistics)
       {
@@ -257,19 +268,6 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       }
    }
 
-   private class fastddsjava_OnPublicationMatchedCallbackImpl extends fastddsjava_OnPublicationCallback
-   {
-      @Override
-      public void call()
-      {
-         synchronized (discoveryLock)
-         {
-            subscriptionDiscovered = true;
-            discoveryLock.notifyAll();
-         }
-      }
-   }
-
    /**
     * Get the GUID (Globally Unique Identifier) for this publisher.
     * The GUID is assigned by Fast-DDS and uniquely identifies this publisher instance.
@@ -279,14 +277,14 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    public Guid getGuid()
    {
-      fastddsjava_get_writer_guid(fastddsDataWriter, guid.getValue());
+      fastddsjava.getWriterGuid(fastddsDataWriter, guid.getValue());
       return guid;
    }
 
    /**
     * Use {@link ROS2Node#destroyPublisher(ROS2Publisher)}
     */
-   protected void close(Pointer fastddsParticipant)
+   protected void close(long fastddsParticipant)
    {
       closeLock.writeLock().lock();
       boolean wasClosed = closed;
@@ -295,25 +293,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
       if (!wasClosed)
       {
-         // Clear listener from datawriter to prevent further callbacks
-         fastddsjava_datawriter_set_listener(fastddsDataWriter, null);
-
-         // Delete the datawriter to ensure Fast-DDS stops using the listener
-         retcodePrintOnError(fastddsjava_delete_datawriter(fastddsPublisher, fastddsDataWriter));
-
-         // Note: We intentionally do NOT close the listener and callback objects here.
-         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datawriter.
-         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
-         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
-         // listener.close();
-         // fastddsPublicationMatchedCallback.close();
-
-         publicationMatchedStatus.close();
-
-         topicData.topicDataWrapperType.delete_data(topicDataWrapper);
-         topicDataWrapper.close();
-
-         retcodePrintOnError(fastddsjava_delete_publisher(fastddsParticipant, fastddsPublisher));
+         fastddsjava.dataWriterSetListener(fastddsDataWriter, 0);
+         retcodePrintOnError(fastddsjava.deleteDataWriter(fastddsPublisher, fastddsDataWriter));
+         // Intentionally do not delete listener/callback yet; Fast-DDS may still invoke in-flight callbacks.
+         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsTopicData);
+         retcodePrintOnError(fastddsjava.deletePublisher(fastddsParticipant, fastddsPublisher));
       }
    }
 
@@ -375,11 +359,7 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          }
          else
          {
-            synchronized (publicationMatchedStatus)
-            {
-               fastddsjava_datawriter_get_publication_matched_status(fastddsDataWriter, publicationMatchedStatus);
-               count = publicationMatchedStatus.current_count();
-            }
+            count = fastddsjava.dataWriterGetPublicationMatchedCount(fastddsDataWriter);
          }
       }
       finally

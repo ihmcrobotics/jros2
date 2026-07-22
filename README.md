@@ -11,9 +11,11 @@
 
 A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other supported ROS 2 DDS middlewares.
 
-Fast-DDS version: `3.2.2`
+Fast-DDS version: `3.6.2`
 
-ROS 2 compatible and tested distros: `[humble, jazzy, kilted]`
+ROS 2 compatible and tested distros: `[foxy, humble, jazzy, kilted, lyrical]`
+(Foxy covers Ubuntu 20.04; Humble 22.04; Jazzy/Kilted 24.04; Lyrical 26.04.
+On Foxy, ros2 to jros2 interop is tested; jros2 to `ros2 topic echo` is covered on Humble+.)
 
 Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
@@ -24,7 +26,7 @@ Supported platforms:
 Works on NVIDIA Jetson and all versions of Raspberry Pi!
 
 ## Features
-- Fully compatible with ROS 2 humble or newer (may also work with older ROS 2 distros)
+- Fully compatible with ROS 2 foxy or newer
 - Does not require a ROS 2 installation on the system
 - Ready-to-use Java library, just add to your Maven or Gradle dependencies!
 - Publish and subscribe to ROS 2 topics

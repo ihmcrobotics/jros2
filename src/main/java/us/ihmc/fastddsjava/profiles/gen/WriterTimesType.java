@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for writerTimesType complex type.
  * 
@@ -31,17 +27,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class WriterTimesType {
 
-    @JacksonXmlProperty(localName = "initial_heartbeat_delay")
     protected DurationType initialHeartbeatDelay;
-    @JacksonXmlProperty(localName = "heartbeat_period")
     protected DurationType heartbeatPeriod;
-    @JacksonXmlProperty(localName = "nack_response_delay")
     protected DurationType nackResponseDelay;
-    @JacksonXmlProperty(localName = "nack_supression_duration")
     protected DurationType nackSupressionDuration;
 
     /**

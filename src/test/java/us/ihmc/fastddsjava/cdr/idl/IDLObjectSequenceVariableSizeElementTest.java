@@ -7,19 +7,11 @@ import us.ihmc.fastddsjava.cdr.CDRSerializable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Regression test for a bug where {@link IDLSequence#calculateSizeBytes(int)} could return a value larger than
- * the number of bytes {@link IDLSequence#serialize(CDRBuffer)} actually writes, for an {@link IDLObjectSequence}
- * of elements whose size varies (e.g. because they contain a string field). {@link IDLObjectSequenceTest} does not
- * catch this because its {@code TestIDLMsg} fixture is a fixed 4 bytes per element - already a valid CDR alignment
- * boundary - so the bug this guards against never manifests there.
+ * Checks {@link IDLObjectSequence#calculateSizeBytes(int)} against serialize() for variable-size elements.
  */
 public class IDLObjectSequenceVariableSizeElementTest
 {
-   /**
-    * A struct whose encoded size varies with the name field's length, unlike {@code TestIDLMsg}'s fixed 4 bytes.
-    * Mirrors the shape (an int followed by a string) that exposed the bug in a real generated message,
-    * {@code geometry_msgs.TransformStamped} (nested under {@code tf2_msgs.TFMessage.transforms}).
-    */
+   /** Element with a string field so encoded size is not a fixed CDR alignment boundary. */
    static class VariableSizeMsg implements CDRSerializable
    {
       private int id;
@@ -71,11 +63,7 @@ public class IDLObjectSequenceVariableSizeElementTest
 
       int actualSizeBytes = buffer.getBufferUnsafe().position() - CDRBuffer.PAYLOAD_HEADER.length;
 
-      assertEquals(actualSizeBytes,
-                   calculatedSizeBytes,
-                   "calculateSizeBytes() must equal the number of bytes serialize() actually writes - "
-                   + "callers such as ROS2Publisher#writeAndPublish previously trusted it as the exact payload "
-                   + "length written to the wire.");
+      assertEquals(actualSizeBytes, calculatedSizeBytes, "calculateSizeBytes must match serialize byte count");
    }
 
    @Test

@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for defaultType.
  * 
@@ -26,7 +22,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
 public enum DefaultType {
 
-    @JsonProperty("default")
     DEFAULT("default");
     private final String value;
 

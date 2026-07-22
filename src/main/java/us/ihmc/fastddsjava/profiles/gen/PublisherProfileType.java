@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for publisherProfileType complex type.
  * 
@@ -27,15 +23,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class PublisherProfileType
     extends PublisherProfileNoAttributesType
 {
 
-    @JacksonXmlProperty(isAttribute = true, localName = "profile_name")
     protected String profileName;
-    @JacksonXmlProperty(isAttribute = true, localName = "is_default_profile")
     protected Boolean isDefaultProfile;
 
     /**

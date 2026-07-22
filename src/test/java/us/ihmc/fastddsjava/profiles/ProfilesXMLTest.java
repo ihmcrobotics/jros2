@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Comprehensive test coverage for {@link ProfilesXML} based on Fast-DDS XML configuration documentation.
- * Tests verify compliance with Fast-DDS v3.2.2 XML schema and examples.
+ * Tests verify compliance with Fast-DDS v3.6.2 XML schema and examples.
  *
- * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/xml_configuration.html">Fast-DDS XML Configuration</a>
+ * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/xml_configuration/xml_configuration.html">Fast-DDS XML Configuration</a>
  */
 public class ProfilesXMLTest
 {
@@ -134,8 +134,7 @@ public class ProfilesXMLTest
       String xml = profilesXML.marshall();
 
       assertTrue(xml.contains("<interfaceWhiteList>"));
-      // Note: The implementation may serialize as <address> due to Jackson limitations
-      // This is acceptable as Fast-DDS accepts both
+      // Serialized as <address>; Fast-DDS accepts both <address> and <interface>
       assertTrue(xml.contains("eth0"));
       assertTrue(xml.contains("wlan0"));
    }

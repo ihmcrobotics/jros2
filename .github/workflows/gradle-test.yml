@@ -10,21 +10,47 @@ on:
   #   - cron: '0 */8 * * *'
 
 jobs:
+  # Major ROS 2 distros + Foxy for Ubuntu 20.04 / GLIBC 2.31 coverage.
+  # Platform mapping: foxy=20.04, humble=22.04, jazzy/kilted=24.04, lyrical=26.04.
   test-linux:
-    name: Linux (ROS 2 ${{ matrix.ros_distro }})
+    name: Linux (ROS 2 ${{ matrix.ros_distro }} / Ubuntu ${{ matrix.ubuntu }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
-        ros_distro: [humble, jazzy, kilted]
+        include:
+          - ros_distro: foxy
+            ubuntu: '20.04'
+          - ros_distro: humble
+            ubuntu: '22.04'
+          - ros_distro: jazzy
+            ubuntu: '24.04'
+          - ros_distro: kilted
+            ubuntu: '24.04'
+          - ros_distro: lyrical
+            ubuntu: '26.04'
     container:
       image: osrf/ros:${{ matrix.ros_distro }}-desktop
+    defaults:
+      run:
+        # Older ROS images (e.g. foxy/focal) default to dash in job containers.
+        shell: bash
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+
+      - name: Confirm ROS / Ubuntu environment
+        run: |
+          set -euo pipefail
+          . /etc/os-release
+          echo "ROS_DISTRO=${{ matrix.ros_distro }}"
+          echo "Container Ubuntu: $PRETTY_NAME"
+          test "$VERSION_ID" = "${{ matrix.ubuntu }}"
+          test -f "/opt/ros/${{ matrix.ros_distro }}/setup.bash"
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -36,22 +62,106 @@ jobs:
         if: failure()
         run: find . -name 'hs_err*' -type f -exec cat {} +
 
+  # Build the Android AAR and verify that bundled natives load on an x86_64 emulator.
+  test-android:
+    name: Android (AAR + native load)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Enable KVM
+        run: |
+          set -euo pipefail
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android SDK packages
+        run: |
+          set -euo pipefail
+          # JNI libs are prebuilt in jniLibs; NDK is not required to assemble the AAR.
+          sdkmanager --install \
+            "platforms;android-35" \
+            "build-tools;35.0.0" \
+            "platform-tools" \
+            "emulator" \
+            "system-images;android-30;google_apis;x86_64"
+
+      - name: Verify committed Android JNI libraries
+        run: |
+          set -euo pipefail
+          for abi in arm64-v8a x86_64; do
+            for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
+              test -f "android/src/main/jniLibs/$abi/$lib" || {
+                echo "Missing android/src/main/jniLibs/$abi/$lib"
+                exit 1
+              }
+            done
+            echo "OK jniLibs/$abi"
+            ls -la "android/src/main/jniLibs/$abi"
+          done
+
+      - name: Build Android release AAR
+        working-directory: android
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Verify AAR packages JNI libraries
+        working-directory: android
+        run: |
+          set -euo pipefail
+          AAR=$(find build/outputs/aar -name '*.aar' | head -1)
+          test -n "$AAR" || { echo "No AAR produced under build/outputs/aar"; find build -type f | head -50; exit 1; }
+          echo "Built AAR: $AAR"
+          unzip -l "$AAR"
+
+          for abi in arm64-v8a x86_64; do
+            for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
+              unzip -l "$AAR" | grep -q "jni/$abi/$lib" || {
+                echo "AAR missing jni/$abi/$lib"
+                exit 1
+              }
+            done
+            echo "OK AAR contains jni/$abi natives"
+          done
+
+      - name: Run Android native library load test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: google_apis
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          working-directory: android
+          script: ./gradlew connectedDebugAndroidTest --stacktrace
+
   test-docker:
     name: Docker Integration Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build JAR
         run: ./gradlew jar
@@ -63,12 +173,14 @@ jobs:
     name: Windows
     runs-on: windows-latest
     timeout-minutes: 10
+    env:
+      JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -83,10 +195,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'
@@ -100,10 +212,10 @@ jobs:
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: '17'
           distribution: 'temurin'

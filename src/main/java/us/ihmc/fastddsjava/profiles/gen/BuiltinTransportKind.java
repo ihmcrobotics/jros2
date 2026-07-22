@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for builtinTransportKind.
  * 
@@ -36,17 +32,12 @@ public enum BuiltinTransportKind {
 
     NONE("NONE"),
     DEFAULT("DEFAULT"),
-    @JsonProperty("DEFAULTv6")
     DEFAUL_TV_6("DEFAULTv6"),
     SHM("SHM"),
-    @JsonProperty("UDPv4")
     UD_PV_4("UDPv4"),
-    @JsonProperty("UDPv6")
     UD_PV_6("UDPv6"),
     LARGE_DATA("LARGE_DATA"),
-    @JsonProperty("LARGE_DATAv6")
     LARGE_DAT_AV_6("LARGE_DATAv6"),
-    @JsonProperty("P2P")
     P_2_P("P2P");
     private final String value;
 

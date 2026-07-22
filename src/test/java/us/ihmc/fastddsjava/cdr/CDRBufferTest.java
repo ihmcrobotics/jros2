@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.ByteOrder;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.fastddsjava.natives.fastddsjava.*;
 
 /**
  * Comprehensive tests for CDRBuffer following the OMG CDR specification.
@@ -615,6 +615,10 @@ public class CDRBufferTest
 
       assertTrue(expanded, "Buffer should expand when capacity insufficient");
       assertTrue(smallBuffer.getBufferUnsafe().capacity() >= 100, "Buffer capacity should meet requirement");
+      assertTrue(smallBuffer.getBufferUnsafe().isDirect(), "CDRBuffer should use a direct ByteBuffer");
+      // Power-of-two growth: next power of two >= 100 is 128.
+      assertEquals(128, smallBuffer.getBufferUnsafe().capacity());
+      assertTrue(smallBuffer.getBufferUnsafe().capacity() > initialCapacity);
    }
 
    @Test

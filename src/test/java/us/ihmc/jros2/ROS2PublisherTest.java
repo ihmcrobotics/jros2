@@ -17,8 +17,7 @@ package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.condition.EnabledIf;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 
 import java.io.IOException;
@@ -131,7 +130,7 @@ public class ROS2PublisherTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#supportsROS2PublisherEcho")
    @Timeout(30)
    public void testPublisherTransientLocal() throws IOException, InterruptedException
    {

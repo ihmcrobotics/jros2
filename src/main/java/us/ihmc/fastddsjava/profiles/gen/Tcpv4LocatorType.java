@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for tcpv4LocatorType complex type.
  * 
@@ -32,17 +28,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class Tcpv4LocatorType {
 
         protected Integer port;
-    @JacksonXmlProperty(localName = "physical_port")
         protected Integer physicalPort;
     protected String address;
-    @JacksonXmlProperty(localName = "unique_lan_id")
     protected String uniqueLanId;
-    @JacksonXmlProperty(localName = "wan_address")
     protected String wanAddress;
 
     /**

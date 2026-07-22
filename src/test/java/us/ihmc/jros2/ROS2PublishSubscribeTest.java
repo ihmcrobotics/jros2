@@ -18,8 +18,7 @@ package us.ihmc.jros2;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.condition.EnabledIf;
 import us.ihmc.jros2.ROS2QoSProfile.Durability;
 import us.ihmc.jros2.ROS2QoSProfile.History;
 import us.ihmc.jros2.ROS2QoSProfile.Reliability;
@@ -103,7 +102,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testROS2SubscriptionAPI()
    {
@@ -147,7 +146,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#supportsROS2PublisherEcho")
    @Timeout(30)
    public void testROS2Publisher() throws InterruptedException, IOException
    {
@@ -177,7 +176,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    // Allocation-free subscription
    public void testROS2Subscription1() throws InterruptedException, IOException
@@ -232,7 +231,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    // Allocation subscription
    public void testROS2Subscription2() throws InterruptedException, IOException
@@ -288,7 +287,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    // Subscription sampler
    public void testROS2Subscription3() throws InterruptedException, IOException
@@ -342,7 +341,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    // Callback-less subscription
    public void testROS2Subscription4() throws InterruptedException, IOException
@@ -402,7 +401,7 @@ public class ROS2PublishSubscribeTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    // Callback-less AND callback subscription
    public void testROS2Subscription5() throws InterruptedException, IOException

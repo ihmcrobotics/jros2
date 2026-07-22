@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for nonBasicType.
  * 
@@ -26,7 +22,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
 public enum NonBasicType {
 
-    @JsonProperty("nonBasic")
     NON_BASIC("nonBasic");
     private final String value;
 

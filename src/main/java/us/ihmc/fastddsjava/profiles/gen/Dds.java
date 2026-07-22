@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for anonymous complex type.
  * 
@@ -31,15 +27,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
-@JacksonXmlRootElement(localName = "dds")
 public class Dds {
 
     protected ProfilesType profiles;
     protected TypesType types;
     protected LogType log;
-    @JacksonXmlProperty(localName = "library_settings")
     protected LibrarySettingsType librarySettings;
 
     /**

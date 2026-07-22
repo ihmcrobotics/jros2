@@ -7,9 +7,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy JAR and all runtime dependencies
+# Copy JAR and runtime dependencies (docker-libs may be empty when there are no third-party jars)
 COPY build/libs/jros2-*.jar /app/jros2.jar
-COPY build/docker-libs/*.jar /app/libs/
+RUN mkdir -p /app/libs
+COPY build/docker-libs/ /app/libs/
 
 # Copy test source files
 COPY src/test/docker/TestPublisher.java /app/

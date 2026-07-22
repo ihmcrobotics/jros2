@@ -18,7 +18,7 @@ package us.ihmc.fastddsjava.cdr;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.fastddsjava.natives.fastddsjava.*;
 
 /**
  * A buffer wrapper for reading and writing data using Common Data Representation (CDR) encoding,
@@ -41,9 +41,21 @@ public final class CDRBuffer
 
    public CDRBuffer()
    {
-      buffer = ByteBuffer.allocate(1);
+      // Must be direct: JNI topicData*Buffer uses GetDirectBufferAddress.
+      // Do not call ByteBuffer.array(); sequential get/put on this buffer is the supported path.
+      buffer = ByteBuffer.allocateDirect(1);
    }
 
+   /**
+    * Returns the underlying CDR {@link ByteBuffer}.
+    * <p>
+    * The buffer is always direct ({@link ByteBuffer#isDirect()} is {@code true}).
+    * JNI publish/subscribe paths use {@code GetDirectBufferAddress}, which has no heap
+    * fallback, so callers must not replace this with a heap buffer or call
+    * {@link ByteBuffer#array()}. Use sequential {@code get}/{@code put} on this buffer.
+    *
+    * @return the live direct buffer; position, limit, and capacity are owned by this {@link CDRBuffer}
+    */
    public ByteBuffer getBufferUnsafe()
    {
       return buffer;
@@ -57,7 +69,13 @@ public final class CDRBuffer
       {
          int oldPosition = buffer.position();
          ByteOrder oldOrder = buffer.order();
-         ByteBuffer newBuffer = ByteBuffer.allocate(requiredCapacity);
+         // Grow by powers of two to reduce repeated reallocations for variable-size payloads.
+         int newCapacity = 1;
+         while (newCapacity < requiredCapacity)
+         {
+            newCapacity <<= 1;
+         }
+         ByteBuffer newBuffer = ByteBuffer.allocateDirect(newCapacity);
          newBuffer.order(oldOrder);
 
          buffer.flip();

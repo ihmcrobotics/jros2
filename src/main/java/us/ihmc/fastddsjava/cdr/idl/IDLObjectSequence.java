@@ -232,24 +232,8 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    /**
-    * Overridden because {@link IDLSequence#calculateSizeBytes(int)}'s generic loop assumes
-    * {@link #elementSizeBytes(int, int)} returns a size that does not itself depend on the alignment context it
-    * was given - true for every fixed-size primitive sequence (e.g. {@link IDLDoubleSequence}, whose element size
-    * is always the constant {@code 8}), where the loop is responsible for computing and inserting the leading
-    * alignment padding before each element via {@code CDRBuffer.alignment(currentAlignment, elementSizeBytes)}.
-    * <p>
-    * That assumption does not hold here: {@link #elementSizeBytes(int, int)} forwards directly to
-    * {@code elements[i].calculateSizeBytes(currentAlignment)}, and a well-behaved {@link CDRSerializable} (e.g. any
-    * jros2-generated message class) already accounts for its own leading alignment padding relative to the given
-    * {@code currentAlignment} as part of that call - see e.g. {@code std_msgs.Header#calculateSizeBytes}. Reusing
-    * the base loop on top of that double-counts alignment: it re-derives a padding amount from the *total* size of
-    * the (already-aligned) element and adds it again, which is not only redundant but incoherent, since
-    * {@link CDRBuffer#alignment(int, int)} assumes its {@code bytes} argument is itself a valid power-of-two CDR
-    * alignment boundary (1, 2, 4, or 8) - never true for an arbitrary struct's total encoded size. In practice this
-    * could throw a two-element {@code tf2_msgs.TFMessage.transforms} sequence's computed size off by tens of
-    * bytes in either direction (observed both over- and under-counting depending on element sizes), which matters
-    * because callers such as {@code ROS2Publisher#writeAndPublish} use this value as the exact number of bytes
-    * copied to the wire.
+    * Object elements already include their own alignment padding in {@link #elementSizeBytes(int, int)},
+    * so the base {@link IDLSequence#calculateSizeBytes(int)} loop must not add a second alignment pass.
     */
    @Override
    public int calculateSizeBytes(int currentAlignment)
