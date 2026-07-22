@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for bitsetDcl complex type.
@@ -51,15 +46,12 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class BitsetDcl {
 
     
     protected List<BitsetDcl.Bitfield> bitfield;
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @JacksonXmlProperty(isAttribute = true, localName = "baseType")
     protected String baseType;
 
     /**
@@ -139,7 +131,6 @@ public class BitsetDcl {
         this.baseType = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -166,15 +157,11 @@ public class BitsetDcl {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Bitfield {
 
-        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-        @JacksonXmlProperty(isAttribute = true, localName = "type")
         protected IntPrimitiveTypes type;
-        @JacksonXmlProperty(isAttribute = true, localName = "bit_bound")
         protected short bitBound;
 
         /**

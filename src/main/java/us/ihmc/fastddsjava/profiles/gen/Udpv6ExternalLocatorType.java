@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for udpv6ExternalLocatorType complex type.
  * 
@@ -53,17 +49,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class Udpv6ExternalLocatorType {
 
         protected Integer port;
     protected String address;
-    @JacksonXmlProperty(isAttribute = true, localName = "externality")
     protected Integer externality;
-    @JacksonXmlProperty(isAttribute = true, localName = "cost")
     protected Integer cost;
-    @JacksonXmlProperty(isAttribute = true, localName = "mask")
     protected Integer mask;
 
     /**

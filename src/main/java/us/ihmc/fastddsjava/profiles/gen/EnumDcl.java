@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for enumDcl complex type.
@@ -42,13 +37,11 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class EnumDcl {
 
     
     protected List<EnumDcl.Enumerator> enumerator;
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
 
     /**
@@ -104,7 +97,6 @@ public class EnumDcl {
         this.name = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -123,13 +115,10 @@ public class EnumDcl {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Enumerator {
 
-        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-        @JacksonXmlProperty(isAttribute = true, localName = "value")
         protected Long value;
 
         /**

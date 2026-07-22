@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for topicElementType complex type.
  * 
@@ -43,7 +39,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class TopicElementType {
 
@@ -98,7 +93,6 @@ public class TopicElementType {
         this.resourceLimitsQos = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -122,19 +116,13 @@ public class TopicElementType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class ResourceLimitsQos {
 
-        @JacksonXmlProperty(localName = "max_samples")
                 protected Long maxSamples;
-        @JacksonXmlProperty(localName = "max_instances")
                 protected Long maxInstances;
-        @JacksonXmlProperty(localName = "max_samples_per_instance")
                 protected Long maxSamplesPerInstance;
-        @JacksonXmlProperty(localName = "allocated_samples")
                 protected Long allocatedSamples;
-        @JacksonXmlProperty(localName = "extra_samples")
                 protected Long extraSamples;
 
         /**

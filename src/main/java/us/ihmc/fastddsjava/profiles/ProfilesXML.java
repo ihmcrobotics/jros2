@@ -15,24 +15,17 @@
  */
 package us.ihmc.fastddsjava.profiles;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import us.ihmc.fastddsjava.fastddsjavaException;
 import us.ihmc.fastddsjava.fastddsjavaTools;
-import us.ihmc.fastddsjava.pointers.fastddsjava;
-import us.ihmc.fastddsjava.profiles.gen.Dds;
+import us.ihmc.fastddsjava.natives.fastddsjava;
 import us.ihmc.fastddsjava.profiles.gen.LibrarySettingsType;
-import us.ihmc.fastddsjava.profiles.gen.LogType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
-import us.ihmc.fastddsjava.profiles.gen.ProfilesType;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
-import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
-import us.ihmc.fastddsjava.profiles.gen.TypesType;
 
-// https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/making_xml_profiles.html
+// https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/xml_configuration/making_xml_profiles.html
 public class ProfilesXML
 {
    public static final String FAST_DDS_NAMESPACE_URI = "http://www.eprosima.com";
@@ -74,18 +67,12 @@ public class ProfilesXML
       }
    }
 
-   private final ProfilesType profilesType;
    private final LibrarySettingsType librarySettingsType;
-   private final LogType logType;
-   private final TypesType typesType;
    private final java.util.List<ProfileElement> profileElements;
 
    public ProfilesXML()
    {
-      profilesType = new ProfilesType();
       librarySettingsType = new LibrarySettingsType();
-      logType = new LogType();
-      typesType = new TypesType();
       profileElements = new java.util.ArrayList<>();
 
       librarySettingsType.setIntraprocessDelivery(intraprocessDelivery);
@@ -99,28 +86,13 @@ public class ProfilesXML
       // to be fully thread-safe and can sometimes result in a native crash.
       synchronized (loadLock)
       {
-         fastddsjavaTools.retcodeThrowOnError(fastddsjava.fastddsjava_load_xml_profiles_string(xml));
+         fastddsjavaTools.retcodeThrowOnError(fastddsjava.loadXmlProfilesString(xml));
       }
-   }
-
-   public ProfilesType getProfilesType()
-   {
-      return profilesType;
    }
 
    public LibrarySettingsType getLibrarySettingsType()
    {
       return librarySettingsType;
-   }
-
-   public LogType getLogType()
-   {
-      return logType;
-   }
-
-   public TypesType getTypesType()
-   {
-      return typesType;
    }
 
    public void addParticipantProfile(ParticipantProfileType participantProfileType)
@@ -150,18 +122,6 @@ public class ProfilesXML
 
    public String marshall()
    {
-      Dds dds = new Dds();
-
-      dds.setProfiles(profilesType);
-      dds.setLibrarySettings(librarySettingsType);
-      dds.setLog(logType);
-      dds.setTypes(typesType);
-
-      return marshall(dds);
-   }
-
-   private String marshall(Dds dds)
-   {
       StringBuilder xml = new StringBuilder();
       xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
       xml.append("<dds xmlns=\"").append(FAST_DDS_NAMESPACE_URI).append("\">\n");
@@ -170,82 +130,11 @@ public class ProfilesXML
       if (!profileElements.isEmpty())
       {
          xml.append("    <profiles>\n");
-
-         XmlMapper xmlMapper = new XmlMapper();
-         xmlMapper.enable(SerializationFeature.INDENT_OUTPUT);
-         xmlMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
-         xmlMapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY);
-
          for (ProfileElement element : profileElements)
          {
-            try
-            {
-               String profileXml;
-
-               // Special handling for TransportDescriptorListType
-               if (element.profile instanceof TransportDescriptorListType)
-               {
-                  TransportDescriptorListType transportList = (TransportDescriptorListType) element.profile;
-                  StringBuilder transportXml = new StringBuilder();
-                  transportXml.append("<").append(element.elementName).append(">\n");
-
-                  // Serialize each transport descriptor individually
-                  for (TransportDescriptorType descriptor : transportList.getTransportDescriptor())
-                  {
-                     String descriptorXml = xmlMapper.writeValueAsString(descriptor);
-                     descriptorXml = descriptorXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
-                     descriptorXml = descriptorXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<transport_descriptor");
-                     descriptorXml = descriptorXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</transport_descriptor>");
-
-                     // Fix interfaceWhiteList structure - remove double nesting of addressOrInterface
-                     descriptorXml = descriptorXml.replaceAll("<addressOrInterface>\\s*<addressOrInterface>", "<address>");
-                     descriptorXml = descriptorXml.replaceAll("</addressOrInterface>\\s*</addressOrInterface>", "</address>");
-
-                     // Indent descriptor XML (1 extra level)
-                     String[] descriptorLines = descriptorXml.split("\n");
-                     for (String line : descriptorLines)
-                     {
-                        if (!line.trim().isEmpty())
-                        {
-                           transportXml.append("  ").append(line).append("\n");
-                        }
-                     }
-                  }
-
-                  transportXml.append("</").append(element.elementName).append(">");
-                  profileXml = transportXml.toString();
-               }
-               else
-               {
-                  // Normal serialization for other profile types
-                  profileXml = xmlMapper.writeValueAsString(element.profile);
-
-                  // Remove XML declaration if present
-                  profileXml = profileXml.replaceFirst("<\\?xml[^>]*\\?>\\s*", "");
-
-                  // Replace the root element name with the correct element name
-                  profileXml = profileXml.replaceFirst("<[A-Za-z][^/>\\s]*", "<" + element.elementName);
-                  profileXml = profileXml.replaceFirst("</[A-Za-z][^>]*>\\s*$", "</" + element.elementName + ">");
-
-                  // Fix double-nested transport_id elements in userTransports
-                  profileXml = profileXml.replaceAll("<transport_id>\\s*<transport_id>", "<transport_id>");
-                  profileXml = profileXml.replaceAll("</transport_id>\\s*</transport_id>", "</transport_id>");
-               }
-
-               // Add proper indentation (2 levels: 8 spaces)
-               String[] lines = profileXml.split("\n");
-               for (String line : lines)
-               {
-                  if (!line.trim().isEmpty())
-                  {
-                     xml.append("        ").append(line).append("\n");
-                  }
-               }
-            }
-            catch (Exception e)
-            {
-               throw new RuntimeException("Failed to serialize profile: " + element.profile, e);
-            }
+            xml.append("        ");
+            ProfilesXMLWriter.writeProfile(xml, element.elementName, element.profile);
+            xml.append('\n');
          }
          xml.append("    </profiles>\n");
       }

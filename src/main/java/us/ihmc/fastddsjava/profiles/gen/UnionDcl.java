@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for unionDcl complex type.
@@ -75,13 +70,11 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class UnionDcl {
 
     
     protected List<Object> discriminatorOrCase;
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
 
     /**
@@ -138,7 +131,6 @@ public class UnionDcl {
         this.name = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -174,7 +166,6 @@ public class UnionDcl {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Case {
 
@@ -211,7 +202,6 @@ public class UnionDcl {
             return this.caseDiscriminatorOrMember;
         }
 
-
         /**
          * <p>Java class for anonymous complex type.
          * 
@@ -234,11 +224,9 @@ public class UnionDcl {
          * 
          * 
          */
-        @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
         
         public static class CaseDiscriminator {
 
-            @JacksonXmlProperty(isAttribute = true, localName = "value")
             protected String value;
 
             /**
@@ -269,7 +257,6 @@ public class UnionDcl {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -292,11 +279,9 @@ public class UnionDcl {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Discriminator {
 
-        @JacksonXmlProperty(isAttribute = true, localName = "type")
         protected String type;
 
         /**

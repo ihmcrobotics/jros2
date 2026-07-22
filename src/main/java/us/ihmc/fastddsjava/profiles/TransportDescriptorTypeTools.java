@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,8 +21,8 @@ import java.util.concurrent.atomic.AtomicLong;
  * Factory methods for creating and configuring Fast-DDS {@link TransportDescriptorType} instances.
  * Supports UDPv4, UDPv6, TCPv4, TCPv6, and SHM (Shared Memory) transports with optional interface whitelisting.
  *
- * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/transport.html">Fast-DDS Transport Layer</a>
- * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/whitelist.html">Fast-DDS Interface Whitelist</a>
+ * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/transport/transport.html">Fast-DDS Transport Layer</a>
+ * @see <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/transport/whitelist.html">Fast-DDS Interface Whitelist</a>
  */
 public final class TransportDescriptorTypeTools
 {
@@ -262,19 +263,32 @@ public final class TransportDescriptorTypeTools
          return new TransportConfiguration(customTransports, false, shouldAddToXml);
       }
 
-      // Whitelist without custom transports - create separate transport per interface
+      // Whitelist without custom transports - one UDPv4 with the whitelist, plus SHM
       if (hasWhitelist)
       {
          return createWhitelistedTransports(interfaceWhitelist);
       }
 
-      // No custom transports or whitelist - use builtin
+      // No custom transports or whitelist - use builtin (UDPv4 only on Android; SHM is unreliable there)
+      if (isAndroid())
+      {
+         TransportDescriptorType udp = createUDPv4Descriptor();
+         synchronized (registeredTransportIds)
+         {
+            boolean shouldAddToXml = registeredTransportIds.add(udp.getTransportId());
+            return new TransportConfiguration(new TransportDescriptorType[] {udp}, false, shouldAddToXml);
+         }
+      }
       return new TransportConfiguration(null, true, false);
    }
 
+   private static boolean isAndroid()
+   {
+      return System.getProperty("java.vendor", "").toLowerCase(Locale.ROOT).contains("android");
+   }
+
    /**
-    * Create separate UDPv4 transport for each interface entry.
-    * This is necessary because Jackson XML cannot serialize multiple whitelist entries properly.
+    * Create a UDPv4 transport with the given interface whitelist, plus SHM for local communication.
     */
    private static TransportConfiguration createWhitelistedTransports(String[] interfaceWhitelist)
    {
@@ -287,14 +301,7 @@ public final class TransportDescriptorTypeTools
          if (!whitelistKey.equals(cachedWhitelistKey) || isFirstTime)
          {
             List<TransportDescriptorType> transports = new ArrayList<>();
-
-            // Create one UDPv4 transport per interface
-            for (String interfaceEntry : interfaceWhitelist)
-            {
-               transports.add(createUDPv4Transport(interfaceEntry));
-            }
-
-            // Add SHM for local communication
+            transports.add(createUDPv4Transport(interfaceWhitelist));
             transports.add(createSHMTransport());
 
             cachedTransports = transports.toArray(new TransportDescriptorType[0]);
@@ -321,9 +328,6 @@ public final class TransportDescriptorTypeTools
     * Supports IP addresses ("192.168.1.100"), CIDR notation ("192.168.1.0/24"),
     * and interface names ("eth0", "wlan0", "lo"). When an interface name is specified,
     * Fast-DDS binds to all IP addresses on that interface.
-    * <p>
-    * Note: Due to Jackson XML serialization limitations, only single entries work reliably.
-    * For multiple interfaces, create separate transport descriptors using {@link #configureTransports}.
     *
     * @param descriptor         transport descriptor to configure (must not be SHM type)
     * @param interfaceWhitelist addresses or interface names to whitelist (null/empty clears whitelist)

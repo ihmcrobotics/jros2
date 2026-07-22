@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for typedefDcl complex type.
  * 
@@ -37,23 +33,15 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class TypedefDcl {
 
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @JacksonXmlProperty(isAttribute = true, localName = "type")
     protected String type;
-    @JacksonXmlProperty(isAttribute = true, localName = "nonBasicTypeName")
     protected String nonBasicTypeName;
-    @JacksonXmlProperty(isAttribute = true, localName = "arrayDimensions")
     protected String arrayDimensions;
-    @JacksonXmlProperty(isAttribute = true, localName = "sequenceMaxLength")
     protected Integer sequenceMaxLength;
-    @JacksonXmlProperty(isAttribute = true, localName = "mapMaxLength")
     protected Integer mapMaxLength;
-    @JacksonXmlProperty(isAttribute = true, localName = "key_type")
     protected String keyType;
 
     /**

@@ -51,19 +51,19 @@ build_test_image() {
     mkdir -p build/docker-libs
     rm -f build/docker-libs/*.jar
 
-    # Use Gradle to copy runtime dependencies
-    ./gradlew copyDockerDependencies > /dev/null 2>&1 || {
-        echo "WARNING: Failed to copy dependencies. Tests will be skipped."
+    # Use Gradle to copy runtime dependencies and build the project jar
+    ./gradlew jar copyDockerDependencies > /dev/null 2>&1 || {
+        echo "WARNING: Failed to prepare Docker dependencies. Tests will be skipped."
         exit 0
     }
 
-    # Build Docker image
-    docker build -t "$IMAGE_NAME" -f src/test/docker/Dockerfile . > /dev/null 2>&1
-
-    if [ $? -eq 0 ]; then
+    # Build Docker image (keep set -e safe: check status in if, not via $?)
+    if docker build -t "$IMAGE_NAME" -f src/test/docker/Dockerfile . > /tmp/jros2-docker-build.log 2>&1; then
         echo "Docker image built successfully"
     else
         echo "WARNING: Failed to build Docker image. Tests will be skipped."
+        echo "---- docker build log (tail) ----"
+        tail -n 40 /tmp/jros2-docker-build.log || true
         exit 0
     fi
 }

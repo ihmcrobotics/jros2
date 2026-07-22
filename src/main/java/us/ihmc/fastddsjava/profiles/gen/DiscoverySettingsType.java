@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for discoverySettingsType complex type.
@@ -88,7 +83,6 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class DiscoverySettingsType {
 
@@ -133,7 +127,6 @@ public class DiscoverySettingsType {
         return this.discoveryProtocolOrDiscoveryServersListOrIgnoreParticipantFlags;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -154,7 +147,6 @@ public class DiscoverySettingsType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class InitialAnnouncements {
 
@@ -211,7 +203,6 @@ public class DiscoverySettingsType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -232,13 +223,10 @@ public class DiscoverySettingsType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class SimpleEDP {
 
-        @JacksonXmlProperty(localName = "PUBWRITER_SUBREADER")
         protected Boolean pubwritersubreader;
-        @JacksonXmlProperty(localName = "PUBREADER_SUBWRITER")
         protected Boolean pubreadersubwriter;
 
         /**

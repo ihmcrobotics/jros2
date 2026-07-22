@@ -15,7 +15,6 @@
  */
 package us.ihmc.jros2;
 
-import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,10 +41,10 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    private final T[] messagesToPublish;
 
    private final Runnable publishTask;
-   private final AtomicBoolean publishTaskScheduled = new AtomicBoolean(false);
+   private final AtomicBoolean publishTaskScheduled;
 
    protected AsyncROS2Publisher(AsyncROS2Node node,
-                                Pointer fastddsParticipant,
+                                long fastddsParticipant,
                                 String publisherProfileName,
                                 ROS2Topic<T> topic,
                                 TopicData topicData,
@@ -57,6 +56,8 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       this.queueCapacity = queueCapacity;
 
       queueSize = new AtomicInteger();
+      insertPosition = 0;
+      publishPosition = 0;
 
       //noinspection unchecked
       messagesToPublish = (T[]) new ROS2Message[queueCapacity];
@@ -66,6 +67,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       }
 
       publishTask = this::publishTask;
+      publishTaskScheduled = new AtomicBoolean(false);
 
       int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + messagesToPublish[0].calculateSizeBytes(0);
       preallocateWriteBuffer(payloadSizeBytes);
@@ -99,16 +101,18 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
    private boolean schedulePublishTaskIfNeeded()
    {
+      boolean scheduled = true;
+
       if (publishTaskScheduled.compareAndSet(false, true))
       {
          if (!node.addTask(publishTask))
          {
             publishTaskScheduled.set(false);
-            return false;
+            scheduled = false;
          }
       }
 
-      return true;
+      return scheduled;
    }
 
    private void publishTask()

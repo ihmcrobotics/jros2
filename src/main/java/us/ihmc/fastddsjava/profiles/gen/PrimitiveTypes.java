@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for primitiveTypes.
  * 
@@ -52,59 +48,32 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
 
 public enum PrimitiveTypes {
 
-    @JsonProperty("bool")
     BOOL("bool"),
-    @JsonProperty("boolean")
     BOOLEAN("boolean"),
-    @JsonProperty("char")
     CHAR("char"),
-    @JsonProperty("char8")
     CHAR_8("char8"),
-    @JsonProperty("wchar")
     WCHAR("wchar"),
-    @JsonProperty("char16")
     CHAR_16("char16"),
-    @JsonProperty("byte")
     BYTE("byte"),
-    @JsonProperty("octet")
     OCTET("octet"),
-    @JsonProperty("int8")
     INT_8("int8"),
-    @JsonProperty("uint8")
     UINT_8("uint8"),
-    @JsonProperty("short")
     SHORT("short"),
-    @JsonProperty("uShort")
     U_SHORT("uShort"),
-    @JsonProperty("int16")
     INT_16("int16"),
-    @JsonProperty("uint16")
     UINT_16("uint16"),
-    @JsonProperty("long")
     LONG("long"),
-    @JsonProperty("uLong")
     U_LONG("uLong"),
-    @JsonProperty("int32")
     INT_32("int32"),
-    @JsonProperty("uint32")
     UINT_32("uint32"),
-    @JsonProperty("longLong")
     LONG_LONG("longLong"),
-    @JsonProperty("uLongLong")
     U_LONG_LONG("uLongLong"),
-    @JsonProperty("int64")
     INT_64("int64"),
-    @JsonProperty("uint64")
     UINT_64("uint64"),
-    @JsonProperty("float32")
     FLOAT_32("float32"),
-    @JsonProperty("float64")
     FLOAT_64("float64"),
-    @JsonProperty("float128")
     FLOAT_128("float128"),
-    @JsonProperty("string")
     STRING("string"),
-    @JsonProperty("wstring")
     WSTRING("wstring");
     private final String value;
 

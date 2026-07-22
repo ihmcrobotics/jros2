@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for tlsConfigType complex type.
@@ -105,33 +100,21 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class TlsConfigType {
 
     protected String password;
-    @JacksonXmlProperty(localName = "private_key_file")
     protected String privateKeyFile;
-    @JacksonXmlProperty(localName = "rsa_private_key_file")
     protected String rsaPrivateKeyFile;
-    @JacksonXmlProperty(localName = "cert_chain_file")
     protected String certChainFile;
-    @JacksonXmlProperty(localName = "tmp_dh_file")
     protected String tmpDhFile;
-    @JacksonXmlProperty(localName = "verify_file")
     protected String verifyFile;
-    @JacksonXmlProperty(localName = "verify_mode")
     protected TlsConfigType.VerifyMode verifyMode;
-    @JacksonXmlProperty(localName = "verify_paths")
     protected TlsConfigType.VerifyPaths verifyPaths;
-    @JacksonXmlProperty(localName = "verify_depth")
     protected Integer verifyDepth;
-    @JacksonXmlProperty(localName = "default_verify_path")
     protected Boolean defaultVerifyPath;
     protected TlsConfigType.Options options;
-    @JacksonXmlProperty(localName = "handshake_role")
     protected String handshakeRole;
-    @JacksonXmlProperty(localName = "server_name")
     protected String serverName;
 
     /**
@@ -446,7 +429,6 @@ public class TlsConfigType {
         this.serverName = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -480,7 +462,6 @@ public class TlsConfigType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Options {
 
@@ -517,7 +498,6 @@ public class TlsConfigType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -546,7 +526,6 @@ public class TlsConfigType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class VerifyMode {
 
@@ -583,7 +562,6 @@ public class TlsConfigType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -603,11 +581,9 @@ public class TlsConfigType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class VerifyPaths {
 
-        @JacksonXmlProperty(localName = "verify_path")
         protected List<String> verifyPath;
 
         /**

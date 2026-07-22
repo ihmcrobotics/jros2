@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for dataSharingQosPolicyType complex type.
@@ -54,19 +49,14 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class DataSharingQosPolicyType {
 
     
     protected String kind;
-    @JacksonXmlProperty(localName = "shared_dir")
     protected String sharedDir;
-    @JacksonXmlProperty(localName = "domain_ids")
     protected DataSharingQosPolicyType.DomainIds domainIds;
-    @JacksonXmlProperty(localName = "max_domains")
         protected Long maxDomains;
-    @JacksonXmlProperty(localName = "data_sharing_listener_thread")
     protected ThreadSettingsType dataSharingListenerThread;
 
     /**
@@ -189,7 +179,6 @@ public class DataSharingQosPolicyType {
         this.dataSharingListenerThread = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -209,7 +198,6 @@ public class DataSharingQosPolicyType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class DomainIds {
 

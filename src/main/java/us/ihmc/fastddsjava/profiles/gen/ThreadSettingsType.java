@@ -5,12 +5,7 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.math.BigInteger;
-
 
 /**
  * <p>Java class for threadSettingsType complex type.
@@ -34,15 +29,12 @@ import java.math.BigInteger;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class ThreadSettingsType {
 
-    @JacksonXmlProperty(localName = "scheduling_policy")
     protected Integer schedulingPolicy;
     protected Integer priority;
         protected BigInteger affinity;
-    @JacksonXmlProperty(localName = "stack_size")
     protected Integer stackSize;
 
     /**

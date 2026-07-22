@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for propertyPolicyType complex type.
@@ -55,7 +50,6 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class PropertyPolicyType {
 
@@ -92,7 +86,6 @@ public class PropertyPolicyType {
         return this.propertiesOrBinaryProperties;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -112,7 +105,6 @@ public class PropertyPolicyType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class BinaryProperties {
 
@@ -150,7 +142,6 @@ public class PropertyPolicyType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -170,7 +161,6 @@ public class PropertyPolicyType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Properties {
 
