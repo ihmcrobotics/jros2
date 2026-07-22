@@ -231,6 +231,25 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
       return elements[i].calculateSizeBytes(currentAlignment);
    }
 
+   /**
+    * Object elements already include their own alignment padding in {@link #elementSizeBytes(int, int)},
+    * so the base {@link IDLSequence#calculateSizeBytes(int)} loop must not add a second alignment pass.
+    */
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // Length header
+
+      for (int i = 0; i < size(); i++)
+      {
+         currentAlignment += elementSizeBytes(currentAlignment, i);
+      }
+
+      return currentAlignment - initialAlignment;
+   }
+
    @Override
    public void readElement(CDRBuffer buffer)
    {

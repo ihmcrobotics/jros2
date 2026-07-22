@@ -205,11 +205,11 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
       {
          writeBuffer.rewind();
 
-         // For fixed-size messages the payload length is stable after construction preallocation.
-         payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-         if (payloadSizeBytes > writeBuffer.getBufferUnsafe().capacity())
+         // Presize from calculateSizeBytes; actual payload length is the buffer position after serialize.
+         int estimatedSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
+         if (estimatedSizeBytes > writeBuffer.getBufferUnsafe().capacity())
          {
-            writeBuffer.ensureRemainingCapacity(payloadSizeBytes);
+            writeBuffer.ensureRemainingCapacity(estimatedSizeBytes);
          }
 
          writeBuffer.writePayloadHeader();
