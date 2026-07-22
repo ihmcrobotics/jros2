@@ -347,7 +347,7 @@ popd
 # xjc generation ###
 pushd cppbuild
 
-if command -v xjc >/dev/null 2>&1 && xjc; then
+if command -v xjc >/dev/null 2>&1; then
   echo "Generating Java classes from XSD with xjc..."
   xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java Fast-DDS-$FASTDDS_VERSION/resources/xsd/fastdds_profiles.xsd
 
@@ -362,7 +362,7 @@ if command -v xjc >/dev/null 2>&1 && xjc; then
     find "../src/main/java/us/ihmc/fastddsjava/profiles/gen" -type f -name "*.java" -exec dos2unix {} \;
   fi
 else
-    echo "xjc not found"
+  echo "xjc not found"
 fi
 
 popd
