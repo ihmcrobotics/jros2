@@ -5,12 +5,7 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.math.BigInteger;
-
 
 /**
  * <p>Java class for flowControllerDescriptorType complex type.
@@ -35,18 +30,14 @@ import java.math.BigInteger;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class FlowControllerDescriptorType {
 
     
     protected String name;
         protected FlowControllerSchedulerPolicy scheduler;
-    @JacksonXmlProperty(localName = "max_bytes_per_period")
     protected Integer maxBytesPerPeriod;
-    @JacksonXmlProperty(localName = "period_ms")
         protected BigInteger periodMs;
-    @JacksonXmlProperty(localName = "sender_thread")
     protected ThreadSettingsType senderThread;
 
     /**

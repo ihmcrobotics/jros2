@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for bitmaskDcl complex type.
@@ -57,15 +52,11 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class BitmaskDcl {
 
-    @JacksonXmlProperty(localName = "bit_value")
     protected List<BitmaskDcl.BitValue> bitValue;
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-    @JacksonXmlProperty(isAttribute = true, localName = "bit_bound")
     protected Short bitBound;
 
     /**
@@ -145,7 +136,6 @@ public class BitmaskDcl {
         this.bitBound = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -171,13 +161,10 @@ public class BitmaskDcl {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class BitValue {
 
-        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
-        @JacksonXmlProperty(isAttribute = true, localName = "position")
         protected Integer position;
 
         /**

@@ -17,16 +17,90 @@ package us.ihmc.jros2;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ProcessBuilder.Redirect;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 /**
  * Tools for launching a local vanilla ROS 2 installation.
- * Only works on Linux.
+ * Only works on Linux hosts with a ROS 2 distro under {@code /opt/ros}.
  */
 public class ROS2TestTools
 {
    public static String ROS_DISTRO = System.getenv().getOrDefault("ROS_DISTRO", "humble");
+
+   /**
+    * True when running on the Android runtime (including emulators).
+    * Note: Android reports {@code os.name=Linux}, so {@code @EnabledOnOs(LINUX)} is not sufficient to exclude it.
+    */
+   public static boolean isAndroid()
+   {
+      return System.getProperty("java.vendor", "").toLowerCase(Locale.ROOT).contains("android");
+   }
+
+   /** Inverse of {@link #isAndroid()} for {@code @EnabledIf} filters. */
+   public static boolean isNotAndroid()
+   {
+      return !isAndroid();
+   }
+
+   /**
+    * Whether tests may invoke the host {@code ros2} CLI (requires a Linux ROS install, not Android).
+    */
+   public static boolean isROS2CLIAvailable()
+   {
+      if (isAndroid())
+      {
+         return false;
+      }
+      String os = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
+      if (!os.contains("linux"))
+      {
+         return false;
+      }
+      return Files.isRegularFile(Path.of("/opt/ros", ROS_DISTRO, "setup.bash"));
+   }
+
+   /**
+    * {@code ros2 topic pub -w/--wait-matching-subscriptions} exists on Humble+.
+    */
+   private static boolean supportsWaitMatchingSubscriptions()
+   {
+      return !ROS_DISTRO.equals("foxy") && !ROS_DISTRO.equals("galactic");
+   }
+
+   /**
+    * Whether jros2 to {@code ros2 topic echo} interop tests are supported.
+    * Foxy/Galactic (Ubuntu 20.04) can discover jros2 topics but cannot reliably echo
+    * samples from Fast-DDS 3 publishers; ros2 to jros2 interop is still covered there.
+    */
+   public static boolean supportsROS2PublisherEcho()
+   {
+      return isROS2CLIAvailable() && !ROS_DISTRO.equals("foxy") && !ROS_DISTRO.equals("galactic");
+   }
+
+   /**
+    * Adapt {@code ros2 topic pub} options for older CLI versions (e.g. Foxy on Ubuntu 20.04).
+    */
+   private static String adaptPublishOptions(String options)
+   {
+      String adapted = options;
+      if (!supportsWaitMatchingSubscriptions())
+      {
+         adapted = adapted.replaceAll("--wait-matching-subscriptions\\s+\\d+", " ");
+         adapted = adapted.replaceAll("(?<!\\w)-w\\s+\\d+", " ");
+         if (!adapted.contains("keep-alive"))
+         {
+            // Give matching subscriptions time to discover without -w.
+            adapted = adapted + " --keep-alive 5";
+         }
+      }
+      return adapted.trim().replaceAll("\\s+", " ");
+   }
 
    /**
     * Launches {@code ros2 subCommand}
@@ -46,9 +120,13 @@ public class ROS2TestTools
       processBuilder.environment().put("ROS_DOMAIN_ID", String.valueOf(domainId));
 
       if (outputRedirect != null)
+      {
          processBuilder.redirectOutput(outputRedirect);
+      }
       if (errorRedirect != null)
+      {
          processBuilder.redirectError(errorRedirect);
+      }
 
       return processBuilder.start();
    }
@@ -74,7 +152,7 @@ public class ROS2TestTools
                                                   Redirect errorRedirect) throws IOException
    {
       StringJoiner command = new StringJoiner(" ");
-      command.add("topic pub").add(options).add(topicName).add(messageType).add("\"" + values + "\"");
+      command.add("topic pub").add(adaptPublishOptions(options)).add(topicName).add(messageType).add("\"" + values + "\"");
       return launchROS2Process(domainId, command.toString(), outputRedirect, errorRedirect);
    }
 
@@ -91,11 +169,14 @@ public class ROS2TestTools
       echoProcess.waitFor();
 
       StringBuilder output = new StringBuilder();
-      try (BufferedReader stdoutReader = echoProcess.inputReader())
+      // Avoid Process#inputReader() (Java 17) so this compiles on Android/ART toolchains too.
+      try (BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(echoProcess.getInputStream(), StandardCharsets.UTF_8)))
       {
          String line;
          while ((line = stdoutReader.readLine()) != null)
+         {
             output.append(line).append("\n");
+         }
       }
 
       return output.toString();

@@ -2,30 +2,80 @@ name: Build natives
 
 on:
   workflow_dispatch:
+    inputs:
+      platforms:
+        description: Platforms to build and commit
+        type: choice
+        options:
+          - all
+          - linux
+        default: all
 
 permissions:
   contents: write
 
 jobs:
+  # Build on Ubuntu 20.04 (GLIBC 2.31) so shipped libs run on focal and newer.
+  # Hosted ubuntu-20.04 runners were removed; use a focal container instead.
   build-natives-linux:
     runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    container:
+      image: ubuntu:20.04
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    timeout-minutes: 60
+    defaults:
+      run:
+        # Focal job containers default to dash; we need bash for pipefail and [[ ]].
+        shell: bash
     strategy:
+      fail-fast: false
       matrix:
         platform: [arm64, armhf, x86_64]
     steps:
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get -y install build-essential crossbuild-essential-arm64 crossbuild-essential-armhf git curl wget unzip openjdk-17-jdk
-          # Install newer version of cmake
+          set -euo pipefail
+          # Azure mirror is more reliable than archive.ubuntu.com on GitHub runners.
+          # Partial apt index failures previously left packages like "file" unavailable.
+          if [ -f /etc/apt/sources.list ]; then
+            sed -i \
+              -e 's|http://archive.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' \
+              -e 's|http://security.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' \
+              /etc/apt/sources.list
+          fi
+          APT_OPTS=(-o Acquire::Retries=5 -o Acquire::http::Timeout=30)
+          install_ok=0
+          for attempt in 1 2 3 4 5 6; do
+            echo "apt install attempt ${attempt}/6"
+            apt-get "${APT_OPTS[@]}" update
+            if apt-get "${APT_OPTS[@]}" -y install \
+              build-essential \
+              crossbuild-essential-arm64 \
+              crossbuild-essential-armhf \
+              git curl wget unzip ca-certificates \
+              openjdk-17-jdk \
+              binutils file; then
+              install_ok=1
+              break
+            fi
+            echo "apt install failed; sleeping before retry"
+            sleep $((attempt * 20))
+          done
+          test "$install_ok" = "1"
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
-          sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
+          mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
           rm -rf cmake-4.0.2-linux-x86_64.tar.gz
+          # Confirm the build environment is Ubuntu 20.04 / GLIBC 2.31.
+          . /etc/os-release
+          echo "Building on $PRETTY_NAME"
+          # Avoid SIGPIPE/141 under pipefail when head closes the pipe early.
+          echo "$(ldd --version 2>&1 | sed -n '1p' || true)"
+          test "$VERSION_ID" = "20.04"
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
@@ -42,54 +92,94 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
 
-      - name: Stage Linux native libraries
+      - name: Stage and verify Linux native libraries
         run: |
+          set -euo pipefail
+          DEST="src/main/resources/fastddsjava/native/linux-${{ matrix.platform }}"
+          for f in libfastcdr.so.2.3.5 libfastdds.so.3.6.2 libjnifastddsjava.so; do
+            test -f "$DEST/$f" || { echo "Missing $DEST/$f"; ls -la "$DEST" || true; exit 1; }
+          done
+
+          # Ubuntu 20.04 ships GLIBC 2.31; reject anything that needs a newer symbol.
+          MAX_GLIBC=2.31
+          for f in libfastcdr.so.2.3.5 libfastdds.so.3.6.2 libjnifastddsjava.so; do
+            max_needed=$(objdump -T "$DEST/$f" | grep -oE 'GLIBC_[0-9.]+' | sed 's/GLIBC_//' | sort -uV | tail -1 || true)
+            if [ -z "$max_needed" ]; then
+              echo "OK [glibc] $DEST/$f: no GLIBC versioned symbols"
+              continue
+            fi
+            echo "GLIBC check $DEST/$f: max needed GLIBC_$max_needed (limit $MAX_GLIBC)"
+            if [ "$(printf '%s\n' "$MAX_GLIBC" "$max_needed" | sort -V | tail -1)" != "$MAX_GLIBC" ]; then
+              echo "ERROR: $DEST/$f requires GLIBC_$max_needed > $MAX_GLIBC (not compatible with Ubuntu 20.04)"
+              objdump -T "$DEST/$f" | grep -oE 'GLIBC_[0-9.]+' | sort -uV
+              exit 1
+            fi
+          done
+
           mkdir -p "artifact/linux-${{ matrix.platform }}"
-          cp -a "src/main/resources/fastddsjava/native/linux-${{ matrix.platform }}/." "artifact/linux-${{ matrix.platform }}/"
+          cp -a "$DEST/." "artifact/linux-${{ matrix.platform }}/"
+          ls -la "artifact/linux-${{ matrix.platform }}"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: natives-linux-${{ matrix.platform }}
           path: artifact/linux-${{ matrix.platform }}/
           retention-days: 1
 
   build-natives-windows:
+    if: github.event.inputs.platforms != 'linux'
     runs-on: windows-2022
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           vsversion: 2022
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Compile native library
         run: |
           bash.exe cppbuild.bash
-      - name: Stage Windows native libraries
+      - name: Stage and verify Windows native libraries
         shell: bash
         run: |
+          set -euo pipefail
+          DEST="src/main/resources/fastddsjava/native/windows-x86_64"
+          ls -la "$DEST" || true
+          test -f "$DEST/fastcdr-2.3.dll" || { echo "Missing fastcdr DLL"; ls -la "$DEST" install/bin 2>/dev/null || true; exit 1; }
+          test -f "$DEST/fastdds-3.6.dll" || { echo "Missing fastdds-3.6.dll"; ls -la "$DEST" cppbuild/install/bin 2>/dev/null || true; exit 1; }
+          test -f "$DEST/jnifastddsjava.dll" || { echo "Missing jnifastddsjava.dll"; exit 1; }
+          # Reject stale JNI binaries still linked against older Fast-DDS SONAMEs.
+          if command -v objdump >/dev/null 2>&1; then
+            deps=$(objdump -p "$DEST/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
+            echo "$deps"
+            echo "$deps" | grep -qi 'fastdds-3\.6\.dll' || { echo "jnifastddsjava.dll does not import fastdds-3.6.dll"; exit 1; }
+            echo "$deps" | grep -qi 'fastdds-3\.2\.dll' && { echo "jnifastddsjava.dll still imports fastdds-3.2.dll"; exit 1; } || true
+          fi
           mkdir -p artifact/windows-x86_64
-          cp -a src/main/resources/fastddsjava/native/windows-x86_64/. artifact/windows-x86_64/
+          cp -a "$DEST/." artifact/windows-x86_64/
+          ls -la artifact/windows-x86_64
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: natives-windows
           path: artifact/windows-x86_64/
           retention-days: 1
 
   build-natives-android:
+    if: github.event.inputs.platforms != 'linux'
     runs-on: ubuntu-22.04
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         platform: [arm64-v8a, x86_64]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -97,7 +187,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install build-essential git curl wget unzip openjdk-17-jdk
-          # Install newer version of cmake
           wget https://github.com/Kitware/CMake/releases/download/v4.0.2/cmake-4.0.2-linux-x86_64.tar.gz
           tar -xzvf cmake-4.0.2-linux-x86_64.tar.gz
           sudo mv cmake-4.0.2-linux-x86_64 /opt/cmake-4.0.2
@@ -105,7 +194,6 @@ jobs:
 
       - name: Setup Android NDK
         run: |
-          # Download and install Android NDK r27c (latest stable available for direct download)
           wget https://dl.google.com/android/repository/android-ndk-r27c-linux.zip
           unzip -q android-ndk-r27c-linux.zip
           sudo mv android-ndk-r27c /opt/android-ndk
@@ -121,69 +209,80 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
 
-      - name: Stage Android native libraries
+      - name: Stage and verify Android native libraries
         run: |
+          set -euo pipefail
+          DEST="android/src/main/jniLibs/${{ matrix.platform }}"
+          for f in libfastcdr.so libfastdds.so libjnifastddsjava.so; do
+            test -f "$DEST/$f" || { echo "Missing $DEST/$f"; ls -la "$DEST" || true; exit 1; }
+          done
           mkdir -p "artifact/${{ matrix.platform }}"
-          cp -a "android/src/main/jniLibs/${{ matrix.platform }}/." "artifact/${{ matrix.platform }}/"
+          cp -a "$DEST/." "artifact/${{ matrix.platform }}/"
+          ls -la "artifact/${{ matrix.platform }}"
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: natives-android-${{ matrix.platform }}
           path: artifact/${{ matrix.platform }}/
           retention-days: 1
 
   build-natives-macos:
+    if: github.event.inputs.platforms != 'linux'
     runs-on: macos-14
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
+      fail-fast: false
       matrix:
         platform: [arm64, x86_64]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
       - name: Compile native library (${{ matrix.platform }})
         run: |
           MAC_COMPILE_${{ matrix.platform == 'arm64' && 'ARM64' || 'X86_64' }}=1 bash cppbuild.bash
-      - name: Stage macOS native libraries
+      - name: Stage and verify macOS native libraries
         run: |
+          set -euo pipefail
+          DEST="src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}"
+          for f in libfastcdr.2.3.5.dylib libfastdds.3.6.2.dylib libjnifastddsjava.dylib; do
+            test -f "$DEST/$f" || { echo "Missing $DEST/$f"; ls -la "$DEST" cppbuild/install/lib 2>/dev/null || true; exit 1; }
+          done
           mkdir -p "artifact/macos-${{ matrix.platform }}"
-          cp -a "src/main/resources/fastddsjava/native/macos-${{ matrix.platform }}/." "artifact/macos-${{ matrix.platform }}/"
+          cp -a "$DEST/." "artifact/macos-${{ matrix.platform }}/"
+          ls -la "artifact/macos-${{ matrix.platform }}"
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: natives-macos-${{ matrix.platform }}
           path: artifact/macos-${{ matrix.platform }}/
           retention-days: 1
 
-  commit-all-natives:
+  commit-linux-natives:
+    if: github.event.inputs.platforms == 'linux'
     runs-on: ubuntu-22.04
-    timeout-minutes: 10
-    needs: [build-natives-linux, build-natives-windows, build-natives-android, build-natives-macos]
+    timeout-minutes: 15
+    needs: [build-natives-linux]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
+      - name: Download Linux artifacts
+        uses: actions/download-artifact@v7
         with:
           path: artifacts
+          pattern: natives-linux-*
+          merge-multiple: false
 
-      - name: List downloaded artifacts
-        run: |
-          echo "Listing artifacts directory structure:"
-          find artifacts -type f
-
-      - name: Copy artifacts to repository
+      - name: Copy Linux artifacts to repository
         run: |
           set -euo pipefail
 
-          # upload-artifact v4 places files at artifacts/<name>/ (flat).
-          # Fall back to artifacts/<name>/<subdir> for older staged layouts.
           resolve_artifact_src() {
             local artifact_root="$1"
             local nested_subdir="$2"
@@ -201,26 +300,24 @@ jobs:
             local src="$1"
             local dest="$2"
             mkdir -p "$dest"
+            find "$dest" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
             cp -a "$src/." "$dest/"
+            echo "Installed into $dest:"
+            ls -la "$dest"
           }
+
+          find artifacts -type f | sort
 
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-arm64 linux-arm64)" src/main/resources/fastddsjava/native/linux-arm64
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-armhf linux-armhf)" src/main/resources/fastddsjava/native/linux-armhf
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-x86_64 linux-x86_64)" src/main/resources/fastddsjava/native/linux-x86_64
 
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows windows-x86_64)" src/main/resources/fastddsjava/native/windows-x86_64
-
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-arm64-v8a arm64-v8a)" android/src/main/jniLibs/arm64-v8a
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-x86_64 x86_64)" android/src/main/jniLibs/x86_64
-
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-arm64 macos-arm64)" src/main/resources/fastddsjava/native/macos-arm64
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-x86_64 macos-x86_64)" src/main/resources/fastddsjava/native/macos-x86_64
-
-      - name: Verify native library architectures
+      - name: Verify Linux native library architectures and GLIBC
         run: |
+          set -euo pipefail
           FAIL=0
           BASE="src/main/resources/fastddsjava/native"
-          ANDROID_BASE="android/src/main/jniLibs"
+          MAX_GLIBC=2.31
 
           check_file() {
             local path="$1"
@@ -243,34 +340,210 @@ jobs:
             fi
           }
 
+          check_glibc() {
+            local path="$1"
+            local max_needed
+            max_needed=$(objdump -T "$path" | grep -oE 'GLIBC_[0-9.]+' | sed 's/GLIBC_//' | sort -uV | tail -1 || true)
+            if [ -z "$max_needed" ]; then
+              echo "OK [glibc]: $path (no versioned GLIBC symbols)"
+              return
+            fi
+            echo "GLIBC [$path]: max GLIBC_$max_needed (limit $MAX_GLIBC)"
+            if [ "$(printf '%s\n' "$MAX_GLIBC" "$max_needed" | sort -V | tail -1)" != "$MAX_GLIBC" ]; then
+              echo "WRONG GLIBC: $path requires GLIBC_$max_needed > $MAX_GLIBC"
+              FAIL=1
+            fi
+          }
+
+          check_file "$BASE/linux-arm64/libfastcdr.so.2.3.5"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libfastdds.so.3.6.2"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libjnifastddsjava.so"      "aarch64"  "linux-arm64"
+
+          check_file "$BASE/linux-armhf/libfastcdr.so.2.3.5"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libfastdds.so.3.6.2"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libjnifastddsjava.so"      "EABI5"    "linux-armhf"
+
+          check_file "$BASE/linux-x86_64/libfastcdr.so.2.3.5"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libfastdds.so.3.6.2"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libjnifastddsjava.so"     "x86-64"   "linux-x86_64"
+
+          for plat in linux-arm64 linux-armhf linux-x86_64; do
+            for f in libfastcdr.so.2.3.5 libfastdds.so.3.6.2 libjnifastddsjava.so; do
+              check_glibc "$BASE/$plat/$f"
+            done
+          done
+
+          if [ $FAIL -ne 0 ]; then
+            echo "Linux native verification failed."
+            exit 1
+          fi
+          echo "Linux native libraries verified (Ubuntu 20.04 / GLIBC <= $MAX_GLIBC)."
+
+      - name: Commit Linux native libraries
+        run: |
+          set -euo pipefail
+          git config user.name "ihmc-rosie"
+          git config user.email "rosie@ihmc.us"
+          git add \
+            src/main/resources/fastddsjava/native/linux-arm64 \
+            src/main/resources/fastddsjava/native/linux-armhf \
+            src/main/resources/fastddsjava/native/linux-x86_64
+          if git diff --staged --quiet; then
+            echo "No Linux native library changes to commit."
+            exit 0
+          fi
+          git commit -m "Rebuild Linux native libraries for Ubuntu 20.04 (Fast-DDS 3.6.2)"
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
+
+  commit-all-natives:
+    if: github.event.inputs.platforms != 'linux'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    needs: [build-natives-linux, build-natives-windows, build-natives-android, build-natives-macos]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: List downloaded artifacts
+        run: |
+          echo "Listing artifacts directory structure:"
+          find artifacts -type f | sort
+
+      - name: Copy artifacts to repository
+        run: |
+          set -euo pipefail
+
+          resolve_artifact_src() {
+            local artifact_root="$1"
+            local nested_subdir="$2"
+            if [ -d "$artifact_root/$nested_subdir" ]; then
+              echo "$artifact_root/$nested_subdir"
+            elif [ -d "$artifact_root" ] && [ -n "$(ls -A "$artifact_root" 2>/dev/null)" ]; then
+              echo "$artifact_root"
+            else
+              echo "Missing artifact directory: $artifact_root (also tried $artifact_root/$nested_subdir)" >&2
+              return 1
+            fi
+          }
+
+          copy_artifact_dir() {
+            local src="$1"
+            local dest="$2"
+            mkdir -p "$dest"
+            # Replace contents so stale versioned libs from prior Fast-DDS releases are removed.
+            find "$dest" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+            cp -a "$src/." "$dest/"
+            echo "Installed into $dest:"
+            ls -la "$dest"
+          }
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-arm64 linux-arm64)" src/main/resources/fastddsjava/native/linux-arm64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-armhf linux-armhf)" src/main/resources/fastddsjava/native/linux-armhf
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-x86_64 linux-x86_64)" src/main/resources/fastddsjava/native/linux-x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows windows-x86_64)" src/main/resources/fastddsjava/native/windows-x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-arm64-v8a arm64-v8a)" android/src/main/jniLibs/arm64-v8a
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-x86_64 x86_64)" android/src/main/jniLibs/x86_64
+
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-arm64 macos-arm64)" src/main/resources/fastddsjava/native/macos-arm64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-x86_64 macos-x86_64)" src/main/resources/fastddsjava/native/macos-x86_64
+
+      - name: Verify native library architectures
+        run: |
+          FAIL=0
+          BASE="src/main/resources/fastddsjava/native"
+          ANDROID_BASE="android/src/main/jniLibs"
+          MAX_GLIBC=2.31
+
+          check_file() {
+            local path="$1"
+            local arch_pattern="$2"
+            local label="$3"
+            if [ ! -f "$path" ]; then
+              echo "MISSING [$label]: $path"
+              FAIL=1
+              return
+            fi
+            local info
+            info=$(file -b "$path")
+            if echo "$info" | grep -qE "$arch_pattern"; then
+              echo "OK [$label]: $path"
+            else
+              echo "WRONG ARCH [$label]: $path"
+              echo "  Expected pattern: $arch_pattern"
+              echo "  Got: $info"
+              FAIL=1
+            fi
+          }
+
+          check_glibc() {
+            local path="$1"
+            local max_needed
+            max_needed=$(objdump -T "$path" | grep -oE 'GLIBC_[0-9.]+' | sed 's/GLIBC_//' | sort -uV | tail -1 || true)
+            if [ -z "$max_needed" ]; then
+              echo "OK [glibc]: $path (no versioned GLIBC symbols)"
+              return
+            fi
+            echo "GLIBC [$path]: max GLIBC_$max_needed (limit $MAX_GLIBC)"
+            if [ "$(printf '%s\n' "$MAX_GLIBC" "$max_needed" | sort -V | tail -1)" != "$MAX_GLIBC" ]; then
+              echo "WRONG GLIBC: $path requires GLIBC_$max_needed > $MAX_GLIBC"
+              FAIL=1
+            fi
+          }
+
           # Linux arm64
-          check_file "$BASE/linux-arm64/libfastcdr.so.2.3.0"      "aarch64"  "linux-arm64"
-          check_file "$BASE/linux-arm64/libfastdds.so.3.2.2"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libfastcdr.so.2.3.5"      "aarch64"  "linux-arm64"
+          check_file "$BASE/linux-arm64/libfastdds.so.3.6.2"      "aarch64"  "linux-arm64"
           check_file "$BASE/linux-arm64/libjnifastddsjava.so"      "aarch64"  "linux-arm64"
 
           # Linux armhf (32-bit ARM, EABI5)
-          check_file "$BASE/linux-armhf/libfastcdr.so.2.3.0"      "EABI5"    "linux-armhf"
-          check_file "$BASE/linux-armhf/libfastdds.so.3.2.2"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libfastcdr.so.2.3.5"      "EABI5"    "linux-armhf"
+          check_file "$BASE/linux-armhf/libfastdds.so.3.6.2"      "EABI5"    "linux-armhf"
           check_file "$BASE/linux-armhf/libjnifastddsjava.so"      "EABI5"    "linux-armhf"
 
           # Linux x86_64
-          check_file "$BASE/linux-x86_64/libfastcdr.so.2.3.0"     "x86-64"   "linux-x86_64"
-          check_file "$BASE/linux-x86_64/libfastdds.so.3.2.2"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libfastcdr.so.2.3.5"     "x86-64"   "linux-x86_64"
+          check_file "$BASE/linux-x86_64/libfastdds.so.3.6.2"     "x86-64"   "linux-x86_64"
           check_file "$BASE/linux-x86_64/libjnifastddsjava.so"     "x86-64"   "linux-x86_64"
 
+          for plat in linux-arm64 linux-armhf linux-x86_64; do
+            for f in libfastcdr.so.2.3.5 libfastdds.so.3.6.2 libjnifastddsjava.so; do
+              check_glibc "$BASE/$plat/$f"
+            done
+          done
+
           # Windows x86_64
-          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64"   "windows-x86_64"
-          check_file "$BASE/windows-x86_64/fastdds-3.2.dll"        "x86-64"   "windows-x86_64"
-          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64"   "windows-x86_64"
+          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64|PE32" "windows-x86_64"
+          check_file "$BASE/windows-x86_64/fastdds-3.6.dll"        "x86-64|PE32" "windows-x86_64"
+          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64|PE32" "windows-x86_64"
+          win_jni_deps=$(objdump -p "$BASE/windows-x86_64/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
+          echo "$win_jni_deps"
+          if ! echo "$win_jni_deps" | grep -qi 'fastdds-3\.6\.dll'; then
+            echo "WRONG DEPS [windows-x86_64]: jnifastddsjava.dll must import fastdds-3.6.dll"
+            FAIL=1
+          fi
+          if echo "$win_jni_deps" | grep -qi 'fastdds-3\.2\.dll'; then
+            echo "WRONG DEPS [windows-x86_64]: jnifastddsjava.dll still imports fastdds-3.2.dll"
+            FAIL=1
+          fi
 
           # macOS arm64
-          check_file "$BASE/macos-arm64/libfastcdr.2.3.0.dylib"    "arm64"    "macos-arm64"
-          check_file "$BASE/macos-arm64/libfastdds.3.2.2.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libfastcdr.2.3.5.dylib"    "arm64"    "macos-arm64"
+          check_file "$BASE/macos-arm64/libfastdds.3.6.2.dylib"    "arm64"    "macos-arm64"
           check_file "$BASE/macos-arm64/libjnifastddsjava.dylib"   "arm64"    "macos-arm64"
 
           # macOS x86_64
-          check_file "$BASE/macos-x86_64/libfastcdr.2.3.0.dylib"  "x86_64"   "macos-x86_64"
-          check_file "$BASE/macos-x86_64/libfastdds.3.2.2.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libfastcdr.2.3.5.dylib"  "x86_64"   "macos-x86_64"
+          check_file "$BASE/macos-x86_64/libfastdds.3.6.2.dylib"  "x86_64"   "macos-x86_64"
           check_file "$BASE/macos-x86_64/libjnifastddsjava.dylib"  "x86_64"   "macos-x86_64"
 
           # Android arm64-v8a
@@ -298,6 +571,7 @@ jobs:
 
       - name: Commit all native libraries
         run: |
+          set -euo pipefail
           git config user.name "ihmc-rosie"
           git config user.email "rosie@ihmc.us"
           git add src/main/resources/fastddsjava/native android/src/main/jniLibs
@@ -305,5 +579,7 @@ jobs:
             echo "No native library changes to commit."
             exit 0
           fi
-          git commit -m "Rebuild all native libraries"
+          git commit -m "Rebuild all native libraries (Fast-DDS 3.6.2)"
+          # Rebase onto latest branch tip in case other commits landed during the build.
+          git pull --rebase origin "${{ github.ref_name }}"
           git push origin "HEAD:${{ github.ref_name }}"

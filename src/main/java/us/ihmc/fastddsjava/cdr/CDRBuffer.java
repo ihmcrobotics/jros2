@@ -18,7 +18,7 @@ package us.ihmc.fastddsjava.cdr;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.fastddsjava.natives.fastddsjava.*;
 
 /**
  * A buffer wrapper for reading and writing data using Common Data Representation (CDR) encoding,
@@ -41,7 +41,8 @@ public final class CDRBuffer
 
    public CDRBuffer()
    {
-      buffer = ByteBuffer.allocate(1);
+      // Direct buffers allow zero-copy JNI via GetDirectBufferAddress.
+      buffer = ByteBuffer.allocateDirect(1);
    }
 
    public ByteBuffer getBufferUnsafe()
@@ -57,7 +58,13 @@ public final class CDRBuffer
       {
          int oldPosition = buffer.position();
          ByteOrder oldOrder = buffer.order();
-         ByteBuffer newBuffer = ByteBuffer.allocate(requiredCapacity);
+         // Grow by powers of two to reduce repeated reallocations for variable-size payloads.
+         int newCapacity = 1;
+         while (newCapacity < requiredCapacity)
+         {
+            newCapacity <<= 1;
+         }
+         ByteBuffer newBuffer = ByteBuffer.allocateDirect(newCapacity);
          newBuffer.order(oldOrder);
 
          buffer.flip();

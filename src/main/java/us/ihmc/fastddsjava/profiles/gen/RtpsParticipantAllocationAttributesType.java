@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for rtpsParticipantAllocationAttributesType complex type.
  * 
@@ -58,25 +54,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class RtpsParticipantAllocationAttributesType {
 
-    @JacksonXmlProperty(localName = "remote_locators")
     protected RtpsParticipantAllocationAttributesType.RemoteLocators remoteLocators;
-    @JacksonXmlProperty(localName = "total_participants")
     protected AllocationConfigType totalParticipants;
-    @JacksonXmlProperty(localName = "total_readers")
     protected AllocationConfigType totalReaders;
-    @JacksonXmlProperty(localName = "total_writers")
     protected AllocationConfigType totalWriters;
-    @JacksonXmlProperty(localName = "send_buffers")
     protected RtpsParticipantAllocationAttributesType.SendBuffers sendBuffers;
-    @JacksonXmlProperty(localName = "max_properties")
         protected Long maxProperties;
-    @JacksonXmlProperty(localName = "max_user_data")
         protected Long maxUserData;
-    @JacksonXmlProperty(localName = "max_partitions")
         protected Long maxPartitions;
 
     /**
@@ -271,7 +258,6 @@ public class RtpsParticipantAllocationAttributesType {
         this.maxPartitions = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -292,13 +278,10 @@ public class RtpsParticipantAllocationAttributesType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class RemoteLocators {
 
-        @JacksonXmlProperty(localName = "max_unicast_locators")
                 protected Long maxUnicastLocators;
-        @JacksonXmlProperty(localName = "max_multicast_locators")
                 protected Long maxMulticastLocators;
 
         /**
@@ -351,7 +334,6 @@ public class RtpsParticipantAllocationAttributesType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -373,14 +355,11 @@ public class RtpsParticipantAllocationAttributesType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class SendBuffers {
 
-        @JacksonXmlProperty(localName = "preallocated_number")
                 protected Long preallocatedNumber;
         protected Boolean dynamic;
-        @JacksonXmlProperty(localName = "network_buffers_config")
         protected AllocationConfigType networkBuffersConfig;
 
         /**

@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for presentationQosPolicyType complex type.
  * 
@@ -38,15 +34,11 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class PresentationQosPolicyType {
 
-    @JacksonXmlProperty(localName = "access_scope")
     protected String accessScope;
-    @JacksonXmlProperty(localName = "coherent_access")
     protected Boolean coherentAccess;
-    @JacksonXmlProperty(localName = "ordered_access")
     protected Boolean orderedAccess;
 
     /**

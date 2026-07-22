@@ -17,8 +17,7 @@ package us.ihmc.jros2;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.junit.jupiter.api.condition.EnabledOnOs;
-import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.condition.EnabledIf;
 import us.ihmc.jros2.ROS2QoSProfile.History;
 import us.ihmc.jros2.ROS2QoSProfile.Reliability;
 
@@ -41,7 +40,7 @@ public class ROS2SubscriptionTest
    private static final Random RANDOM = new Random(1881108);
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionBasicCreationAndDestruction()
    {
@@ -84,7 +83,7 @@ public class ROS2SubscriptionTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionAllocationFree() throws InterruptedException, IOException
    {
@@ -134,7 +133,7 @@ public class ROS2SubscriptionTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionWithAllocation() throws InterruptedException, IOException
    {
@@ -185,7 +184,7 @@ public class ROS2SubscriptionTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionSampler() throws InterruptedException, IOException
    {
@@ -234,7 +233,7 @@ public class ROS2SubscriptionTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionWithoutCallback() throws InterruptedException, IOException
    {
@@ -289,7 +288,7 @@ public class ROS2SubscriptionTest
    }
 
    @Test
-   @EnabledOnOs(OS.LINUX)
+   @EnabledIf("us.ihmc.jros2.ROS2TestTools#isROS2CLIAvailable")
    @Timeout(30)
    public void testSubscriptionCallbackAndPolling() throws InterruptedException, IOException
    {

@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for structDcl complex type.
@@ -34,15 +29,12 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class StructDcl {
 
     
     protected List<MemberDcl> member;
-    @JacksonXmlProperty(isAttribute = true, localName = "name")
     protected String name;
-    @JacksonXmlProperty(isAttribute = true, localName = "baseType")
     protected String baseType;
 
     /**

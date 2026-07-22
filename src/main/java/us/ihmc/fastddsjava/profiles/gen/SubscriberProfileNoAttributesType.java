@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for subscriberProfileNoAttributesType complex type.
  * 
@@ -40,7 +36,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class SubscriberProfileNoAttributesType {
 
@@ -49,11 +44,8 @@ public class SubscriberProfileNoAttributesType {
     protected ReaderTimesType times;
     protected LocatorListType unicastLocatorList;
     protected LocatorListType multicastLocatorList;
-    @JacksonXmlProperty(localName = "external_unicast_locators")
     protected ExternalLocatorListType externalUnicastLocators;
-    @JacksonXmlProperty(localName = "ignore_non_matching_locators")
     protected Boolean ignoreNonMatchingLocators;
-    @JacksonXmlProperty(localName = "expects_inline_qos")
     protected Boolean expectsInlineQos;
         protected HistoryMemoryPolicyType historyMemoryPolicy;
     protected PropertyPolicyType propertiesPolicy;

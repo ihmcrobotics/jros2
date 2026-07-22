@@ -15,9 +15,8 @@
  */
 package us.ihmc.jros2;
 
-import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.fastddsjavaException;
-import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapperType;
+import us.ihmc.fastddsjava.natives.fastddsjava;
 import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
@@ -41,7 +40,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.fastddsjava.natives.fastddsjava.*;
 
 /**
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
@@ -76,7 +75,7 @@ public class ROS2Node implements Closeable
     * The domain ID the node will use when writing and reading to the network transport. A valid domain ID must
     * be within the range [0, 232].
     * <p>
-    * See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/dds_layer/domain/domain.html">Domain</a>
+    * See: <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/dds_layer/domain/domain.html">Domain</a>
     * See: <a href="https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html">ROS 2 Domain ID</a>
     */
    private final int domainId;
@@ -85,9 +84,9 @@ public class ROS2Node implements Closeable
     * Fast-DDS pointers
     */
    /**
-    * Pointer to a Fast-DDS participant used by this node in native memory. For internal use only.
+    * Native handle to a Fast-DDS participant used by this node. For internal use only.
     */
-   protected final Pointer fastddsParticipant;
+   protected final long fastddsParticipant;
    /**
     * A helper map linking {@link ROS2Topic}\s to {@link TopicData}, where TopicData is a set of Fast-DDS pointers required
     * for creating and using a topic. For internal use only.
@@ -191,7 +190,7 @@ public class ROS2Node implements Closeable
          throw new RuntimeException("Failed to load participant profile: " + participantProfileName, e);
       }
 
-      fastddsParticipant = fastddsjava_create_participant(participantProfileName);
+      fastddsParticipant = fastddsjava.createParticipant(participantProfileName);
       topicDataByNameAndType = new HashMap<>();
       typeRegistrationsByName = new HashMap<>();
       publishers = new ArrayList<>();
@@ -297,19 +296,19 @@ public class ROS2Node implements Closeable
                      typeRegistration = typeRegistrationsByName.get(topicTypeName);
                      if (typeRegistration == null)
                      {
-                        fastddsjava_TopicDataWrapperType topicDataWrapperType = new fastddsjava_TopicDataWrapperType(topicTypeName, CDR_LE);
-                        Pointer fastddsTypeSupport = fastddsjava_create_typesupport(topicDataWrapperType);
-                        fastddsjava_register_type(fastddsParticipant, fastddsTypeSupport);
-                        typeRegistration = new TypeRegistration(topicDataWrapperType, fastddsTypeSupport);
+                        long fastddsTopicDataWrapperType = fastddsjava.createTopicDataWrapperType(topicTypeName, CDR_LE);
+                        long fastddsTypeSupport = fastddsjava.createTypesupport(fastddsTopicDataWrapperType);
+                        fastddsjava.registerType(fastddsParticipant, fastddsTypeSupport);
+                        typeRegistration = new TypeRegistration(fastddsTopicDataWrapperType, fastddsTypeSupport);
                         typeRegistrationsByName.put(topicTypeName, typeRegistration);
                      }
                   }
                }
-               Pointer fastddsTopic = fastddsjava_create_topic(fastddsParticipant,
-                                                               typeRegistration.topicDataWrapperType,
+               long fastddsTopic = fastddsjava.createTopic(fastddsParticipant,
+                                                               typeRegistration.fastddsTopicDataWrapperType,
                                                                prefixedTopicName,
                                                                topicProfileName);
-               TopicData topicData = new TopicData(typeRegistration.topicDataWrapperType, typeRegistration.fastddsTypeSupport, fastddsTopic);
+               TopicData topicData = new TopicData(typeRegistration.fastddsTopicDataWrapperType, typeRegistration.fastddsTypeSupport, fastddsTopic);
 
                topicDataByType.put(topicTypeName, topicData);
 
@@ -394,7 +393,7 @@ public class ROS2Node implements Closeable
 
    /**
     * Destroy a {@link ROS2Publisher}. Do not use on publishers which were created with another instance of {@link ROS2Node}.
-    * This will remove the publisher from the list of publishers within this node and call {@link ROS2Publisher#close(Pointer)} to release the native Fast-DDS
+    * This will remove the publisher from the list of publishers within this node and call {@link ROS2Publisher#close(long)} to release the native Fast-DDS
     * publisher.
     * You do not have to call this if you call {@link ROS2Node#close()}, it will destroy all publishers created by this node for you.
     *
@@ -606,7 +605,7 @@ public class ROS2Node implements Closeable
 
    /**
     * Destroy a {@link ROS2Subscription}. Do not use on subscriptions which were created with another instance of {@link ROS2Node}.
-    * This will remove the subscription from the list of subscriptions within this node and call {@link ROS2Subscription#close(Pointer)} to release the native
+    * This will remove the subscription from the list of subscriptions within this node and call {@link ROS2Subscription#close(long)} to release the native
     * Fast-DDS subscriber.
     * You do not have to call this if you call {@link ROS2Node#close()}, it will destroy all subscriptions created by this node for you.
     *
@@ -729,86 +728,83 @@ public class ROS2Node implements Closeable
    {
       // Wait until all readers are finished, then start closing
       closeLock.writeLock().lock();
-      if (closed)
-      {
-         closeLock.writeLock().unlock();
-         return;
-      }
-      closed = true;
-      activeNodes.remove(this);
-
       try
       {
-         try
+         if (!closed)
          {
-            Runtime.getRuntime().removeShutdownHook(shutdownHook);
-         }
-         catch (IllegalStateException ignored)
-         {
-            // JVM shutdown already in progress
-         }
+            closed = true;
+            activeNodes.remove(this);
 
-         synchronized (publishers)
-         {
-            // Delete publishers
-            for (ROS2Publisher<?> publisher : publishers)
+            try
             {
-               publisher.close(fastddsParticipant);
+               Runtime.getRuntime().removeShutdownHook(shutdownHook);
             }
-            publishers.clear();
-         }
-
-         synchronized (subscriptions)
-         {
-            // Delete subscriptions
-            for (ROS2Subscription<?> subscription : subscriptions)
+            catch (IllegalStateException ignored)
             {
-               subscription.close(fastddsParticipant);
+               // JVM shutdown already in progress
             }
-            subscriptions.clear();
-         }
 
-         synchronized (participantDestructionLock)
-         {
-            synchronized (ProfilesXML.getLoadLock())
+            synchronized (publishers)
             {
-               try
+               // Delete publishers
+               for (ROS2Publisher<?> publisher : publishers)
                {
-                  Thread.sleep(50);
+                  publisher.close(fastddsParticipant);
                }
-               catch (InterruptedException e)
-               {
-                  Thread.currentThread().interrupt();
-               }
+               publishers.clear();
+            }
 
-               synchronized (topicDataByNameAndType)
+            synchronized (subscriptions)
+            {
+               // Delete subscriptions
+               for (ROS2Subscription<?> subscription : subscriptions)
                {
-                  // Delete topics
-                  for (Map<String, TopicData> topicDataByType : topicDataByNameAndType.values())
+                  subscription.close(fastddsParticipant);
+               }
+               subscriptions.clear();
+            }
+
+            synchronized (participantDestructionLock)
+            {
+               synchronized (ProfilesXML.getLoadLock())
+               {
+                  try
                   {
-                     for (TopicData topicData : topicDataByType.values())
+                     Thread.sleep(50);
+                  }
+                  catch (InterruptedException e)
+                  {
+                     Thread.currentThread().interrupt();
+                  }
+
+                  synchronized (topicDataByNameAndType)
+                  {
+                     // Delete topics
+                     for (Map<String, TopicData> topicDataByType : topicDataByNameAndType.values())
                      {
-                        retcodePrintOnError(fastddsjava_delete_topic(fastddsParticipant, topicData.fastddsTopic));
+                        for (TopicData topicData : topicDataByType.values())
+                        {
+                           retcodePrintOnError(fastddsjava.deleteTopic(fastddsParticipant, topicData.fastddsTopic));
+                        }
+                     }
+                     topicDataByNameAndType.clear();
+
+                     synchronized (typeRegistrationLock)
+                     {
+                        // Unregister types
+                        for (TypeRegistration typeRegistration : typeRegistrationsByName.values())
+                        {
+                           retcodePrintOnError(fastddsjava.unregisterType(fastddsParticipant,
+                                                                            fastddsjava.topicDataWrapperTypeGetName(typeRegistration.fastddsTopicDataWrapperType)));
+                           fastddsjava.deleteTypesupport(typeRegistration.fastddsTypeSupport);
+                        }
+                        typeRegistrationsByName.clear();
                      }
                   }
-                  topicDataByNameAndType.clear();
 
-                  synchronized (typeRegistrationLock)
-                  {
-                     // Unregister types
-                     for (TypeRegistration typeRegistration : typeRegistrationsByName.values())
-                     {
-                        retcodePrintOnError(fastddsjava_unregister_type(fastddsParticipant, typeRegistration.topicDataWrapperType.get_name()));
-                        typeRegistration.fastddsTypeSupport.close();
-                        typeRegistration.topicDataWrapperType.setNull();
-                     }
-                     typeRegistrationsByName.clear();
-                  }
+                  // Delete participant
+                  retcodePrintOnError(fastddsjava.deleteParticipant(fastddsParticipant));
                }
-
-               // Delete participant
-               retcodePrintOnError(fastddsjava_delete_participant(fastddsParticipant));
-               fastddsParticipant.setNull();
             }
          }
       }
@@ -855,12 +851,12 @@ public class ROS2Node implements Closeable
 
    private static final class TypeRegistration
    {
-      private final fastddsjava_TopicDataWrapperType topicDataWrapperType;
-      private final Pointer fastddsTypeSupport;
+      private final long fastddsTopicDataWrapperType;
+      private final long fastddsTypeSupport;
 
-      private TypeRegistration(fastddsjava_TopicDataWrapperType topicDataWrapperType, Pointer fastddsTypeSupport)
+      private TypeRegistration(long fastddsTopicDataWrapperType, long fastddsTypeSupport)
       {
-         this.topicDataWrapperType = topicDataWrapperType;
+         this.fastddsTopicDataWrapperType = fastddsTopicDataWrapperType;
          this.fastddsTypeSupport = fastddsTypeSupport;
       }
    }

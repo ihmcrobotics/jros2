@@ -35,7 +35,7 @@ interface jros2Settings
     *       call the receive-method of subscriptions. Please note that any operations the subscriptions perform in
     *       the {@link ROS2MessageReader} will block the publish method of the {@link ROS2Publisher}. Do not enable
     *       in performance critical loops without using {@link AsyncROS2Publisher}.
-    *       See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/intraprocess.html">Intra-process delivery</a>
+    *       See: <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/transport/intraprocess.html">Intra-process delivery</a>
     */
    boolean intraprocessDelivery();
 
@@ -48,7 +48,7 @@ interface jros2Settings
     * A list of addresses (IPv4 or IPv6) and/or interface names which correspond to network interfaces on the host system.
     * {@link ROS2Node} will only be able to communicate using whitelisted network interfaces.
     * Empty or null for no whitelist.
-    * This is a Fast-DDS parameter. See: <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/transport/whitelist.html">Interface Whitelist</a>.
+    * This is a Fast-DDS parameter. See: <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/transport/whitelist.html">Interface Whitelist</a>.
     */
    String[] interfaceWhitelist();
 

@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for builtinTransportsType complex type.
  * 
@@ -29,19 +25,13 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class BuiltinTransportsType {
 
-    @JacksonXmlText
     protected BuiltinTransportKind value;
-    @JacksonXmlProperty(isAttribute = true, localName = "max_msg_size")
     protected String maxMsgSize;
-    @JacksonXmlProperty(isAttribute = true, localName = "sockets_size")
     protected String socketsSize;
-    @JacksonXmlProperty(isAttribute = true, localName = "non_blocking")
     protected Boolean nonBlocking;
-    @JacksonXmlProperty(isAttribute = true, localName = "tcp_negotiation_timeout")
     protected Long tcpNegotiationTimeout;
 
     /**

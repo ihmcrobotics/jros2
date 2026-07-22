@@ -15,12 +15,9 @@
  */
 package us.ihmc.jros2;
 
-import org.bytedeco.javacpp.Pointer;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
-import us.ihmc.fastddsjava.pointers.SubscriptionMatchedStatus;
-import us.ihmc.fastddsjava.pointers.fastddsjavaInfoMapper.fastddsjava_OnDataCallback;
-import us.ihmc.fastddsjava.pointers.fastddsjava_DataReaderListener;
-import us.ihmc.fastddsjava.pointers.fastddsjava_TopicDataWrapper;
+import us.ihmc.fastddsjava.natives.fastddsjava;
+import us.ihmc.fastddsjava.natives.fastddsjavaCallback;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -28,7 +25,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
-import static us.ihmc.fastddsjava.pointers.fastddsjava.*;
+import static us.ihmc.fastddsjava.natives.fastddsjava.RETCODE_OK;
 import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
@@ -36,7 +33,7 @@ import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
  */
 public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageReader<T>, MessageStatisticsProvider
 {
-   private static final int OK = RETCODE_OK();
+   private static final int OK = RETCODE_OK;
 
    static
    {
@@ -44,37 +41,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    }
 
    /*
-    * Debug
-    */
-   private final ROS2Topic<T> topic;
-
-   /*
-    * Fast-DDS pointers
-    */
-   private final Pointer fastddsSubscriber;
-   private final Pointer fastddsDataReader;
-   private final fastddsjava_TopicDataWrapper callbackSampleData;
-   private final SampleInfo callbackSampleInfo;
-   protected final fastddsjava_TopicDataWrapper userSampleData;
-   protected final SampleInfo userSampleInfo;
-   private final SubscriptionMatchedStatus subscriptionMatchedStatus;
-   private final fastddsjava_DataReaderListener listener; // Keep as a field to avoid GC
-   private final fastddsjava_OnDataCallback fastddsDataCallback; // Keep as a field to avoid GC
-   private final fastddsjava_OnSubscriptionCallback fastddsSubscriptionMatchedCallback; // Keep as a field to avoid GC
-   private final TopicData topicData;
-
-   /*
     * Callback
     */
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
-   private volatile Runnable subscriptionMatchedCallback; // User callback for subscription matched events
    private final ROS2SubscriptionMatchedCallback subscriptionMatchedInfoCallback;
-   private final Guid subscriptionMatchedGuid = new Guid();
 
    /*
-    * Read buffer
+    * Debug
     */
-   protected final CDRBuffer readBuffer;
+   private final ROS2Topic<T> topic;
 
    /*
     * Locks
@@ -87,30 +62,62 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    private final Object discoveryLock;
    private volatile boolean publisherDiscovered;
-   private int previousMatchedPublicationCount = 0;
+   private int previousMatchedPublicationCount;
+
+   /*
+    * Fast-DDS pointers
+    */
+   private final TopicData topicData;
+   private final long fastddsCallbackSampleData;
+   private final SampleInfo callbackSampleInfo;
+   private final Object callbackSampleLock;
+   protected final long fastddsUserSampleData;
+   protected final SampleInfo userSampleInfo;
+   private final Object userSampleLock;
+
+   /*
+    * Read buffer
+    */
+   protected final CDRBuffer readBuffer;
 
    /*
     * Flags
     */
-   private boolean flagHadData;
    private final AtomicInteger untakenMessageCount;
-
-   /*
-    * GUID
-    */
-   private final Guid guid = new Guid();
+   private boolean flagHadData;
 
    /*
     * Statistics
     */
-   private final StatisticsCalculator[] statisticsCalculators;
    private final int statisticsCalculatorCount;
+   private final StatisticsCalculator[] statisticsCalculators;
    private long lastReceiveTime;
+
+   /*
+    * GUID
+    */
+   private final Guid guid;
+   private final Guid subscriptionMatchedGuid;
+   private final byte[] subscriptionMatchedGuidBytes;
+
+   /*
+    * Callback (matched)
+    */
+   private volatile Runnable subscriptionMatchedCallback; // User callback for subscription matched events
+
+   /*
+    * Fast-DDS pointers (endpoints)
+    */
+   private final fastddsjavaCallback fastddsDataCallback; // Keep as a field to avoid GC
+   private final fastddsjavaCallback fastddsSubscriptionMatchedCallback; // Keep as a field to avoid GC
+   private final long fastddsDataReaderListener;
+   private final long fastddsSubscriber;
+   private final long fastddsDataReader;
 
    /**
     * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
     */
-   ROS2Subscription(Pointer fastddsParticipant,
+   ROS2Subscription(long fastddsParticipant,
                     String subscriberProfileName,
                     ROS2SubscriptionCallback<T> callback, // May be null
                     ROS2SubscriptionMatchedCallback subscriptionMatchedInfoCallback,
@@ -120,23 +127,33 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       this.callback = callback;
       this.subscriptionMatchedInfoCallback = subscriptionMatchedInfoCallback;
       this.topic = topic;
-      this.topicData = topicData;
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
 
       discoveryLock = new Object();
       publisherDiscovered = false;
+      previousMatchedPublicationCount = 0;
 
-      callbackSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      this.topicData = topicData;
+      fastddsCallbackSampleData = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
       callbackSampleInfo = new SampleInfo();
-      userSampleData = new fastddsjava_TopicDataWrapper(topicData.topicDataWrapperType.create_data());
+      callbackSampleLock = new Object();
+      fastddsUserSampleData = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
       userSampleInfo = new SampleInfo();
-      subscriptionMatchedStatus = new SubscriptionMatchedStatus();
+      userSampleLock = new Object();
 
       readBuffer = new CDRBuffer();
 
+      // Pre-size for an empty message payload so fixed-size reads do not allocate on first use.
+      T emptyMessage = ROS2Message.createInstance(topic.getType());
+      int initialPayloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + emptyMessage.calculateSizeBytes(0);
+      readBuffer.ensureRemainingCapacity(initialPayloadSizeBytes);
+      fastddsjava.topicDataResize(fastddsCallbackSampleData, initialPayloadSizeBytes);
+      fastddsjava.topicDataResize(fastddsUserSampleData, initialPayloadSizeBytes);
+
       untakenMessageCount = new AtomicInteger(0);
+      flagHadData = false;
 
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
@@ -146,15 +163,21 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       }
       lastReceiveTime = Long.MIN_VALUE;
 
+      guid = new Guid();
+      subscriptionMatchedGuid = new Guid();
+      subscriptionMatchedGuidBytes = new byte[16];
+
+      subscriptionMatchedCallback = null;
+
       // Initialize callbacks last to ensure the rest of the state of this class exists before they run
-      fastddsDataCallback = new fastddsjava_OnDataCallbackImpl();
-      fastddsSubscriptionMatchedCallback = new fastddsjava_OnSubscriptionMatchedCallbackImpl();
-      listener = new fastddsjava_DataReaderListener();
-      listener.set_on_data_available_callback(fastddsDataCallback);
-      listener.set_on_subscription_callback(fastddsSubscriptionMatchedCallback);
-      fastddsSubscriber = fastddsjava_create_subscriber(fastddsParticipant, subscriberProfileName);
-      fastddsDataReader = fastddsjava_create_datareader(fastddsSubscriber, topicData.fastddsTopic, null, subscriberProfileName);
-      fastddsjava_datareader_set_listener(fastddsDataReader, listener);
+      fastddsDataCallback = this::onDataAvailable;
+      fastddsSubscriptionMatchedCallback = this::onSubscriptionMatched;
+      fastddsDataReaderListener = fastddsjava.createDataReaderListener();
+      fastddsjava.dataReaderListenerSetOnDataAvailable(fastddsDataReaderListener, fastddsDataCallback);
+      fastddsjava.dataReaderListenerSetOnSubscriptionMatched(fastddsDataReaderListener, fastddsSubscriptionMatchedCallback);
+      fastddsSubscriber = fastddsjava.createSubscriber(fastddsParticipant, subscriberProfileName);
+      fastddsDataReader = fastddsjava.createDataReader(fastddsSubscriber, topicData.fastddsTopic, 0, subscriberProfileName);
+      fastddsjava.dataReaderSetListener(fastddsDataReader, fastddsDataReaderListener);
 
       // Check if publisher is already matched (outside of discovery lock to avoid nested synchronization)
       if (getSubscriptionMatchedStatus() > 0)
@@ -177,31 +200,26 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    private void notifySubscriptionMatchedInfoForExistingMatches()
    {
-      if (subscriptionMatchedInfoCallback == null || closed)
-         return;
-
-      closeLock.readLock().lock();
-      try
+      if (subscriptionMatchedInfoCallback != null && !closed)
       {
-         if (!closed)
+         closeLock.readLock().lock();
+         try
          {
-            synchronized (subscriptionMatchedStatus)
+            if (!closed)
             {
-               fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
-               fastddsjava_subscription_matched_status_last_publication_guid(subscriptionMatchedStatus, subscriptionMatchedGuid.getValue());
-               previousMatchedPublicationCount = subscriptionMatchedStatus.current_count();
+               previousMatchedPublicationCount = fastddsjava.dataReaderGetSubscriptionMatchedStatus(fastddsDataReader, subscriptionMatchedGuidBytes);
+               System.arraycopy(subscriptionMatchedGuidBytes, 0, subscriptionMatchedGuid.getValue(), 0, 16);
+               subscriptionMatchedInfoCallback.onSubscriptionMatched(this, subscriptionMatchedGuid, true);
             }
-
-            subscriptionMatchedInfoCallback.onSubscriptionMatched(this, subscriptionMatchedGuid, true);
          }
-      }
-      catch (Exception e)
-      {
-         jros2.logError(e);
-      }
-      finally
-      {
-         closeLock.readLock().unlock();
+         catch (Exception e)
+         {
+            jros2.logError(e);
+         }
+         finally
+         {
+            closeLock.readLock().unlock();
+         }
       }
    }
 
@@ -215,122 +233,107 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     * Refer to documentation here:
     * <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/dds_layer/subscriber/dataReaderListener/dataReaderListener.html">DataReaderListener</a>
     */
-   private class fastddsjava_OnDataCallbackImpl extends fastddsjava_OnDataCallback
+   private void onDataAvailable()
    {
-      @Override
-      public void call()
+      closeLock.readLock().lock();
+      try
       {
-         closeLock.readLock().lock();
-         try
+         synchronized (callbackSampleLock)
          {
-            synchronized (callbackSampleData)
+            int ret; // Keep for debugging
+            while (!closed && OK == (ret = fastddsjava.dataReaderReadNextSample(fastddsDataReader, fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo))
+                   && callbackSampleInfo.hasValidData())
             {
-               int ret; // Keep for debugging
-               while (!closed && OK == (ret = fastddsjava_datareader_read_next_sample(fastddsDataReader,
-                                                                                      callbackSampleData,
-                                                                                      callbackSampleInfo.nativeInfo))
-                      && callbackSampleInfo.hasValidData())
+               flagHadData = true;
+               untakenMessageCount.incrementAndGet();
+
+               recordStatistics();
+
+               if (callback != null)
                {
-                  flagHadData = true;
-                  untakenMessageCount.incrementAndGet();
-
-                  recordStatistics();
-
-                  if (callback != null)
+                  try
                   {
-                     try
-                     {
-                        callback.onMessage(ROS2Subscription.this);
-                     }
-                     catch (Throwable e)
-                     {
-                        jros2.logSubscriptionCallbackError(topic.getName(), topic.getType().getSimpleName(), e);
-                     }
+                     callback.onMessage(ROS2Subscription.this);
+                  }
+                  catch (Throwable e)
+                  {
+                     jros2.logSubscriptionCallbackError(topic.getName(), topic.getType().getSimpleName(), e);
                   }
                }
             }
          }
-         finally
-         {
-            closeLock.readLock().unlock();
-         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
       }
    }
 
-   private class fastddsjava_OnSubscriptionMatchedCallbackImpl extends fastddsjava_OnSubscriptionCallback
+   private void onSubscriptionMatched()
    {
-      @Override
-      public void call()
+      boolean hasMatchChange = false;
+      boolean matched = false;
+      if (!closed)
       {
-         boolean hasMatchChange = false;
-         boolean matched = false;
+         int currentCount = fastddsjava.dataReaderGetSubscriptionMatchedStatus(fastddsDataReader, subscriptionMatchedGuidBytes);
+         if (currentCount > previousMatchedPublicationCount)
+         {
+            hasMatchChange = true;
+            matched = true;
+         }
+         else if (currentCount < previousMatchedPublicationCount)
+         {
+            hasMatchChange = true;
+            matched = false;
+         }
+
+         if (hasMatchChange)
+         {
+            System.arraycopy(subscriptionMatchedGuidBytes, 0, subscriptionMatchedGuid.getValue(), 0, 16);
+         }
+
+         previousMatchedPublicationCount = currentCount;
+      }
+
+      synchronized (discoveryLock)
+      {
+         publisherDiscovered = true;
+         discoveryLock.notifyAll();
+      }
+
+      closeLock.readLock().lock();
+      try
+      {
          if (!closed)
          {
-            synchronized (subscriptionMatchedStatus)
+            if (subscriptionMatchedCallback != null)
             {
-               fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
-               int currentCount = subscriptionMatchedStatus.current_count();
-               if (currentCount > previousMatchedPublicationCount)
+               try
                {
-                  hasMatchChange = true;
-                  matched = true;
+                  subscriptionMatchedCallback.run();
                }
-               else if (currentCount < previousMatchedPublicationCount)
+               catch (Exception e)
                {
-                  hasMatchChange = true;
-                  matched = false;
+                  jros2.logError(e);
                }
-
-               if (hasMatchChange)
-               {
-                  fastddsjava_subscription_matched_status_last_publication_guid(subscriptionMatchedStatus,
-                                                                                subscriptionMatchedGuid.getValue());
-               }
-
-               previousMatchedPublicationCount = currentCount;
             }
-         }
 
-         synchronized (discoveryLock)
-         {
-            publisherDiscovered = true;
-            discoveryLock.notifyAll();
-         }
-
-         closeLock.readLock().lock();
-         try
-         {
-            if (!closed)
+            if (hasMatchChange && subscriptionMatchedInfoCallback != null)
             {
-               if (subscriptionMatchedCallback != null)
+               try
                {
-                  try
-                  {
-                     subscriptionMatchedCallback.run();
-                  }
-                  catch (Exception e)
-                  {
-                     jros2.logError(e);
-                  }
+                  subscriptionMatchedInfoCallback.onSubscriptionMatched(ROS2Subscription.this, subscriptionMatchedGuid, matched);
                }
-
-               if (hasMatchChange && subscriptionMatchedInfoCallback != null)
+               catch (Exception e)
                {
-                  try
-                  {
-                     subscriptionMatchedInfoCallback.onSubscriptionMatched(ROS2Subscription.this, subscriptionMatchedGuid, matched);
-                  }
-                  catch (Exception e)
-                  {
-                     jros2.logError(e);
-                  }
+                  jros2.logError(e);
                }
             }
          }
-         finally
-         {
-            closeLock.readLock().unlock();
-         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
       }
    }
 
@@ -372,11 +375,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       {
          if (!closed)
          {
-            synchronized (subscriptionMatchedStatus)
-            {
-               fastddsjava_datareader_get_subscription_matched_status(fastddsDataReader, subscriptionMatchedStatus);
-               count = subscriptionMatchedStatus.current_count();
-            }
+            count = fastddsjava.dataReaderGetSubscriptionMatchedCount(fastddsDataReader);
          }
          else
          {
@@ -465,22 +464,22 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       {
          if (!closed && hasHadData())
          {
-            synchronized (userSampleData)
+            synchronized (userSampleLock)
             {
                SampleInfo info = sampleInfo != null ? sampleInfo : userSampleInfo;
-               int ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, info.nativeInfo);
+               int ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, info.fastddsSampleInfo);
                if (OK == ret)
                {
                   untakenMessageCount.decrementAndGet();
 
-                  long payloadSizeBytes = userSampleData.data_vector().size();
+                  int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
 
                   // Resize Java heap buffer (if necessary) and rewind
-                  readBuffer.ensureRemainingCapacity((int) payloadSizeBytes);
+                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
                   readBuffer.rewind();
 
                   // Copy sample from native memory to Java heap memory
-                  userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
+                  fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message
                   readBuffer.readPayloadHeader();
@@ -525,24 +524,24 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       {
          if (!closed && hasHadData())
          {
-            synchronized (userSampleData)
+            synchronized (userSampleLock)
             {
                int ret; // Keep for debugging
-               while (OK == (ret = fastddsjava_datareader_take_next_custom(fastddsDataReader, userSampleData, userSampleInfo.nativeInfo)))
+               while (OK == (ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, userSampleInfo.fastddsSampleInfo)))
                {
                   totalRead++;
                }
 
                if (totalRead > 0)
                {
-                  long payloadSizeBytes = userSampleData.data_vector().size();
+                  int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
 
                   // Resize Java heap buffer (if necessary) and rewind
-                  readBuffer.ensureRemainingCapacity((int) payloadSizeBytes);
+                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
                   readBuffer.rewind();
 
                   // Copy sample from native memory to Java heap memory
-                  userSampleData.data_ptr().get(readBuffer.getBufferUnsafe().array(), 0, (int) payloadSizeBytes);
+                  fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
 
                   // Deserialize sample into Java ROS2Message
                   readBuffer.readPayloadHeader();
@@ -581,14 +580,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    public Guid getGuid()
    {
-      fastddsjava_get_reader_guid(fastddsDataReader, guid.getValue());
+      fastddsjava.getReaderGuid(fastddsDataReader, guid.getValue());
       return guid;
    }
 
    /**
     * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
     */
-   protected void close(Pointer fastddsParticipant)
+   protected void close(long fastddsParticipant)
    {
       closeLock.writeLock().lock();
       boolean wasClosed = closed;
@@ -598,29 +597,20 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       if (!wasClosed)
       {
          // Clear listener from datareader to prevent further callbacks
-         fastddsjava_datareader_set_listener(fastddsDataReader, null);
+         fastddsjava.dataReaderSetListener(fastddsDataReader, 0);
 
          // Delete the datareader to ensure Fast-DDS stops using the listener
-         retcodePrintOnError(fastddsjava_delete_datareader(fastddsSubscriber, fastddsDataReader));
+         retcodePrintOnError(fastddsjava.deleteDataReader(fastddsSubscriber, fastddsDataReader));
 
-         // Note: We intentionally do NOT close the listener and callback objects here.
+         // Note: We intentionally do NOT delete the listener and callback objects here.
          // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datareader.
-         // Calling close() immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
+         // Freeing them immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
          // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
-         // listener.close();
-         // fastddsDataCallback.close();
-         // fastddsSubscriptionMatchedCallback.close();
-
-         subscriptionMatchedStatus.close();
-
-         topicData.topicDataWrapperType.delete_data(callbackSampleData);
          callbackSampleInfo.close();
-         callbackSampleData.close();
-         topicData.topicDataWrapperType.delete_data(userSampleData);
+         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsCallbackSampleData);
          userSampleInfo.close();
-         userSampleData.close();
-
-         retcodePrintOnError(fastddsjava_delete_subscriber(fastddsParticipant, fastddsSubscriber));
+         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsUserSampleData);
+         retcodePrintOnError(fastddsjava.deleteSubscriber(fastddsParticipant, fastddsSubscriber));
       }
    }
 
@@ -633,7 +623,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(callbackSampleInfo.getReceptionTimestampNanos());
 
       // The size of the entire payload (including the header) in bytes
-      int payloadSizeBytes = (int) callbackSampleData.data_vector().size();
+      int payloadSizeBytes = fastddsjava.topicDataSize(fastddsCallbackSampleData);
 
       synchronized (statisticsCalculators)
       {

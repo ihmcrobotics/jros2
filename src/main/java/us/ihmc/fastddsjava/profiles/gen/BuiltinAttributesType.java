@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for builtinAttributesType complex type.
  * 
@@ -40,17 +36,12 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class BuiltinAttributesType {
 
-    @JacksonXmlProperty(localName = "discovery_config")
     protected DiscoverySettingsType discoveryConfig;
-    @JacksonXmlProperty(localName = "avoid_builtin_multicast")
     protected Boolean avoidBuiltinMulticast;
-    @JacksonXmlProperty(localName = "use_WriterLivelinessProtocol")
     protected Boolean useWriterLivelinessProtocol;
-    @JacksonXmlProperty(localName = "metatraffic_external_unicast_locators")
     protected ExternalLocatorListType metatrafficExternalUnicastLocators;
     protected LocatorListType metatrafficUnicastLocatorList;
     protected LocatorListType metatrafficMulticastLocatorList;
@@ -59,9 +50,7 @@ public class BuiltinAttributesType {
         protected HistoryMemoryPolicyType writerHistoryMemoryPolicy;
         protected Long readerPayloadSize;
         protected Long writerPayloadSize;
-    @JacksonXmlProperty(localName = "mutation_tries")
         protected Long mutationTries;
-    @JacksonXmlProperty(localName = "flow_controller_name")
     protected String flowControllerName;
 
     /**

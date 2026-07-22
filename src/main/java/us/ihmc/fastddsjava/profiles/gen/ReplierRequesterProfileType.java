@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for replierRequesterProfileType complex type.
  * 
@@ -35,25 +31,16 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class ReplierRequesterProfileType {
 
-    @JacksonXmlProperty(localName = "request_topic_name")
     protected String requestTopicName;
-    @JacksonXmlProperty(localName = "reply_topic_name")
     protected String replyTopicName;
-    @JacksonXmlProperty(localName = "data_writer")
     protected PublisherProfileNoAttributesType dataWriter;
-    @JacksonXmlProperty(localName = "data_reader")
     protected SubscriberProfileNoAttributesType dataReader;
-    @JacksonXmlProperty(isAttribute = true, localName = "profile_name")
     protected String profileName;
-    @JacksonXmlProperty(isAttribute = true, localName = "service_name")
     protected String serviceName;
-    @JacksonXmlProperty(isAttribute = true, localName = "request_type")
     protected String requestType;
-    @JacksonXmlProperty(isAttribute = true, localName = "reply_type")
     protected String replyType;
 
     /**

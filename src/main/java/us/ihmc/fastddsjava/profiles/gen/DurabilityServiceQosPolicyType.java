@@ -5,10 +5,6 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 /**
  * <p>Java class for durabilityServiceQosPolicyType complex type.
  * 
@@ -33,21 +29,14 @@ import com.fasterxml.jackson.dataformat.xml.annotation.*;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class DurabilityServiceQosPolicyType {
 
-    @JacksonXmlProperty(localName = "service_cleanup_delay")
     protected DurationType serviceCleanupDelay;
-    @JacksonXmlProperty(localName = "history_kind")
         protected HistoryQosKindPolicyType historyKind;
-    @JacksonXmlProperty(localName = "history_depth")
     protected Integer historyDepth;
-    @JacksonXmlProperty(localName = "max_samples")
     protected Integer maxSamples;
-    @JacksonXmlProperty(localName = "max_instances")
     protected Integer maxInstances;
-    @JacksonXmlProperty(localName = "max_samples_per_instance")
     protected Integer maxSamplesPerInstance;
 
     /**

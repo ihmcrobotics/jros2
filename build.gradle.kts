@@ -54,6 +54,11 @@ java {
    targetCompatibility = JavaVersion.VERSION_17
 }
 
+// Avoid windows-1252 compile failures for UTF-8 test sources (e.g. wide-string literals).
+tasks.withType<JavaCompile>().configureEach {
+   options.encoding = "UTF-8"
+}
+
 tasks.javadoc {
    exclude("us/ihmc/fastddsjava/**")
 }
@@ -65,11 +70,6 @@ sourceSets {
 }
 
 mainDependencies {
-   api("org.bytedeco:javacpp:1.5.11")
-   api("us.ihmc:ihmc-native-library-loader:2.0.6")
-   // Match Jackson version with ihmc-robot-data-logger
-   api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
-   api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
 }
 
 parserDependencies {
@@ -128,13 +128,21 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
     outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java-interfaces" }.toString()
 }
 
-// Copy runtime dependencies for Docker integration tests
-tasks.register<Copy>("copyDockerDependencies") {
+// Copy runtime dependencies for Docker integration tests.
+// Always create docker-libs/ even when runtimeClasspath is empty (no third-party jars),
+// so the Docker image COPY step does not fail on a missing directory/glob.
+tasks.register("copyDockerDependencies") {
    description = "Copy runtime dependencies for Docker integration tests"
    group = "build"
 
-   from(configurations.runtimeClasspath)
-   into(layout.buildDirectory.dir("docker-libs"))
+   doLast {
+      val dir = layout.buildDirectory.dir("docker-libs").get().asFile
+      dir.mkdirs()
+      dir.listFiles()?.filter { it.isFile && it.extension == "jar" }?.forEach { it.delete() }
+      configurations.runtimeClasspath.get().files.filter { it.extension == "jar" }.forEach { jar ->
+         jar.copyTo(dir.resolve(jar.name), overwrite = true)
+      }
+   }
 }
 
 // Docker integration test for interface whitelisting (Linux only)

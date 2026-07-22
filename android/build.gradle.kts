@@ -65,6 +65,7 @@ android {
       minSdk = 26
 
       consumerProguardFiles("consumer-rules.pro")
+      testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
    }
 
    buildTypes {
@@ -94,17 +95,16 @@ android {
          pickFirsts.add("**/libjnifastddsjava.so")
       }
    }
+
+   testOptions {
+      animationsDisabled = true
+   }
 }
 
 dependencies {
-   api("org.bytedeco:javacpp:1.5.11")
-   api("us.ihmc:ihmc-native-library-loader:2.0.6")
-   // Match Jackson version with ihmc-robot-data-logger
-   api("com.fasterxml.jackson.core:jackson-databind:2.18.1")
-   api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.18.1")
-   // StAX API and implementation for Android (javax.xml.stream package)
-   api("javax.xml.stream:stax-api:1.0-2")
-   api("com.fasterxml.woodstox:woodstox-core:6.7.0")
+   androidTestImplementation("junit:junit:4.13.2")
+   androidTestImplementation("androidx.test:runner:1.6.2")
+   androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
 
 tasks.register("copyLibcppShared") {
@@ -124,11 +124,16 @@ tasks.register("copyLibcppShared") {
             if (libcppPath.exists()) {
                val abiDir = file("$jniLibsDir/$abi")
                abiDir.mkdirs()
-               copy {
-                  from(libcppPath)
-                  into(abiDir)
+               val dest = file("$abiDir/libc++_shared.so")
+               if (!dest.exists()) {
+                  copy {
+                     from(libcppPath)
+                     into(abiDir)
+                  }
+                  println("Copied libc++_shared.so for $abi from $libcppPath")
+               } else {
+                  println("Keeping existing libc++_shared.so for $abi")
                }
-               println("Copied libc++_shared.so for $abi from $libcppPath")
             } else {
                println("libc++_shared.so not found at $libcppPath")
             }

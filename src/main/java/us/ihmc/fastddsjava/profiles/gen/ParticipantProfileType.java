@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for participantProfileType complex type.
@@ -88,15 +83,12 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class ParticipantProfileType {
 
         protected Integer domainId;
     protected ParticipantProfileType.Rtps rtps;
-    @JacksonXmlProperty(isAttribute = true, localName = "profile_name")
     protected String profileName;
-    @JacksonXmlProperty(isAttribute = true, localName = "is_default_profile")
     protected Boolean isDefaultProfile;
 
     /**
@@ -195,7 +187,6 @@ public class ParticipantProfileType {
         this.isDefaultProfile = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -258,25 +249,20 @@ public class ParticipantProfileType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Rtps {
 
         protected String name;
         protected LocatorListType defaultUnicastLocatorList;
         protected LocatorListType defaultMulticastLocatorList;
-        @JacksonXmlProperty(localName = "default_external_unicast_locators")
         protected ExternalLocatorListType defaultExternalUnicastLocators;
-        @JacksonXmlProperty(localName = "ignore_non_matching_locators")
         protected Boolean ignoreNonMatchingLocators;
                 protected Long sendSocketBufferSize;
                 protected Long listenSocketBufferSize;
-        @JacksonXmlProperty(localName = "netmask_filter")
         protected String netmaskFilter;
         protected BuiltinAttributesType builtin;
         protected PortType port;
         protected Integer participantID;
-        @JacksonXmlProperty(localName = "easy_mode_ip")
         protected String easyModeIp;
         protected ParticipantProfileType.Rtps.UserTransports userTransports;
         protected Boolean useBuiltinTransports;
@@ -285,19 +271,12 @@ public class ParticipantProfileType {
         protected RtpsParticipantAllocationAttributesType allocation;
         protected OctectVectorQosPolicyType userData;
         protected String prefix;
-        @JacksonXmlProperty(localName = "flow_controller_descriptor_list")
         protected FlowControllerDescriptorListType flowControllerDescriptorList;
-        @JacksonXmlProperty(localName = "builtin_controllers_sender_thread")
         protected ThreadSettingsType builtinControllersSenderThread;
-        @JacksonXmlProperty(localName = "timed_events_thread")
         protected ThreadSettingsType timedEventsThread;
-        @JacksonXmlProperty(localName = "discovery_server_thread")
         protected ThreadSettingsType discoveryServerThread;
-        @JacksonXmlProperty(localName = "typelookup_service_thread")
         protected ThreadSettingsType typelookupServiceThread;
-        @JacksonXmlProperty(localName = "builtin_transports_reception_threads")
         protected ThreadSettingsType builtinTransportsReceptionThreads;
-        @JacksonXmlProperty(localName = "security_log_thread")
         protected ThreadSettingsType securityLogThread;
 
         /**
@@ -924,7 +903,6 @@ public class ParticipantProfileType {
             this.securityLogThread = value;
         }
 
-
         /**
          * <p>Java class for anonymous complex type.
          * 
@@ -944,11 +922,9 @@ public class ParticipantProfileType {
          * 
          * 
          */
-        @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
         
         public static class UserTransports {
 
-            @JacksonXmlProperty(localName = "transport_id")
             protected List<String> transportId;
 
             /**

@@ -102,7 +102,7 @@ final class jros2 implements jros2Settings
        *   You may expect the publisher to not use intraprocess, but it's most likely that it will because node B has enabled intraprocess for the entire
        *   Fast-DDS library instance.
        *
-       * See: https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/xml_configuration/library_settings.html#intra-process-delivery-xml-profile
+       * See: https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/xml_configuration/library_settings.html#intra-process-delivery-xml-profile
        * Notice how intraprocess delivery is a library setting, not a participant, data reader, or data writer setting.
        */
       ProfilesXML.setIntraprocessDelivery(intraprocessDelivery() ? "FULL" : "OFF");
@@ -125,7 +125,7 @@ final class jros2 implements jros2Settings
 
       /*
        * Attempt to load native libraries for Android if the current platform is Android.
-       * Otherwise, attempt to load the native libraries using the fastddsjavaNativeLibrary (ihmc-native-library-loader) class.
+       * Otherwise, attempt to load the native libraries using fastddsjavaNativeLibrary.
        */
       if (android)
       {
@@ -219,7 +219,7 @@ final class jros2 implements jros2Settings
 
    /**
     * Log a subscription callback exception with topic, message type, and throw site.
-    * Does not rethrow — exceptions must not propagate out of native DDS callbacks.
+    * Does not rethrow; exceptions must not propagate out of native DDS callbacks.
     */
    static void logSubscriptionCallbackError(String topicName, String messageTypeName, Throwable throwable)
    {

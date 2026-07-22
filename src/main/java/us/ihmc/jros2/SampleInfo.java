@@ -15,50 +15,49 @@
  */
 package us.ihmc.jros2;
 
-import us.ihmc.fastddsjava.pointers.fastddsjava_SampleInfo;
+import us.ihmc.fastddsjava.natives.fastddsjava;
 
 /**
  * Metadata for a sample received by a {@link ROS2Subscription}.
- * Reuses a single native allocation for garbage-free reads.
  */
 public class SampleInfo implements AutoCloseable
 {
-   final fastddsjava_SampleInfo nativeInfo;
+   final long fastddsSampleInfo;
    private boolean closed;
 
    public SampleInfo()
    {
-      nativeInfo = new fastddsjava_SampleInfo();
+      fastddsSampleInfo = fastddsjava.createSampleInfo();
    }
 
    public boolean hasValidData()
    {
-      return nativeInfo.valid_data();
+      return fastddsjava.sampleInfoValidData(fastddsSampleInfo);
    }
 
    public long getSourceTimestampNanos()
    {
-      return nativeInfo.source_timestamp().to_ns();
+      return fastddsjava.sampleInfoSourceTimestampNanos(fastddsSampleInfo);
    }
 
    public long getReceptionTimestampNanos()
    {
-      return nativeInfo.reception_timestamp().to_ns();
+      return fastddsjava.sampleInfoReceptionTimestampNanos(fastddsSampleInfo);
    }
 
    public short getSampleState()
    {
-      return nativeInfo.sample_state();
+      return fastddsjava.sampleInfoSampleState(fastddsSampleInfo);
    }
 
    public short getViewState()
    {
-      return nativeInfo.view_state();
+      return fastddsjava.sampleInfoViewState(fastddsSampleInfo);
    }
 
    public short getInstanceState()
    {
-      return nativeInfo.instance_state();
+      return fastddsjava.sampleInfoInstanceState(fastddsSampleInfo);
    }
 
    @Override
@@ -66,7 +65,7 @@ public class SampleInfo implements AutoCloseable
    {
       if (!closed)
       {
-         nativeInfo.close();
+         fastddsjava.deleteSampleInfo(fastddsSampleInfo);
          closed = true;
       }
    }

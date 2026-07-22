@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for blocklistType complex type.
@@ -40,11 +35,9 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class BlocklistType {
 
-    @JacksonXmlProperty(localName = "interface")
     protected List<BlocklistType.Interface> _interface;
 
     /**
@@ -76,7 +69,6 @@ public class BlocklistType {
         return this._interface;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -94,11 +86,9 @@ public class BlocklistType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class Interface {
 
-        @JacksonXmlProperty(isAttribute = true, localName = "name")
         protected String name;
 
         /**

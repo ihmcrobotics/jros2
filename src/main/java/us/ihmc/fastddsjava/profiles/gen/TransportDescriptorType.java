@@ -5,13 +5,8 @@
 
 package us.ihmc.fastddsjava.profiles.gen;
 
-import com.fasterxml.jackson.annotation.*;
-import com.fasterxml.jackson.dataformat.xml.annotation.*;
-
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 /**
  * <p>Java class for transportDescriptorType complex type.
@@ -110,11 +105,9 @@ import java.util.List;
  * 
  * 
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class TransportDescriptorType {
 
-    @JacksonXmlProperty(localName = "transport_id")
     protected String transportId;
     protected String type;
         protected Long sendBufferSize;
@@ -122,55 +115,31 @@ public class TransportDescriptorType {
         protected Long maxMessageSize;
         protected Long maxInitialPeersRange;
     protected TransportDescriptorType.InterfaceWhiteList interfaceWhiteList;
-    @JacksonXmlProperty(localName = "netmask_filter")
     protected String netmaskFilter;
     protected InterfacesType interfaces;
-    @JacksonXmlProperty(localName = "TTL")
         protected Short ttl;
-    @JacksonXmlProperty(localName = "non_blocking_send")
     protected Boolean nonBlockingSend;
-    @JacksonXmlProperty(localName = "output_port")
         protected Integer outputPort;
-    @JacksonXmlProperty(localName = "wan_addr")
     protected String wanAddr;
-    @JacksonXmlProperty(localName = "keep_alive_frequency_ms")
         protected Long keepAliveFrequencyMs;
-    @JacksonXmlProperty(localName = "keep_alive_timeout_ms")
         protected Long keepAliveTimeoutMs;
-    @JacksonXmlProperty(localName = "max_logical_port")
         protected Integer maxLogicalPort;
-    @JacksonXmlProperty(localName = "logical_port_range")
         protected Integer logicalPortRange;
-    @JacksonXmlProperty(localName = "logical_port_increment")
         protected Integer logicalPortIncrement;
-    @JacksonXmlProperty(localName = "listening_ports")
     protected TransportDescriptorType.ListeningPorts listeningPorts;
-    @JacksonXmlProperty(localName = "calculate_crc")
     protected Boolean calculateCrc;
-    @JacksonXmlProperty(localName = "check_crc")
     protected Boolean checkCrc;
-    @JacksonXmlProperty(localName = "enable_tcp_nodelay")
     protected Boolean enableTcpNodelay;
     protected TlsConfigType tls;
-    @JacksonXmlProperty(localName = "keep_alive_thread")
     protected ThreadSettingsType keepAliveThread;
-    @JacksonXmlProperty(localName = "accept_thread")
     protected ThreadSettingsType acceptThread;
-    @JacksonXmlProperty(localName = "tcp_negotiation_timeout")
         protected Long tcpNegotiationTimeout;
-    @JacksonXmlProperty(localName = "segment_size")
         protected Long segmentSize;
-    @JacksonXmlProperty(localName = "port_queue_capacity")
         protected Long portQueueCapacity;
-    @JacksonXmlProperty(localName = "healthy_check_timeout_ms")
         protected Long healthyCheckTimeoutMs;
-    @JacksonXmlProperty(localName = "rtps_dump_file")
     protected String rtpsDumpFile;
-    @JacksonXmlProperty(localName = "default_reception_threads")
     protected ThreadSettingsType defaultReceptionThreads;
-    @JacksonXmlProperty(localName = "reception_threads")
     protected ReceptionThreadsListType receptionThreads;
-    @JacksonXmlProperty(localName = "dump_thread")
     protected ThreadSettingsType dumpThread;
 
     /**
@@ -965,7 +934,6 @@ public class TransportDescriptorType {
         this.dumpThread = value;
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -993,7 +961,6 @@ public class TransportDescriptorType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class InterfaceWhiteList {
 
@@ -1032,7 +999,6 @@ public class TransportDescriptorType {
 
     }
 
-
     /**
      * <p>Java class for anonymous complex type.
      * 
@@ -1052,7 +1018,6 @@ public class TransportDescriptorType {
      * 
      * 
      */
-    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
     
     public static class ListeningPorts {
 
