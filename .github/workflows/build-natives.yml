@@ -171,12 +171,16 @@ jobs:
           test -f "$DEST/fastdds-3.6.dll" || { echo "Missing fastdds-3.6.dll"; ls -la "$DEST" cppbuild/install/bin 2>/dev/null || true; exit 1; }
           test -f "$DEST/jnifastddsjava.dll" || { echo "Missing jnifastddsjava.dll"; exit 1; }
           # Reject stale JNI binaries still linked against older Fast-DDS SONAMEs.
-          if command -v objdump >/dev/null 2>&1; then
-            deps=$(objdump -p "$DEST/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
-            echo "$deps"
-            echo "$deps" | grep -qi 'fastdds-3\.6\.dll' || { echo "jnifastddsjava.dll does not import fastdds-3.6.dll"; exit 1; }
-            echo "$deps" | grep -qi 'fastdds-3\.2\.dll' && { echo "jnifastddsjava.dll still imports fastdds-3.2.dll"; exit 1; } || true
+          # Prefer dumpbin: MinGW objdump on the runner cannot parse ARM64 PE.
+          deps=""
+          if command -v dumpbin.exe >/dev/null 2>&1 || command -v dumpbin >/dev/null 2>&1; then
+            deps=$(MSYS_NO_PATHCONV=1 dumpbin.exe /DEPENDENTS "$DEST/jnifastddsjava.dll" 2>/dev/null || true)
+          elif command -v objdump >/dev/null 2>&1; then
+            deps=$(objdump -p "$DEST/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
           fi
+          echo "$deps"
+          echo "$deps" | grep -qi 'fastdds-3\.6\.dll' || { echo "jnifastddsjava.dll does not import fastdds-3.6.dll"; exit 1; }
+          echo "$deps" | grep -qi 'fastdds-3\.2\.dll' && { echo "jnifastddsjava.dll still imports fastdds-3.2.dll"; exit 1; } || true
           mkdir -p "artifact/windows-${{ matrix.platform }}"
           cp -a "$DEST/." "artifact/windows-${{ matrix.platform }}/"
           ls -la "artifact/windows-${{ matrix.platform }}"
@@ -550,7 +554,7 @@ jobs:
           check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64" "windows-x86_64"
           check_file "$BASE/windows-x86_64/fastdds-3.6.dll"        "x86-64" "windows-x86_64"
           check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64" "windows-x86_64"
-          win_jni_deps=$(objdump -p "$BASE/windows-x86_64/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
+          win_jni_deps=$(objdump -p "$BASE/windows-x86_64/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
           echo "$win_jni_deps"
           if ! echo "$win_jni_deps" | grep -qi 'fastdds-3\.6\.dll'; then
             echo "WRONG DEPS [windows-x86_64]: jnifastddsjava.dll must import fastdds-3.6.dll"
@@ -565,7 +569,17 @@ jobs:
           check_file "$BASE/windows-arm64/fastcdr-2.3.dll"         "Aarch64|ARM64|aarch64" "windows-arm64"
           check_file "$BASE/windows-arm64/fastdds-3.6.dll"         "Aarch64|ARM64|aarch64" "windows-arm64"
           check_file "$BASE/windows-arm64/jnifastddsjava.dll"      "Aarch64|ARM64|aarch64" "windows-arm64"
-          win_arm_jni_deps=$(objdump -p "$BASE/windows-arm64/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
+          # Linux binutils may not parse ARM64 PE; try llvm-objdump, then objdump, then strings fallback.
+          win_arm_jni_deps=""
+          if command -v llvm-objdump >/dev/null 2>&1; then
+            win_arm_jni_deps=$(llvm-objdump -p "$BASE/windows-arm64/jnifastddsjava.dll" 2>/dev/null | grep -iE 'DLL Name|fastdds' || true)
+          fi
+          if [ -z "$win_arm_jni_deps" ]; then
+            win_arm_jni_deps=$(objdump -p "$BASE/windows-arm64/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
+          fi
+          if [ -z "$win_arm_jni_deps" ]; then
+            win_arm_jni_deps=$(strings "$BASE/windows-arm64/jnifastddsjava.dll" | grep -iE 'fastdds-.*\.dll' || true)
+          fi
           echo "$win_arm_jni_deps"
           if ! echo "$win_arm_jni_deps" | grep -qi 'fastdds-3\.6\.dll'; then
             echo "WRONG DEPS [windows-arm64]: jnifastddsjava.dll must import fastdds-3.6.dll"
