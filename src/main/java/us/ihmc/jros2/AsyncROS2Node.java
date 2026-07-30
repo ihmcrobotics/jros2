@@ -20,9 +20,9 @@ import us.ihmc.fastddsjava.profiles.ProfilesXML;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
@@ -45,7 +45,7 @@ public class AsyncROS2Node extends ROS2Node
     * Publish thread
     */
    private final Thread publishThread;
-   private final BlockingQueue<Runnable> tasks;
+   private final PublishTaskQueue tasks;
    private final String threadName;
    private volatile boolean rejectTasks;
 
@@ -53,7 +53,7 @@ public class AsyncROS2Node extends ROS2Node
    {
       super(name, domainId, fastddsTransports);
 
-      tasks = new ArrayBlockingQueue<>(QUEUE_CAPACITY, false); // Unfair for better performance
+      tasks = new PublishTaskQueue(QUEUE_CAPACITY);
 
       // Pre-allocate thread name during construction to avoid allocation during runtime
       threadName = "AsyncROS2NodePublishThread-" + name;
@@ -170,23 +170,91 @@ public class AsyncROS2Node extends ROS2Node
       if (!rejectTasks)
       {
          accepted = tasks.offer(task);
+         if (accepted)
+         {
+            LockSupport.unpark(publishThread);
+         }
       }
       return accepted;
    }
 
    private void publishLoop()
    {
-      try
+      while (!Thread.currentThread().isInterrupted())
       {
-         while (!Thread.currentThread().isInterrupted())
+         Runnable task = tasks.poll();
+         if (task != null)
          {
-            Runnable task = tasks.take();
             task.run();
          }
+         else
+         {
+            LockSupport.park();
+         }
       }
-      catch (InterruptedException ignored)
+   }
+
+   /**
+    * Multi-producer, single-consumer queue for reusable publish tasks.
+    */
+   private static final class PublishTaskQueue
+   {
+      private final AtomicReferenceArray<Runnable> slots;
+      private final int mask;
+      private final AtomicLong producerIndex = new AtomicLong();
+      private final AtomicLong consumerIndex = new AtomicLong();
+
+      PublishTaskQueue(int capacity)
       {
-         Thread.currentThread().interrupt();
+         if (capacity < 2 || (capacity & (capacity - 1)) != 0)
+         {
+            throw new IllegalArgumentException("capacity must be a power of 2: " + capacity);
+         }
+         slots = new AtomicReferenceArray<>(capacity);
+         mask = capacity - 1;
+      }
+
+      boolean offer(Runnable task)
+      {
+         final long capacity = mask + 1L;
+         for (;;)
+         {
+            final long producer = producerIndex.get();
+            final long consumer = consumerIndex.get();
+            if (producer - consumer >= capacity)
+            {
+               return false;
+            }
+            if (producerIndex.compareAndSet(producer, producer + 1L))
+            {
+               final int index = (int) producer & mask;
+               while (!slots.compareAndSet(index, null, task))
+               {
+                  Thread.onSpinWait();
+               }
+               return true;
+            }
+         }
+      }
+
+      Runnable poll()
+      {
+         final long consumer = consumerIndex.get();
+         if (consumer == producerIndex.get())
+         {
+            return null;
+         }
+
+         final int index = (int) consumer & mask;
+         Runnable task;
+         while ((task = slots.get(index)) == null)
+         {
+            // Producer claimed the index but has not published the reference yet.
+            Thread.onSpinWait();
+         }
+         slots.lazySet(index, null);
+         consumerIndex.set(consumer + 1L);
+         return task;
       }
    }
 }

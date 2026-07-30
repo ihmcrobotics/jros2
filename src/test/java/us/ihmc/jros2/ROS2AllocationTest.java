@@ -91,6 +91,86 @@ public class ROS2AllocationTest
    }
 
    @Test
+   public void testAsyncPublishThreadIsAllocationFreeWhileIdleWaiting()
+   {
+      ThreadMXBean threadMXBean = requireThreadAllocationBean();
+
+      String nodeName = "async_alloc_pub_thread";
+      AsyncROS2Node asyncNode = new AsyncROS2Node(nodeName);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/async_alloc_pub_thread", example_interfaces.Bool.class);
+      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
+
+      example_interfaces.Bool message = new example_interfaces.Bool();
+      message.setData(true);
+
+      Thread publishThread = findThreadByName("AsyncROS2NodePublishThread-" + nodeName);
+      long publishThreadId = publishThread.getId();
+
+      // Warmup including idle waits so park/unpark paths are JIT'd.
+      for (int i = 0; i < WARMUP_MESSAGES; ++i)
+      {
+         publisher.publish(message);
+         LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(50));
+      }
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
+
+      long before = threadMXBean.getThreadAllocatedBytes(publishThreadId);
+      for (int i = 0; i < MEASURED_MESSAGES; ++i)
+      {
+         publisher.publish(message);
+         // Force the publish thread to drain and go idle between publishes (former take() allocation path).
+         LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(50));
+      }
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
+      long allocated = threadMXBean.getThreadAllocatedBytes(publishThreadId) - before;
+
+      assertTrue(allocated <= MAX_TOTAL_ALLOCATED_BYTES,
+                 "Async publish thread allocated " + allocated + " bytes over " + MEASURED_MESSAGES
+                 + " publish/idle cycles (expected <= " + MAX_TOTAL_ALLOCATED_BYTES + ")");
+
+      asyncNode.close();
+   }
+
+   @Test
+   public void testAsyncPublishThreadIsAllocationFreeUnderBurstLoad() throws InterruptedException
+   {
+      ThreadMXBean threadMXBean = requireThreadAllocationBean();
+
+      String nodeName = "async_alloc_burst";
+      AsyncROS2Node asyncNode = new AsyncROS2Node(nodeName);
+      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/async_alloc_burst", example_interfaces.Bool.class);
+
+      final int publisherCount = 4;
+      @SuppressWarnings("unchecked")
+      ROS2Publisher<example_interfaces.Bool>[] publishers = new ROS2Publisher[publisherCount];
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         publishers[i] = asyncNode.createPublisher(topic);
+      }
+
+      example_interfaces.Bool message = new example_interfaces.Bool();
+      message.setData(true);
+
+      Thread publishThread = findThreadByName("AsyncROS2NodePublishThread-" + nodeName);
+      long publishThreadId = publishThread.getId();
+
+      // Warmup with concurrent publishers offering tasks.
+      runConcurrentPublishes(publishers, message, WARMUP_MESSAGES / publisherCount);
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
+
+      long before = threadMXBean.getThreadAllocatedBytes(publishThreadId);
+      runConcurrentPublishes(publishers, message, MEASURED_MESSAGES / publisherCount);
+      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
+      long allocated = threadMXBean.getThreadAllocatedBytes(publishThreadId) - before;
+
+      assertTrue(allocated <= MAX_TOTAL_ALLOCATED_BYTES,
+                 "Async publish thread allocated " + allocated + " bytes under burst load from "
+                 + publisherCount + " publishers (expected <= " + MAX_TOTAL_ALLOCATED_BYTES + ")");
+
+      asyncNode.close();
+   }
+
+   @Test
    public void testReuseSubscriptionReadIsAllocationFree() throws InterruptedException
    {
       ThreadMXBean threadMXBean = requireThreadAllocationBean();
@@ -203,6 +283,45 @@ public class ROS2AllocationTest
       Assumptions.assumeTrue(threadMXBean != null && threadMXBean.isThreadAllocatedMemorySupported(),
                              "Thread allocation measurement requires HotSpot ThreadMXBean support");
       return threadMXBean;
+   }
+
+   private static Thread findThreadByName(String name)
+   {
+      for (Thread thread : Thread.getAllStackTraces().keySet())
+      {
+         if (name.equals(thread.getName()))
+         {
+            return thread;
+         }
+      }
+      throw new IllegalStateException("Thread not found: " + name);
+   }
+
+   private static void runConcurrentPublishes(ROS2Publisher<example_interfaces.Bool>[] publishers,
+                                              example_interfaces.Bool message,
+                                              int messagesPerPublisher)
+         throws InterruptedException
+   {
+      Thread[] threads = new Thread[publishers.length];
+      for (int i = 0; i < publishers.length; ++i)
+      {
+         ROS2Publisher<example_interfaces.Bool> publisher = publishers[i];
+         threads[i] = new Thread(() ->
+         {
+            for (int j = 0; j < messagesPerPublisher; ++j)
+            {
+               publisher.publish(message);
+            }
+         }, "alloc-burst-publisher-" + i);
+      }
+      for (Thread thread : threads)
+      {
+         thread.start();
+      }
+      for (Thread thread : threads)
+      {
+         thread.join();
+      }
    }
 
    private static void assertSteadyStateAllocationFree(ThreadMXBean threadMXBean, int measuredCount, Runnable action)
