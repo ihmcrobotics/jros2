@@ -14,8 +14,6 @@ A ROS 2 library for Java. Uses Fast-DDS middleware. Fully compatible with other 
 Fast-DDS version: `3.6.2`
 
 ROS 2 compatible and tested distros: `[foxy, humble, jazzy, kilted, lyrical]`
-(Foxy covers Ubuntu 20.04; Humble 22.04; Jazzy/Kilted 24.04; Lyrical 26.04.
-On Foxy, ros2 to jros2 interop is tested; jros2 to `ros2 topic echo` is covered on Humble+.)
 
 Supported platforms:
 - Linux (Ubuntu 20.04+ or similar x86_64, arm64, armhf)
