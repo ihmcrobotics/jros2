@@ -101,7 +101,7 @@ jobs:
       - name: Verify committed Android JNI libraries
         run: |
           set -euo pipefail
-          for abi in arm64-v8a x86_64; do
+          for abi in arm64-v8a armeabi-v7a x86_64; do
             for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
               test -f "android/src/main/jniLibs/$abi/$lib" || {
                 echo "Missing android/src/main/jniLibs/$abi/$lib"
@@ -125,7 +125,7 @@ jobs:
           echo "Built AAR: $AAR"
           unzip -l "$AAR"
 
-          for abi in arm64-v8a x86_64; do
+          for abi in arm64-v8a armeabi-v7a x86_64; do
             for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
               unzip -l "$AAR" | grep -q "jni/$abi/$lib" || {
                 echo "AAR missing jni/$abi/$lib"

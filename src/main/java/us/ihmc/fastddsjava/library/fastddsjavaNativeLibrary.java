@@ -148,11 +148,20 @@ public final class fastddsjavaNativeLibrary
       }
       else if (os.contains("win"))
       {
-         if (!(arch.equals("amd64") || arch.equals("x86_64")))
+         String archPackage;
+         if (arch.equals("amd64") || arch.equals("x86_64"))
+         {
+            archPackage = "windows-x86_64";
+         }
+         else if (arch.equals("aarch64") || arch.equals("arm64"))
+         {
+            archPackage = "windows-arm64";
+         }
+         else
          {
             throw new RuntimeException("Unsupported Windows architecture: " + arch);
          }
-         platformLibs = new PlatformLibs("fastddsjava.native.windows-x86_64", "jnifastddsjava.dll",
+         platformLibs = new PlatformLibs("fastddsjava.native." + archPackage, "jnifastddsjava.dll",
                                          new String[] {"fastcdr-2.3.dll", "fastdds-3.6.dll"});
       }
       else if (os.contains("mac"))
