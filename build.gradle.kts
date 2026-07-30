@@ -20,7 +20,7 @@ plugins {
    id("java-gradle-plugin")
    id("us.ihmc.ihmc-build")
 
-   id("us.ihmc.jros2.generator") version "1.4.0"
+   id("us.ihmc.jros2.generator") version "1.5.0"
 }
 
 ihmc {
