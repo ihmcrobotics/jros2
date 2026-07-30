@@ -130,43 +130,65 @@ jobs:
   build-natives-windows:
     if: github.event.inputs.platforms != 'linux'
     runs-on: windows-2022
-    timeout-minutes: 30
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: x86_64
+            msvc_arch: x64
+            windows_arm64: "0"
+          - platform: arm64
+            msvc_arch: amd64_arm64
+            windows_arm64: "1"
     steps:
       - uses: actions/checkout@v5
       - uses: ilammy/msvc-dev-cmd@v1
         with:
           vsversion: 2022
+          arch: ${{ matrix.msvc_arch }}
       - uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Compile native library
+      - name: Compile native library (${{ matrix.platform }})
+        shell: bash
+        env:
+          WINDOWS_COMPILE_ARM64: ${{ matrix.windows_arm64 }}
         run: |
-          bash.exe cppbuild.bash
+          if [ "${{ matrix.windows_arm64 }}" = "1" ]; then
+            bash build-windows-arm64.bash
+          else
+            bash cppbuild.bash
+          fi
       - name: Stage and verify Windows native libraries
         shell: bash
         run: |
           set -euo pipefail
-          DEST="src/main/resources/fastddsjava/native/windows-x86_64"
+          DEST="src/main/resources/fastddsjava/native/windows-${{ matrix.platform }}"
           ls -la "$DEST" || true
           test -f "$DEST/fastcdr-2.3.dll" || { echo "Missing fastcdr DLL"; ls -la "$DEST" install/bin 2>/dev/null || true; exit 1; }
           test -f "$DEST/fastdds-3.6.dll" || { echo "Missing fastdds-3.6.dll"; ls -la "$DEST" cppbuild/install/bin 2>/dev/null || true; exit 1; }
           test -f "$DEST/jnifastddsjava.dll" || { echo "Missing jnifastddsjava.dll"; exit 1; }
           # Reject stale JNI binaries still linked against older Fast-DDS SONAMEs.
-          if command -v objdump >/dev/null 2>&1; then
-            deps=$(objdump -p "$DEST/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
-            echo "$deps"
-            echo "$deps" | grep -qi 'fastdds-3\.6\.dll' || { echo "jnifastddsjava.dll does not import fastdds-3.6.dll"; exit 1; }
-            echo "$deps" | grep -qi 'fastdds-3\.2\.dll' && { echo "jnifastddsjava.dll still imports fastdds-3.2.dll"; exit 1; } || true
+          # Prefer dumpbin: MinGW objdump on the runner cannot parse ARM64 PE.
+          deps=""
+          if command -v dumpbin.exe >/dev/null 2>&1 || command -v dumpbin >/dev/null 2>&1; then
+            deps=$(MSYS_NO_PATHCONV=1 dumpbin.exe /DEPENDENTS "$DEST/jnifastddsjava.dll" 2>/dev/null || true)
+          elif command -v objdump >/dev/null 2>&1; then
+            deps=$(objdump -p "$DEST/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
           fi
-          mkdir -p artifact/windows-x86_64
-          cp -a "$DEST/." artifact/windows-x86_64/
-          ls -la artifact/windows-x86_64
+          echo "$deps"
+          echo "$deps" | grep -qi 'fastdds-3\.6\.dll' || { echo "jnifastddsjava.dll does not import fastdds-3.6.dll"; exit 1; }
+          echo "$deps" | grep -qi 'fastdds-3\.2\.dll' && { echo "jnifastddsjava.dll still imports fastdds-3.2.dll"; exit 1; } || true
+          mkdir -p "artifact/windows-${{ matrix.platform }}"
+          cp -a "$DEST/." "artifact/windows-${{ matrix.platform }}/"
+          ls -la "artifact/windows-${{ matrix.platform }}"
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
-          name: natives-windows
-          path: artifact/windows-x86_64/
+          name: natives-windows-${{ matrix.platform }}
+          path: artifact/windows-${{ matrix.platform }}/
           retention-days: 1
 
   build-natives-android:
@@ -176,7 +198,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [arm64-v8a, x86_64]
+        platform: [arm64-v8a, armeabi-v7a, x86_64]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -204,6 +226,11 @@ jobs:
         run: |
           PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-arm64.bash
 
+      - name: Compile native library (armeabi-v7a)
+        if: matrix.platform == 'armeabi-v7a'
+        run: |
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-armeabi-v7a.bash
+
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
@@ -213,7 +240,7 @@ jobs:
         run: |
           set -euo pipefail
           DEST="android/src/main/jniLibs/${{ matrix.platform }}"
-          for f in libfastcdr.so libfastdds.so libjnifastddsjava.so; do
+          for f in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
             test -f "$DEST/$f" || { echo "Missing $DEST/$f"; ls -la "$DEST" || true; exit 1; }
           done
           mkdir -p "artifact/${{ matrix.platform }}"
@@ -449,9 +476,11 @@ jobs:
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-armhf linux-armhf)" src/main/resources/fastddsjava/native/linux-armhf
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-linux-x86_64 linux-x86_64)" src/main/resources/fastddsjava/native/linux-x86_64
 
-          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows windows-x86_64)" src/main/resources/fastddsjava/native/windows-x86_64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows-x86_64 windows-x86_64)" src/main/resources/fastddsjava/native/windows-x86_64
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-windows-arm64 windows-arm64)" src/main/resources/fastddsjava/native/windows-arm64
 
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-arm64-v8a arm64-v8a)" android/src/main/jniLibs/arm64-v8a
+          copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-armeabi-v7a armeabi-v7a)" android/src/main/jniLibs/armeabi-v7a
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-android-x86_64 x86_64)" android/src/main/jniLibs/x86_64
 
           copy_artifact_dir "$(resolve_artifact_src artifacts/natives-macos-arm64 macos-arm64)" src/main/resources/fastddsjava/native/macos-arm64
@@ -522,10 +551,10 @@ jobs:
           done
 
           # Windows x86_64
-          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64|PE32" "windows-x86_64"
-          check_file "$BASE/windows-x86_64/fastdds-3.6.dll"        "x86-64|PE32" "windows-x86_64"
-          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64|PE32" "windows-x86_64"
-          win_jni_deps=$(objdump -p "$BASE/windows-x86_64/jnifastddsjava.dll" | grep -i 'DLL Name' || true)
+          check_file "$BASE/windows-x86_64/fastcdr-2.3.dll"        "x86-64" "windows-x86_64"
+          check_file "$BASE/windows-x86_64/fastdds-3.6.dll"        "x86-64" "windows-x86_64"
+          check_file "$BASE/windows-x86_64/jnifastddsjava.dll"     "x86-64" "windows-x86_64"
+          win_jni_deps=$(objdump -p "$BASE/windows-x86_64/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
           echo "$win_jni_deps"
           if ! echo "$win_jni_deps" | grep -qi 'fastdds-3\.6\.dll'; then
             echo "WRONG DEPS [windows-x86_64]: jnifastddsjava.dll must import fastdds-3.6.dll"
@@ -533,6 +562,31 @@ jobs:
           fi
           if echo "$win_jni_deps" | grep -qi 'fastdds-3\.2\.dll'; then
             echo "WRONG DEPS [windows-x86_64]: jnifastddsjava.dll still imports fastdds-3.2.dll"
+            FAIL=1
+          fi
+
+          # Windows ARM64
+          check_file "$BASE/windows-arm64/fastcdr-2.3.dll"         "Aarch64|ARM64|aarch64" "windows-arm64"
+          check_file "$BASE/windows-arm64/fastdds-3.6.dll"         "Aarch64|ARM64|aarch64" "windows-arm64"
+          check_file "$BASE/windows-arm64/jnifastddsjava.dll"      "Aarch64|ARM64|aarch64" "windows-arm64"
+          # Linux binutils may not parse ARM64 PE; try llvm-objdump, then objdump, then strings fallback.
+          win_arm_jni_deps=""
+          if command -v llvm-objdump >/dev/null 2>&1; then
+            win_arm_jni_deps=$(llvm-objdump -p "$BASE/windows-arm64/jnifastddsjava.dll" 2>/dev/null | grep -iE 'DLL Name|fastdds' || true)
+          fi
+          if [ -z "$win_arm_jni_deps" ]; then
+            win_arm_jni_deps=$(objdump -p "$BASE/windows-arm64/jnifastddsjava.dll" 2>/dev/null | grep -i 'DLL Name' || true)
+          fi
+          if [ -z "$win_arm_jni_deps" ]; then
+            win_arm_jni_deps=$(strings "$BASE/windows-arm64/jnifastddsjava.dll" | grep -iE 'fastdds-.*\.dll' || true)
+          fi
+          echo "$win_arm_jni_deps"
+          if ! echo "$win_arm_jni_deps" | grep -qi 'fastdds-3\.6\.dll'; then
+            echo "WRONG DEPS [windows-arm64]: jnifastddsjava.dll must import fastdds-3.6.dll"
+            FAIL=1
+          fi
+          if echo "$win_arm_jni_deps" | grep -qi 'fastdds-3\.2\.dll'; then
+            echo "WRONG DEPS [windows-arm64]: jnifastddsjava.dll still imports fastdds-3.2.dll"
             FAIL=1
           fi
 
@@ -550,11 +604,19 @@ jobs:
           check_file "$ANDROID_BASE/arm64-v8a/libfastcdr.so"       "aarch64"  "android-arm64-v8a"
           check_file "$ANDROID_BASE/arm64-v8a/libfastdds.so"       "aarch64"  "android-arm64-v8a"
           check_file "$ANDROID_BASE/arm64-v8a/libjnifastddsjava.so" "aarch64" "android-arm64-v8a"
+          check_file "$ANDROID_BASE/arm64-v8a/libc++_shared.so"    "aarch64"  "android-arm64-v8a"
+
+          # Android armeabi-v7a
+          check_file "$ANDROID_BASE/armeabi-v7a/libfastcdr.so"       "EABI5|ARM" "android-armeabi-v7a"
+          check_file "$ANDROID_BASE/armeabi-v7a/libfastdds.so"       "EABI5|ARM" "android-armeabi-v7a"
+          check_file "$ANDROID_BASE/armeabi-v7a/libjnifastddsjava.so" "EABI5|ARM" "android-armeabi-v7a"
+          check_file "$ANDROID_BASE/armeabi-v7a/libc++_shared.so"    "EABI5|ARM" "android-armeabi-v7a"
 
           # Android x86_64
           check_file "$ANDROID_BASE/x86_64/libfastcdr.so"          "x86-64"   "android-x86_64"
           check_file "$ANDROID_BASE/x86_64/libfastdds.so"          "x86-64"   "android-x86_64"
           check_file "$ANDROID_BASE/x86_64/libjnifastddsjava.so"   "x86-64"   "android-x86_64"
+          check_file "$ANDROID_BASE/x86_64/libc++_shared.so"       "x86-64"   "android-x86_64"
 
           if [ $FAIL -ne 0 ]; then
             echo ""

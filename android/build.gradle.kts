@@ -119,7 +119,11 @@ tasks.register("copyLibcppShared") {
       if (ndkDir != null && ndkDir.exists()) {
          println("Found NDK: $ndkDir")
          // Copy libc++_shared.so for each ABI
-         listOf("arm64-v8a" to "aarch64-linux-android", "x86_64" to "x86_64-linux-android").forEach { (abi, triple) ->
+         listOf(
+            "arm64-v8a" to "aarch64-linux-android",
+            "armeabi-v7a" to "arm-linux-androideabi",
+            "x86_64" to "x86_64-linux-android"
+         ).forEach { (abi, triple) ->
             val libcppPath = file("$ndkDir/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$triple/libc++_shared.so")
             if (libcppPath.exists()) {
                val abiDir = file("$jniLibsDir/$abi")

@@ -88,11 +88,16 @@ elif [[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" || "$OS" == "Windows_NT" ]]
   # Fast-DDS is built with MSVC; JNI must use the same toolchain/ABI.
   WINDOWS_COMPILE=1
   JNI_TARGET_NAME="jnifastddsjava.dll"
+  # Cross-compile ARM64 from an x64 host via msvc-dev-cmd arch=amd64_arm64 (or native ARM64 host).
+  if [ "$WINDOWS_COMPILE_ARM64" == "1" ]; then
+    COMPILER_ARGS="-A ARM64"
+  fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   JNI_TARGET_NAME="libjnifastddsjava.dylib"
 fi
 
 WINDOWS_COMPILE=${WINDOWS_COMPILE:-0}
+WINDOWS_COMPILE_ARM64=${WINDOWS_COMPILE_ARM64:-0}
 
 # Build foonathan_memory_vendor
 pushd .
@@ -177,6 +182,9 @@ to_win_path() {
 }
 
 if [ "$ANDROID_COMPILE" == "1" ]; then
+  # Prefer NDK JNI headers. Host OpenJDK jni.h uses AttachCurrentThread(void**),
+  # while Android's uses AttachCurrentThread(JNIEnv**) — required by our __ANDROID__ paths.
+  JNI_INCLUDE=""
   ANDROID_TOOLCHAIN_BIN="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
   if [ "$ANDROID_ABI" == "arm64-v8a" ]; then
     ANDROID_COMPILER_PREFIX="aarch64-linux-android"
@@ -194,6 +202,10 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
     -o javainstall/libjnifastddsjava.so -L${INSTALL_DIR}/install/lib \
     -Wl,-rpath,${INSTALL_DIR}/install/lib \
     -lfastdds -lfastcdr -llog -lc++_shared
+  if [ ! -f "javainstall/libjnifastddsjava.so" ]; then
+    echo "Error: Android JNI build did not produce javainstall/libjnifastddsjava.so"
+    exit 1
+  fi
 elif [ "$WINDOWS_COMPILE" == "1" ]; then
   # Match Fast-DDS MSVC build: MinGW cannot consume MSVC import libs as -lfastdds.
   if ! command -v cl.exe >/dev/null 2>&1; then
@@ -269,7 +281,11 @@ if [ -f "javainstall/libjnifastddsjava.so" ]; then
 fi
 # Windows: Fast-DDS installs versioned DLLs (e.g. fastdds-3.6.dll, fastcdr-2.3.dll).
 if [ "$WINDOWS_COMPILE" == "1" ]; then
-  WINDOWS_GEN_PATH="../src/main/resources/fastddsjava/native/windows-x86_64"
+  if [ "$WINDOWS_COMPILE_ARM64" == "1" ]; then
+    WINDOWS_GEN_PATH="../src/main/resources/fastddsjava/native/windows-arm64"
+  else
+    WINDOWS_GEN_PATH="../src/main/resources/fastddsjava/native/windows-x86_64"
+  fi
   mkdir -p "$WINDOWS_GEN_PATH"
   # Drop stale DLLs so we never ship an old JNI binary linked against a previous Fast-DDS SONAME.
   rm -f "$WINDOWS_GEN_PATH"/*.dll
@@ -313,8 +329,16 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   # Map ANDROID_ABI to Android jniLibs directory naming
   if [ "$ANDROID_ABI" == "arm64-v8a" ]; then
     ANDROID_GEN_PATH="../android/src/main/jniLibs/arm64-v8a"
+    ANDROID_NDK_TRIPLE="aarch64-linux-android"
+  elif [ "$ANDROID_ABI" == "armeabi-v7a" ]; then
+    ANDROID_GEN_PATH="../android/src/main/jniLibs/armeabi-v7a"
+    ANDROID_NDK_TRIPLE="arm-linux-androideabi"
   elif [ "$ANDROID_ABI" == "x86_64" ]; then
     ANDROID_GEN_PATH="../android/src/main/jniLibs/x86_64"
+    ANDROID_NDK_TRIPLE="x86_64-linux-android"
+  elif [ "$ANDROID_ABI" == "x86" ]; then
+    ANDROID_GEN_PATH="../android/src/main/jniLibs/x86"
+    ANDROID_NDK_TRIPLE="i686-linux-android"
   else
     echo "Unsupported ANDROID_ABI: $ANDROID_ABI"
     exit 1
@@ -332,6 +356,13 @@ if [ "$ANDROID_COMPILE" == "1" ]; then
   if [ -f "javainstall/libjnifastddsjava.so" ]; then
     cp -f javainstall/libjnifastddsjava.so "$ANDROID_GEN_PATH/libjnifastddsjava.so"
     ${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip "$ANDROID_GEN_PATH/libjnifastddsjava.so"
+  fi
+  # Bundle the C++ shared runtime required by Fast-DDS / JNI on Android.
+  ANDROID_LIBCPP_SHARED="${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/${ANDROID_NDK_TRIPLE}/libc++_shared.so"
+  if [ -f "$ANDROID_LIBCPP_SHARED" ]; then
+    cp -f "$ANDROID_LIBCPP_SHARED" "$ANDROID_GEN_PATH/libc++_shared.so"
+  else
+    echo "Warning: libc++_shared.so not found at $ANDROID_LIBCPP_SHARED"
   fi
   # Ensure the Android linker records the C++ runtime dependency (needed when symbols are unresolved).
   if command -v patchelf >/dev/null 2>&1; then
