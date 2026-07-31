@@ -30,4 +30,8 @@ Commit the version bump with message ":bookmark: VERSION"
 
 Create a tag with the version e.g. `git tag VERSION`
 
-Push the commit and tag to develop
+Push the commit and tag to develop.
+
+Make a GitHub release.
+
+Update the Wiki on GitHub with any required changes.
