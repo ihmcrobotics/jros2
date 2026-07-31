@@ -5,10 +5,14 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
+
 export WINDOWS_COMPILE_ARM64=1
 
 echo "Building for Windows ARM64..."
-bash cppbuild.bash
+bash "$SCRIPT_DIR/cppbuild.bash"
 
 echo ""
 echo "Build complete! Libraries installed to:"

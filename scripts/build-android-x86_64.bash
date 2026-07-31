@@ -4,6 +4,10 @@
 
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
+
 # Find Android NDK (try common locations)
 if [ -z "$ANDROID_NDK" ]; then
   if [ -d "$HOME/Android/Sdk/ndk" ]; then
@@ -30,7 +34,7 @@ rm -rf cppbuild
 
 # Run build
 echo "Building for Android x86_64..."
-bash cppbuild.bash
+bash "$SCRIPT_DIR/cppbuild.bash"
 
 echo ""
 echo "Build complete! Libraries installed to:"

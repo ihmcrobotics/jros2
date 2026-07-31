@@ -13,7 +13,11 @@
 #  limitations under the License.
 
 #!/bin/bash
-# This build script is designed to work on Linux and Windows. For Windows, run from a bash shell launched with launchBashWindows.bat
+# This build script is designed to work on Linux and Windows. For Windows, run from a bash shell launched with scripts/launchBashWindows.bat
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 
 # Clean
 rm -rf cppbuild/us
@@ -383,7 +387,7 @@ if command -v xjc >/dev/null 2>&1; then
   xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java Fast-DDS-$FASTDDS_VERSION/resources/xsd/fastdds_profiles.xsd
 
   echo "Stripping JAXB annotations from generated profile classes..."
-  python3 ../strip_jaxb_annotations.py ../src/main/java/us/ihmc/fastddsjava/profiles/gen
+  python3 "$SCRIPT_DIR/strip_jaxb_annotations.py" ../src/main/java/us/ihmc/fastddsjava/profiles/gen
 
   # Delete JAXB-specific files that are not needed for plain POJO marshalling
   rm -f ../src/main/java/us/ihmc/fastddsjava/profiles/gen/ObjectFactory.java

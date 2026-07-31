@@ -143,12 +143,12 @@ ROS2Subscription<Int32> subscription = node.createSubscription(intTopic, reader 
 ```
 
 ### Talker and listener example
-Run a talker and listener example with `./run_talker_listener.sh`. If you have a local ROS 2 installation or use a ROS 2 container, you
+Run a talker and listener example with `./scripts/run_talker_listener.sh`. If you have a local ROS 2 installation or use a ROS 2 container, you
 can verify that ROS 2 is able to communicate with jros2.
 
 ```
 [New shell]
-jros2$ ./run_talker_listener.sh
+jros2$ ./scripts/run_talker_listener.sh
 > Task :examples:ros2-ros2-talker-listener:run
 Publishing: 'Hello world: 0'
 Publishing: 'Hello world: 1'

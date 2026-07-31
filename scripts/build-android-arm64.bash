@@ -1,8 +1,12 @@
 #!/bin/bash
-# Build script for Android armeabi-v7a architecture
+# Build script for Android ARM64-v8a architecture
 # This script sets all required environment variables and builds native libraries
 
 set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+cd "$REPO_ROOT"
 
 # Find Android NDK (try common locations)
 if [ -z "$ANDROID_NDK" ]; then
@@ -21,7 +25,7 @@ echo "Using Android NDK: $ANDROID_NDK"
 
 # Set Android build configuration
 export ANDROID_COMPILE=1
-export ANDROID_ABI=armeabi-v7a
+export ANDROID_ABI=arm64-v8a
 export ANDROID_API_LEVEL=26
 
 # Clean previous build
@@ -29,9 +33,9 @@ echo "Cleaning previous build..."
 rm -rf cppbuild
 
 # Run build
-echo "Building for Android armeabi-v7a..."
-bash cppbuild.bash
+echo "Building for Android ARM64-v8a..."
+bash "$SCRIPT_DIR/cppbuild.bash"
 
 echo ""
 echo "Build complete! Libraries installed to:"
-echo "  android/src/main/jniLibs/armeabi-v7a/"
+echo "  android/src/main/jniLibs/arm64-v8a/"

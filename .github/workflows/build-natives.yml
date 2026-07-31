@@ -80,17 +80,17 @@ jobs:
       - name: Compile native library (arm64)
         if: matrix.platform == 'arm64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-arm64.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-linux-arm64.bash
 
       - name: Compile native library (armhf)
         if: matrix.platform == 'armhf'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-armhf.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-linux-armhf.bash
 
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-linux-x86_64.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-linux-x86_64.bash
 
       - name: Stage and verify Linux native libraries
         run: |
@@ -157,9 +157,9 @@ jobs:
           WINDOWS_COMPILE_ARM64: ${{ matrix.windows_arm64 }}
         run: |
           if [ "${{ matrix.windows_arm64 }}" = "1" ]; then
-            bash build-windows-arm64.bash
+            bash scripts/build-windows-arm64.bash
           else
-            bash cppbuild.bash
+            bash scripts/cppbuild.bash
           fi
       - name: Stage and verify Windows native libraries
         shell: bash
@@ -224,17 +224,17 @@ jobs:
       - name: Compile native library (arm64-v8a)
         if: matrix.platform == 'arm64-v8a'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-arm64.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-android-arm64.bash
 
       - name: Compile native library (armeabi-v7a)
         if: matrix.platform == 'armeabi-v7a'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-armeabi-v7a.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-android-armeabi-v7a.bash
 
       - name: Compile native library (x86_64)
         if: matrix.platform == 'x86_64'
         run: |
-          PATH=/opt/cmake-4.0.2/bin:$PATH bash build-android-x86_64.bash
+          PATH=/opt/cmake-4.0.2/bin:$PATH bash scripts/build-android-x86_64.bash
 
       - name: Stage and verify Android native libraries
         run: |
@@ -270,7 +270,7 @@ jobs:
           java-version: '17'
       - name: Compile native library (${{ matrix.platform }})
         run: |
-          MAC_COMPILE_${{ matrix.platform == 'arm64' && 'ARM64' || 'X86_64' }}=1 bash cppbuild.bash
+          MAC_COMPILE_${{ matrix.platform == 'arm64' && 'ARM64' || 'X86_64' }}=1 bash scripts/cppbuild.bash
       - name: Stage and verify macOS native libraries
         run: |
           set -euo pipefail
