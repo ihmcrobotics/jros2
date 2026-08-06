@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.DoubleSummaryStatistics;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
@@ -174,9 +175,17 @@ public class AsyncROS2Test
          publisherThreads[i].join();
       }
 
-      asyncNode.close();
+      // Async publishes may still be in flight after publisher threads return.
+      int expectedCount = publisherCount * messagesToPublish;
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+      while (receivedMessageCount.get() < expectedCount && System.nanoTime() < deadline)
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
+      }
 
-      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
+      assertEquals(expectedCount, receivedMessageCount.get());
+
+      asyncNode.close();
    }
 
    @Test

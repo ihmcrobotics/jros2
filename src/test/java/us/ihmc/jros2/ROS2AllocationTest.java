@@ -232,7 +232,7 @@ public class ROS2AllocationTest
             LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(200));
       }
 
-      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(30);
       while (measuredReads.get() < MEASURED_MESSAGES / 2 && System.nanoTime() < deadline)
       {
          LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));

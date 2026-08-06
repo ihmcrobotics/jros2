@@ -26,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
@@ -268,9 +269,6 @@ public class ROS2PublisherTest
          messagesReceived.incrementAndGet();
       }, ROS2QoSProfile.DEFAULT);
 
-      // Wait for subscription to discover publisher before publishing
-      subscription.waitForPublisher(5000);
-
       // Create many publishers on separate threads and publish
       int publisherCount = 20;
       List<Thread> threads = new ArrayList<>();
@@ -297,6 +295,9 @@ public class ROS2PublisherTest
          threads.add(thread);
       }
 
+      // Wait until at least one publisher is matched (publishers are created on worker threads)
+      assertTrue(subscription.waitForPublisher(5000), "Subscription should discover at least one publisher");
+
       // Wait for all publisher threads to complete
       for (Thread thread : threads)
       {
@@ -308,6 +309,13 @@ public class ROS2PublisherTest
          {
             throw new RuntimeException(e);
          }
+      }
+
+      // Allow in-flight samples to be delivered after the last publish
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+      while (messagesReceived.get() == 0 && System.nanoTime() < deadline)
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
       }
 
       // Should have received messages
