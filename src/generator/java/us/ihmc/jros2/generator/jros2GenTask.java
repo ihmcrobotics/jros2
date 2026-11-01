@@ -22,6 +22,8 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
 import us.ihmc.jros2.parser.MsgContext;
 import us.ihmc.jros2.parser.MsgParser;
+import us.ihmc.jros2.parser.SrvContext;
+import us.ihmc.jros2.parser.SrvParser;
 import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 import java.io.IOException;
@@ -116,6 +118,7 @@ public class jros2GenTask extends DefaultTask
          Path packagePath = Path.of(packagePathStr);
          Path packageXmlPath = packagePath.resolve("package.xml");
          Path msgDirPath = packagePath.resolve("msg");
+         Path srvDirPath = packagePath.resolve("srv");
 
          if (!Files.exists(packageXmlPath))
          {
@@ -142,13 +145,41 @@ public class jros2GenTask extends DefaultTask
                      }
                      String msgFileContent = Files.readString(msgFile).replaceAll("\\*+/", ""); // Replace any comment enders in the file
                      MsgContext context = MsgParser.parseMsg(msgFileContent, packageResourceName);
-                     String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
-                     Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
-                     Files.createDirectories(outputFilePath.getParent());
-                     Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
-                     generatedPaths.add(outputFilePath.toAbsolutePath().normalize());
-                     System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toAbsolutePath());
+                     writeMessage(context, outputDirPath, generatedPaths);
                      totalInterfacesGenerated++;
+                  }
+                  catch (InterfaceFieldParsingException e)
+                  {
+                     System.err.println(e.getMessage());
+                     throw new RuntimeException(e);
+                  }
+               }
+            }
+         }
+
+         if (Files.exists(srvDirPath) && Files.isDirectory(srvDirPath))
+         {
+            DirectoryStream.Filter<Path> srvFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".srv");
+
+            try (DirectoryStream<Path> stream = Files.newDirectoryStream(srvDirPath, srvFileFilter))
+            {
+               for (Path srvFile : stream)
+               {
+                  try
+                  {
+                     String packageResourceName = packagePath.getFileName().toString() + "/" + srvFile.getFileName().toString().replace(".srv", "");
+                     String srvFileContent = Files.readString(srvFile).replaceAll("\\*+/", ""); // Replace any comment enders in the file
+                     SrvContext srvContext = SrvParser.parseSrv(srvFileContent, packageResourceName);
+                     for (MsgContext context : new MsgContext[] {srvContext.getRequestContext(), srvContext.getResponseContext()})
+                     {
+                        if (typeToClass.containsKey(context.getPackageName() + "/" + context.getJavaClassName()))
+                        {
+                           System.out.println("Not generating for " + context.getJavaClassName() + ". It is mapped in typeToClass");
+                           continue;
+                        }
+                        writeMessage(context, outputDirPath, generatedPaths);
+                        totalInterfacesGenerated++;
+                     }
                   }
                   catch (InterfaceFieldParsingException e)
                   {
@@ -169,5 +200,15 @@ public class jros2GenTask extends DefaultTask
       System.out.println(totalInterfacesGenerated + " interfaces generated in " + runTimeSeconds + "s");
       if (removedOrphans > 0)
          System.out.println(removedOrphans + " orphaned generated files removed");
+   }
+
+   private void writeMessage(MsgContext context, Path outputDirPath, Set<Path> generatedPaths) throws IOException
+   {
+      String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
+      Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
+      Files.createDirectories(outputFilePath.getParent());
+      Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
+      generatedPaths.add(outputFilePath.toAbsolutePath().normalize());
+      System.out.printf("%-40s | %s%n", context.getPackageName() + "/" + context.getJavaClassName(), outputFilePath.toAbsolutePath());
    }
 }
