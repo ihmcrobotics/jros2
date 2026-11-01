@@ -29,6 +29,8 @@ import us.ihmc.fastddsjava.profiles.gen.ReliabilityQosPolicyType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicElementType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
+import us.ihmc.fastddsjava.profiles.gen.PropertyPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.PropertyType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
@@ -130,9 +132,35 @@ final class ProfilesXMLWriter
             }
             close(xml, "userTransports");
          }
+         if (rtps.getPropertiesPolicy() != null)
+         {
+            writePropertiesPolicy(xml, rtps.getPropertiesPolicy());
+         }
          close(xml, "rtps");
       }
       close(xml, elementName);
+   }
+
+   private static void writePropertiesPolicy(StringBuilder xml, PropertyPolicyType propertiesPolicy)
+   {
+      open(xml, "propertiesPolicy");
+      for (Object entry : propertiesPolicy.getPropertiesOrBinaryProperties())
+      {
+         if (entry instanceof PropertyPolicyType.Properties properties)
+         {
+            open(xml, "properties");
+            for (PropertyType property : properties.getProperty())
+            {
+               open(xml, "property");
+               writeText(xml, "name", property.getName());
+               writeText(xml, "value", property.getValue());
+               writeText(xml, "propagate", property.isPropagate());
+               close(xml, "property");
+            }
+            close(xml, "properties");
+         }
+      }
+      close(xml, "propertiesPolicy");
    }
 
    private static void writePublisher(StringBuilder xml, String elementName, PublisherProfileType publisher)

@@ -22,6 +22,8 @@ import us.ihmc.fastddsjava.profiles.TransportDescriptorTypeTools;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps.UserTransports;
+import us.ihmc.fastddsjava.profiles.gen.PropertyPolicyType;
+import us.ihmc.fastddsjava.profiles.gen.PropertyType;
 import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.SubscriberProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TopicProfileType;
@@ -169,6 +171,22 @@ public class ROS2Node implements Closeable
       participantProfile.setProfileName(participantProfileName);
       Rtps rtps = new Rtps();
       rtps.setName(name);
+
+      /*
+       * jros2 registers its types by name only, without XTypes type information, so it has no use for the TypeLookup service.
+       * Disable type propagation: otherwise, when a remote endpoint announces type information (e.g. rclcpp nodes using
+       * Fast-DDS 3, as in ROS 2 Lyrical), this participant first queries the remote type before matching the endpoint. The
+       * remote side matches at once, so a request sent right after a client sees a service as available can arrive before
+       * our reader has matched its writer, and is lost.
+       */
+      PropertyPolicyType propertiesPolicy = new PropertyPolicyType();
+      PropertyPolicyType.Properties properties = new PropertyPolicyType.Properties();
+      PropertyType typePropagation = new PropertyType();
+      typePropagation.setName("fastdds.type_propagation");
+      typePropagation.setValue("disabled");
+      properties.getProperty().add(typePropagation);
+      propertiesPolicy.getPropertiesOrBinaryProperties().add(properties);
+      rtps.setPropertiesPolicy(propertiesPolicy);
 
       // Configure RTPS transports
       rtps.setUseBuiltinTransports(transportConfig.shouldUseBuiltinTransports());
