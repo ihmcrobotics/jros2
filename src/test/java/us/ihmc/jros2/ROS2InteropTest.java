@@ -76,10 +76,10 @@ public class ROS2InteropTest
       try (ROS2Node node = new ROS2Node("jros2_interop_client"))
       {
          Process server = interopProcess(node.getDomainId(), "add_two_ints_server", serviceName).start();
+         ProcessOutput serverOutput = new ProcessOutput(server);
          try
          {
-            BufferedReader serverOutput = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8));
-            assertEquals("ready", serverOutput.readLine());
+            assertTrue(serverOutput.waitForLine("ready", WAIT_MS), serverOutput::get);
 
             ROS2Client<AddTwoInts_Request, AddTwoInts_Response> client = node.createClient(serviceName,
                                                                                            AddTwoInts_Request.class,
@@ -96,12 +96,15 @@ public class ROS2InteropTest
             }
             for (int i = 0; i < futures.size(); i++)
             {
-               assertEquals(i + 100, futures.get(i).get(WAIT_MS, TimeUnit.MILLISECONDS).getSum());
+               int index = i;
+               AddTwoInts_Response response = assertDoesNotThrow(() -> futures.get(index).get(WAIT_MS, TimeUnit.MILLISECONDS),
+                                                                 () -> "No response to request " + index + ". Server output:\n" + serverOutput.get());
+               assertEquals(i + 100, response.getSum());
             }
 
             for (int i = 0; i < 10; i++)
             {
-               assertEquals("request a=" + i + " b=100", serverOutput.readLine());
+               assertTrue(serverOutput.waitForLine("request a=" + i + " b=100", WAIT_MS), serverOutput::get);
             }
          }
          finally
@@ -171,8 +174,8 @@ public class ROS2InteropTest
          Process server = interopProcess(node.getDomainId(), "fibonacci_server", actionName).start();
          try
          {
-            BufferedReader serverOutput = new BufferedReader(new InputStreamReader(server.getInputStream(), StandardCharsets.UTF_8));
-            assertEquals("ready", serverOutput.readLine());
+            ProcessOutput serverOutput = new ProcessOutput(server);
+            assertTrue(serverOutput.waitForLine("ready", WAIT_MS), serverOutput::get);
 
             ROS2ActionClient<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> client = node.createActionClient(actionName,
                                                                                                                      Fibonacci_Goal.class,
@@ -184,13 +187,13 @@ public class ROS2InteropTest
             List<Integer> feedbackSizes = new ArrayList<>();
             Fibonacci_Goal goal = new Fibonacci_Goal();
             goal.setOrder(8);
-            ROS2ClientGoalHandle<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> handle = client.sendGoal(goal, (h, feedback) ->
+            ROS2ClientGoalHandle<Fibonacci_Goal, Fibonacci_Result, Fibonacci_Feedback> handle = assertDoesNotThrow(() -> client.sendGoal(goal, (h, feedback) ->
             {
                synchronized (feedbackSizes)
                {
                   feedbackSizes.add(feedback.getSequence().size());
                }
-            }).get(WAIT_MS, TimeUnit.MILLISECONDS);
+            }).get(WAIT_MS, TimeUnit.MILLISECONDS), serverOutput::get);
             assertTrue(handle.isAccepted());
             ROS2ActionResult<Fibonacci_Result> result = handle.getResultFuture().get(WAIT_MS, TimeUnit.MILLISECONDS);
             assertEquals(ROS2GoalStatus.SUCCEEDED, result.status());
@@ -314,5 +317,62 @@ public class ROS2InteropTest
          }
       }
       return output.toString();
+   }
+
+   /**
+    * Collects the output of a process on a background thread, so it can be waited on and shown when a test fails.
+    */
+   private static class ProcessOutput
+   {
+      private final StringBuilder output = new StringBuilder();
+
+      ProcessOutput(Process process)
+      {
+         Thread reader = new Thread(() ->
+         {
+            try (BufferedReader lines = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)))
+            {
+               String line;
+               while ((line = lines.readLine()) != null)
+               {
+                  synchronized (output)
+                  {
+                     output.append(line).append('\n');
+                     output.notifyAll();
+                  }
+               }
+            }
+            catch (IOException ignored)
+            {
+               // Process closed
+            }
+         }, "InteropProcessOutput");
+         reader.setDaemon(true);
+         reader.start();
+      }
+
+      boolean waitForLine(String line, long timeoutMs) throws InterruptedException
+      {
+         long deadline = System.currentTimeMillis() + timeoutMs;
+         synchronized (output)
+         {
+            while (!("\n" + output).contains("\n" + line + "\n"))
+            {
+               long remaining = deadline - System.currentTimeMillis();
+               if (remaining <= 0)
+                  return false;
+               output.wait(remaining);
+            }
+            return true;
+         }
+      }
+
+      String get()
+      {
+         synchronized (output)
+         {
+            return output.toString();
+         }
+      }
    }
 }

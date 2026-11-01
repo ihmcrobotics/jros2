@@ -9,7 +9,7 @@ rclcpp nodes used by `ROS2InteropTest` to check that jros2 interoperates with RO
 | `fibonacci_server`, `fibonacci_client` | `example_interfaces/action/Fibonacci` action server and client (rclcpp_action) |
 
 ```bash
-# In a ROS 2 workspace (tested with Jazzy built from source; any distro with rclcpp, rclcpp_action and example_interfaces works)
+# In a ROS 2 workspace with rclcpp, rclcpp_action and example_interfaces
 cp -r <jros2>/src/test/ros2/jros2_interop ~/ros2_ws/src/
 cd ~/ros2_ws && colcon build --packages-up-to jros2_interop
 
@@ -18,3 +18,14 @@ JROS2_INTEROP_SETUP=~/ros2_ws/install/setup.bash ./gradlew test --tests '*ROS2In
 ```
 
 The test is skipped when `JROS2_INTEROP_SETUP` is not set.
+
+Or against any distro with Docker, using the official `ros:<distro>` image:
+
+```bash
+src/test/ros2/run-interop-docker.sh foxy
+```
+
+Tested with Foxy and Lyrical (official Docker images) and Jazzy (built from source).
+
+Note for Foxy: its rclcpp_action client calls the feedback callback with the client's goal mutex locked, so calling
+`async_cancel_goal` from that callback deadlocks. `fibonacci_client` cancels from `main` instead.
