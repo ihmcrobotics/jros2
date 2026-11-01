@@ -15,6 +15,7 @@
  */
 package us.ihmc.jros2;
 
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 
 /**
@@ -31,7 +32,7 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
     */
    private static final byte ENTITY_KIND_IS_READER_BIT = 0x04;
    /**
-    * Maximum time to wait for the response writer to match a newly discovered client before replying.
+    * Maximum time to wait for the response writer to match the reader of a newly discovered client before replying.
     */
    private static final long CLIENT_DISCOVERY_TIMEOUT_MS = 1000;
 
@@ -150,11 +151,16 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
     */
    void sendResponse(Res response, SampleIdentity requestId)
    {
-      // Work around the discovery race: the request may arrive before our response writer has matched the client's
-      // response reader, in which case the response would be lost. Requests carrying the response reader GUID say so.
-      if ((requestId.getWriterGuid().getValue()[15] & ENTITY_KIND_IS_READER_BIT) != 0)
+      // The request may arrive before our response writer has matched the client's response reader, in which case the
+      // response would be lost. Like rmw_fastrtps, when the request carries the GUID of that reader, wait for that reader.
+      Guid requestGuid = requestId.getWriterGuid();
+      if ((requestGuid.getValue()[15] & ENTITY_KIND_IS_READER_BIT) != 0)
       {
-         responsePublisher.waitForSubscription(CLIENT_DISCOVERY_TIMEOUT_MS);
+         long deadline = System.nanoTime() + CLIENT_DISCOVERY_TIMEOUT_MS * 1_000_000L;
+         while (!responsePublisher.isMatchedWith(requestGuid) && System.nanoTime() < deadline)
+         {
+            LockSupport.parkNanos(1_000_000L);
+         }
       }
 
       responsePublisher.publish(response, requestId, null);

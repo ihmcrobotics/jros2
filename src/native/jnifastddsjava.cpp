@@ -298,6 +298,15 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterWriteWithParams)(JNIEnv* 
    return static_cast<jint>(ret);
 }
 
+extern "C" JNIEXPORT jboolean JNICALL JNIFASTDDS(dataWriterIsMatchedWith)(JNIEnv* env, jclass, jlong writer, jbyteArray readerGuid)
+{
+   if (readerGuid == nullptr || env->GetArrayLength(readerGuid) < 16)
+      return JNI_FALSE;
+   uint8_t guid[16];
+   env->GetByteArrayRegion(readerGuid, 0, 16, reinterpret_cast<jbyte*>(guid));
+   return fastddsjava_datawriter_is_matched_with(reinterpret_cast<void*>(writer), guid) ? JNI_TRUE : JNI_FALSE;
+}
+
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterSetListener)(JNIEnv*, jclass, jlong writer, jlong listener)
 {
    return static_cast<jint>(fastddsjava_datawriter_set_listener(reinterpret_cast<void*>(writer),

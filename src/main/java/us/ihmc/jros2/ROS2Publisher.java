@@ -338,6 +338,22 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Returns a cached {@link Guid} instance owned by this publisher; its bytes are refreshed from DDS on each call.
     * Copy with {@link Guid#set(Guid)} if you need an independent snapshot.
     */
+   /**
+    * @return true if this publisher is matched with the subscription (data reader) with the given GUID. For internal use only.
+    */
+   boolean isMatchedWith(Guid readerGuid)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         return !closed && fastddsjava.dataWriterIsMatchedWith(fastddsDataWriter, readerGuid.getValue());
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+   }
+
    public Guid getGuid()
    {
       fastddsjava.getWriterGuid(fastddsDataWriter, guid.getValue());

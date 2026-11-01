@@ -54,6 +54,8 @@ uint32_t fastddsjava_datawriter_write(void* writer_, fastddsjava_TopicDataWrappe
 uint32_t fastddsjava_datawriter_write_with_params(void* writer_, fastddsjava_TopicDataWrapper* data, const uint8_t* related_guid,
                                                   uint64_t related_sequence_number, uint8_t* sample_guid_out,
                                                   uint64_t* sample_sequence_number_out);
+// True if the writer is matched with the reader whose 16-byte GUID is given
+bool fastddsjava_datawriter_is_matched_with(void* writer_, const uint8_t* reader_guid);
 uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener = nullptr);
 uint32_t fastddsjava_datawriter_get_publication_matched_status(void* writer_, eprosima::fastdds::dds::PublicationMatchedStatus& status);
 

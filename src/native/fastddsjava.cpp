@@ -317,6 +317,31 @@ uint32_t fastddsjava_datawriter_write_with_params(void* writer_, fastddsjava_Top
    return ret;
 }
 
+bool fastddsjava_datawriter_is_matched_with(void* writer_, const uint8_t* reader_guid)
+{
+   auto* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+   std::vector<eprosima::fastdds::dds::InstanceHandle_t> handles;
+   if (writer->get_matched_subscriptions(handles) != eprosima::fastdds::dds::RETCODE_OK)
+   {
+      return false;
+   }
+
+   eprosima::fastdds::rtps::GUID_t expected;
+   memcpy(expected.guidPrefix.value, reader_guid, 12);
+   memcpy(expected.entityId.value, reader_guid + 12, 4);
+   for (const auto& handle : handles)
+   {
+      eprosima::fastdds::rtps::GUID_t guid;
+      eprosima::fastdds::rtps::iHandle2GUID(guid, handle);
+      if (guid == expected)
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
 uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener)
 {
    auto* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);

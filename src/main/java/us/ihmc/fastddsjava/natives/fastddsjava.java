@@ -98,6 +98,12 @@ public final class fastddsjava
    public static native int dataWriterWriteWithParams(long fastddsDataWriter, long fastddsTopicData, byte[] relatedGuid, long relatedSequenceNumber,
                                                       byte[] sampleGuidOut, long[] sampleSequenceNumberOut);
 
+   /**
+    * @param readerGuid 16-byte GUID of a data reader
+    * @return true if the data writer is currently matched with that reader
+    */
+   public static native boolean dataWriterIsMatchedWith(long fastddsDataWriter, byte[] readerGuid);
+
    public static native int dataWriterSetListener(long fastddsDataWriter, long fastddsDataWriterListener);
 
    public static native int dataWriterGetPublicationMatchedCount(long fastddsDataWriter);
