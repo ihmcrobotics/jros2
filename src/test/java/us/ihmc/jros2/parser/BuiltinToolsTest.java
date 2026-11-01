@@ -214,4 +214,18 @@ public class BuiltinToolsTest
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.sanitizeBoolAsJavaFieldValue("Hello"));
       assertThrows(IllegalArgumentException.class, () -> BuiltinTools.sanitizeBoolAsJavaFieldValue("2"));
    }
+
+   @Test
+   public void testSanitizeUnsignedAsJavaFieldValue()
+   {
+      assertEquals("127", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint8", "127"));
+      assertEquals("(byte) 255", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint8", "255"));
+      assertEquals("(short) 65535", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint16", "65535"));
+      assertEquals("(int) 4294967295L", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint32", "4294967295"));
+      assertEquals("-1L", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint64", "18446744073709551615"));
+      assertEquals("5", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint64", "5"));
+      assertEquals("255", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("int32", "255"));
+      assertEquals("[1, 255]", BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint8", "[1, 255]"));
+      assertNull(BuiltinTools.sanitizeUnsignedAsJavaFieldValue("uint8", null));
+   }
 }

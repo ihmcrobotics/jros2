@@ -252,6 +252,10 @@ public class InterfaceField
       {
          constantValue = BuiltinTools.sanitizeStringAsJavaFieldValue(constantValue);
       }
+      else if (constantValue != null)
+      {
+         constantValue = BuiltinTools.sanitizeUnsignedAsJavaFieldValue(type, constantValue);
+      }
 
       this.constantValue = constantValue;
    }
@@ -275,6 +279,10 @@ public class InterfaceField
          // Ensure it's either "true" or "false"
          // interface definitions allow 1 or 0 as well
          defaultValue = BuiltinTools.sanitizeBoolAsJavaFieldValue(defaultValue);
+      }
+      else if (defaultValue != null && !isBuiltinStringType())
+      {
+         defaultValue = BuiltinTools.sanitizeUnsignedAsJavaFieldValue(type, defaultValue);
       }
 
       this.defaultValue = defaultValue;
