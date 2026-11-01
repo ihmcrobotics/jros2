@@ -17,6 +17,8 @@ package us.ihmc.jros2.parser;
 
 import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringJoiner;
 
 public final class SrvParser
@@ -35,34 +37,46 @@ public final class SrvParser
     */
    public static SrvContext parseSrv(String schema, String packageResourceName) throws InterfaceFieldParsingException
    {
-      StringJoiner request = new StringJoiner("\n");
-      StringJoiner response = new StringJoiner("\n");
-      int separators = 0;
+      List<String> sections = splitSections(schema, 2, packageResourceName);
+
+      SrvSectionContext requestContext = parseSection(sections.get(0), packageResourceName, SrvSection.REQUEST);
+      SrvSectionContext responseContext = parseSection(sections.get(1), packageResourceName, SrvSection.RESPONSE);
+
+      return new SrvContext(schema, requestContext, responseContext);
+   }
+
+   /**
+    * Split a .srv or .action schema on its {@value #SECTION_SEPARATOR} lines.
+    *
+    * @param sectionCount the number of sections expected (2 for a service, 3 for an action)
+    * @throws IllegalArgumentException if the number of separators does not match
+    */
+   static List<String> splitSections(String schema, int sectionCount, String packageResourceName)
+   {
+      List<StringJoiner> sections = new ArrayList<>();
+      sections.add(new StringJoiner("\n"));
 
       for (String line : schema.split("\\R", -1))
       {
          if (line.trim().equals(SECTION_SEPARATOR))
          {
-            separators++;
+            sections.add(new StringJoiner("\n"));
             continue;
          }
-
-         if (separators == 0)
-            request.add(line);
-         else
-            response.add(line);
+         sections.get(sections.size() - 1).add(line);
       }
 
-      if (separators != 1)
+      if (sections.size() != sectionCount)
       {
          throw new IllegalArgumentException(
-               "Service " + packageResourceName + " must contain exactly one '" + SECTION_SEPARATOR + "' separator, found " + separators);
+               packageResourceName + " must contain exactly " + (sectionCount - 1) + " '" + SECTION_SEPARATOR + "' separator" + (sectionCount > 2 ? "s" : "")
+               + ", found " + (sections.size() - 1));
       }
 
-      SrvSectionContext requestContext = parseSection(request.toString(), packageResourceName, SrvSection.REQUEST);
-      SrvSectionContext responseContext = parseSection(response.toString(), packageResourceName, SrvSection.RESPONSE);
-
-      return new SrvContext(schema, requestContext, responseContext);
+      List<String> result = new ArrayList<>();
+      for (StringJoiner section : sections)
+         result.add(section.toString());
+      return result;
    }
 
    private static SrvSectionContext parseSection(String section, String packageResourceName, SrvSection srvSection) throws InterfaceFieldParsingException
