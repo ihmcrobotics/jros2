@@ -44,6 +44,13 @@ public class ROS2Client<Req extends ROS2Message<Req>, Res extends ROS2Message<Re
     * Requests waiting for a response, by the sequence number of the request sample. Guarded by itself.
     */
    private final Map<Long, CompletableFuture<Res>> pendingRequests;
+   /**
+    * Responses received while a request is being written, before its future is registered. With Fast-DDS intraprocess
+    * delivery the request and its response are delivered on the writing thread, inside the write call. Guarded by
+    * {@link #pendingRequests}.
+    */
+   private final Map<Long, Res> responsesDuringWrite;
+   private boolean writing;
    private final SampleIdentity relatedIdentity;
    private final SampleIdentity writtenIdentity;
    private final SampleInfo sampleInfo;
@@ -62,6 +69,7 @@ public class ROS2Client<Req extends ROS2Message<Req>, Res extends ROS2Message<Re
       this.requestPublisher = requestPublisher;
 
       pendingRequests = new HashMap<>();
+      responsesDuringWrite = new HashMap<>();
       relatedIdentity = new SampleIdentity();
       writtenIdentity = new SampleIdentity();
       sampleInfo = new SampleInfo();
@@ -100,15 +108,36 @@ public class ROS2Client<Req extends ROS2Message<Req>, Res extends ROS2Message<Re
          relatedIdentity.getWriterGuid().set(responseReaderGuid);
          relatedIdentity.setSequenceNumber(SampleIdentity.UNKNOWN_SEQUENCE_NUMBER);
 
-         if (requestPublisher.publish(request, relatedIdentity, writtenIdentity))
+         // Other threads wait for the lock, so a response processed before the future is registered can only come from this
+         // thread, during the write (intraprocess delivery); it is kept in responsesDuringWrite
+         boolean written;
+         writing = true;
+         try
          {
-            // Registered while holding the lock, so a fast response cannot be processed before this
-            pendingRequests.put(writtenIdentity.getSequenceNumber(), future);
+            written = requestPublisher.publish(request, relatedIdentity, writtenIdentity);
+         }
+         finally
+         {
+            writing = false;
+         }
+
+         if (written)
+         {
+            Res earlyResponse = responsesDuringWrite.remove(writtenIdentity.getSequenceNumber());
+            if (earlyResponse != null)
+            {
+               future.complete(earlyResponse);
+            }
+            else
+            {
+               pendingRequests.put(writtenIdentity.getSequenceNumber(), future);
+            }
          }
          else
          {
             future.completeExceptionally(new IllegalStateException("Failed to write request for " + serviceName));
          }
+         responsesDuringWrite.clear();
       }
 
       return future;
@@ -131,6 +160,11 @@ public class ROS2Client<Req extends ROS2Message<Req>, Res extends ROS2Message<Re
             return;
 
          future = pendingRequests.remove(responseRelatedIdentity.getSequenceNumber());
+         if (future == null && writing)
+         {
+            responsesDuringWrite.put(responseRelatedIdentity.getSequenceNumber(), response);
+            return;
+         }
       }
 
       if (future != null)
