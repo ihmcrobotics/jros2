@@ -119,6 +119,10 @@ public class ROS2Node implements Closeable
     * A list of {@link ROS2Client}\s managed by this node.
     */
    private final List<ROS2Client<?, ?>> clients;
+   /**
+    * Parameters of this node and their services.
+    */
+   private final ROS2NodeParameters parameters;
 
    /*
     * Locks
@@ -214,6 +218,7 @@ public class ROS2Node implements Closeable
       subscriptions = new ArrayList<>();
       services = new ArrayList<>();
       clients = new ArrayList<>();
+      parameters = new ROS2NodeParameters(this);
 
       closeLock = new ReentrantReadWriteLock(true);
       closed = false;
@@ -903,16 +908,102 @@ public class ROS2Node implements Closeable
       client.getRequestPublisher().close(fastddsParticipant);
       client.closeResources();
    }
-   public Object declareParameter(String name, Object value)
+   /**
+    * Declare a parameter. The first declaration also starts this node's parameter services
+    * ({@code /<node name>/get_parameters}, {@code set_parameters}, ...) and its events publisher on {@code /parameter_events}.
+    *
+    * @param name         the parameter name, use '.' to group parameters, e.g. {@code control.gain}
+    * @param defaultValue the initial value, see {@link ROS2Parameter#of(String, Object)} for the supported types
+    * @param descriptor   description, read-only and dynamic typing flags
+    * @return the declared parameter
+    * @throws IllegalStateException    if the parameter is already declared
+    * @throws IllegalArgumentException if the value type is not supported or a {@link ROS2ParameterCallback} rejects it
+    */
+   public ROS2Parameter declareParameter(String name, Object defaultValue, ROS2ParameterDescriptor descriptor)
    {
-      throw new RuntimeException("Not yet implemented");
+      return parameters.declare(name, defaultValue, descriptor);
    }
 
-   public Object getParameter(String name)
+   /**
+    * Declare a parameter with the default descriptor (not read-only, statically typed).
+    *
+    * @see #declareParameter(String, Object, ROS2ParameterDescriptor)
+    */
+   public ROS2Parameter declareParameter(String name, Object defaultValue)
    {
-      throw new RuntimeException("Not yet implemented");
+      return parameters.declare(name, defaultValue, ROS2ParameterDescriptor.DEFAULT);
    }
 
+   /**
+    * @return the current value of a declared parameter
+    * @throws IllegalStateException if the parameter is not declared
+    */
+   public ROS2Parameter getParameter(String name)
+   {
+      return parameters.get(name);
+   }
+
+   /**
+    * @return all declared parameters, in declaration order
+    */
+   public List<ROS2Parameter> getParameters()
+   {
+      return parameters.getAll();
+   }
+
+   public boolean hasParameter(String name)
+   {
+      return parameters.has(name);
+   }
+
+   public ROS2ParameterDescriptor describeParameter(String name)
+   {
+      return parameters.describe(name);
+   }
+
+   /**
+    * Set a declared parameter, with the same checks as a remote {@code set_parameters} call: the parameter must be declared, not
+    * read-only, keep its type (unless dynamically typed) and be accepted by every {@link ROS2ParameterCallback}.
+    *
+    * @param name  the parameter name
+    * @param value the new value
+    * @return whether it was set and, if not, why
+    */
+   public ROS2SetParametersResult setParameter(String name, Object value)
+   {
+      return parameters.set(List.of(ROS2Parameter.of(name, value)));
+   }
+
+   /**
+    * Set several parameters atomically: either all are set or none.
+    */
+   public ROS2SetParametersResult setParameters(List<ROS2Parameter> parameters)
+   {
+      return this.parameters.set(parameters);
+   }
+
+   /**
+    * Undeclare a dynamically typed, writable parameter.
+    *
+    * @throws IllegalStateException if the parameter is not declared, is read-only or statically typed
+    */
+   public void undeclareParameter(String name)
+   {
+      parameters.undeclare(name);
+   }
+
+   /**
+    * Add a callback that can reject parameter changes before they are applied.
+    */
+   public void addOnSetParametersCallback(ROS2ParameterCallback callback)
+   {
+      parameters.addCallback(callback);
+   }
+
+   public boolean removeOnSetParametersCallback(ROS2ParameterCallback callback)
+   {
+      return parameters.removeCallback(callback);
+   }
    /**
     * Get the colloquial (user-friendly) name of the node.
     * This name is intended for display or user reference only and is not used internally.
