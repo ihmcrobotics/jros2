@@ -20,6 +20,8 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
+import us.ihmc.jros2.parser.ActionContext;
+import us.ihmc.jros2.parser.ActionParser;
 import us.ihmc.jros2.parser.MsgContext;
 import us.ihmc.jros2.parser.MsgParser;
 import us.ihmc.jros2.parser.SrvContext;
@@ -119,6 +121,7 @@ public class jros2GenTask extends DefaultTask
          Path packageXmlPath = packagePath.resolve("package.xml");
          Path msgDirPath = packagePath.resolve("msg");
          Path srvDirPath = packagePath.resolve("srv");
+         Path actionDirPath = packagePath.resolve("action");
 
          if (!Files.exists(packageXmlPath))
          {
@@ -157,38 +160,8 @@ public class jros2GenTask extends DefaultTask
             }
          }
 
-         if (Files.exists(srvDirPath) && Files.isDirectory(srvDirPath))
-         {
-            DirectoryStream.Filter<Path> srvFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".srv");
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(srvDirPath, srvFileFilter))
-            {
-               for (Path srvFile : stream)
-               {
-                  try
-                  {
-                     String packageResourceName = packagePath.getFileName().toString() + "/" + srvFile.getFileName().toString().replace(".srv", "");
-                     String srvFileContent = Files.readString(srvFile).replaceAll("\\*+/", ""); // Replace any comment enders in the file
-                     SrvContext srvContext = SrvParser.parseSrv(srvFileContent, packageResourceName);
-                     for (MsgContext context : new MsgContext[] {srvContext.getRequestContext(), srvContext.getResponseContext()})
-                     {
-                        if (typeToClass.containsKey(context.getPackageName() + "/" + context.getJavaClassName()))
-                        {
-                           System.out.println("Not generating for " + context.getJavaClassName() + ". It is mapped in typeToClass");
-                           continue;
-                        }
-                        writeMessage(context, outputDirPath, generatedPaths);
-                        totalInterfacesGenerated++;
-                     }
-                  }
-                  catch (InterfaceFieldParsingException e)
-                  {
-                     System.err.println(e.getMessage());
-                     throw new RuntimeException(e);
-                  }
-               }
-            }
-         }
+         totalInterfacesGenerated += generateMultiMessageInterfaces(packagePath, srvDirPath, ".srv", outputDirPath, generatedPaths);
+         totalInterfacesGenerated += generateMultiMessageInterfaces(packagePath, actionDirPath, ".action", outputDirPath, generatedPaths);
       }
 
       int removedOrphans = GeneratedMessageFileCleanup.removeOrphanedGeneratedFiles(outputDirPath, generatedPaths);
@@ -200,6 +173,61 @@ public class jros2GenTask extends DefaultTask
       System.out.println(totalInterfacesGenerated + " interfaces generated in " + runTimeSeconds + "s");
       if (removedOrphans > 0)
          System.out.println(removedOrphans + " orphaned generated files removed");
+   }
+
+   /**
+    * Generate the messages of every service (.srv: request and response) or action (.action: goal, result, feedback and the
+    * derived service and feedback messages) in a directory.
+    *
+    * @return the number of messages generated
+    */
+   private int generateMultiMessageInterfaces(Path packagePath, Path dirPath, String extension, Path outputDirPath, Set<Path> generatedPaths)
+         throws IOException
+   {
+      if (!Files.exists(dirPath) || !Files.isDirectory(dirPath))
+         return 0;
+
+      int generated = 0;
+      DirectoryStream.Filter<Path> fileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(extension);
+      try (DirectoryStream<Path> stream = Files.newDirectoryStream(dirPath, fileFilter))
+      {
+         for (Path file : stream)
+         {
+            try
+            {
+               String packageResourceName = packagePath.getFileName().toString() + "/" + file.getFileName().toString().replace(extension, "");
+               String fileContent = Files.readString(file).replaceAll("\\*+/", ""); // Replace any comment enders in the file
+               List<? extends MsgContext> contexts;
+               if (extension.equals(".srv"))
+               {
+                  SrvContext srvContext = SrvParser.parseSrv(fileContent, packageResourceName);
+                  contexts = List.of(srvContext.getRequestContext(), srvContext.getResponseContext());
+               }
+               else
+               {
+                  ActionContext actionContext = ActionParser.parseAction(fileContent, packageResourceName);
+                  contexts = actionContext.getAllContexts();
+               }
+
+               for (MsgContext context : contexts)
+               {
+                  if (typeToClass.containsKey(context.getPackageName() + "/" + context.getJavaClassName()))
+                  {
+                     System.out.println("Not generating for " + context.getJavaClassName() + ". It is mapped in typeToClass");
+                     continue;
+                  }
+                  writeMessage(context, outputDirPath, generatedPaths);
+                  generated++;
+               }
+            }
+            catch (InterfaceFieldParsingException e)
+            {
+               System.err.println(e.getMessage());
+               throw new RuntimeException(e);
+            }
+         }
+      }
+      return generated;
    }
 
    private void writeMessage(MsgContext context, Path outputDirPath, Set<Path> generatedPaths) throws IOException
