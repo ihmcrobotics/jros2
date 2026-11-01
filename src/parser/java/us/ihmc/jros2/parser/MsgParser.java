@@ -28,8 +28,21 @@ public final class MsgParser
       MsgContext msgContext = new MsgContext(schema);
       msgContext.setPackageResourceName(packageResourceName);
 
+      parseFields(msgContext, schema);
+
+      return msgContext;
+   }
+
+   /**
+    * Parse the header comment and fields of a single interface section into the given context.
+    *
+    * @param context the context to populate
+    * @param section the section text (a whole .msg, or one side of a .srv)
+    */
+   static void parseFields(InterfaceContext context, String section) throws InterfaceFieldParsingException
+   {
       StringJoiner commentLines = new StringJoiner("\n");
-      String[] lines = schema.split("\\R");
+      String[] lines = section.split("\\R");
       for (String line : lines)
       {
          line = line.trim();
@@ -40,28 +53,26 @@ public final class MsgParser
             continue;
          }
 
-         if (line.isEmpty() && msgContext.getFields().isEmpty())
+         if (line.isEmpty() && context.getFields().isEmpty())
          {
-            msgContext.setHeaderComment(commentLines.toString());
+            context.setHeaderComment(commentLines.toString());
             commentLines = new StringJoiner("\n");
             continue;
          }
 
          if (line.equals("---"))
          {
-            // TODO: Handle interface sections
+            // Section separators are handled by SrvParser; ignored in .msg files
             continue;
          }
 
-         InterfaceField field = InterfaceFieldParser.parseField(msgContext, line, commentLines.toString());
+         InterfaceField field = InterfaceFieldParser.parseField(context, line, commentLines.toString());
          commentLines = new StringJoiner("\n");
 
          if (field != null)
          {
-            msgContext.getFields().put(field.getName(), field);
+            context.getFields().put(field.getName(), field);
          }
       }
-
-      return msgContext;
    }
 }

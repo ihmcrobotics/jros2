@@ -134,6 +134,9 @@ public abstract class InterfaceContext
       return javaPackageName;
    }
 
+   /**
+    * Get the fully qualified DDS type name, e.g. {@code std_msgs::msg::dds_::String_}.
+    */
    public String getDDSName()
    {
       String javaClassNameSanitized = javaClassName.replace("_", "");
