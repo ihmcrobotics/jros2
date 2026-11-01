@@ -130,6 +130,33 @@ public class ROS2ServiceInteropTest
       }
    }
 
+   @Test
+   @Timeout(120)
+   public void testRclcppParameterClientOnJros2Node() throws Exception
+   {
+      try (ROS2Node node = new ROS2Node("jros2_interop_parameters"))
+      {
+         node.declareParameter("rate", 10);
+         node.declareParameter("control.gain", 1.5);
+         node.declareParameter("frame", "map");
+
+         Process client = interopProcess(node.getDomainId(), "param_client", "/jros2_interop_parameters", "rate", "25").start();
+         String output = readAll(client);
+         assertTrue(client.waitFor(60, TimeUnit.SECONDS));
+         assertEquals(0, client.exitValue(), output);
+
+         assertTrue(output.contains("name=rate\nname=control.gain\nname=frame\n"), output);
+         assertTrue(output.contains("get rate=10\n"), output);
+         assertTrue(output.contains("get control.gain=1.5"), output);
+         assertTrue(output.contains("get frame=map\n"), output);
+         // set_parameters sets each parameter on its own: the first succeeds, the second has the wrong type
+         assertTrue(output.contains("set successful=1 reason=\n"), output);
+         assertTrue(output.contains("set successful=0 reason=Wrong parameter type, parameter {rate} is of type {integer}, setting it to {string} is not allowed."), output);
+         assertTrue(output.contains("after rate=25\n"), output);
+         assertEquals(25L, node.getParameter("rate").asLong());
+      }
+   }
+
    private static String readAll(Process process) throws IOException
    {
       StringBuilder output = new StringBuilder();
