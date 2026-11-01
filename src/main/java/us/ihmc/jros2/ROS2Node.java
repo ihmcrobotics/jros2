@@ -119,6 +119,8 @@ public class ROS2Node implements Closeable
     * A list of {@link ROS2Client}\s managed by this node.
     */
    private final List<ROS2Client<?, ?>> clients;
+   private final List<ROS2ActionServer<?, ?, ?>> actionServers;
+   private final List<ROS2ActionClient<?, ?, ?>> actionClients;
    /**
     * Parameters of this node and their services.
     */
@@ -218,6 +220,8 @@ public class ROS2Node implements Closeable
       subscriptions = new ArrayList<>();
       services = new ArrayList<>();
       clients = new ArrayList<>();
+      actionServers = new ArrayList<>();
+      actionClients = new ArrayList<>();
       parameters = new ROS2NodeParameters(this);
 
       closeLock = new ReentrantReadWriteLock(true);
@@ -713,6 +717,28 @@ public class ROS2Node implements Closeable
                                                                                                          ROS2ServiceCallback<Req, Res> callback,
                                                                                                          ROS2QoSProfile qosProfile)
    {
+      return createService(serviceName, requestType, responseType, callback, null, qosProfile);
+   }
+
+   /**
+    * Create a service whose responses are sent later with {@link ROS2Service#sendResponse(ROS2Message, SampleIdentity)}.
+    */
+   <Req extends ROS2Message<Req>, Res extends ROS2Message<Res>> ROS2Service<Req, Res> createDeferredService(String serviceName,
+                                                                                                          Class<Req> requestType,
+                                                                                                          Class<Res> responseType,
+                                                                                                          ROS2Service.DeferredCallback<Req> callback,
+                                                                                                          ROS2QoSProfile qosProfile)
+   {
+      return createService(serviceName, requestType, responseType, null, callback, qosProfile);
+   }
+
+   private <Req extends ROS2Message<Req>, Res extends ROS2Message<Res>> ROS2Service<Req, Res> createService(String serviceName,
+                                                                                                          Class<Req> requestType,
+                                                                                                          Class<Res> responseType,
+                                                                                                          ROS2ServiceCallback<Req, Res> callback,
+                                                                                                          ROS2Service.DeferredCallback<Req> deferredCallback,
+                                                                                                          ROS2QoSProfile qosProfile)
+   {
       closeLock.readLock().lock();
       try
       {
@@ -728,6 +754,7 @@ public class ROS2Node implements Closeable
                                                               requestType,
                                                               responseType,
                                                               callback,
+                                                              deferredCallback,
                                                               responsePublisher,
                                                               requestCallback -> createSubscription(requestTopic,
                                                                                                     requestCallback,
@@ -893,6 +920,120 @@ public class ROS2Node implements Closeable
       }
 
       return removed;
+   }
+
+   /**
+    * Create an action server. It serves {@code <actionName>/_action/send_goal}, {@code cancel_goal} and {@code get_result} and
+    * publishes {@code <actionName>/_action/feedback} and {@code status}, compatible with rclcpp_action clients.
+    *
+    * @param actionName   the ROS 2 action name, e.g. {@code /fibonacci}
+    * @param goalType     the generated goal class, e.g. {@code example_interfaces.Fibonacci_Goal.class}; the other generated
+    *                     messages of the action are found from it
+    * @param resultType   the generated result class, e.g. {@code example_interfaces.Fibonacci_Result.class}
+    * @param feedbackType the generated feedback class, e.g. {@code example_interfaces.Fibonacci_Feedback.class}
+    * @param callbacks    decide on goals and cancel requests, and execute accepted goals
+    * @return the action server
+    */
+   public <G extends ROS2Message<G>, R extends ROS2Message<R>, F extends ROS2Message<F>> ROS2ActionServer<G, R, F> createActionServer(String actionName,
+                                                                                                                                    Class<G> goalType,
+                                                                                                                                    Class<R> resultType,
+                                                                                                                                    Class<F> feedbackType,
+                                                                                                                                    ROS2ActionServerCallbacks<G, R, F> callbacks)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            ROS2ActionServer<G, R, F> actionServer = new ROS2ActionServer<>(this, actionName, goalType, resultType, feedbackType, callbacks);
+            synchronized (actionServers)
+            {
+               actionServers.add(actionServer);
+            }
+            return actionServer;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+      return null;
+   }
+
+   /**
+    * Create an action client, compatible with rclcpp_action servers.
+    *
+    * @param actionName   the ROS 2 action name, e.g. {@code /fibonacci}
+    * @param goalType     the generated goal class, e.g. {@code example_interfaces.Fibonacci_Goal.class}
+    * @param resultType   the generated result class, e.g. {@code example_interfaces.Fibonacci_Result.class}
+    * @param feedbackType the generated feedback class, e.g. {@code example_interfaces.Fibonacci_Feedback.class}
+    * @return the action client
+    */
+   public <G extends ROS2Message<G>, R extends ROS2Message<R>, F extends ROS2Message<F>> ROS2ActionClient<G, R, F> createActionClient(String actionName,
+                                                                                                                                    Class<G> goalType,
+                                                                                                                                    Class<R> resultType,
+                                                                                                                                    Class<F> feedbackType)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            ROS2ActionClient<G, R, F> actionClient = new ROS2ActionClient<>(this, actionName, goalType, resultType, feedbackType);
+            synchronized (actionClients)
+            {
+               actionClients.add(actionClient);
+            }
+            return actionClient;
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+      return null;
+   }
+
+   public boolean destroyActionServer(ROS2ActionServer<?, ?, ?> actionServer)
+   {
+      boolean removed;
+      synchronized (actionServers)
+      {
+         removed = actionServers.remove(actionServer);
+      }
+      if (removed)
+      {
+         actionServer.closeResources();
+         actionServer.getServices().forEach(this::destroyService);
+         actionServer.getPublishers().forEach(this::destroyPublisher);
+      }
+      return removed;
+   }
+
+   public boolean destroyActionClient(ROS2ActionClient<?, ?, ?> actionClient)
+   {
+      boolean removed;
+      synchronized (actionClients)
+      {
+         removed = actionClients.remove(actionClient);
+      }
+      if (removed)
+      {
+         actionClient.closeResources();
+         actionClient.getClients().forEach(this::destroyClient);
+         actionClient.getSubscriptions().forEach(this::destroySubscription);
+      }
+      return removed;
+   }
+
+   public List<ROS2ActionServer<?, ?, ?>> getActionServers()
+   {
+      return Collections.unmodifiableList(actionServers);
+   }
+
+   public List<ROS2ActionClient<?, ?, ?>> getActionClients()
+   {
+      return Collections.unmodifiableList(actionClients);
    }
 
    private void closeService(ROS2Service<?, ?> service)
@@ -1101,6 +1242,18 @@ public class ROS2Node implements Closeable
             catch (IllegalStateException ignored)
             {
                // JVM shutdown already in progress
+            }
+
+            // Stop action servers and clients first; their endpoints are closed with the others below
+            synchronized (actionServers)
+            {
+               actionServers.forEach(ROS2ActionServer::closeResources);
+               actionServers.clear();
+            }
+            synchronized (actionClients)
+            {
+               actionClients.forEach(ROS2ActionClient::closeResources);
+               actionClients.clear();
             }
 
             synchronized (publishers)

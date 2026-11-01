@@ -39,6 +39,7 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
    private final Class<Req> requestType;
    private final Class<Res> responseType;
    private final ROS2ServiceCallback<Req, Res> callback;
+   private final DeferredCallback<Req> deferredCallback;
 
    private final ROS2Publisher<Res> responsePublisher;
    private final ROS2Subscription<Req> requestSubscription;
@@ -50,6 +51,19 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
    private final SampleIdentity requestIdentity;
    private final SampleIdentity relatedIdentity;
 
+   /**
+    * Receives requests whose response is sent later with {@link #sendResponse(ROS2Message, SampleIdentity)}. For internal use
+    * (e.g. action result requests, answered when the goal finishes).
+    */
+   interface DeferredCallback<Req>
+   {
+      /**
+       * @param request   the request; reused after this call returns, copy it if needed
+       * @param requestId identifies the request when responding; reused after this call returns, copy it if needed
+       */
+      void onRequest(Req request, SampleIdentity requestId);
+   }
+
    ROS2Service(String serviceName,
                Class<Req> requestType,
                Class<Res> responseType,
@@ -57,10 +71,22 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
                ROS2Publisher<Res> responsePublisher,
                Function<ROS2SubscriptionCallback<Req>, ROS2Subscription<Req>> requestSubscriptionFactory)
    {
+      this(serviceName, requestType, responseType, callback, null, responsePublisher, requestSubscriptionFactory);
+   }
+
+   ROS2Service(String serviceName,
+               Class<Req> requestType,
+               Class<Res> responseType,
+               ROS2ServiceCallback<Req, Res> callback,
+               DeferredCallback<Req> deferredCallback,
+               ROS2Publisher<Res> responsePublisher,
+               Function<ROS2SubscriptionCallback<Req>, ROS2Subscription<Req>> requestSubscriptionFactory)
+   {
       this.serviceName = serviceName;
       this.requestType = requestType;
       this.responseType = responseType;
       this.callback = callback;
+      this.deferredCallback = deferredCallback;
       this.responsePublisher = responsePublisher;
 
       request = ROS2Message.createInstance(requestType);
@@ -91,6 +117,19 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
             requestIdentity.getWriterGuid().set(relatedIdentity.getWriterGuid());
          }
 
+         if (deferredCallback != null)
+         {
+            try
+            {
+               deferredCallback.onRequest(request, requestIdentity);
+            }
+            catch (Throwable e)
+            {
+               jros2.logError("Exception in service callback for " + serviceName, e);
+            }
+            return;
+         }
+
          response.set(emptyResponse);
          try
          {
@@ -102,15 +141,23 @@ public class ROS2Service<Req extends ROS2Message<Req>, Res extends ROS2Message<R
             return;
          }
 
-         // Work around the discovery race: the request may arrive before our response writer has matched the client's
-         // response reader, in which case the response would be lost.
-         if (relatedIsResponseReader && (requestIdentity.getWriterGuid().getValue()[15] & ENTITY_KIND_IS_READER_BIT) != 0)
-         {
-            responsePublisher.waitForSubscription(CLIENT_DISCOVERY_TIMEOUT_MS);
-         }
-
-         responsePublisher.publish(response, requestIdentity, null);
+         sendResponse(response, requestIdentity);
       }
+   }
+
+   /**
+    * Send the response to a request. Called after the callback for normal services, or later for deferred ones.
+    */
+   void sendResponse(Res response, SampleIdentity requestId)
+   {
+      // Work around the discovery race: the request may arrive before our response writer has matched the client's
+      // response reader, in which case the response would be lost. Requests carrying the response reader GUID say so.
+      if ((requestId.getWriterGuid().getValue()[15] & ENTITY_KIND_IS_READER_BIT) != 0)
+      {
+         responsePublisher.waitForSubscription(CLIENT_DISCOVERY_TIMEOUT_MS);
+      }
+
+      responsePublisher.publish(response, requestId, null);
    }
 
    private static boolean isZero(Guid guid)
