@@ -44,7 +44,7 @@ against rclcpp and rclcpp_action nodes in both directions (see [Interoperability
 
 | | Status |
 |---|---|
-| ROS 2 distros | Tested with foxy, jazzy and lyrical. humble and kilted use the same protocol and are expected to work |
+| ROS 2 distros | Tested with foxy, humble, jazzy and lyrical. kilted uses the same protocol and is expected to work |
 | ROS 2 nodes using `rmw_fastrtps_cpp` | Tested |
 | ROS 2 nodes using `rmw_connextdds` | Not tested. Expected to work with its default (extended) request/reply mapping |
 | ROS 2 nodes using `rmw_cyclonedds_cpp` | Not supported: Cyclone DDS identifies requests with a header in the payload |

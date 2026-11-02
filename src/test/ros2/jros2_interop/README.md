@@ -25,7 +25,7 @@ Or against any distro with Docker, using the official `ros:<distro>` image:
 src/test/ros2/run-interop-docker.sh foxy
 ```
 
-Tested with Foxy and Lyrical (official Docker images) and Jazzy (built from source).
+Tested with Foxy, Humble and Lyrical (official Docker images) and Jazzy (built from source).
 
 Note for Foxy: its rclcpp_action client calls the feedback callback with the client's goal mutex locked, so calling
 `async_cancel_goal` from that callback deadlocks. `fibonacci_client` cancels from `main` instead.
