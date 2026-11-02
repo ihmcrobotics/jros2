@@ -7,6 +7,10 @@ Publish the parser and generator Gradle plugin
 ```
 Upgrade the us.ihmc.jros2.generator Gradle plugin to the one you just published
 
+Do not run `jros2GenerateDefaultInterfaces` before upgrading the plugin: the task uses the published plugin, not the generator
+in this repository. Plugins up to 1.5.1 do not generate `.srv` and `.action` files, and their orphan cleanup deletes the
+service and action classes already in `src/main/java-interfaces`.
+
 Regenerate the common ROS 2 interfaces
 ```
 ./gradlew jros2GenerateDefaultInterfaces

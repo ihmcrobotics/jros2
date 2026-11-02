@@ -20,6 +20,8 @@ plugins {
    id("java-gradle-plugin")
    id("us.ihmc.ihmc-build")
 
+   // Used by jros2GenerateDefaultInterfaces. 1.5.1 predates .srv/.action generation and would delete the generated service and
+   // action classes: publish the generator from this repository and upgrade this version first (see RELEASING.md).
    id("us.ihmc.jros2.generator") version "1.5.1"
 }
 
