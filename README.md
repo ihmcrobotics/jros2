@@ -48,7 +48,7 @@ against rclcpp and rclcpp_action nodes in both directions (see [Interoperability
 | ROS 2 nodes using `rmw_fastrtps_cpp` | Tested |
 | ROS 2 nodes using `rmw_connextdds` | Not tested. Expected to work with its default (extended) request/reply mapping |
 | ROS 2 nodes using `rmw_cyclonedds_cpp` | Not supported: Cyclone DDS identifies requests with a header in the payload |
-| Platforms | The native library with service support is currently built for Linux x86_64 only. On other platforms, topics work and services, actions and parameters fail with `UnsatisfiedLinkError` until their native libraries are rebuilt |
+| Platforms | All supported platforms. Tested in CI on Linux x86_64, macOS (ARM and Intel) and Windows x86_64; on Android, linux-arm64/armhf and Windows ARM64 the native libraries are built but services, actions and parameters are not run in CI |
 
 jros2 nodes are not announced in the ROS 2 graph, so `ros2 node list`, `ros2 param list` and other commands that look nodes up
 by name do not see them. Clients that use the service names directly (e.g. `rclcpp::SyncParametersClient`, `ros2 service call`)
