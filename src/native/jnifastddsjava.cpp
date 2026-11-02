@@ -270,6 +270,43 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterWrite)(JNIEnv*, jclass, j
    return static_cast<jint>(fastddsjava_datawriter_write(reinterpret_cast<void*>(writer), reinterpret_cast<fastddsjava_TopicDataWrapper*>(data)));
 }
 
+extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterWriteWithParams)(JNIEnv* env, jclass, jlong writer, jlong data, jbyteArray relatedGuid,
+                                                                       jlong relatedSequenceNumber, jbyteArray sampleGuidOut,
+                                                                       jlongArray sampleSequenceNumberOut)
+{
+   uint8_t related[16];
+   const uint8_t* relatedPtr = nullptr;
+   if (relatedGuid != nullptr && env->GetArrayLength(relatedGuid) >= 16)
+   {
+      env->GetByteArrayRegion(relatedGuid, 0, 16, reinterpret_cast<jbyte*>(related));
+      relatedPtr = related;
+   }
+
+   uint8_t sampleGuid[16] = {};
+   uint64_t sampleSequenceNumber = 0;
+   uint32_t ret = fastddsjava_datawriter_write_with_params(reinterpret_cast<void*>(writer), reinterpret_cast<fastddsjava_TopicDataWrapper*>(data),
+                                                           relatedPtr, static_cast<uint64_t>(relatedSequenceNumber), sampleGuid,
+                                                           &sampleSequenceNumber);
+
+   fillGuid(env, sampleGuidOut, sampleGuid);
+   if (sampleSequenceNumberOut != nullptr && env->GetArrayLength(sampleSequenceNumberOut) >= 1)
+   {
+      jlong value = static_cast<jlong>(sampleSequenceNumber);
+      env->SetLongArrayRegion(sampleSequenceNumberOut, 0, 1, &value);
+   }
+
+   return static_cast<jint>(ret);
+}
+
+extern "C" JNIEXPORT jboolean JNICALL JNIFASTDDS(dataWriterIsMatchedWith)(JNIEnv* env, jclass, jlong writer, jbyteArray readerGuid)
+{
+   if (readerGuid == nullptr || env->GetArrayLength(readerGuid) < 16)
+      return JNI_FALSE;
+   uint8_t guid[16];
+   env->GetByteArrayRegion(readerGuid, 0, 16, reinterpret_cast<jbyte*>(guid));
+   return fastddsjava_datawriter_is_matched_with(reinterpret_cast<void*>(writer), guid) ? JNI_TRUE : JNI_FALSE;
+}
+
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterSetListener)(JNIEnv*, jclass, jlong writer, jlong listener)
 {
    return static_cast<jint>(fastddsjava_datawriter_set_listener(reinterpret_cast<void*>(writer),
@@ -468,6 +505,23 @@ extern "C" JNIEXPORT jshort JNICALL JNIFASTDDS(sampleInfoInstanceState)(JNIEnv*,
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
    return static_cast<jshort>(info->instance_state);
+}
+
+extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(sampleInfoSampleIdentity)(JNIEnv* env, jclass, jlong sampleInfo, jbyteArray guidOut)
+{
+   uint8_t guid[16];
+   uint64_t sequenceNumber = fastddsjava_sample_info_sample_identity(reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo), guid);
+   fillGuid(env, guidOut, guid);
+   return static_cast<jlong>(sequenceNumber);
+}
+
+extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(sampleInfoRelatedSampleIdentity)(JNIEnv* env, jclass, jlong sampleInfo, jbyteArray guidOut)
+{
+   uint8_t guid[16];
+   uint64_t sequenceNumber = fastddsjava_sample_info_related_sample_identity(reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo),
+                                                                              guid);
+   fillGuid(env, guidOut, guid);
+   return static_cast<jlong>(sequenceNumber);
 }
 
 extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(createDataReaderListener)(JNIEnv*, jclass)

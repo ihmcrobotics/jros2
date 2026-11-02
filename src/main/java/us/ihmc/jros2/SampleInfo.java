@@ -60,6 +60,25 @@ public class SampleInfo implements AutoCloseable
       return fastddsjava.sampleInfoInstanceState(fastddsSampleInfo);
    }
 
+   /**
+    * Copies the identity of this sample (writer GUID and sequence number) into {@code identityOut}.
+    */
+   public void getSampleIdentity(SampleIdentity identityOut)
+   {
+      long sequenceNumber = fastddsjava.sampleInfoSampleIdentity(fastddsSampleInfo, identityOut.getWriterGuid().getValue());
+      identityOut.setSequenceNumber(sequenceNumber);
+   }
+
+   /**
+    * Copies the related sample identity into {@code identityOut}. For a service response this is the identity of
+    * the request it answers. It is unknown ({@link SampleIdentity#isUnknown()}) when the writer did not set it.
+    */
+   public void getRelatedSampleIdentity(SampleIdentity identityOut)
+   {
+      long sequenceNumber = fastddsjava.sampleInfoRelatedSampleIdentity(fastddsSampleInfo, identityOut.getWriterGuid().getValue());
+      identityOut.setSequenceNumber(sequenceNumber);
+   }
+
    @Override
    public void close()
    {

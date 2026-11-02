@@ -86,6 +86,24 @@ public final class fastddsjava
 
    public static native int dataWriterWrite(long fastddsDataWriter, long fastddsTopicData);
 
+   /**
+    * Write with Fast-DDS WriteParams.
+    *
+    * @param relatedGuid             16-byte writer GUID of the related sample identity, or null to leave it unset
+    * @param relatedSequenceNumber   sequence number of the related sample identity (ignored if relatedGuid is null)
+    * @param sampleGuidOut           receives the 16-byte writer GUID of the written sample's identity (may be null)
+    * @param sampleSequenceNumberOut receives the written sample's sequence number in element 0 (may be null)
+    * @return the Fast-DDS return code
+    */
+   public static native int dataWriterWriteWithParams(long fastddsDataWriter, long fastddsTopicData, byte[] relatedGuid, long relatedSequenceNumber,
+                                                      byte[] sampleGuidOut, long[] sampleSequenceNumberOut);
+
+   /**
+    * @param readerGuid 16-byte GUID of a data reader
+    * @return true if the data writer is currently matched with that reader
+    */
+   public static native boolean dataWriterIsMatchedWith(long fastddsDataWriter, byte[] readerGuid);
+
    public static native int dataWriterSetListener(long fastddsDataWriter, long fastddsDataWriterListener);
 
    public static native int dataWriterGetPublicationMatchedCount(long fastddsDataWriter);
@@ -145,6 +163,12 @@ public final class fastddsjava
    public static native short sampleInfoViewState(long fastddsSampleInfo);
 
    public static native short sampleInfoInstanceState(long fastddsSampleInfo);
+
+   /** Copies the writer GUID of the sample identity into guidOut (16 bytes) and returns its sequence number. */
+   public static native long sampleInfoSampleIdentity(long fastddsSampleInfo, byte[] guidOut);
+
+   /** Copies the writer GUID of the related sample identity into guidOut (16 bytes) and returns its sequence number. */
+   public static native long sampleInfoRelatedSampleIdentity(long fastddsSampleInfo, byte[] guidOut);
 
    public static native long createDataReaderListener();
 

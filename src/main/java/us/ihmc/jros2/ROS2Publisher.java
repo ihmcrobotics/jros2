@@ -71,6 +71,10 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     */
    private final CDRBuffer writeBuffer;
    private int lastPayloadSizeBytes;
+   /**
+    * Receives the sequence number of the written sample when publishing with sample identities. Guarded by {@link #writeBuffer}.
+    */
+   private final long[] writtenSequenceNumber = new long[1];
 
    /*
     * Statistics
@@ -199,13 +203,47 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
 
    private void writeAndPublish(T message, boolean recordStatistics)
    {
+      writeAndPublish(message, recordStatistics, null, null);
+   }
+
+   /**
+    * Publish a message carrying sample identities, as used by ROS 2 services. For internal use only.
+    *
+    * @param message                 the message to publish
+    * @param relatedSampleIdentity   written as the sample's related_sample_identity, or null to leave it unset
+    * @param writtenSampleIdentity   receives the sample_identity Fast-DDS assigned to the written sample, or null
+    * @return true if the write succeeded
+    */
+   boolean publish(T message, SampleIdentity relatedSampleIdentity, SampleIdentity writtenSampleIdentity)
+   {
+      boolean success = false;
+
+      closeLock.readLock().lock();
+      try
+      {
+         if (!closed)
+         {
+            success = writeAndPublish(message, recordStatistics, relatedSampleIdentity, writtenSampleIdentity);
+         }
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+
+      return success;
+   }
+
+   private boolean writeAndPublish(T message, boolean recordStatistics, SampleIdentity relatedSampleIdentity, SampleIdentity writtenSampleIdentity)
+   {
       int payloadSizeBytes;
+      int ret;
+      boolean useWriteParams = relatedSampleIdentity != null || writtenSampleIdentity != null;
 
       synchronized (writeBuffer)
       {
          writeBuffer.rewind();
 
-         // Presize from calculateSizeBytes; actual payload length is the buffer position after serialize.
          int estimatedSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
          if (estimatedSizeBytes > writeBuffer.getBufferUnsafe().capacity())
          {
@@ -223,14 +261,39 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
          }
 
          fastddsjava.topicDataWriteBuffer(fastddsTopicData, writeBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
+
+         if (useWriteParams)
+         {
+            // Written while holding the lock so writtenSequenceNumber is not shared between threads
+            ret = fastddsjava.dataWriterWriteWithParams(fastddsDataWriter,
+                                                        fastddsTopicData,
+                                                        relatedSampleIdentity == null ? null : relatedSampleIdentity.getWriterGuid().getValue(),
+                                                        relatedSampleIdentity == null ? 0 : relatedSampleIdentity.getSequenceNumber(),
+                                                        writtenSampleIdentity == null ? null : writtenSampleIdentity.getWriterGuid().getValue(),
+                                                        writtenSequenceNumber);
+            if (writtenSampleIdentity != null)
+            {
+               writtenSampleIdentity.setSequenceNumber(writtenSequenceNumber[0]);
+            }
+         }
+         else
+         {
+            ret = 0;
+         }
       }
 
-      retcodePrintOnError(fastddsjava.dataWriterWrite(fastddsDataWriter, fastddsTopicData));
+      if (!useWriteParams)
+      {
+         ret = fastddsjava.dataWriterWrite(fastddsDataWriter, fastddsTopicData);
+      }
+      retcodePrintOnError(ret);
 
       if (recordStatistics)
       {
          recordStatistics(message, payloadSizeBytes, System.currentTimeMillis());
       }
+
+      return ret == 0;
    }
 
    private void recordStatistics(T message, long messageSizeBytes, long publishTimeMillis)
@@ -275,6 +338,22 @@ public class ROS2Publisher<T extends ROS2Message<T>> implements MessageStatistic
     * Returns a cached {@link Guid} instance owned by this publisher; its bytes are refreshed from DDS on each call.
     * Copy with {@link Guid#set(Guid)} if you need an independent snapshot.
     */
+   /**
+    * @return true if this publisher is matched with the subscription (data reader) with the given GUID. For internal use only.
+    */
+   boolean isMatchedWith(Guid readerGuid)
+   {
+      closeLock.readLock().lock();
+      try
+      {
+         return !closed && fastddsjava.dataWriterIsMatchedWith(fastddsDataWriter, readerGuid.getValue());
+      }
+      finally
+      {
+         closeLock.readLock().unlock();
+      }
+   }
+
    public Guid getGuid()
    {
       fastddsjava.getWriterGuid(fastddsDataWriter, guid.getValue());

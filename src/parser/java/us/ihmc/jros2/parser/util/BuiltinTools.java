@@ -319,4 +319,38 @@ public final class BuiltinTools
          default -> throw new IllegalArgumentException(String.format("Unexpected bool value {%s}.", value));
       };
    }
+
+   /**
+    * Unsigned ROS 2 integers are stored in the signed Java type of the same width (uint8 in byte, etc.). A literal above the
+    * signed maximum (e.g. {@code uint8 X=255}) does not compile as is, so it is cast to the Java type, keeping the same bits.
+    *
+    * @param type  the built-in type name
+    * @param value the literal from the interface definition
+    * @return a Java expression for the value
+    */
+   public static String sanitizeUnsignedAsJavaFieldValue(String type, String value)
+   {
+      if (type == null || value == null)
+         return value;
+
+      String trimmed = value.trim();
+      java.math.BigInteger number;
+      try
+      {
+         number = new java.math.BigInteger(trimmed);
+      }
+      catch (NumberFormatException e)
+      {
+         return value; // Not a plain decimal literal (e.g. hex or an array), leave it untouched
+      }
+
+      return switch (type)
+      {
+         case "uint8" -> number.compareTo(java.math.BigInteger.valueOf(Byte.MAX_VALUE)) > 0 ? "(byte) " + trimmed : value;
+         case "uint16" -> number.compareTo(java.math.BigInteger.valueOf(Short.MAX_VALUE)) > 0 ? "(short) " + trimmed : value;
+         case "uint32" -> number.compareTo(java.math.BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ? "(int) " + trimmed + "L" : value;
+         case "uint64" -> number.compareTo(java.math.BigInteger.valueOf(Long.MAX_VALUE)) > 0 ? number.longValue() + "L" : value;
+         default -> value;
+      };
+   }
 }

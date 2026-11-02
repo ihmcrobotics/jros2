@@ -49,6 +49,13 @@ uint32_t fastddsjava_delete_topic(void* participant_, void* topic_);
 void* fastddsjava_create_datawriter(void* publisher_, void* topic_, const std::string& profile_name);
 uint32_t fastddsjava_delete_datawriter(void* publisher_, void* writer_);
 uint32_t fastddsjava_datawriter_write(void* writer_, fastddsjava_TopicDataWrapper* data);
+// Write with rtps::WriteParams. If related_guid is not null, related_sample_identity is set to (related_guid, related_sequence_number).
+// The sample_identity assigned to the written sample is copied into sample_guid_out (16 bytes) and sample_sequence_number_out, if not null.
+uint32_t fastddsjava_datawriter_write_with_params(void* writer_, fastddsjava_TopicDataWrapper* data, const uint8_t* related_guid,
+                                                  uint64_t related_sequence_number, uint8_t* sample_guid_out,
+                                                  uint64_t* sample_sequence_number_out);
+// True if the writer is matched with the reader whose 16-byte GUID is given
+bool fastddsjava_datawriter_is_matched_with(void* writer_, const uint8_t* reader_guid);
 uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener = nullptr);
 uint32_t fastddsjava_datawriter_get_publication_matched_status(void* writer_, eprosima::fastdds::dds::PublicationMatchedStatus& status);
 
@@ -75,6 +82,9 @@ void fastddsjava_topic_data_read(fastddsjava_TopicDataWrapper* data, uint8_t* ds
 
 eprosima::fastdds::dds::SampleInfo* fastddsjava_create_sample_info();
 void fastddsjava_delete_sample_info(eprosima::fastdds::dds::SampleInfo* info);
+// Sample identities are returned as a 16 byte writer GUID and a 64 bit sequence number
+uint64_t fastddsjava_sample_info_sample_identity(const eprosima::fastdds::dds::SampleInfo* info, uint8_t* guid_out);
+uint64_t fastddsjava_sample_info_related_sample_identity(const eprosima::fastdds::dds::SampleInfo* info, uint8_t* guid_out);
 
 fastddsjava_DataReaderListener* fastddsjava_create_datareader_listener();
 void fastddsjava_delete_datareader_listener(fastddsjava_DataReaderListener* listener);

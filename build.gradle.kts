@@ -20,6 +20,8 @@ plugins {
    id("java-gradle-plugin")
    id("us.ihmc.ihmc-build")
 
+   // Used by jros2GenerateDefaultInterfaces. 1.5.1 predates .srv/.action generation and would delete the generated service and
+   // action classes: publish the generator from this repository and upgrade this version first (see RELEASING.md).
    id("us.ihmc.jros2.generator") version "1.5.1"
 }
 
@@ -105,6 +107,7 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
         projectDir.resolve("ros2_interfaces").resolve("example_interfaces").absolutePath,
 
         // rcl_interfaces used as dependency to common_interfaces; we include it here
+        projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("action_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("builtin_interfaces").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("lifecycle_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("rcl_interfaces").resolve("rcl_interfaces").absolutePath,
@@ -122,6 +125,9 @@ tasks.register<jros2GenTask>("jros2GenerateDefaultInterfaces") {
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("trajectory_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("common_interfaces").resolve("visualization_msgs").absolutePath,
         projectDir.resolve("ros2_interfaces").resolve("geometry2").resolve("tf2_msgs").absolutePath,
+
+        // Used by action_msgs and by every action for its goal ids
+        projectDir.resolve("ros2_interfaces").resolve("unique_identifier_msgs").absolutePath,
 
         projectDir.resolve("ros2_interfaces").resolve("jros2_example_interfaces").absolutePath,
     )

@@ -15,6 +15,7 @@
 #include <fastdds/dds/topic/TypeSupport.hpp>
 #include <fastdds/rtps/common/InstanceHandle.hpp>
 #include <fastdds/rtps/common/SerializedPayload.hpp>
+#include <fastdds/rtps/common/WriteParams.hpp>
 
 uint8_t* fastddsjava_TopicDataWrapper::data_ptr()
 {
@@ -283,6 +284,64 @@ uint32_t fastddsjava_datawriter_write(void* writer_, fastddsjava_TopicDataWrappe
    return writer->write(data);
 }
 
+uint32_t fastddsjava_datawriter_write_with_params(void* writer_, fastddsjava_TopicDataWrapper* data, const uint8_t* related_guid,
+                                                  uint64_t related_sequence_number, uint8_t* sample_guid_out,
+                                                  uint64_t* sample_sequence_number_out)
+{
+   auto* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+   eprosima::fastdds::rtps::WriteParams params;
+   if (related_guid != nullptr)
+   {
+      eprosima::fastdds::rtps::SampleIdentity related;
+      memcpy(related.writer_guid().guidPrefix.value, related_guid, 12);
+      memcpy(related.writer_guid().entityId.value, related_guid + 12, 4);
+      related.sequence_number(eprosima::fastdds::rtps::SequenceNumber_t(related_sequence_number));
+      params.related_sample_identity(related);
+   }
+
+   uint32_t ret = writer->write(data, params);
+
+   // After a successful write, Fast-DDS stores the identity assigned to the sample in params.sample_identity()
+   const eprosima::fastdds::rtps::SampleIdentity& written = params.sample_identity();
+   if (sample_guid_out != nullptr)
+   {
+      memcpy(sample_guid_out, written.writer_guid().guidPrefix.value, 12);
+      memcpy(sample_guid_out + 12, written.writer_guid().entityId.value, 4);
+   }
+   if (sample_sequence_number_out != nullptr)
+   {
+      *sample_sequence_number_out = written.sequence_number().to64long();
+   }
+
+   return ret;
+}
+
+bool fastddsjava_datawriter_is_matched_with(void* writer_, const uint8_t* reader_guid)
+{
+   auto* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
+
+   std::vector<eprosima::fastdds::dds::InstanceHandle_t> handles;
+   if (writer->get_matched_subscriptions(handles) != eprosima::fastdds::dds::RETCODE_OK)
+   {
+      return false;
+   }
+
+   eprosima::fastdds::rtps::GUID_t expected;
+   memcpy(expected.guidPrefix.value, reader_guid, 12);
+   memcpy(expected.entityId.value, reader_guid + 12, 4);
+   for (const auto& handle : handles)
+   {
+      eprosima::fastdds::rtps::GUID_t guid;
+      eprosima::fastdds::rtps::iHandle2GUID(guid, handle);
+      if (guid == expected)
+      {
+         return true;
+      }
+   }
+   return false;
+}
+
 uint32_t fastddsjava_datawriter_set_listener(void* writer_, fastddsjava_DataWriterListener* listener)
 {
    auto* writer = static_cast<eprosima::fastdds::dds::DataWriter*>(writer_);
@@ -413,6 +472,26 @@ void fastddsjava_topic_data_read(fastddsjava_TopicDataWrapper* data, uint8_t* ds
 eprosima::fastdds::dds::SampleInfo* fastddsjava_create_sample_info()
 {
    return new eprosima::fastdds::dds::SampleInfo();
+}
+
+static uint64_t fastddsjava_copy_sample_identity(const eprosima::fastdds::rtps::SampleIdentity& identity, uint8_t* guid_out)
+{
+   if (guid_out != nullptr)
+   {
+      memcpy(guid_out, identity.writer_guid().guidPrefix.value, 12);
+      memcpy(guid_out + 12, identity.writer_guid().entityId.value, 4);
+   }
+   return identity.sequence_number().to64long();
+}
+
+uint64_t fastddsjava_sample_info_sample_identity(const eprosima::fastdds::dds::SampleInfo* info, uint8_t* guid_out)
+{
+   return fastddsjava_copy_sample_identity(info->sample_identity, guid_out);
+}
+
+uint64_t fastddsjava_sample_info_related_sample_identity(const eprosima::fastdds::dds::SampleInfo* info, uint8_t* guid_out)
+{
+   return fastddsjava_copy_sample_identity(info->related_sample_identity, guid_out);
 }
 
 void fastddsjava_delete_sample_info(eprosima::fastdds::dds::SampleInfo* info)
