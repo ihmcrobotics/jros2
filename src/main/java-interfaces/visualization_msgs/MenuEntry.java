@@ -102,6 +102,11 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MenuEntry_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/MenuEntry, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_22170c387c70fd4236232ec902de8604e72ff027342c7c0f28ad9f68c64c51d6";
+
+   /**
       ID is a number for each menu entry.  Must be unique within the
       control, and should never be 0.
    */
@@ -126,15 +131,15 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       ROSRUN: execute "rosrun" with arguments given in the command field (above).
       ROSLAUNCH: execute "roslaunch" with arguments given in the command field (above).
    */
-   public static final byte FEEDBACK = 0;
-   public static final byte ROSRUN = 1;
-   public static final byte ROSLAUNCH = 2;
+   public static final byte FEEDBACK = (byte) 0;
+   public static final byte ROSRUN = (byte) 1;
+   public static final byte ROSLAUNCH = (byte) 2;
    private byte command_type_;
 
    public MenuEntry()
    {
-      title_ = new StringBuilder();
-      command_ = new StringBuilder();
+      title_ = CDRBuffer.newStringBuilder(16);
+      command_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -149,11 +154,11 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // parent_id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * title_.length()) + 1; // title_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * command_.length()) + 1; // command_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // command_type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // parent_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(title_) + 1; // title_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(command_) + 1; // command_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // command_type_
 
       return currentAlignment - initialAlignment;
    }
@@ -183,12 +188,17 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    @Override
    public void set(MenuEntry from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       id_ = from.id_;
       parent_id_ = from.parent_id_;
-      title_.delete(0, title_.length());
-      title_.insert(0, from.title_);
-      command_.delete(0, command_.length());
-      command_.insert(0, from.command_);
+      title_.setLength(0);
+      title_.append(from.title_);
+      command_.setLength(0);
+      command_.append(from.command_);
       command_type_ = from.command_type_;
 
    }
@@ -218,30 +228,70 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       return title_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of title (allocates). {@link #getTitle()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getTitleAsString()
    {
       return title_.toString();
    }
 
+   /**
+    * Replaces the content of title with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setTitle(java.lang.String s)
    {
-      this.title_.delete(0, this.title_.length());
-      this.title_.insert(0, s);
+      this.title_.setLength(0);
+      this.title_.append(s);
+   }
+
+   /**
+    * Replaces the content of title with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setTitle(java.lang.CharSequence s)
+   {
+      if (s != this.title_)
+      {
+         this.title_.setLength(0);
+         this.title_.append(s);
+      }
    }
    public StringBuilder getCommand()
    {
       return command_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of command (allocates). {@link #getCommand()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getCommandAsString()
    {
       return command_.toString();
    }
 
+   /**
+    * Replaces the content of command with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setCommand(java.lang.String s)
    {
-      this.command_.delete(0, this.command_.length());
-      this.command_.insert(0, s);
+      this.command_.setLength(0);
+      this.command_.append(s);
+   }
+
+   /**
+    * Replaces the content of command with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setCommand(java.lang.CharSequence s)
+   {
+      if (s != this.command_)
+      {
+         this.command_.setLength(0);
+         this.command_.append(s);
+      }
    }
    public byte getCommandType()
    {
@@ -254,29 +304,36 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MenuEntry {", "id_=", "parent_id_=", "title_=", "command_=", "FEEDBACK=", "ROSRUN=", "ROSLAUNCH=", "command_type_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MenuEntry {");
-      builder.append("id_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(id_);
-      builder.append("parent_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(parent_id_);
-      builder.append("title_=");
+      builder.append(toStringLabels[3]);
       builder.append(title_.toString());
-      builder.append("command_=");
+      builder.append(toStringLabels[4]);
       builder.append(command_.toString());
-      builder.append("FEEDBACK=");
+      builder.append(toStringLabels[5]);
       builder.append(FEEDBACK);
-      builder.append("ROSRUN=");
+      builder.append(toStringLabels[6]);
       builder.append(ROSRUN);
-      builder.append("ROSLAUNCH=");
+      builder.append(toStringLabels[7]);
       builder.append(ROSLAUNCH);
-      builder.append("command_type_=");
+      builder.append(toStringLabels[8]);
       builder.append(command_type_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

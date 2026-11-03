@@ -18,6 +18,11 @@ public class IllegalJava implements ROS2Message<IllegalJava>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::IllegalJava_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of jros2_example_interfaces/msg/IllegalJava, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_95253a880d29042935a3c8b66ae9b9c473b49b4d80e5d474d76acf16b94f5254";
+
    private byte class_;
 
    public IllegalJava()
@@ -35,7 +40,7 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // class_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // class_
 
       return currentAlignment - initialAlignment;
    }
@@ -57,6 +62,11 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    @Override
    public void set(IllegalJava from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       class_ = from.class_;
 
    }
@@ -72,15 +82,22 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"IllegalJava {", "class_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("IllegalJava {");
-      builder.append("class_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(class_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

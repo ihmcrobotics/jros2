@@ -1,0 +1,3 @@
+# jros2's patches of Fast-DDS are applied to the pristine (LF) Fast-DDS sources with exact context by
+# scripts/docker/deps.sh and scripts/cppbuild.bash: never convert their line endings (e.g. core.autocrlf on Windows).
+/src/native/fastdds-patches/*.patch -text

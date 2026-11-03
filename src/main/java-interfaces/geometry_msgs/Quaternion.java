@@ -24,6 +24,11 @@ public class Quaternion implements ROS2Message<Quaternion>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Quaternion_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Quaternion, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_8a765f66778c8ff7c8ab94afcc590a2ed5325a1d9a076ffff38fbce36f458684";
+
    private double x_;
    private double y_;
    private double z_;
@@ -31,10 +36,10 @@ public class Quaternion implements ROS2Message<Quaternion>
 
    public Quaternion()
    {
-      x_ = (double) 0;
-      y_ = (double) 0;
-      z_ = (double) 0;
-      w_ = (double) 1;
+      x_ = 0.0;
+      y_ = 0.0;
+      z_ = 0.0;
+      w_ = 1.0;
 
    }
 
@@ -49,10 +54,10 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // x_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // y_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // z_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // w_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // x_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // y_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // z_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // w_
 
       return currentAlignment - initialAlignment;
    }
@@ -80,6 +85,11 @@ public class Quaternion implements ROS2Message<Quaternion>
    @Override
    public void set(Quaternion from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       x_ = from.x_;
       y_ = from.y_;
       z_ = from.z_;
@@ -128,21 +138,28 @@ public class Quaternion implements ROS2Message<Quaternion>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Quaternion {", "x_=", "y_=", "z_=", "w_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Quaternion {");
-      builder.append("x_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(x_);
-      builder.append("y_=");
+      builder.append(toStringLabels[2]);
       builder.append(y_);
-      builder.append("z_=");
+      builder.append(toStringLabels[3]);
       builder.append(z_);
-      builder.append("w_=");
+      builder.append(toStringLabels[4]);
       builder.append(w_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

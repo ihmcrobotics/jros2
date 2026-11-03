@@ -18,9 +18,14 @@ std_msgs/Header header
 TwistWithCovariance twist
 }</pre>
 */
-public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarianceStamped>
+public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarianceStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistWithCovarianceStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/TwistWithCovarianceStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_77b67434531e6529b7a0091357b186b6ebdb17fd9ffd3e0c7ce9d3fb11a44563";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.TwistWithCovariance twist_;
@@ -68,6 +73,11 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    @Override
    public void set(TwistWithCovarianceStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       twist_.set(from.twist_);
 
@@ -84,17 +94,24 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TwistWithCovarianceStamped {", "header_=", "twist_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TwistWithCovarianceStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("twist_=");
+      builder.append(toStringLabels[2]);
       builder.append(twist_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

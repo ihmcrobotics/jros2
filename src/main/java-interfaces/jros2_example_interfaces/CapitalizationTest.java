@@ -20,6 +20,11 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::CapitalizationTest_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of jros2_example_interfaces/msg/CapitalizationTest, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_b8f4787bf859cbaa59b8930f2e859c6f87665636b241b0bdf52979a0192fd21a";
+
    private byte test_test1_;
    private byte testTest2_;
    private byte TestTest3_;
@@ -39,9 +44,9 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // test_test1_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // testTest2_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // TestTest3_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // test_test1_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // testTest2_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // TestTest3_
 
       return currentAlignment - initialAlignment;
    }
@@ -67,6 +72,11 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    @Override
    public void set(CapitalizationTest from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       test_test1_ = from.test_test1_;
       testTest2_ = from.testTest2_;
       TestTest3_ = from.TestTest3_;
@@ -104,19 +114,26 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"CapitalizationTest {", "test_test1_=", "testTest2_=", "TestTest3_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("CapitalizationTest {");
-      builder.append("test_test1_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(test_test1_);
-      builder.append("testTest2_=");
+      builder.append(toStringLabels[2]);
       builder.append(testTest2_);
-      builder.append("TestTest3_=");
+      builder.append(toStringLabels[3]);
       builder.append(TestTest3_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

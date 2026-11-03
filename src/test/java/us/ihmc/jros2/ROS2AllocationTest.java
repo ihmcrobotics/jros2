@@ -15,339 +15,81 @@
  */
 package us.ihmc.jros2;
 
-import com.sun.management.ThreadMXBean;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
-import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import org.junit.jupiter.api.Timeout;
+import us.ihmc.fastddsjava.fastddsjavaTestTools;
+import us.ihmc.jros2.allocation.AllocationGate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.LockSupport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Steady-state allocation checks for the jros2 publish/subscribe and CDR paths.
- * Uses HotSpot {@link ThreadMXBean#getThreadAllocatedBytes(long)} so these run in the default
- * test category (no allocation javaagent required).
+ * Fast smoke version of the allocation gates for the normal test suite: sync and async publish, inline, polling and
+ * executor receive, both native ABI paths and a CDR round trip must allocate zero bytes on every thread (no tolerance).
  * <p>
- * Fixed-size messages are expected to be allocation-free after warmup. Variable-size payloads
- * (growing strings/sequences) may still allocate when buffers grow.
+ * The gates run in a child JVM ({@link ROS2AllocationSmokeChild}) with {@code -Xbatch -XX:CompileThresholdScaling=0.1},
+ * so that the one-time JIT warm-up effects happen at fixed points of the warm-up (see {@code AllocationGate}); this JVM's
+ * settings (JaCoCo, parallel tests) do not matter. Escape analysis is on and the instrumenter is not loaded, so this is a
+ * smoke test only: the real gate is {@code :jros2-test:allocationTest}, which runs every test tagged "allocation" with the
+ * instrumenter, without escape analysis and with intraprocess delivery off and on.
  */
 public class ROS2AllocationTest
 {
-   private static final int WARMUP_MESSAGES = 2_000;
-   private static final int MEASURED_MESSAGES = 10_000;
-   /** JVM/JIT bookkeeping can show up as a few small allocations over long loops. */
-   private static final long MAX_TOTAL_ALLOCATED_BYTES = 2_048L;
+   private static final long CHILD_TIMEOUT_SECONDS = 300;
 
    @Test
-   public void testSyncPublishCallerThreadIsAllocationFree()
+   @Timeout(CHILD_TIMEOUT_SECONDS + 30)
+   public void testHotPathsAreAllocationFree() throws IOException, InterruptedException
    {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      ROS2Node node = new ROS2Node("sync_alloc_pub");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/sync_alloc_pub", example_interfaces.Bool.class);
-      ROS2Publisher<example_interfaces.Bool> publisher = node.createPublisher(topic);
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      message.setData(true);
-
-      for (int i = 0; i < WARMUP_MESSAGES; ++i)
+      List<String> command = new ArrayList<>();
+      command.add(Paths.get(System.getProperty("java.home"), "bin", "java").toString());
+      command.add("-Xmx512m");
+      command.add("-Xbatch");
+      command.add("-XX:CompileThresholdScaling=0.1");
+      command.addAll(List.of(AllocationGate.CONSTANT_POOL_ACCESS_OPTIONS));
+      command.addAll(fastddsjavaTestTools.coverageAgentArguments());
+      for (String argument : ManagementFactory.getRuntimeMXBean().getInputArguments())
       {
-         publisher.publish(message);
+         // Settings that Gradle or the environment pass as system properties (e.g. intraprocess delivery, the native path)
+         if (argument.startsWith("-Dfastdds.") || argument.startsWith("-Djros2.") || argument.startsWith("-Dros."))
+            command.add(argument);
       }
+      command.add("-cp");
+      command.add(System.getProperty("java.class.path"));
+      command.add(ROS2AllocationSmokeChild.class.getName());
 
-      assertSteadyStateAllocationFree(threadMXBean, MEASURED_MESSAGES, () -> publisher.publish(message));
-
-      node.close();
-   }
-
-   @Test
-   public void testAsyncPublishCallerThreadIsAllocationFree()
-   {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      AsyncROS2Node asyncNode = new AsyncROS2Node("async_alloc_pub");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/async_alloc_pub", example_interfaces.Bool.class);
-      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      message.setData(true);
-
-      for (int i = 0; i < WARMUP_MESSAGES; ++i)
+      Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
+      ByteArrayOutputStream output = new ByteArrayOutputStream();
+      Thread pump = new Thread(() ->
       {
-         publisher.publish(message);
-      }
-
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-
-      assertSteadyStateAllocationFree(threadMXBean, MEASURED_MESSAGES, () -> publisher.publish(message));
-
-      asyncNode.close();
-   }
-
-   @Test
-   public void testAsyncPublishThreadIsAllocationFreeWhileIdleWaiting()
-   {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      String nodeName = "async_alloc_pub_thread";
-      AsyncROS2Node asyncNode = new AsyncROS2Node(nodeName);
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/async_alloc_pub_thread", example_interfaces.Bool.class);
-      ROS2Publisher<example_interfaces.Bool> publisher = asyncNode.createPublisher(topic);
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      message.setData(true);
-
-      Thread publishThread = findThreadByName("AsyncROS2NodePublishThread-" + nodeName);
-      long publishThreadId = publishThread.getId();
-
-      // Warmup including idle waits so park/unpark paths are JIT'd.
-      for (int i = 0; i < WARMUP_MESSAGES; ++i)
-      {
-         publisher.publish(message);
-         LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(50));
-      }
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-
-      long before = threadMXBean.getThreadAllocatedBytes(publishThreadId);
-      for (int i = 0; i < MEASURED_MESSAGES; ++i)
-      {
-         publisher.publish(message);
-         // Force the publish thread to drain and go idle between publishes (former take() allocation path).
-         LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(50));
-      }
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-      long allocated = threadMXBean.getThreadAllocatedBytes(publishThreadId) - before;
-
-      assertTrue(allocated <= MAX_TOTAL_ALLOCATED_BYTES,
-                 "Async publish thread allocated " + allocated + " bytes over " + MEASURED_MESSAGES
-                 + " publish/idle cycles (expected <= " + MAX_TOTAL_ALLOCATED_BYTES + ")");
-
-      asyncNode.close();
-   }
-
-   @Test
-   public void testAsyncPublishThreadIsAllocationFreeUnderBurstLoad() throws InterruptedException
-   {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      String nodeName = "async_alloc_burst";
-      AsyncROS2Node asyncNode = new AsyncROS2Node(nodeName);
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/async_alloc_burst", example_interfaces.Bool.class);
-
-      final int publisherCount = 4;
-      @SuppressWarnings("unchecked")
-      ROS2Publisher<example_interfaces.Bool>[] publishers = new ROS2Publisher[publisherCount];
-      for (int i = 0; i < publisherCount; ++i)
-      {
-         publishers[i] = asyncNode.createPublisher(topic);
-      }
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      message.setData(true);
-
-      Thread publishThread = findThreadByName("AsyncROS2NodePublishThread-" + nodeName);
-      long publishThreadId = publishThread.getId();
-
-      // Warmup with concurrent publishers offering tasks.
-      runConcurrentPublishes(publishers, message, WARMUP_MESSAGES / publisherCount);
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-
-      long before = threadMXBean.getThreadAllocatedBytes(publishThreadId);
-      runConcurrentPublishes(publishers, message, MEASURED_MESSAGES / publisherCount);
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-      long allocated = threadMXBean.getThreadAllocatedBytes(publishThreadId) - before;
-
-      assertTrue(allocated <= MAX_TOTAL_ALLOCATED_BYTES,
-                 "Async publish thread allocated " + allocated + " bytes under burst load from "
-                 + publisherCount + " publishers (expected <= " + MAX_TOTAL_ALLOCATED_BYTES + ")");
-
-      asyncNode.close();
-   }
-
-   @Test
-   public void testReuseSubscriptionReadIsAllocationFree() throws InterruptedException
-   {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      ROS2Node node = new ROS2Node("alloc_sub_reuse");
-      ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/alloc_sub_reuse", example_interfaces.Bool.class);
-
-      ROS2QoSProfile qos = new ROS2QoSProfile();
-      qos.reliability(ROS2QoSProfile.Reliability.RELIABLE);
-      qos.history(ROS2QoSProfile.History.KEEP_ALL);
-      qos.depth(MEASURED_MESSAGES);
-
-      AtomicBoolean measuring = new AtomicBoolean(false);
-      AtomicInteger measuredReads = new AtomicInteger();
-      AtomicLong allocatedDuringRead = new AtomicLong();
-      example_interfaces.Bool reusable = new example_interfaces.Bool();
-
-      ROS2Subscription<example_interfaces.Bool> subscription = node.createSubscription(topic, reader ->
-      {
-         if (!measuring.get())
+         try (InputStream in = process.getInputStream())
          {
-            reader.read(reusable);
-            return;
+            in.transferTo(output);
          }
-
-         long threadId = Thread.currentThread().getId();
-         long before = threadMXBean.getThreadAllocatedBytes(threadId);
-         boolean ok = reader.read(reusable);
-         long after = threadMXBean.getThreadAllocatedBytes(threadId);
-         if (ok)
+         catch (IOException ignored)
          {
-            allocatedDuringRead.addAndGet(after - before);
-            measuredReads.incrementAndGet();
+            // the process ended
          }
-      }, qos);
-
-      ROS2Publisher<example_interfaces.Bool> publisher = node.createPublisher(topic, qos);
-      assertTrue(publisher.waitForSubscription(5_000));
-      assertTrue(subscription.waitForPublisher(5_000));
-
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(200));
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      message.setData(true);
-
-      for (int i = 0; i < WARMUP_MESSAGES; ++i)
-      {
-         publisher.publish(message);
-         if ((i & 63) == 0)
-            LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(200));
-      }
-      LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(500));
-
-      measuring.set(true);
-      for (int i = 0; i < MEASURED_MESSAGES; ++i)
-      {
-         publisher.publish(message);
-         if ((i & 63) == 0)
-            LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(200));
-      }
-
-      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
-      while (measuredReads.get() < MEASURED_MESSAGES / 2 && System.nanoTime() < deadline)
-      {
-         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1));
-      }
-
-      assertTrue(measuredReads.get() >= MEASURED_MESSAGES / 2,
-                 "Not enough measured reads: " + measuredReads.get());
-      assertTrue(allocatedDuringRead.get() <= MAX_TOTAL_ALLOCATED_BYTES,
-                 "Subscription read allocated " + allocatedDuringRead.get() + " bytes over " + measuredReads.get() + " reads");
-
-      node.close();
-   }
-
-   @Test
-   public void testFixedSizeCDRSerializeDeserializeIsAllocationFree()
-   {
-      ThreadMXBean threadMXBean = requireThreadAllocationBean();
-
-      example_interfaces.Bool message = new example_interfaces.Bool();
-      example_interfaces.Bool decoded = new example_interfaces.Bool();
-      message.setData(true);
-
-      CDRBuffer buffer = new CDRBuffer();
-      int payloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0);
-      buffer.ensureRemainingCapacity(payloadSizeBytes);
-
-      for (int i = 0; i < WARMUP_MESSAGES; ++i)
-      {
-         roundTripSerialize(message, decoded, buffer);
-      }
-
-      assertSteadyStateAllocationFree(threadMXBean, MEASURED_MESSAGES, () -> roundTripSerialize(message, decoded, buffer));
-   }
-
-   private static void roundTripSerialize(example_interfaces.Bool message, example_interfaces.Bool decoded, CDRBuffer buffer)
-   {
-      buffer.rewind();
-      buffer.writePayloadHeader();
-      message.serialize(buffer);
-      buffer.rewind();
-      buffer.readPayloadHeader();
-      decoded.deserialize(buffer);
-   }
-
-   private static ThreadMXBean requireThreadAllocationBean()
-   {
-      ThreadMXBean threadMXBean = ManagementFactory.getPlatformMXBean(ThreadMXBean.class);
-      Assumptions.assumeTrue(threadMXBean != null && threadMXBean.isThreadAllocatedMemorySupported(),
-                             "Thread allocation measurement requires HotSpot ThreadMXBean support");
-      return threadMXBean;
-   }
-
-   private static Thread findThreadByName(String name)
-   {
-      for (Thread thread : Thread.getAllStackTraces().keySet())
-      {
-         if (name.equals(thread.getName()))
-         {
-            return thread;
-         }
-      }
-      throw new IllegalStateException("Thread not found: " + name);
-   }
-
-   private static void runConcurrentPublishes(ROS2Publisher<example_interfaces.Bool>[] publishers,
-                                              example_interfaces.Bool message,
-                                              int messagesPerPublisher)
-         throws InterruptedException
-   {
-      Thread[] threads = new Thread[publishers.length];
-      for (int i = 0; i < publishers.length; ++i)
-      {
-         ROS2Publisher<example_interfaces.Bool> publisher = publishers[i];
-         threads[i] = new Thread(() ->
-         {
-            for (int j = 0; j < messagesPerPublisher; ++j)
-            {
-               publisher.publish(message);
-            }
-         }, "alloc-burst-publisher-" + i);
-      }
-      for (Thread thread : threads)
-      {
-         thread.start();
-      }
-      for (Thread thread : threads)
-      {
-         thread.join();
-      }
-   }
-
-   private static void assertSteadyStateAllocationFree(ThreadMXBean threadMXBean, int measuredCount, Runnable action)
-   {
-      long threadId = Thread.currentThread().getId();
-
-      long shortLoopBefore = threadMXBean.getThreadAllocatedBytes(threadId);
-      for (int i = 0; i < 1_000; ++i)
-      {
-         action.run();
-      }
-      long shortLoopAllocated = threadMXBean.getThreadAllocatedBytes(threadId) - shortLoopBefore;
-
-      long longLoopBefore = threadMXBean.getThreadAllocatedBytes(threadId);
-      for (int i = 0; i < measuredCount; ++i)
-      {
-         action.run();
-      }
-      long longLoopAllocated = threadMXBean.getThreadAllocatedBytes(threadId) - longLoopBefore;
-
-      assertTrue(shortLoopAllocated <= MAX_TOTAL_ALLOCATED_BYTES,
-                 "Short loop allocated " + shortLoopAllocated + " bytes");
-      assertTrue(longLoopAllocated <= MAX_TOTAL_ALLOCATED_BYTES,
-                 "Long loop allocated " + longLoopAllocated + " bytes");
-      // Must not grow roughly linearly with iteration count.
-      assertTrue(longLoopAllocated <= Math.max(shortLoopAllocated * 2, MAX_TOTAL_ALLOCATED_BYTES),
-                 "Allocation scaled with message count: short=" + shortLoopAllocated + ", long=" + longLoopAllocated);
+      }, "allocation-smoke-output");
+      pump.start();
+      boolean finished = process.waitFor(CHILD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+      if (!finished)
+         process.destroyForcibly();
+      pump.join(10_000);
+      String text = output.toString(StandardCharsets.UTF_8);
+      assertTrue(finished, "the allocation smoke child timed out:\n" + text);
+      assertEquals(0, process.exitValue(), "allocation smoke child failed:\n" + text);
+      assertTrue(text.contains("ALLOCATION-SMOKE OK"), text);
+      assertEquals(5, text.split("RESULT ok ", -1).length - 1, text);
    }
 }

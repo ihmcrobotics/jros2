@@ -25,7 +25,9 @@ class jros2SettingsEnv implements jros2Settings
    private static final String SOURCE_NAME = "Environment Variables";
 
    static final String DOMAIN_ID_KEY = "ROS_DOMAIN_ID";
-   static final String INTRAPROCESS_DELIVERY_KEY = "FASTDDS_INRAPROCESS_DELIVERY";
+   static final String INTRAPROCESS_DELIVERY_KEY = "FASTDDS_INTRAPROCESS_DELIVERY";
+   /** Misspelled name accepted by jros2 1.5.1 and earlier; still honored when the correct name is absent. */
+   static final String LEGACY_INTRAPROCESS_DELIVERY_KEY = "FASTDDS_INRAPROCESS_DELIVERY";
    static final String INTERFACE_WHITELIST_KEY = "FASTDDS_INTERFACE_WHITELIST";
 
    private final Map<String, String> env;
@@ -73,13 +75,18 @@ class jros2SettingsEnv implements jros2Settings
    @Override
    public boolean intraprocessDelivery()
    {
-      return env.getOrDefault(INTRAPROCESS_DELIVERY_KEY, Boolean.toString(new jros2SettingsDefault().intraprocessDelivery())).equalsIgnoreCase("true");
+      String value = env.containsKey(INTRAPROCESS_DELIVERY_KEY) ? env.get(INTRAPROCESS_DELIVERY_KEY) : env.get(LEGACY_INTRAPROCESS_DELIVERY_KEY);
+      if (value == null)
+      {
+         return new jros2SettingsDefault().intraprocessDelivery();
+      }
+      return value.equalsIgnoreCase("true");
    }
 
    @Override
    public boolean hasIntraprocessDelivery()
    {
-      return env.containsKey(INTRAPROCESS_DELIVERY_KEY);
+      return env.containsKey(INTRAPROCESS_DELIVERY_KEY) || env.containsKey(LEGACY_INTRAPROCESS_DELIVERY_KEY);
    }
 
    @Override
@@ -100,5 +107,17 @@ class jros2SettingsEnv implements jros2Settings
    public boolean hasInterfaceWhitelist()
    {
       return env.containsKey(INTERFACE_WHITELIST_KEY);
+   }
+
+   @Override
+   public String rawSetting(Key key)
+   {
+      return env.get(key.environmentVariable);
+   }
+
+   @Override
+   public boolean hasRawSetting(Key key)
+   {
+      return env.containsKey(key.environmentVariable);
    }
 }

@@ -26,9 +26,14 @@ float32 cell_height
 geometry_msgs/Point[] cells
 }</pre>
 */
-public class GridCells implements ROS2Message<GridCells>
+public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::GridCells_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of nav_msgs/msg/GridCells, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_bb99c2f5d0a04750745a81ec6a8147aa373cce5bd17c8cd6507f2413354a6933";
 
    private final std_msgs.Header header_;
    /**
@@ -63,8 +68,8 @@ public class GridCells implements ROS2Message<GridCells>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // cell_width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // cell_height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // cell_width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // cell_height_
       currentAlignment += cells_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -93,10 +98,15 @@ public class GridCells implements ROS2Message<GridCells>
    @Override
    public void set(GridCells from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       cell_width_ = from.cell_width_;
       cell_height_ = from.cell_height_;
-      cells_.set(from.cells_);
+      cells_.set(from.cells_, geometry_msgs.Point::set); // copies the elements, never shares them
 
    }
 
@@ -131,21 +141,28 @@ public class GridCells implements ROS2Message<GridCells>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"GridCells {", "header_=", "cell_width_=", "cell_height_=", "cells_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("GridCells {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("cell_width_=");
+      builder.append(toStringLabels[2]);
       builder.append(cell_width_);
-      builder.append("cell_height_=");
+      builder.append(toStringLabels[3]);
       builder.append(cell_height_);
-      builder.append("cells_=");
+      builder.append(toStringLabels[4]);
       builder.append(cells_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -16,7 +16,7 @@ limitations under the License.
 Template for generating ROS2Message types
 
 Template inputs:
-   context: us.ihmc.jros2.generator.context.MsgContext
+   context: us.ihmc.jros2.parser.MsgContext
 
 Template syntax: https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
 !>
@@ -31,43 +31,69 @@ import us.ihmc.fastddsjava.cdr.idl.*;
 import us.ihmc.jros2.ROS2Message;
 
 /**
-<if(context.headerComment)><context.headerComment><endif>
+<if(context.headerComment)><context.headerComment; format="javaComment"><endif>
 \<p>Source (<context.packageName>/<context.resourceName>):
 \<pre>{@code
-<context.schema>}\</pre>
+<context.schema; format="javaComment">}\</pre>
 */
-public class <context.javaClassName> implements ROS2Message\<<context.javaClassName>>
+public class <context.javaClassName> implements ROS2Message\<<context.javaClassName>><if(context.withHeader)>, ROS2Message.WithHeader<endif>
 {
    public static final java.lang.String name = "<context.DDSName>";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of <context.rosTypeName>, computed from the definition above<if(!context.typeHash)> (null: a referenced type could not be resolved when this class was generated)<endif>.
+    */
+   public static final java.lang.String typeHash = <if(context.typeHash)>"<context.typeHash>"<else>null<endif>;
+
    <context.fieldList:{ field |
 <if(field.headerComment)>/**
-   <field.headerComment>
+   <field.headerComment; format="javaComment">
 */
 <endif>
-<if(field.builtinStringType&&field.stringMaxLength)>
-// Note: The length of <if(field.array)>each string in this sequence<else>this string<endif> should not exceed <field.stringLength> characters.
-// This is not strictly enforced in Java / jros2.
+<if(field.builtinStringType&&field.stringMaxLength&&!field.constantValue)>
+// Note: <if(field.array)>each string in this array<else>this string<endif> is declared with an upper bound of <field.stringLength> characters.
+// Like rmw (rclcpp / rclpy), jros2 does not enforce string bounds when publishing or receiving.
 <endif>
-<if(field.constantValue)>public static final<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif><endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName><if(field.constantValue)> = <field.constantValue><endif>;<if(field.trailingComment)> // <field.trailingComment><endif>
+<if(field.upperBounded)>
+// Bounded sequence: at most <field.length> elements. Adding more, or publishing more, throws IllegalArgumentException.
+<endif>
+<if(field.constantValue)>public static final <field.javaType> <field.javaName> = <field.constantValueJava>;<else>private<if((!field.builtinType||field.builtinStringType)||field.array)> final<endif> <field.javaType><if(field.array&&field.fixedSize)>[]<endif> <field.javaName>;<endif><if(field.trailingComment)> // <field.trailingComment; format="javaComment"><endif>
    }>
    public <context.javaClassName>()
    {
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.array)>
-<field.javaName> = new <field.javaType><if(field.fixedSize)>[<if(!field.defaultValueArray)><field.length><endif>]<if(field.defaultValueArray)> {<field.defaultValueArrayValues; wrap, anchor, separator=", ">\}<endif><else>(<if(field.upperBounded)><if(field.builtinStringType)><if(field.stringMaxLength)>0, <field.length>, <field.stringLength><else>0<endif><else>0, <field.length><endif><endif><if(field.objectSequence)><if(field.upperBounded)>, <endif><field.objectSequenceTypeClass><endif>)<endif>;
-      <if(field.fixedSize&&(!field.builtinType||field.builtinStringType))>
+      <if(field.fixedSize)>
+      <if(field.builtinType&&!field.builtinStringType)>
+<field.javaName> = new <field.javaType>[<if(!field.defaultValueJavaElements)><field.length><endif>]<if(field.defaultValueJavaElements)> {<field.defaultValueJavaElements; wrap, anchor, separator=", ">\}<endif>;
+      <else>
+<field.javaName> = new <field.javaType>[<field.length>];
 // <field.name> is defined as a fixed-size array, so it is pre-allocated.
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   <field.javaName>[i] = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif><if(field.builtinStringType&&field.stringMaxLength)><field.stringLength><endif>);
+   <if(field.builtinStringType)>
+   <field.javaName>[i] = CDRBuffer.newStringBuilder(<if(field.stringMaxLength)><field.stringLength><else>16<endif>);
+   <else>
+   <field.javaName>[i] = new <field.javaType>();
+   <endif>
 \}
+<field.defaultValueJavaElements:{ value |
+<field.javaName>[<i0>].append(<value>);
+}>
       <endif>
-      <elseif(!field.builtinType||field.builtinStringType)><! If not a builtin type excluding string, wstring !>
-<field.javaName> = new <field.javaType>(<if(field.builtinStringType&&field.defaultValue)><field.defaultValue><endif><if(field.builtinStringType&&field.stringMaxLength)><field.stringLength><endif>);
-      <elseif(field.builtinType&&!field.builtinStringType&&field.defaultValue)><! Handle default value assignments for builtin types other than string, wstring !>
-<field.javaName> = (<field.javaType>) <field.defaultValue>;
+      <else>
+<field.javaName> = new <field.javaType>(<if(field.objectSequence)><if(field.upperBounded)>0, <field.length>, <endif><field.objectSequenceTypeClass><elseif(field.builtinStringType&&field.stringMaxLength)>0, <if(field.upperBounded)><field.length><else>IDLSequence.UNBOUNDED_MAX_SIZE<endif>, <field.stringLength><elseif(field.upperBounded)>0, <field.length><endif>);
+<if(field.defaultValueJavaElements)>
+<field.javaName>.addAll(new <field.sequenceDefaultValueJavaElementType>[] {<field.defaultValueJavaElements; wrap, anchor, separator=", ">\});
+<endif>
+      <endif>
+      <elseif(field.builtinStringType)><! string, wstring: see CDRBuffer.newStringBuilder !>
+<field.javaName> = CDRBuffer.newStringBuilder(<if(field.defaultValueJava)><field.defaultValueJava><elseif(field.stringMaxLength)><field.stringLength><else>16<endif>);
+      <elseif(!field.builtinType)><! nested message !>
+<field.javaName> = new <field.javaType>();
+      <elseif(field.defaultValueJava)><! Handle default value assignments for builtin types other than string, wstring !>
+<field.javaName> = <field.defaultValueJava>;
       <endif>
       <endif>
       }>
@@ -84,22 +110,25 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    {
       int initialAlignment = currentAlignment;
 
+      <if(context.emptyStructure)>
+      currentAlignment += 1; // uint8 structure_needs_at_least_one_member
+      <endif>
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
       <if(field.array&&field.fixedSize&&field.builtinStringType)>
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.builtinTypeSize> * <field.javaName>[i].length())<if(!field.builtinWStringType)> + 1<endif>; // <field.javaName>[i]
+   currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + <if(field.builtinWStringType)>(4 * <field.javaName>[i].length())<else>CDRBuffer.utf8Length(<field.javaName>[i]) + 1<endif>; // <field.javaName>[i]
 \}
       <elseif(field.array&&field.fixedSize)>
-currentAlignment += (<field.length> * <field.builtinTypeSize>) + CDRBuffer.alignment(currentAlignment, (<field.length> * <field.builtinTypeSize>)); // <field.javaName>
+currentAlignment += CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>) + (<field.length> * <field.builtinTypeSize>); // <field.javaName>
       <elseif(field.array&&!field.fixedSize)>
 currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
       <elseif(!field.array&&field.builtinStringType)>
-currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (<field.builtinTypeSize> * <field.javaName>.length())<if(!field.builtinWStringType)> + 1<endif>; // <field.javaName>
+currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + <if(field.builtinWStringType)>(4 * <field.javaName>.length())<else>CDRBuffer.utf8Length(<field.javaName>) + 1<endif>; // <field.javaName>
       <elseif(!field.array)>
-currentAlignment += <field.builtinTypeSize> + CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>); // <field.javaName>
+currentAlignment += CDRBuffer.alignment(currentAlignment, <field.builtinTypeSize>) + <field.builtinTypeSize>; // <field.javaName>
       <endif>
       <else>
       <if(field.array&&field.fixedSize)>
@@ -119,15 +148,19 @@ currentAlignment += <field.javaName>.calculateSizeBytes(currentAlignment);
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      <if(context.emptyStructure)>
+      buffer.writeStructureDummyMember();
+      <endif>
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
-      <if(field.array&&field.fixedSize)>
-<! TODO: direct array to buffer copy instead of iterating !>
+      <if(field.array&&field.fixedSize&&field.builtinStringType)>
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
    buffer.<field.builtinCDRBufferWriteMethod>(<field.javaName>[i]);
 \}
+      <elseif(field.array&&field.fixedSize)>
+buffer.<field.builtinCDRBufferWriteArrayMethod>(<field.javaName>);
       <elseif(field.array&&!field.fixedSize)>
 <field.javaName>.serialize(buffer);
       <elseif(!field.array)>
@@ -150,19 +183,19 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      <if(context.emptyStructure)>
+      buffer.readStructureDummyMember();
+      <endif>
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
-      <if(field.array&&field.fixedSize)>
-<! TODO: direct buffer to array copy instead of iterating !>
+      <if(field.array&&field.fixedSize&&field.builtinStringType)>
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-      <if(field.builtinStringType)>
    buffer.<field.builtinCDRBufferReadMethod>(<field.javaName>[i]);
-      <else>
-   <field.javaName>[i] = buffer.<field.builtinCDRBufferReadMethod>();
-      <endif>
 \}
+      <elseif(field.array&&field.fixedSize)>
+buffer.<field.builtinCDRBufferReadArrayMethod>(<field.javaName>);
       <elseif(field.array&&!field.fixedSize)>
 <field.javaName>.deserialize(buffer);
       <elseif(!field.array)>
@@ -189,20 +222,27 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
    @Override
    public void set(<context.javaClassName> from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       <context.fieldList:{ field |
       <if(!field.constantValue)>
       <if(field.builtinType)>
-      <if(field.array&&field.fixedSize)>
-<! TODO: Use more efficient array copy !>
+      <if(field.array&&field.fixedSize&&field.builtinStringType)>
 for (int i = 0; i \< <field.javaName>.length; ++i)
 {
-   <field.javaName>[i] = from.<field.javaName>[i];
+   <field.javaName>[i].setLength(0);
+   <field.javaName>[i].append(from.<field.javaName>[i]);
 \}
+      <elseif(field.array&&field.fixedSize)>
+System.arraycopy(from.<field.javaName>, 0, <field.javaName>, 0, <field.javaName>.length);
       <elseif(field.sequence)>
 <field.javaName>.set(from.<field.javaName>);
       <elseif(!field.array&&field.builtinStringType)>
-<field.javaName>.delete(0, <field.javaName>.length());
-<field.javaName>.insert(0, from.<field.javaName>);
+<field.javaName>.setLength(0);
+<field.javaName>.append(from.<field.javaName>);
       <elseif(!field.array)>
 <field.javaName> = from.<field.javaName>;
       <endif>
@@ -212,6 +252,8 @@ for (int i = 0; i \< <field.javaName>.length; ++i)
 {
    <field.javaName>[i].set(from.<field.javaName>[i]);
 \}
+      <elseif(field.objectSequence)>
+<field.javaName>.set(from.<field.javaName>, <field.objectSequenceElementType>::set); // copies the elements, never shares them
       <else>
 <field.javaName>.set(from.<field.javaName>);
       <endif>
@@ -235,26 +277,53 @@ public void <field.javaSetterMethodName>(<field.javaType> <field.javaName>)
 \}
 
 <elseif(field.builtinType&&field.builtinStringType&&!field.array)>
+/**
+ * Returns a new {@link java.lang.String\} with the content of <field.name> (allocates). {@link #<field.javaGetterMethodName>()\} gives
+ * allocation-free access to the {@link java.lang.StringBuilder\} itself.
+ */
 public java.lang.String <field.javaGetterMethodName>AsString()
 {
    return <field.javaName>.toString();
 \}
 
+/**
+ * Replaces the content of <field.name> with {@code s\}. Allocation-free while {@code s\} fits in the capacity of the field.
+ */
 public void <field.javaSetterMethodName>(java.lang.String s)
 {
-   this.<field.javaName>.delete(0, this.<field.javaName>.length());
-   this.<field.javaName>.insert(0, s);
+   this.<field.javaName>.setLength(0);
+   this.<field.javaName>.append(s);
+\}
+
+/**
+ * Replaces the content of <field.name> with {@code s\}, for example a reused {@link java.lang.StringBuilder\}. Allocation-free while
+ * {@code s\} fits in the capacity of the field.
+ */
+public void <field.javaSetterMethodName>(java.lang.CharSequence s)
+{
+   if (s != this.<field.javaName>)
+   {
+      this.<field.javaName>.setLength(0);
+      this.<field.javaName>.append(s);
+   \}
 \}
 <endif>
 <endif>
    }>
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"<context.javaClassName> {"<context.fieldList:{ field |, "<field.javaName>="}>};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("<context.javaClassName> {");
+      builder.append(toStringLabels[0]);
 <context.fieldList:{ field |
-      builder.append("<field.javaName>=");
+      builder.append(toStringLabels[<i>]);
 <if(field.constantValue)>
       builder.append(<field.javaName>);
 <elseif(field.array&&field.fixedSize)>
@@ -269,7 +338,7 @@ public void <field.javaSetterMethodName>(java.lang.String s)
       builder.append(<field.javaName>);
 <endif>
 }>
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    \}
 }

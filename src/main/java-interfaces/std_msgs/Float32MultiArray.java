@@ -29,6 +29,11 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Float32MultiArray_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Float32MultiArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_0599f6f85b4bfca379873a0b4375a0aca022156bd2d7021275d116ed1fa8bfe0";
+
    private final std_msgs.MultiArrayLayout layout_; // specification of data layout
    private final IDLFloatSequence data_; // array of data
 
@@ -75,6 +80,11 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
    @Override
    public void set(Float32MultiArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       layout_.set(from.layout_);
       data_.set(from.data_);
 
@@ -91,17 +101,24 @@ public class Float32MultiArray implements ROS2Message<Float32MultiArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Float32MultiArray {", "layout_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Float32MultiArray {");
-      builder.append("layout_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(layout_);
-      builder.append("data_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

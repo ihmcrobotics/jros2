@@ -18,9 +18,14 @@ std_msgs/Header header
 Inertia inertia
 }</pre>
 */
-public class InertiaStamped implements ROS2Message<InertiaStamped>
+public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::InertiaStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/InertiaStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_766be45976252babf7f9d8ac4ae7c912a7ceccf71035622529f27518b695aa09";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Inertia inertia_;
@@ -68,6 +73,11 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    @Override
    public void set(InertiaStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       inertia_.set(from.inertia_);
 
@@ -84,17 +94,24 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InertiaStamped {", "header_=", "inertia_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InertiaStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("inertia_=");
+      builder.append(toStringLabels[2]);
       builder.append(inertia_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -98,9 +98,14 @@ MeshFile mesh_file
 bool mesh_use_embedded_materials
 }</pre>
 */
-public class Marker implements ROS2Message<Marker>
+public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::Marker_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/Marker, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_45b13ccf791f225962bf74e746f9644518855d783a6f42ba0cc14fde2b4f3ce0";
 
    public static final int ARROW = 0;
    public static final int CUBE = 1;
@@ -208,21 +213,19 @@ public class Marker implements ROS2Message<Marker>
    public Marker()
    {
       header_ = new std_msgs.Header();
-      ns_ = new StringBuilder();
+      ns_ = CDRBuffer.newStringBuilder(16);
       pose_ = new geometry_msgs.Pose();
       scale_ = new geometry_msgs.Vector3();
       color_ = new std_msgs.ColorRGBA();
       lifetime_ = new builtin_interfaces.Duration();
-      frame_locked_ = (boolean) false;
       points_ = new IDLObjectSequence<geometry_msgs.Point>(geometry_msgs.Point.class);
       colors_ = new IDLObjectSequence<std_msgs.ColorRGBA>(std_msgs.ColorRGBA.class);
-      texture_resource_ = new StringBuilder();
+      texture_resource_ = CDRBuffer.newStringBuilder(16);
       texture_ = new sensor_msgs.CompressedImage();
       uv_coordinates_ = new IDLObjectSequence<visualization_msgs.UVCoordinate>(visualization_msgs.UVCoordinate.class);
-      text_ = new StringBuilder();
-      mesh_resource_ = new StringBuilder();
+      text_ = CDRBuffer.newStringBuilder(16);
+      mesh_resource_ = CDRBuffer.newStringBuilder(16);
       mesh_file_ = new visualization_msgs.MeshFile();
-      mesh_use_embedded_materials_ = (boolean) false;
 
    }
 
@@ -238,24 +241,24 @@ public class Marker implements ROS2Message<Marker>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * ns_.length()) + 1; // ns_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(ns_) + 1; // ns_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // action_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += scale_.calculateSizeBytes(currentAlignment);
       currentAlignment += color_.calculateSizeBytes(currentAlignment);
       currentAlignment += lifetime_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // frame_locked_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // frame_locked_
       currentAlignment += points_.calculateSizeBytes(currentAlignment);
       currentAlignment += colors_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * texture_resource_.length()) + 1; // texture_resource_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(texture_resource_) + 1; // texture_resource_
       currentAlignment += texture_.calculateSizeBytes(currentAlignment);
       currentAlignment += uv_coordinates_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * text_.length()) + 1; // text_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * mesh_resource_.length()) + 1; // mesh_resource_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(text_) + 1; // text_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(mesh_resource_) + 1; // mesh_resource_
       currentAlignment += mesh_file_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mesh_use_embedded_materials_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // mesh_use_embedded_materials_
 
       return currentAlignment - initialAlignment;
    }
@@ -313,9 +316,14 @@ public class Marker implements ROS2Message<Marker>
    @Override
    public void set(Marker from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      ns_.delete(0, ns_.length());
-      ns_.insert(0, from.ns_);
+      ns_.setLength(0);
+      ns_.append(from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
@@ -324,16 +332,16 @@ public class Marker implements ROS2Message<Marker>
       color_.set(from.color_);
       lifetime_.set(from.lifetime_);
       frame_locked_ = from.frame_locked_;
-      points_.set(from.points_);
-      colors_.set(from.colors_);
-      texture_resource_.delete(0, texture_resource_.length());
-      texture_resource_.insert(0, from.texture_resource_);
+      points_.set(from.points_, geometry_msgs.Point::set); // copies the elements, never shares them
+      colors_.set(from.colors_, std_msgs.ColorRGBA::set); // copies the elements, never shares them
+      texture_resource_.setLength(0);
+      texture_resource_.append(from.texture_resource_);
       texture_.set(from.texture_);
-      uv_coordinates_.set(from.uv_coordinates_);
-      text_.delete(0, text_.length());
-      text_.insert(0, from.text_);
-      mesh_resource_.delete(0, mesh_resource_.length());
-      mesh_resource_.insert(0, from.mesh_resource_);
+      uv_coordinates_.set(from.uv_coordinates_, visualization_msgs.UVCoordinate::set); // copies the elements, never shares them
+      text_.setLength(0);
+      text_.append(from.text_);
+      mesh_resource_.setLength(0);
+      mesh_resource_.append(from.mesh_resource_);
       mesh_file_.set(from.mesh_file_);
       mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
 
@@ -349,15 +357,35 @@ public class Marker implements ROS2Message<Marker>
       return ns_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of ns (allocates). {@link #getNs()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNsAsString()
    {
       return ns_.toString();
    }
 
+   /**
+    * Replaces the content of ns with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setNs(java.lang.String s)
    {
-      this.ns_.delete(0, this.ns_.length());
-      this.ns_.insert(0, s);
+      this.ns_.setLength(0);
+      this.ns_.append(s);
+   }
+
+   /**
+    * Replaces the content of ns with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setNs(java.lang.CharSequence s)
+   {
+      if (s != this.ns_)
+      {
+         this.ns_.setLength(0);
+         this.ns_.append(s);
+      }
    }
    public int getId()
    {
@@ -434,15 +462,35 @@ public class Marker implements ROS2Message<Marker>
       return texture_resource_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of texture_resource (allocates). {@link #getTextureResource()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getTextureResourceAsString()
    {
       return texture_resource_.toString();
    }
 
+   /**
+    * Replaces the content of texture_resource with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setTextureResource(java.lang.String s)
    {
-      this.texture_resource_.delete(0, this.texture_resource_.length());
-      this.texture_resource_.insert(0, s);
+      this.texture_resource_.setLength(0);
+      this.texture_resource_.append(s);
+   }
+
+   /**
+    * Replaces the content of texture_resource with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setTextureResource(java.lang.CharSequence s)
+   {
+      if (s != this.texture_resource_)
+      {
+         this.texture_resource_.setLength(0);
+         this.texture_resource_.append(s);
+      }
    }
    public sensor_msgs.CompressedImage getTexture()
    {
@@ -459,30 +507,70 @@ public class Marker implements ROS2Message<Marker>
       return text_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of text (allocates). {@link #getText()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getTextAsString()
    {
       return text_.toString();
    }
 
+   /**
+    * Replaces the content of text with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setText(java.lang.String s)
    {
-      this.text_.delete(0, this.text_.length());
-      this.text_.insert(0, s);
+      this.text_.setLength(0);
+      this.text_.append(s);
+   }
+
+   /**
+    * Replaces the content of text with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setText(java.lang.CharSequence s)
+   {
+      if (s != this.text_)
+      {
+         this.text_.setLength(0);
+         this.text_.append(s);
+      }
    }
    public StringBuilder getMeshResource()
    {
       return mesh_resource_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of mesh_resource (allocates). {@link #getMeshResource()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMeshResourceAsString()
    {
       return mesh_resource_.toString();
    }
 
+   /**
+    * Replaces the content of mesh_resource with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMeshResource(java.lang.String s)
    {
-      this.mesh_resource_.delete(0, this.mesh_resource_.length());
-      this.mesh_resource_.insert(0, s);
+      this.mesh_resource_.setLength(0);
+      this.mesh_resource_.append(s);
+   }
+
+   /**
+    * Replaces the content of mesh_resource with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMeshResource(java.lang.CharSequence s)
+   {
+      if (s != this.mesh_resource_)
+      {
+         this.mesh_resource_.setLength(0);
+         this.mesh_resource_.append(s);
+      }
    }
    public visualization_msgs.MeshFile getMeshFile()
    {
@@ -500,83 +588,90 @@ public class Marker implements ROS2Message<Marker>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Marker {", "ARROW=", "CUBE=", "SPHERE=", "CYLINDER=", "LINE_STRIP=", "LINE_LIST=", "CUBE_LIST=", "SPHERE_LIST=", "POINTS=", "TEXT_VIEW_FACING=", "MESH_RESOURCE=", "TRIANGLE_LIST=", "ADD=", "MODIFY=", "DELETE=", "DELETEALL=", "header_=", "ns_=", "id_=", "type_=", "action_=", "pose_=", "scale_=", "color_=", "lifetime_=", "frame_locked_=", "points_=", "colors_=", "texture_resource_=", "texture_=", "uv_coordinates_=", "text_=", "mesh_resource_=", "mesh_file_=", "mesh_use_embedded_materials_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Marker {");
-      builder.append("ARROW=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(ARROW);
-      builder.append("CUBE=");
+      builder.append(toStringLabels[2]);
       builder.append(CUBE);
-      builder.append("SPHERE=");
+      builder.append(toStringLabels[3]);
       builder.append(SPHERE);
-      builder.append("CYLINDER=");
+      builder.append(toStringLabels[4]);
       builder.append(CYLINDER);
-      builder.append("LINE_STRIP=");
+      builder.append(toStringLabels[5]);
       builder.append(LINE_STRIP);
-      builder.append("LINE_LIST=");
+      builder.append(toStringLabels[6]);
       builder.append(LINE_LIST);
-      builder.append("CUBE_LIST=");
+      builder.append(toStringLabels[7]);
       builder.append(CUBE_LIST);
-      builder.append("SPHERE_LIST=");
+      builder.append(toStringLabels[8]);
       builder.append(SPHERE_LIST);
-      builder.append("POINTS=");
+      builder.append(toStringLabels[9]);
       builder.append(POINTS);
-      builder.append("TEXT_VIEW_FACING=");
+      builder.append(toStringLabels[10]);
       builder.append(TEXT_VIEW_FACING);
-      builder.append("MESH_RESOURCE=");
+      builder.append(toStringLabels[11]);
       builder.append(MESH_RESOURCE);
-      builder.append("TRIANGLE_LIST=");
+      builder.append(toStringLabels[12]);
       builder.append(TRIANGLE_LIST);
-      builder.append("ADD=");
+      builder.append(toStringLabels[13]);
       builder.append(ADD);
-      builder.append("MODIFY=");
+      builder.append(toStringLabels[14]);
       builder.append(MODIFY);
-      builder.append("DELETE=");
+      builder.append(toStringLabels[15]);
       builder.append(DELETE);
-      builder.append("DELETEALL=");
+      builder.append(toStringLabels[16]);
       builder.append(DELETEALL);
-      builder.append("header_=");
+      builder.append(toStringLabels[17]);
       builder.append(header_);
-      builder.append("ns_=");
+      builder.append(toStringLabels[18]);
       builder.append(ns_.toString());
-      builder.append("id_=");
+      builder.append(toStringLabels[19]);
       builder.append(id_);
-      builder.append("type_=");
+      builder.append(toStringLabels[20]);
       builder.append(type_);
-      builder.append("action_=");
+      builder.append(toStringLabels[21]);
       builder.append(action_);
-      builder.append("pose_=");
+      builder.append(toStringLabels[22]);
       builder.append(pose_);
-      builder.append("scale_=");
+      builder.append(toStringLabels[23]);
       builder.append(scale_);
-      builder.append("color_=");
+      builder.append(toStringLabels[24]);
       builder.append(color_);
-      builder.append("lifetime_=");
+      builder.append(toStringLabels[25]);
       builder.append(lifetime_);
-      builder.append("frame_locked_=");
+      builder.append(toStringLabels[26]);
       builder.append(frame_locked_);
-      builder.append("points_=");
+      builder.append(toStringLabels[27]);
       builder.append(points_);
-      builder.append("colors_=");
+      builder.append(toStringLabels[28]);
       builder.append(colors_);
-      builder.append("texture_resource_=");
+      builder.append(toStringLabels[29]);
       builder.append(texture_resource_.toString());
-      builder.append("texture_=");
+      builder.append(toStringLabels[30]);
       builder.append(texture_);
-      builder.append("uv_coordinates_=");
+      builder.append(toStringLabels[31]);
       builder.append(uv_coordinates_);
-      builder.append("text_=");
+      builder.append(toStringLabels[32]);
       builder.append(text_.toString());
-      builder.append("mesh_resource_=");
+      builder.append(toStringLabels[33]);
       builder.append(mesh_resource_.toString());
-      builder.append("mesh_file_=");
+      builder.append(toStringLabels[34]);
       builder.append(mesh_file_);
-      builder.append("mesh_use_embedded_materials_=");
+      builder.append(toStringLabels[35]);
       builder.append(mesh_use_embedded_materials_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -115,86 +115,91 @@ public class Transition implements ROS2Message<Transition>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::Transition_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of lifecycle_msgs/msg/Transition, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_c65d7b31ea134cba4f54fc867b817979be799f7452035cd35fac9b7421fb3424";
+
+   /**
       This transition will instantiate the node, but will not run any code beyond
       the constructor.
    */
-   public static final byte TRANSITION_CREATE = 0;
+   public static final byte TRANSITION_CREATE = (byte) 0;
    /**
       The node's onConfigure callback will be called to allow the node to load its
       configuration and conduct any required setup.
    */
-   public static final byte TRANSITION_CONFIGURE = 1;
+   public static final byte TRANSITION_CONFIGURE = (byte) 1;
    /**
       The node's callback onCleanup will be called in this transition to allow the
       node to load its configuration and conduct any required setup.
    */
-   public static final byte TRANSITION_CLEANUP = 2;
+   public static final byte TRANSITION_CLEANUP = (byte) 2;
    /**
       The node's callback onActivate will be executed to do any final preparations
       to start executing.
    */
-   public static final byte TRANSITION_ACTIVATE = 3;
+   public static final byte TRANSITION_ACTIVATE = (byte) 3;
    /**
       The node's callback onDeactivate will be executed to do any cleanup to start
       executing, and reverse the onActivate changes.
    */
-   public static final byte TRANSITION_DEACTIVATE = 4;
+   public static final byte TRANSITION_DEACTIVATE = (byte) 4;
    /**
       This signals shutdown during an unconfigured state, the node's callback
       onShutdown will be executed to do any cleanup necessary before destruction.
    */
-   public static final byte TRANSITION_UNCONFIGURED_SHUTDOWN = 5;
+   public static final byte TRANSITION_UNCONFIGURED_SHUTDOWN = (byte) 5;
    /**
       This signals shutdown during an inactive state, the node's callback onShutdown
       will be executed to do any cleanup necessary before destruction.
    */
-   public static final byte TRANSITION_INACTIVE_SHUTDOWN = 6;
+   public static final byte TRANSITION_INACTIVE_SHUTDOWN = (byte) 6;
    /**
       This signals shutdown during an active state, the node's callback onShutdown
       will be executed to do any cleanup necessary before destruction.
    */
-   public static final byte TRANSITION_ACTIVE_SHUTDOWN = 7;
+   public static final byte TRANSITION_ACTIVE_SHUTDOWN = (byte) 7;
    /**
       This transition will simply cause the deallocation of the node.
    */
-   public static final byte TRANSITION_DESTROY = 8;
+   public static final byte TRANSITION_DESTROY = (byte) 8;
    /**
       Reserved [10-69], private transitions
       These transitions are not publicly available and cannot be invoked by a user.
       The following transitions are implicitly invoked based on the callback
       feedback of the intermediate transition states.
    */
-   public static final byte TRANSITION_ON_CONFIGURE_SUCCESS = 10;
-   public static final byte TRANSITION_ON_CONFIGURE_FAILURE = 11;
-   public static final byte TRANSITION_ON_CONFIGURE_ERROR = 12;
-   public static final byte TRANSITION_ON_CLEANUP_SUCCESS = 20;
-   public static final byte TRANSITION_ON_CLEANUP_FAILURE = 21;
-   public static final byte TRANSITION_ON_CLEANUP_ERROR = 22;
-   public static final byte TRANSITION_ON_ACTIVATE_SUCCESS = 30;
-   public static final byte TRANSITION_ON_ACTIVATE_FAILURE = 31;
-   public static final byte TRANSITION_ON_ACTIVATE_ERROR = 32;
-   public static final byte TRANSITION_ON_DEACTIVATE_SUCCESS = 40;
-   public static final byte TRANSITION_ON_DEACTIVATE_FAILURE = 41;
-   public static final byte TRANSITION_ON_DEACTIVATE_ERROR = 42;
-   public static final byte TRANSITION_ON_SHUTDOWN_SUCCESS = 50;
-   public static final byte TRANSITION_ON_SHUTDOWN_FAILURE = 51;
-   public static final byte TRANSITION_ON_SHUTDOWN_ERROR = 52;
-   public static final byte TRANSITION_ON_ERROR_SUCCESS = 60;
-   public static final byte TRANSITION_ON_ERROR_FAILURE = 61;
-   public static final byte TRANSITION_ON_ERROR_ERROR = 62;
+   public static final byte TRANSITION_ON_CONFIGURE_SUCCESS = (byte) 10;
+   public static final byte TRANSITION_ON_CONFIGURE_FAILURE = (byte) 11;
+   public static final byte TRANSITION_ON_CONFIGURE_ERROR = (byte) 12;
+   public static final byte TRANSITION_ON_CLEANUP_SUCCESS = (byte) 20;
+   public static final byte TRANSITION_ON_CLEANUP_FAILURE = (byte) 21;
+   public static final byte TRANSITION_ON_CLEANUP_ERROR = (byte) 22;
+   public static final byte TRANSITION_ON_ACTIVATE_SUCCESS = (byte) 30;
+   public static final byte TRANSITION_ON_ACTIVATE_FAILURE = (byte) 31;
+   public static final byte TRANSITION_ON_ACTIVATE_ERROR = (byte) 32;
+   public static final byte TRANSITION_ON_DEACTIVATE_SUCCESS = (byte) 40;
+   public static final byte TRANSITION_ON_DEACTIVATE_FAILURE = (byte) 41;
+   public static final byte TRANSITION_ON_DEACTIVATE_ERROR = (byte) 42;
+   public static final byte TRANSITION_ON_SHUTDOWN_SUCCESS = (byte) 50;
+   public static final byte TRANSITION_ON_SHUTDOWN_FAILURE = (byte) 51;
+   public static final byte TRANSITION_ON_SHUTDOWN_ERROR = (byte) 52;
+   public static final byte TRANSITION_ON_ERROR_SUCCESS = (byte) 60;
+   public static final byte TRANSITION_ON_ERROR_FAILURE = (byte) 61;
+   public static final byte TRANSITION_ON_ERROR_ERROR = (byte) 62;
    /**
       The transition callback successfully performed its required functionality.
    */
-   public static final byte TRANSITION_CALLBACK_SUCCESS = 97;
+   public static final byte TRANSITION_CALLBACK_SUCCESS = (byte) 97;
    /**
       The transition callback failed to perform its required functionality.
    */
-   public static final byte TRANSITION_CALLBACK_FAILURE = 98;
+   public static final byte TRANSITION_CALLBACK_FAILURE = (byte) 98;
    /**
       The transition callback encountered an error that requires special cleanup, if
       possible.
    */
-   public static final byte TRANSITION_CALLBACK_ERROR = 99;
+   public static final byte TRANSITION_CALLBACK_ERROR = (byte) 99;
    /**
       The transition id from above definitions.
    */
@@ -206,7 +211,7 @@ public class Transition implements ROS2Message<Transition>
 
    public Transition()
    {
-      label_ = new StringBuilder();
+      label_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -221,8 +226,8 @@ public class Transition implements ROS2Message<Transition>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * label_.length()) + 1; // label_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(label_) + 1; // label_
 
       return currentAlignment - initialAlignment;
    }
@@ -246,9 +251,14 @@ public class Transition implements ROS2Message<Transition>
    @Override
    public void set(Transition from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       id_ = from.id_;
-      label_.delete(0, label_.length());
-      label_.insert(0, from.label_);
+      label_.setLength(0);
+      label_.append(from.label_);
 
    }
 
@@ -267,88 +277,115 @@ public class Transition implements ROS2Message<Transition>
       return label_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of label (allocates). {@link #getLabel()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getLabelAsString()
    {
       return label_.toString();
    }
 
+   /**
+    * Replaces the content of label with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setLabel(java.lang.String s)
    {
-      this.label_.delete(0, this.label_.length());
-      this.label_.insert(0, s);
+      this.label_.setLength(0);
+      this.label_.append(s);
    }
+
+   /**
+    * Replaces the content of label with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setLabel(java.lang.CharSequence s)
+   {
+      if (s != this.label_)
+      {
+         this.label_.setLength(0);
+         this.label_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Transition {", "TRANSITION_CREATE=", "TRANSITION_CONFIGURE=", "TRANSITION_CLEANUP=", "TRANSITION_ACTIVATE=", "TRANSITION_DEACTIVATE=", "TRANSITION_UNCONFIGURED_SHUTDOWN=", "TRANSITION_INACTIVE_SHUTDOWN=", "TRANSITION_ACTIVE_SHUTDOWN=", "TRANSITION_DESTROY=", "TRANSITION_ON_CONFIGURE_SUCCESS=", "TRANSITION_ON_CONFIGURE_FAILURE=", "TRANSITION_ON_CONFIGURE_ERROR=", "TRANSITION_ON_CLEANUP_SUCCESS=", "TRANSITION_ON_CLEANUP_FAILURE=", "TRANSITION_ON_CLEANUP_ERROR=", "TRANSITION_ON_ACTIVATE_SUCCESS=", "TRANSITION_ON_ACTIVATE_FAILURE=", "TRANSITION_ON_ACTIVATE_ERROR=", "TRANSITION_ON_DEACTIVATE_SUCCESS=", "TRANSITION_ON_DEACTIVATE_FAILURE=", "TRANSITION_ON_DEACTIVATE_ERROR=", "TRANSITION_ON_SHUTDOWN_SUCCESS=", "TRANSITION_ON_SHUTDOWN_FAILURE=", "TRANSITION_ON_SHUTDOWN_ERROR=", "TRANSITION_ON_ERROR_SUCCESS=", "TRANSITION_ON_ERROR_FAILURE=", "TRANSITION_ON_ERROR_ERROR=", "TRANSITION_CALLBACK_SUCCESS=", "TRANSITION_CALLBACK_FAILURE=", "TRANSITION_CALLBACK_ERROR=", "id_=", "label_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Transition {");
-      builder.append("TRANSITION_CREATE=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(TRANSITION_CREATE);
-      builder.append("TRANSITION_CONFIGURE=");
+      builder.append(toStringLabels[2]);
       builder.append(TRANSITION_CONFIGURE);
-      builder.append("TRANSITION_CLEANUP=");
+      builder.append(toStringLabels[3]);
       builder.append(TRANSITION_CLEANUP);
-      builder.append("TRANSITION_ACTIVATE=");
+      builder.append(toStringLabels[4]);
       builder.append(TRANSITION_ACTIVATE);
-      builder.append("TRANSITION_DEACTIVATE=");
+      builder.append(toStringLabels[5]);
       builder.append(TRANSITION_DEACTIVATE);
-      builder.append("TRANSITION_UNCONFIGURED_SHUTDOWN=");
+      builder.append(toStringLabels[6]);
       builder.append(TRANSITION_UNCONFIGURED_SHUTDOWN);
-      builder.append("TRANSITION_INACTIVE_SHUTDOWN=");
+      builder.append(toStringLabels[7]);
       builder.append(TRANSITION_INACTIVE_SHUTDOWN);
-      builder.append("TRANSITION_ACTIVE_SHUTDOWN=");
+      builder.append(toStringLabels[8]);
       builder.append(TRANSITION_ACTIVE_SHUTDOWN);
-      builder.append("TRANSITION_DESTROY=");
+      builder.append(toStringLabels[9]);
       builder.append(TRANSITION_DESTROY);
-      builder.append("TRANSITION_ON_CONFIGURE_SUCCESS=");
+      builder.append(toStringLabels[10]);
       builder.append(TRANSITION_ON_CONFIGURE_SUCCESS);
-      builder.append("TRANSITION_ON_CONFIGURE_FAILURE=");
+      builder.append(toStringLabels[11]);
       builder.append(TRANSITION_ON_CONFIGURE_FAILURE);
-      builder.append("TRANSITION_ON_CONFIGURE_ERROR=");
+      builder.append(toStringLabels[12]);
       builder.append(TRANSITION_ON_CONFIGURE_ERROR);
-      builder.append("TRANSITION_ON_CLEANUP_SUCCESS=");
+      builder.append(toStringLabels[13]);
       builder.append(TRANSITION_ON_CLEANUP_SUCCESS);
-      builder.append("TRANSITION_ON_CLEANUP_FAILURE=");
+      builder.append(toStringLabels[14]);
       builder.append(TRANSITION_ON_CLEANUP_FAILURE);
-      builder.append("TRANSITION_ON_CLEANUP_ERROR=");
+      builder.append(toStringLabels[15]);
       builder.append(TRANSITION_ON_CLEANUP_ERROR);
-      builder.append("TRANSITION_ON_ACTIVATE_SUCCESS=");
+      builder.append(toStringLabels[16]);
       builder.append(TRANSITION_ON_ACTIVATE_SUCCESS);
-      builder.append("TRANSITION_ON_ACTIVATE_FAILURE=");
+      builder.append(toStringLabels[17]);
       builder.append(TRANSITION_ON_ACTIVATE_FAILURE);
-      builder.append("TRANSITION_ON_ACTIVATE_ERROR=");
+      builder.append(toStringLabels[18]);
       builder.append(TRANSITION_ON_ACTIVATE_ERROR);
-      builder.append("TRANSITION_ON_DEACTIVATE_SUCCESS=");
+      builder.append(toStringLabels[19]);
       builder.append(TRANSITION_ON_DEACTIVATE_SUCCESS);
-      builder.append("TRANSITION_ON_DEACTIVATE_FAILURE=");
+      builder.append(toStringLabels[20]);
       builder.append(TRANSITION_ON_DEACTIVATE_FAILURE);
-      builder.append("TRANSITION_ON_DEACTIVATE_ERROR=");
+      builder.append(toStringLabels[21]);
       builder.append(TRANSITION_ON_DEACTIVATE_ERROR);
-      builder.append("TRANSITION_ON_SHUTDOWN_SUCCESS=");
+      builder.append(toStringLabels[22]);
       builder.append(TRANSITION_ON_SHUTDOWN_SUCCESS);
-      builder.append("TRANSITION_ON_SHUTDOWN_FAILURE=");
+      builder.append(toStringLabels[23]);
       builder.append(TRANSITION_ON_SHUTDOWN_FAILURE);
-      builder.append("TRANSITION_ON_SHUTDOWN_ERROR=");
+      builder.append(toStringLabels[24]);
       builder.append(TRANSITION_ON_SHUTDOWN_ERROR);
-      builder.append("TRANSITION_ON_ERROR_SUCCESS=");
+      builder.append(toStringLabels[25]);
       builder.append(TRANSITION_ON_ERROR_SUCCESS);
-      builder.append("TRANSITION_ON_ERROR_FAILURE=");
+      builder.append(toStringLabels[26]);
       builder.append(TRANSITION_ON_ERROR_FAILURE);
-      builder.append("TRANSITION_ON_ERROR_ERROR=");
+      builder.append(toStringLabels[27]);
       builder.append(TRANSITION_ON_ERROR_ERROR);
-      builder.append("TRANSITION_CALLBACK_SUCCESS=");
+      builder.append(toStringLabels[28]);
       builder.append(TRANSITION_CALLBACK_SUCCESS);
-      builder.append("TRANSITION_CALLBACK_FAILURE=");
+      builder.append(toStringLabels[29]);
       builder.append(TRANSITION_CALLBACK_FAILURE);
-      builder.append("TRANSITION_CALLBACK_ERROR=");
+      builder.append(toStringLabels[30]);
       builder.append(TRANSITION_CALLBACK_ERROR);
-      builder.append("id_=");
+      builder.append(toStringLabels[31]);
       builder.append(id_);
-      builder.append("label_=");
+      builder.append(toStringLabels[32]);
       builder.append(label_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

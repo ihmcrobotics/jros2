@@ -1,0 +1,59 @@
+jros2: send buffers created outside the pool use the participant's network_buffers_config
+
+An RTPS message is gathered in a vector of network buffers (submessage headers, payloads, padding) that belongs to a
+send buffer (RTPSMessageGroup_t). The pooled send buffers are created with the participant's
+allocation.send_buffers.network_buffers_config, but the send buffers that RTPSMessageGroup creates for itself
+(internal_buffer, e.g. the persistent message group of the asynchronous flow controller thread that sends the fragments
+of large samples) and the ones SendBuffersManager adds when the pool may grow used a hard-coded initial capacity of 16
+entries. Their vectors therefore grew (operator new + free on the sending thread, e.g. dds.asyn.*) the first time a
+message needed more parts than before, at an unpredictable time in steady state. They now use the participant's
+configuration too, so a profile can preallocate enough entries (jros2 sets 80; a message is flushed at 62 entries).
+
+diff --git a/src/cpp/rtps/messages/RTPSMessageGroup.cpp b/src/cpp/rtps/messages/RTPSMessageGroup.cpp
+--- a/src/cpp/rtps/messages/RTPSMessageGroup.cpp
++++ b/src/cpp/rtps/messages/RTPSMessageGroup.cpp
+@@ -263,7 +263,8 @@
+ #if HAVE_SECURITY
+                     participant->is_secure(),
+ #endif // if HAVE_SECURITY
+-                    payload_size, guid_prefix
++                    payload_size, guid_prefix,
++                    participant->get_attributes().allocation.send_buffers.network_buffers_config
+                     ));
+     }
+ 
+diff --git a/src/cpp/rtps/messages/RTPSMessageGroup_t.hpp b/src/cpp/rtps/messages/RTPSMessageGroup_t.hpp
+--- a/src/cpp/rtps/messages/RTPSMessageGroup_t.hpp
++++ b/src/cpp/rtps/messages/RTPSMessageGroup_t.hpp
+@@ -44,14 +44,16 @@
+             bool has_security,
+ #endif // if HAVE_SECURITY
+             uint32_t payload,
+-            const GuidPrefix_t& participant_guid)
++            const GuidPrefix_t& participant_guid,
++            const ResourceLimitedContainerConfig& nb_config =
++            ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
+         : rtpsmsg_submessage_(0u)
+         , rtpsmsg_fullmsg_(0u)
+ #if HAVE_SECURITY
+         , rtpsmsg_encrypt_(0u)
+ #endif // if HAVE_SECURITY
+-        , buffers_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
+-        , payloads_(ResourceLimitedContainerConfig(16, std::numeric_limits<size_t>::max dummy_avoid_winmax (), 16))
++        , buffers_(nb_config)
++        , payloads_(nb_config)
+     {
+         rtpsmsg_fullmsg_.reserve(payload);
+         rtpsmsg_submessage_.reserve(payload);
+diff --git a/src/cpp/rtps/messages/SendBuffersManager.cpp b/src/cpp/rtps/messages/SendBuffersManager.cpp
+--- a/src/cpp/rtps/messages/SendBuffersManager.cpp
++++ b/src/cpp/rtps/messages/SendBuffersManager.cpp
+@@ -130,7 +130,7 @@
+ #if HAVE_SECURITY
+         participant->is_secure(),
+ #endif // if HAVE_SECURITY
+-        participant->getMaxMessageSize(), participant->getGuid().guidPrefix);
++        participant->getMaxMessageSize(), participant->getGuid().guidPrefix, network_buffers_config_);
+     pool_.emplace_back(new_item);
+     ++n_created_;
+ }

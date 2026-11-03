@@ -1,5 +1,8 @@
 package us.ihmc.fastddsjava.profiles;
 
+import us.ihmc.fastddsjava.fastddsjavaException;
+import us.ihmc.fastddsjava.profiles.gen.ThreadSettingsType;
+import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorListType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
@@ -79,6 +82,16 @@ public final class TransportDescriptorTypeTools
     * Track which transport IDs have been registered in XML profiles to avoid duplicates
     */
    private static final java.util.Set<String> registeredTransportIds = new java.util.HashSet<>();
+
+   /*
+    * Transport IDs that ensureRegistered() has loaded into Fast-DDS
+    */
+   private static final java.util.Set<String> loadedTransportIds = new java.util.HashSet<>();
+
+   /*
+    * Derived descriptors (deriveVariant) by base ID and settings
+    */
+   private static final Map<String, TransportDescriptorType> variantCache = new HashMap<>();
 
    /**
     * Create a UDPv4 transport descriptor.
@@ -216,12 +229,66 @@ public final class TransportDescriptorTypeTools
     * Configure transports based on custom transports and interface whitelist settings.
     * This method handles the logic for determining whether to use builtin transports, custom transports,
     * or create transports from an interface whitelist.
+    * <p>
+    * {@link TransportConfiguration#shouldAddToXml()} is true when at least one of the returned transports has not been
+    * returned for adding to an XML profile before (also after the interface whitelist changed). jros2 itself uses
+    * {@link #selectTransports} and {@link #ensureRegistered} instead, which register the descriptors with Fast-DDS before any
+    * participant profile references them.
     *
     * @param customTransports   optional custom transport descriptors (null/empty to auto-configure)
     * @param interfaceWhitelist optional interface whitelist (null/empty for no restrictions)
     * @return TransportConfiguration containing the transports to use and builtin transport flag
     */
    public static TransportConfiguration configureTransports(TransportDescriptorType[] customTransports, String[] interfaceWhitelist)
+   {
+      TransportDescriptorType[] transports = selectTransports(customTransports, interfaceWhitelist);
+      if (transports == null)
+      {
+         return new TransportConfiguration(null, true, false);
+      }
+
+      boolean shouldAddToXml = false;
+      synchronized (registeredTransportIds)
+      {
+         for (TransportDescriptorType transport : transports)
+         {
+            // Every transport must be checked (and recorded), not only the first: after a whitelist change the new
+            // UDP descriptor is unregistered while the shared SHM descriptor already is.
+            if (registeredTransportIds.add(transport.getTransportId()))
+            {
+               shouldAddToXml = true;
+            }
+         }
+      }
+      return new TransportConfiguration(transports, false, shouldAddToXml);
+   }
+
+   /**
+    * Selects the transports a participant uses.
+    * <ul>
+    *    <li>Custom transports: returned as given; the interface whitelist (if any) is applied to every non-SHM descriptor.</li>
+    *    <li>Interface whitelist only: a UDPv4 descriptor restricted to the whitelist (loopback is added automatically) and an
+    *    SHM descriptor.</li>
+    *    <li>Neither on Android: a single UDPv4 descriptor (SHM is unreliable on Android).</li>
+    *    <li>Neither elsewhere: null, meaning the Fast-DDS builtin transports (SHM and UDPv4).</li>
+    * </ul>
+    * Descriptors are cached, so the same configuration always yields the same transport IDs.
+    *
+    * @param customTransports   optional custom transport descriptors (null/empty to auto-configure)
+    * @param interfaceWhitelist optional interface whitelist (null/empty for no restrictions)
+    * @return the transports, or null to use the Fast-DDS builtin transports
+    */
+   public static TransportDescriptorType[] selectTransports(TransportDescriptorType[] customTransports, String[] interfaceWhitelist)
+   {
+      return selectTransports(customTransports, interfaceWhitelist, isAndroid());
+   }
+
+   /**
+    * Same as {@link #selectTransports(TransportDescriptorType[], String[])} with an explicit platform.
+    *
+    * @param android whether to apply the Android defaults (UDPv4 only) instead of the Fast-DDS builtin transports
+    */
+   public static TransportDescriptorType[] selectTransports(TransportDescriptorType[] customTransports, String[] interfaceWhitelist, boolean android)
    {
       // Expand and validate whitelist
       if (interfaceWhitelist != null && interfaceWhitelist.length > 0)
@@ -245,22 +312,7 @@ public final class TransportDescriptorTypeTools
                }
             }
          }
-
-         // Check if these transports need to be added to XML
-         boolean shouldAddToXml = false;
-         synchronized (registeredTransportIds)
-         {
-            for (TransportDescriptorType transport : customTransports)
-            {
-               if (!registeredTransportIds.contains(transport.getTransportId()))
-               {
-                  shouldAddToXml = true;
-                  registeredTransportIds.add(transport.getTransportId());
-               }
-            }
-         }
-
-         return new TransportConfiguration(customTransports, false, shouldAddToXml);
+         return customTransports.clone();
       }
 
       // Whitelist without custom transports - one UDPv4 with the whitelist, plus SHM
@@ -270,19 +322,166 @@ public final class TransportDescriptorTypeTools
       }
 
       // No custom transports or whitelist - use builtin (UDPv4 only on Android; SHM is unreliable there)
-      if (isAndroid())
+      if (android)
       {
-         TransportDescriptorType udp = createUDPv4Descriptor();
-         synchronized (registeredTransportIds)
-         {
-            boolean shouldAddToXml = registeredTransportIds.add(udp.getTransportId());
-            return new TransportConfiguration(new TransportDescriptorType[] {udp}, false, shouldAddToXml);
-         }
+         return new TransportDescriptorType[] {createUDPv4Descriptor()};
       }
-      return new TransportConfiguration(null, true, false);
+      return null;
    }
 
-   private static boolean isAndroid()
+   /**
+    * Makes sure Fast-DDS knows every given transport descriptor: descriptors that were not registered by this method before are
+    * loaded in their own {@code <transport_descriptors>} XML document, under a lock, before this method returns. A participant
+    * profile loaded afterwards can therefore reference them by ID, also when several participants are created concurrently.
+    * <p>
+    * Fast-DDS keeps transport descriptors in a global map keyed by ID (first registration wins), so a descriptor must not be
+    * changed after it was registered; use {@link #deriveVariant} to create a modified copy with a new ID.
+    *
+    * @param transports the descriptors a participant profile references
+    * @throws fastddsjavaException if Fast-DDS rejects the descriptors
+    */
+   public static void ensureRegistered(TransportDescriptorType... transports) throws fastddsjavaException
+   {
+      if (transports == null || transports.length == 0)
+      {
+         return;
+      }
+      synchronized (loadedTransportIds)
+      {
+         TransportDescriptorListType newTransports = new TransportDescriptorListType();
+         for (TransportDescriptorType transport : transports)
+         {
+            if (!loadedTransportIds.contains(transport.getTransportId()) && !newTransports.getTransportDescriptor().contains(transport))
+            {
+               newTransports.getTransportDescriptor().add(transport);
+            }
+         }
+         if (newTransports.getTransportDescriptor().isEmpty())
+         {
+            return;
+         }
+
+         ProfilesXML profilesXML = new ProfilesXML();
+         profilesXML.addTransportDescriptorsProfile(newTransports);
+         profilesXML.load();
+
+         for (TransportDescriptorType transport : newTransports.getTransportDescriptor())
+         {
+            loadedTransportIds.add(transport.getTransportId());
+         }
+      }
+   }
+
+   /**
+    * @param transportId a transport ID
+    * @return whether {@link #ensureRegistered} has registered a descriptor with this ID with Fast-DDS
+    */
+   public static boolean isRegistered(String transportId)
+   {
+      synchronized (loadedTransportIds)
+      {
+         return loadedTransportIds.contains(transportId);
+      }
+   }
+
+   /**
+    * Returns a copy of {@code base} with a new transport ID and the given settings, or {@code base} itself when no setting
+    * differs. Copies are cached per base ID and settings, so the same request returns the same descriptor (and ID).
+    * The base descriptor is never modified.
+    *
+    * @param base                    the descriptor to derive from
+    * @param maxInitialPeersRange    the {@code maxInitialPeersRange} of the copy, or null to keep the base value
+    * @param defaultReceptionThreads the {@code default_reception_threads} of the copy, or null to keep the base value
+    * @return {@code base} or a cached copy
+    */
+   public static TransportDescriptorType deriveVariant(TransportDescriptorType base, Long maxInitialPeersRange, ThreadSettingsType defaultReceptionThreads)
+   {
+      boolean changePeersRange = maxInitialPeersRange != null && !maxInitialPeersRange.equals(base.getMaxInitialPeersRange());
+      if (!changePeersRange && defaultReceptionThreads == null)
+      {
+         return base;
+      }
+
+      StringBuilder key = new StringBuilder(base.getTransportId());
+      key.append("|mipr=").append(changePeersRange ? maxInitialPeersRange : base.getMaxInitialPeersRange());
+      key.append("|thr=");
+      if (defaultReceptionThreads != null)
+      {
+         key.append(defaultReceptionThreads.getSchedulingPolicy()).append(',').append(defaultReceptionThreads.getPriority()).append(',');
+         key.append(defaultReceptionThreads.getAffinity()).append(',').append(defaultReceptionThreads.getStackSize());
+      }
+      String cacheKey = key.toString();
+
+      synchronized (variantCache)
+      {
+         TransportDescriptorType cached = variantCache.get(cacheKey);
+         if (cached != null)
+         {
+            return cached;
+         }
+
+         TransportDescriptorType variant = copyOf(base, base.getTransportId() + "_v" + transportIdCounter.getAndIncrement());
+         if (changePeersRange)
+         {
+            variant.setMaxInitialPeersRange(maxInitialPeersRange);
+         }
+         if (defaultReceptionThreads != null)
+         {
+            variant.setDefaultReceptionThreads(defaultReceptionThreads);
+         }
+         variantCache.put(cacheKey, variant);
+         return variant;
+      }
+   }
+
+   /**
+    * @param descriptor     the descriptor to copy
+    * @param newTransportId the transport ID of the copy
+    * @return a shallow copy of every field of {@code descriptor} with {@code newTransportId}
+    */
+   public static TransportDescriptorType copyOf(TransportDescriptorType descriptor, String newTransportId)
+   {
+      TransportDescriptorType copy = new TransportDescriptorType();
+      copy.setTransportId(newTransportId);
+      copy.setType(descriptor.getType());
+      copy.setSendBufferSize(descriptor.getSendBufferSize());
+      copy.setReceiveBufferSize(descriptor.getReceiveBufferSize());
+      copy.setMaxMessageSize(descriptor.getMaxMessageSize());
+      copy.setMaxInitialPeersRange(descriptor.getMaxInitialPeersRange());
+      copy.setInterfaceWhiteList(descriptor.getInterfaceWhiteList());
+      copy.setNetmaskFilter(descriptor.getNetmaskFilter());
+      copy.setInterfaces(descriptor.getInterfaces());
+      copy.setTTL(descriptor.getTTL());
+      copy.setNonBlockingSend(descriptor.isNonBlockingSend());
+      copy.setOutputPort(descriptor.getOutputPort());
+      copy.setWanAddr(descriptor.getWanAddr());
+      copy.setKeepAliveFrequencyMs(descriptor.getKeepAliveFrequencyMs());
+      copy.setKeepAliveTimeoutMs(descriptor.getKeepAliveTimeoutMs());
+      copy.setMaxLogicalPort(descriptor.getMaxLogicalPort());
+      copy.setLogicalPortRange(descriptor.getLogicalPortRange());
+      copy.setLogicalPortIncrement(descriptor.getLogicalPortIncrement());
+      copy.setListeningPorts(descriptor.getListeningPorts());
+      copy.setCalculateCrc(descriptor.isCalculateCrc());
+      copy.setCheckCrc(descriptor.isCheckCrc());
+      copy.setEnableTcpNodelay(descriptor.isEnableTcpNodelay());
+      copy.setTls(descriptor.getTls());
+      copy.setKeepAliveThread(descriptor.getKeepAliveThread());
+      copy.setAcceptThread(descriptor.getAcceptThread());
+      copy.setTcpNegotiationTimeout(descriptor.getTcpNegotiationTimeout());
+      copy.setSegmentSize(descriptor.getSegmentSize());
+      copy.setPortQueueCapacity(descriptor.getPortQueueCapacity());
+      copy.setHealthyCheckTimeoutMs(descriptor.getHealthyCheckTimeoutMs());
+      copy.setRtpsDumpFile(descriptor.getRtpsDumpFile());
+      copy.setDefaultReceptionThreads(descriptor.getDefaultReceptionThreads());
+      copy.setReceptionThreads(descriptor.getReceptionThreads());
+      copy.setDumpThread(descriptor.getDumpThread());
+      return copy;
+   }
+
+   /**
+    * @return whether the current JVM is Android's runtime
+    */
+   public static boolean isAndroid()
    {
       return System.getProperty("java.vendor", "").toLowerCase(Locale.ROOT).contains("android");
    }
@@ -290,34 +489,18 @@ public final class TransportDescriptorTypeTools
    /**
     * Create a UDPv4 transport with the given interface whitelist, plus SHM for local communication.
     */
-   private static TransportConfiguration createWhitelistedTransports(String[] interfaceWhitelist)
+   private static TransportDescriptorType[] createWhitelistedTransports(String[] interfaceWhitelist)
    {
       String whitelistKey = String.join(",", interfaceWhitelist);
 
       synchronized (transportCacheLock)
       {
-         boolean isFirstTime = cachedTransports == null;
-
-         if (!whitelistKey.equals(cachedWhitelistKey) || isFirstTime)
+         if (cachedTransports == null || !whitelistKey.equals(cachedWhitelistKey))
          {
-            List<TransportDescriptorType> transports = new ArrayList<>();
-            transports.add(createUDPv4Transport(interfaceWhitelist));
-            transports.add(createSHMTransport());
-
-            cachedTransports = transports.toArray(new TransportDescriptorType[0]);
+            cachedTransports = new TransportDescriptorType[] {createUDPv4Transport(interfaceWhitelist), createSHMTransport()};
             cachedWhitelistKey = whitelistKey;
-
-            // Register these transport IDs
-            synchronized (registeredTransportIds)
-            {
-               for (TransportDescriptorType transport : cachedTransports)
-               {
-                  registeredTransportIds.add(transport.getTransportId());
-               }
-            }
          }
-
-         return new TransportConfiguration(cachedTransports, false, isFirstTime);
+         return cachedTransports;
       }
    }
 

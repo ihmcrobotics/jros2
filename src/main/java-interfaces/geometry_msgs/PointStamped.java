@@ -18,9 +18,14 @@ std_msgs/Header header
 Point point
 }</pre>
 */
-public class PointStamped implements ROS2Message<PointStamped>
+public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PointStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/PointStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_4c0296af86e01e562e9e0405d138a01537247580076c58ea38d7923ac1045897";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Point point_;
@@ -68,6 +73,11 @@ public class PointStamped implements ROS2Message<PointStamped>
    @Override
    public void set(PointStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       point_.set(from.point_);
 
@@ -84,17 +94,24 @@ public class PointStamped implements ROS2Message<PointStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PointStamped {", "header_=", "point_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PointStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("point_=");
+      builder.append(toStringLabels[2]);
       builder.append(point_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

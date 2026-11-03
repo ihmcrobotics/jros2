@@ -36,6 +36,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    public static final java.lang.String name = "nav_msgs::msg::dds_::MapMetaData_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of nav_msgs/msg/MapMetaData, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_2772d4b2000ef2b35dbaeb80fd3946c1369f817fb4f75677d916d27c17d763c8";
+
+   /**
       The time at which the map was loaded
    */
    private final builtin_interfaces.Time map_load_time_;
@@ -76,9 +81,9 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       int initialAlignment = currentAlignment;
 
       currentAlignment += map_load_time_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // resolution_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // resolution_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // height_
       currentAlignment += origin_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -109,6 +114,11 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    @Override
    public void set(MapMetaData from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       map_load_time_.set(from.map_load_time_);
       resolution_ = from.resolution_;
       width_ = from.width_;
@@ -158,23 +168,30 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MapMetaData {", "map_load_time_=", "resolution_=", "width_=", "height_=", "origin_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MapMetaData {");
-      builder.append("map_load_time_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(map_load_time_);
-      builder.append("resolution_=");
+      builder.append(toStringLabels[2]);
       builder.append(resolution_);
-      builder.append("width_=");
+      builder.append(toStringLabels[3]);
       builder.append(width_);
-      builder.append("height_=");
+      builder.append(toStringLabels[4]);
       builder.append(height_);
-      builder.append("origin_=");
+      builder.append(toStringLabels[5]);
       builder.append(origin_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

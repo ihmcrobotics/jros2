@@ -17,9 +17,14 @@ std_msgs/Header header
 GoalStatus[] status_list
 }</pre>
 */
-public class GoalStatusArray implements ROS2Message<GoalStatusArray>
+public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatusArray_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of actionlib_msgs/msg/GoalStatusArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_f3230208e8daec53eb7b8da6df1c1d1d4eb095f3082be922661c29a1f855a1bc";
 
    /**
       Stores the statuses for goals that are currently being tracked
@@ -71,8 +76,13 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    @Override
    public void set(GoalStatusArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      status_list_.set(from.status_list_);
+      status_list_.set(from.status_list_, actionlib_msgs.GoalStatus::set); // copies the elements, never shares them
 
    }
 
@@ -87,17 +97,24 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"GoalStatusArray {", "header_=", "status_list_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("GoalStatusArray {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("status_list_=");
+      builder.append(toStringLabels[2]);
       builder.append(status_list_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

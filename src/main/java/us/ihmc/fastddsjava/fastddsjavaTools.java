@@ -89,7 +89,20 @@ public final class fastddsjavaTools
 
    public static String retcodeMessage(int ReturnCode_t)
    {
-      return "Fast-DDS retcode (%d): %s".formatted(ReturnCode_t, retcodeName(ReturnCode_t));
+      // String concatenation instead of String#formatted (Android API 34+).
+      return "Fast-DDS retcode (" + ReturnCode_t + "): " + retcodeName(ReturnCode_t);
+   }
+
+   /**
+    * Decodes an error result of {@link us.ihmc.fastddsjava.natives.fastddsjava#dataReaderTakeNextToBuffer}.
+    *
+    * @param takeResult a result {@code <= -TAKE_ERROR_BASE}
+    * @return the Fast-DDS retcode encoded in {@code takeResult}, or {@link us.ihmc.fastddsjava.natives.fastddsjava#RETCODE_OK} if
+    *       {@code takeResult} is not an error (a payload size, {@code TAKE_NO_DATA} or {@code TAKE_INVALID_SAMPLE})
+    */
+   public static int takeResultRetcode(int takeResult)
+   {
+      return takeResult <= -TAKE_ERROR_BASE ? -takeResult - TAKE_ERROR_BASE : RETCODE_OK;
    }
 
    public static void retcodeThrowOnError(int ReturnCode_t) throws fastddsjavaException
@@ -105,7 +118,7 @@ public final class fastddsjavaTools
       // Avoid allocating an exception on the publish hot path when the retcode is OK.
       if (RETCODE_OK != ReturnCode_t)
       {
-         System.err.println("Fast-DDS error: %s".formatted(retcodeMessage(ReturnCode_t)));
+         System.err.println("Fast-DDS error: " + retcodeMessage(ReturnCode_t));
       }
    }
 }

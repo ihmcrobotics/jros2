@@ -1,0 +1,63 @@
+jros2: build the shared-memory watchdog's lock file path once per watched segment
+
+The SHM watchdog thread (dds.shm.wdog) checks every watched remote segment once per second with
+RobustExclusiveLock::is_locked(name), which builds the lock file path, a std::string longer than the small-string
+buffer, on every check: one operator new and one free per watched segment per second for the life of the
+participant. The path is now built once in SegmentWrapper and passed to a new is_locked(name, path) overload.
+
+diff --git a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+index b5f58a2..1de64dd 100644
+--- a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
++++ b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+@@ -1288,6 +1288,8 @@ private:
+             , segment_name_(segment_name)
+         {
+             lock_file_name_ = segment_name + "_el";
++            // Built once: the watchdog checks the lock every second for as long as the segment is watched.
++            lock_file_path_ = SharedDir::get_lock_path(lock_file_name_);
+             update_alive_time(std::chrono::steady_clock::now());
+         }
+ 
+@@ -1455,13 +1457,14 @@ private:
+         SharedMemSegment::Id segment_id_;
+         std::string segment_name_;
+         std::string lock_file_name_;
++        std::string lock_file_path_;
+         std::atomic<std::chrono::steady_clock::time_point::rep> last_alive_check_time_;
+ 
+         static constexpr uint32_t ALIVE_CHECK_TIMEOUT_SECS {5};
+ 
+         bool check_alive()
+         {
+-            if (!RobustExclusiveLock::is_locked(lock_file_name_))
++            if (!RobustExclusiveLock::is_locked(lock_file_name_, lock_file_path_))
+             {
+                 // The segment is not locked so the origin is no longer active
+                 close_and_remove();
+diff --git a/src/cpp/utils/shared_memory/RobustExclusiveLock.hpp b/src/cpp/utils/shared_memory/RobustExclusiveLock.hpp
+index 8b0076f..2c794f0 100644
+--- a/src/cpp/utils/shared_memory/RobustExclusiveLock.hpp
++++ b/src/cpp/utils/shared_memory/RobustExclusiveLock.hpp
+@@ -89,9 +89,20 @@ public:
+     static bool is_locked(
+             const std::string& name)
+     {
+-        bool was_lock_created;
++        return is_locked(name, SharedDir::get_lock_path(name));
++    }
+ 
+-        auto file_path = SharedDir::get_lock_path(name);
++    /**
++     * Checks whether the file is locked, given its path (SharedDir::get_lock_path(name)), so that a periodic check does
++     * not build the path (a heap allocation) every time.
++     * @param in name Is the object interprocess global name, visible for all processes in the same machine.
++     * @param in file_path The path of the lock file of name.
++     */
++    static bool is_locked(
++            const std::string& name,
++            const std::string& file_path)
++    {
++        bool was_lock_created;
+ 
+         int fd;
+         if ((fd = open_and_lock_file(file_path, &was_lock_created)) == -1)

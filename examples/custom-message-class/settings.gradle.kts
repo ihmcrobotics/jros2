@@ -1,4 +1,6 @@
 pluginManagement {
+   // Resolve the us.ihmc.jros2.generator plugin from this checkout (remove to use the published plugin version).
+   includeBuild("../..")
    repositories {
       gradlePluginPortal()
       mavenCentral()

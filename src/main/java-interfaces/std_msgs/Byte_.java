@@ -27,6 +27,11 @@ public class Byte_ implements ROS2Message<Byte_>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Byte_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Byte, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_41e1a3345f73fe93ede006da826a6ee274af23dd4653976ff249b0f44e3e798f";
+
    private byte data_;
 
    public Byte_()
@@ -44,7 +49,7 @@ public class Byte_ implements ROS2Message<Byte_>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -66,6 +71,11 @@ public class Byte_ implements ROS2Message<Byte_>
    @Override
    public void set(Byte_ from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -81,15 +91,22 @@ public class Byte_ implements ROS2Message<Byte_>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Byte_ {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Byte_ {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

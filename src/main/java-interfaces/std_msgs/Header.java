@@ -30,6 +30,11 @@ public class Header implements ROS2Message<Header>
    public static final java.lang.String name = "std_msgs::msg::dds_::Header_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Header, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_f49fb3ae2cf070f793645ff749683ac6b06203e41c891e17701b1cb597ce6a01";
+
+   /**
       Two-integer timestamp that is expressed as seconds and nanoseconds.
    */
    private final builtin_interfaces.Time stamp_;
@@ -41,7 +46,7 @@ public class Header implements ROS2Message<Header>
    public Header()
    {
       stamp_ = new builtin_interfaces.Time();
-      frame_id_ = new StringBuilder();
+      frame_id_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -57,7 +62,7 @@ public class Header implements ROS2Message<Header>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * frame_id_.length()) + 1; // frame_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(frame_id_) + 1; // frame_id_
 
       return currentAlignment - initialAlignment;
    }
@@ -81,9 +86,14 @@ public class Header implements ROS2Message<Header>
    @Override
    public void set(Header from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       stamp_.set(from.stamp_);
-      frame_id_.delete(0, frame_id_.length());
-      frame_id_.insert(0, from.frame_id_);
+      frame_id_.setLength(0);
+      frame_id_.append(from.frame_id_);
 
    }
 
@@ -97,28 +107,55 @@ public class Header implements ROS2Message<Header>
       return frame_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of frame_id (allocates). {@link #getFrameId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getFrameIdAsString()
    {
       return frame_id_.toString();
    }
 
+   /**
+    * Replaces the content of frame_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setFrameId(java.lang.String s)
    {
-      this.frame_id_.delete(0, this.frame_id_.length());
-      this.frame_id_.insert(0, s);
+      this.frame_id_.setLength(0);
+      this.frame_id_.append(s);
    }
+
+   /**
+    * Replaces the content of frame_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setFrameId(java.lang.CharSequence s)
+   {
+      if (s != this.frame_id_)
+      {
+         this.frame_id_.setLength(0);
+         this.frame_id_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Header {", "stamp_=", "frame_id_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Header {");
-      builder.append("stamp_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(stamp_);
-      builder.append("frame_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(frame_id_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

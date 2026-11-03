@@ -5,40 +5,77 @@
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <string>
+
+#include <fastdds/dds/core/ReturnCode.hpp>
 
 namespace
 {
 JavaVM* g_jvm = nullptr;
 jclass g_nativeCallbackClass = nullptr;
 jmethodID g_callbackCallMethod = nullptr;
+std::mutex g_callbackMethodMutex;
 
+/** Owns the JNI global reference of one Java callback. Destroyed on whichever thread drops the last reference. */
 struct JniCallback
 {
    jobject global_ref = nullptr;
 
    ~JniCallback()
    {
-      if (g_jvm != nullptr && global_ref != nullptr)
+      // While the process exits the JVM may be gone; calling into it could block this thread forever.
+      if (g_jvm != nullptr && global_ref != nullptr && !fastddsjava_process_exiting())
       {
          JNIEnv* env = nullptr;
-         if (g_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) == JNI_OK && env != nullptr)
+         jint status = g_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+         if (status == JNI_OK && env != nullptr)
          {
             env->DeleteGlobalRef(global_ref);
          }
-#if defined(__ANDROID__)
-         else if (g_jvm->AttachCurrentThread(&env, nullptr) == 0 && env != nullptr)
-#else
-         else if (g_jvm->AttachCurrentThread(reinterpret_cast<void**>(&env), nullptr) == 0 && env != nullptr)
-#endif
+         else if (status == JNI_EDETACHED)
          {
-            env->DeleteGlobalRef(global_ref);
-            g_jvm->DetachCurrentThread();
+            // A thread that never called Java (e.g. a native thread dropping the last reference): attach just long
+            // enough to release the reference, then restore its detached state.
+#if defined(__ANDROID__)
+            if (g_jvm->AttachCurrentThread(&env, nullptr) == JNI_OK && env != nullptr)
+#else
+            if (g_jvm->AttachCurrentThread(reinterpret_cast<void**>(&env), nullptr) == JNI_OK && env != nullptr)
+#endif
+            {
+               env->DeleteGlobalRef(global_ref);
+               g_jvm->DetachCurrentThread();
+            }
          }
          global_ref = nullptr;
       }
    }
 };
+
+#if !defined(_WIN32)
+/**
+ * Detaches a Fast-DDS thread that getEnv() attached to the JVM when that thread ends. C++ thread_local destructors run
+ * at thread exit while the JVM still knows the thread (before the pthread key destructors of HotSpot and ART). Without
+ * this, every deleted participant would leave its callback threads attached forever: HotSpot keeps their
+ * java.lang.Thread and VM structures, and ART warns or aborts ("Native thread exited without calling
+ * DetachCurrentThread"). Skipped while the process exits (see fastddsjava_process_exiting()).
+ *
+ * Not used on Windows, where thread_local destructors of a DLL run under the loader lock; there the threads stay attached
+ * as before.
+ */
+struct AttachedThreadGuard
+{
+   bool attached = false;
+
+   ~AttachedThreadGuard()
+   {
+      if (attached && g_jvm != nullptr && !fastddsjava_process_exiting())
+         g_jvm->DetachCurrentThread();
+   }
+};
+
+thread_local AttachedThreadGuard t_attached_thread;
+#endif
 
 JNIEnv* getEnv()
 {
@@ -49,20 +86,26 @@ JNIEnv* getEnv()
       jint status = g_jvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
       if (status == JNI_EDETACHED)
       {
-         // Attach as daemon and leave attached for the lifetime of the Fast-DDS thread.
-         // Detaching after every on_data_available made e2e latency ~2x worse than JavaCPP.
+         // Attach as daemon and leave attached for the lifetime of the Fast-DDS thread (detached when it ends, see
+         // AttachedThreadGuard). Detaching after every on_data_available made e2e latency ~2x worse than JavaCPP.
          JavaVMAttachArgs args;
          args.version = JNI_VERSION_1_6;
          args.name = const_cast<char*>("fastdds-callback");
          args.group = nullptr;
 #if defined(__ANDROID__)
-         if (g_jvm->AttachCurrentThreadAsDaemon(&env, &args) != 0)
+         if (g_jvm->AttachCurrentThreadAsDaemon(&env, &args) != JNI_OK)
 #else
-         if (g_jvm->AttachCurrentThreadAsDaemon(reinterpret_cast<void**>(&env), &args) != 0)
+         if (g_jvm->AttachCurrentThreadAsDaemon(reinterpret_cast<void**>(&env), &args) != JNI_OK)
 #endif
          {
             env = nullptr;
          }
+#if !defined(_WIN32)
+         else
+         {
+            t_attached_thread.attached = true;
+         }
+#endif
       }
       else if (status != JNI_OK)
       {
@@ -110,23 +153,44 @@ void fillGuid(JNIEnv* env, jbyteArray guidOut, const uint8_t* guid)
    env->SetByteArrayRegion(guidOut, 0, 16, reinterpret_cast<const jbyte*>(guid));
 }
 
-bool ensureCallbackMethod(JNIEnv* env)
+/** True if [offset, offset + length) lies within [0, capacity). */
+bool inRange(jlong offset, jlong length, jlong capacity)
 {
-   if (g_callbackCallMethod != nullptr)
-      return true;
+   return offset >= 0 && length >= 0 && capacity >= 0 && offset <= capacity && length <= capacity - offset;
+}
 
+bool lookupCallbackMethod(JNIEnv* env)
+{
    jclass local = env->FindClass("us/ihmc/fastddsjava/natives/fastddsjavaCallback");
    if (local == nullptr)
+   {
+      env->ExceptionClear();
       return false;
+   }
 
-   g_nativeCallbackClass = static_cast<jclass>(env->NewGlobalRef(local));
+   jclass global = static_cast<jclass>(env->NewGlobalRef(local));
    env->DeleteLocalRef(local);
-   if (g_nativeCallbackClass == nullptr)
+   if (global == nullptr)
       return false;
 
    // Method IDs from the interface are valid for all implementing classes.
-   g_callbackCallMethod = env->GetMethodID(g_nativeCallbackClass, "call", "()V");
-   return g_callbackCallMethod != nullptr;
+   jmethodID method = env->GetMethodID(global, "call", "()V");
+   if (method == nullptr)
+   {
+      env->ExceptionClear();
+      env->DeleteGlobalRef(global);
+      return false;
+   }
+
+   g_nativeCallbackClass = global;
+   g_callbackCallMethod = method;
+   return true;
+}
+
+bool ensureCallbackMethod(JNIEnv* env)
+{
+   std::lock_guard<std::mutex> lock(g_callbackMethodMutex);
+   return g_callbackCallMethod != nullptr || lookupCallbackMethod(env);
 }
 
 std::function<void()> makeJavaCallback(JNIEnv* env, jobject callback)
@@ -148,11 +212,22 @@ std::function<void()> makeJavaCallback(JNIEnv* env, jobject callback)
 extern "C" JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void*)
 {
    g_jvm = vm;
+
+   // Resolve the callback method eagerly (with the class loader that loads this library); fall back to lazy lookup.
+   JNIEnv* env = nullptr;
+   if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) == JNI_OK && env != nullptr)
+   {
+      std::lock_guard<std::mutex> lock(g_callbackMethodMutex);
+      if (g_callbackCallMethod == nullptr)
+         lookupCallbackMethod(env);
+   }
+
    return JNI_VERSION_1_6;
 }
 
 extern "C" JNIEXPORT void JNICALL JNI_OnUnload(JavaVM*, void*)
 {
+   std::lock_guard<std::mutex> lock(g_callbackMethodMutex);
    if (g_jvm != nullptr && g_nativeCallbackClass != nullptr)
    {
       JNIEnv* env = nullptr;
@@ -165,6 +240,16 @@ extern "C" JNIEXPORT void JNICALL JNI_OnUnload(JavaVM*, void*)
 }
 
 #define JNIFASTDDS(name) Java_us_ihmc_fastddsjava_natives_fastddsjava_##name
+
+extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(nativeAbiVersion)(JNIEnv*, jclass)
+{
+   return static_cast<jint>(fastddsjava_abi_version());
+}
+
+extern "C" JNIEXPORT jboolean JNICALL JNIFASTDDS(nativeHasSecurity)(JNIEnv*, jclass)
+{
+   return fastddsjava_has_security() ? JNI_TRUE : JNI_FALSE;
+}
 
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(loadXmlProfilesString)(JNIEnv* env, jclass, jstring xml)
 {
@@ -213,7 +298,8 @@ extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(createTypesupport)(JNIEnv*, jclass
 
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(registerType)(JNIEnv*, jclass, jlong participant, jlong typeSupport)
 {
-   return static_cast<jint>(fastddsjava_register_type(reinterpret_cast<void*>(participant), reinterpret_cast<void*>(typeSupport)));
+   return static_cast<jint>(fastddsjava_register_type(reinterpret_cast<void*>(participant),
+                                                      reinterpret_cast<fastddsjava_TypeSupportHolder*>(typeSupport)));
 }
 
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(unregisterType)(JNIEnv* env, jclass, jlong participant, jstring typeName)
@@ -223,7 +309,7 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(unregisterType)(JNIEnv* env, jclass
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(deleteTypesupport)(JNIEnv*, jclass, jlong typeSupport)
 {
-   fastddsjava_delete_typesupport(reinterpret_cast<void*>(typeSupport));
+   fastddsjava_delete_typesupport(reinterpret_cast<fastddsjava_TypeSupportHolder*>(typeSupport));
 }
 
 extern "C" JNIEXPORT jstring JNICALL JNIFASTDDS(topicDataWrapperTypeGetName)(JNIEnv* env, jclass, jlong type)
@@ -270,6 +356,17 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterWrite)(JNIEnv*, jclass, j
    return static_cast<jint>(fastddsjava_datawriter_write(reinterpret_cast<void*>(writer), reinterpret_cast<fastddsjava_TopicDataWrapper*>(data)));
 }
 
+extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterWriteBuffer)(JNIEnv* env, jclass, jlong writer, jobject src, jint length)
+{
+   if (writer == 0 || src == nullptr || length <= 0)
+      return static_cast<jint>(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER);
+   const auto* address = static_cast<const uint8_t*>(env->GetDirectBufferAddress(src));
+   if (address == nullptr || !inRange(0, length, env->GetDirectBufferCapacity(src)))
+      return static_cast<jint>(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER);
+   // The buffer is only read during this call (DataWriter::write serializes synchronously).
+   return static_cast<jint>(fastddsjava_datawriter_write_view(reinterpret_cast<void*>(writer), address, static_cast<uint32_t>(length)));
+}
+
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataWriterSetListener)(JNIEnv*, jclass, jlong writer, jlong listener)
 {
    return static_cast<jint>(fastddsjava_datawriter_set_listener(reinterpret_cast<void*>(writer),
@@ -306,6 +403,26 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataReaderTakeNextCustom)(JNIEnv*, 
 {
    return static_cast<jint>(fastddsjava_datareader_take_next_custom(reinterpret_cast<void*>(reader), reinterpret_cast<void*>(data),
                                                                    reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo)));
+}
+
+extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataReaderTakeNextToBuffer)(JNIEnv* env, jclass, jlong reader, jlong data, jlong sampleInfo,
+                                                                         jobject dst, jint dstCapacity)
+{
+   uint8_t* address = nullptr;
+   uint32_t capacity = 0;
+   if (dst != nullptr && dstCapacity > 0)
+   {
+      // The caller learns where the payload is from the result alone (result <= dstCapacity: in dst), so dst must be a
+      // direct buffer that really provides dstCapacity bytes. Otherwise nothing is taken.
+      address = static_cast<uint8_t*>(env->GetDirectBufferAddress(dst));
+      if (address == nullptr || env->GetDirectBufferCapacity(dst) < static_cast<jlong>(dstCapacity))
+         return -(FASTDDSJAVA_TAKE_ERROR_BASE + static_cast<jint>(eprosima::fastdds::dds::RETCODE_BAD_PARAMETER));
+      capacity = static_cast<uint32_t>(dstCapacity);
+   }
+   return static_cast<jint>(fastddsjava_datareader_take_next_to_buffer(reinterpret_cast<void*>(reader),
+                                                                       reinterpret_cast<fastddsjava_TopicDataWrapper*>(data),
+                                                                       reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo),
+                                                                       address, capacity));
 }
 
 extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(dataReaderSetListener)(JNIEnv*, jclass, jlong reader, jlong listener)
@@ -361,6 +478,8 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(getReaderGuid)(JNIEnv* env, jclass,
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataResize)(JNIEnv*, jclass, jlong data, jint size)
 {
+   if (size < 0)
+      return;
    fastddsjava_topic_data_resize(reinterpret_cast<fastddsjava_TopicDataWrapper*>(data), static_cast<size_t>(size));
 }
 
@@ -371,7 +490,7 @@ extern "C" JNIEXPORT jint JNICALL JNIFASTDDS(topicDataSize)(JNIEnv*, jclass, jlo
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataWrite)(JNIEnv* env, jclass, jlong data, jbyteArray src, jint offset, jint length)
 {
-   if (src == nullptr || length <= 0)
+   if (data == 0 || src == nullptr || length <= 0 || !inRange(offset, length, env->GetArrayLength(src)))
       return;
    // Prefer critical access to avoid an intermediate native copy of the heap array.
    jbyte* bytes = static_cast<jbyte*>(env->GetPrimitiveArrayCritical(src, nullptr));
@@ -384,7 +503,7 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataWrite)(JNIEnv* env, jclass
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataRead)(JNIEnv* env, jclass, jlong data, jbyteArray dst, jint offset, jint length)
 {
-   if (dst == nullptr || length <= 0)
+   if (data == 0 || dst == nullptr || length <= 0 || !inRange(offset, length, env->GetArrayLength(dst)))
       return;
    jbyte* bytes = static_cast<jbyte*>(env->GetPrimitiveArrayCritical(dst, nullptr));
    if (bytes == nullptr)
@@ -396,13 +515,10 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataRead)(JNIEnv* env, jclass,
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataWriteBuffer)(JNIEnv* env, jclass, jlong data, jobject src, jint offset, jint length)
 {
-   if (src == nullptr || length <= 0)
+   if (data == 0 || src == nullptr || length <= 0)
       return;
    void* address = env->GetDirectBufferAddress(src);
-   if (address == nullptr)
-      return;
-   jlong capacity = env->GetDirectBufferCapacity(src);
-   if (offset < 0 || length < 0 || static_cast<jlong>(offset) + length > capacity)
+   if (address == nullptr || !inRange(offset, length, env->GetDirectBufferCapacity(src)))
       return;
    fastddsjava_topic_data_write(reinterpret_cast<fastddsjava_TopicDataWrapper*>(data),
                                 static_cast<const uint8_t*>(address) + offset,
@@ -411,13 +527,10 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataWriteBuffer)(JNIEnv* env, 
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(topicDataReadBuffer)(JNIEnv* env, jclass, jlong data, jobject dst, jint offset, jint length)
 {
-   if (dst == nullptr || length <= 0)
+   if (data == 0 || dst == nullptr || length <= 0)
       return;
    void* address = env->GetDirectBufferAddress(dst);
-   if (address == nullptr)
-      return;
-   jlong capacity = env->GetDirectBufferCapacity(dst);
-   if (offset < 0 || length < 0 || static_cast<jlong>(offset) + length > capacity)
+   if (address == nullptr || !inRange(offset, length, env->GetDirectBufferCapacity(dst)))
       return;
    fastddsjava_topic_data_read(reinterpret_cast<fastddsjava_TopicDataWrapper*>(data),
                                static_cast<uint8_t*>(address) + offset,
@@ -437,37 +550,37 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(deleteSampleInfo)(JNIEnv*, jclass, 
 extern "C" JNIEXPORT jboolean JNICALL JNIFASTDDS(sampleInfoValidData)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return info->valid_data ? JNI_TRUE : JNI_FALSE;
+   return info != nullptr && info->valid_data ? JNI_TRUE : JNI_FALSE;
 }
 
 extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(sampleInfoSourceTimestampNanos)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return static_cast<jlong>(info->source_timestamp.to_ns());
+   return info != nullptr ? static_cast<jlong>(info->source_timestamp.to_ns()) : 0;
 }
 
 extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(sampleInfoReceptionTimestampNanos)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return static_cast<jlong>(info->reception_timestamp.to_ns());
+   return info != nullptr ? static_cast<jlong>(info->reception_timestamp.to_ns()) : 0;
 }
 
 extern "C" JNIEXPORT jshort JNICALL JNIFASTDDS(sampleInfoSampleState)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return static_cast<jshort>(info->sample_state);
+   return info != nullptr ? static_cast<jshort>(info->sample_state) : 0;
 }
 
 extern "C" JNIEXPORT jshort JNICALL JNIFASTDDS(sampleInfoViewState)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return static_cast<jshort>(info->view_state);
+   return info != nullptr ? static_cast<jshort>(info->view_state) : 0;
 }
 
 extern "C" JNIEXPORT jshort JNICALL JNIFASTDDS(sampleInfoInstanceState)(JNIEnv*, jclass, jlong sampleInfo)
 {
    auto* info = reinterpret_cast<eprosima::fastdds::dds::SampleInfo*>(sampleInfo);
-   return static_cast<jshort>(info->instance_state);
+   return info != nullptr ? static_cast<jshort>(info->instance_state) : 0;
 }
 
 extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(createDataReaderListener)(JNIEnv*, jclass)
@@ -483,13 +596,15 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(deleteDataReaderListener)(JNIEnv*, 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(dataReaderListenerSetOnDataAvailable)(JNIEnv* env, jclass, jlong listener, jobject callback)
 {
    auto* nativeListener = reinterpret_cast<fastddsjava_DataReaderListener*>(listener);
-   fastddsjava_datareader_listener_set_on_data_available(nativeListener, makeJavaCallback(env, callback));
+   if (nativeListener != nullptr)
+      fastddsjava_datareader_listener_set_on_data_available(nativeListener, makeJavaCallback(env, callback));
 }
 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(dataReaderListenerSetOnSubscriptionMatched)(JNIEnv* env, jclass, jlong listener, jobject callback)
 {
    auto* nativeListener = reinterpret_cast<fastddsjava_DataReaderListener*>(listener);
-   fastddsjava_datareader_listener_set_on_subscription_matched(nativeListener, makeJavaCallback(env, callback));
+   if (nativeListener != nullptr)
+      fastddsjava_datareader_listener_set_on_subscription_matched(nativeListener, makeJavaCallback(env, callback));
 }
 
 extern "C" JNIEXPORT jlong JNICALL JNIFASTDDS(createDataWriterListener)(JNIEnv*, jclass)
@@ -505,5 +620,6 @@ extern "C" JNIEXPORT void JNICALL JNIFASTDDS(deleteDataWriterListener)(JNIEnv*, 
 extern "C" JNIEXPORT void JNICALL JNIFASTDDS(dataWriterListenerSetOnPublicationMatched)(JNIEnv* env, jclass, jlong listener, jobject callback)
 {
    auto* nativeListener = reinterpret_cast<fastddsjava_DataWriterListener*>(listener);
-   fastddsjava_datawriter_listener_set_on_publication_matched(nativeListener, makeJavaCallback(env, callback));
+   if (nativeListener != nullptr)
+      fastddsjava_datawriter_listener_set_on_publication_matched(nativeListener, makeJavaCallback(env, callback));
 }

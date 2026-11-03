@@ -233,4 +233,39 @@ public class ROS2TopicTest
       ROS2Topic<Empty> typedTopic = new ROS2Topic<>("/test").withQoS(ROS2QoSProfile.BEST_EFFORT).withType(Empty.class);
       assertSame(ROS2QoSProfile.BEST_EFFORT, typedTopic.getQoS());
    }
+
+   @Test
+   public void testRelativeAndPrivateNames()
+   {
+      // Relative and private names are legal; they are resolved by the node that creates an endpoint
+      ROS2Topic<?> relative = new ROS2Topic<>("camera/image");
+      assertEquals("camera/image", relative.getName());
+      assertEquals(2, relative.numberOfTokens());
+
+      ROS2Topic<?> privateTopic = new ROS2Topic<>("~/status");
+      assertEquals(2, privateTopic.numberOfTokens());
+
+      assertEquals(0, new ROS2Topic<>("/").numberOfTokens());
+      assertEquals(1, new ROS2Topic<>("chatter").numberOfTokens());
+   }
+
+   @Test
+   public void testTokenHelpersOnRelativeNames()
+   {
+      ROS2Topic<?> relative = new ROS2Topic<>("camera");
+      assertEquals("camera/color", relative.appendedWith("color").getName());
+      assertEquals("robot/camera", relative.prependedWith("robot").getName());
+      assertEquals(2, relative.prependedWith("robot").numberOfTokens());
+
+      ROS2Topic<?> twoTokens = new ROS2Topic<>("camera/image");
+      ROS2Topic<?> inserted = twoTokens.insert(1, "color");
+      assertEquals("camera/color/image", inserted.getName());
+      assertEquals(3, inserted.numberOfTokens());
+      assertEquals("robot/camera/image", twoTokens.insert(0, "robot").getName());
+      assertEquals("camera/image/raw", twoTokens.insert(2, "raw").getName());
+      assertThrows(IllegalArgumentException.class, () -> twoTokens.insert(3, "x"));
+
+      // Absolute names keep their leading slash
+      assertEquals("/camera/color/image", new ROS2Topic<>("/camera/image").insert(1, "color").getName());
+   }
 }

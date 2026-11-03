@@ -1,0 +1,110 @@
+jros2: keep every PREALLOCATED_WITH_REALLOC payload pool node at the largest payload size requested so far
+
+A PREALLOCATED_WITH_REALLOC pool preallocates its nodes with the type's initial size (64 bytes for jros2's opaque
+payload type) and reallocates a node the first time it serves a larger payload. The free list is LIFO, so the nodes deep
+in it are only used when more payloads than ever before are in use at once (writer history + reader history + samples
+being received or taken: a burst, a slow reader, scheduling jitter), which can happen at any time: a node was then
+reallocated (realloc on the publishing or receiving thread) during steady traffic of constant size, long after warm-up.
+Now the first request for a payload larger than any before grows every free node, new or reserved nodes are created
+with that size, and nodes that were in use are grown when they are released, so once the largest payload has been seen
+no request reallocates a node, whichever node it gets. Memory: every preallocated node of a topic's pool now has the
+size of the largest payload seen (KEEP_LAST: about depth nodes per endpoint; KEEP_ALL: allocated_samples nodes), as a
+PREALLOCATED pool of that size would.
+
+diff --git a/src/cpp/rtps/history/TopicPayloadPool.cpp b/src/cpp/rtps/history/TopicPayloadPool.cpp
+index ccf5fc2..545294a 100644
+--- a/src/cpp/rtps/history/TopicPayloadPool.cpp
++++ b/src/cpp/rtps/history/TopicPayloadPool.cpp
+@@ -45,9 +45,32 @@ bool TopicPayloadPool::do_get_payload(
+     PayloadNode* payload_node = nullptr;
+ 
+     std::unique_lock<std::mutex> lock(mutex_);
++
++    // With grow_all_nodes_, every node is kept at the largest size requested so far: a payload larger than any before
++    // grows every free node now (nodes in use grow when they are released), and new nodes are created with that size.
++    // Otherwise a node is only grown the first time it serves a larger payload, and a node deep in the LIFO free list is
++    // only used when more payloads than ever before are in use at once (a burst, a slow reader): it was reallocated
++    // during steady traffic of constant size, long after warm-up.
++    uint32_t node_size = size;
++    if (grow_all_nodes_ && resizeable)
++    {
++        if (size > high_water_size_)
++        {
++            high_water_size_ = size;
++            for (PayloadNode* free_node : free_payloads_)
++            {
++                if (free_node->data_size() < size)
++                {
++                    free_node->resize(size); // on failure the node keeps its size and is resized when it is taken
++                }
++            }
++        }
++        node_size = high_water_size_;
++    }
++
+     if (free_payloads_.empty())
+     {
+-        payload_node = allocate(size); //Allocates a single payload
++        payload_node = allocate(node_size); //Allocates a single payload
+         if (payload_node == nullptr)
+         {
+             lock.unlock();
+@@ -64,9 +87,9 @@ bool TopicPayloadPool::do_get_payload(
+     }
+ 
+     // Resize if needed
+-    if (resizeable && size > payload_node->data_size())
++    if (resizeable && node_size > payload_node->data_size())
+     {
+-        if (!payload_node->resize(size))
++        if (!payload_node->resize(node_size) && size > payload_node->data_size())
+         {
+             // Failed to resize, but we can still keep it for later.
+             free_payloads_.push_back(payload_node);
+@@ -130,6 +153,11 @@ bool TopicPayloadPool::release_payload(
+     {
+         std::lock_guard<std::mutex> lock(mutex_);
+         PayloadNode* payload_node = all_payloads_.at(PayloadNode::data_index(payload.data));
++        if (grow_all_nodes_ && payload_node->data_size() < high_water_size_)
++        {
++            // The node was in use when a larger payload arrived (see do_get_payload)
++            payload_node->resize(high_water_size_); // on failure the node is resized when it is taken
++        }
+         free_payloads_.push_back(payload_node);
+     }
+ 
+diff --git a/src/cpp/rtps/history/TopicPayloadPool.hpp b/src/cpp/rtps/history/TopicPayloadPool.hpp
+index fea4700..98d02fd 100644
+--- a/src/cpp/rtps/history/TopicPayloadPool.hpp
++++ b/src/cpp/rtps/history/TopicPayloadPool.hpp
+@@ -355,6 +355,9 @@ protected:
+     uint32_t infinite_histories_count_  = 0;  //< Number of infinite histories reserved
+     uint32_t finite_max_pool_size_      = 0;  //< Maximum size of the pool if no infinite histories were reserved
+ 
++    bool grow_all_nodes_                = false;  //< Keep every node at high_water_size_ (see do_get_payload)
++    uint32_t high_water_size_           = 0;  //< Largest size requested from a resizeable get_payload so far
++
+     std::vector<PayloadNode*> free_payloads_; //< Payloads that are free
+     std::vector<PayloadNode*> all_payloads_;  //< All payloads
+ 
+diff --git a/src/cpp/rtps/history/TopicPayloadPool_impl/PreallocatedWithRealloc.hpp b/src/cpp/rtps/history/TopicPayloadPool_impl/PreallocatedWithRealloc.hpp
+index a54a1eb..8269005 100644
+--- a/src/cpp/rtps/history/TopicPayloadPool_impl/PreallocatedWithRealloc.hpp
++++ b/src/cpp/rtps/history/TopicPayloadPool_impl/PreallocatedWithRealloc.hpp
+@@ -35,6 +35,7 @@ public:
+         , minimum_pool_size_(0)
+     {
+         assert(min_payload_size_ > 0);
++        grow_all_nodes_ = true;
+     }
+ 
+     bool get_payload(
+@@ -55,7 +56,7 @@ public:
+ 
+         std::lock_guard<std::mutex> lock(mutex_);
+         minimum_pool_size_ += config.initial_size;
+-        reserve(minimum_pool_size_, min_payload_size_);
++        reserve(minimum_pool_size_, std::max(min_payload_size_, high_water_size_));
+         return true;
+     }
+ 

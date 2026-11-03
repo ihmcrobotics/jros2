@@ -1,0 +1,82 @@
+jros2: discard a message for a full shared-memory port queue without throwing an exception
+
+When a listener of a shared-memory port cannot keep up (a slow subscriber process or callback on the same host), the
+port's ring buffer is full and MultiProducerConsumerRingBuffer::push() throws std::runtime_error("Buffer full"), which
+SharedMemGlobal::Port::try_push() catches to discard the message. Every throw allocates the exception object (malloc in
+__cxa_allocate_exception) and its what() string (operator new) on the sending thread, i.e. on the publishing thread for
+every message sent while the queue is full. A new try_push() reports a full buffer with its return value, push() keeps
+its contract (it throws), and Port::try_push() discards the message as before (returns false, counts the overflow).
+
+diff --git a/src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp b/src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp
+index f88a215..18440eb 100644
+--- a/src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp
++++ b/src/cpp/rtps/transport/shared_mem/MultiProducerConsumerRingBuffer.hpp
+@@ -208,10 +208,30 @@ public:
+     bool push(
+             const T& data)
+     {
++        bool listeners_active = false;
++        if (!try_push(data, listeners_active))
++        {
++            throw std::runtime_error("Buffer full");
++        }
++        return listeners_active;
++    }
++
++    /**
++     * Like push(), but reports a full buffer with its return value instead of an exception (an exception allocates; a
++     * sender whose listener cannot keep up meets a full buffer for every message).
++     * @param [out] listeners_active true if there are listeners registered, false if no listeners => buffer not enqueued
++     * @return false if the buffer is full (nothing enqueued), true otherwise
++     */
++    bool try_push(
++            const T& data,
++            bool& listeners_active)
++    {
++        listeners_active = false;
++
+         // If no listeners the buffer is dropped
+         if (node_->registered_listeners_ == 0)
+         {
+-            return false;
++            return true;
+         }
+ 
+         auto pointer = node_->pointer_.load(std::memory_order_relaxed);
+@@ -227,7 +247,7 @@ public:
+ 
+         if (pointer.ptr.free_cells == 0)
+         {
+-            throw std::runtime_error("Buffer full");
++            return false;
+         }
+ 
+         auto& cell = cells_[get_pointer_value(pointer.ptr.write_p)];
+@@ -235,6 +255,7 @@ public:
+         cell.data(data);
+         cell.ref_counter_.store(node_->registered_listeners_, std::memory_order_release);
+ 
++        listeners_active = true;
+         return true;
+     }
+ 
+diff --git a/src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp b/src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp
+index 7bbc90e..2942223 100644
+--- a/src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp
++++ b/src/cpp/rtps/transport/shared_mem/SharedMemGlobal.hpp
+@@ -539,7 +539,14 @@ public:
+                 bool was_buffer_empty_before_push = buffer_->is_buffer_empty();
+                 bool was_someone_listening = (node_->waiting_count > 0);
+ 
+-                *listeners_active = buffer_->push(buffer_descriptor);
++                // A full port queue (a listener that cannot keep up) discards the buffer without an exception, which
++                // would allocate on the sending thread for every message.
++                if (!buffer_->try_push(buffer_descriptor, *listeners_active))
++                {
++                    lock_empty.unlock();
++                    overflows_count_++;
++                    return false;
++                }
+ 
+                 lock_empty.unlock();
+ 

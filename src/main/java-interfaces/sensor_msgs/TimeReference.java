@@ -21,9 +21,14 @@ builtin_interfaces/Time time_ref  # corresponding time from this external source
 string source                     # (optional) name of time source
 }</pre>
 */
-public class TimeReference implements ROS2Message<TimeReference>
+public class TimeReference implements ROS2Message<TimeReference>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::TimeReference_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/TimeReference, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_dd66e84cf40bbb5d5a40472e6ecf2675a031334d4c426abdb2ad41801a8efc99";
 
    private final std_msgs.Header header_; // stamp is system time for which measurement was valid
    private final builtin_interfaces.Time time_ref_; // corresponding time from this external source
@@ -33,7 +38,7 @@ public class TimeReference implements ROS2Message<TimeReference>
    {
       header_ = new std_msgs.Header();
       time_ref_ = new builtin_interfaces.Time();
-      source_ = new StringBuilder();
+      source_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -50,7 +55,7 @@ public class TimeReference implements ROS2Message<TimeReference>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += time_ref_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * source_.length()) + 1; // source_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(source_) + 1; // source_
 
       return currentAlignment - initialAlignment;
    }
@@ -76,10 +81,15 @@ public class TimeReference implements ROS2Message<TimeReference>
    @Override
    public void set(TimeReference from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       time_ref_.set(from.time_ref_);
-      source_.delete(0, source_.length());
-      source_.insert(0, from.source_);
+      source_.setLength(0);
+      source_.append(from.source_);
 
    }
 
@@ -98,30 +108,57 @@ public class TimeReference implements ROS2Message<TimeReference>
       return source_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of source (allocates). {@link #getSource()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getSourceAsString()
    {
       return source_.toString();
    }
 
+   /**
+    * Replaces the content of source with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setSource(java.lang.String s)
    {
-      this.source_.delete(0, this.source_.length());
-      this.source_.insert(0, s);
+      this.source_.setLength(0);
+      this.source_.append(s);
    }
+
+   /**
+    * Replaces the content of source with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setSource(java.lang.CharSequence s)
+   {
+      if (s != this.source_)
+      {
+         this.source_.setLength(0);
+         this.source_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TimeReference {", "header_=", "time_ref_=", "source_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TimeReference {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("time_ref_=");
+      builder.append(toStringLabels[2]);
       builder.append(time_ref_);
-      builder.append("source_=");
+      builder.append(toStringLabels[3]);
       builder.append(source_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

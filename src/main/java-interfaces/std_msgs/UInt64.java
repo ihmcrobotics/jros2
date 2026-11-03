@@ -27,6 +27,11 @@ public class UInt64 implements ROS2Message<UInt64>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt64_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/UInt64, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_fbdc52018fc13755dce18024d1a671c856aa8b4aaf63adfb095b608f98e8c943";
+
    private long data_;
 
    public UInt64()
@@ -44,7 +49,7 @@ public class UInt64 implements ROS2Message<UInt64>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -66,6 +71,11 @@ public class UInt64 implements ROS2Message<UInt64>
    @Override
    public void set(UInt64 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -81,15 +91,22 @@ public class UInt64 implements ROS2Message<UInt64>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"UInt64 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("UInt64 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

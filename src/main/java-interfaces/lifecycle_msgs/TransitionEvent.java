@@ -29,6 +29,11 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::TransitionEvent_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of lifecycle_msgs/msg/TransitionEvent, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d5f8873a2f0146498f812d7885c7327ce27e463d36811d8792f35ee38c0d6c38";
+
+   /**
       The time point at which this event occurred.
    */
    private long timestamp_;
@@ -64,7 +69,7 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // timestamp_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // timestamp_
       currentAlignment += transition_.calculateSizeBytes(currentAlignment);
       currentAlignment += start_state_.calculateSizeBytes(currentAlignment);
       currentAlignment += goal_state_.calculateSizeBytes(currentAlignment);
@@ -95,6 +100,11 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    @Override
    public void set(TransitionEvent from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       timestamp_ = from.timestamp_;
       transition_.set(from.transition_);
       start_state_.set(from.start_state_);
@@ -128,21 +138,28 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TransitionEvent {", "timestamp_=", "transition_=", "start_state_=", "goal_state_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TransitionEvent {");
-      builder.append("timestamp_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(timestamp_);
-      builder.append("transition_=");
+      builder.append(toStringLabels[2]);
       builder.append(transition_);
-      builder.append("start_state_=");
+      builder.append(toStringLabels[3]);
       builder.append(start_state_);
-      builder.append("goal_state_=");
+      builder.append(toStringLabels[4]);
       builder.append(goal_state_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -21,6 +21,11 @@ public class Accel implements ROS2Message<Accel>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Accel_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Accel, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_dc448243ded9b1fcbcca24aba0c22f013dae06c354ba2d849571c0a2a3f57ca0";
+
+   /**
       This expresses acceleration in free space broken into its linear and angular parts.
    */
    private final geometry_msgs.Vector3 linear_;
@@ -69,6 +74,11 @@ public class Accel implements ROS2Message<Accel>
    @Override
    public void set(Accel from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       linear_.set(from.linear_);
       angular_.set(from.angular_);
 
@@ -85,17 +95,24 @@ public class Accel implements ROS2Message<Accel>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Accel {", "linear_=", "angular_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Accel {");
-      builder.append("linear_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(linear_);
-      builder.append("angular_=");
+      builder.append(toStringLabels[2]);
       builder.append(angular_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

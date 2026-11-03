@@ -24,9 +24,14 @@ string reference_frame_id
 Twist velocity
 }</pre>
 */
-public class VelocityStamped implements ROS2Message<VelocityStamped>
+public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::VelocityStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/VelocityStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_55e7196186c8dbe4375278d7f1ac050dd8c9bacade1cf3eef8460fa667bd2457";
 
    private final std_msgs.Header header_;
    private final StringBuilder body_frame_id_;
@@ -36,8 +41,8 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    public VelocityStamped()
    {
       header_ = new std_msgs.Header();
-      body_frame_id_ = new StringBuilder();
-      reference_frame_id_ = new StringBuilder();
+      body_frame_id_ = CDRBuffer.newStringBuilder(16);
+      reference_frame_id_ = CDRBuffer.newStringBuilder(16);
       velocity_ = new geometry_msgs.Twist();
 
    }
@@ -54,8 +59,8 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * body_frame_id_.length()) + 1; // body_frame_id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * reference_frame_id_.length()) + 1; // reference_frame_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(body_frame_id_) + 1; // body_frame_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(reference_frame_id_) + 1; // reference_frame_id_
       currentAlignment += velocity_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -84,11 +89,16 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    @Override
    public void set(VelocityStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      body_frame_id_.delete(0, body_frame_id_.length());
-      body_frame_id_.insert(0, from.body_frame_id_);
-      reference_frame_id_.delete(0, reference_frame_id_.length());
-      reference_frame_id_.insert(0, from.reference_frame_id_);
+      body_frame_id_.setLength(0);
+      body_frame_id_.append(from.body_frame_id_);
+      reference_frame_id_.setLength(0);
+      reference_frame_id_.append(from.reference_frame_id_);
       velocity_.set(from.velocity_);
 
    }
@@ -103,30 +113,70 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
       return body_frame_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of body_frame_id (allocates). {@link #getBodyFrameId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getBodyFrameIdAsString()
    {
       return body_frame_id_.toString();
    }
 
+   /**
+    * Replaces the content of body_frame_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setBodyFrameId(java.lang.String s)
    {
-      this.body_frame_id_.delete(0, this.body_frame_id_.length());
-      this.body_frame_id_.insert(0, s);
+      this.body_frame_id_.setLength(0);
+      this.body_frame_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of body_frame_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setBodyFrameId(java.lang.CharSequence s)
+   {
+      if (s != this.body_frame_id_)
+      {
+         this.body_frame_id_.setLength(0);
+         this.body_frame_id_.append(s);
+      }
    }
    public StringBuilder getReferenceFrameId()
    {
       return reference_frame_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of reference_frame_id (allocates). {@link #getReferenceFrameId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getReferenceFrameIdAsString()
    {
       return reference_frame_id_.toString();
    }
 
+   /**
+    * Replaces the content of reference_frame_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setReferenceFrameId(java.lang.String s)
    {
-      this.reference_frame_id_.delete(0, this.reference_frame_id_.length());
-      this.reference_frame_id_.insert(0, s);
+      this.reference_frame_id_.setLength(0);
+      this.reference_frame_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of reference_frame_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setReferenceFrameId(java.lang.CharSequence s)
+   {
+      if (s != this.reference_frame_id_)
+      {
+         this.reference_frame_id_.setLength(0);
+         this.reference_frame_id_.append(s);
+      }
    }
    public geometry_msgs.Twist getVelocity()
    {
@@ -134,21 +184,28 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"VelocityStamped {", "header_=", "body_frame_id_=", "reference_frame_id_=", "velocity_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("VelocityStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("body_frame_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(body_frame_id_.toString());
-      builder.append("reference_frame_id_=");
+      builder.append(toStringLabels[3]);
       builder.append(reference_frame_id_.toString());
-      builder.append("velocity_=");
+      builder.append(toStringLabels[4]);
       builder.append(velocity_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

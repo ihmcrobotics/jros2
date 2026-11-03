@@ -1,0 +1,27 @@
+jros2: keep the instance of a keyless topic in DataReaderHistory::data_available_instances_
+
+Fast-DDS 3.6.2 erases the (only, fictitious) instance of a keyless topic from data_available_instances_ whenever a
+read/take leaves it without samples, and add_to_instance() re-inserts it when the next sample arrives. That is one
+std::map node allocation (operator new, 72 bytes) on the receiving thread (transport receive thread, or the writer's
+thread with intraprocess delivery) and one free on the taking thread for every sample a drained reader receives.
+The constructor already keeps the empty instance available, so this only restores that state.
+
+diff --git a/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp b/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
+index 7a2a2d3..aaf2124 100644
+--- a/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
++++ b/src/cpp/fastdds/subscriber/history/DataReaderHistory.cpp
+@@ -696,6 +696,14 @@ void DataReaderHistory::check_and_remove_instance(
+             instances_.erase(instance_info->first);
+         }
+ 
++        if (!has_keys_)
++        {
++            // The single (fictitious) instance of a keyless topic stays available, as after construction: erasing it
++            // here made add_to_instance() insert (allocate) a new map node for every sample that arrives after a
++            // read/take emptied the reader. Iterating an empty instance just yields no samples.
++            return;
++        }
++
+         instance_info = data_available_instances_.erase(instance_info);
+     }
+ }

@@ -28,6 +28,11 @@ public class Pose2D implements ROS2Message<Pose2D>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Pose2D_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Pose2D, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d68efa5b46e70f7b16ca23085474fdac5a44b638783ec42f661da64da4724ccc";
+
    private double x_;
    private double y_;
    private double theta_;
@@ -47,9 +52,9 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // x_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // y_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // theta_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // x_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // y_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // theta_
 
       return currentAlignment - initialAlignment;
    }
@@ -75,6 +80,11 @@ public class Pose2D implements ROS2Message<Pose2D>
    @Override
    public void set(Pose2D from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       x_ = from.x_;
       y_ = from.y_;
       theta_ = from.theta_;
@@ -112,19 +122,26 @@ public class Pose2D implements ROS2Message<Pose2D>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Pose2D {", "x_=", "y_=", "theta_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Pose2D {");
-      builder.append("x_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(x_);
-      builder.append("y_=");
+      builder.append(toStringLabels[2]);
       builder.append(y_);
-      builder.append("theta_=");
+      builder.append(toStringLabels[3]);
       builder.append(theta_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

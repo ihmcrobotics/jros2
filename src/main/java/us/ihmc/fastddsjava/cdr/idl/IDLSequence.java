@@ -16,8 +16,19 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.CDRDeserializationException;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
+/**
+ * Base class of the IDL sequence types ({@code T[]} and bounded {@code T[<=N]} in .msg files).
+ * <p>
+ * Bounded sequences never grow beyond {@link #getMaxSize()}: {@link #ensureMinCapacity(int)} returns false and the
+ * {@code add}/{@code set} methods of the subclasses throw {@link IllegalArgumentException} ("array size exceeds upper
+ * bound"), as rclcpp's {@code BoundedVector} does. {@link #serialize(CDRBuffer)} refuses to write a sequence above its
+ * bound, and {@link #deserialize(CDRBuffer)} throws {@link CDRDeserializationException} for a received length that is
+ * above the bound or cannot fit in the remaining payload, before anything is allocated.
+ * </p>
+ */
 public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerializable
 {
    public static final int UNBOUNDED_MAX_SIZE = Integer.MAX_VALUE;
@@ -32,12 +43,12 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
    {
       if (maxSize < 0)
       {
-         throw new IllegalArgumentException("IDLSequence maxSize cannot be negative");
+         throw IDLSequenceErrors.negativeMaxSize();
       }
 
       if (capacity > maxSize)
       {
-         throw new IllegalArgumentException("IDLSequence capacity cannot be larger than maxSize");
+         throw IDLSequenceErrors.capacityAboveMaxSize();
       }
 
       this.maxSize = maxSize;
@@ -94,11 +105,12 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     *
     * @param desiredCapacity The minimum required capacity.
     * @implSpec If the current capacity is greater than or equal to {@code desiredCapacity}, the capacity need not be changed.
-    *       Otherwise, the capacity should be increased to be grater than or equal to {@code desiredCapacity}.
+    *       Otherwise, the capacity should be increased to be grater than or equal to {@code desiredCapacity}, but never
+    *       above {@link #getMaxSize()}.
     *       <p>
     *       Elements should not be added or removed by this method.
     * @return true if the capacity was not needed to be changed or was changed successfully,
-    *          false if the new capacity would exceed {@link #getMaxSize()}
+    *          false (without changing anything) if {@code desiredCapacity} exceeds {@link #getMaxSize()}
     */
    public abstract boolean ensureMinCapacity(int desiredCapacity);
 
@@ -119,8 +131,82 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
     *
     * @param other The sequence to set from.
     * @implSpec {@link #size()} of this sequence will return the same values as {@code other} after calling this method.
+    * @throws IllegalArgumentException if {@code other} has more elements than {@link #getMaxSize()}
     */
    public abstract void set(T other);
+
+   /**
+    * The minimum number of bytes one element occupies on the wire, used to validate a received length before allocating.
+    * For primitive elements this is also their alignment. Must be 1, 2, 4 or 8.
+    */
+   protected int minimumElementSizeBytes()
+   {
+      return 1;
+   }
+
+   /**
+    * Computes the new capacity when growing from {@code currentCapacity} to at least {@code desiredCapacity}.
+    *
+    * @return the new capacity, or -1 if {@code desiredCapacity} exceeds {@link #getMaxSize()}
+    */
+   protected int grownCapacity(int currentCapacity, int desiredCapacity)
+   {
+      if (desiredCapacity > maxSize)
+      {
+         return -1;
+      }
+
+      long grown = Math.max((long) desiredCapacity, (long) currentCapacity * CAPACITY_GROW_SCALAR);
+      return (int) Math.min(grown, maxSize);
+   }
+
+   /**
+    * Ensures the capacity for {@code desiredSize} elements.
+    *
+    * @throws IllegalArgumentException if {@code desiredSize} exceeds {@link #getMaxSize()}
+    */
+   protected void ensureSizeWithinBound(int desiredSize)
+   {
+      if (desiredSize < 0 || !ensureMinCapacity(desiredSize))
+      {
+         throw exceedsUpperBound(desiredSize);
+      }
+   }
+
+   protected IllegalArgumentException exceedsUpperBound(long size)
+   {
+      return IDLSequenceErrors.exceedsUpperBound(size, maxSize);
+   }
+
+   /**
+    * Throws if the current size is above the upper bound; called before serializing.
+    */
+   protected void checkSizeWithinBound()
+   {
+      int size = size();
+      if (size > maxSize)
+      {
+         throw exceedsUpperBound(size);
+      }
+   }
+
+   /**
+    * Size of a sequence of {@code size} primitive elements of {@code elementSizeBytes} bytes each, including the length
+    * prefix and alignment padding.
+    */
+   protected static int primitiveSequenceSizeBytes(int currentAlignment, int size, int elementSizeBytes)
+   {
+      int initialAlignment = currentAlignment;
+
+      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // Length header
+
+      if (size > 0)
+      {
+         currentAlignment += CDRBuffer.alignment(currentAlignment, elementSizeBytes) + size * elementSizeBytes;
+      }
+
+      return currentAlignment - initialAlignment;
+   }
 
    @Override
    public int calculateSizeBytes(int currentAlignment)
@@ -139,12 +225,17 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
       return currentAlignment - initialAlignment;
    }
 
+   /**
+    * @throws IllegalArgumentException if the sequence has more elements than its upper bound
+    */
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      checkSizeWithinBound();
+
       int elements = size();
 
-      buffer.writeInt(elements);
+      buffer.writeSequenceLength(elements);
 
       for (int i = 0; i < elements; i++)
       {
@@ -152,12 +243,15 @@ public abstract class IDLSequence<T extends IDLSequence<T>> implements CDRSerial
       }
    }
 
+   /**
+    * @throws CDRDeserializationException if the received length exceeds the upper bound or the remaining payload
+    */
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       clear();
 
-      int elements = buffer.readInt();
+      int elements = buffer.readSequenceLength(minimumElementSizeBytes(), maxSize);
 
       ensureMinCapacity(elements);
 

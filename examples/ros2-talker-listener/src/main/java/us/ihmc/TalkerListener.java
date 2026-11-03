@@ -31,7 +31,10 @@ public class TalkerListener
    public static void main(java.lang.String[] args) throws InterruptedException
    {
       /*
-       * Create a topic with type example_interfaces/String
+       * Create a topic with type example_interfaces/String.
+       * Without an explicit ROS2QoSProfile the publisher and subscription use ROS2QoSProfile.DEFAULT, which matches ROS 2's
+       * default profile (RELIABLE, VOLATILE, KEEP_LAST 10), so they also talk to rclcpp/rclpy nodes with default QoS, e.g.
+       * "ros2 topic echo /chatter example_interfaces/msg/String".
        */
       ROS2Topic<example_interfaces.String_> topic = new ROS2Topic<>("/chatter", example_interfaces.String_.class);
 

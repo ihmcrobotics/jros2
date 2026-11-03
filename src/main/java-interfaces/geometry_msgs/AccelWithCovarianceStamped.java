@@ -16,9 +16,14 @@ std_msgs/Header header
 AccelWithCovariance accel
 }</pre>
 */
-public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarianceStamped>
+public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarianceStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovarianceStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/AccelWithCovarianceStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_61c9ad8928e71dd95ce791b2f02809ee2a0bbcc42cd0e4047fd00a822a08e444";
 
    /**
       This represents an estimated accel with reference coordinate frame and timestamp.
@@ -69,6 +74,11 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    @Override
    public void set(AccelWithCovarianceStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       accel_.set(from.accel_);
 
@@ -85,17 +95,24 @@ public class AccelWithCovarianceStamped implements ROS2Message<AccelWithCovarian
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"AccelWithCovarianceStamped {", "header_=", "accel_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("AccelWithCovarianceStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("accel_=");
+      builder.append(toStringLabels[2]);
       builder.append(accel_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

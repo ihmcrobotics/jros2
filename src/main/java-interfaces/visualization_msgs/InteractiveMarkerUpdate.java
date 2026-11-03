@@ -50,6 +50,11 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerUpdate_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarkerUpdate, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_0a8b000c4fd4d50876ac716a7de018911599a2f015795388e956a2ca8b0c54f0";
+
+   /**
       Identifying string. Must be unique in the topic namespace
       that this server works on.
    */
@@ -68,8 +73,8 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       The sequence number does not increase.
       No payload data should be filled out (markers, poses, or erases).
    */
-   public static final byte KEEP_ALIVE = 0;
-   public static final byte UPDATE = 1;
+   public static final byte KEEP_ALIVE = (byte) 0;
+   public static final byte UPDATE = (byte) 1;
    private byte type_;
    /**
       Markers to be added or updated
@@ -86,7 +91,7 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
 
    public InteractiveMarkerUpdate()
    {
-      server_id_ = new StringBuilder();
+      server_id_ = CDRBuffer.newStringBuilder(16);
       markers_ = new IDLObjectSequence<visualization_msgs.InteractiveMarker>(visualization_msgs.InteractiveMarker.class);
       poses_ = new IDLObjectSequence<visualization_msgs.InteractiveMarkerPose>(visualization_msgs.InteractiveMarkerPose.class);
       erases_ = new IDLStringSequence();
@@ -104,9 +109,9 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * server_id_.length()) + 1; // server_id_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // seq_num_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(server_id_) + 1; // server_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // seq_num_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // type_
       currentAlignment += markers_.calculateSizeBytes(currentAlignment);
       currentAlignment += poses_.calculateSizeBytes(currentAlignment);
       currentAlignment += erases_.calculateSizeBytes(currentAlignment);
@@ -141,12 +146,17 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    @Override
    public void set(InteractiveMarkerUpdate from)
    {
-      server_id_.delete(0, server_id_.length());
-      server_id_.insert(0, from.server_id_);
+      if (from == this)
+      {
+         return;
+      }
+
+      server_id_.setLength(0);
+      server_id_.append(from.server_id_);
       seq_num_ = from.seq_num_;
       type_ = from.type_;
-      markers_.set(from.markers_);
-      poses_.set(from.poses_);
+      markers_.set(from.markers_, visualization_msgs.InteractiveMarker::set); // copies the elements, never shares them
+      poses_.set(from.poses_, visualization_msgs.InteractiveMarkerPose::set); // copies the elements, never shares them
       erases_.set(from.erases_);
 
    }
@@ -156,15 +166,35 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       return server_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of server_id (allocates). {@link #getServerId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getServerIdAsString()
    {
       return server_id_.toString();
    }
 
+   /**
+    * Replaces the content of server_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setServerId(java.lang.String s)
    {
-      this.server_id_.delete(0, this.server_id_.length());
-      this.server_id_.insert(0, s);
+      this.server_id_.setLength(0);
+      this.server_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of server_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setServerId(java.lang.CharSequence s)
+   {
+      if (s != this.server_id_)
+      {
+         this.server_id_.setLength(0);
+         this.server_id_.append(s);
+      }
    }
    public long getSeqNum()
    {
@@ -202,29 +232,36 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarkerUpdate {", "server_id_=", "seq_num_=", "KEEP_ALIVE=", "UPDATE=", "type_=", "markers_=", "poses_=", "erases_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarkerUpdate {");
-      builder.append("server_id_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(server_id_.toString());
-      builder.append("seq_num_=");
+      builder.append(toStringLabels[2]);
       builder.append(seq_num_);
-      builder.append("KEEP_ALIVE=");
+      builder.append(toStringLabels[3]);
       builder.append(KEEP_ALIVE);
-      builder.append("UPDATE=");
+      builder.append(toStringLabels[4]);
       builder.append(UPDATE);
-      builder.append("type_=");
+      builder.append(toStringLabels[5]);
       builder.append(type_);
-      builder.append("markers_=");
+      builder.append(toStringLabels[6]);
       builder.append(markers_);
-      builder.append("poses_=");
+      builder.append(toStringLabels[7]);
       builder.append(poses_);
-      builder.append("erases_=");
+      builder.append(toStringLabels[8]);
       builder.append(erases_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -60,6 +60,11 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterValue_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ParameterValue, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_115fc089a387e23c7ecd3525c9189c379109119d6ab82e8dfbde0fdf6a7f9b68";
+
+   /**
       The type of this parameter, which corresponds to the appropriate field below.
    */
    private byte type_;
@@ -103,8 +108,7 @@ public class ParameterValue implements ROS2Message<ParameterValue>
 
    public ParameterValue()
    {
-      bool_value_ = (boolean) false;
-      string_value_ = new StringBuilder();
+      string_value_ = CDRBuffer.newStringBuilder(16);
       byte_array_value_ = new IDLByteSequence();
       bool_array_value_ = new IDLBoolSequence();
       integer_array_value_ = new IDLLongSequence();
@@ -124,11 +128,11 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // integer_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // double_value_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * string_value_.length()) + 1; // string_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // bool_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // integer_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // double_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(string_value_) + 1; // string_value_
       currentAlignment += byte_array_value_.calculateSizeBytes(currentAlignment);
       currentAlignment += bool_array_value_.calculateSizeBytes(currentAlignment);
       currentAlignment += integer_array_value_.calculateSizeBytes(currentAlignment);
@@ -173,12 +177,17 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    @Override
    public void set(ParameterValue from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       type_ = from.type_;
       bool_value_ = from.bool_value_;
       integer_value_ = from.integer_value_;
       double_value_ = from.double_value_;
-      string_value_.delete(0, string_value_.length());
-      string_value_.insert(0, from.string_value_);
+      string_value_.setLength(0);
+      string_value_.append(from.string_value_);
       byte_array_value_.set(from.byte_array_value_);
       bool_array_value_.set(from.bool_array_value_);
       integer_array_value_.set(from.integer_array_value_);
@@ -232,15 +241,35 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       return string_value_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of string_value (allocates). {@link #getStringValue()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStringValueAsString()
    {
       return string_value_.toString();
    }
 
+   /**
+    * Replaces the content of string_value with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStringValue(java.lang.String s)
    {
-      this.string_value_.delete(0, this.string_value_.length());
-      this.string_value_.insert(0, s);
+      this.string_value_.setLength(0);
+      this.string_value_.append(s);
+   }
+
+   /**
+    * Replaces the content of string_value with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStringValue(java.lang.CharSequence s)
+   {
+      if (s != this.string_value_)
+      {
+         this.string_value_.setLength(0);
+         this.string_value_.append(s);
+      }
    }
    public IDLByteSequence getByteArrayValue()
    {
@@ -268,33 +297,40 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ParameterValue {", "type_=", "bool_value_=", "integer_value_=", "double_value_=", "string_value_=", "byte_array_value_=", "bool_array_value_=", "integer_array_value_=", "double_array_value_=", "string_array_value_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ParameterValue {");
-      builder.append("type_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(type_);
-      builder.append("bool_value_=");
+      builder.append(toStringLabels[2]);
       builder.append(bool_value_);
-      builder.append("integer_value_=");
+      builder.append(toStringLabels[3]);
       builder.append(integer_value_);
-      builder.append("double_value_=");
+      builder.append(toStringLabels[4]);
       builder.append(double_value_);
-      builder.append("string_value_=");
+      builder.append(toStringLabels[5]);
       builder.append(string_value_.toString());
-      builder.append("byte_array_value_=");
+      builder.append(toStringLabels[6]);
       builder.append(byte_array_value_);
-      builder.append("bool_array_value_=");
+      builder.append(toStringLabels[7]);
       builder.append(bool_array_value_);
-      builder.append("integer_array_value_=");
+      builder.append(toStringLabels[8]);
       builder.append(integer_array_value_);
-      builder.append("double_array_value_=");
+      builder.append(toStringLabels[9]);
       builder.append(double_array_value_);
-      builder.append("string_array_value_=");
+      builder.append(toStringLabels[10]);
       builder.append(string_array_value_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

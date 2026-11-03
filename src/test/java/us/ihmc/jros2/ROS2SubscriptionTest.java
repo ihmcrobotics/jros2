@@ -248,12 +248,14 @@ public class ROS2SubscriptionTest
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
+      // Foxy/Galactic's CLI cannot wait for the subscription before the burst: deliver samples published before the match too
+      String burstOptions = ROS2TestTools.prepareCLIBurst("--times " + publishCount + " -r 100000 --qos-depth " + publishCount, subscriptionQos);
 
       ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
       // Publish messages
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
+                                                               burstOptions,
                                                                topicName,
                                                                "std_msgs/msg/String",
                                                                "{data: " + data + "}",
@@ -303,6 +305,8 @@ public class ROS2SubscriptionTest
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
+      // Foxy/Galactic's CLI cannot wait for the subscription before the burst: deliver samples published before the match too
+      String burstOptions = ROS2TestTools.prepareCLIBurst("--times " + publishCount + " -r 100000 --qos-depth " + publishCount, subscriptionQos);
 
       AtomicInteger callbackRun = new AtomicInteger();
       ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, reader ->
@@ -325,7 +329,7 @@ public class ROS2SubscriptionTest
 
       // Publish messages
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
+                                                               burstOptions,
                                                                topicName,
                                                                "std_msgs/msg/String",
                                                                "{data: " + data + "}",
@@ -342,7 +346,9 @@ public class ROS2SubscriptionTest
 
       assertEquals(publishCount, callbackRun.get());
 
-      // Read remaining messages that weren't read in callback
+      // Callback mode takes every sample before invoking the callback (like rclcpp), so the samples the callback chose not
+      // to read are consumed as well: nothing is left for polling. (Before jros2 took samples in the listener, the unread
+      // half stayed in the DataReader history.)
       int totalRead = 0;
       std_msgs.String_ msg = subscription.read();
       while (msg != null)
@@ -351,7 +357,8 @@ public class ROS2SubscriptionTest
          totalRead++;
          msg = subscription.read();
       }
-      assertEquals(publishCount / 2, totalRead);
+      assertEquals(0, totalRead);
+      assertEquals(0, subscription.getUnreadMessageCount());
 
       assertNull(subscription.read());
       assertNull(subscription.readLatest());

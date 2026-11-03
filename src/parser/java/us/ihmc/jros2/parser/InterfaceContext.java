@@ -53,6 +53,7 @@ public abstract class InterfaceContext
    private String headerComment;
    private String javaClassName;
    private String javaPackageName;
+   private String typeHash;
 
    protected InterfaceContext(String schema)
    {
@@ -132,6 +133,56 @@ public abstract class InterfaceContext
    public String getJavaPackageName()
    {
       return javaPackageName;
+   }
+
+   /**
+    * @return the ROS 2 type name used in type descriptions, e.g. {@code std_msgs/msg/String} (without any Java-specific
+    *       suffix such as the {@code _} appended to {@code String_})
+    */
+   public String getRosTypeName()
+   {
+      return packageName + "/msg/" + resourceName.split("\\.")[0];
+   }
+
+   /**
+    * @return true if the interface has no fields other than constants. ROS 2 then adds the member
+    *       {@code uint8 structure_needs_at_least_one_member}, which is serialized as one byte.
+    */
+   public boolean isEmptyStructure()
+   {
+      for (InterfaceField field : fields.values())
+      {
+         if (field.getConstantValue() == null)
+         {
+            return false;
+         }
+      }
+
+      return true;
+   }
+
+   /**
+    * @return true if the interface has a (non-array, non-constant) field {@code std_msgs/Header header}, the ROS
+    *       convention for stamped messages. The generated class then implements {@code ROS2Message.WithHeader}, so that
+    *       jros2 reads the header (publisher age statistics) through a plain interface call instead of reflection.
+    */
+   public boolean isWithHeader()
+   {
+      InterfaceField header = fields.get("header");
+      return header != null && header.getConstantValue() == null && !header.isArray() && "std_msgs.Header".equals(header.getJavaType());
+   }
+
+   /**
+    * @return the RIHS01 type description hash (e.g. {@code RIHS01_df66...}), or null if it has not been computed
+    */
+   public String getTypeHash()
+   {
+      return typeHash;
+   }
+
+   public void setTypeHash(String typeHash)
+   {
+      this.typeHash = typeHash;
    }
 
    public String getDDSName()

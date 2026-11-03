@@ -22,6 +22,11 @@ public class Point implements ROS2Message<Point>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Point_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Point, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_6963084842a9b04494d6b2941d11444708d892da2f4b09843b9c43f42a7f6881";
+
+   /**
       This contains the position of a point in free space
    */
    private double x_;
@@ -43,9 +48,9 @@ public class Point implements ROS2Message<Point>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // x_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // y_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // z_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // x_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // y_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // z_
 
       return currentAlignment - initialAlignment;
    }
@@ -71,6 +76,11 @@ public class Point implements ROS2Message<Point>
    @Override
    public void set(Point from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       x_ = from.x_;
       y_ = from.y_;
       z_ = from.z_;
@@ -108,19 +118,26 @@ public class Point implements ROS2Message<Point>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Point {", "x_=", "y_=", "z_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Point {");
-      builder.append("x_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(x_);
-      builder.append("y_=");
+      builder.append(toStringLabels[2]);
       builder.append(y_);
-      builder.append("z_=");
+      builder.append(toStringLabels[3]);
       builder.append(z_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -49,9 +49,14 @@ geometry_msgs/Point[] points
 std_msgs/ColorRGBA[] outline_colors
 }</pre>
 */
-public class ImageMarker implements ROS2Message<ImageMarker>
+public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::ImageMarker_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/ImageMarker, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_603152491ef2331c200a5305230d31f6e8704875944b388da0f547c415d11836";
 
    public static final int CIRCLE = 0;
    public static final int LINE_STRIP = 1;
@@ -114,7 +119,7 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    public ImageMarker()
    {
       header_ = new std_msgs.Header();
-      ns_ = new StringBuilder();
+      ns_ = CDRBuffer.newStringBuilder(16);
       position_ = new geometry_msgs.Point();
       outline_color_ = new std_msgs.ColorRGBA();
       fill_color_ = new std_msgs.ColorRGBA();
@@ -136,14 +141,14 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * ns_.length()) + 1; // ns_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // action_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(ns_) + 1; // ns_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // action_
       currentAlignment += position_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // scale_
       currentAlignment += outline_color_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // filled_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // filled_
       currentAlignment += fill_color_.calculateSizeBytes(currentAlignment);
       currentAlignment += lifetime_.calculateSizeBytes(currentAlignment);
       currentAlignment += points_.calculateSizeBytes(currentAlignment);
@@ -193,9 +198,14 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    @Override
    public void set(ImageMarker from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      ns_.delete(0, ns_.length());
-      ns_.insert(0, from.ns_);
+      ns_.setLength(0);
+      ns_.append(from.ns_);
       id_ = from.id_;
       type_ = from.type_;
       action_ = from.action_;
@@ -205,8 +215,8 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       filled_ = from.filled_;
       fill_color_.set(from.fill_color_);
       lifetime_.set(from.lifetime_);
-      points_.set(from.points_);
-      outline_colors_.set(from.outline_colors_);
+      points_.set(from.points_, geometry_msgs.Point::set); // copies the elements, never shares them
+      outline_colors_.set(from.outline_colors_, std_msgs.ColorRGBA::set); // copies the elements, never shares them
 
    }
 
@@ -220,15 +230,35 @@ public class ImageMarker implements ROS2Message<ImageMarker>
       return ns_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of ns (allocates). {@link #getNs()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNsAsString()
    {
       return ns_.toString();
    }
 
+   /**
+    * Replaces the content of ns with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setNs(java.lang.String s)
    {
-      this.ns_.delete(0, this.ns_.length());
-      this.ns_.insert(0, s);
+      this.ns_.setLength(0);
+      this.ns_.append(s);
+   }
+
+   /**
+    * Replaces the content of ns with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setNs(java.lang.CharSequence s)
+   {
+      if (s != this.ns_)
+      {
+         this.ns_.setLength(0);
+         this.ns_.append(s);
+      }
    }
    public int getId()
    {
@@ -311,53 +341,60 @@ public class ImageMarker implements ROS2Message<ImageMarker>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ImageMarker {", "CIRCLE=", "LINE_STRIP=", "LINE_LIST=", "POLYGON=", "POINTS=", "ADD=", "REMOVE=", "header_=", "ns_=", "id_=", "type_=", "action_=", "position_=", "scale_=", "outline_color_=", "filled_=", "fill_color_=", "lifetime_=", "points_=", "outline_colors_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ImageMarker {");
-      builder.append("CIRCLE=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(CIRCLE);
-      builder.append("LINE_STRIP=");
+      builder.append(toStringLabels[2]);
       builder.append(LINE_STRIP);
-      builder.append("LINE_LIST=");
+      builder.append(toStringLabels[3]);
       builder.append(LINE_LIST);
-      builder.append("POLYGON=");
+      builder.append(toStringLabels[4]);
       builder.append(POLYGON);
-      builder.append("POINTS=");
+      builder.append(toStringLabels[5]);
       builder.append(POINTS);
-      builder.append("ADD=");
+      builder.append(toStringLabels[6]);
       builder.append(ADD);
-      builder.append("REMOVE=");
+      builder.append(toStringLabels[7]);
       builder.append(REMOVE);
-      builder.append("header_=");
+      builder.append(toStringLabels[8]);
       builder.append(header_);
-      builder.append("ns_=");
+      builder.append(toStringLabels[9]);
       builder.append(ns_.toString());
-      builder.append("id_=");
+      builder.append(toStringLabels[10]);
       builder.append(id_);
-      builder.append("type_=");
+      builder.append(toStringLabels[11]);
       builder.append(type_);
-      builder.append("action_=");
+      builder.append(toStringLabels[12]);
       builder.append(action_);
-      builder.append("position_=");
+      builder.append(toStringLabels[13]);
       builder.append(position_);
-      builder.append("scale_=");
+      builder.append(toStringLabels[14]);
       builder.append(scale_);
-      builder.append("outline_color_=");
+      builder.append(toStringLabels[15]);
       builder.append(outline_color_);
-      builder.append("filled_=");
+      builder.append(toStringLabels[16]);
       builder.append(filled_);
-      builder.append("fill_color_=");
+      builder.append(toStringLabels[17]);
       builder.append(fill_color_);
-      builder.append("lifetime_=");
+      builder.append(toStringLabels[18]);
       builder.append(lifetime_);
-      builder.append("points_=");
+      builder.append(toStringLabels[19]);
       builder.append(points_);
-      builder.append("outline_colors_=");
+      builder.append(toStringLabels[20]);
       builder.append(outline_colors_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

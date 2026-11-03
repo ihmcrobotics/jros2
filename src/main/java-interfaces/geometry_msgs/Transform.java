@@ -22,6 +22,11 @@ public class Transform implements ROS2Message<Transform>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Transform_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Transform, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_beb83fbe698636351461f6f35d1abb20010c43d55374d81bd041f1ba2581fddc";
+
    private final geometry_msgs.Vector3 translation_;
    private final geometry_msgs.Quaternion rotation_;
 
@@ -68,6 +73,11 @@ public class Transform implements ROS2Message<Transform>
    @Override
    public void set(Transform from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       translation_.set(from.translation_);
       rotation_.set(from.rotation_);
 
@@ -84,17 +94,24 @@ public class Transform implements ROS2Message<Transform>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Transform {", "translation_=", "rotation_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Transform {");
-      builder.append("translation_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(translation_);
-      builder.append("rotation_=");
+      builder.append(toStringLabels[2]);
       builder.append(rotation_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

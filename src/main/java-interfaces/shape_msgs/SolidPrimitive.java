@@ -69,11 +69,16 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::SolidPrimitive_";
 
-   public static final byte BOX = 1;
-   public static final byte SPHERE = 2;
-   public static final byte CYLINDER = 3;
-   public static final byte CONE = 4;
-   public static final byte PRISM = 5;
+   /**
+    * RIHS01 type description hash (REP-2011) of shape_msgs/msg/SolidPrimitive, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_2802a15190aadc3f496584df4b0b4c5824d8a0b31aaef839faa75bc34dda38ac";
+
+   public static final byte BOX = (byte) 1;
+   public static final byte SPHERE = (byte) 2;
+   public static final byte CYLINDER = (byte) 3;
+   public static final byte CONE = (byte) 4;
+   public static final byte PRISM = (byte) 5;
    /**
       The type of the shape
    */
@@ -81,22 +86,23 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    /**
       The dimensions of the shape
    */
+   // Bounded sequence: at most 3 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLDoubleSequence dimensions_; // At no point will dimensions have a length > 3.
    /**
       For type BOX, the X, Y, and Z dimensions are the length of the corresponding sides of the box.
    */
-   public static final byte BOX_X = 0;
-   public static final byte BOX_Y = 1;
-   public static final byte BOX_Z = 2;
+   public static final byte BOX_X = (byte) 0;
+   public static final byte BOX_Y = (byte) 1;
+   public static final byte BOX_Z = (byte) 2;
    /**
       For the SPHERE type, only one component is used, and it gives the radius of the sphere.
    */
-   public static final byte SPHERE_RADIUS = 0;
-   public static final byte CYLINDER_HEIGHT = 0;
-   public static final byte CYLINDER_RADIUS = 1;
-   public static final byte CONE_HEIGHT = 0;
-   public static final byte CONE_RADIUS = 1;
-   public static final byte PRISM_HEIGHT = 0;
+   public static final byte SPHERE_RADIUS = (byte) 0;
+   public static final byte CYLINDER_HEIGHT = (byte) 0;
+   public static final byte CYLINDER_RADIUS = (byte) 1;
+   public static final byte CONE_HEIGHT = (byte) 0;
+   public static final byte CONE_RADIUS = (byte) 1;
+   public static final byte PRISM_HEIGHT = (byte) 0;
    private final geometry_msgs.Polygon polygon_;
 
    public SolidPrimitive()
@@ -117,7 +123,7 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // type_
       currentAlignment += dimensions_.calculateSizeBytes(currentAlignment);
       currentAlignment += polygon_.calculateSizeBytes(currentAlignment);
 
@@ -145,6 +151,11 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    @Override
    public void set(SolidPrimitive from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       type_ = from.type_;
       dimensions_.set(from.dimensions_);
       polygon_.set(from.polygon_);
@@ -172,47 +183,54 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"SolidPrimitive {", "BOX=", "SPHERE=", "CYLINDER=", "CONE=", "PRISM=", "type_=", "dimensions_=", "BOX_X=", "BOX_Y=", "BOX_Z=", "SPHERE_RADIUS=", "CYLINDER_HEIGHT=", "CYLINDER_RADIUS=", "CONE_HEIGHT=", "CONE_RADIUS=", "PRISM_HEIGHT=", "polygon_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("SolidPrimitive {");
-      builder.append("BOX=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(BOX);
-      builder.append("SPHERE=");
+      builder.append(toStringLabels[2]);
       builder.append(SPHERE);
-      builder.append("CYLINDER=");
+      builder.append(toStringLabels[3]);
       builder.append(CYLINDER);
-      builder.append("CONE=");
+      builder.append(toStringLabels[4]);
       builder.append(CONE);
-      builder.append("PRISM=");
+      builder.append(toStringLabels[5]);
       builder.append(PRISM);
-      builder.append("type_=");
+      builder.append(toStringLabels[6]);
       builder.append(type_);
-      builder.append("dimensions_=");
+      builder.append(toStringLabels[7]);
       builder.append(dimensions_);
-      builder.append("BOX_X=");
+      builder.append(toStringLabels[8]);
       builder.append(BOX_X);
-      builder.append("BOX_Y=");
+      builder.append(toStringLabels[9]);
       builder.append(BOX_Y);
-      builder.append("BOX_Z=");
+      builder.append(toStringLabels[10]);
       builder.append(BOX_Z);
-      builder.append("SPHERE_RADIUS=");
+      builder.append(toStringLabels[11]);
       builder.append(SPHERE_RADIUS);
-      builder.append("CYLINDER_HEIGHT=");
+      builder.append(toStringLabels[12]);
       builder.append(CYLINDER_HEIGHT);
-      builder.append("CYLINDER_RADIUS=");
+      builder.append(toStringLabels[13]);
       builder.append(CYLINDER_RADIUS);
-      builder.append("CONE_HEIGHT=");
+      builder.append(toStringLabels[14]);
       builder.append(CONE_HEIGHT);
-      builder.append("CONE_RADIUS=");
+      builder.append(toStringLabels[15]);
       builder.append(CONE_RADIUS);
-      builder.append("PRISM_HEIGHT=");
+      builder.append(toStringLabels[16]);
       builder.append(PRISM_HEIGHT);
-      builder.append("polygon_=");
+      builder.append(toStringLabels[17]);
       builder.append(polygon_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

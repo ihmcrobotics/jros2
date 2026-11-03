@@ -33,6 +33,11 @@ public class Duration implements ROS2Message<Duration>
    public static final java.lang.String name = "builtin_interfaces::msg::dds_::Duration_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of builtin_interfaces/msg/Duration, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_e8d009f659816f758b75334ee1a9ca5b5c0b859843261f14c7f937349599d93b";
+
+   /**
       The seconds component, valid over all int32 values.
    */
    private int sec_;
@@ -59,8 +64,8 @@ public class Duration implements ROS2Message<Duration>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // sec_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // nanosec_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // sec_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // nanosec_
 
       return currentAlignment - initialAlignment;
    }
@@ -84,6 +89,11 @@ public class Duration implements ROS2Message<Duration>
    @Override
    public void set(Duration from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       sec_ = from.sec_;
       nanosec_ = from.nanosec_;
 
@@ -110,17 +120,24 @@ public class Duration implements ROS2Message<Duration>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Duration {", "sec_=", "nanosec_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Duration {");
-      builder.append("sec_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(sec_);
-      builder.append("nanosec_=");
+      builder.append(toStringLabels[2]);
       builder.append(nanosec_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

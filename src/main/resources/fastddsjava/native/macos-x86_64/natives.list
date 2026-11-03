@@ -1,0 +1,4 @@
+# Load order for macos-x86_64 (one file name per line, JNI library last). Read by fastddsjavaNativeLibrary.
+libfastcdr.2.3.5.dylib
+libfastdds.3.6.2.dylib
+libjnifastddsjava.dylib

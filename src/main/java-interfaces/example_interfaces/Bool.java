@@ -23,6 +23,11 @@ public class Bool implements ROS2Message<Bool>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Bool_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/Bool, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_4765c142500f8fd4e1a32fb3edd7b7d9d822a16ec270445f5120e772c5f9aed5";
+
+   /**
       This is an example message of using a primitive datatype, bool.
       If you want to test with this that's fine, but if you are deploying
       it into a system you should create a semantically meaningful message type.
@@ -32,8 +37,6 @@ public class Bool implements ROS2Message<Bool>
 
    public Bool()
    {
-      data_ = (boolean) false;
-
    }
 
    public Bool(Bool from)
@@ -47,7 +50,7 @@ public class Bool implements ROS2Message<Bool>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -69,6 +72,11 @@ public class Bool implements ROS2Message<Bool>
    @Override
    public void set(Bool from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -84,15 +92,22 @@ public class Bool implements ROS2Message<Bool>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Bool {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Bool {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

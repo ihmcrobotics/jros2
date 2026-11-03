@@ -22,6 +22,11 @@ public class BoolTest implements ROS2Message<BoolTest>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::BoolTest_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of jros2_example_interfaces/msg/BoolTest, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5ca1bf9c8690cb74e952737088a194a7482d665623c354954c5c446549925b58";
+
    private boolean bool_1_;
    private boolean bool_2_;
    private boolean bool_3_;
@@ -29,10 +34,10 @@ public class BoolTest implements ROS2Message<BoolTest>
 
    public BoolTest()
    {
-      bool_1_ = (boolean) true;
-      bool_2_ = (boolean) true;
-      bool_3_ = (boolean) false;
-      bool_4_ = (boolean) false;
+      bool_1_ = true;
+      bool_2_ = true;
+      bool_3_ = false;
+      bool_4_ = false;
 
    }
 
@@ -47,10 +52,10 @@ public class BoolTest implements ROS2Message<BoolTest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_1_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_2_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_3_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // bool_4_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // bool_1_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // bool_2_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // bool_3_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // bool_4_
 
       return currentAlignment - initialAlignment;
    }
@@ -78,6 +83,11 @@ public class BoolTest implements ROS2Message<BoolTest>
    @Override
    public void set(BoolTest from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       bool_1_ = from.bool_1_;
       bool_2_ = from.bool_2_;
       bool_3_ = from.bool_3_;
@@ -126,21 +136,28 @@ public class BoolTest implements ROS2Message<BoolTest>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"BoolTest {", "bool_1_=", "bool_2_=", "bool_3_=", "bool_4_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("BoolTest {");
-      builder.append("bool_1_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(bool_1_);
-      builder.append("bool_2_=");
+      builder.append(toStringLabels[2]);
       builder.append(bool_2_);
-      builder.append("bool_3_=");
+      builder.append(toStringLabels[3]);
       builder.append(bool_3_);
-      builder.append("bool_4_=");
+      builder.append(toStringLabels[4]);
       builder.append(bool_4_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

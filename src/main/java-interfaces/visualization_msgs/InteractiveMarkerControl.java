@@ -96,6 +96,11 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerControl_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarkerControl, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_60e2fa36344f5f4791b24a809542a18bffd555f563550d4b22b3bbfc31ec0ed5";
+
+   /**
       Identifying string for this control.
       You need to assign a unique value to this to receive feedback from the GUI
       on what actions the user performs on this control (e.g. a button click).
@@ -113,9 +118,9 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       FIXED: Keep orientation fixed at initial state
       VIEW_FACING: Align y-z plane with screen (x: forward, y:left, z:up).
    */
-   public static final byte INHERIT = 0;
-   public static final byte FIXED = 1;
-   public static final byte VIEW_FACING = 2;
+   public static final byte INHERIT = (byte) 0;
+   public static final byte FIXED = (byte) 1;
+   public static final byte VIEW_FACING = (byte) 2;
    private byte orientation_mode_;
    /**
       Interaction mode for this control
@@ -128,22 +133,22 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       ROTATE_AXIS: Rotate around local x-axis.
       MOVE_ROTATE: Combines MOVE_PLANE and ROTATE_AXIS.
    */
-   public static final byte NONE = 0;
-   public static final byte MENU = 1;
-   public static final byte BUTTON = 2;
-   public static final byte MOVE_AXIS = 3;
-   public static final byte MOVE_PLANE = 4;
-   public static final byte ROTATE_AXIS = 5;
-   public static final byte MOVE_ROTATE = 6;
+   public static final byte NONE = (byte) 0;
+   public static final byte MENU = (byte) 1;
+   public static final byte BUTTON = (byte) 2;
+   public static final byte MOVE_AXIS = (byte) 3;
+   public static final byte MOVE_PLANE = (byte) 4;
+   public static final byte ROTATE_AXIS = (byte) 5;
+   public static final byte MOVE_ROTATE = (byte) 6;
    /**
       "3D" interaction modes work with the mouse+SHIFT+CTRL or with 3D cursors.
       MOVE_3D: Translate freely in 3D space.
       ROTATE_3D: Rotate freely in 3D space about the origin of parent frame.
       MOVE_ROTATE_3D: Full 6-DOF freedom of translation and rotation about the cursor origin.
    */
-   public static final byte MOVE_3D = 7;
-   public static final byte ROTATE_3D = 8;
-   public static final byte MOVE_ROTATE_3D = 9;
+   public static final byte MOVE_3D = (byte) 7;
+   public static final byte ROTATE_3D = (byte) 8;
+   public static final byte MOVE_ROTATE_3D = (byte) 9;
    private byte interaction_mode_;
    /**
       If true, the contained markers will also be visible
@@ -176,12 +181,10 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
 
    public InteractiveMarkerControl()
    {
-      name_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
       orientation_ = new geometry_msgs.Quaternion();
-      always_visible_ = (boolean) false;
       markers_ = new IDLObjectSequence<visualization_msgs.Marker>(visualization_msgs.Marker.class);
-      independent_marker_orientation_ = (boolean) false;
-      description_ = new StringBuilder();
+      description_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -196,14 +199,14 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
       currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // orientation_mode_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // interaction_mode_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // always_visible_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // orientation_mode_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // interaction_mode_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // always_visible_
       currentAlignment += markers_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // independent_marker_orientation_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * description_.length()) + 1; // description_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // independent_marker_orientation_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(description_) + 1; // description_
 
       return currentAlignment - initialAlignment;
    }
@@ -239,16 +242,21 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
    @Override
    public void set(InteractiveMarkerControl from)
    {
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      if (from == this)
+      {
+         return;
+      }
+
+      name_.setLength(0);
+      name_.append(from.name_);
       orientation_.set(from.orientation_);
       orientation_mode_ = from.orientation_mode_;
       interaction_mode_ = from.interaction_mode_;
       always_visible_ = from.always_visible_;
-      markers_.set(from.markers_);
+      markers_.set(from.markers_, visualization_msgs.Marker::set); // copies the elements, never shares them
       independent_marker_orientation_ = from.independent_marker_orientation_;
-      description_.delete(0, description_.length());
-      description_.insert(0, from.description_);
+      description_.setLength(0);
+      description_.append(from.description_);
 
    }
 
@@ -257,15 +265,35 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public geometry_msgs.Quaternion getOrientation()
    {
@@ -322,66 +350,93 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       return description_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of description (allocates). {@link #getDescription()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getDescriptionAsString()
    {
       return description_.toString();
    }
 
+   /**
+    * Replaces the content of description with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setDescription(java.lang.String s)
    {
-      this.description_.delete(0, this.description_.length());
-      this.description_.insert(0, s);
+      this.description_.setLength(0);
+      this.description_.append(s);
    }
+
+   /**
+    * Replaces the content of description with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setDescription(java.lang.CharSequence s)
+   {
+      if (s != this.description_)
+      {
+         this.description_.setLength(0);
+         this.description_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarkerControl {", "name_=", "orientation_=", "INHERIT=", "FIXED=", "VIEW_FACING=", "orientation_mode_=", "NONE=", "MENU=", "BUTTON=", "MOVE_AXIS=", "MOVE_PLANE=", "ROTATE_AXIS=", "MOVE_ROTATE=", "MOVE_3D=", "ROTATE_3D=", "MOVE_ROTATE_3D=", "interaction_mode_=", "always_visible_=", "markers_=", "independent_marker_orientation_=", "description_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarkerControl {");
-      builder.append("name_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(name_.toString());
-      builder.append("orientation_=");
+      builder.append(toStringLabels[2]);
       builder.append(orientation_);
-      builder.append("INHERIT=");
+      builder.append(toStringLabels[3]);
       builder.append(INHERIT);
-      builder.append("FIXED=");
+      builder.append(toStringLabels[4]);
       builder.append(FIXED);
-      builder.append("VIEW_FACING=");
+      builder.append(toStringLabels[5]);
       builder.append(VIEW_FACING);
-      builder.append("orientation_mode_=");
+      builder.append(toStringLabels[6]);
       builder.append(orientation_mode_);
-      builder.append("NONE=");
+      builder.append(toStringLabels[7]);
       builder.append(NONE);
-      builder.append("MENU=");
+      builder.append(toStringLabels[8]);
       builder.append(MENU);
-      builder.append("BUTTON=");
+      builder.append(toStringLabels[9]);
       builder.append(BUTTON);
-      builder.append("MOVE_AXIS=");
+      builder.append(toStringLabels[10]);
       builder.append(MOVE_AXIS);
-      builder.append("MOVE_PLANE=");
+      builder.append(toStringLabels[11]);
       builder.append(MOVE_PLANE);
-      builder.append("ROTATE_AXIS=");
+      builder.append(toStringLabels[12]);
       builder.append(ROTATE_AXIS);
-      builder.append("MOVE_ROTATE=");
+      builder.append(toStringLabels[13]);
       builder.append(MOVE_ROTATE);
-      builder.append("MOVE_3D=");
+      builder.append(toStringLabels[14]);
       builder.append(MOVE_3D);
-      builder.append("ROTATE_3D=");
+      builder.append(toStringLabels[15]);
       builder.append(ROTATE_3D);
-      builder.append("MOVE_ROTATE_3D=");
+      builder.append(toStringLabels[16]);
       builder.append(MOVE_ROTATE_3D);
-      builder.append("interaction_mode_=");
+      builder.append(toStringLabels[17]);
       builder.append(interaction_mode_);
-      builder.append("always_visible_=");
+      builder.append(toStringLabels[18]);
       builder.append(always_visible_);
-      builder.append("markers_=");
+      builder.append(toStringLabels[19]);
       builder.append(markers_);
-      builder.append("independent_marker_orientation_=");
+      builder.append(toStringLabels[20]);
       builder.append(independent_marker_orientation_);
-      builder.append("description_=");
+      builder.append(toStringLabels[21]);
       builder.append(description_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

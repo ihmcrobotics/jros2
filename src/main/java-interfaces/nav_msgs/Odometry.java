@@ -31,9 +31,14 @@ geometry_msgs/PoseWithCovariance pose
 geometry_msgs/TwistWithCovariance twist
 }</pre>
 */
-public class Odometry implements ROS2Message<Odometry>
+public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Odometry_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of nav_msgs/msg/Odometry, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3cc97dc7fb7502f8714462c526d369e35b603cfc34d946e3f2eda2766dfec6e0";
 
    /**
       Includes the frame id of the pose parent.
@@ -55,7 +60,7 @@ public class Odometry implements ROS2Message<Odometry>
    public Odometry()
    {
       header_ = new std_msgs.Header();
-      child_frame_id_ = new StringBuilder();
+      child_frame_id_ = CDRBuffer.newStringBuilder(16);
       pose_ = new geometry_msgs.PoseWithCovariance();
       twist_ = new geometry_msgs.TwistWithCovariance();
 
@@ -73,7 +78,7 @@ public class Odometry implements ROS2Message<Odometry>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * child_frame_id_.length()) + 1; // child_frame_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(child_frame_id_) + 1; // child_frame_id_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
       currentAlignment += twist_.calculateSizeBytes(currentAlignment);
 
@@ -103,9 +108,14 @@ public class Odometry implements ROS2Message<Odometry>
    @Override
    public void set(Odometry from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      child_frame_id_.delete(0, child_frame_id_.length());
-      child_frame_id_.insert(0, from.child_frame_id_);
+      child_frame_id_.setLength(0);
+      child_frame_id_.append(from.child_frame_id_);
       pose_.set(from.pose_);
       twist_.set(from.twist_);
 
@@ -121,15 +131,35 @@ public class Odometry implements ROS2Message<Odometry>
       return child_frame_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of child_frame_id (allocates). {@link #getChildFrameId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getChildFrameIdAsString()
    {
       return child_frame_id_.toString();
    }
 
+   /**
+    * Replaces the content of child_frame_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setChildFrameId(java.lang.String s)
    {
-      this.child_frame_id_.delete(0, this.child_frame_id_.length());
-      this.child_frame_id_.insert(0, s);
+      this.child_frame_id_.setLength(0);
+      this.child_frame_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of child_frame_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setChildFrameId(java.lang.CharSequence s)
+   {
+      if (s != this.child_frame_id_)
+      {
+         this.child_frame_id_.setLength(0);
+         this.child_frame_id_.append(s);
+      }
    }
    public geometry_msgs.PoseWithCovariance getPose()
    {
@@ -142,21 +172,28 @@ public class Odometry implements ROS2Message<Odometry>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Odometry {", "header_=", "child_frame_id_=", "pose_=", "twist_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Odometry {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("child_frame_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(child_frame_id_.toString());
-      builder.append("pose_=");
+      builder.append(toStringLabels[3]);
       builder.append(pose_);
-      builder.append("twist_=");
+      builder.append(toStringLabels[4]);
       builder.append(twist_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

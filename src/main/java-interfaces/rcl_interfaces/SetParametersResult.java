@@ -25,6 +25,11 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::SetParametersResult_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/SetParametersResult, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_cfcc0fb0371ee5159b403960ef4300f8f9d2f1fd6117c8666b7f9654d528a9b1";
+
+   /**
       A true value of the same index indicates that the parameter was set
       successfully. A false value indicates the change was rejected.
    */
@@ -37,8 +42,7 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
 
    public SetParametersResult()
    {
-      successful_ = (boolean) false;
-      reason_ = new StringBuilder();
+      reason_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -53,8 +57,8 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // successful_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * reason_.length()) + 1; // reason_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // successful_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(reason_) + 1; // reason_
 
       return currentAlignment - initialAlignment;
    }
@@ -78,9 +82,14 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    @Override
    public void set(SetParametersResult from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       successful_ = from.successful_;
-      reason_.delete(0, reason_.length());
-      reason_.insert(0, from.reason_);
+      reason_.setLength(0);
+      reason_.append(from.reason_);
 
    }
 
@@ -99,28 +108,55 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       return reason_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of reason (allocates). {@link #getReason()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getReasonAsString()
    {
       return reason_.toString();
    }
 
+   /**
+    * Replaces the content of reason with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setReason(java.lang.String s)
    {
-      this.reason_.delete(0, this.reason_.length());
-      this.reason_.insert(0, s);
+      this.reason_.setLength(0);
+      this.reason_.append(s);
    }
+
+   /**
+    * Replaces the content of reason with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setReason(java.lang.CharSequence s)
+   {
+      if (s != this.reason_)
+      {
+         this.reason_.setLength(0);
+         this.reason_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"SetParametersResult {", "successful_=", "reason_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("SetParametersResult {");
-      builder.append("successful_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(successful_);
-      builder.append("reason_=");
+      builder.append(toStringLabels[2]);
       builder.append(reason_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

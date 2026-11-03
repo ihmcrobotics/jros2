@@ -149,8 +149,9 @@ public class ROS2PublisherTest
       bool.setData(expectedValue);
       publisher.publish(bool);
 
-      // Use ros2 topic echo to verify the published message
-      String result = ROS2TestTools.ros2EchoOnce(ros2Node.getDomainId(), topicName);
+      // Use ros2 topic echo to verify the published message. The CLI is started after the publish, so only a
+      // TRANSIENT_LOCAL sample can reach it; retry while the CLI has not discovered the publisher yet.
+      String result = PubSubTestTools.ros2EchoOnceUntil(ros2Node.getDomainId(), topicName, String.valueOf(expectedValue));
       assertTrue(result.contains(String.valueOf(expectedValue)), result);
 
       ros2Node.close();

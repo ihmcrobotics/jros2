@@ -42,9 +42,14 @@ string child_frame_id
 Transform transform
 }</pre>
 */
-public class TransformStamped implements ROS2Message<TransformStamped>
+public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TransformStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/TransformStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_0a241f87d04668d94099cbb5ba11691d5ad32c2f29682e4eb5653424bd275206";
 
    /**
       The frame id in the header is used as the reference frame of this transform.
@@ -62,7 +67,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    public TransformStamped()
    {
       header_ = new std_msgs.Header();
-      child_frame_id_ = new StringBuilder();
+      child_frame_id_ = CDRBuffer.newStringBuilder(16);
       transform_ = new geometry_msgs.Transform();
 
    }
@@ -79,7 +84,7 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * child_frame_id_.length()) + 1; // child_frame_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(child_frame_id_) + 1; // child_frame_id_
       currentAlignment += transform_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -106,9 +111,14 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    @Override
    public void set(TransformStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      child_frame_id_.delete(0, child_frame_id_.length());
-      child_frame_id_.insert(0, from.child_frame_id_);
+      child_frame_id_.setLength(0);
+      child_frame_id_.append(from.child_frame_id_);
       transform_.set(from.transform_);
 
    }
@@ -123,15 +133,35 @@ public class TransformStamped implements ROS2Message<TransformStamped>
       return child_frame_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of child_frame_id (allocates). {@link #getChildFrameId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getChildFrameIdAsString()
    {
       return child_frame_id_.toString();
    }
 
+   /**
+    * Replaces the content of child_frame_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setChildFrameId(java.lang.String s)
    {
-      this.child_frame_id_.delete(0, this.child_frame_id_.length());
-      this.child_frame_id_.insert(0, s);
+      this.child_frame_id_.setLength(0);
+      this.child_frame_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of child_frame_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setChildFrameId(java.lang.CharSequence s)
+   {
+      if (s != this.child_frame_id_)
+      {
+         this.child_frame_id_.setLength(0);
+         this.child_frame_id_.append(s);
+      }
    }
    public geometry_msgs.Transform getTransform()
    {
@@ -139,19 +169,26 @@ public class TransformStamped implements ROS2Message<TransformStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TransformStamped {", "header_=", "child_frame_id_=", "transform_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TransformStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("child_frame_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(child_frame_id_.toString());
-      builder.append("transform_=");
+      builder.append(toStringLabels[3]);
       builder.append(transform_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

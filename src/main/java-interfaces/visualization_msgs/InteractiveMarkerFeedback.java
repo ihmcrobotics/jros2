@@ -55,9 +55,14 @@ geometry_msgs/Point mouse_point
 bool mouse_point_valid
 }</pre>
 */
-public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerFeedback>
+public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerFeedback>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerFeedback_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarkerFeedback, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_6cc48741df9f05d19ba7d9ea3101e9fcd1309c9d6bda3c55668ba607492f725e";
 
    /**
       Time/frame info.
@@ -79,12 +84,12 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       BUTTON_CLICK: a button control has been clicked
       POSE_UPDATE: the pose has been changed using one of the controls
    */
-   public static final byte KEEP_ALIVE = 0;
-   public static final byte POSE_UPDATE = 1;
-   public static final byte MENU_SELECT = 2;
-   public static final byte BUTTON_CLICK = 3;
-   public static final byte MOUSE_DOWN = 4;
-   public static final byte MOUSE_UP = 5;
+   public static final byte KEEP_ALIVE = (byte) 0;
+   public static final byte POSE_UPDATE = (byte) 1;
+   public static final byte MENU_SELECT = (byte) 2;
+   public static final byte BUTTON_CLICK = (byte) 3;
+   public static final byte MOUSE_DOWN = (byte) 4;
+   public static final byte MOUSE_UP = (byte) 5;
    private byte event_type_;
    /**
       Current pose of the marker
@@ -108,12 +113,11 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    public InteractiveMarkerFeedback()
    {
       header_ = new std_msgs.Header();
-      client_id_ = new StringBuilder();
-      marker_name_ = new StringBuilder();
-      control_name_ = new StringBuilder();
+      client_id_ = CDRBuffer.newStringBuilder(16);
+      marker_name_ = CDRBuffer.newStringBuilder(16);
+      control_name_ = CDRBuffer.newStringBuilder(16);
       pose_ = new geometry_msgs.Pose();
       mouse_point_ = new geometry_msgs.Point();
-      mouse_point_valid_ = (boolean) false;
 
    }
 
@@ -129,14 +133,14 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * client_id_.length()) + 1; // client_id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * marker_name_.length()) + 1; // marker_name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * control_name_.length()) + 1; // control_name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // event_type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(client_id_) + 1; // client_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(marker_name_) + 1; // marker_name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(control_name_) + 1; // control_name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // event_type_
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // menu_entry_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // menu_entry_id_
       currentAlignment += mouse_point_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // mouse_point_valid_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // mouse_point_valid_
 
       return currentAlignment - initialAlignment;
    }
@@ -174,13 +178,18 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    @Override
    public void set(InteractiveMarkerFeedback from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      client_id_.delete(0, client_id_.length());
-      client_id_.insert(0, from.client_id_);
-      marker_name_.delete(0, marker_name_.length());
-      marker_name_.insert(0, from.marker_name_);
-      control_name_.delete(0, control_name_.length());
-      control_name_.insert(0, from.control_name_);
+      client_id_.setLength(0);
+      client_id_.append(from.client_id_);
+      marker_name_.setLength(0);
+      marker_name_.append(from.marker_name_);
+      control_name_.setLength(0);
+      control_name_.append(from.control_name_);
       event_type_ = from.event_type_;
       pose_.set(from.pose_);
       menu_entry_id_ = from.menu_entry_id_;
@@ -199,45 +208,105 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       return client_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of client_id (allocates). {@link #getClientId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getClientIdAsString()
    {
       return client_id_.toString();
    }
 
+   /**
+    * Replaces the content of client_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setClientId(java.lang.String s)
    {
-      this.client_id_.delete(0, this.client_id_.length());
-      this.client_id_.insert(0, s);
+      this.client_id_.setLength(0);
+      this.client_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of client_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setClientId(java.lang.CharSequence s)
+   {
+      if (s != this.client_id_)
+      {
+         this.client_id_.setLength(0);
+         this.client_id_.append(s);
+      }
    }
    public StringBuilder getMarkerName()
    {
       return marker_name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of marker_name (allocates). {@link #getMarkerName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMarkerNameAsString()
    {
       return marker_name_.toString();
    }
 
+   /**
+    * Replaces the content of marker_name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMarkerName(java.lang.String s)
    {
-      this.marker_name_.delete(0, this.marker_name_.length());
-      this.marker_name_.insert(0, s);
+      this.marker_name_.setLength(0);
+      this.marker_name_.append(s);
+   }
+
+   /**
+    * Replaces the content of marker_name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMarkerName(java.lang.CharSequence s)
+   {
+      if (s != this.marker_name_)
+      {
+         this.marker_name_.setLength(0);
+         this.marker_name_.append(s);
+      }
    }
    public StringBuilder getControlName()
    {
       return control_name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of control_name (allocates). {@link #getControlName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getControlNameAsString()
    {
       return control_name_.toString();
    }
 
+   /**
+    * Replaces the content of control_name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setControlName(java.lang.String s)
    {
-      this.control_name_.delete(0, this.control_name_.length());
-      this.control_name_.insert(0, s);
+      this.control_name_.setLength(0);
+      this.control_name_.append(s);
+   }
+
+   /**
+    * Replaces the content of control_name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setControlName(java.lang.CharSequence s)
+   {
+      if (s != this.control_name_)
+      {
+         this.control_name_.setLength(0);
+         this.control_name_.append(s);
+      }
    }
    public byte getEventType()
    {
@@ -280,43 +349,50 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarkerFeedback {", "header_=", "client_id_=", "marker_name_=", "control_name_=", "KEEP_ALIVE=", "POSE_UPDATE=", "MENU_SELECT=", "BUTTON_CLICK=", "MOUSE_DOWN=", "MOUSE_UP=", "event_type_=", "pose_=", "menu_entry_id_=", "mouse_point_=", "mouse_point_valid_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarkerFeedback {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("client_id_=");
+      builder.append(toStringLabels[2]);
       builder.append(client_id_.toString());
-      builder.append("marker_name_=");
+      builder.append(toStringLabels[3]);
       builder.append(marker_name_.toString());
-      builder.append("control_name_=");
+      builder.append(toStringLabels[4]);
       builder.append(control_name_.toString());
-      builder.append("KEEP_ALIVE=");
+      builder.append(toStringLabels[5]);
       builder.append(KEEP_ALIVE);
-      builder.append("POSE_UPDATE=");
+      builder.append(toStringLabels[6]);
       builder.append(POSE_UPDATE);
-      builder.append("MENU_SELECT=");
+      builder.append(toStringLabels[7]);
       builder.append(MENU_SELECT);
-      builder.append("BUTTON_CLICK=");
+      builder.append(toStringLabels[8]);
       builder.append(BUTTON_CLICK);
-      builder.append("MOUSE_DOWN=");
+      builder.append(toStringLabels[9]);
       builder.append(MOUSE_DOWN);
-      builder.append("MOUSE_UP=");
+      builder.append(toStringLabels[10]);
       builder.append(MOUSE_UP);
-      builder.append("event_type_=");
+      builder.append(toStringLabels[11]);
       builder.append(event_type_);
-      builder.append("pose_=");
+      builder.append(toStringLabels[12]);
       builder.append(pose_);
-      builder.append("menu_entry_id_=");
+      builder.append(toStringLabels[13]);
       builder.append(menu_entry_id_);
-      builder.append("mouse_point_=");
+      builder.append(toStringLabels[14]);
       builder.append(mouse_point_);
-      builder.append("mouse_point_valid_=");
+      builder.append(toStringLabels[15]);
       builder.append(mouse_point_valid_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

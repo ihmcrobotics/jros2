@@ -29,6 +29,11 @@ public class Parameter implements ROS2Message<Parameter>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::Parameter_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/Parameter, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_ddfe6442cffc462317adb5c92536a7b6dd55858c5c3e1e328165a6b73c2831af";
+
+   /**
       The full name of the parameter.
    */
    private final StringBuilder name_;
@@ -40,7 +45,7 @@ public class Parameter implements ROS2Message<Parameter>
 
    public Parameter()
    {
-      name_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
       value_ = new rcl_interfaces.ParameterValue();
 
    }
@@ -56,7 +61,7 @@ public class Parameter implements ROS2Message<Parameter>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
       currentAlignment += value_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -81,8 +86,13 @@ public class Parameter implements ROS2Message<Parameter>
    @Override
    public void set(Parameter from)
    {
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      if (from == this)
+      {
+         return;
+      }
+
+      name_.setLength(0);
+      name_.append(from.name_);
       value_.set(from.value_);
 
    }
@@ -92,15 +102,35 @@ public class Parameter implements ROS2Message<Parameter>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public rcl_interfaces.ParameterValue getValue()
    {
@@ -108,17 +138,24 @@ public class Parameter implements ROS2Message<Parameter>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Parameter {", "name_=", "value_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Parameter {");
-      builder.append("name_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(name_.toString());
-      builder.append("value_=");
+      builder.append(toStringLabels[2]);
       builder.append(value_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

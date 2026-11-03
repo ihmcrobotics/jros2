@@ -18,6 +18,11 @@ public class MarkerArray implements ROS2Message<MarkerArray>
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MarkerArray_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/MarkerArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_86cb8800b6fb05b5eff1abd7a56f62a5641d3ae9a1c29e78e67e704f1d067dcf";
+
    private final IDLObjectSequence<visualization_msgs.Marker> markers_;
 
    public MarkerArray()
@@ -59,7 +64,12 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    @Override
    public void set(MarkerArray from)
    {
-      markers_.set(from.markers_);
+      if (from == this)
+      {
+         return;
+      }
+
+      markers_.set(from.markers_, visualization_msgs.Marker::set); // copies the elements, never shares them
 
    }
 
@@ -69,15 +79,22 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MarkerArray {", "markers_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MarkerArray {");
-      builder.append("markers_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(markers_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

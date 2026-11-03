@@ -23,6 +23,19 @@ import java.lang.reflect.Method;
 
 public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
 {
+   /**
+    * Implemented by generated messages that have a {@code std_msgs/Header header} field (the ROS convention for stamped
+    * messages). Publisher statistics read the age of a message through this interface, a plain call that allocates
+    * nothing on any VM; for other message classes they fall back to {@link #getHeaderMethod(Class) reflection}.
+    */
+   interface WithHeader
+   {
+      /**
+       * @return the {@code header} field of the message (not a copy)
+       */
+      std_msgs.Header getHeader();
+   }
+
    void set(T from);
 
    static <T extends ROS2Message<T>> String getNameFromMessageClass(Class<T> topicType)
@@ -41,6 +54,51 @@ public interface ROS2Message<T extends ROS2Message<T>> extends CDRSerializable
       }
 
       return null;
+   }
+
+   /**
+    * Returns the RIHS01 type description hash (REP-2011) of a generated message class: its
+    * {@code public static final String typeHash} field, {@code "RIHS01_"} followed by 64 hexadecimal digits (e.g.
+    * {@code "RIHS01_df66..."}). rmw puts it in the endpoint USER_DATA as {@code typehash=<hash>;}.
+    *
+    * @return the hash, or null for classes generated before jros2 emitted type hashes, classes whose hash could not be
+    *       computed (a referenced type was not available to the generator), and values that are not a well-formed RIHS01
+    *       hash (rmw would reject them)
+    */
+   static String getTypeHashFromMessageClass(Class<?> topicType)
+   {
+      Object value;
+      try
+      {
+         Field field = topicType.getField("typeHash");
+         value = field.get(null);
+      }
+      catch (NoSuchFieldException | IllegalAccessException | NullPointerException e)
+      {
+         return null;
+      }
+
+      if (!(value instanceof String))
+      {
+         return null;
+      }
+
+      String hash = (String) value;
+      if (hash.length() != 71 || !hash.startsWith("RIHS01_"))
+      {
+         return null;
+      }
+
+      for (int i = 7; i < hash.length(); ++i)
+      {
+         char c = hash.charAt(i);
+         if (!((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')))
+         {
+            return null;
+         }
+      }
+
+      return hash;
    }
 
    static <T extends ROS2Message<T>> T createInstance(Class<T> topicType)

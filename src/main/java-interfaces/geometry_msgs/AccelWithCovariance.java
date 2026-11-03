@@ -27,6 +27,11 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelWithCovariance_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/AccelWithCovariance, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_230d51bd53bc36f260574e73b42941cefe44684753480b6fc330c032c5db5997";
+
    private final geometry_msgs.Accel accel_;
    /**
       Row-major representation of the 6x6 covariance matrix
@@ -55,7 +60,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
       int initialAlignment = currentAlignment;
 
       currentAlignment += accel_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (36 * 8) + CDRBuffer.alignment(currentAlignment, (36 * 8)); // covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (36 * 8); // covariance_
 
       return currentAlignment - initialAlignment;
    }
@@ -64,10 +69,7 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    public void serialize(CDRBuffer buffer)
    {
       accel_.serialize(buffer);
-      for (int i = 0; i < covariance_.length; ++i)
-      {
-         buffer.writeDouble(covariance_[i]);
-      }
+      buffer.writeDoubleArray(covariance_);
 
    }
 
@@ -75,21 +77,20 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    public void deserialize(CDRBuffer buffer)
    {
       accel_.deserialize(buffer);
-      for (int i = 0; i < covariance_.length; ++i)
-      {
-         covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(covariance_);
 
    }
 
    @Override
    public void set(AccelWithCovariance from)
    {
-      accel_.set(from.accel_);
-      for (int i = 0; i < covariance_.length; ++i)
+      if (from == this)
       {
-         covariance_[i] = from.covariance_[i];
+         return;
       }
+
+      accel_.set(from.accel_);
+      System.arraycopy(from.covariance_, 0, covariance_, 0, covariance_.length);
 
    }
 
@@ -104,17 +105,24 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"AccelWithCovariance {", "accel_=", "covariance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("AccelWithCovariance {");
-      builder.append("accel_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(accel_);
-      builder.append("covariance_=");
+      builder.append(toStringLabels[2]);
       builder.append(java.util.Arrays.toString(covariance_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

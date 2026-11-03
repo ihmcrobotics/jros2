@@ -57,6 +57,71 @@ interface jros2Settings
     */
    boolean hasInterfaceWhitelist();
 
+   /**
+    * Additional string-valued settings. Each key can be given as a system property, an environment variable, or a
+    * jros2.properties entry. Sources only report the raw text; callers apply the semantics (for example the exact rcl
+    * parsing rules for {@code ROS_AUTOMATIC_DISCOVERY_RANGE}).
+    */
+   enum Key
+   {
+      /** ROS 2 distribution of the peers, e.g. "humble" or "jazzy". Used to pick the ROS graph message format. */
+      ROS_DISTRO("ros.distro", "ROS_DISTRO", "jros2.ros.distro"),
+      /** ROS graph (ros_discovery_info) compatibility: AUTO, IRON_PLUS, HUMBLE or DUAL. */
+      GRAPH_COMPATIBILITY("jros2.graph.compatibility", "JROS2_GRAPH_COMPATIBILITY", "jros2.graph.compatibility"),
+      /** Deprecated ROS 2 Humble variable; "1" restricts discovery to localhost. */
+      LOCALHOST_ONLY("ros.localhost.only", "ROS_LOCALHOST_ONLY", "jros2.ros.localhost.only"),
+      /** OFF, LOCALHOST, SUBNET or SYSTEM_DEFAULT (ROS 2 Iron and newer). */
+      AUTOMATIC_DISCOVERY_RANGE("ros.automatic.discovery.range", "ROS_AUTOMATIC_DISCOVERY_RANGE", "jros2.ros.automatic.discovery.range"),
+      /** Semicolon-separated hostnames or IPv4 addresses (ROS 2 Iron and newer). */
+      STATIC_PEERS("ros.static.peers", "ROS_STATIC_PEERS", "jros2.ros.static.peers"),
+      /** SROS2: "true" enables DDS-Security. */
+      SECURITY_ENABLE("ros.security.enable", "ROS_SECURITY_ENABLE", "jros2.ros.security.enable"),
+      /** SROS2: "Enforce" or anything else (Permissive). */
+      SECURITY_STRATEGY("ros.security.strategy", "ROS_SECURITY_STRATEGY", "jros2.ros.security.strategy"),
+      /** SROS2: path to the keystore directory. */
+      SECURITY_KEYSTORE("ros.security.keystore", "ROS_SECURITY_KEYSTORE", "jros2.ros.security.keystore"),
+      /** SROS2: enclave used for the keystore lookup instead of the node's enclave. */
+      SECURITY_ENCLAVE_OVERRIDE("ros.security.enclave.override", "ROS_SECURITY_ENCLAVE_OVERRIDE", "jros2.ros.security.enclave.override"),
+      /** SROS2: file the DDS-Security logging plugin writes to. */
+      SECURITY_LOG_FILE("ros.security.log.file", "ROS_SECURITY_LOG_FILE", "jros2.ros.security.log.file"),
+      /** SROS2: "true" or "false", whether DDS-Security log entries are published on the DDS log topic. */
+      SECURITY_LOG_PUBLISH("ros.security.log.publish", "ROS_SECURITY_LOG_PUBLISH", "jros2.ros.security.log.publish"),
+      /** SROS2: DDS-Security log verbosity: FATAL, ERROR, WARN, INFO or DEBUG. */
+      SECURITY_LOG_VERBOSITY("ros.security.log.verbosity", "ROS_SECURITY_LOG_VERBOSITY", "jros2.ros.security.log.verbosity"),
+      /**
+       * SROS2: AUTO (default), true or false, whether DDS-Security announces its certificate algorithms with the legacy names
+       * that the Fast-DDS of ROS 2 Foxy, Galactic and Humble requires. AUTO does so when ROS_DISTRO is one of these distros.
+       */
+      SECURITY_LEGACY_ALGORITHMS("jros2.security.legacy.algorithms", "JROS2_SECURITY_LEGACY_ALGORITHMS", "jros2.security.legacy.algorithms");
+
+      final String property;
+      final String environmentVariable;
+      final String fileKey;
+
+      Key(String property, String environmentVariable, String fileKey)
+      {
+         this.property = property;
+         this.environmentVariable = environmentVariable;
+         this.fileKey = fileKey;
+      }
+   }
+
+   /**
+    * @return the raw value of {@code key} from this source, or null if this source does not specify it.
+    */
+   default String rawSetting(Key key)
+   {
+      return null;
+   }
+
+   /**
+    * @return whether this source specifies {@code key}.
+    */
+   default boolean hasRawSetting(Key key)
+   {
+      return false;
+   }
+
    static String[] splitInterfaceWhitelistFromCSV(String interfaceWhitelistCSV)
    {
       if (interfaceWhitelistCSV.trim().isEmpty())

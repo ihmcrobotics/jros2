@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- DDS discovery and data use UDP sockets. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Lets apps hold a WifiManager.MulticastLock (us.ihmc.jros2.android.ROS2Android.acquireMulticastLock) so that the
+         Wi-Fi driver does not filter the multicast SPDP discovery packets. Normal permission, granted at install time. -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 </manifest>

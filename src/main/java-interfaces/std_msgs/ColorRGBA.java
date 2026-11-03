@@ -21,6 +21,11 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::ColorRGBA_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/ColorRGBA, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_77a7a5b9ae477306097665106e0413ba74440245b1f3d0c6d6405fe5c7813fe8";
+
    private float r_;
    private float g_;
    private float b_;
@@ -41,10 +46,10 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // r_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // g_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // b_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // a_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // r_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // g_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // b_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // a_
 
       return currentAlignment - initialAlignment;
    }
@@ -72,6 +77,11 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    @Override
    public void set(ColorRGBA from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       r_ = from.r_;
       g_ = from.g_;
       b_ = from.b_;
@@ -120,21 +130,28 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ColorRGBA {", "r_=", "g_=", "b_=", "a_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ColorRGBA {");
-      builder.append("r_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(r_);
-      builder.append("g_=");
+      builder.append(toStringLabels[2]);
       builder.append(g_);
-      builder.append("b_=");
+      builder.append(toStringLabels[3]);
       builder.append(b_);
-      builder.append("a_=");
+      builder.append(toStringLabels[4]);
       builder.append(a_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

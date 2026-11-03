@@ -15,6 +15,8 @@
  */
 package us.ihmc.fastddsjava.profiles;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import us.ihmc.fastddsjava.profiles.gen.*;
 import us.ihmc.fastddsjava.profiles.gen.ParticipantProfileType.Rtps;
@@ -31,6 +33,25 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ProfilesXMLTest
 {
+   /**
+    * The intraprocess default of ProfilesXML is process-wide: tests that change it must restore it, or every profile that
+    * the tests running after this class in the same JVM load carries the changed mode (Fast-DDS applies the library
+    * settings of each loaded profile to the whole process).
+    */
+   private String intraprocessDeliveryBefore;
+
+   @BeforeEach
+   public void saveIntraprocessDelivery()
+   {
+      intraprocessDeliveryBefore = ProfilesXML.getIntraprocessDelivery();
+   }
+
+   @AfterEach
+   public void restoreIntraprocessDelivery()
+   {
+      ProfilesXML.setIntraprocessDelivery(intraprocessDeliveryBefore);
+   }
+
    @Test
    public void testXMLNamespaceCorrect()
    {
@@ -463,9 +484,6 @@ public class ProfilesXMLTest
       String xml = profilesXML.marshall();
 
       assertTrue(xml.contains("<intraprocess_delivery>USER_DATA_ONLY</intraprocess_delivery>"));
-
-      // Reset to default
-      ProfilesXML.setIntraprocessDelivery("OFF");
    }
 
    @Test
@@ -477,9 +495,6 @@ public class ProfilesXMLTest
       String xml = profilesXML.marshall();
 
       assertTrue(xml.contains("<intraprocess_delivery>FULL</intraprocess_delivery>"));
-
-      // Reset to default
-      ProfilesXML.setIntraprocessDelivery("OFF");
    }
 
    @Test

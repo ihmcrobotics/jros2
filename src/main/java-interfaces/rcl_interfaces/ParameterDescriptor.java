@@ -55,6 +55,11 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterDescriptor_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ParameterDescriptor, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_52175dbfda6c51153101d33d2a9da05743f66f02d5ab2ca9ec4709b46b73d704";
+
+   /**
       The name of the parameter.
    */
    private final StringBuilder name_;
@@ -85,19 +90,21 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    /**
       FloatingPointRange consists of a from_value, a to_value, and a step.
    */
+   // Bounded sequence: at most 1 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLObjectSequence<rcl_interfaces.FloatingPointRange> floating_point_range_;
    /**
       IntegerRange consists of a from_value, a to_value, and a step.
    */
+   // Bounded sequence: at most 1 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLObjectSequence<rcl_interfaces.IntegerRange> integer_range_;
 
    public ParameterDescriptor()
    {
-      name_ = new StringBuilder();
-      description_ = new StringBuilder();
-      additional_constraints_ = new StringBuilder();
-      read_only_ = (boolean) false;
-      dynamic_typing_ = (boolean) false;
+      name_ = CDRBuffer.newStringBuilder(16);
+      description_ = CDRBuffer.newStringBuilder(16);
+      additional_constraints_ = CDRBuffer.newStringBuilder(16);
+      read_only_ = false;
+      dynamic_typing_ = false;
       floating_point_range_ = new IDLObjectSequence<rcl_interfaces.FloatingPointRange>(0, 1, rcl_interfaces.FloatingPointRange.class);
       integer_range_ = new IDLObjectSequence<rcl_interfaces.IntegerRange>(0, 1, rcl_interfaces.IntegerRange.class);
 
@@ -114,12 +121,12 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * description_.length()) + 1; // description_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * additional_constraints_.length()) + 1; // additional_constraints_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // read_only_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // dynamic_typing_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(description_) + 1; // description_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(additional_constraints_) + 1; // additional_constraints_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // read_only_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // dynamic_typing_
       currentAlignment += floating_point_range_.calculateSizeBytes(currentAlignment);
       currentAlignment += integer_range_.calculateSizeBytes(currentAlignment);
 
@@ -157,17 +164,22 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    @Override
    public void set(ParameterDescriptor from)
    {
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      if (from == this)
+      {
+         return;
+      }
+
+      name_.setLength(0);
+      name_.append(from.name_);
       type_ = from.type_;
-      description_.delete(0, description_.length());
-      description_.insert(0, from.description_);
-      additional_constraints_.delete(0, additional_constraints_.length());
-      additional_constraints_.insert(0, from.additional_constraints_);
+      description_.setLength(0);
+      description_.append(from.description_);
+      additional_constraints_.setLength(0);
+      additional_constraints_.append(from.additional_constraints_);
       read_only_ = from.read_only_;
       dynamic_typing_ = from.dynamic_typing_;
-      floating_point_range_.set(from.floating_point_range_);
-      integer_range_.set(from.integer_range_);
+      floating_point_range_.set(from.floating_point_range_, rcl_interfaces.FloatingPointRange::set); // copies the elements, never shares them
+      integer_range_.set(from.integer_range_, rcl_interfaces.IntegerRange::set); // copies the elements, never shares them
 
    }
 
@@ -176,15 +188,35 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public byte getType()
    {
@@ -201,30 +233,70 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       return description_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of description (allocates). {@link #getDescription()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getDescriptionAsString()
    {
       return description_.toString();
    }
 
+   /**
+    * Replaces the content of description with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setDescription(java.lang.String s)
    {
-      this.description_.delete(0, this.description_.length());
-      this.description_.insert(0, s);
+      this.description_.setLength(0);
+      this.description_.append(s);
+   }
+
+   /**
+    * Replaces the content of description with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setDescription(java.lang.CharSequence s)
+   {
+      if (s != this.description_)
+      {
+         this.description_.setLength(0);
+         this.description_.append(s);
+      }
    }
    public StringBuilder getAdditionalConstraints()
    {
       return additional_constraints_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of additional_constraints (allocates). {@link #getAdditionalConstraints()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getAdditionalConstraintsAsString()
    {
       return additional_constraints_.toString();
    }
 
+   /**
+    * Replaces the content of additional_constraints with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setAdditionalConstraints(java.lang.String s)
    {
-      this.additional_constraints_.delete(0, this.additional_constraints_.length());
-      this.additional_constraints_.insert(0, s);
+      this.additional_constraints_.setLength(0);
+      this.additional_constraints_.append(s);
+   }
+
+   /**
+    * Replaces the content of additional_constraints with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setAdditionalConstraints(java.lang.CharSequence s)
+   {
+      if (s != this.additional_constraints_)
+      {
+         this.additional_constraints_.setLength(0);
+         this.additional_constraints_.append(s);
+      }
    }
    public boolean getReadOnly()
    {
@@ -257,29 +329,36 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ParameterDescriptor {", "name_=", "type_=", "description_=", "additional_constraints_=", "read_only_=", "dynamic_typing_=", "floating_point_range_=", "integer_range_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ParameterDescriptor {");
-      builder.append("name_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(name_.toString());
-      builder.append("type_=");
+      builder.append(toStringLabels[2]);
       builder.append(type_);
-      builder.append("description_=");
+      builder.append(toStringLabels[3]);
       builder.append(description_.toString());
-      builder.append("additional_constraints_=");
+      builder.append(toStringLabels[4]);
       builder.append(additional_constraints_.toString());
-      builder.append("read_only_=");
+      builder.append(toStringLabels[5]);
       builder.append(read_only_);
-      builder.append("dynamic_typing_=");
+      builder.append(toStringLabels[6]);
       builder.append(dynamic_typing_);
-      builder.append("floating_point_range_=");
+      builder.append(toStringLabels[7]);
       builder.append(floating_point_range_);
-      builder.append("integer_range_=");
+      builder.append(toStringLabels[8]);
       builder.append(integer_range_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

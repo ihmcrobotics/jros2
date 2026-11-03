@@ -1,0 +1,9 @@
+Strings same_pkg
+rihs_edge/Prims same_pkg_qualified
+Prims[2] arr_same
+Prims[<=3] bseq_same
+Prims[] useq_same
+std_msgs/Header header
+geometry_msgs/Point[4] pts
+builtin_interfaces/Time[<=2] times
+OnlyConstants oc

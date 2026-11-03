@@ -24,6 +24,11 @@ public class LaserEcho implements ROS2Message<LaserEcho>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserEcho_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/LaserEcho, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_0fbc05a0db7d37fe52c0f0375356db55da0046f7ef5bd27ca6b34bd0582bc952";
+
    private final IDLFloatSequence echoes_; // Multiple values of ranges or intensities.
 
    public LaserEcho()
@@ -65,6 +70,11 @@ public class LaserEcho implements ROS2Message<LaserEcho>
    @Override
    public void set(LaserEcho from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       echoes_.set(from.echoes_);
 
    }
@@ -75,15 +85,22 @@ public class LaserEcho implements ROS2Message<LaserEcho>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"LaserEcho {", "echoes_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("LaserEcho {");
-      builder.append("echoes_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(echoes_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -32,9 +32,14 @@ geometry_msgs/Point32[] points
 ChannelFloat32[] channels
 }</pre>
 */
-public class PointCloud implements ROS2Message<PointCloud>
+public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/PointCloud, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_614593df71d3c2b9bd4604a71b750fd218f0d65c045ea988b713719455a65b3b";
 
    /**
       Time of sensor data acquisition, coordinate frame ID.
@@ -99,9 +104,14 @@ public class PointCloud implements ROS2Message<PointCloud>
    @Override
    public void set(PointCloud from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      points_.set(from.points_);
-      channels_.set(from.channels_);
+      points_.set(from.points_, geometry_msgs.Point32::set); // copies the elements, never shares them
+      channels_.set(from.channels_, sensor_msgs.ChannelFloat32::set); // copies the elements, never shares them
 
    }
 
@@ -121,19 +131,26 @@ public class PointCloud implements ROS2Message<PointCloud>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PointCloud {", "header_=", "points_=", "channels_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PointCloud {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("points_=");
+      builder.append(toStringLabels[2]);
       builder.append(points_);
-      builder.append("channels_=");
+      builder.append(toStringLabels[3]);
       builder.append(channels_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

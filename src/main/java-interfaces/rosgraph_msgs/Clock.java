@@ -22,6 +22,11 @@ public class Clock implements ROS2Message<Clock>
    public static final java.lang.String name = "rosgraph_msgs::msg::dds_::Clock_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rosgraph_msgs/msg/Clock, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_692f7a66e93a3c83e71765d033b60349ba68023a8c689a79e48078bcb5c58564";
+
+   /**
       This message communicates the current time.
 
       For more information, see https://design.ros2.org/articles/clock_and_time.html.
@@ -67,6 +72,11 @@ public class Clock implements ROS2Message<Clock>
    @Override
    public void set(Clock from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       clock_.set(from.clock_);
 
    }
@@ -77,15 +87,22 @@ public class Clock implements ROS2Message<Clock>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Clock {", "clock_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Clock {");
-      builder.append("clock_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(clock_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

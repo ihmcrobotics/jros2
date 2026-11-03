@@ -45,16 +45,19 @@ public class ReadWriteTest
 
    private static ProfilesXML profile()
    {
+      // The process-wide default of ProfilesXML: restored right away, so that it does not leak into the tests that run
+      // after this class in the same JVM (it decided the intraprocess mode of every profile they loaded).
+      String previous = ProfilesXML.getIntraprocessDelivery();
       ProfilesXML.setIntraprocessDelivery("FULL");
-
       ProfilesXML profilesXML = new ProfilesXML();
+      ProfilesXML.setIntraprocessDelivery(previous);
 
       ParticipantProfileType participantProfileType = new ParticipantProfileType();
       Rtps rtps = new Rtps();
       rtps.setUseBuiltinTransports(true);
       participantProfileType.setRtps(rtps);
       participantProfileType.setProfileName("unit_test_participant");
-      participantProfileType.setDomainId(100);
+      participantProfileType.setDomainId(fastddsjavaTestTools.testDomainId());
       profilesXML.addParticipantProfile(participantProfileType);
 
       TopicProfileType topicProfileType = new TopicProfileType();
@@ -94,12 +97,13 @@ public class ReadWriteTest
                                      long fastddsTopicDataReceive,
                                      long fastddsSampleInfo) throws fastddsjavaException
    {
-      fastddsjava.deleteData(fastddsTopicDataWrapperType, fastddsTopicDataPublish);
-      fastddsjava.deleteSampleInfo(fastddsSampleInfo);
-      fastddsjava.deleteData(fastddsTopicDataWrapperType, fastddsTopicDataReceive);
+      // The reader (a callback fence) goes first: its callback uses the receive data and sample info.
       fastddsjava.dataReaderSetListener(fastddsDataReader, 0);
       retcodeThrowOnError(fastddsjava.deleteDataReader(fastddsSubscriber, fastddsDataReader));
       fastddsjava.deleteDataReaderListener(fastddsDataReaderListener);
+      fastddsjava.deleteData(fastddsTopicDataWrapperType, fastddsTopicDataPublish);
+      fastddsjava.deleteSampleInfo(fastddsSampleInfo);
+      fastddsjava.deleteData(fastddsTopicDataWrapperType, fastddsTopicDataReceive);
       retcodeThrowOnError(fastddsjava.deleteSubscriber(fastddsParticipant, fastddsSubscriber));
       retcodeThrowOnError(fastddsjava.deleteDataWriter(fastddsPublisher, fastddsDataWriter));
       retcodeThrowOnError(fastddsjava.deletePublisher(fastddsParticipant, fastddsPublisher));

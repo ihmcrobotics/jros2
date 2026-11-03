@@ -166,8 +166,11 @@ public class ROS2PublishSubscribeTest
       bool.setData(expectedValue);
       publisher.publish(bool);
 
-      // Use ros2 topic echo --once to get the value of the published message
-      String result = ROS2TestTools.ros2EchoOnce(ros2Node.getDomainId(), topicName);
+      // Use ros2 topic echo --once to get the value of the published message.
+      // The CLI exits right away ("topic ... does not appear to be published yet") when its graph has not discovered the
+      // publisher yet, which races the first attempt on a loaded machine. The sample is TRANSIENT_LOCAL, so a later attempt
+      // still receives exactly this message; retry briefly (as testAsyncROS2Publisher does).
+      String result = PubSubTestTools.ros2EchoOnceUntil(ros2Node.getDomainId(), topicName, String.valueOf(expectedValue));
 
       // Ensure the value received by ros2 matches the value we published
       assertTrue(result.contains(String.valueOf(expectedValue)), result);
@@ -358,12 +361,14 @@ public class ROS2PublishSubscribeTest
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
+      // Foxy/Galactic's CLI cannot wait for the subscription before the burst: deliver samples published before the match too
+      String burstOptions = ROS2TestTools.prepareCLIBurst("--times " + publishCount + " -r 100000 --qos-depth " + publishCount, subscriptionQos);
 
       ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, subscriptionQos);
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
+                                                               burstOptions,
                                                                // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
@@ -418,6 +423,8 @@ public class ROS2PublishSubscribeTest
       subscriptionQos.history(History.KEEP_LAST);
       subscriptionQos.depth(publishCount);
       subscriptionQos.reliability(Reliability.RELIABLE);
+      // Foxy/Galactic's CLI cannot wait for the subscription before the burst: deliver samples published before the match too
+      String burstOptions = ROS2TestTools.prepareCLIBurst("--times " + publishCount + " -r 100000 --qos-depth " + publishCount, subscriptionQos);
 
       AtomicInteger callbackRun = new AtomicInteger();
       ROS2Subscription<std_msgs.String_> subscription = ros2Node.createSubscription(topic, reader ->
@@ -440,7 +447,7 @@ public class ROS2PublishSubscribeTest
 
       // Launch a ROS 2 process to publish a String message
       Process process = ROS2TestTools.launchROS2PublishProcess(ros2Node.getDomainId(),
-                                                               "--times " + publishCount + " -r 100000 --qos-depth " + publishCount,
+                                                               burstOptions,
                                                                // -r sets the publish frequency, just set to some very high number to get all the messages at once
                                                                topicName,
                                                                "std_msgs/msg/String",
@@ -467,8 +474,9 @@ public class ROS2PublishSubscribeTest
          totalRead++;
          msg = subscription.read();
       }
-      // Non callback reads should total half of the publish count
-      assertEquals(publishCount / 2, totalRead);
+      // Callback mode takes every sample before invoking the callback (like rclcpp): the samples the callback did not read
+      // are consumed too, so polling finds nothing. (Previously the unread half stayed in the DataReader history.)
+      assertEquals(0, totalRead);
 
       assertNull(subscription.read());
       assertNull(subscription.readLatest());
@@ -625,7 +633,7 @@ public class ROS2PublishSubscribeTest
       List<String> received = new ArrayList<>();
       Object sync = new Object();
 
-      subscriberNode.createSubscriptionSampler(topic, message ->
+      ROS2Subscription<std_msgs.String_> subscription = subscriberNode.createSubscriptionSampler(topic, message ->
       {
          synchronized (sync)
          {
@@ -636,6 +644,10 @@ public class ROS2PublishSubscribeTest
 
       ROS2Publisher<std_msgs.String_> publisher = publisherNode.createPublisher(topic);
       assertTrue(publisher.waitForSubscription(5000));
+      // Discovery is asymmetric: the subscription may match the publisher later than the publisher matches the
+      // subscription (by ~100 ms once each participant also has its ROS graph writer), and a BEST_EFFORT subscription
+      // drops samples from publishers it has not matched yet.
+      assertTrue(subscription.waitForPublisher(5000));
 
       std_msgs.String_ largeMessage = new std_msgs.String_();
       largeMessage.setData("b".repeat(65536));

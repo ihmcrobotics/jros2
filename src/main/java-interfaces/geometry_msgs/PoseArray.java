@@ -19,9 +19,14 @@ std_msgs/Header header
 Pose[] poses
 }</pre>
 */
-public class PoseArray implements ROS2Message<PoseArray>
+public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PoseArray_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/PoseArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_af0cc36d190e104d546d168d6b39df04fa4b4ccecf59cb4c9ed328d3d5004aa0";
 
    private final std_msgs.Header header_;
    private final IDLObjectSequence<geometry_msgs.Pose> poses_;
@@ -69,8 +74,13 @@ public class PoseArray implements ROS2Message<PoseArray>
    @Override
    public void set(PoseArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      poses_.set(from.poses_);
+      poses_.set(from.poses_, geometry_msgs.Pose::set); // copies the elements, never shares them
 
    }
 
@@ -85,17 +95,24 @@ public class PoseArray implements ROS2Message<PoseArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PoseArray {", "header_=", "poses_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PoseArray {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("poses_=");
+      builder.append(toStringLabels[2]);
       builder.append(poses_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

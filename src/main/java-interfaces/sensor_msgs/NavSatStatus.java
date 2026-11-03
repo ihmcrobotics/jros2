@@ -44,10 +44,15 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatStatus_";
 
-   public static final byte STATUS_NO_FIX = -1; // unable to fix position
-   public static final byte STATUS_FIX = 0; // unaugmented fix
-   public static final byte STATUS_SBAS_FIX = 1; // with satellite-based augmentation
-   public static final byte STATUS_GBAS_FIX = 2; // with ground-based augmentation
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/NavSatStatus, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d1ed3befa628e09571bd273b888ba1c1fd187c9a5e0006b385d7e5e9095a3204";
+
+   public static final byte STATUS_NO_FIX = (byte) -1; // unable to fix position
+   public static final byte STATUS_FIX = (byte) 0; // unaugmented fix
+   public static final byte STATUS_SBAS_FIX = (byte) 1; // with satellite-based augmentation
+   public static final byte STATUS_GBAS_FIX = (byte) 2; // with ground-based augmentation
    private byte status_;
    public static final int SERVICE_GPS = 1;
    public static final int SERVICE_GLONASS = 2;
@@ -70,8 +75,8 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // status_
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // service_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // status_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 2) + 2; // service_
 
       return currentAlignment - initialAlignment;
    }
@@ -95,6 +100,11 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    @Override
    public void set(NavSatStatus from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       status_ = from.status_;
       service_ = from.service_;
 
@@ -121,33 +131,40 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"NavSatStatus {", "STATUS_NO_FIX=", "STATUS_FIX=", "STATUS_SBAS_FIX=", "STATUS_GBAS_FIX=", "status_=", "SERVICE_GPS=", "SERVICE_GLONASS=", "SERVICE_COMPASS=", "SERVICE_GALILEO=", "service_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("NavSatStatus {");
-      builder.append("STATUS_NO_FIX=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(STATUS_NO_FIX);
-      builder.append("STATUS_FIX=");
+      builder.append(toStringLabels[2]);
       builder.append(STATUS_FIX);
-      builder.append("STATUS_SBAS_FIX=");
+      builder.append(toStringLabels[3]);
       builder.append(STATUS_SBAS_FIX);
-      builder.append("STATUS_GBAS_FIX=");
+      builder.append(toStringLabels[4]);
       builder.append(STATUS_GBAS_FIX);
-      builder.append("status_=");
+      builder.append(toStringLabels[5]);
       builder.append(status_);
-      builder.append("SERVICE_GPS=");
+      builder.append(toStringLabels[6]);
       builder.append(SERVICE_GPS);
-      builder.append("SERVICE_GLONASS=");
+      builder.append(toStringLabels[7]);
       builder.append(SERVICE_GLONASS);
-      builder.append("SERVICE_COMPASS=");
+      builder.append(toStringLabels[8]);
       builder.append(SERVICE_COMPASS);
-      builder.append("SERVICE_GALILEO=");
+      builder.append(toStringLabels[9]);
       builder.append(SERVICE_GALILEO);
-      builder.append("service_=");
+      builder.append(toStringLabels[10]);
       builder.append(service_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

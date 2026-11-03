@@ -16,10 +16,14 @@
 package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
+import us.ihmc.fastddsjava.cdr.CDRDeserializationException;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
+/**
+ * IDL sequence of booleans, stored as one byte (0 or 1) per element.
+ */
 public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Iterable<Boolean>
 {
    private static final BooleanBufferWrapper EMPTY_BUFFER = new BooleanBufferWrapper(0);
@@ -79,10 +83,11 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
     * Appends a boolean value to the end of the sequence.
     *
     * @param value the boolean value to add
+    * @throws IllegalArgumentException if the sequence is bounded and already full
     */
    public void add(boolean value)
    {
-      ensureMinCapacity(buffer.position() + 1);
+      ensureSizeWithinBound(buffer.position() + 1);
       buffer.put(value);
    }
 
@@ -91,10 +96,16 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
     * This is an efficient bulk operation.
     *
     * @param values the boolean array to add
+    * @throws IllegalArgumentException if the result would exceed the upper bound (nothing is added)
     */
    public void addAll(boolean[] values)
    {
-      ensureMinCapacity(buffer.position() + values.length);
+      long newSize = (long) buffer.position() + values.length;
+      if (newSize > getMaxSize())
+      {
+         throw exceedsUpperBound(newSize);
+      }
+      ensureSizeWithinBound((int) newSize);
       buffer.put(values);
    }
 
@@ -119,9 +130,14 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
     */
    public boolean remove(int index)
    {
+      int size = buffer.position();
+      if (index < 0 || index >= size)
+      {
+         throw IDLSequenceErrors.indexOutOfBounds(index, size);
+      }
       boolean value = buffer.get(index);
-      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
-      buffer.position(buffer.position() - 1);
+      buffer.put(index, buffer, index + 1, size - index - 1);
+      buffer.position(size - 1);
       return value;
    }
 
@@ -142,23 +158,22 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
    @Override
    public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (buffer.capacity() < desiredCapacity)
+      if (buffer.capacity() >= desiredCapacity)
       {
-         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
-
-         if (desiredCapacity > getMaxSize())
-         {
-            return false;
-         }
-         else
-         {
-            BooleanBufferWrapper newBuffer = new BooleanBufferWrapper(desiredCapacity);
-            newBuffer.put(0, buffer, 0, buffer.position());
-            newBuffer.position(buffer.position());
-
-            buffer = newBuffer;
-         }
+         return true;
       }
+
+      int newCapacity = grownCapacity(buffer.capacity(), desiredCapacity);
+      if (newCapacity < 0)
+      {
+         return false;
+      }
+
+      BooleanBufferWrapper newBuffer = new BooleanBufferWrapper(newCapacity);
+      newBuffer.put(0, buffer, 0, buffer.position());
+      newBuffer.position(buffer.position());
+
+      buffer = newBuffer;
 
       return true;
    }
@@ -170,23 +185,85 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
    }
 
    @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      return primitiveSequenceSizeBytes(currentAlignment, size(), 1);
+   }
+
+   @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      buffer.put(cdrBuffer.readByte() == 1);
+      add(cdrBuffer.readBoolean());
    }
 
    @Override
    public void writeElement(int i, CDRBuffer cdrBuffer)
    {
-      cdrBuffer.writeByte((byte) (buffer.get(i) ? 1 : 0));
+      cdrBuffer.writeBoolean(buffer.get(i));
    }
 
+   /**
+    * Writes the length and all elements (each as 0 or 1).
+    *
+    * @throws IllegalArgumentException if the sequence has more elements than its upper bound
+    */
+   @Override
+   public void serialize(CDRBuffer cdrBuffer)
+   {
+      checkSizeWithinBound();
+
+      int size = buffer.position();
+      cdrBuffer.writeSequenceLength(size);
+
+      byte[] array = buffer.byteBuffer.array();
+      int offset = buffer.byteBuffer.arrayOffset();
+      for (int i = 0; i < size; ++i)
+      {
+         cdrBuffer.writeBoolean(array[offset + i] != 0);
+      }
+   }
+
+   /**
+    * Reads the length and all elements, replacing the content of this sequence.
+    *
+    * @throws CDRDeserializationException if the length exceeds the upper bound or the remaining payload, or a value is
+    *                                     not 0 or 1
+    */
+   @Override
+   public void deserialize(CDRBuffer cdrBuffer)
+   {
+      buffer.clear();
+
+      int size = cdrBuffer.readSequenceLength(1, getMaxSize());
+      ensureMinCapacity(size);
+
+      byte[] array = buffer.byteBuffer.array();
+      int offset = buffer.byteBuffer.arrayOffset();
+      cdrBuffer.readByteArray(array, offset, size);
+      for (int i = 0; i < size; ++i)
+      {
+         byte value = array[offset + i];
+         if (value != 0 && value != 1)
+         {
+            throw IDLSequenceErrors.unexpectedBoolean(value, i);
+         }
+      }
+      buffer.position(size);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void set(IDLBoolSequence other)
    {
-      clear();
-
       int othersElements = other.size();
+      if (othersElements > getMaxSize())
+      {
+         throw exceedsUpperBound(othersElements);
+      }
+
+      buffer.clear();
       ensureMinCapacity(othersElements);
 
       buffer.put(0, other.buffer, 0, othersElements);
@@ -197,19 +274,23 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
    public String toString()
    {
       StringBuilder builder = new StringBuilder();
-      builder.append("[");
+      builder.append('[');
       for (int i = 0; i < size(); ++i)
       {
          builder.append(buffer.get(i));
          if (i < size() - 1)
          {
-            builder.append(", ");
+            builder.append(',').append(' ');
          }
       }
-      builder.append("]");
+      builder.append(']');
       return builder.toString();
    }
 
+   /**
+    * Iterates over the elements as {@link Boolean} objects. Allocates an iterator and boxes the elements; use
+    * {@link #get(int)} and {@link #size()} for allocation-free access.
+    */
    @Override
    public Iterator<Boolean> iterator()
    {
@@ -237,6 +318,9 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
       };
    }
 
+   /**
+    * Heap storage of booleans as bytes (0 or 1). Its position is the size of the owning sequence.
+    */
    public static class BooleanBufferWrapper
    {
       private final ByteBuffer byteBuffer;
@@ -281,12 +365,13 @@ public class IDLBoolSequence extends IDLSequence<IDLBoolSequence> implements Ite
          return byteBuffer.get() != 0;
       }
 
+      /**
+       * Copies {@code length} values from {@code src} (starting at {@code srcIndex}) to this buffer (starting at
+       * {@code dstIndex}). Overlapping copies within the same buffer are handled. Positions are not changed.
+       */
       public BooleanBufferWrapper put(int dstIndex, BooleanBufferWrapper src, int srcIndex, int length)
       {
-         for (int i = 0; i < length; i++)
-         {
-            byteBuffer.put(dstIndex + i, src.byteBuffer.get(srcIndex + i));
-         }
+         System.arraycopy(src.byteBuffer.array(), src.byteBuffer.arrayOffset() + srcIndex, byteBuffer.array(), byteBuffer.arrayOffset() + dstIndex, length);
          return this;
       }
 

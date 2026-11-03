@@ -39,6 +39,11 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterEvent_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ParameterEvent, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_043e627780fcad87a22d225bc2a037361dba713fca6a6b9f4b869a5aa0393204";
+
+   /**
       The time stamp when this parameter event occurred.
    */
    private final builtin_interfaces.Time stamp_;
@@ -62,7 +67,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    public ParameterEvent()
    {
       stamp_ = new builtin_interfaces.Time();
-      node_ = new StringBuilder();
+      node_ = CDRBuffer.newStringBuilder(16);
       new_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
       changed_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
       deleted_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
@@ -81,7 +86,7 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * node_.length()) + 1; // node_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(node_) + 1; // node_
       currentAlignment += new_parameters_.calculateSizeBytes(currentAlignment);
       currentAlignment += changed_parameters_.calculateSizeBytes(currentAlignment);
       currentAlignment += deleted_parameters_.calculateSizeBytes(currentAlignment);
@@ -114,12 +119,17 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    @Override
    public void set(ParameterEvent from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       stamp_.set(from.stamp_);
-      node_.delete(0, node_.length());
-      node_.insert(0, from.node_);
-      new_parameters_.set(from.new_parameters_);
-      changed_parameters_.set(from.changed_parameters_);
-      deleted_parameters_.set(from.deleted_parameters_);
+      node_.setLength(0);
+      node_.append(from.node_);
+      new_parameters_.set(from.new_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
+      changed_parameters_.set(from.changed_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
+      deleted_parameters_.set(from.deleted_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
 
    }
 
@@ -133,15 +143,35 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       return node_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of node (allocates). {@link #getNode()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNodeAsString()
    {
       return node_.toString();
    }
 
+   /**
+    * Replaces the content of node with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setNode(java.lang.String s)
    {
-      this.node_.delete(0, this.node_.length());
-      this.node_.insert(0, s);
+      this.node_.setLength(0);
+      this.node_.append(s);
+   }
+
+   /**
+    * Replaces the content of node with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setNode(java.lang.CharSequence s)
+   {
+      if (s != this.node_)
+      {
+         this.node_.setLength(0);
+         this.node_.append(s);
+      }
    }
    public IDLObjectSequence<rcl_interfaces.Parameter> getNewParameters()
    {
@@ -159,23 +189,30 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ParameterEvent {", "stamp_=", "node_=", "new_parameters_=", "changed_parameters_=", "deleted_parameters_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ParameterEvent {");
-      builder.append("stamp_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(stamp_);
-      builder.append("node_=");
+      builder.append(toStringLabels[2]);
       builder.append(node_.toString());
-      builder.append("new_parameters_=");
+      builder.append(toStringLabels[3]);
       builder.append(new_parameters_);
-      builder.append("changed_parameters_=");
+      builder.append(toStringLabels[4]);
       builder.append(changed_parameters_);
-      builder.append("deleted_parameters_=");
+      builder.append(toStringLabels[5]);
       builder.append(deleted_parameters_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

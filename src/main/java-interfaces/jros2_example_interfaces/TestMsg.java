@@ -52,29 +52,37 @@ string[3] three_strings
 string<=5[3] three_strings_each_max_length_of_five_chars
 sensor_msgs/Image[3] three_images}</pre>
 */
-public class TestMsg implements ROS2Message<TestMsg>
+public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::TestMsg_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of jros2_example_interfaces/msg/TestMsg, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_4e03bc794abf30caa9ef485560e1590ab0b58cc6bdd2f1c98053d768eec9e9ec";
 
    private final std_msgs.Header header_;
    private int my_int_;
    private final StringBuilder my_string_; // Test comment
    private final IDLIntSequence unbounded_integer_array_;
    private final int[] five_integers_array_;
+   // Bounded sequence: at most 5 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLIntSequence up_to_five_integers_array_;
    private final StringBuilder string_of_unbounded_size_;
-   // Note: The length of this string should not exceed 10 characters.
-   // This is not strictly enforced in Java / jros2.
+   // Note: this string is declared with an upper bound of 10 characters.
+   // Like rmw (rclcpp / rclpy), jros2 does not enforce string bounds when publishing or receiving.
    private final StringBuilder up_to_ten_characters_string_;
+   // Bounded sequence: at most 5 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLStringSequence up_to_five_unbounded_strings_;
    /**
       Test header comment
    */
-   // Note: The length of each string in this sequence should not exceed 10 characters.
-   // This is not strictly enforced in Java / jros2.
+   // Note: each string in this array is declared with an upper bound of 10 characters.
+   // Like rmw (rclcpp / rclpy), jros2 does not enforce string bounds when publishing or receiving.
    private final IDLStringSequence unbounded_array_of_strings_up_to_ten_characters_each_; // Test comment
-   // Note: The length of each string in this sequence should not exceed 10 characters.
-   // This is not strictly enforced in Java / jros2.
+   // Note: each string in this array is declared with an upper bound of 10 characters.
+   // Like rmw (rclcpp / rclpy), jros2 does not enforce string bounds when publishing or receiving.
+   // Bounded sequence: at most 5 elements. Adding more, or publishing more, throws IllegalArgumentException.
    private final IDLStringSequence up_to_five_strings_up_to_ten_characters_each_;
    private byte x_;
    private short y_;
@@ -86,39 +94,40 @@ public class TestMsg implements ROS2Message<TestMsg>
    public static final String FOO = "foo";
    public static final String EXAMPLE = "bar";
    private final StringBuilder[] three_strings_;
-   // Note: The length of each string in this sequence should not exceed 5 characters.
-   // This is not strictly enforced in Java / jros2.
+   // Note: each string in this array is declared with an upper bound of 5 characters.
+   // Like rmw (rclcpp / rclpy), jros2 does not enforce string bounds when publishing or receiving.
    private final StringBuilder[] three_strings_each_max_length_of_five_chars_;
    private final sensor_msgs.Image[] three_images_;
 
    public TestMsg()
    {
       header_ = new std_msgs.Header();
-      my_string_ = new StringBuilder();
+      my_string_ = CDRBuffer.newStringBuilder(16);
       unbounded_integer_array_ = new IDLIntSequence();
       five_integers_array_ = new int[5];
       up_to_five_integers_array_ = new IDLIntSequence(0, 5);
-      string_of_unbounded_size_ = new StringBuilder();
-      up_to_ten_characters_string_ = new StringBuilder(10);
-      up_to_five_unbounded_strings_ = new IDLStringSequence(0);
-      unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence();
+      string_of_unbounded_size_ = CDRBuffer.newStringBuilder(16);
+      up_to_ten_characters_string_ = CDRBuffer.newStringBuilder(10);
+      up_to_five_unbounded_strings_ = new IDLStringSequence(0, 5);
+      unbounded_array_of_strings_up_to_ten_characters_each_ = new IDLStringSequence(0, IDLSequence.UNBOUNDED_MAX_SIZE, 10);
       up_to_five_strings_up_to_ten_characters_each_ = new IDLStringSequence(0, 5, 10);
       x_ = (byte) 42;
       y_ = (short) -2000;
-      full_name_ = new StringBuilder("John Doe");
+      full_name_ = CDRBuffer.newStringBuilder("John Doe");
       samples_ = new IDLIntSequence();
+      samples_.addAll(new int[] {-200, -100, 0, 100, 200});
       samples2_ = new int[] {-200, -100, 0, 100, 200};
       three_strings_ = new StringBuilder[3];
       // three_strings is defined as a fixed-size array, so it is pre-allocated.
       for (int i = 0; i < three_strings_.length; ++i)
       {
-         three_strings_[i] = new StringBuilder();
+         three_strings_[i] = CDRBuffer.newStringBuilder(16);
       }
       three_strings_each_max_length_of_five_chars_ = new StringBuilder[3];
       // three_strings_each_max_length_of_five_chars is defined as a fixed-size array, so it is pre-allocated.
       for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
       {
-         three_strings_each_max_length_of_five_chars_[i] = new StringBuilder(5);
+         three_strings_each_max_length_of_five_chars_[i] = CDRBuffer.newStringBuilder(5);
       }
       three_images_ = new sensor_msgs.Image[3];
       // three_images is defined as a fixed-size array, so it is pre-allocated.
@@ -141,28 +150,28 @@ public class TestMsg implements ROS2Message<TestMsg>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // my_int_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * my_string_.length()) + 1; // my_string_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // my_int_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(my_string_) + 1; // my_string_
       currentAlignment += unbounded_integer_array_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // five_integers_array_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + (5 * 4); // five_integers_array_
       currentAlignment += up_to_five_integers_array_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * string_of_unbounded_size_.length()) + 1; // string_of_unbounded_size_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * up_to_ten_characters_string_.length()) + 1; // up_to_ten_characters_string_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(string_of_unbounded_size_) + 1; // string_of_unbounded_size_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(up_to_ten_characters_string_) + 1; // up_to_ten_characters_string_
       currentAlignment += up_to_five_unbounded_strings_.calculateSizeBytes(currentAlignment);
       currentAlignment += unbounded_array_of_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
       currentAlignment += up_to_five_strings_up_to_ten_characters_each_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // x_
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // y_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * full_name_.length()) + 1; // full_name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // x_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 2) + 2; // y_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(full_name_) + 1; // full_name_
       currentAlignment += samples_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (5 * 4) + CDRBuffer.alignment(currentAlignment, (5 * 4)); // samples2_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + (5 * 4); // samples2_
       for (int i = 0; i < three_strings_.length; ++i)
       {
-         currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * three_strings_[i].length()) + 1; // three_strings_[i]
+         currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(three_strings_[i]) + 1; // three_strings_[i]
       }
       for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
       {
-         currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * three_strings_each_max_length_of_five_chars_[i].length()) + 1; // three_strings_each_max_length_of_five_chars_[i]
+         currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(three_strings_each_max_length_of_five_chars_[i]) + 1; // three_strings_each_max_length_of_five_chars_[i]
       }
       for (int i = 0; i < three_images_.length; ++i)
       {
@@ -179,10 +188,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       buffer.writeInt(my_int_);
       buffer.writeString(my_string_);
       unbounded_integer_array_.serialize(buffer);
-      for (int i = 0; i < five_integers_array_.length; ++i)
-      {
-         buffer.writeInt(five_integers_array_[i]);
-      }
+      buffer.writeIntArray(five_integers_array_);
       up_to_five_integers_array_.serialize(buffer);
       buffer.writeString(string_of_unbounded_size_);
       buffer.writeString(up_to_ten_characters_string_);
@@ -193,10 +199,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       buffer.writeShort(y_);
       buffer.writeString(full_name_);
       samples_.serialize(buffer);
-      for (int i = 0; i < samples2_.length; ++i)
-      {
-         buffer.writeInt(samples2_[i]);
-      }
+      buffer.writeIntArray(samples2_);
       for (int i = 0; i < three_strings_.length; ++i)
       {
          buffer.writeString(three_strings_[i]);
@@ -219,10 +222,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       my_int_ = buffer.readInt();
       buffer.readString(my_string_);
       unbounded_integer_array_.deserialize(buffer);
-      for (int i = 0; i < five_integers_array_.length; ++i)
-      {
-         five_integers_array_[i] = buffer.readInt();
-      }
+      buffer.readIntArray(five_integers_array_);
       up_to_five_integers_array_.deserialize(buffer);
       buffer.readString(string_of_unbounded_size_);
       buffer.readString(up_to_ten_characters_string_);
@@ -233,10 +233,7 @@ public class TestMsg implements ROS2Message<TestMsg>
       y_ = buffer.readShort();
       buffer.readString(full_name_);
       samples_.deserialize(buffer);
-      for (int i = 0; i < samples2_.length; ++i)
-      {
-         samples2_[i] = buffer.readInt();
-      }
+      buffer.readIntArray(samples2_);
       for (int i = 0; i < three_strings_.length; ++i)
       {
          buffer.readString(three_strings_[i]);
@@ -255,39 +252,40 @@ public class TestMsg implements ROS2Message<TestMsg>
    @Override
    public void set(TestMsg from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       my_int_ = from.my_int_;
-      my_string_.delete(0, my_string_.length());
-      my_string_.insert(0, from.my_string_);
+      my_string_.setLength(0);
+      my_string_.append(from.my_string_);
       unbounded_integer_array_.set(from.unbounded_integer_array_);
-      for (int i = 0; i < five_integers_array_.length; ++i)
-      {
-         five_integers_array_[i] = from.five_integers_array_[i];
-      }
+      System.arraycopy(from.five_integers_array_, 0, five_integers_array_, 0, five_integers_array_.length);
       up_to_five_integers_array_.set(from.up_to_five_integers_array_);
-      string_of_unbounded_size_.delete(0, string_of_unbounded_size_.length());
-      string_of_unbounded_size_.insert(0, from.string_of_unbounded_size_);
-      up_to_ten_characters_string_.delete(0, up_to_ten_characters_string_.length());
-      up_to_ten_characters_string_.insert(0, from.up_to_ten_characters_string_);
+      string_of_unbounded_size_.setLength(0);
+      string_of_unbounded_size_.append(from.string_of_unbounded_size_);
+      up_to_ten_characters_string_.setLength(0);
+      up_to_ten_characters_string_.append(from.up_to_ten_characters_string_);
       up_to_five_unbounded_strings_.set(from.up_to_five_unbounded_strings_);
       unbounded_array_of_strings_up_to_ten_characters_each_.set(from.unbounded_array_of_strings_up_to_ten_characters_each_);
       up_to_five_strings_up_to_ten_characters_each_.set(from.up_to_five_strings_up_to_ten_characters_each_);
       x_ = from.x_;
       y_ = from.y_;
-      full_name_.delete(0, full_name_.length());
-      full_name_.insert(0, from.full_name_);
+      full_name_.setLength(0);
+      full_name_.append(from.full_name_);
       samples_.set(from.samples_);
-      for (int i = 0; i < samples2_.length; ++i)
-      {
-         samples2_[i] = from.samples2_[i];
-      }
+      System.arraycopy(from.samples2_, 0, samples2_, 0, samples2_.length);
       for (int i = 0; i < three_strings_.length; ++i)
       {
-         three_strings_[i] = from.three_strings_[i];
+         three_strings_[i].setLength(0);
+         three_strings_[i].append(from.three_strings_[i]);
       }
       for (int i = 0; i < three_strings_each_max_length_of_five_chars_.length; ++i)
       {
-         three_strings_each_max_length_of_five_chars_[i] = from.three_strings_each_max_length_of_five_chars_[i];
+         three_strings_each_max_length_of_five_chars_[i].setLength(0);
+         three_strings_each_max_length_of_five_chars_[i].append(from.three_strings_each_max_length_of_five_chars_[i]);
       }
       for (int i = 0; i < three_images_.length; ++i)
       {
@@ -316,15 +314,35 @@ public class TestMsg implements ROS2Message<TestMsg>
       return my_string_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of my_string (allocates). {@link #getMyString()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMyStringAsString()
    {
       return my_string_.toString();
    }
 
+   /**
+    * Replaces the content of my_string with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMyString(java.lang.String s)
    {
-      this.my_string_.delete(0, this.my_string_.length());
-      this.my_string_.insert(0, s);
+      this.my_string_.setLength(0);
+      this.my_string_.append(s);
+   }
+
+   /**
+    * Replaces the content of my_string with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMyString(java.lang.CharSequence s)
+   {
+      if (s != this.my_string_)
+      {
+         this.my_string_.setLength(0);
+         this.my_string_.append(s);
+      }
    }
    public IDLIntSequence getUnboundedIntegerArray()
    {
@@ -346,30 +364,70 @@ public class TestMsg implements ROS2Message<TestMsg>
       return string_of_unbounded_size_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of string_of_unbounded_size (allocates). {@link #getStringOfUnboundedSize()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStringOfUnboundedSizeAsString()
    {
       return string_of_unbounded_size_.toString();
    }
 
+   /**
+    * Replaces the content of string_of_unbounded_size with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStringOfUnboundedSize(java.lang.String s)
    {
-      this.string_of_unbounded_size_.delete(0, this.string_of_unbounded_size_.length());
-      this.string_of_unbounded_size_.insert(0, s);
+      this.string_of_unbounded_size_.setLength(0);
+      this.string_of_unbounded_size_.append(s);
+   }
+
+   /**
+    * Replaces the content of string_of_unbounded_size with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStringOfUnboundedSize(java.lang.CharSequence s)
+   {
+      if (s != this.string_of_unbounded_size_)
+      {
+         this.string_of_unbounded_size_.setLength(0);
+         this.string_of_unbounded_size_.append(s);
+      }
    }
    public StringBuilder getUpToTenCharactersString()
    {
       return up_to_ten_characters_string_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of up_to_ten_characters_string (allocates). {@link #getUpToTenCharactersString()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getUpToTenCharactersStringAsString()
    {
       return up_to_ten_characters_string_.toString();
    }
 
+   /**
+    * Replaces the content of up_to_ten_characters_string with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setUpToTenCharactersString(java.lang.String s)
    {
-      this.up_to_ten_characters_string_.delete(0, this.up_to_ten_characters_string_.length());
-      this.up_to_ten_characters_string_.insert(0, s);
+      this.up_to_ten_characters_string_.setLength(0);
+      this.up_to_ten_characters_string_.append(s);
+   }
+
+   /**
+    * Replaces the content of up_to_ten_characters_string with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setUpToTenCharactersString(java.lang.CharSequence s)
+   {
+      if (s != this.up_to_ten_characters_string_)
+      {
+         this.up_to_ten_characters_string_.setLength(0);
+         this.up_to_ten_characters_string_.append(s);
+      }
    }
    public IDLStringSequence getUpToFiveUnboundedStrings()
    {
@@ -411,15 +469,35 @@ public class TestMsg implements ROS2Message<TestMsg>
       return full_name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of full_name (allocates). {@link #getFullName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getFullNameAsString()
    {
       return full_name_.toString();
    }
 
+   /**
+    * Replaces the content of full_name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setFullName(java.lang.String s)
    {
-      this.full_name_.delete(0, this.full_name_.length());
-      this.full_name_.insert(0, s);
+      this.full_name_.setLength(0);
+      this.full_name_.append(s);
+   }
+
+   /**
+    * Replaces the content of full_name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setFullName(java.lang.CharSequence s)
+   {
+      if (s != this.full_name_)
+      {
+         this.full_name_.setLength(0);
+         this.full_name_.append(s);
+      }
    }
    public IDLIntSequence getSamples()
    {
@@ -447,59 +525,66 @@ public class TestMsg implements ROS2Message<TestMsg>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TestMsg {", "header_=", "my_int_=", "my_string_=", "unbounded_integer_array_=", "five_integers_array_=", "up_to_five_integers_array_=", "string_of_unbounded_size_=", "up_to_ten_characters_string_=", "up_to_five_unbounded_strings_=", "unbounded_array_of_strings_up_to_ten_characters_each_=", "up_to_five_strings_up_to_ten_characters_each_=", "x_=", "y_=", "full_name_=", "samples_=", "samples2_=", "X=", "Y=", "FOO=", "EXAMPLE=", "three_strings_=", "three_strings_each_max_length_of_five_chars_=", "three_images_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TestMsg {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("my_int_=");
+      builder.append(toStringLabels[2]);
       builder.append(my_int_);
-      builder.append("my_string_=");
+      builder.append(toStringLabels[3]);
       builder.append(my_string_.toString());
-      builder.append("unbounded_integer_array_=");
+      builder.append(toStringLabels[4]);
       builder.append(unbounded_integer_array_);
-      builder.append("five_integers_array_=");
+      builder.append(toStringLabels[5]);
       builder.append(java.util.Arrays.toString(five_integers_array_));
-      builder.append("up_to_five_integers_array_=");
+      builder.append(toStringLabels[6]);
       builder.append(up_to_five_integers_array_);
-      builder.append("string_of_unbounded_size_=");
+      builder.append(toStringLabels[7]);
       builder.append(string_of_unbounded_size_.toString());
-      builder.append("up_to_ten_characters_string_=");
+      builder.append(toStringLabels[8]);
       builder.append(up_to_ten_characters_string_.toString());
-      builder.append("up_to_five_unbounded_strings_=");
+      builder.append(toStringLabels[9]);
       builder.append(up_to_five_unbounded_strings_);
-      builder.append("unbounded_array_of_strings_up_to_ten_characters_each_=");
+      builder.append(toStringLabels[10]);
       builder.append(unbounded_array_of_strings_up_to_ten_characters_each_);
-      builder.append("up_to_five_strings_up_to_ten_characters_each_=");
+      builder.append(toStringLabels[11]);
       builder.append(up_to_five_strings_up_to_ten_characters_each_);
-      builder.append("x_=");
+      builder.append(toStringLabels[12]);
       builder.append(x_);
-      builder.append("y_=");
+      builder.append(toStringLabels[13]);
       builder.append(y_);
-      builder.append("full_name_=");
+      builder.append(toStringLabels[14]);
       builder.append(full_name_.toString());
-      builder.append("samples_=");
+      builder.append(toStringLabels[15]);
       builder.append(samples_);
-      builder.append("samples2_=");
+      builder.append(toStringLabels[16]);
       builder.append(java.util.Arrays.toString(samples2_));
-      builder.append("X=");
+      builder.append(toStringLabels[17]);
       builder.append(X);
-      builder.append("Y=");
+      builder.append(toStringLabels[18]);
       builder.append(Y);
-      builder.append("FOO=");
+      builder.append(toStringLabels[19]);
       builder.append(FOO);
-      builder.append("EXAMPLE=");
+      builder.append(toStringLabels[20]);
       builder.append(EXAMPLE);
-      builder.append("three_strings_=");
+      builder.append(toStringLabels[21]);
       builder.append(java.util.Arrays.toString(three_strings_));
-      builder.append("three_strings_each_max_length_of_five_chars_=");
+      builder.append(toStringLabels[22]);
       builder.append(java.util.Arrays.toString(three_strings_each_max_length_of_five_chars_));
-      builder.append("three_images_=");
+      builder.append(toStringLabels[23]);
       builder.append(java.util.Arrays.toString(three_images_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

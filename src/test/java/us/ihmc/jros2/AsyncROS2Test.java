@@ -256,12 +256,16 @@ public class AsyncROS2Test
       // Ensure async publisher is not meaningfully slower on Linux.
       // Exact "async < standard" is too noisy under CI load (Foxy containers especially).
       // On Windows, thread scheduling and timer resolution make this comparison unreliable.
+      // Compare the medians: a few preemptions of the (otherwise idle) publish thread on a loaded machine dominate the
+      // averages, while the median reflects the typical cost of a publish() call on each side.
       if (System.getProperty("os.name").toLowerCase().contains("linux"))
       {
-         double asyncAvg = asyncPublisherStatistics.getAverage();
-         double standardAvg = standardPublisherStatistics.getAverage();
-         assertTrue(asyncAvg <= standardAvg * 1.25,
-                    () -> "Async avg: " + asyncAvg + ", standard avg: " + standardAvg);
+         double asyncMedian = asyncPublisherStatistics.getMedian();
+         double standardMedian = standardPublisherStatistics.getMedian();
+         jros2.getLogger().info("Median publish() duration: async " + asyncMedian + " s, standard " + standardMedian + " s");
+         assertTrue(asyncMedian <= standardMedian * 1.25,
+                    () -> "Async median: " + asyncMedian + ", standard median: " + standardMedian + " (averages: async "
+                          + asyncPublisherStatistics.getAverage() + ", standard " + standardPublisherStatistics.getAverage() + ")");
       }
       // Ideally this should not be commented, but things can happen on the system which cause it to be unreliable.
 //      assertTrue(asyncPublisherStatistics.getStandardDeviation() < standardPublisherStatistics.getStandardDeviation());
@@ -321,6 +325,18 @@ public class AsyncROS2Test
       public double[] getHistory()
       {
          return history;
+      }
+
+      public double getMedian()
+      {
+         int count = (int) getCount();
+         if (count == 0)
+         {
+            return Double.NaN;
+         }
+         double[] sorted = java.util.Arrays.copyOf(history, count);
+         java.util.Arrays.sort(sorted);
+         return (count % 2 == 1) ? sorted[count / 2] : 0.5 * (sorted[count / 2 - 1] + sorted[count / 2]);
       }
 
       @Override

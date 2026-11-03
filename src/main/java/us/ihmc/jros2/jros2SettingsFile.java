@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -41,8 +42,8 @@ class jros2SettingsFile implements jros2Settings
    static final String INTRAPROCESS_DELIVERY_KEY = "jros2.fastdds.intraprocess.delivery";
    static final String INTERFACE_WHITELIST_KEY = "jros2.fastdds.interface.whitelist";
 
-   private static final Path DEFAULT_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "jros2.properties");
-   private static final Path COMPATIBILITY_FILE_PATH = Path.of(System.getProperty("user.home"), ".ihmc", "IHMCNetworkParameters.ini");
+   private static final Path DEFAULT_FILE_PATH = Paths.get(System.getProperty("user.home", ""), ".ihmc", "jros2.properties");
+   private static final Path COMPATIBILITY_FILE_PATH = Paths.get(System.getProperty("user.home", ""), ".ihmc", "IHMCNetworkParameters.ini");
    private static final jros2SettingsDefault DEFAULTS = new jros2SettingsDefault();
 
    private final Path filePath;
@@ -53,6 +54,7 @@ class jros2SettingsFile implements jros2Settings
 
    private boolean fileExists;
    private String loadedFrom;
+   private final Properties loadedProperties = new Properties();
 
    jros2SettingsFile()
    {
@@ -177,6 +179,7 @@ class jros2SettingsFile implements jros2Settings
       // Parse properties if any file was loaded
       if (loaded)
       {
+         loadedProperties.putAll(properties);
          try
          {
             rosDomainId = Integer.parseInt(properties.getProperty(DOMAIN_ID_KEY));
@@ -266,5 +269,17 @@ class jros2SettingsFile implements jros2Settings
    public boolean hasInterfaceWhitelist()
    {
       return fileExists && !Arrays.equals(DEFAULTS.interfaceWhitelist(), interfaceWhitelist);
+   }
+
+   @Override
+   public String rawSetting(Key key)
+   {
+      return loadedProperties.getProperty(key.fileKey);
+   }
+
+   @Override
+   public boolean hasRawSetting(Key key)
+   {
+      return loadedProperties.containsKey(key.fileKey);
    }
 }

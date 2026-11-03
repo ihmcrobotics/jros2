@@ -46,9 +46,14 @@ float64 illuminance          # Measurement of the Photometric Illuminance in Lux
 float64 variance             # 0 is interpreted as variance unknown
 }</pre>
 */
-public class Illuminance implements ROS2Message<Illuminance>
+public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Illuminance_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Illuminance, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_b954b25f452fcf81a91c9c2a7e3b3fd85c4c873d452aecb3cfd8fd1da732a22d";
 
    private final std_msgs.Header header_; // timestamp is the time the illuminance was measured
    private double illuminance_; // Measurement of the Photometric Illuminance in Lux.
@@ -72,8 +77,8 @@ public class Illuminance implements ROS2Message<Illuminance>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // illuminance_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // illuminance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // variance_
 
       return currentAlignment - initialAlignment;
    }
@@ -99,6 +104,11 @@ public class Illuminance implements ROS2Message<Illuminance>
    @Override
    public void set(Illuminance from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       illuminance_ = from.illuminance_;
       variance_ = from.variance_;
@@ -131,19 +141,26 @@ public class Illuminance implements ROS2Message<Illuminance>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Illuminance {", "header_=", "illuminance_=", "variance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Illuminance {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("illuminance_=");
+      builder.append(toStringLabels[2]);
       builder.append(illuminance_);
-      builder.append("variance_=");
+      builder.append(toStringLabels[3]);
       builder.append(variance_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

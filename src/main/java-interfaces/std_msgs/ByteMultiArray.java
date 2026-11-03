@@ -29,6 +29,11 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::ByteMultiArray_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/ByteMultiArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_972fec7f50ab3c1d06783c228e79e8a9a509021708c511c059926261ada901d4";
+
    private final std_msgs.MultiArrayLayout layout_; // specification of data layout
    private final IDLByteSequence data_; // array of data
 
@@ -75,6 +80,11 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    @Override
    public void set(ByteMultiArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       layout_.set(from.layout_);
       data_.set(from.data_);
 
@@ -91,17 +101,24 @@ public class ByteMultiArray implements ROS2Message<ByteMultiArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ByteMultiArray {", "layout_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ByteMultiArray {");
-      builder.append("layout_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(layout_);
-      builder.append("data_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

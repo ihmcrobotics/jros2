@@ -18,9 +18,14 @@ std_msgs/Header header
 Twist twist
 }</pre>
 */
-public class TwistStamped implements ROS2Message<TwistStamped>
+public class TwistStamped implements ROS2Message<TwistStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::TwistStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/TwistStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5f0fcd4f81d5d06ad9b4c4c63e3ea51b82d6ae4d0558f1d475229b1121db6f64";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Twist twist_;
@@ -68,6 +73,11 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    @Override
    public void set(TwistStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       twist_.set(from.twist_);
 
@@ -84,17 +94,24 @@ public class TwistStamped implements ROS2Message<TwistStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TwistStamped {", "header_=", "twist_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TwistStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("twist_=");
+      builder.append(toStringLabels[2]);
       builder.append(twist_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

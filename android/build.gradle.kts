@@ -1,6 +1,13 @@
-import java.util.Properties
+import com.android.build.api.artifact.SingleArtifact
 import java.io.File
 import java.io.FileOutputStream
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.Properties
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+import javax.inject.Inject
 
 plugins {
    id("com.android.library")
@@ -61,6 +68,10 @@ android {
    namespace = "us.ihmc.jros2"
    compileSdk = 35
 
+   // The Gradle build does not compile or strip native code: src/main/jniLibs holds prebuilt, already stripped
+   // libraries built by scripts/ with NDK r30 (16 KB aligned on arm64-v8a and x86_64). See verifyJniLibs below.
+   // No ndkVersion is declared on purpose, so building the AAR never needs (or downloads) an NDK.
+
    defaultConfig {
       minSdk = 26
 
@@ -71,7 +82,6 @@ android {
    buildTypes {
       release {
          isMinifyEnabled = false
-         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       }
    }
 
@@ -82,18 +92,50 @@ android {
 
    sourceSets {
       getByName("main") {
-         java.srcDirs("../src/main/java", "../src/main/java-interfaces")
-         resources.srcDirs("../src/main/resources")
+         // src/main/java: Android-only helpers (us.ihmc.jros2.android). ../src/main/java{,-interfaces}: the shared jros2 sources,
+         // which lint checks against minSdk below.
+         java.srcDirs("src/main/java", "../src/main/java", "../src/main/java-interfaces")
+         resources.srcDirs("src/main/resources", "../src/main/resources")
       }
    }
 
    packaging {
+      // Desktop natives are not usable on Android; the jniLibs are packaged instead.
       resources.excludes.add("**/fastddsjava/native/**")
       jniLibs {
          pickFirsts.add("**/libfastcdr.so*")
          pickFirsts.add("**/libfastdds.so*")
          pickFirsts.add("**/libjnifastddsjava.so")
+         // Already stripped by the native build; keeping them as-is means AGP does not need an NDK to strip.
+         keepDebugSymbols.add("**/*.so")
       }
+   }
+
+   lint {
+      // Gate: jros2 must run on every API level >= minSdk (26). Any call to a newer API is an error and makes
+      // lintRelease/lintDebug (and therefore `check`, see below) fail. This covers the shared ../src/main/java sources
+      // and, with checkTestSources, the androidTest sources (lintDebug).
+      abortOnError = true
+      checkReleaseBuilds = true
+      checkTestSources = true
+      warningsAsErrors = false
+      error += setOf(
+         "NewApi",              // calls, fields and classes above minSdk
+         "InlinedApi",          // constants above minSdk
+         "Override",            // methods that accidentally override newer framework methods
+         "WrongConstant",
+         "BlockedPrivateApi",
+         "SoonBlockedPrivateApi",
+         "DiscouragedPrivateApi"
+      )
+      // Version nags depend on the network and on release dates, not on the code.
+      disable += setOf("GradleDependency", "AndroidGradlePluginVersion", "NewerVersionAvailable")
+      // Reports go to build/reports/lint-results-<variant>.{txt,xml,html,sarif}; on failure Gradle also prints the first
+      // error. (Do not set textOutput: AGP 8 copies the report to a file literally named "stdout" in the project dir.)
+      textReport = true
+      xmlReport = true
+      htmlReport = true
+      sarifReport = true
    }
 
    testOptions {
@@ -107,49 +149,369 @@ dependencies {
    androidTestImplementation("androidx.test.ext:junit:1.2.1")
 }
 
-tasks.register("copyLibcppShared") {
-   doLast {
-      val jniLibsDir = file("src/main/jniLibs")
-      jniLibsDir.mkdirs()
+/**
+ * Packages the enclaves of an SROS2 keystore as androidTest assets (sros2_keystore/enclaves/...) for SROS2OnDeviceTest.
+ * The CA private keys (private/) are never packaged. Without a keystore the assets stay empty and the test is skipped.
+ */
+abstract class Sros2KeystoreAssetsTask : DefaultTask() {
+   @get:Optional
+   @get:InputDirectory
+   @get:PathSensitive(PathSensitivity.RELATIVE)
+   abstract val keystore: DirectoryProperty
 
-      // Find NDK directory
-      val sdkDir = android.sdkDirectory
-      val ndkDir = file("$sdkDir/ndk").listFiles()?.maxByOrNull { it.name } // Get latest NDK version
+   @get:OutputDirectory
+   abstract val outputDirectory: DirectoryProperty
 
-      if (ndkDir != null && ndkDir.exists()) {
-         println("Found NDK: $ndkDir")
-         // Copy libc++_shared.so for each ABI
-         listOf(
-            "arm64-v8a" to "aarch64-linux-android",
-            "armeabi-v7a" to "arm-linux-androideabi",
-            "x86_64" to "x86_64-linux-android"
-         ).forEach { (abi, triple) ->
-            val libcppPath = file("$ndkDir/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/$triple/libc++_shared.so")
-            if (libcppPath.exists()) {
-               val abiDir = file("$jniLibsDir/$abi")
-               abiDir.mkdirs()
-               val dest = file("$abiDir/libc++_shared.so")
-               if (!dest.exists()) {
-                  copy {
-                     from(libcppPath)
-                     into(abiDir)
-                  }
-                  println("Copied libc++_shared.so for $abi from $libcppPath")
-               } else {
-                  println("Keeping existing libc++_shared.so for $abi")
-               }
-            } else {
-               println("libc++_shared.so not found at $libcppPath")
+   @get:Inject
+   abstract val fileSystem: FileSystemOperations
+
+   @TaskAction
+   fun copy() {
+      fileSystem.sync {
+         into(outputDirectory)
+         if (keystore.isPresent) {
+            from(keystore) {
+               include("enclaves/**")
+               into("sros2_keystore")
             }
          }
-      } else {
-         println("NDK not found in $sdkDir/ndk")
       }
    }
 }
 
-tasks.named("preBuild") {
-   dependsOn("copyLibcppShared")
+// ./gradlew connectedDebugAndroidTest -Pjros2.sros2Keystore=/path/to/keystore   runs SROS2OnDeviceTest with that keystore
+val sros2KeystoreAssets = tasks.register<Sros2KeystoreAssetsTask>("sros2KeystoreAssets") {
+   keystore.set(providers.gradleProperty("jros2.sros2Keystore").map { layout.projectDirectory.dir(it) })
+   outputDirectory.set(layout.buildDirectory.dir("generated/sros2KeystoreAssets"))
+}
+
+androidComponents {
+   onVariants(selector().withBuildType("debug")) { variant ->
+      variant.androidTest?.sources?.assets?.addGeneratedSourceDirectory(sros2KeystoreAssets, Sros2KeystoreAssetsTask::outputDirectory)
+   }
+}
+
+/**
+ * Verifies the prebuilt libraries in src/main/jniLibs without needing an NDK:
+ *  - every ABI contains libc++_shared.so, libfastcdr.so, libfastdds.so and libjnifastddsjava.so,
+ *  - the ELF class and machine match the ABI directory,
+ *  - every PT_LOAD segment of a 64-bit library (arm64-v8a, x86_64) is aligned to at least 16 KB
+ *    (required on Android 15+ devices with 16 KB pages; 32-bit armeabi-v7a never runs on such kernels),
+ *  - no library carries DWARF debug sections (unstripped libc++_shared.so from NDK r28+ is ~9 MB),
+ *  - no library has a DT_RPATH/DT_RUNPATH (bionic resolves dependencies by soname; a runpath only leaks build paths),
+ *  - every DT_NEEDED entry is either bundled or an NDK system library,
+ *  - libjnifastddsjava.so exports a JNI symbol for every native method declared in fastddsjava.java (JNI resolves
+ *    natives lazily, so a missing symbol only shows up as UnsatisfiedLinkError when that method is first called).
+ */
+abstract class VerifyJniLibsTask : DefaultTask() {
+   @get:InputDirectory
+   @get:PathSensitive(PathSensitivity.RELATIVE)
+   abstract val jniLibsDir: DirectoryProperty
+
+   /** us/ihmc/fastddsjava/natives/fastddsjava.java, whose native method declarations the JNI library must implement. */
+   @get:InputFile
+   @get:PathSensitive(PathSensitivity.NONE)
+   abstract val nativesJavaSource: RegularFileProperty
+
+   @get:OutputFile
+   abstract val reportFile: RegularFileProperty
+
+   private class Elf(val is64: Boolean, val machine: Int, val loadAlignments: List<Long>, val sectionNames: List<String>,
+                     val needed: List<String>, val runpaths: List<String>, val exportedSymbols: Set<String>)
+
+   private fun parseElf(file: File): Elf {
+      val bytes = RandomAccessFile(file, "r").use { raf ->
+         val data = ByteArray(raf.length().toInt())
+         raf.readFully(data)
+         data
+      }
+      require(bytes.size > 64 && bytes[0] == 0x7f.toByte() && bytes[1] == 'E'.code.toByte() && bytes[2] == 'L'.code.toByte() &&
+              bytes[3] == 'F'.code.toByte()) { "not an ELF file" }
+      val is64 = bytes[4].toInt() == 2
+      val order = if (bytes[5].toInt() == 2) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN
+      val buf = ByteBuffer.wrap(bytes).order(order)
+      fun u16(at: Long) = buf.getShort(at.toInt()).toInt() and 0xffff
+      fun u32(at: Long) = buf.getInt(at.toInt()).toLong() and 0xffffffffL
+      fun word(at: Long) = if (is64) buf.getLong(at.toInt()) else u32(at)
+
+      val machine = u16(18)
+      val phoff = if (is64) word(32) else u32(28)
+      val shoff = if (is64) word(40) else u32(32)
+      val phentsize = u16(if (is64) 54 else 42)
+      val phnum = u16(if (is64) 56 else 44)
+      val shentsize = u16(if (is64) 58 else 46)
+      val shnum = u16(if (is64) 60 else 48)
+      val shstrndx = u16(if (is64) 62 else 50)
+
+      val loadAlignments = ArrayList<Long>()
+      for (i in 0 until phnum) {
+         val ph = phoff + i.toLong() * phentsize
+         if (u32(ph) == 1L) { // PT_LOAD
+            loadAlignments.add(if (is64) word(ph + 48) else u32(ph + 28))
+         }
+      }
+
+      class Section(val name: Int, val type: Long, val offset: Long, val size: Long, val link: Int)
+      val sections = (0 until shnum).map { i ->
+         val sh = shoff + i.toLong() * shentsize
+         if (is64) Section(u32(sh).toInt(), u32(sh + 4), word(sh + 24), word(sh + 32), u32(sh + 40).toInt())
+         else Section(u32(sh).toInt(), u32(sh + 4), u32(sh + 16), u32(sh + 20), u32(sh + 24).toInt())
+      }
+      fun cString(at: Long): String {
+         var end = at.toInt()
+         while (end < bytes.size && bytes[end] != 0.toByte()) end++
+         return String(bytes, at.toInt(), end - at.toInt(), Charsets.UTF_8)
+      }
+      val sectionNames = if (shstrndx in sections.indices) sections.map { cString(sections[shstrndx].offset + it.name) } else emptyList()
+
+      val needed = ArrayList<String>()
+      val runpaths = ArrayList<String>()
+      sections.filter { it.type == 6L }.forEach { dynamic -> // SHT_DYNAMIC
+         val strtab = sections[dynamic.link]
+         val entrySize = if (is64) 16 else 8
+         var at = dynamic.offset
+         while (at + entrySize <= dynamic.offset + dynamic.size) {
+            val tag = word(at)
+            val value = word(at + entrySize / 2)
+            when (tag) {
+               0L -> break
+               1L -> needed.add(cString(strtab.offset + value))
+               15L, 29L -> runpaths.add(cString(strtab.offset + value))
+            }
+            at += entrySize
+         }
+      }
+
+      // Defined (st_shndx != SHN_UNDEF) entries of the dynamic symbol table, i.e. what dlsym/JNI can resolve.
+      val exportedSymbols = HashSet<String>()
+      sections.filter { it.type == 11L }.forEach { dynsym -> // SHT_DYNSYM
+         val strtab = sections[dynsym.link]
+         val entrySize = if (is64) 24 else 16
+         var at = dynsym.offset + entrySize // entry 0 is the null symbol
+         while (at + entrySize <= dynsym.offset + dynsym.size) {
+            val shndx = u16(if (is64) at + 6 else at + 14)
+            if (shndx != 0) {
+               exportedSymbols.add(cString(strtab.offset + u32(at)))
+            }
+            at += entrySize
+         }
+      }
+      return Elf(is64, machine, loadAlignments, sectionNames, needed, runpaths, exportedSymbols)
+   }
+
+   /** JNI short name of a native method of us.ihmc.fastddsjava.natives.fastddsjava (JNI spec, "Resolving Native Method Names"). */
+   private fun jniSymbol(method: String): String {
+      val mangled = StringBuilder()
+      for (c in method) {
+         when {
+            c == '_' -> mangled.append("_1")
+            c.code < 128 && c.isLetterOrDigit() -> mangled.append(c)
+            else -> mangled.append("_0").append(c.code.toString(16).padStart(4, '0'))
+         }
+      }
+      return "Java_us_ihmc_fastddsjava_natives_fastddsjava_$mangled"
+   }
+
+   @TaskAction
+   fun verify() {
+      // ABI directory -> (64-bit, ELF e_machine)
+      val abis = mapOf("arm64-v8a" to (true to 183), "armeabi-v7a" to (false to 40), "x86_64" to (true to 62))
+      val requiredLibs = listOf("libc++_shared.so", "libfastcdr.so", "libfastdds.so", "libjnifastddsjava.so")
+      // NDK stable system libraries an app may link against (https://developer.android.com/ndk/guides/stable_apis).
+      val systemLibs = setOf("libc.so", "libm.so", "libdl.so", "liblog.so", "libz.so", "libandroid.so", "libjnigraphics.so",
+                             "libEGL.so", "libGLESv2.so", "libGLESv3.so", "libvulkan.so", "libOpenSLES.so", "libaaudio.so",
+                             "libmediandk.so", "libnativewindow.so", "libneuralnetworks.so", "libsync.so", "libbinder_ndk.so",
+                             "libcamera2ndk.so", "libamidi.so", "libicu.so")
+      val pageSize16k = 16384L
+      val root = jniLibsDir.get().asFile
+      val problems = ArrayList<String>()
+      val report = StringBuilder()
+
+      val nativeMethods = Regex("""\bstatic\s+native\s+[\w.\[\]<>]+\s+(\w+)\s*\(""")
+         .findAll(nativesJavaSource.get().asFile.readText()).map { it.groupValues[1] }.toSortedSet()
+      if (nativeMethods.isEmpty()) {
+         problems.add("${nativesJavaSource.get().asFile}: no native method declarations found")
+      }
+      report.append("fastddsjava.java declares ${nativeMethods.size} native methods\n")
+
+      for ((abi, expected) in abis) {
+         val dir = File(root, abi)
+         val bundled = dir.listFiles { f -> f.name.endsWith(".so") }?.map { it.name }?.toSet() ?: emptySet()
+         requiredLibs.filter { it !in bundled }.forEach { problems.add("$abi/$it: missing") }
+
+         for (name in bundled.sorted()) {
+            val file = File(dir, name)
+            val elf = try {
+               parseElf(file)
+            } catch (e: Exception) {
+               problems.add("$abi/$name: cannot parse ELF (${e.message})")
+               continue
+            }
+            report.append("$abi/$name: ${if (elf.is64) "ELF64" else "ELF32"} machine=${elf.machine} ")
+               .append("load-align=${elf.loadAlignments.distinct().joinToString(",") { "0x" + it.toString(16) }} ")
+               .append("needed=${elf.needed} runpath=${elf.runpaths}\n")
+
+            if (elf.is64 != expected.first || elf.machine != expected.second) {
+               problems.add("$abi/$name: wrong ELF class/machine (64-bit=${elf.is64}, e_machine=${elf.machine}) for this ABI")
+            }
+            if (elf.is64 && elf.loadAlignments.any { it < pageSize16k || it % pageSize16k != 0L }) {
+               problems.add("$abi/$name: PT_LOAD alignment ${elf.loadAlignments.distinct().joinToString { "0x" + it.toString(16) }} " +
+                            "is not 16 KB compatible (link with NDK r28+ or -Wl,-z,max-page-size=16384)")
+            }
+            val debugSections = elf.sectionNames.filter { it.startsWith(".debug_") || it == ".gnu_debuglink" }
+            if (debugSections.isNotEmpty()) {
+               problems.add("$abi/$name: not stripped (contains ${debugSections.joinToString()}); run llvm-strip --strip-unneeded")
+            }
+            if (elf.runpaths.isNotEmpty()) {
+               problems.add("$abi/$name: has DT_RPATH/DT_RUNPATH ${elf.runpaths} (leaks build paths; drop -Wl,-rpath for Android)")
+            }
+            elf.needed.filter { it !in bundled && it !in systemLibs }.forEach {
+               problems.add("$abi/$name: needs $it, which is neither bundled in jniLibs/$abi nor an NDK system library")
+            }
+            if (name == "libjnifastddsjava.so") {
+               val missing = nativeMethods.filter { jniSymbol(it) !in elf.exportedSymbols }
+               report.append("$abi/$name: exports ${nativeMethods.size - missing.size}/${nativeMethods.size} JNI methods\n")
+               if (missing.isNotEmpty()) {
+                  problems.add("$abi/$name: no JNI export for ${missing.size} native method(s) of fastddsjava.java: " +
+                               "${missing.joinToString()} (rebuild it from src/native)")
+               }
+            }
+         }
+      }
+
+      val out = reportFile.get().asFile
+      out.parentFile.mkdirs()
+      out.writeText(report.toString() + (if (problems.isEmpty()) "OK\n" else problems.joinToString("\n", "PROBLEMS:\n", "\n")))
+      logger.lifecycle(report.toString().trimEnd())
+      if (problems.isNotEmpty()) {
+         throw GradleException("jniLibs verification failed:\n  " + problems.joinToString("\n  "))
+      }
+      logger.lifecycle("jniLibs OK: all ABIs complete, stripped, no runpath, 64-bit ABIs 16 KB aligned, all JNI methods exported")
+   }
+}
+
+// ./gradlew verifyJniLibs                                  checks src/main/jniLibs
+// ./gradlew verifyJniLibs -Pjros2.jniLibsDir=/path/to/libs  checks freshly built natives (<dir>/<abi>/*.so) before they are committed
+val verifyJniLibs = tasks.register<VerifyJniLibsTask>("verifyJniLibs") {
+   group = "verification"
+   description = "Checks src/main/jniLibs: complete per ABI, stripped, no runpath, resolvable deps, 16 KB LOAD alignment on 64-bit ABIs, " +
+                 "JNI exports for every native method."
+   jniLibsDir.set(providers.gradleProperty("jros2.jniLibsDir")
+                     .map { layout.projectDirectory.dir(it) }
+                     .orElse(layout.projectDirectory.dir("src/main/jniLibs")))
+   nativesJavaSource.set(layout.projectDirectory.file("../src/main/java/us/ihmc/fastddsjava/natives/fastddsjava.java"))
+   reportFile.set(layout.buildDirectory.file("reports/jniLibs/verifyJniLibs.txt"))
+}
+
+/**
+ * Verifies the content of the release AAR as an app consumes it:
+ *  - jni/<abi>/ holds libc++_shared.so, libfastcdr.so, libfastdds.so and libjnifastddsjava.so for every ABI,
+ *  - proguard.txt carries the consumer keep rules (every rule line of consumer-rules.pro),
+ *  - AndroidManifest.xml declares CHANGE_WIFI_MULTICAST_STATE (needed by ROS2Android.acquireMulticastLock),
+ *  - classes.jar contains the Android helper and the native license notice, and none of the desktop natives
+ *    (fastddsjava/native/...). Java resources of an AAR live inside classes.jar, so the top-level listing alone cannot
+ *    show them.
+ */
+abstract class VerifyAarTask : DefaultTask() {
+   @get:InputFile
+   @get:PathSensitive(PathSensitivity.NONE)
+   abstract val aarFile: RegularFileProperty
+
+   @get:InputFile
+   @get:PathSensitive(PathSensitivity.NONE)
+   abstract val consumerRulesFile: RegularFileProperty
+
+   @get:OutputFile
+   abstract val reportFile: RegularFileProperty
+
+   @TaskAction
+   fun verify() {
+      val aar = aarFile.get().asFile
+      val problems = ArrayList<String>()
+      val topLevel = ArrayList<String>()
+      val classesJar = ArrayList<String>()
+      var proguard = ""
+      var manifest = ""
+
+      ZipFile(aar).use { zip ->
+         for (entry in zip.entries()) {
+            topLevel.add(entry.name)
+         }
+         fun text(name: String) = zip.getEntry(name)?.let { e -> zip.getInputStream(e).use { String(it.readBytes(), Charsets.UTF_8) } }
+         proguard = text("proguard.txt") ?: ""
+         manifest = text("AndroidManifest.xml") ?: ""
+         val classes = zip.getEntry("classes.jar")
+         if (classes == null) {
+            problems.add("classes.jar is missing")
+         } else {
+            ZipInputStream(zip.getInputStream(classes)).use { jar ->
+               while (true) {
+                  val entry = jar.nextEntry ?: break
+                  classesJar.add(entry.name)
+               }
+            }
+         }
+      }
+
+      for (abi in listOf("arm64-v8a", "armeabi-v7a", "x86_64")) {
+         for (lib in listOf("libc++_shared.so", "libfastcdr.so", "libfastdds.so", "libjnifastddsjava.so")) {
+            if ("jni/$abi/$lib" !in topLevel) {
+               problems.add("jni/$abi/$lib is missing")
+            }
+         }
+      }
+
+      val rules = consumerRulesFile.get().asFile.readLines().map { it.trim() }.filter { it.isNotEmpty() && !it.startsWith("#") }
+      if (rules.isEmpty()) {
+         problems.add("consumer-rules.pro contains no rules")
+      }
+      val proguardLines = proguard.lines().map { it.trim() }.toSet()
+      rules.filter { it !in proguardLines }.forEach { problems.add("proguard.txt lacks the consumer rule line '$it'") }
+
+      if (!manifest.contains("android.permission.CHANGE_WIFI_MULTICAST_STATE")) {
+         problems.add("AndroidManifest.xml does not declare android.permission.CHANGE_WIFI_MULTICAST_STATE")
+      }
+
+      (topLevel + classesJar).filter { it.contains("fastddsjava/native/") }.forEach {
+         problems.add("$it: desktop natives must not be packaged in the AAR")
+      }
+      for (required in listOf("us/ihmc/jros2/android/ROS2Android.class", "us/ihmc/jros2/ROS2Node.class",
+                              "fastddsjava/android/THIRD_PARTY_LICENSES.txt")) {
+         if (required !in classesJar) {
+            problems.add("classes.jar lacks $required")
+         }
+      }
+
+      val out = reportFile.get().asFile
+      out.parentFile.mkdirs()
+      out.writeText("${aar.name}: ${topLevel.size} entries, classes.jar ${classesJar.size} entries, ${rules.size} consumer rule lines\n" +
+                    (if (problems.isEmpty()) "OK\n" else problems.joinToString("\n", "PROBLEMS:\n", "\n")))
+      if (problems.isNotEmpty()) {
+         throw GradleException("AAR verification failed for ${aar.name}:\n  " + problems.joinToString("\n  "))
+      }
+      logger.lifecycle("AAR OK: ${aar.name} (natives for all ABIs, consumer rules, multicast permission, no desktop natives)")
+   }
+}
+
+// ./gradlew verifyAar   builds the release AAR and checks what apps get from it
+val verifyAar = tasks.register<VerifyAarTask>("verifyAar") {
+   group = "verification"
+   description = "Checks the release AAR: jni libraries for every ABI, consumer rules, manifest permission, no desktop natives."
+   consumerRulesFile.set(layout.projectDirectory.file("consumer-rules.pro"))
+   reportFile.set(layout.buildDirectory.file("reports/aar/verifyAar.txt"))
+}
+
+androidComponents {
+   onVariants(selector().withBuildType("release")) { variant ->
+      verifyAar.configure {
+         aarFile.set(variant.artifacts.get(SingleArtifact.AAR))
+      }
+   }
+}
+
+// `check` runs the gates: the API-level lint of the release variant, the jniLibs verification and the AAR verification.
+tasks.named("check") {
+   dependsOn(verifyJniLibs, "lintRelease", verifyAar)
 }
 
 afterEvaluate {

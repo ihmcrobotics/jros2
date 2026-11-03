@@ -38,12 +38,17 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticStatus_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of diagnostic_msgs/msg/DiagnosticStatus, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_b0e3e692ea2d54a8af2f4ef1930e81556a2db55216b771f8a7d2724ed47bf0e4";
+
+   /**
       Possible levels of operations.
    */
-   public static final byte OK = 0;
-   public static final byte WARN = 1;
-   public static final byte ERROR = 2;
-   public static final byte STALE = 3;
+   public static final byte OK = (byte) 0;
+   public static final byte WARN = (byte) 1;
+   public static final byte ERROR = (byte) 2;
+   public static final byte STALE = (byte) 3;
    /**
       Level of operation enumerated above.
    */
@@ -67,9 +72,9 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
 
    public DiagnosticStatus()
    {
-      name_ = new StringBuilder();
-      message_ = new StringBuilder();
-      hardware_id_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
+      message_ = CDRBuffer.newStringBuilder(16);
+      hardware_id_ = CDRBuffer.newStringBuilder(16);
       values_ = new IDLObjectSequence<diagnostic_msgs.KeyValue>(diagnostic_msgs.KeyValue.class);
 
    }
@@ -85,10 +90,10 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // level_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * message_.length()) + 1; // message_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * hardware_id_.length()) + 1; // hardware_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // level_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(message_) + 1; // message_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(hardware_id_) + 1; // hardware_id_
       currentAlignment += values_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -119,14 +124,19 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    @Override
    public void set(DiagnosticStatus from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       level_ = from.level_;
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
-      message_.delete(0, message_.length());
-      message_.insert(0, from.message_);
-      hardware_id_.delete(0, hardware_id_.length());
-      hardware_id_.insert(0, from.hardware_id_);
-      values_.set(from.values_);
+      name_.setLength(0);
+      name_.append(from.name_);
+      message_.setLength(0);
+      message_.append(from.message_);
+      hardware_id_.setLength(0);
+      hardware_id_.append(from.hardware_id_);
+      values_.set(from.values_, diagnostic_msgs.KeyValue::set); // copies the elements, never shares them
 
    }
 
@@ -145,45 +155,105 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public StringBuilder getMessage()
    {
       return message_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of message (allocates). {@link #getMessage()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMessageAsString()
    {
       return message_.toString();
    }
 
+   /**
+    * Replaces the content of message with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMessage(java.lang.String s)
    {
-      this.message_.delete(0, this.message_.length());
-      this.message_.insert(0, s);
+      this.message_.setLength(0);
+      this.message_.append(s);
+   }
+
+   /**
+    * Replaces the content of message with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMessage(java.lang.CharSequence s)
+   {
+      if (s != this.message_)
+      {
+         this.message_.setLength(0);
+         this.message_.append(s);
+      }
    }
    public StringBuilder getHardwareId()
    {
       return hardware_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of hardware_id (allocates). {@link #getHardwareId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getHardwareIdAsString()
    {
       return hardware_id_.toString();
    }
 
+   /**
+    * Replaces the content of hardware_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setHardwareId(java.lang.String s)
    {
-      this.hardware_id_.delete(0, this.hardware_id_.length());
-      this.hardware_id_.insert(0, s);
+      this.hardware_id_.setLength(0);
+      this.hardware_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of hardware_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setHardwareId(java.lang.CharSequence s)
+   {
+      if (s != this.hardware_id_)
+      {
+         this.hardware_id_.setLength(0);
+         this.hardware_id_.append(s);
+      }
    }
    public IDLObjectSequence<diagnostic_msgs.KeyValue> getValues()
    {
@@ -191,31 +261,38 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"DiagnosticStatus {", "OK=", "WARN=", "ERROR=", "STALE=", "level_=", "name_=", "message_=", "hardware_id_=", "values_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("DiagnosticStatus {");
-      builder.append("OK=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(OK);
-      builder.append("WARN=");
+      builder.append(toStringLabels[2]);
       builder.append(WARN);
-      builder.append("ERROR=");
+      builder.append(toStringLabels[3]);
       builder.append(ERROR);
-      builder.append("STALE=");
+      builder.append(toStringLabels[4]);
       builder.append(STALE);
-      builder.append("level_=");
+      builder.append(toStringLabels[5]);
       builder.append(level_);
-      builder.append("name_=");
+      builder.append(toStringLabels[6]);
       builder.append(name_.toString());
-      builder.append("message_=");
+      builder.append(toStringLabels[7]);
       builder.append(message_.toString());
-      builder.append("hardware_id_=");
+      builder.append(toStringLabels[8]);
       builder.append(hardware_id_.toString());
-      builder.append("values_=");
+      builder.append(toStringLabels[9]);
       builder.append(values_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -27,6 +27,11 @@ public class Float64 implements ROS2Message<Float64>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Float64_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Float64, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_705ba9c3d1a09df43737eb67095534de36fd426c0587779bda2bc51fe790182a";
+
    private double data_;
 
    public Float64()
@@ -44,7 +49,7 @@ public class Float64 implements ROS2Message<Float64>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -66,6 +71,11 @@ public class Float64 implements ROS2Message<Float64>
    @Override
    public void set(Float64 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -81,15 +91,22 @@ public class Float64 implements ROS2Message<Float64>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Float64 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Float64 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

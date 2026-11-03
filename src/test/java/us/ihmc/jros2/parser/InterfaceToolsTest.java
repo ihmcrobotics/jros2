@@ -43,4 +43,15 @@ public class InterfaceToolsTest
       assertThrows(NullPointerException.class, () -> InterfaceTools.checkSchema(null));
       assertThrows(IllegalArgumentException.class, () -> InterfaceTools.checkSchema(""));
    }
+
+   @Test
+   public void testEmptyNamesAreRejected()
+   {
+      IllegalArgumentException empty = assertThrows(IllegalArgumentException.class, () -> InterfaceTools.checkAndParsePackageResourceName(""));
+      assertTrue(empty.getMessage().contains("cannot be empty"), empty.getMessage());
+      IllegalArgumentException noPackage = assertThrows(IllegalArgumentException.class, () -> InterfaceTools.checkAndParsePackageResourceName("/Empty"));
+      assertTrue(noPackage.getMessage().contains("package name"), noPackage.getMessage());
+      // "std_msgs/" splits into one part, so it is rejected as not being package/resource
+      assertThrows(IllegalArgumentException.class, () -> InterfaceTools.checkAndParsePackageResourceName("std_msgs/"));
+   }
 }

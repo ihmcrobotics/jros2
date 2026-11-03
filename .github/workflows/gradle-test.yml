@@ -9,13 +9,21 @@ on:
   # schedule:
   #   - cron: '0 */8 * * *'
 
+env:
+  # Native ABI (fastddsjava.abiVersion()) that the committed Android, musl and riscv64 natives must implement. They must
+  # also be built with DDS-Security. Checked by NativeLibraryLoadTest (Android) and examples/native-smoke.
+  JROS2_EXPECTED_NATIVE_ABI: '2'
+
 jobs:
   # Major ROS 2 distros + Foxy for Ubuntu 20.04 / GLIBC 2.31 coverage.
   # Platform mapping: foxy=20.04, humble=22.04, jazzy/kilted=24.04, lyrical=26.04.
+  # On GitHub Actions jros2 enables Fast-DDS intraprocess delivery by default (jros2SettingsDefault checks GITHUB_ACTIONS);
+  # everywhere else the default is off. The extra jazzy entry therefore runs the suite with intraprocess delivery
+  # explicitly disabled, i.e. with the default users get. The jazzy entry with coverage produces the JaCoCo report.
   test-linux:
-    name: Linux (ROS 2 ${{ matrix.ros_distro }} / Ubuntu ${{ matrix.ubuntu }})
+    name: Linux (ROS 2 ${{ matrix.ros_distro }} / Ubuntu ${{ matrix.ubuntu }}${{ matrix.intraprocess == 'false' && ' / no intraprocess' || '' }})
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     strategy:
       fail-fast: false
       matrix:
@@ -26,6 +34,10 @@ jobs:
             ubuntu: '22.04'
           - ros_distro: jazzy
             ubuntu: '24.04'
+            coverage: 'true'
+          - ros_distro: jazzy
+            ubuntu: '24.04'
+            intraprocess: 'false'
           - ros_distro: kilted
             ubuntu: '24.04'
           - ros_distro: lyrical
@@ -56,17 +68,194 @@ jobs:
           distribution: 'temurin'
 
       - name: Run tests
-        run: ROS_DISTRO=${{ matrix.ros_distro }} ./gradlew test
+        env:
+          ROS_DISTRO: ${{ matrix.ros_distro }}
+        run: |
+          set -euo pipefail
+          # Only set the variable when the matrix asks for it, so the other entries keep the CI default.
+          if [ -n "${{ matrix.intraprocess }}" ]; then
+            export FASTDDS_INTRAPROCESS_DELIVERY="${{ matrix.intraprocess }}"
+            echo "FASTDDS_INTRAPROCESS_DELIVERY=$FASTDDS_INTRAPROCESS_DELIVERY"
+          fi
+          ./gradlew test --continue
+
+      # Uses the execution data of the test run above; -x keeps Gradle from running (or re-running failed) tests here.
+      - name: Coverage report (JaCoCo)
+        if: matrix.coverage == 'true' && (success() || failure())
+        run: ./gradlew :jros2-test:jacocoTestReport -x :jros2-test:test
+
+      - name: Upload coverage report
+        if: matrix.coverage == 'true' && (success() || failure())
+        uses: actions/upload-artifact@v7
+        with:
+          name: jacoco-${{ matrix.ros_distro }}
+          path: src/test/build/reports/jacoco/
+          if-no-files-found: warn
+          retention-days: 14
+
+      # Fails the coverage job when the hand-written code falls below the thresholds in build.gradle.kts. Runs only after a
+      # successful test run (failed tests lower the coverage).
+      - name: Coverage gate (JaCoCo)
+        if: matrix.coverage == 'true'
+        run: ./gradlew :jros2-test:jacocoTestCoverageVerification -x :jros2-test:test
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-linux-${{ matrix.ros_distro }}${{ matrix.intraprocess == 'false' && '-no-intraprocess' || '' }}
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Print error logs
         if: failure()
         run: find . -name 'hs_err*' -type f -exec cat {} +
 
-  # Build the Android AAR and verify that bundled natives load on an x86_64 emulator.
-  test-android:
-    name: Android (AAR + native load)
+  # Allocation gates (README, "Allocation-free hot paths"): every @Tag("allocation") test class in its own JVM, with the
+  # java-allocation-instrumenter agent and with -XX:-DoEscapeAnalysis, each with intraprocess delivery OFF and FULL
+  # (:jros2-test:allocationTest runs all four tasks), including the native heap gates (an LD_PRELOAD malloc shim built
+  # with the container's C compiler) and the combined control-loop gate. A job of its own: the four tasks take about an
+  # hour on a hosted runner. The gate reports (one per gate and pass) are uploaded.
+  test-allocation:
+    name: Allocation gates (ROS 2 jazzy / Ubuntu 24.04)
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    container:
+      image: osrf/ros:jazzy-desktop
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: C compiler for the native heap gate's malloc shim
+        run: |
+          set -euo pipefail
+          command -v cc || { apt-get update && apt-get install -y --no-install-recommends gcc libc6-dev; }
+          cc --version | head -1
+
+      - name: Run the allocation gates
+        env:
+          ROS_DISTRO: jazzy
+        run: ./gradlew :jros2-test:allocationTest --continue
+
+      - name: Upload allocation gate reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allocation-gates
+          path: |
+            src/test/build/allocation-gate/
+            src/test/build/test-results/allocationTest*/
+            src/test/build/reports/tests/allocationTest*/
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Print error logs
+        if: failure()
+        run: find . -name 'hs_err*' -type f -exec cat {} +
+
+  # Android Lint is the gate for "no API above minSdk 26" in the shared ../src/main/java sources (NewApi, InlinedApi,
+  # Override, ... are errors; lintRelease) and in the instrumented tests (lintDebug, checkTestSources), plus the checks of
+  # the prebuilt jniLibs (complete, stripped, no RUNPATH, 16 KB aligned, a JNI export for every native method of
+  # fastddsjava.java) and the R8 validation of android/consumer-rules.pro.
+  lint-android:
+    name: Android (Lint API gate, jniLibs, R8 rules)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install Android SDK packages
+        run: |
+          set -euo pipefail
+          # platforms;android-35 = compileSdk; build-tools 34.0.0 is the default of AGP 8.7.3 (no download during the build);
+          # build-tools 36.1.0 provides dexdump and lib/d8.jar (R8 9.0.3) for consumer-rules-check/validate.sh.
+          sdkmanager --install "platforms;android-35" "build-tools;34.0.0" "build-tools;36.1.0" "platform-tools"
+
+      - name: Android Lint (fails on NewApi, InlinedApi, Override, ...)
+        working-directory: android
+        run: ./gradlew lintRelease lintDebug --stacktrace
+
+      - name: Print the lint reports
+        if: failure()
+        run: cat android/build/reports/lint-results-release.txt android/build/reports/lint-results-debug.txt || true
+
+      - name: Verify jniLibs (all ABIs, stripped, no RUNPATH, 16 KB LOAD alignment on arm64-v8a/x86_64, every JNI method exported)
+        if: success() || failure()
+        working-directory: android
+        run: ./gradlew verifyJniLibs
+
+      - name: Build jros2 jar
+        if: success() || failure()
+        run: ./gradlew jar
+
+      - name: Validate consumer-rules.pro with R8 (positive and negative control)
+        if: success() || failure()
+        env:
+          ROS_DOMAIN_ID: '77'
+        run: |
+          set -euo pipefail
+          JAR=$(ls build/libs/jros2-*.jar | grep -v -e sources -e javadoc | head -1)
+          BUILD_TOOLS="$ANDROID_HOME/build-tools/36.1.0" bash android/consumer-rules-check/validate.sh "$JAR"
+
+      - name: Upload lint reports
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-lint
+          path: |
+            android/build/reports/lint-results-release.*
+            android/build/reports/lint-results-debug.*
+            android/build/reports/jniLibs/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # Builds the AAR and runs the instrumented tests (android/src/androidTest) on x86_64 emulators:
+  # API 26 (minSdk), API 31, API 35 with 16 KB memory pages (google_apis_ps16k) and API 36.1 (Android 16).
+  # The same four system images pass all 27 instrumented tests locally (AVDs jros2_api26, jros2_api31, jros2_api35_ps16k,
+  # jros2_api36). api-level is a string because the action builds 'platforms;android-<api-level>' and
+  # 'system-images;android-<api-level>;<target>;<arch>' from it verbatim.
+  test-android:
+    name: Android API ${{ matrix.api-level }} (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - api-level: '26'
+            target: google_apis
+            page-size: 4096
+          - api-level: '31'
+            target: google_apis
+            page-size: 4096
+          - api-level: '35'
+            target: google_apis_ps16k
+            page-size: 16384
+          - api-level: '36.1'
+            target: google_apis_playstore
+            page-size: 4096
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -90,61 +279,146 @@ jobs:
       - name: Install Android SDK packages
         run: |
           set -euo pipefail
-          # JNI libs are prebuilt in jniLibs; NDK is not required to assemble the AAR.
+          # JNI libs are prebuilt in jniLibs; the AAR build needs no NDK. The emulator runner installs the system image.
+          # build-tools 34.0.0 is the default of AGP 8.7.3.
           sdkmanager --install \
             "platforms;android-35" \
-            "build-tools;35.0.0" \
+            "build-tools;34.0.0" \
             "platform-tools" \
-            "emulator" \
-            "system-images;android-30;google_apis;x86_64"
+            "emulator"
 
-      - name: Verify committed Android JNI libraries
-        run: |
-          set -euo pipefail
-          for abi in arm64-v8a armeabi-v7a x86_64; do
-            for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
-              test -f "android/src/main/jniLibs/$abi/$lib" || {
-                echo "Missing android/src/main/jniLibs/$abi/$lib"
-                exit 1
-              }
-            done
-            echo "OK jniLibs/$abi"
-            ls -la "android/src/main/jniLibs/$abi"
-          done
+      # verifyAar (android/build.gradle.kts) checks jni/<abi>/*.so for every ABI, the consumer rules in proguard.txt, the
+      # CHANGE_WIFI_MULTICAST_STATE permission in the manifest and that classes.jar (where an AAR keeps its Java resources)
+      # contains no desktop natives.
+      # SROS2OnDeviceTest runs DDS-Security (PKI-DH, access control, AES-GCM) on the device with a throw-away keystore
+      # made with openssl only; -Pjros2.sros2Keystore packages its enclaves (not the CA key) into the test APK.
+      - name: Create a throw-away SROS2 keystore
+        run: bash android/src/androidTest/sros2/make-test-keystore.sh "$RUNNER_TEMP/sros2-keystore"
 
-      - name: Build Android release AAR
-        working-directory: android
-        run: ./gradlew assembleRelease --stacktrace
-
-      - name: Verify AAR packages JNI libraries
+      - name: Build and verify the Android release AAR, build the test APK
         working-directory: android
         run: |
           set -euo pipefail
-          AAR=$(find build/outputs/aar -name '*.aar' | head -1)
-          test -n "$AAR" || { echo "No AAR produced under build/outputs/aar"; find build -type f | head -50; exit 1; }
-          echo "Built AAR: $AAR"
-          unzip -l "$AAR"
+          ./gradlew assembleRelease verifyAar assembleDebugAndroidTest -Pjros2.sros2Keystore="$RUNNER_TEMP/sros2-keystore" --stacktrace
+          cat build/reports/aar/verifyAar.txt
+          unzip -l build/outputs/aar/*.aar
 
-          for abi in arm64-v8a armeabi-v7a x86_64; do
-            for lib in libfastcdr.so libfastdds.so libjnifastddsjava.so libc++_shared.so; do
-              unzip -l "$AAR" | grep -q "jni/$abi/$lib" || {
-                echo "AAR missing jni/$abi/$lib"
-                exit 1
-              }
-            done
-            echo "OK AAR contains jni/$abi natives"
-          done
-
-      - name: Run Android native library load test
+      - name: Run instrumented tests on the emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: ${{ matrix.api-level }}
           arch: x86_64
-          target: google_apis
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          target: ${{ matrix.target }}
+          ram-size: 2048M
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none -camera-front none
+          # A first (cold, no snapshot) boot of the API 26 image took 11 min on a loaded machine; later boots ~10 s.
+          emulator-boot-timeout: 1200
           disable-animations: true
           working-directory: android
-          script: ./gradlew connectedDebugAndroidTest --stacktrace
+          # expectedPageSize makes PageSize16KbTest assert that the ps16k image really runs with 16 KB pages;
+          # expectedAbiVersion / expectSecurity make NativeLibraryLoadTest check the bundled natives; the keystore enables
+          # SROS2OnDeviceTest (skipped without it).
+          # connectedDebugAndroidTest runs the x86_64 natives. The second line installs the same test APK with
+          # --abi arm64-v8a and runs every test again, so the arm64-v8a natives (what phones load) execute through the
+          # image's ARM translation (API 30+ x86_64 images; the API 26 image cannot, and the script skips it).
+          # The action runs each script line as its own shell command.
+          script: |
+            ./gradlew connectedDebugAndroidTest --stacktrace -Pjros2.sros2Keystore=${{ runner.temp }}/sros2-keystore -Pandroid.testInstrumentationRunnerArguments.expectedPageSize=${{ matrix.page-size }} -Pandroid.testInstrumentationRunnerArguments.expectedAbiVersion=${{ env.JROS2_EXPECTED_NATIVE_ABI }} -Pandroid.testInstrumentationRunnerArguments.expectSecurity=true
+            bash src/androidTest/instrument-abi.sh arm64-v8a build/outputs/apk/androidTest/debug/jros2-android-debug-androidTest.apk -e expectedPageSize ${{ matrix.page-size }} -e expectedAbiVersion ${{ env.JROS2_EXPECTED_NATIVE_ABI }} -e expectSecurity true
+
+      - name: Upload instrumented test results
+        if: success() || failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-tests-api${{ matrix.api-level }}-${{ matrix.target }}
+          path: |
+            android/build/reports/androidTests/
+            android/build/outputs/androidTest-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # musl libc (Alpine): the bundled linux-musl-x86_64 natives must load (native smoke test), and the unit tests must
+  # pass (ROS 2 CLI interop tests skip themselves without a ROS 2 installation). The job runs an alpine container
+  # explicitly with docker run, so that no JavaScript action has to execute inside the musl container.
+  test-musl:
+    name: Alpine Linux (musl x86_64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Native smoke test and unit tests in alpine:3.22 (OpenJDK 17)
+        run: |
+          set -euo pipefail
+          docker run --rm -v "$PWD:/w" -w /w -e GITHUB_ACTIONS -e JROS2_EXPECTED_NATIVE_ABI -e ROS_DISTRO=jazzy -e ROS_DOMAIN_ID=0 alpine:3.22 sh -euc '
+            apk add --no-cache openjdk17 bash git libstdc++ binutils
+            cat /etc/alpine-release
+            ldd --version 2>&1 | head -1 || true
+            java -version
+            ls -la src/main/resources/fastddsjava/native/linux-musl-x86_64/
+            ./gradlew --no-daemon jar
+            JAR=$(ls build/libs/jros2-*.jar | grep -v -e sources -e javadoc | head -1)
+            mkdir -p build/native-smoke
+            javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-smoke examples/native-smoke/src/main/java/us/ihmc/NativeSmoke.java
+            java -cp "$JAR:build/native-smoke" us.ihmc.NativeSmoke --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security
+            ./gradlew --no-daemon :jros2-test:test --continue
+          '
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-musl
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Print error logs
+        if: failure()
+        run: find . -name 'hs_err*' -type f -exec cat {} +
+
+  # riscv64: runs the native smoke test in an emulated riscv64 container (QEMU user mode). The full suite is too slow
+  # under QEMU; the smoke test loads the linux-riscv64 natives and sends a string and an image through Fast-DDS.
+  smoke-riscv64:
+    name: riscv64 smoke test (QEMU)
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Verify riscv64 natives are bundled
+        run: ls -la src/main/resources/fastddsjava/native/linux-riscv64/
+
+      - name: Build jar and the smoke test
+        run: |
+          set -euo pipefail
+          ./gradlew jar
+          JAR=$(ls build/libs/jros2-*.jar | grep -v -e sources -e javadoc | head -1)
+          cp "$JAR" build/jros2-smoke.jar
+          mkdir -p build/native-smoke
+          javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-smoke examples/native-smoke/src/main/java/us/ihmc/NativeSmoke.java
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: riscv64
+
+      - name: Run the smoke test on linux/riscv64 (eclipse-temurin:17-jre-noble)
+        run: |
+          set -euo pipefail
+          docker run --rm --platform linux/riscv64 -v "$PWD/build:/w" -w /w -e ROS_DOMAIN_ID=0 -e JROS2_EXPECTED_NATIVE_ABI \
+            eclipse-temurin:17-jre-noble \
+            sh -c 'uname -m && java -version && java -cp jros2-smoke.jar:native-smoke us.ihmc.NativeSmoke --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security'
 
   test-docker:
     name: Docker Integration Tests
@@ -172,7 +446,7 @@ jobs:
   test-windows:
     name: Windows
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     env:
       JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
     steps:
@@ -192,7 +466,7 @@ jobs:
   test-macos-intel:
     name: macOS (Intel)
     runs-on: macos-26-intel
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -209,7 +483,7 @@ jobs:
   test-macos-arm:
     name: macOS (ARM)
     runs-on: macos-26
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v5

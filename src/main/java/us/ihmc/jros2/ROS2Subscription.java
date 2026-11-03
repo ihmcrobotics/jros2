@@ -17,19 +17,37 @@ package us.ihmc.jros2;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.natives.fastddsjava;
-import us.ihmc.fastddsjava.natives.fastddsjavaCallback;
 
+import java.nio.ByteBuffer;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
 
-import static us.ihmc.fastddsjava.fastddsjavaTools.retcodePrintOnError;
-import static us.ihmc.fastddsjava.natives.fastddsjava.RETCODE_OK;
+import static us.ihmc.fastddsjava.natives.fastddsjava.*;
 import static us.ihmc.jros2.MessageStatisticsProvider.MessageMetadataType.*;
 
 /**
  * A ROS 2-compatible subscription for ingesting {@link ROS2Message} types.
+ * <p>
+ * <b>Callback mode</b> (created with a {@link ROS2SubscriptionCallback}): every received sample is taken from Fast-DDS
+ * once and the callback is invoked once per sample with this subscription as the {@link ROS2MessageReader}. Inside the
+ * callback, {@link #read(ROS2Message)} deserializes the sample that triggered the callback; calling it again reads the
+ * next sample that is already available (which then gets no callback of its own), so {@code while (reader.read(msg))}
+ * drains everything. A sample the callback does not read is consumed nonetheless, as in rclcpp. By default the callback
+ * runs on the Fast-DDS thread that received the data; with a callback executor (see
+ * {@link ROS2NodeOptions#callbackExecutor(Executor)}) the Fast-DDS thread only schedules a drain task and the callbacks run
+ * on the executor, one at a time per subscription; a drain task runs at most {@value #EXECUTOR_DRAIN_BATCH} callbacks and
+ * then schedules a new task, so that busy subscriptions take turns on a shared executor.
+ * <p>
+ * <b>Polling mode</b> (no callback): {@link #read(ROS2Message)} and {@link #readLatest(ROS2Message)} take samples from the
+ * Fast-DDS history (bounded by the QoS history depth); {@link #getUnreadMessageCount()} reports how many are waiting.
+ * <p>
+ * Samples without data (Fast-DDS notifies them when the last matched publisher goes away) are never returned or counted.
+ * Malformed samples that fail to deserialize are logged (rate-limited), counted by {@link #getMalformedSampleCount()} and
+ * dropped.
  */
 public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageReader<T>, MessageStatisticsProvider
 {
@@ -38,11 +56,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       jros2.load();
    }
 
+   /** Maximum number of callbacks one drain task runs on a callback executor before it hands the thread back. */
+   static final int EXECUTOR_DRAIN_BATCH = 64;
+
    /*
     * Callback
     */
    private final ROS2SubscriptionCallback<T> callback; // The callback may be null
    private final ROS2SubscriptionMatchedCallback subscriptionMatchedInfoCallback;
+   private final Executor callbackExecutor; // null: callbacks run inline on the Fast-DDS thread
 
    /*
     * Debug
@@ -50,64 +72,82 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    private final ROS2Topic<T> topic;
 
    /*
-    * Locks
+    * Lifecycle
     */
-   private final ReadWriteLock closeLock;
-   private boolean closed;
+   private volatile boolean closed;
+   private final EndpointSupport.Gate gate;
+   private final Object teardownLock;
+   private boolean nativesReleased;
+   private final AtomicBoolean teardownScheduled;
 
    /*
     * Discovery
     */
    private final Object discoveryLock;
    private volatile boolean publisherDiscovered;
+   private final Object matchLock;
    private int previousMatchedPublicationCount;
+   private final byte[] subscriptionMatchedGuidBytes;
+   private volatile Runnable subscriptionMatchedCallback; // Internal callback for subscription matched events
 
    /*
-    * Fast-DDS pointers
+    * Fast-DDS pointers and buffers of the polling path (read()/readLatest() outside of a callback), guarded by pollLock
+    * (allocation-free when several threads poll at once, unlike a contended monitor)
     */
    private final TopicData topicData;
-   private final long fastddsCallbackSampleData;
-   private final SampleInfo callbackSampleInfo;
-   private final Object callbackSampleLock;
+   private final boolean useTakeToBufferAbi;
+   private final AllocationFreeLock pollLock;
    protected final long fastddsUserSampleData;
    protected final SampleInfo userSampleInfo;
-   private final Object userSampleLock;
+   protected final CDRBuffer readBuffer;
 
    /*
-    * Read buffer
+    * Callback dispatch: the thread holding dispatchLock owns the callback sample objects below
     */
-   protected final CDRBuffer readBuffer;
+   private final ReentrantLock dispatchLock;
+   private volatile boolean dispatchPending;
+   private final AtomicBoolean drainScheduled;
+   private final Runnable drainTask;
+   private final long fastddsCallbackSampleData;
+   private final SampleInfo callbackSampleInfo;
+   private final CDRBuffer callbackBuffer;
+   private boolean currentSampleUnread;
+   private int currentSampleSizeBytes;
 
    /*
     * Flags
     */
-   private final AtomicInteger untakenMessageCount;
-   private boolean flagHadData;
+   private volatile boolean flagHadData;
 
    /*
-    * Statistics
+    * Statistics (opt-in)
     */
+   private volatile boolean statisticsEnabled;
    private final int statisticsCalculatorCount;
    private final StatisticsCalculator[] statisticsCalculators;
+   private final AllocationFreeLock statisticsLock;
    private long lastReceiveTime;
+
+   /*
+    * Errors
+    */
+   private final AtomicLong malformedSampleCount;
+   private final EndpointSupport.RateLimiter malformedSampleLog;
+   private final EndpointSupport.RateLimiter takeErrorLog;
+   private final EndpointSupport.RateLimiter executorErrorLog;
 
    /*
     * GUID
     */
+   private final byte[] guidBytes;
    private final Guid guid;
-   private final Guid subscriptionMatchedGuid;
-   private final byte[] subscriptionMatchedGuidBytes;
-
-   /*
-    * Callback (matched)
-    */
-   private volatile Runnable subscriptionMatchedCallback; // User callback for subscription matched events
 
    /*
     * Fast-DDS pointers (endpoints)
     */
-   private final fastddsjavaCallback fastddsDataCallback; // Keep as a field to avoid GC
-   private final fastddsjavaCallback fastddsSubscriptionMatchedCallback; // Keep as a field to avoid GC
+   private final EndpointSupport.Trampoline dataAvailableTrampoline;
+   private final EndpointSupport.Trampoline subscriptionMatchedTrampoline;
+   private volatile boolean listenerReady;
    private final long fastddsDataReaderListener;
    private final long fastddsSubscriber;
    private final long fastddsDataReader;
@@ -122,71 +162,210 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                     ROS2Topic<T> topic,
                     TopicData topicData)
    {
+      this(fastddsParticipant, subscriberProfileName, callback, subscriptionMatchedInfoCallback, topic, topicData, null);
+   }
+
+   /**
+    * Use {@link ROS2Node#createSubscription(ROS2Topic, ROS2SubscriptionCallback, ROS2QoSProfile)}
+    *
+    * @param callbackExecutor executor that runs callbacks, or null to run them on the Fast-DDS thread
+    * @throws IllegalStateException if Fast-DDS refuses to create the subscriber or data reader (for example an invalid
+    *                               QoS profile, or a topic name already used with a different type); nothing is leaked
+    */
+   ROS2Subscription(long fastddsParticipant,
+                    String subscriberProfileName,
+                    ROS2SubscriptionCallback<T> callback, // May be null
+                    ROS2SubscriptionMatchedCallback subscriptionMatchedInfoCallback,
+                    ROS2Topic<T> topic,
+                    TopicData topicData,
+                    Executor callbackExecutor)
+   {
       this.callback = callback;
       this.subscriptionMatchedInfoCallback = subscriptionMatchedInfoCallback;
+      this.callbackExecutor = callback == null ? null : callbackExecutor;
       this.topic = topic;
+      this.topicData = topicData;
 
-      closeLock = new ReentrantReadWriteLock(true);
       closed = false;
+      gate = new EndpointSupport.Gate();
+      teardownLock = new Object();
+      teardownScheduled = new AtomicBoolean(false);
 
       discoveryLock = new Object();
       publisherDiscovered = false;
+      matchLock = new Object();
       previousMatchedPublicationCount = 0;
+      subscriptionMatchedGuidBytes = new byte[16];
+      subscriptionMatchedCallback = null;
 
-      this.topicData = topicData;
-      fastddsCallbackSampleData = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
-      callbackSampleInfo = new SampleInfo();
-      callbackSampleLock = new Object();
-      fastddsUserSampleData = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
-      userSampleInfo = new SampleInfo();
-      userSampleLock = new Object();
+      if (topicData == null || topicData.fastddsTopic == 0)
+      {
+         throw new IllegalStateException(HotPathText.subscriptionTopicMissing(topic.getName()));
+      }
 
-      readBuffer = new CDRBuffer();
-
-      // Pre-size for an empty message payload so fixed-size reads do not allocate on first use.
-      T emptyMessage = ROS2Message.createInstance(topic.getType());
-      int initialPayloadSizeBytes = CDRBuffer.PAYLOAD_HEADER.length + emptyMessage.calculateSizeBytes(0);
-      readBuffer.ensureRemainingCapacity(initialPayloadSizeBytes);
-      fastddsjava.topicDataResize(fastddsCallbackSampleData, initialPayloadSizeBytes);
-      fastddsjava.topicDataResize(fastddsUserSampleData, initialPayloadSizeBytes);
-
-      untakenMessageCount = new AtomicInteger(0);
+      useTakeToBufferAbi = EndpointSupport.useNativeAbiV2();
+      pollLock = new AllocationFreeLock();
+      dispatchLock = new ReentrantLock();
+      dispatchPending = false;
+      drainScheduled = new AtomicBoolean(false);
+      drainTask = this::runDrainTask;
+      currentSampleUnread = false;
       flagHadData = false;
 
+      // Pre-size for an empty message payload so fixed-size reads do not allocate on first use.
+      int initialPayloadSizeBytes = ROS2Publisher.initialPayloadSizeBytes(topic.getType());
+      readBuffer = new CDRBuffer();
+      readBuffer.ensureRemainingCapacity(initialPayloadSizeBytes);
+      if (callback != null)
+      {
+         callbackBuffer = new CDRBuffer();
+         callbackBuffer.ensureRemainingCapacity(initialPayloadSizeBytes);
+      }
+      else
+      {
+         callbackBuffer = null;
+      }
+
+      statisticsEnabled = false;
       statisticsCalculatorCount = MessageMetadataType.values.length;
       statisticsCalculators = new StatisticsCalculator[statisticsCalculatorCount];
+      statisticsLock = new AllocationFreeLock();
       for (int i = 0; i < statisticsCalculatorCount; ++i)
       {
          statisticsCalculators[i] = new StatisticsCalculator();
       }
       lastReceiveTime = Long.MIN_VALUE;
 
+      malformedSampleCount = new AtomicLong();
+      malformedSampleLog = new EndpointSupport.RateLimiter(5, TimeUnit.SECONDS);
+      takeErrorLog = new EndpointSupport.RateLimiter(5, TimeUnit.SECONDS);
+      executorErrorLog = new EndpointSupport.RateLimiter(5, TimeUnit.SECONDS);
+
+      guidBytes = new byte[16];
       guid = new Guid();
-      subscriptionMatchedGuid = new Guid();
-      subscriptionMatchedGuidBytes = new byte[16];
 
-      subscriptionMatchedCallback = null;
+      // The native listener only references these trampolines, never this subscription directly.
+      dataAvailableTrampoline = new EndpointSupport.Trampoline(this::onDataAvailable);
+      subscriptionMatchedTrampoline = new EndpointSupport.Trampoline(this::onSubscriptionMatched);
 
-      // Initialize callbacks last to ensure the rest of the state of this class exists before they run
-      fastddsDataCallback = this::onDataAvailable;
-      fastddsSubscriptionMatchedCallback = this::onSubscriptionMatched;
-      fastddsDataReaderListener = fastddsjava.createDataReaderListener();
-      fastddsjava.dataReaderListenerSetOnDataAvailable(fastddsDataReaderListener, fastddsDataCallback);
-      fastddsjava.dataReaderListenerSetOnSubscriptionMatched(fastddsDataReaderListener, fastddsSubscriptionMatchedCallback);
-      fastddsSubscriber = fastddsjava.createSubscriber(fastddsParticipant, subscriberProfileName);
-      fastddsDataReader = fastddsjava.createDataReader(fastddsSubscriber, topicData.fastddsTopic, 0, subscriberProfileName);
-      fastddsjava.dataReaderSetListener(fastddsDataReader, fastddsDataReaderListener);
+      long userData = 0;
+      SampleInfo userInfo = null;
+      long callbackData = 0;
+      SampleInfo callbackInfo = null;
+      long listener = 0;
+      long subscriber = 0;
+      long reader;
+      try
+      {
+         userData = createTopicData(topicData, topic);
+         userInfo = new SampleInfo();
+         if (callback != null)
+         {
+            callbackData = createTopicData(topicData, topic);
+            callbackInfo = new SampleInfo();
+         }
 
-      // Check if publisher is already matched (outside of discovery lock to avoid nested synchronization)
+         listener = fastddsjava.createDataReaderListener();
+         if (listener == 0)
+         {
+            throw new IllegalStateException(HotPathText.dataReaderListenerCreationFailed(topic.getName()));
+         }
+         fastddsjava.dataReaderListenerSetOnDataAvailable(listener, dataAvailableTrampoline);
+         fastddsjava.dataReaderListenerSetOnSubscriptionMatched(listener, subscriptionMatchedTrampoline);
+
+         subscriber = fastddsjava.createSubscriber(fastddsParticipant, subscriberProfileName);
+         if (subscriber == 0)
+         {
+            throw new IllegalStateException(HotPathText.subscriberCreationFailed(topic.getName(), subscriberProfileName));
+         }
+
+         reader = fastddsjava.createDataReader(subscriber, topicData.fastddsTopic, 0, subscriberProfileName);
+         if (reader == 0)
+         {
+            throw new IllegalStateException(HotPathText.dataReaderCreationFailed(topic.getName(), topic.getType().getName(), subscriberProfileName));
+         }
+      }
+      catch (RuntimeException | Error e)
+      {
+         dataAvailableTrampoline.clear();
+         subscriptionMatchedTrampoline.clear();
+         if (subscriber != 0)
+         {
+            int ret = fastddsjava.deleteSubscriber(fastddsParticipant, subscriber);
+            if (ret != RETCODE_OK)
+            {
+               jros2.getLogger().warning(HotPathText.partialSubscriberDeletionFailed(ret));
+            }
+         }
+         if (listener != 0)
+         {
+            // Never attached to an entity, so no callback can be running.
+            fastddsjava.deleteDataReaderListener(listener);
+         }
+         if (callbackInfo != null)
+         {
+            callbackInfo.close();
+         }
+         if (callbackData != 0)
+         {
+            fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, callbackData);
+         }
+         if (userInfo != null)
+         {
+            userInfo.close();
+         }
+         if (userData != 0)
+         {
+            fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, userData);
+         }
+         gate.close();
+         closed = true;
+         throw e;
+      }
+
+      fastddsUserSampleData = userData;
+      userSampleInfo = userInfo;
+      fastddsCallbackSampleData = callbackData;
+      callbackSampleInfo = callbackInfo;
+      fastddsDataReaderListener = listener;
+      fastddsSubscriber = subscriber;
+      fastddsDataReader = reader;
+      fastddsjava.getReaderGuid(fastddsDataReader, guidBytes);
+
+      // Publish all fields to the callback threads before the listener can run.
+      listenerReady = true;
+      int setListenerRet = fastddsjava.dataReaderSetListener(fastddsDataReader, fastddsDataReaderListener);
+      if (setListenerRet != RETCODE_OK)
+      {
+         jros2.getLogger().warning(HotPathText.subscriptionListenerAttachFailed(topic.getName(), setListenerRet));
+      }
+
+      // Fast-DDS does not notify matches or samples (e.g. TRANSIENT_LOCAL history) that arrived before the listener was set.
       if (getSubscriptionMatchedStatus() > 0)
       {
          synchronized (discoveryLock)
          {
             publisherDiscovered = true;
+            discoveryLock.notifyAll();
          }
 
          notifySubscriptionMatchedInfoForExistingMatches();
       }
+
+      if (getUnreadMessageCount() > 0)
+      {
+         onDataAvailable();
+      }
+   }
+
+   private static long createTopicData(TopicData topicData, ROS2Topic<?> topic)
+   {
+      long data = fastddsjava.createData(topicData.fastddsTopicDataWrapperType);
+      if (data == 0)
+      {
+         throw new IllegalStateException(HotPathText.sampleBufferAllocationFailed(topic.getName()));
+      }
+      return data;
    }
 
    /**
@@ -198,140 +377,440 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     */
    private void notifySubscriptionMatchedInfoForExistingMatches()
    {
-      if (subscriptionMatchedInfoCallback != null && !closed)
+      if (subscriptionMatchedInfoCallback != null)
       {
-         closeLock.readLock().lock();
-         try
-         {
-            if (!closed)
-            {
-               previousMatchedPublicationCount = fastddsjava.dataReaderGetSubscriptionMatchedStatus(fastddsDataReader, subscriptionMatchedGuidBytes);
-               System.arraycopy(subscriptionMatchedGuidBytes, 0, subscriptionMatchedGuid.getValue(), 0, 16);
-               subscriptionMatchedInfoCallback.onSubscriptionMatched(this, subscriptionMatchedGuid, true);
-            }
-         }
-         catch (Exception e)
-         {
-            jros2.logError(e);
-         }
-         finally
-         {
-            closeLock.readLock().unlock();
-         }
+         onSubscriptionMatched();
       }
    }
 
    /**
-    * Callback which is invoked by Fast-DDS when there is new data available. There may be multiple samples available to read upon invocation.
+    * Called by Fast-DDS (through {@link #dataAvailableTrampoline}) when new data is available. There may be several
+    * samples available; Fast-DDS does not queue invocations, so every invocation drains all available samples.
     * <p>
-    * on_data_available(): There is new data available for the application on the DataReader. There is no queuing of invocations to this callback, meaning that
-    * if several new data changes are received at once, only one callback invocation may be issued for all of them, instead of one per change. If the
-    * application is retrieving the received data on this callback, it must keep reading data until no new changes are left.
-    * </p>
-    * Refer to documentation here:
-    * <a href="https://fast-dds.docs.eprosima.com/en/v3.2.2/fastdds/dds_layer/subscriber/dataReaderListener/dataReaderListener.html">DataReaderListener</a>
+    * Never blocks: with intraprocess delivery this runs inside another thread's {@code DataWriter::write()}, and with
+    * network delivery it runs on a Fast-DDS receive thread that holds the reader's internal lock.
+    * Refer to <a href="https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/dds_layer/subscriber/dataReaderListener/dataReaderListener.html">DataReaderListener</a>
     */
    private void onDataAvailable()
    {
-      closeLock.readLock().lock();
-      try
+      if (!listenerReady || closed)
       {
-         synchronized (callbackSampleLock)
-         {
-            int ret; // Keep for debugging
-            while (!closed && RETCODE_OK == (ret = fastddsjava.dataReaderReadNextSample(fastddsDataReader, fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo))
-                   && callbackSampleInfo.hasValidData())
-            {
-               flagHadData = true;
-               untakenMessageCount.incrementAndGet();
-
-               recordStatistics();
-
-               if (callback != null)
-               {
-                  try
-                  {
-                     callback.onMessage(ROS2Subscription.this);
-                  }
-                  catch (Throwable e)
-                  {
-                     jros2.logSubscriptionCallbackError(topic.getName(), topic.getType().getSimpleName(), e);
-                  }
-               }
-            }
-         }
+         return;
       }
-      finally
+
+      if (callback == null)
       {
-         closeLock.readLock().unlock();
+         // Polling mode: no data work here, read()/readLatest() take the samples.
+         flagHadData = true;
+      }
+      else if (callbackExecutor == null)
+      {
+         dispatchAvailable(Integer.MAX_VALUE);
+      }
+      else
+      {
+         scheduleDrain();
       }
    }
 
-   private void onSubscriptionMatched()
+   /**
+    * Schedules one coalesced drain task on the callback executor. Allocation-free on our side.
+    */
+   private void scheduleDrain()
    {
-      boolean hasMatchChange = false;
-      boolean matched = false;
-      if (!closed)
+      if (!drainScheduled.get() && drainScheduled.compareAndSet(false, true))
       {
-         int currentCount = fastddsjava.dataReaderGetSubscriptionMatchedStatus(fastddsDataReader, subscriptionMatchedGuidBytes);
-         if (currentCount > previousMatchedPublicationCount)
+         try
          {
-            hasMatchChange = true;
-            matched = true;
+            callbackExecutor.execute(drainTask);
          }
-         else if (currentCount < previousMatchedPublicationCount)
+         catch (RuntimeException e)
          {
-            hasMatchChange = true;
-            matched = false;
+            drainScheduled.set(false);
+            EndpointSupport.logRateLimited(executorErrorLog,
+                                           Level.SEVERE,
+                                           HotPathText.callbackExecutorRejected(topic.getName()),
+                                           e);
          }
+      }
+   }
 
-         if (hasMatchChange)
-         {
-            System.arraycopy(subscriptionMatchedGuidBytes, 0, subscriptionMatchedGuid.getValue(), 0, 16);
-         }
+   private void runDrainTask()
+   {
+      // Cleared before draining so that data arriving during the drain schedules another drain.
+      drainScheduled.set(false);
+      if (!closed && dispatchAvailable(EXECUTOR_DRAIN_BATCH))
+      {
+         // More samples may be waiting: continue in a new task so that a busy subscription takes turns with the other
+         // work of the executor instead of monopolizing one of its threads.
+         scheduleDrain();
+      }
+   }
 
-         previousMatchedPublicationCount = currentCount;
+   /**
+    * Takes the available samples and runs the callback for each. At most one thread dispatches at a time; a thread that
+    * finds another one dispatching leaves a flag for it instead of waiting, so Fast-DDS threads never block here.
+    *
+    * @param maxSamples the maximum number of callbacks to run before returning
+    * @return true if {@code maxSamples} callbacks ran and more samples may be available
+    */
+   private boolean dispatchAvailable(int maxSamples)
+   {
+      dispatchPending = true;
+      if (dispatchLock.isHeldByCurrentThread())
+      {
+         // Re-entrant notification (e.g. the callback published on this topic with intraprocess delivery): the running
+         // drain loop picks the sample up after the callback returns.
+         return false;
       }
 
-      synchronized (discoveryLock)
+      while (dispatchPending && !closed && dispatchLock.tryLock())
       {
-         publisherDiscovered = true;
-         discoveryLock.notifyAll();
+         try
+         {
+            dispatchPending = false;
+            if (drainCallbacks(maxSamples))
+            {
+               return true;
+            }
+         }
+         finally
+         {
+            dispatchLock.unlock();
+         }
       }
+      return false;
+   }
 
-      closeLock.readLock().lock();
+   /**
+    * @return true if {@code maxSamples} callbacks ran (more samples may be available)
+    */
+   private boolean drainCallbacks(int maxSamples)
+   {
+      CallbackContext.enter();
       try
       {
-         if (!closed)
+         int dispatched = 0;
+         while (!closed)
          {
-            if (subscriptionMatchedCallback != null)
+            if (dispatched == maxSamples)
             {
-               try
-               {
-                  subscriptionMatchedCallback.run();
-               }
-               catch (Exception e)
-               {
-                  jros2.logError(e);
-               }
+               return true;
             }
 
-            if (hasMatchChange && subscriptionMatchedInfoCallback != null)
+            int sizeBytes = takeNextValidSample(fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo, callbackBuffer);
+            if (sizeBytes < 0)
             {
-               try
+               break;
+            }
+            dispatched++;
+
+            currentSampleSizeBytes = sizeBytes;
+            currentSampleUnread = true;
+            try
+            {
+               callback.onMessage(this);
+            }
+            catch (Throwable e)
+            {
+               jros2.logSubscriptionCallbackError(topic.getName(), topic.getType().getSimpleName(), e);
+            }
+            finally
+            {
+               currentSampleUnread = false;
+            }
+         }
+         return false;
+      }
+      finally
+      {
+         CallbackContext.exit();
+      }
+   }
+
+   /**
+    * Takes the next sample that carries data into {@code buffer}, skipping samples without data.
+    *
+    * @param fastddsTopicData  native topic data wrapper (ABI v1 destination, ABI v2 fallback for large payloads)
+    * @param fastddsSampleInfo native sample info to fill
+    * @return the payload size in bytes (CDR header included), or -1 if no sample is available or the subscription is closed
+    */
+   private int takeNextValidSample(long fastddsTopicData, long fastddsSampleInfo, CDRBuffer buffer)
+   {
+      if (!gate.enter())
+      {
+         return -1;
+      }
+
+      try
+      {
+         for (;;)
+         {
+            ByteBuffer destination = buffer.getBufferUnsafe();
+            int sizeBytes;
+
+            if (useTakeToBufferAbi)
+            {
+               sizeBytes = fastddsjava.dataReaderTakeNextToBuffer(fastddsDataReader, fastddsTopicData, fastddsSampleInfo, destination, destination.capacity());
+               if (sizeBytes == TAKE_NO_DATA)
                {
-                  subscriptionMatchedInfoCallback.onSubscriptionMatched(ROS2Subscription.this, subscriptionMatchedGuid, matched);
+                  return -1;
                }
-               catch (Exception e)
+               if (sizeBytes == TAKE_INVALID_SAMPLE)
                {
-                  jros2.logError(e);
+                  continue;
                }
+               if (sizeBytes < 0)
+               {
+                  int retcode = sizeBytes <= -TAKE_ERROR_BASE ? -sizeBytes - TAKE_ERROR_BASE : sizeBytes;
+                  EndpointSupport.logRetcode(takeErrorLog, EndpointSupport.TAKE, topic.getName(), retcode);
+                  return -1;
+               }
+               if (sizeBytes > destination.capacity())
+               {
+                  // The payload did not fit and was kept in the native wrapper.
+                  destination = grow(buffer, sizeBytes);
+                  fastddsjava.topicDataReadBuffer(fastddsTopicData, destination, 0, sizeBytes);
+               }
+            }
+            else
+            {
+               int ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsTopicData, fastddsSampleInfo);
+               if (ret != RETCODE_OK)
+               {
+                  if (ret != RETCODE_NO_DATA)
+                  {
+                     EndpointSupport.logRetcode(takeErrorLog, EndpointSupport.TAKE, topic.getName(), ret);
+                  }
+                  return -1;
+               }
+               if (!fastddsjava.sampleInfoValidData(fastddsSampleInfo))
+               {
+                  // Instance state notification (e.g. the last publisher went away); the wrapper still holds the previous payload.
+                  continue;
+               }
+               sizeBytes = fastddsjava.topicDataSize(fastddsTopicData);
+               if (sizeBytes > destination.capacity())
+               {
+                  destination = grow(buffer, sizeBytes);
+               }
+               fastddsjava.topicDataReadBuffer(fastddsTopicData, destination, 0, sizeBytes);
+            }
+
+            flagHadData = true;
+            if (statisticsEnabled)
+            {
+               recordStatistics(sizeBytes, fastddsSampleInfo);
+            }
+            return sizeBytes;
+         }
+      }
+      finally
+      {
+         gate.exit();
+      }
+   }
+
+   private static ByteBuffer grow(CDRBuffer buffer, int sizeBytes)
+   {
+      // Position 0: nothing is copied into the new buffer.
+      buffer.rewind();
+      buffer.ensureRemainingCapacity(sizeBytes);
+      return buffer.getBufferUnsafe();
+   }
+
+   /**
+    * Deserializes a payload of {@code sizeBytes} bytes held in {@code buffer} into {@code data}. Reads are bounded by the
+    * payload size, so a truncated or malformed payload fails instead of reading stale bytes.
+    *
+    * @return false if the payload is malformed (it is then logged and counted)
+    */
+   private boolean deserialize(T data, CDRBuffer buffer, int sizeBytes)
+   {
+      try
+      {
+         buffer.beginRead(sizeBytes);
+         buffer.readPayloadHeader();
+         data.deserialize(buffer);
+         return true;
+      }
+      catch (RuntimeException e)
+      {
+         malformedSampleCount.incrementAndGet();
+         EndpointSupport.logRateLimited(malformedSampleLog,
+                                        Level.WARNING,
+                                        HotPathText.malformedSample(topic.getType().getSimpleName(), sizeBytes, topic.getName()),
+                                        e);
+         return false;
+      }
+      finally
+      {
+         buffer.rewind();
+      }
+   }
+
+   private boolean isDispatchThread()
+   {
+      return callback != null && dispatchLock.isHeldByCurrentThread();
+   }
+
+   private static void checkSampleInfo(SampleInfo sampleInfo)
+   {
+      if (sampleInfo != null && sampleInfo.isClosed())
+      {
+         throw new IllegalArgumentException(HotPathText.sampleInfoClosed());
+      }
+   }
+
+   /**
+    * Read inside this subscription's callback: the sample that triggered the callback first, then samples that are
+    * already available.
+    */
+   private boolean readInCallback(T data, SampleInfo sampleInfo)
+   {
+      if (currentSampleUnread)
+      {
+         currentSampleUnread = false;
+         if (sampleInfo != null && !copyCallbackSampleInfo(sampleInfo))
+         {
+            return false;
+         }
+         return deserialize(data, callbackBuffer, currentSampleSizeBytes);
+      }
+
+      for (;;)
+      {
+         long fastddsSampleInfo = sampleInfo != null ? sampleInfo.nativeHandleForFill() : callbackSampleInfo.fastddsSampleInfo;
+         int sizeBytes = takeNextValidSample(fastddsCallbackSampleData, fastddsSampleInfo, callbackBuffer);
+         if (sizeBytes < 0)
+         {
+            return false;
+         }
+         if (deserialize(data, callbackBuffer, sizeBytes))
+         {
+            return true;
+         }
+      }
+   }
+
+   private boolean copyCallbackSampleInfo(SampleInfo destination)
+   {
+      if (!gate.enter())
+      {
+         return false;
+      }
+      try
+      {
+         destination.copyFrom(callbackSampleInfo);
+         return true;
+      }
+      finally
+      {
+         gate.exit();
+      }
+   }
+
+   private int readLatestInCallback(T data)
+   {
+      int count = 0;
+      int lastSizeBytes = -1;
+      if (currentSampleUnread)
+      {
+         currentSampleUnread = false;
+         count = 1;
+         lastSizeBytes = currentSampleSizeBytes;
+      }
+
+      int sizeBytes;
+      while ((sizeBytes = takeNextValidSample(fastddsCallbackSampleData, callbackSampleInfo.fastddsSampleInfo, callbackBuffer)) >= 0)
+      {
+         count++;
+         lastSizeBytes = sizeBytes;
+      }
+
+      if (count == 0)
+      {
+         return 0;
+      }
+      return deserialize(data, callbackBuffer, lastSizeBytes) ? count : 0;
+   }
+
+   /**
+    * Called by Fast-DDS (through {@link #subscriptionMatchedTrampoline}) when a publisher is matched or unmatched, and
+    * once from the constructor for publishers matched before the listener was set.
+    */
+   private void onSubscriptionMatched()
+   {
+      if (!listenerReady || closed)
+      {
+         return;
+      }
+
+      CallbackContext.enter();
+      try
+      {
+         boolean hasMatchChange = false;
+         boolean matched = false;
+         Guid publicationGuid = null;
+
+         synchronized (matchLock)
+         {
+            if (!gate.enter())
+            {
+               return;
+            }
+            try
+            {
+               int currentCount = fastddsjava.dataReaderGetSubscriptionMatchedStatus(fastddsDataReader, subscriptionMatchedGuidBytes);
+               if (currentCount != previousMatchedPublicationCount)
+               {
+                  hasMatchChange = true;
+                  matched = currentCount > previousMatchedPublicationCount;
+                  // Matched events are rare: give every invocation its own GUID instance.
+                  publicationGuid = new Guid(subscriptionMatchedGuidBytes);
+               }
+               previousMatchedPublicationCount = currentCount;
+            }
+            finally
+            {
+               gate.exit();
+            }
+         }
+
+         synchronized (discoveryLock)
+         {
+            publisherDiscovered = true;
+            discoveryLock.notifyAll();
+         }
+
+         Runnable matchedCallback = subscriptionMatchedCallback;
+         if (matchedCallback != null && !closed)
+         {
+            try
+            {
+               matchedCallback.run();
+            }
+            catch (Exception e)
+            {
+               jros2.logError(e);
+            }
+         }
+
+         if (hasMatchChange && subscriptionMatchedInfoCallback != null && !closed)
+         {
+            try
+            {
+               subscriptionMatchedInfoCallback.onSubscriptionMatched(this, publicationGuid, matched);
+            }
+            catch (Exception e)
+            {
+               jros2.logError(e);
             }
          }
       }
       finally
       {
-         closeLock.readLock().unlock();
+         CallbackContext.exit();
       }
    }
 
@@ -362,27 +841,22 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /**
     * Get the current number of matched publishers for this subscription.
     *
-    * @return The number of publishers currently matched to this subscription
+    * @return The number of publishers currently matched to this subscription, 0 once closed
     */
    int getSubscriptionMatchedStatus()
    {
-      int count;
+      int count = 0;
 
-      closeLock.readLock().lock();
-      try
+      if (gate.enter())
       {
-         if (!closed)
+         try
          {
             count = fastddsjava.dataReaderGetSubscriptionMatchedCount(fastddsDataReader);
          }
-         else
+         finally
          {
-            count = 0;
+            gate.exit();
          }
-      }
-      finally
-      {
-         closeLock.readLock().unlock();
       }
 
       return count;
@@ -391,7 +865,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /**
     * Wait for a publisher to be discovered.
     * <p>
-    * This method blocks until a publisher is discovered or the timeout expires.
+    * This method blocks until a publisher is discovered, the subscription is closed, or the timeout expires.
     *
     * @param timeoutMs Timeout in milliseconds to wait for publisher discovery
     * @return true if a publisher was discovered, false if timeout occurred
@@ -445,6 +919,9 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    /**
     * {@inheritDoc}
+    * <p>
+    * Inside this subscription's callback the sample that triggered the callback is read first. Allocation-free after
+    * warm-up for messages whose size does not grow.
     */
    @Override
    public boolean read(T data)
@@ -452,48 +929,42 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       return read(data, null);
    }
 
+   /**
+    * {@inheritDoc}
+    *
+    * @throws IllegalArgumentException if {@code sampleInfo} has been closed
+    */
    @Override
    public boolean read(T data, SampleInfo sampleInfo)
    {
-      boolean read = false;
+      checkSampleInfo(sampleInfo);
 
-      closeLock.readLock().lock();
+      if (isDispatchThread())
+      {
+         return readInCallback(data, sampleInfo);
+      }
+
+      pollLock.lock();
       try
       {
-         if (!closed && hasHadData())
+         for (;;)
          {
-            synchronized (userSampleLock)
+            long fastddsSampleInfo = sampleInfo != null ? sampleInfo.nativeHandleForFill() : userSampleInfo.fastddsSampleInfo;
+            int sizeBytes = takeNextValidSample(fastddsUserSampleData, fastddsSampleInfo, readBuffer);
+            if (sizeBytes < 0)
             {
-               SampleInfo info = sampleInfo != null ? sampleInfo : userSampleInfo;
-               int ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, info.fastddsSampleInfo);
-               if (RETCODE_OK == ret)
-               {
-                  untakenMessageCount.decrementAndGet();
-
-                  int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
-
-                  // Resize CDR buffer (if necessary) and rewind
-                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-                  readBuffer.rewind();
-
-                  // Copy sample from native memory into the direct CDR buffer
-                  fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
-
-                  // Deserialize sample into Java ROS2Message
-                  readBuffer.readPayloadHeader();
-                  data.deserialize(readBuffer);
-
-                  read = true;
-               }
+               return false;
+            }
+            if (deserialize(data, readBuffer, sizeBytes))
+            {
+               return true;
             }
          }
       }
       finally
       {
-         closeLock.readLock().unlock();
+         pollLock.unlock();
       }
-
-      return read;
    }
 
    /**
@@ -511,49 +982,39 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    /**
     * {@inheritDoc}
+    * <p>
+    * Only samples that carry data are counted. If the latest sample is malformed it is dropped and 0 is returned.
     */
    @Override
    public int readLatest(T data)
    {
-      int totalRead = 0;
+      if (isDispatchThread())
+      {
+         return readLatestInCallback(data);
+      }
 
-      closeLock.readLock().lock();
+      pollLock.lock();
       try
       {
-         if (!closed && hasHadData())
+         int count = 0;
+         int lastSizeBytes = -1;
+         int sizeBytes;
+         while ((sizeBytes = takeNextValidSample(fastddsUserSampleData, userSampleInfo.fastddsSampleInfo, readBuffer)) >= 0)
          {
-            synchronized (userSampleLock)
-            {
-               int ret; // Keep for debugging
-               while (RETCODE_OK == (ret = fastddsjava.dataReaderTakeNextCustom(fastddsDataReader, fastddsUserSampleData, userSampleInfo.fastddsSampleInfo)))
-               {
-                  totalRead++;
-               }
-
-               if (totalRead > 0)
-               {
-                  int payloadSizeBytes = fastddsjava.topicDataSize(fastddsUserSampleData);
-
-                  // Resize CDR buffer (if necessary) and rewind
-                  readBuffer.ensureRemainingCapacity(payloadSizeBytes);
-                  readBuffer.rewind();
-
-                  // Copy sample from native memory into the direct CDR buffer
-                  fastddsjava.topicDataReadBuffer(fastddsUserSampleData, readBuffer.getBufferUnsafe(), 0, payloadSizeBytes);
-
-                  // Deserialize sample into Java ROS2Message
-                  readBuffer.readPayloadHeader();
-                  data.deserialize(readBuffer);
-               }
-            }
+            count++;
+            lastSizeBytes = sizeBytes;
          }
+
+         if (count == 0)
+         {
+            return 0;
+         }
+         return deserialize(data, readBuffer, lastSizeBytes) ? count : 0;
       }
       finally
       {
-         closeLock.readLock().unlock();
+         pollLock.unlock();
       }
-
-      return totalRead;
    }
 
    /**
@@ -573,82 +1034,240 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
     * Get the GUID (Globally Unique Identifier) for this subscription.
     * The GUID is assigned by Fast-DDS and uniquely identifies this subscription instance.
     * <p>
-    * Returns a cached {@link Guid} instance owned by this subscription; its bytes are refreshed from DDS on each call.
-    * Copy with {@link Guid#set(Guid)} if you need an independent snapshot.
+    * Returns a cached {@link Guid} instance owned by this subscription; its bytes are refreshed on each call.
+    * Copy with {@link Guid#set(Guid)} if you need an independent snapshot. Still valid after the subscription is closed.
     */
    public Guid getGuid()
    {
-      fastddsjava.getReaderGuid(fastddsDataReader, guid.getValue());
+      guid.set(guidBytes);
       return guid;
    }
 
    /**
     * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
+    * <p>
+    * Marks the subscription closed immediately: no callback starts afterwards and reads return no data. Called from a
+    * jros2 callback (see {@link CallbackContext}), including this subscription's own callback, the native teardown is
+    * deferred because deleting a DataReader from a Fast-DDS callback deadlocks; otherwise it completes before this method
+    * returns, after waiting for a callback of this subscription that is running on another thread (inline or on the
+    * callback executor), so that no callback runs once this method returned. The native listener is deleted only after
+    * Fast-DDS confirmed the DataReader deletion, which releases the references that the native layer holds.
     */
    protected void close(long fastddsParticipant)
    {
-      closeLock.writeLock().lock();
-      boolean wasClosed = closed;
-      closed = true;
-      closeLock.writeLock().unlock();
-
-      if (!wasClosed)
+      if (gate.close())
       {
-         // Clear listener from datareader to prevent further callbacks
-         fastddsjava.dataReaderSetListener(fastddsDataReader, 0);
+         closed = true;
+         dataAvailableTrampoline.clear();
+         subscriptionMatchedTrampoline.clear();
+         synchronized (discoveryLock)
+         {
+            discoveryLock.notifyAll();
+         }
+      }
 
-         // Delete the datareader to ensure Fast-DDS stops using the listener
-         retcodePrintOnError(fastddsjava.deleteDataReader(fastddsSubscriber, fastddsDataReader));
-
-         // Note: We intentionally do NOT delete the listener and callback objects here.
-         // Due to Fast-DDS's asynchronous nature, callbacks may still be in-flight when we delete the datareader.
-         // Freeing them immediately can cause JVM crashes as Fast-DDS tries to invoke callbacks on freed memory.
-         // Instead, we rely on Java garbage collection to clean up these objects after Fast-DDS is done with them.
-         callbackSampleInfo.close();
-         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsCallbackSampleData);
-         userSampleInfo.close();
-         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsUserSampleData);
-         retcodePrintOnError(fastddsjava.deleteSubscriber(fastddsParticipant, fastddsSubscriber));
+      if (CallbackContext.isInCallback())
+      {
+         if (teardownScheduled.compareAndSet(false, true))
+         {
+            CallbackContext.runDeferred(() -> releaseNatives(fastddsParticipant));
+         }
+      }
+      else
+      {
+         awaitRunningCallback();
+         releaseNatives(fastddsParticipant);
       }
    }
 
-   private void recordStatistics()
+   /**
+    * Waits until no thread dispatches callbacks of this subscription. Only valid once {@link #closed} is set: a dispatch
+    * that is still running stops after its current callback and no new one starts.
+    * <p>
+    * Inline callbacks are also fenced by Fast-DDS (deleting the DataReader waits for its listener), but a callback running
+    * on a callback executor is not, so without this a callback could still run after {@code destroySubscription()}
+    * returned. Never called on a dispatching thread: those are inside a {@link CallbackContext} and defer the teardown.
+    */
+   private void awaitRunningCallback()
+   {
+      if (callback == null || dispatchLock.isHeldByCurrentThread())
+      {
+         return;
+      }
+
+      boolean interrupted = false;
+      try
+      {
+         for (;;)
+         {
+            try
+            {
+               if (dispatchLock.tryLock(5, TimeUnit.SECONDS))
+               {
+                  dispatchLock.unlock();
+                  return;
+               }
+            }
+            catch (InterruptedException e)
+            {
+               interrupted = true;
+               continue;
+            }
+            jros2.getLogger().warning(HotPathText.stillWaitingForCallback(topic.getName()));
+         }
+      }
+      finally
+      {
+         if (interrupted)
+         {
+            Thread.currentThread().interrupt();
+         }
+      }
+   }
+
+   private void releaseNatives(long fastddsParticipant)
+   {
+      synchronized (teardownLock)
+      {
+         if (nativesReleased)
+         {
+            return;
+         }
+         nativesReleased = true;
+
+         // Wait for native calls (takes, status queries) that entered before the gate closed.
+         gate.awaitIdle();
+
+         // Called on a thread that is not a Fast-DDS callback thread: an OK return guarantees that no listener callback
+         // is running or will run, so the listener (and its JNI global references) can be freed.
+         int ret = fastddsjava.deleteDataReader(fastddsSubscriber, fastddsDataReader);
+         if (ret == RETCODE_OK)
+         {
+            fastddsjava.deleteDataReaderListener(fastddsDataReaderListener);
+         }
+         else
+         {
+            jros2.getLogger().log(Level.SEVERE, HotPathText.dataReaderDeletionFailed(topic.getName(), ret));
+         }
+
+         // Nothing in Java touches these any more: every use goes through the closed gate.
+         userSampleInfo.close();
+         fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsUserSampleData);
+         if (callbackSampleInfo != null)
+         {
+            callbackSampleInfo.close();
+            fastddsjava.deleteData(topicData.fastddsTopicDataWrapperType, fastddsCallbackSampleData);
+         }
+
+         ret = fastddsjava.deleteSubscriber(fastddsParticipant, fastddsSubscriber);
+         if (ret != RETCODE_OK)
+         {
+            jros2.getLogger().log(Level.WARNING, HotPathText.subscriberDeletionFailed(topic.getName(), ret));
+         }
+      }
+   }
+
+   /**
+    * @return true once the native resources of this subscription have been released (always eventually true after close)
+    */
+   boolean isNativeReleased()
+   {
+      synchronized (teardownLock)
+      {
+         return nativesReleased;
+      }
+   }
+
+   /**
+    * @return true if the callbacks registered with the native listener no longer reference this subscription
+    */
+   boolean isListenerTrampolineCleared()
+   {
+      return dataAvailableTrampoline.isCleared() && subscriptionMatchedTrampoline.isCleared();
+   }
+
+   /**
+    * @return the Fast-DDS topic handles this subscription reads from
+    */
+   TopicData getTopicData()
+   {
+      return topicData;
+   }
+
+   /**
+    * @return true if this subscription uses the ABI v2 single-call take path
+    */
+   boolean usesNativeAbiV2()
+   {
+      return useTakeToBufferAbi;
+   }
+
+   private void recordStatistics(int payloadSizeBytes, long fastddsSampleInfo)
    {
       // Time when the sample was published
-      long sourceTimestampMs = TimeUnit.NANOSECONDS.toMillis(callbackSampleInfo.getSourceTimestampNanos());
+      long sourceTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava.sampleInfoSourceTimestampNanos(fastddsSampleInfo));
 
       // Time when the sample was received
-      long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(callbackSampleInfo.getReceptionTimestampNanos());
+      long receptionTimestampMs = TimeUnit.NANOSECONDS.toMillis(fastddsjava.sampleInfoReceptionTimestampNanos(fastddsSampleInfo));
 
-      // The size of the entire payload (including the header) in bytes
-      int payloadSizeBytes = fastddsjava.topicDataSize(fastddsCallbackSampleData);
-
-      synchronized (statisticsCalculators)
+      statisticsLock.lock();
+      try
       {
-         // Record message size
+         // Record message size (the entire payload including the header)
          statisticsCalculators[SIZE.ordinal()].record(payloadSizeBytes);
 
-         // Record publish period if available
+         // Record receive period if available
          if (lastReceiveTime != Long.MIN_VALUE)
          {
             statisticsCalculators[PERIOD.ordinal()].record(receptionTimestampMs - lastReceiveTime);
          }
          lastReceiveTime = receptionTimestampMs;
 
-         // Record publish age
-         if (sourceTimestampMs != Long.MIN_VALUE)
-         {
-            statisticsCalculators[AGE.ordinal()].record(receptionTimestampMs - sourceTimestampMs);
-         }
+         // Record message age
+         statisticsCalculators[AGE.ordinal()].record(receptionTimestampMs - sourceTimestampMs);
       }
+      finally
+      {
+         statisticsLock.unlock();
+      }
+   }
+
+   /**
+    * Enables or disables recording of message size, period and age statistics (see {@link MessageStatisticsProvider}).
+    * Disabled by default. Samples are recorded when they are taken from Fast-DDS (before the callback in callback mode,
+    * in {@code read()}/{@code readLatest()} in polling mode). Previously recorded values are kept when recording is
+    * disabled; use {@link #resetStatistics()} to clear them.
+    */
+   @Override
+   public void setStatisticsEnabled(boolean enabled)
+   {
+      statisticsEnabled = enabled;
+   }
+
+   /**
+    * @return true if statistics are recorded for every received sample
+    */
+   @Override
+   public boolean isStatisticsEnabled()
+   {
+      return statisticsEnabled;
    }
 
    @Override
    public void resetStatistics()
    {
-      for (int i = 0; i < statisticsCalculatorCount; ++i)
+      statisticsLock.lock();
+      try
       {
-         statisticsCalculators[i].reset();
+         for (int i = 0; i < statisticsCalculatorCount; ++i)
+         {
+            statisticsCalculators[i].reset();
+         }
+         lastReceiveTime = Long.MIN_VALUE;
+      }
+      finally
+      {
+         statisticsLock.unlock();
       }
    }
 
@@ -656,6 +1275,20 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    public void readStatistics(MessageMetadataType messageMetadataType, Statistics statisticToPack)
    {
       statisticsCalculators[messageMetadataType.ordinal()].read(statisticToPack);
+   }
+
+   @Override
+   public double getStatistic(MessageMetadataType messageMetadataType, Statistics.StatisticDataType statisticType)
+   {
+      return statisticsCalculators[messageMetadataType.ordinal()].get(statisticType);
+   }
+
+   /**
+    * @return the number of received samples that failed to deserialize and were dropped
+    */
+   public long getMalformedSampleCount()
+   {
+      return malformedSampleCount.get();
    }
 
    /**
@@ -690,8 +1323,26 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
       return topic.getName();
    }
 
+   /**
+    * @return the number of received samples that have not been taken yet (polling mode), as reported by Fast-DDS. In
+    *       callback mode samples are taken as they arrive, so this is usually 0. Returns 0 once closed.
+    */
    public int getUnreadMessageCount()
    {
-      return untakenMessageCount.get();
+      int count = 0;
+
+      if (gate.enter())
+      {
+         try
+         {
+            count = fastddsjava.dataReaderGetUnreadCount(fastddsDataReader);
+         }
+         finally
+         {
+            gate.exit();
+         }
+      }
+
+      return count;
    }
 }

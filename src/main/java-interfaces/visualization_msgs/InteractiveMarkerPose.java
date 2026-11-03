@@ -23,9 +23,14 @@ geometry_msgs/Pose pose
 string name
 }</pre>
 */
-public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
+public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerPose_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarkerPose, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_c60e9a4407d5f709a63e0fe9caea324aee08fe717cd090209ebe35012ce7cb66";
 
    /**
       Time/frame info.
@@ -45,7 +50,7 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    {
       header_ = new std_msgs.Header();
       pose_ = new geometry_msgs.Pose();
-      name_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -62,7 +67,7 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
 
       return currentAlignment - initialAlignment;
    }
@@ -88,10 +93,15 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
    @Override
    public void set(InteractiveMarkerPose from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       pose_.set(from.pose_);
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      name_.setLength(0);
+      name_.append(from.name_);
 
    }
 
@@ -110,30 +120,57 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
    }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarkerPose {", "header_=", "pose_=", "name_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarkerPose {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("pose_=");
+      builder.append(toStringLabels[2]);
       builder.append(pose_);
-      builder.append("name_=");
+      builder.append(toStringLabels[3]);
       builder.append(name_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

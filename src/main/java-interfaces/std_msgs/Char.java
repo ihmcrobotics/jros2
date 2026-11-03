@@ -27,6 +27,11 @@ public class Char implements ROS2Message<Char>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Char_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Char, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3ad2d04dd29ba19d04b16659afa3ccaedd691914b02a64e82e252f2fa6a586a9";
+
    private char data_;
 
    public Char()
@@ -44,7 +49,7 @@ public class Char implements ROS2Message<Char>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -66,6 +71,11 @@ public class Char implements ROS2Message<Char>
    @Override
    public void set(Char from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -81,15 +91,22 @@ public class Char implements ROS2Message<Char>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Char {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Char {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

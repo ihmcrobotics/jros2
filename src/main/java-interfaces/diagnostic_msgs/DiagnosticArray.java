@@ -16,9 +16,14 @@ std_msgs/Header header # for timestamp
 DiagnosticStatus[] status # an array of components being reported on
 }</pre>
 */
-public class DiagnosticArray implements ROS2Message<DiagnosticArray>
+public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::DiagnosticArray_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of diagnostic_msgs/msg/DiagnosticArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5a8a36efb05fb25070fa0fb3810290c0e6cd4862b54a8fb975a1ee8dc55a333e";
 
    /**
       This message is used to send diagnostic information about the state of the robot.
@@ -69,8 +74,13 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    @Override
    public void set(DiagnosticArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      status_.set(from.status_);
+      status_.set(from.status_, diagnostic_msgs.DiagnosticStatus::set); // copies the elements, never shares them
 
    }
 
@@ -85,17 +95,24 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"DiagnosticArray {", "header_=", "status_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("DiagnosticArray {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("status_=");
+      builder.append(toStringLabels[2]);
       builder.append(status_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

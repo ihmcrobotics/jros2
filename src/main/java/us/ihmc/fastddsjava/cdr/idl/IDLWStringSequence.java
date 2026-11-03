@@ -17,6 +17,10 @@ package us.ihmc.fastddsjava.cdr.idl;
 
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 
+/**
+ * IDL sequence of wide strings. Each element is written as a {@code uint32} count of UTF-16 code units followed by one
+ * {@code uint32} per code unit (the rmw_fastrtps format), see {@link CDRBuffer#writeWString(StringBuilder)}.
+ */
 public class IDLWStringSequence extends IDLStringSequence
 {
    public IDLWStringSequence()
@@ -39,14 +43,13 @@ public class IDLWStringSequence extends IDLStringSequence
       super(capacity, maxSize, defaultStringLength);
    }
 
+   /**
+    * A wide string is a {@code uint32} count of UTF-16 code units followed by one {@code uint32} per code unit.
+    */
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      int charLength = elements[i].length();
-      int size = 4; // length prefix
-      for (int c = 0; c < charLength; c++)
-         size += 4 + CDRBuffer.alignment(currentAlignment + size, 4);
-      return size;
+      return 4 + 4 * elements[i].length();
    }
 
    @Override
@@ -58,14 +61,8 @@ public class IDLWStringSequence extends IDLStringSequence
 
       for (int i = 0; i < size(); i++)
       {
-         int charLength = elements[i].length();
          currentAlignment += CDRBuffer.alignment(currentAlignment, 4);
-         currentAlignment += 4; // wstring length int
-         for (int c = 0; c < charLength; c++)
-         {
-            currentAlignment += CDRBuffer.alignment(currentAlignment, 4);
-            currentAlignment += 4;
-         }
+         currentAlignment += 4 + 4 * elements[i].length(); // wstring length int + one uint32 per UTF-16 code unit
       }
 
       return currentAlignment - initialAlignment;

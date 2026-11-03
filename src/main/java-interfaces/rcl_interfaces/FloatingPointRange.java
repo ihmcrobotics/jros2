@@ -47,6 +47,11 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::FloatingPointRange_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/FloatingPointRange, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_e6af23a23c177fee5f3075c8b1e435162a9b63c863d78c06017460b49684262d";
+
+   /**
       Start value for valid values, inclusive.
    */
    private double from_value_;
@@ -92,9 +97,9 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // from_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // to_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // step_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // from_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // to_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // step_
 
       return currentAlignment - initialAlignment;
    }
@@ -120,6 +125,11 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    @Override
    public void set(FloatingPointRange from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       from_value_ = from.from_value_;
       to_value_ = from.to_value_;
       step_ = from.step_;
@@ -157,19 +167,26 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"FloatingPointRange {", "from_value_=", "to_value_=", "step_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("FloatingPointRange {");
-      builder.append("from_value_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(from_value_);
-      builder.append("to_value_=");
+      builder.append(toStringLabels[2]);
       builder.append(to_value_);
-      builder.append("step_=");
+      builder.append(toStringLabels[3]);
       builder.append(step_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

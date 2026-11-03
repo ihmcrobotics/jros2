@@ -58,9 +58,14 @@ geometry_msgs/Twist[] twist
 geometry_msgs/Wrench[] wrench
 }</pre>
 */
-public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
+public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MultiDOFJointState_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/MultiDOFJointState, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_4d4ded702cfba7ff3ec783835c1a1425f75e53939a430ff355d1fee4b3bbc40b";
 
    private final std_msgs.Header header_;
    private final IDLStringSequence joint_names_;
@@ -123,11 +128,16 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    @Override
    public void set(MultiDOFJointState from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       joint_names_.set(from.joint_names_);
-      transforms_.set(from.transforms_);
-      twist_.set(from.twist_);
-      wrench_.set(from.wrench_);
+      transforms_.set(from.transforms_, geometry_msgs.Transform::set); // copies the elements, never shares them
+      twist_.set(from.twist_, geometry_msgs.Twist::set); // copies the elements, never shares them
+      wrench_.set(from.wrench_, geometry_msgs.Wrench::set); // copies the elements, never shares them
 
    }
 
@@ -157,23 +167,30 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MultiDOFJointState {", "header_=", "joint_names_=", "transforms_=", "twist_=", "wrench_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MultiDOFJointState {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("joint_names_=");
+      builder.append(toStringLabels[2]);
       builder.append(joint_names_);
-      builder.append("transforms_=");
+      builder.append(toStringLabels[3]);
       builder.append(transforms_);
-      builder.append("twist_=");
+      builder.append(toStringLabels[4]);
       builder.append(twist_);
-      builder.append("wrench_=");
+      builder.append(toStringLabels[5]);
       builder.append(wrench_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -24,6 +24,11 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ListParametersResult_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ListParametersResult, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_237ae3428413dcbcfb452b510c42355f3a2b021dc091afa3e18526d57022f1cd";
+
+   /**
       The resulting parameters under the given prefixes.
    */
    private final IDLStringSequence names_;
@@ -76,6 +81,11 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    @Override
    public void set(ListParametersResult from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       names_.set(from.names_);
       prefixes_.set(from.prefixes_);
 
@@ -92,17 +102,24 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ListParametersResult {", "names_=", "prefixes_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ListParametersResult {");
-      builder.append("names_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(names_);
-      builder.append("prefixes_=");
+      builder.append(toStringLabels[2]);
       builder.append(prefixes_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

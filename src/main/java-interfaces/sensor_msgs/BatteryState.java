@@ -69,40 +69,45 @@ string location          # The location into which the battery is inserted. (slo
 string serial_number     # The best approximation of the battery serial number
 }</pre>
 */
-public class BatteryState implements ROS2Message<BatteryState>
+public class BatteryState implements ROS2Message<BatteryState>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::BatteryState_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/BatteryState, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_4bee5dfce981c98faa6828b868307a0a73f992ed0789f374ee96c8f840e69741";
+
+   /**
       Power supply status constants
    */
-   public static final byte POWER_SUPPLY_STATUS_UNKNOWN = 0;
-   public static final byte POWER_SUPPLY_STATUS_CHARGING = 1;
-   public static final byte POWER_SUPPLY_STATUS_DISCHARGING = 2;
-   public static final byte POWER_SUPPLY_STATUS_NOT_CHARGING = 3;
-   public static final byte POWER_SUPPLY_STATUS_FULL = 4;
+   public static final byte POWER_SUPPLY_STATUS_UNKNOWN = (byte) 0;
+   public static final byte POWER_SUPPLY_STATUS_CHARGING = (byte) 1;
+   public static final byte POWER_SUPPLY_STATUS_DISCHARGING = (byte) 2;
+   public static final byte POWER_SUPPLY_STATUS_NOT_CHARGING = (byte) 3;
+   public static final byte POWER_SUPPLY_STATUS_FULL = (byte) 4;
    /**
       Power supply health constants
    */
-   public static final byte POWER_SUPPLY_HEALTH_UNKNOWN = 0;
-   public static final byte POWER_SUPPLY_HEALTH_GOOD = 1;
-   public static final byte POWER_SUPPLY_HEALTH_OVERHEAT = 2;
-   public static final byte POWER_SUPPLY_HEALTH_DEAD = 3;
-   public static final byte POWER_SUPPLY_HEALTH_OVERVOLTAGE = 4;
-   public static final byte POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = 5;
-   public static final byte POWER_SUPPLY_HEALTH_COLD = 6;
-   public static final byte POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = 7;
-   public static final byte POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = 8;
+   public static final byte POWER_SUPPLY_HEALTH_UNKNOWN = (byte) 0;
+   public static final byte POWER_SUPPLY_HEALTH_GOOD = (byte) 1;
+   public static final byte POWER_SUPPLY_HEALTH_OVERHEAT = (byte) 2;
+   public static final byte POWER_SUPPLY_HEALTH_DEAD = (byte) 3;
+   public static final byte POWER_SUPPLY_HEALTH_OVERVOLTAGE = (byte) 4;
+   public static final byte POWER_SUPPLY_HEALTH_UNSPEC_FAILURE = (byte) 5;
+   public static final byte POWER_SUPPLY_HEALTH_COLD = (byte) 6;
+   public static final byte POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE = (byte) 7;
+   public static final byte POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE = (byte) 8;
    /**
       Power supply technology (chemistry) constants
    */
-   public static final byte POWER_SUPPLY_TECHNOLOGY_UNKNOWN = 0;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_NIMH = 1;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_LION = 2;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_LIPO = 3;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_LIFE = 4;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_NICD = 5;
-   public static final byte POWER_SUPPLY_TECHNOLOGY_LIMN = 6;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_UNKNOWN = (byte) 0;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NIMH = (byte) 1;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LION = (byte) 2;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIPO = (byte) 3;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIFE = (byte) 4;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_NICD = (byte) 5;
+   public static final byte POWER_SUPPLY_TECHNOLOGY_LIMN = (byte) 6;
    private final std_msgs.Header header_;
    private float voltage_; // Voltage in Volts (Mandatory)
    private float temperature_; // Temperature in Degrees Celsius (If unmeasured NaN)
@@ -129,11 +134,10 @@ public class BatteryState implements ROS2Message<BatteryState>
    public BatteryState()
    {
       header_ = new std_msgs.Header();
-      present_ = (boolean) false;
       cell_voltage_ = new IDLFloatSequence();
       cell_temperature_ = new IDLFloatSequence();
-      location_ = new StringBuilder();
-      serial_number_ = new StringBuilder();
+      location_ = CDRBuffer.newStringBuilder(16);
+      serial_number_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -149,21 +153,21 @@ public class BatteryState implements ROS2Message<BatteryState>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // voltage_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // temperature_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // current_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // charge_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // capacity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // design_capacity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // percentage_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_status_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_health_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // power_supply_technology_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // present_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // voltage_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // temperature_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // current_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // charge_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // capacity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // design_capacity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // percentage_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // power_supply_status_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // power_supply_health_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // power_supply_technology_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // present_
       currentAlignment += cell_voltage_.calculateSizeBytes(currentAlignment);
       currentAlignment += cell_temperature_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * location_.length()) + 1; // location_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * serial_number_.length()) + 1; // serial_number_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(location_) + 1; // location_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(serial_number_) + 1; // serial_number_
 
       return currentAlignment - initialAlignment;
    }
@@ -215,6 +219,11 @@ public class BatteryState implements ROS2Message<BatteryState>
    @Override
    public void set(BatteryState from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       voltage_ = from.voltage_;
       temperature_ = from.temperature_;
@@ -229,10 +238,10 @@ public class BatteryState implements ROS2Message<BatteryState>
       present_ = from.present_;
       cell_voltage_.set(from.cell_voltage_);
       cell_temperature_.set(from.cell_temperature_);
-      location_.delete(0, location_.length());
-      location_.insert(0, from.location_);
-      serial_number_.delete(0, serial_number_.length());
-      serial_number_.insert(0, from.serial_number_);
+      location_.setLength(0);
+      location_.append(from.location_);
+      serial_number_.setLength(0);
+      serial_number_.append(from.serial_number_);
 
    }
 
@@ -366,113 +375,160 @@ public class BatteryState implements ROS2Message<BatteryState>
       return location_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of location (allocates). {@link #getLocation()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getLocationAsString()
    {
       return location_.toString();
    }
 
+   /**
+    * Replaces the content of location with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setLocation(java.lang.String s)
    {
-      this.location_.delete(0, this.location_.length());
-      this.location_.insert(0, s);
+      this.location_.setLength(0);
+      this.location_.append(s);
+   }
+
+   /**
+    * Replaces the content of location with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setLocation(java.lang.CharSequence s)
+   {
+      if (s != this.location_)
+      {
+         this.location_.setLength(0);
+         this.location_.append(s);
+      }
    }
    public StringBuilder getSerialNumber()
    {
       return serial_number_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of serial_number (allocates). {@link #getSerialNumber()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getSerialNumberAsString()
    {
       return serial_number_.toString();
    }
 
+   /**
+    * Replaces the content of serial_number with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setSerialNumber(java.lang.String s)
    {
-      this.serial_number_.delete(0, this.serial_number_.length());
-      this.serial_number_.insert(0, s);
+      this.serial_number_.setLength(0);
+      this.serial_number_.append(s);
    }
+
+   /**
+    * Replaces the content of serial_number with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setSerialNumber(java.lang.CharSequence s)
+   {
+      if (s != this.serial_number_)
+      {
+         this.serial_number_.setLength(0);
+         this.serial_number_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"BatteryState {", "POWER_SUPPLY_STATUS_UNKNOWN=", "POWER_SUPPLY_STATUS_CHARGING=", "POWER_SUPPLY_STATUS_DISCHARGING=", "POWER_SUPPLY_STATUS_NOT_CHARGING=", "POWER_SUPPLY_STATUS_FULL=", "POWER_SUPPLY_HEALTH_UNKNOWN=", "POWER_SUPPLY_HEALTH_GOOD=", "POWER_SUPPLY_HEALTH_OVERHEAT=", "POWER_SUPPLY_HEALTH_DEAD=", "POWER_SUPPLY_HEALTH_OVERVOLTAGE=", "POWER_SUPPLY_HEALTH_UNSPEC_FAILURE=", "POWER_SUPPLY_HEALTH_COLD=", "POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE=", "POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE=", "POWER_SUPPLY_TECHNOLOGY_UNKNOWN=", "POWER_SUPPLY_TECHNOLOGY_NIMH=", "POWER_SUPPLY_TECHNOLOGY_LION=", "POWER_SUPPLY_TECHNOLOGY_LIPO=", "POWER_SUPPLY_TECHNOLOGY_LIFE=", "POWER_SUPPLY_TECHNOLOGY_NICD=", "POWER_SUPPLY_TECHNOLOGY_LIMN=", "header_=", "voltage_=", "temperature_=", "current_=", "charge_=", "capacity_=", "design_capacity_=", "percentage_=", "power_supply_status_=", "power_supply_health_=", "power_supply_technology_=", "present_=", "cell_voltage_=", "cell_temperature_=", "location_=", "serial_number_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("BatteryState {");
-      builder.append("POWER_SUPPLY_STATUS_UNKNOWN=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(POWER_SUPPLY_STATUS_UNKNOWN);
-      builder.append("POWER_SUPPLY_STATUS_CHARGING=");
+      builder.append(toStringLabels[2]);
       builder.append(POWER_SUPPLY_STATUS_CHARGING);
-      builder.append("POWER_SUPPLY_STATUS_DISCHARGING=");
+      builder.append(toStringLabels[3]);
       builder.append(POWER_SUPPLY_STATUS_DISCHARGING);
-      builder.append("POWER_SUPPLY_STATUS_NOT_CHARGING=");
+      builder.append(toStringLabels[4]);
       builder.append(POWER_SUPPLY_STATUS_NOT_CHARGING);
-      builder.append("POWER_SUPPLY_STATUS_FULL=");
+      builder.append(toStringLabels[5]);
       builder.append(POWER_SUPPLY_STATUS_FULL);
-      builder.append("POWER_SUPPLY_HEALTH_UNKNOWN=");
+      builder.append(toStringLabels[6]);
       builder.append(POWER_SUPPLY_HEALTH_UNKNOWN);
-      builder.append("POWER_SUPPLY_HEALTH_GOOD=");
+      builder.append(toStringLabels[7]);
       builder.append(POWER_SUPPLY_HEALTH_GOOD);
-      builder.append("POWER_SUPPLY_HEALTH_OVERHEAT=");
+      builder.append(toStringLabels[8]);
       builder.append(POWER_SUPPLY_HEALTH_OVERHEAT);
-      builder.append("POWER_SUPPLY_HEALTH_DEAD=");
+      builder.append(toStringLabels[9]);
       builder.append(POWER_SUPPLY_HEALTH_DEAD);
-      builder.append("POWER_SUPPLY_HEALTH_OVERVOLTAGE=");
+      builder.append(toStringLabels[10]);
       builder.append(POWER_SUPPLY_HEALTH_OVERVOLTAGE);
-      builder.append("POWER_SUPPLY_HEALTH_UNSPEC_FAILURE=");
+      builder.append(toStringLabels[11]);
       builder.append(POWER_SUPPLY_HEALTH_UNSPEC_FAILURE);
-      builder.append("POWER_SUPPLY_HEALTH_COLD=");
+      builder.append(toStringLabels[12]);
       builder.append(POWER_SUPPLY_HEALTH_COLD);
-      builder.append("POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE=");
+      builder.append(toStringLabels[13]);
       builder.append(POWER_SUPPLY_HEALTH_WATCHDOG_TIMER_EXPIRE);
-      builder.append("POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE=");
+      builder.append(toStringLabels[14]);
       builder.append(POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_UNKNOWN=");
+      builder.append(toStringLabels[15]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_UNKNOWN);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_NIMH=");
+      builder.append(toStringLabels[16]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_NIMH);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_LION=");
+      builder.append(toStringLabels[17]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_LION);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_LIPO=");
+      builder.append(toStringLabels[18]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_LIPO);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_LIFE=");
+      builder.append(toStringLabels[19]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_LIFE);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_NICD=");
+      builder.append(toStringLabels[20]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_NICD);
-      builder.append("POWER_SUPPLY_TECHNOLOGY_LIMN=");
+      builder.append(toStringLabels[21]);
       builder.append(POWER_SUPPLY_TECHNOLOGY_LIMN);
-      builder.append("header_=");
+      builder.append(toStringLabels[22]);
       builder.append(header_);
-      builder.append("voltage_=");
+      builder.append(toStringLabels[23]);
       builder.append(voltage_);
-      builder.append("temperature_=");
+      builder.append(toStringLabels[24]);
       builder.append(temperature_);
-      builder.append("current_=");
+      builder.append(toStringLabels[25]);
       builder.append(current_);
-      builder.append("charge_=");
+      builder.append(toStringLabels[26]);
       builder.append(charge_);
-      builder.append("capacity_=");
+      builder.append(toStringLabels[27]);
       builder.append(capacity_);
-      builder.append("design_capacity_=");
+      builder.append(toStringLabels[28]);
       builder.append(design_capacity_);
-      builder.append("percentage_=");
+      builder.append(toStringLabels[29]);
       builder.append(percentage_);
-      builder.append("power_supply_status_=");
+      builder.append(toStringLabels[30]);
       builder.append(power_supply_status_);
-      builder.append("power_supply_health_=");
+      builder.append(toStringLabels[31]);
       builder.append(power_supply_health_);
-      builder.append("power_supply_technology_=");
+      builder.append(toStringLabels[32]);
       builder.append(power_supply_technology_);
-      builder.append("present_=");
+      builder.append(toStringLabels[33]);
       builder.append(present_);
-      builder.append("cell_voltage_=");
+      builder.append(toStringLabels[34]);
       builder.append(cell_voltage_);
-      builder.append("cell_temperature_=");
+      builder.append(toStringLabels[35]);
       builder.append(cell_temperature_);
-      builder.append("location_=");
+      builder.append(toStringLabels[36]);
       builder.append(location_.toString());
-      builder.append("serial_number_=");
+      builder.append(toStringLabels[37]);
       builder.append(serial_number_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

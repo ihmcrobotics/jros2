@@ -22,9 +22,14 @@ float64 temperature          # Measurement of the Temperature in Degrees Celsius
 float64 variance             # 0 is interpreted as variance unknown.
 }</pre>
 */
-public class Temperature implements ROS2Message<Temperature>
+public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Temperature_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Temperature, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_72514a14126ab9f8a9abec974c78e5610a367b59db5da355ff1fb982d5bad4b8";
 
    private final std_msgs.Header header_; // timestamp is the time the temperature was measured
    private double temperature_; // Measurement of the Temperature in Degrees Celsius.
@@ -48,8 +53,8 @@ public class Temperature implements ROS2Message<Temperature>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // temperature_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // temperature_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // variance_
 
       return currentAlignment - initialAlignment;
    }
@@ -75,6 +80,11 @@ public class Temperature implements ROS2Message<Temperature>
    @Override
    public void set(Temperature from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       temperature_ = from.temperature_;
       variance_ = from.variance_;
@@ -107,19 +117,26 @@ public class Temperature implements ROS2Message<Temperature>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Temperature {", "header_=", "temperature_=", "variance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Temperature {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("temperature_=");
+      builder.append(toStringLabels[2]);
       builder.append(temperature_);
-      builder.append("variance_=");
+      builder.append(toStringLabels[3]);
       builder.append(variance_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

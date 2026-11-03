@@ -47,6 +47,11 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::JointTrajectoryPoint_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of trajectory_msgs/msg/JointTrajectoryPoint, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_de8907036d8bd45aac6f30cc9044a3d4a329c42cbf719aff7d95a584cfa532d7";
+
+   /**
       Single DOF joint positions for each joint relative to their "0" position.
       The units depend on the specific joint type: radians for revolute or
       continuous joints, and meters for prismatic joints.
@@ -130,6 +135,11 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    @Override
    public void set(JointTrajectoryPoint from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       positions_.set(from.positions_);
       velocities_.set(from.velocities_);
       accelerations_.set(from.accelerations_);
@@ -164,23 +174,30 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"JointTrajectoryPoint {", "positions_=", "velocities_=", "accelerations_=", "effort_=", "time_from_start_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("JointTrajectoryPoint {");
-      builder.append("positions_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(positions_);
-      builder.append("velocities_=");
+      builder.append(toStringLabels[2]);
       builder.append(velocities_);
-      builder.append("accelerations_=");
+      builder.append(toStringLabels[3]);
       builder.append(accelerations_);
-      builder.append("effort_=");
+      builder.append(toStringLabels[4]);
       builder.append(effort_);
-      builder.append("time_from_start_=");
+      builder.append(toStringLabels[5]);
       builder.append(time_from_start_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

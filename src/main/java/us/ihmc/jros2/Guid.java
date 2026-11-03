@@ -48,7 +48,7 @@ public class Guid
    {
       if (guid.length != 16)
       {
-         throw new IllegalArgumentException("GUID must be exactly 16 bytes, got " + guid.length);
+         throw new IllegalArgumentException(HotPathText.guidLengthInvalid(guid.length));
       }
       System.arraycopy(guid, 0, this.guid, 0, 16);
    }
@@ -93,13 +93,6 @@ public class Guid
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < guid.length; i++)
-      {
-         if (i == 12)
-            sb.append('.');
-         sb.append(String.format("%02x", guid[i]));
-      }
-      return sb.toString();
+      return HotPathText.guidToString(guid);
    }
 }

@@ -13,6 +13,14 @@ public class MyPoint3DMessage implements ROS2Message<MyPoint3DMessage>
     */
    public static final java.lang.String name = "my_interfaces::msg::dds_::MyPoint3D_";
 
+   /*
+    * Optional: the RIHS01 type hash (REP-2011) of my_interfaces/msg/MyPoint3D. jros2 advertises it to ROS 2 (Iron and newer)
+    * in the endpoint USER_DATA ("typehash=...;"); without the field nothing is advertised. Generated classes contain it.
+    * For a hand-written class copy it from the "type_hashes" entry of share/my_interfaces/msg/MyPoint3D.json, which rosidl
+    * (Iron and newer) generates when the package is built with colcon.
+    */
+   public static final java.lang.String typeHash = "RIHS01_21f43f9a5ab8203e463ad0ea994081530f225702d0c70f36706abc50abf53be5";
+
    private final MyPoint3D src;
 
    /*

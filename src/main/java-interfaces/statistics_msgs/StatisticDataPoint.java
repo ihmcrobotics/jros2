@@ -57,6 +57,11 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    public static final java.lang.String name = "statistics_msgs::msg::dds_::StatisticDataPoint_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of statistics_msgs/msg/StatisticDataPoint, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_b7e61a407346ea912effb6954023d2d2c9adf8f7bc10f6cae576d350c445f6a5";
+
+   /**
       The statistic type of this data point, defined in StatisticDataType.msg
       Default value should be StatisticDataType.STATISTICS_DATA_TYPE_UNINITIALIZED (0).
    */
@@ -81,8 +86,8 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_type_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -106,6 +111,11 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    @Override
    public void set(StatisticDataPoint from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_type_ = from.data_type_;
       data_ = from.data_;
 
@@ -132,17 +142,24 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"StatisticDataPoint {", "data_type_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("StatisticDataPoint {");
-      builder.append("data_type_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_type_);
-      builder.append("data_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

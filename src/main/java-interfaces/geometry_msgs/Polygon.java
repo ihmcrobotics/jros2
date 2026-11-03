@@ -21,6 +21,11 @@ public class Polygon implements ROS2Message<Polygon>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Polygon_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Polygon, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3782f9f0bf044964d692d6c017d705e37611afb1f0bf6a9dee248a7dda0f784a";
+
    private final IDLObjectSequence<geometry_msgs.Point32> points_;
 
    public Polygon()
@@ -62,7 +67,12 @@ public class Polygon implements ROS2Message<Polygon>
    @Override
    public void set(Polygon from)
    {
-      points_.set(from.points_);
+      if (from == this)
+      {
+         return;
+      }
+
+      points_.set(from.points_, geometry_msgs.Point32::set); // copies the elements, never shares them
 
    }
 
@@ -72,15 +82,22 @@ public class Polygon implements ROS2Message<Polygon>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Polygon {", "points_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Polygon {");
-      builder.append("points_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(points_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

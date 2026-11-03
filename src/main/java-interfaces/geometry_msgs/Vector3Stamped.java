@@ -22,9 +22,14 @@ std_msgs/Header header
 Vector3 vector
 }</pre>
 */
-public class Vector3Stamped implements ROS2Message<Vector3Stamped>
+public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Vector3Stamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Vector3Stamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d4829622288cbb443886e7ea94ea5671a3b1be6bab4ad04224432a65f7d7887a";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Vector3 vector_;
@@ -72,6 +77,11 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    @Override
    public void set(Vector3Stamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       vector_.set(from.vector_);
 
@@ -88,17 +98,24 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Vector3Stamped {", "header_=", "vector_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Vector3Stamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("vector_=");
+      builder.append(toStringLabels[2]);
       builder.append(vector_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

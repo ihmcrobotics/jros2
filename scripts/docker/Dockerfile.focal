@@ -1,0 +1,39 @@
+#  Copyright 2026 Florida Institute for Human and Machine Cognition (IHMC)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#  http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+# Build image for the glibc Linux natives (x86_64, arm64, armhf, riscv64) and the Android natives.
+# Ubuntu 20.04 (glibc 2.31, gcc 9) is the oldest supported baseline: everything built here runs on glibc >= 2.31.
+# The Android NDK is not part of the image; build-natives.sh mounts a checksum-verified NDK at /ndk.
+# Built for linux/amd64 (the NDK and the cross compilers are x86_64 host tools).
+FROM ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214
+
+ARG CMAKE_VERSION
+ARG CMAKE_SHA256
+ENV DEBIAN_FRONTEND=noninteractive LANG=C.UTF-8
+
+RUN apt-get -o Acquire::Retries=5 update \
+ && apt-get -o Acquire::Retries=5 install -y --no-install-recommends \
+      build-essential crossbuild-essential-arm64 crossbuild-essential-armhf crossbuild-essential-riscv64 \
+      ca-certificates curl perl make ninja-build file binutils openjdk-17-jdk-headless \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN test -n "$CMAKE_VERSION" && test -n "$CMAKE_SHA256" \
+ && curl -fsSL --retry 5 -o /tmp/cmake.tar.gz \
+      "https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}-linux-x86_64.tar.gz" \
+ && echo "${CMAKE_SHA256}  /tmp/cmake.tar.gz" | sha256sum -c - \
+ && mkdir -p /opt/cmake \
+ && tar -xzf /tmp/cmake.tar.gz -C /opt/cmake --strip-components=1 \
+ && rm -f /tmp/cmake.tar.gz
+
+ENV PATH=/opt/cmake/bin:$PATH

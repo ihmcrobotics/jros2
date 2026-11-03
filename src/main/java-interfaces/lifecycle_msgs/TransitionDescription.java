@@ -26,6 +26,11 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::TransitionDescription_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of lifecycle_msgs/msg/TransitionDescription, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_c5f1cd4bb1ad2ba0e3329d4ac7015c52a674a72c1faf7974c37a33f4f6048b28";
+
+   /**
       The transition id and label of this description.
    */
    private final lifecycle_msgs.Transition transition_;
@@ -85,6 +90,11 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    @Override
    public void set(TransitionDescription from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       transition_.set(from.transition_);
       start_state_.set(from.start_state_);
       goal_state_.set(from.goal_state_);
@@ -107,19 +117,26 @@ public class TransitionDescription implements ROS2Message<TransitionDescription>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TransitionDescription {", "transition_=", "start_state_=", "goal_state_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TransitionDescription {");
-      builder.append("transition_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(transition_);
-      builder.append("start_state_=");
+      builder.append(toStringLabels[2]);
       builder.append(start_state_);
-      builder.append("goal_state_=");
+      builder.append(toStringLabels[3]);
       builder.append(goal_state_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

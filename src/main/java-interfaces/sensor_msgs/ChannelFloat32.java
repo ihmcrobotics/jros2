@@ -58,6 +58,11 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::ChannelFloat32_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/ChannelFloat32, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_92665437ddf39346f4ba39ee32e648390605b633cc077d40f4bd4d7b58af6cd4";
+
+   /**
       The channel name should give semantics of the channel (e.g.
       "intensity" instead of "value").
    */
@@ -70,7 +75,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
 
    public ChannelFloat32()
    {
-      name_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
       values_ = new IDLFloatSequence();
 
    }
@@ -86,7 +91,7 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
       currentAlignment += values_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -111,8 +116,13 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    @Override
    public void set(ChannelFloat32 from)
    {
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      if (from == this)
+      {
+         return;
+      }
+
+      name_.setLength(0);
+      name_.append(from.name_);
       values_.set(from.values_);
 
    }
@@ -122,15 +132,35 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public IDLFloatSequence getValues()
    {
@@ -138,17 +168,24 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ChannelFloat32 {", "name_=", "values_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ChannelFloat32 {");
-      builder.append("name_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(name_.toString());
-      builder.append("values_=");
+      builder.append(toStringLabels[2]);
       builder.append(values_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

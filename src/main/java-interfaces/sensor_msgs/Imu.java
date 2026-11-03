@@ -50,9 +50,14 @@ geometry_msgs/Vector3 linear_acceleration
 float64[9] linear_acceleration_covariance # Row major x, y z
 }</pre>
 */
-public class Imu implements ROS2Message<Imu>
+public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Imu_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Imu, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_7d9a00ff131080897a5ec7e26e315954b8eae3353c3f995c55faf71574000b5b";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Quaternion orientation_;
@@ -87,11 +92,11 @@ public class Imu implements ROS2Message<Imu>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += orientation_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // orientation_covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // orientation_covariance_
       currentAlignment += angular_velocity_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // angular_velocity_covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // angular_velocity_covariance_
       currentAlignment += linear_acceleration_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // linear_acceleration_covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // linear_acceleration_covariance_
 
       return currentAlignment - initialAlignment;
    }
@@ -101,20 +106,11 @@ public class Imu implements ROS2Message<Imu>
    {
       header_.serialize(buffer);
       orientation_.serialize(buffer);
-      for (int i = 0; i < orientation_covariance_.length; ++i)
-      {
-         buffer.writeDouble(orientation_covariance_[i]);
-      }
+      buffer.writeDoubleArray(orientation_covariance_);
       angular_velocity_.serialize(buffer);
-      for (int i = 0; i < angular_velocity_covariance_.length; ++i)
-      {
-         buffer.writeDouble(angular_velocity_covariance_[i]);
-      }
+      buffer.writeDoubleArray(angular_velocity_covariance_);
       linear_acceleration_.serialize(buffer);
-      for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
-      {
-         buffer.writeDouble(linear_acceleration_covariance_[i]);
-      }
+      buffer.writeDoubleArray(linear_acceleration_covariance_);
 
    }
 
@@ -123,42 +119,29 @@ public class Imu implements ROS2Message<Imu>
    {
       header_.deserialize(buffer);
       orientation_.deserialize(buffer);
-      for (int i = 0; i < orientation_covariance_.length; ++i)
-      {
-         orientation_covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(orientation_covariance_);
       angular_velocity_.deserialize(buffer);
-      for (int i = 0; i < angular_velocity_covariance_.length; ++i)
-      {
-         angular_velocity_covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(angular_velocity_covariance_);
       linear_acceleration_.deserialize(buffer);
-      for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
-      {
-         linear_acceleration_covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(linear_acceleration_covariance_);
 
    }
 
    @Override
    public void set(Imu from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       orientation_.set(from.orientation_);
-      for (int i = 0; i < orientation_covariance_.length; ++i)
-      {
-         orientation_covariance_[i] = from.orientation_covariance_[i];
-      }
+      System.arraycopy(from.orientation_covariance_, 0, orientation_covariance_, 0, orientation_covariance_.length);
       angular_velocity_.set(from.angular_velocity_);
-      for (int i = 0; i < angular_velocity_covariance_.length; ++i)
-      {
-         angular_velocity_covariance_[i] = from.angular_velocity_covariance_[i];
-      }
+      System.arraycopy(from.angular_velocity_covariance_, 0, angular_velocity_covariance_, 0, angular_velocity_covariance_.length);
       linear_acceleration_.set(from.linear_acceleration_);
-      for (int i = 0; i < linear_acceleration_covariance_.length; ++i)
-      {
-         linear_acceleration_covariance_[i] = from.linear_acceleration_covariance_[i];
-      }
+      System.arraycopy(from.linear_acceleration_covariance_, 0, linear_acceleration_covariance_, 0, linear_acceleration_covariance_.length);
 
    }
 
@@ -198,27 +181,34 @@ public class Imu implements ROS2Message<Imu>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Imu {", "header_=", "orientation_=", "orientation_covariance_=", "angular_velocity_=", "angular_velocity_covariance_=", "linear_acceleration_=", "linear_acceleration_covariance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Imu {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("orientation_=");
+      builder.append(toStringLabels[2]);
       builder.append(orientation_);
-      builder.append("orientation_covariance_=");
+      builder.append(toStringLabels[3]);
       builder.append(java.util.Arrays.toString(orientation_covariance_));
-      builder.append("angular_velocity_=");
+      builder.append(toStringLabels[4]);
       builder.append(angular_velocity_);
-      builder.append("angular_velocity_covariance_=");
+      builder.append(toStringLabels[5]);
       builder.append(java.util.Arrays.toString(angular_velocity_covariance_));
-      builder.append("linear_acceleration_=");
+      builder.append(toStringLabels[6]);
       builder.append(linear_acceleration_);
-      builder.append("linear_acceleration_covariance_=");
+      builder.append(toStringLabels[7]);
       builder.append(java.util.Arrays.toString(linear_acceleration_covariance_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

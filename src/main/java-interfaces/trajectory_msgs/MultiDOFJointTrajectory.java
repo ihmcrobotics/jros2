@@ -23,9 +23,14 @@ string[] joint_names
 MultiDOFJointTrajectoryPoint[] points
 }</pre>
 */
-public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTrajectory>
+public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTrajectory>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectory_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of trajectory_msgs/msg/MultiDOFJointTrajectory, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3a18fd095292a65cfde8833c72985a30af981f3ec44494655c6267262b443a4a";
 
    /**
       The header is used to specify the coordinate frame and the reference time for the trajectory durations
@@ -81,9 +86,14 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    @Override
    public void set(MultiDOFJointTrajectory from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       joint_names_.set(from.joint_names_);
-      points_.set(from.points_);
+      points_.set(from.points_, trajectory_msgs.MultiDOFJointTrajectoryPoint::set); // copies the elements, never shares them
 
    }
 
@@ -103,19 +113,26 @@ public class MultiDOFJointTrajectory implements ROS2Message<MultiDOFJointTraject
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MultiDOFJointTrajectory {", "header_=", "joint_names_=", "points_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MultiDOFJointTrajectory {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("joint_names_=");
+      builder.append(toStringLabels[2]);
       builder.append(joint_names_);
-      builder.append("points_=");
+      builder.append(toStringLabels[3]);
       builder.append(points_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

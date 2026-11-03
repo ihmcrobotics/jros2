@@ -18,9 +18,14 @@ std_msgs/Header header
 Quaternion quaternion
 }</pre>
 */
-public class QuaternionStamped implements ROS2Message<QuaternionStamped>
+public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::QuaternionStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/QuaternionStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_381add86c6c3160644d228ca342182c7fd6c7fab11c7a85ad817a9cc22dbac6e";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.Quaternion quaternion_;
@@ -68,6 +73,11 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    @Override
    public void set(QuaternionStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       quaternion_.set(from.quaternion_);
 
@@ -84,17 +94,24 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"QuaternionStamped {", "header_=", "quaternion_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("QuaternionStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("quaternion_=");
+      builder.append(toStringLabels[2]);
       builder.append(quaternion_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

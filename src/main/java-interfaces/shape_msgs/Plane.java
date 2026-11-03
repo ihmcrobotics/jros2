@@ -25,6 +25,11 @@ public class Plane implements ROS2Message<Plane>
    public static final java.lang.String name = "shape_msgs::msg::dds_::Plane_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of shape_msgs/msg/Plane, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_dfbfe8314689c850615d4a727af017e9aa86c10e369a606c8c851ef8f16c58c8";
+
+   /**
       Representation of a plane, using the plane equation ax + by + cz + d = 0.
 
       a := coef[0]
@@ -51,7 +56,7 @@ public class Plane implements ROS2Message<Plane>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (4 * 8) + CDRBuffer.alignment(currentAlignment, (4 * 8)); // coef_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (4 * 8); // coef_
 
       return currentAlignment - initialAlignment;
    }
@@ -59,30 +64,26 @@ public class Plane implements ROS2Message<Plane>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      for (int i = 0; i < coef_.length; ++i)
-      {
-         buffer.writeDouble(coef_[i]);
-      }
+      buffer.writeDoubleArray(coef_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      for (int i = 0; i < coef_.length; ++i)
-      {
-         coef_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(coef_);
 
    }
 
    @Override
    public void set(Plane from)
    {
-      for (int i = 0; i < coef_.length; ++i)
+      if (from == this)
       {
-         coef_[i] = from.coef_[i];
+         return;
       }
+
+      System.arraycopy(from.coef_, 0, coef_, 0, coef_.length);
 
    }
 
@@ -92,15 +93,22 @@ public class Plane implements ROS2Message<Plane>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Plane {", "coef_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Plane {");
-      builder.append("coef_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(java.util.Arrays.toString(coef_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

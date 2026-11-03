@@ -27,12 +27,15 @@ public class Bool implements ROS2Message<Bool>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Bool_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Bool, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_feb91e995ff9ebd09c0cb3d2aed18b11077585839fb5db80193b62d74528f6c9";
+
    private boolean data_;
 
    public Bool()
    {
-      data_ = (boolean) false;
-
    }
 
    public Bool(Bool from)
@@ -46,7 +49,7 @@ public class Bool implements ROS2Message<Bool>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -68,6 +71,11 @@ public class Bool implements ROS2Message<Bool>
    @Override
    public void set(Bool from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -83,15 +91,22 @@ public class Bool implements ROS2Message<Bool>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Bool {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Bool {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -22,6 +22,11 @@ public class Pose implements ROS2Message<Pose>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Pose_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Pose, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d501954e9476cea2996984e812054b68026ae0bfae789d9a10b23daf35cc90fa";
+
    private final geometry_msgs.Point position_;
    private final geometry_msgs.Quaternion orientation_;
 
@@ -68,6 +73,11 @@ public class Pose implements ROS2Message<Pose>
    @Override
    public void set(Pose from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       position_.set(from.position_);
       orientation_.set(from.orientation_);
 
@@ -84,17 +94,24 @@ public class Pose implements ROS2Message<Pose>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Pose {", "position_=", "orientation_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Pose {");
-      builder.append("position_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(position_);
-      builder.append("orientation_=");
+      builder.append(toStringLabels[2]);
       builder.append(orientation_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

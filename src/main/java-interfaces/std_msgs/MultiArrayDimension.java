@@ -29,13 +29,18 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::MultiArrayDimension_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/MultiArrayDimension, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5e773a60a4c7fc8a54985f307c7837aa2994252a126c301957a24e31282c9cbe";
+
    private final StringBuilder label_; // label of given dimension
    private int size_; // size of given dimension (in type units)
    private int stride_; // stride of given dimension
 
    public MultiArrayDimension()
    {
-      label_ = new StringBuilder();
+      label_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -50,9 +55,9 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * label_.length()) + 1; // label_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // size_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // stride_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(label_) + 1; // label_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // size_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // stride_
 
       return currentAlignment - initialAlignment;
    }
@@ -78,8 +83,13 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    @Override
    public void set(MultiArrayDimension from)
    {
-      label_.delete(0, label_.length());
-      label_.insert(0, from.label_);
+      if (from == this)
+      {
+         return;
+      }
+
+      label_.setLength(0);
+      label_.append(from.label_);
       size_ = from.size_;
       stride_ = from.stride_;
 
@@ -90,15 +100,35 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       return label_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of label (allocates). {@link #getLabel()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getLabelAsString()
    {
       return label_.toString();
    }
 
+   /**
+    * Replaces the content of label with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setLabel(java.lang.String s)
    {
-      this.label_.delete(0, this.label_.length());
-      this.label_.insert(0, s);
+      this.label_.setLength(0);
+      this.label_.append(s);
+   }
+
+   /**
+    * Replaces the content of label with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setLabel(java.lang.CharSequence s)
+   {
+      if (s != this.label_)
+      {
+         this.label_.setLength(0);
+         this.label_.append(s);
+      }
    }
    public int getSize()
    {
@@ -121,19 +151,26 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MultiArrayDimension {", "label_=", "size_=", "stride_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MultiArrayDimension {");
-      builder.append("label_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(label_.toString());
-      builder.append("size_=");
+      builder.append(toStringLabels[2]);
       builder.append(size_);
-      builder.append("stride_=");
+      builder.append(toStringLabels[3]);
       builder.append(stride_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

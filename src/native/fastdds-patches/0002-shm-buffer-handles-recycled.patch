@@ -1,0 +1,269 @@
+jros2: recycle the shared-memory buffer handles instead of allocating one per message
+
+SharedMemManager::Segment::alloc_buffer() (every message or fragment sent through the SHM transport) and
+SharedMemManager::Listener::pop() (every one received) create a std::shared_ptr<SharedMemBuffer> with make_shared: one
+operator new and one free per message on the sending thread and on the receiving thread (see the "TODO(Adolfo):
+Dynamic allocation" notes). The handles are now created with allocate_shared and an allocator that keeps released
+blocks for reuse in one lock-free stack (compare-and-swap on a version-tagged index), shared by every thread: no lock
+between a realtime publishing thread and the transport threads, and no per-thread state, so a thread that sends or
+receives through shared memory for the first time (e.g. the event thread's first heartbeat over SHM, long after start)
+does not allocate either. A new chunk of 64 blocks is carved from the heap, under a mutex, only when no block is free:
+for the first handle of the process, and when more handles than ever before are alive at once.
+
+diff --git a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+index 5442427..b5f58a2 100644
+--- a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
++++ b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+@@ -16,7 +16,11 @@
+ #define _FASTDDS_SHAREDMEM_MANAGER_H_
+ 
+ #include <atomic>
++#include <cstddef>
++#include <cstdint>
+ #include <list>
++#include <mutex>
++#include <new>
+ #include <thread>
+ #include <unordered_map>
+ 
+@@ -34,6 +38,214 @@ namespace rtps {
+ 
+ using Log = fastdds::dds::Log;
+ 
++/**
++ * Allocator for the reference-counted handles (std::allocate_shared) that SharedMemManager creates for every buffer it
++ * sends or receives. Released blocks are kept for reuse instead of being returned to the heap, so a steady stream of
++ * messages does not allocate. The free blocks form one lock-free stack (a compare-and-swap on an index tagged with a
++ * version counter, so a block that is popped and pushed again between a load and a swap cannot corrupt it): every thread
++ * that sends or receives through shared memory (publishing threads, the event and flow controller threads, the receive
++ * threads) takes and returns handles without a lock and without any per-thread state, so no thread allocates at its first
++ * message either, whenever that happens. Only when no block is free (more handles alive at once than ever before, or the
++ * first handle of the process) a new chunk of BLOCKS_PER_CHUNK blocks is carved from the heap, under a mutex. Blocks are
++ * never freed.
++ */
++template<typename T>
++class SharedMemHandleAllocator
++{
++public:
++
++    using value_type = T;
++
++    SharedMemHandleAllocator() noexcept = default;
++
++    template<typename U>
++    SharedMemHandleAllocator(
++            const SharedMemHandleAllocator<U>&) noexcept
++    {
++    }
++
++    T* allocate(
++            std::size_t n)
++    {
++        if (n != 1)
++        {
++            return static_cast<T*>(::operator new(n * sizeof(T)));
++        }
++        return static_cast<T*>(pool().pop());
++    }
++
++    void deallocate(
++            T* p,
++            std::size_t n) noexcept
++    {
++        if (n != 1)
++        {
++            ::operator delete(p);
++            return;
++        }
++        pool().push(p);
++    }
++
++    template<typename U>
++    bool operator ==(
++            const SharedMemHandleAllocator<U>&) const noexcept
++    {
++        return true;
++    }
++
++    template<typename U>
++    bool operator !=(
++            const SharedMemHandleAllocator<U>&) const noexcept
++    {
++        return false;
++    }
++
++private:
++
++    static_assert(alignof(T) <= alignof(std::max_align_t), "over-aligned handle");
++
++    // Precedes the storage of every block.
++    struct Header
++    {
++        std::atomic<uint32_t> next;  // Index of the next free block (valid while the block is free)
++        uint32_t index;              // Index of this block, NO_BLOCK for a block allocated outside the chunks
++    };
++
++    static constexpr std::size_t round_up(
++            std::size_t size)
++    {
++        return (size + alignof(std::max_align_t) - 1) / alignof(std::max_align_t) * alignof(std::max_align_t);
++    }
++
++    static constexpr std::size_t STORAGE_OFFSET = round_up(sizeof(Header));
++    static constexpr std::size_t BLOCK_SIZE = STORAGE_OFFSET + round_up(sizeof(T));
++
++    class Pool
++    {
++    public:
++
++        static constexpr uint32_t BLOCKS_PER_CHUNK = 64;
++        static constexpr uint32_t MAX_CHUNKS = 4096;
++        static constexpr uint32_t NO_BLOCK = UINT32_MAX;
++
++        Pool()
++            : head_(NO_BLOCK)
++        {
++            for (auto& chunk : chunks_)
++            {
++                chunk.store(nullptr, std::memory_order_relaxed);
++            }
++        }
++
++        void* pop()
++        {
++            uint64_t head = head_.load(std::memory_order_acquire);
++            for (;;)
++            {
++                uint32_t index = static_cast<uint32_t>(head);
++                if (index == NO_BLOCK)
++                {
++                    if (!grow())
++                    {
++                        // More than MAX_CHUNKS * BLOCKS_PER_CHUNK handles alive at once: plain heap block.
++                        Header* header = static_cast<Header*>(::operator new(BLOCK_SIZE));
++                        header->index = NO_BLOCK;
++                        return reinterpret_cast<unsigned char*>(header) + STORAGE_OFFSET;
++                    }
++                    head = head_.load(std::memory_order_acquire);
++                    continue;
++                }
++
++                Header* header = header_at(index);
++                // The block may be taken by another thread meanwhile: then the version changed and the swap fails.
++                uint64_t desired = next_version(head) | header->next.load(std::memory_order_relaxed);
++                if (head_.compare_exchange_weak(head, desired, std::memory_order_acquire, std::memory_order_acquire))
++                {
++                    return reinterpret_cast<unsigned char*>(header) + STORAGE_OFFSET;
++                }
++            }
++        }
++
++        void push(
++                void* storage) noexcept
++        {
++            Header* header = reinterpret_cast<Header*>(static_cast<unsigned char*>(storage) - STORAGE_OFFSET);
++            if (header->index == NO_BLOCK)
++            {
++                ::operator delete(header);
++                return;
++            }
++            push_header(header);
++        }
++
++    private:
++
++        static uint64_t next_version(
++                uint64_t head)
++        {
++            return ((head >> 32) + 1) << 32;
++        }
++
++        Header* header_at(
++                uint32_t index) const
++        {
++            unsigned char* chunk = chunks_[index / BLOCKS_PER_CHUNK].load(std::memory_order_acquire);
++            return reinterpret_cast<Header*>(chunk + (index % BLOCKS_PER_CHUNK) * BLOCK_SIZE);
++        }
++
++        void push_header(
++                Header* header) noexcept
++        {
++            uint64_t head = head_.load(std::memory_order_relaxed);
++            uint64_t desired;
++            do
++            {
++                header->next.store(static_cast<uint32_t>(head), std::memory_order_relaxed);
++                desired = next_version(head) | header->index;
++            }
++            while (!head_.compare_exchange_weak(head, desired, std::memory_order_release, std::memory_order_relaxed));
++        }
++
++        // Adds a chunk of free blocks; false when the maximum number of chunks is reached.
++        bool grow()
++        {
++            std::lock_guard<std::mutex> lock(grow_mutex_);
++            if (static_cast<uint32_t>(head_.load(std::memory_order_acquire)) != NO_BLOCK)
++            {
++                return true; // Another thread added a chunk meanwhile
++            }
++            if (chunk_count_ == MAX_CHUNKS)
++            {
++                return false;
++            }
++            unsigned char* chunk = static_cast<unsigned char*>(::operator new(BLOCKS_PER_CHUNK * BLOCK_SIZE));
++            uint32_t first = chunk_count_ * BLOCKS_PER_CHUNK;
++            chunks_[chunk_count_].store(chunk, std::memory_order_release);
++            ++chunk_count_;
++            for (uint32_t i = 0; i < BLOCKS_PER_CHUNK; ++i)
++            {
++                Header* header = new (chunk + i * BLOCK_SIZE) Header();
++                header->index = first + i;
++                push_header(header);
++            }
++            return true;
++        }
++
++        std::atomic<uint64_t> head_;  // Version (high 32 bits) and index (low 32 bits) of the first free block
++        std::atomic<unsigned char*> chunks_[MAX_CHUNKS];
++        std::mutex grow_mutex_;
++        uint32_t chunk_count_ = 0;
++    };
++
++    // Never destroyed, so that handles released during static destruction still find it.
++    static Pool& pool()
++    {
++        static Pool* instance = new Pool();
++        return *instance;
++    }
++
++};
++
+ /**
+  *  Provides functionality for the application to:
+  *
+@@ -464,9 +676,9 @@ public:
+ 
+                 auto validity_id = buffer_node->status.load(std::memory_order_relaxed).validity_id;
+ 
+-                // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
+-                new_buffer = std::make_shared<SharedMemBuffer>(segment_, segment_id_, buffer_node,
+-                                static_cast<uint32_t>(validity_id));
++                // Recycled handle memory: no heap allocation once the free list holds enough blocks.
++                new_buffer = std::allocate_shared<SharedMemBuffer>(SharedMemHandleAllocator<SharedMemBuffer>(),
++                                segment_, segment_id_, buffer_node, static_cast<uint32_t>(validity_id));
+ 
+                 if (new_buffer)
+                 {
+@@ -747,9 +959,9 @@ public:
+                             static_cast<BufferNode*>(segment->get_address_from_offset(buffer_descriptor.
+                                     buffer_node_offset));
+ 
+-                    // TODO(Adolfo) : Dynamic allocation. Use foonathan to convert it to static allocation
+-                    buffer_ref = std::make_shared<SharedMemBuffer>(segment, buffer_descriptor.source_segment_id,
+-                                    buffer_node,
++                    // Recycled handle memory: no heap allocation once the free list holds enough blocks.
++                    buffer_ref = std::allocate_shared<SharedMemBuffer>(SharedMemHandleAllocator<SharedMemBuffer>(),
++                                    segment, buffer_descriptor.source_segment_id, buffer_node,
+                                     buffer_descriptor.validity_id);
+ 
+                     if (buffer_ref)

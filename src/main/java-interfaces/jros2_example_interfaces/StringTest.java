@@ -41,6 +41,11 @@ public class StringTest implements ROS2Message<StringTest>
 {
    public static final java.lang.String name = "jros2_example_interfaces::msg::dds_::StringTest_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of jros2_example_interfaces/msg/StringTest, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_fe4a56ae2ed1fc4e6d798a9b91b9b28cec62b58772775cc3d53f968fc21da614";
+
    private final StringBuilder str1_;
    private final StringBuilder str2_;
    private final StringBuilder str3_;
@@ -65,27 +70,27 @@ public class StringTest implements ROS2Message<StringTest>
 
    public StringTest()
    {
-      str1_ = new StringBuilder("");
-      str2_ = new StringBuilder("");
-      str3_ = new StringBuilder("");
-      str4_ = new StringBuilder("");
-      str5_ = new StringBuilder("''");
-      str6_ = new StringBuilder("\"\"\"");
-      str7_ = new StringBuilder("\"\"");
-      str8_ = new StringBuilder("Hello World");
-      str9_ = new StringBuilder("Hello World");
-      stra_ = new StringBuilder("Hello World");
-      strb_ = new StringBuilder("Hello \"World\"");
-      strc_ = new StringBuilder("Hello 'World'");
-      strd_ = new StringBuilder("\"Hello\" World");
-      stre_ = new StringBuilder("'Hello' World");
-      strf_ = new StringBuilder("Hello 'World'");
-      strg_ = new StringBuilder("Hello \"World\"");
-      strh_ = new StringBuilder("\"Hello\" 'World'");
-      stri_ = new StringBuilder("'Hello' \"World\"");
-      strj_ = new StringBuilder("Hello World");
-      strk_ = new StringBuilder("  Hello World  ");
-      strl_ = new StringBuilder("  Goodbye World  ");
+      str1_ = CDRBuffer.newStringBuilder("");
+      str2_ = CDRBuffer.newStringBuilder("");
+      str3_ = CDRBuffer.newStringBuilder("");
+      str4_ = CDRBuffer.newStringBuilder("");
+      str5_ = CDRBuffer.newStringBuilder("''");
+      str6_ = CDRBuffer.newStringBuilder("\\\"\"\"");
+      str7_ = CDRBuffer.newStringBuilder("\"\"");
+      str8_ = CDRBuffer.newStringBuilder("Hello World");
+      str9_ = CDRBuffer.newStringBuilder("Hello World");
+      stra_ = CDRBuffer.newStringBuilder("Hello World");
+      strb_ = CDRBuffer.newStringBuilder("Hello \"World\"");
+      strc_ = CDRBuffer.newStringBuilder("Hello 'World'");
+      strd_ = CDRBuffer.newStringBuilder("\"Hello\" World");
+      stre_ = CDRBuffer.newStringBuilder("'Hello' World");
+      strf_ = CDRBuffer.newStringBuilder("Hello 'World'");
+      strg_ = CDRBuffer.newStringBuilder("Hello \"World\"");
+      strh_ = CDRBuffer.newStringBuilder("\"Hello\" 'World'");
+      stri_ = CDRBuffer.newStringBuilder("'Hello' \"World\"");
+      strj_ = CDRBuffer.newStringBuilder("Hello World");
+      strk_ = CDRBuffer.newStringBuilder("  Hello World  ");
+      strl_ = CDRBuffer.newStringBuilder("  Goodbye World  ");
 
    }
 
@@ -100,27 +105,27 @@ public class StringTest implements ROS2Message<StringTest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str1_.length()) + 1; // str1_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str2_.length()) + 1; // str2_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str3_.length()) + 1; // str3_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str4_.length()) + 1; // str4_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str5_.length()) + 1; // str5_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str6_.length()) + 1; // str6_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str7_.length()) + 1; // str7_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str8_.length()) + 1; // str8_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * str9_.length()) + 1; // str9_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stra_.length()) + 1; // stra_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strb_.length()) + 1; // strb_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strc_.length()) + 1; // strc_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strd_.length()) + 1; // strd_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stre_.length()) + 1; // stre_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strf_.length()) + 1; // strf_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strg_.length()) + 1; // strg_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strh_.length()) + 1; // strh_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * stri_.length()) + 1; // stri_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strj_.length()) + 1; // strj_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strk_.length()) + 1; // strk_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * strl_.length()) + 1; // strl_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str1_) + 1; // str1_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str2_) + 1; // str2_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str3_) + 1; // str3_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str4_) + 1; // str4_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str5_) + 1; // str5_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str6_) + 1; // str6_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str7_) + 1; // str7_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str8_) + 1; // str8_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(str9_) + 1; // str9_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(stra_) + 1; // stra_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strb_) + 1; // strb_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strc_) + 1; // strc_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strd_) + 1; // strd_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(stre_) + 1; // stre_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strf_) + 1; // strf_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strg_) + 1; // strg_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strh_) + 1; // strh_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(stri_) + 1; // stri_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strj_) + 1; // strj_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strk_) + 1; // strk_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(strl_) + 1; // strl_
 
       return currentAlignment - initialAlignment;
    }
@@ -182,48 +187,53 @@ public class StringTest implements ROS2Message<StringTest>
    @Override
    public void set(StringTest from)
    {
-      str1_.delete(0, str1_.length());
-      str1_.insert(0, from.str1_);
-      str2_.delete(0, str2_.length());
-      str2_.insert(0, from.str2_);
-      str3_.delete(0, str3_.length());
-      str3_.insert(0, from.str3_);
-      str4_.delete(0, str4_.length());
-      str4_.insert(0, from.str4_);
-      str5_.delete(0, str5_.length());
-      str5_.insert(0, from.str5_);
-      str6_.delete(0, str6_.length());
-      str6_.insert(0, from.str6_);
-      str7_.delete(0, str7_.length());
-      str7_.insert(0, from.str7_);
-      str8_.delete(0, str8_.length());
-      str8_.insert(0, from.str8_);
-      str9_.delete(0, str9_.length());
-      str9_.insert(0, from.str9_);
-      stra_.delete(0, stra_.length());
-      stra_.insert(0, from.stra_);
-      strb_.delete(0, strb_.length());
-      strb_.insert(0, from.strb_);
-      strc_.delete(0, strc_.length());
-      strc_.insert(0, from.strc_);
-      strd_.delete(0, strd_.length());
-      strd_.insert(0, from.strd_);
-      stre_.delete(0, stre_.length());
-      stre_.insert(0, from.stre_);
-      strf_.delete(0, strf_.length());
-      strf_.insert(0, from.strf_);
-      strg_.delete(0, strg_.length());
-      strg_.insert(0, from.strg_);
-      strh_.delete(0, strh_.length());
-      strh_.insert(0, from.strh_);
-      stri_.delete(0, stri_.length());
-      stri_.insert(0, from.stri_);
-      strj_.delete(0, strj_.length());
-      strj_.insert(0, from.strj_);
-      strk_.delete(0, strk_.length());
-      strk_.insert(0, from.strk_);
-      strl_.delete(0, strl_.length());
-      strl_.insert(0, from.strl_);
+      if (from == this)
+      {
+         return;
+      }
+
+      str1_.setLength(0);
+      str1_.append(from.str1_);
+      str2_.setLength(0);
+      str2_.append(from.str2_);
+      str3_.setLength(0);
+      str3_.append(from.str3_);
+      str4_.setLength(0);
+      str4_.append(from.str4_);
+      str5_.setLength(0);
+      str5_.append(from.str5_);
+      str6_.setLength(0);
+      str6_.append(from.str6_);
+      str7_.setLength(0);
+      str7_.append(from.str7_);
+      str8_.setLength(0);
+      str8_.append(from.str8_);
+      str9_.setLength(0);
+      str9_.append(from.str9_);
+      stra_.setLength(0);
+      stra_.append(from.stra_);
+      strb_.setLength(0);
+      strb_.append(from.strb_);
+      strc_.setLength(0);
+      strc_.append(from.strc_);
+      strd_.setLength(0);
+      strd_.append(from.strd_);
+      stre_.setLength(0);
+      stre_.append(from.stre_);
+      strf_.setLength(0);
+      strf_.append(from.strf_);
+      strg_.setLength(0);
+      strg_.append(from.strg_);
+      strh_.setLength(0);
+      strh_.append(from.strh_);
+      stri_.setLength(0);
+      stri_.append(from.stri_);
+      strj_.setLength(0);
+      strj_.append(from.strj_);
+      strk_.setLength(0);
+      strk_.append(from.strk_);
+      strl_.setLength(0);
+      strl_.append(from.strl_);
 
    }
 
@@ -232,366 +242,793 @@ public class StringTest implements ROS2Message<StringTest>
       return str1_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str1 (allocates). {@link #getStr1()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr1AsString()
    {
       return str1_.toString();
    }
 
+   /**
+    * Replaces the content of str1 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr1(java.lang.String s)
    {
-      this.str1_.delete(0, this.str1_.length());
-      this.str1_.insert(0, s);
+      this.str1_.setLength(0);
+      this.str1_.append(s);
+   }
+
+   /**
+    * Replaces the content of str1 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr1(java.lang.CharSequence s)
+   {
+      if (s != this.str1_)
+      {
+         this.str1_.setLength(0);
+         this.str1_.append(s);
+      }
    }
    public StringBuilder getStr2()
    {
       return str2_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str2 (allocates). {@link #getStr2()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr2AsString()
    {
       return str2_.toString();
    }
 
+   /**
+    * Replaces the content of str2 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr2(java.lang.String s)
    {
-      this.str2_.delete(0, this.str2_.length());
-      this.str2_.insert(0, s);
+      this.str2_.setLength(0);
+      this.str2_.append(s);
+   }
+
+   /**
+    * Replaces the content of str2 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr2(java.lang.CharSequence s)
+   {
+      if (s != this.str2_)
+      {
+         this.str2_.setLength(0);
+         this.str2_.append(s);
+      }
    }
    public StringBuilder getStr3()
    {
       return str3_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str3 (allocates). {@link #getStr3()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr3AsString()
    {
       return str3_.toString();
    }
 
+   /**
+    * Replaces the content of str3 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr3(java.lang.String s)
    {
-      this.str3_.delete(0, this.str3_.length());
-      this.str3_.insert(0, s);
+      this.str3_.setLength(0);
+      this.str3_.append(s);
+   }
+
+   /**
+    * Replaces the content of str3 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr3(java.lang.CharSequence s)
+   {
+      if (s != this.str3_)
+      {
+         this.str3_.setLength(0);
+         this.str3_.append(s);
+      }
    }
    public StringBuilder getStr4()
    {
       return str4_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str4 (allocates). {@link #getStr4()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr4AsString()
    {
       return str4_.toString();
    }
 
+   /**
+    * Replaces the content of str4 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr4(java.lang.String s)
    {
-      this.str4_.delete(0, this.str4_.length());
-      this.str4_.insert(0, s);
+      this.str4_.setLength(0);
+      this.str4_.append(s);
+   }
+
+   /**
+    * Replaces the content of str4 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr4(java.lang.CharSequence s)
+   {
+      if (s != this.str4_)
+      {
+         this.str4_.setLength(0);
+         this.str4_.append(s);
+      }
    }
    public StringBuilder getStr5()
    {
       return str5_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str5 (allocates). {@link #getStr5()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr5AsString()
    {
       return str5_.toString();
    }
 
+   /**
+    * Replaces the content of str5 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr5(java.lang.String s)
    {
-      this.str5_.delete(0, this.str5_.length());
-      this.str5_.insert(0, s);
+      this.str5_.setLength(0);
+      this.str5_.append(s);
+   }
+
+   /**
+    * Replaces the content of str5 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr5(java.lang.CharSequence s)
+   {
+      if (s != this.str5_)
+      {
+         this.str5_.setLength(0);
+         this.str5_.append(s);
+      }
    }
    public StringBuilder getStr6()
    {
       return str6_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str6 (allocates). {@link #getStr6()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr6AsString()
    {
       return str6_.toString();
    }
 
+   /**
+    * Replaces the content of str6 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr6(java.lang.String s)
    {
-      this.str6_.delete(0, this.str6_.length());
-      this.str6_.insert(0, s);
+      this.str6_.setLength(0);
+      this.str6_.append(s);
+   }
+
+   /**
+    * Replaces the content of str6 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr6(java.lang.CharSequence s)
+   {
+      if (s != this.str6_)
+      {
+         this.str6_.setLength(0);
+         this.str6_.append(s);
+      }
    }
    public StringBuilder getStr7()
    {
       return str7_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str7 (allocates). {@link #getStr7()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr7AsString()
    {
       return str7_.toString();
    }
 
+   /**
+    * Replaces the content of str7 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr7(java.lang.String s)
    {
-      this.str7_.delete(0, this.str7_.length());
-      this.str7_.insert(0, s);
+      this.str7_.setLength(0);
+      this.str7_.append(s);
+   }
+
+   /**
+    * Replaces the content of str7 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr7(java.lang.CharSequence s)
+   {
+      if (s != this.str7_)
+      {
+         this.str7_.setLength(0);
+         this.str7_.append(s);
+      }
    }
    public StringBuilder getStr8()
    {
       return str8_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str8 (allocates). {@link #getStr8()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr8AsString()
    {
       return str8_.toString();
    }
 
+   /**
+    * Replaces the content of str8 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr8(java.lang.String s)
    {
-      this.str8_.delete(0, this.str8_.length());
-      this.str8_.insert(0, s);
+      this.str8_.setLength(0);
+      this.str8_.append(s);
+   }
+
+   /**
+    * Replaces the content of str8 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr8(java.lang.CharSequence s)
+   {
+      if (s != this.str8_)
+      {
+         this.str8_.setLength(0);
+         this.str8_.append(s);
+      }
    }
    public StringBuilder getStr9()
    {
       return str9_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of str9 (allocates). {@link #getStr9()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStr9AsString()
    {
       return str9_.toString();
    }
 
+   /**
+    * Replaces the content of str9 with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStr9(java.lang.String s)
    {
-      this.str9_.delete(0, this.str9_.length());
-      this.str9_.insert(0, s);
+      this.str9_.setLength(0);
+      this.str9_.append(s);
+   }
+
+   /**
+    * Replaces the content of str9 with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStr9(java.lang.CharSequence s)
+   {
+      if (s != this.str9_)
+      {
+         this.str9_.setLength(0);
+         this.str9_.append(s);
+      }
    }
    public StringBuilder getStra()
    {
       return stra_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of stra (allocates). {@link #getStra()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStraAsString()
    {
       return stra_.toString();
    }
 
+   /**
+    * Replaces the content of stra with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStra(java.lang.String s)
    {
-      this.stra_.delete(0, this.stra_.length());
-      this.stra_.insert(0, s);
+      this.stra_.setLength(0);
+      this.stra_.append(s);
+   }
+
+   /**
+    * Replaces the content of stra with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStra(java.lang.CharSequence s)
+   {
+      if (s != this.stra_)
+      {
+         this.stra_.setLength(0);
+         this.stra_.append(s);
+      }
    }
    public StringBuilder getStrb()
    {
       return strb_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strb (allocates). {@link #getStrb()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrbAsString()
    {
       return strb_.toString();
    }
 
+   /**
+    * Replaces the content of strb with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrb(java.lang.String s)
    {
-      this.strb_.delete(0, this.strb_.length());
-      this.strb_.insert(0, s);
+      this.strb_.setLength(0);
+      this.strb_.append(s);
+   }
+
+   /**
+    * Replaces the content of strb with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrb(java.lang.CharSequence s)
+   {
+      if (s != this.strb_)
+      {
+         this.strb_.setLength(0);
+         this.strb_.append(s);
+      }
    }
    public StringBuilder getStrc()
    {
       return strc_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strc (allocates). {@link #getStrc()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrcAsString()
    {
       return strc_.toString();
    }
 
+   /**
+    * Replaces the content of strc with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrc(java.lang.String s)
    {
-      this.strc_.delete(0, this.strc_.length());
-      this.strc_.insert(0, s);
+      this.strc_.setLength(0);
+      this.strc_.append(s);
+   }
+
+   /**
+    * Replaces the content of strc with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrc(java.lang.CharSequence s)
+   {
+      if (s != this.strc_)
+      {
+         this.strc_.setLength(0);
+         this.strc_.append(s);
+      }
    }
    public StringBuilder getStrd()
    {
       return strd_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strd (allocates). {@link #getStrd()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrdAsString()
    {
       return strd_.toString();
    }
 
+   /**
+    * Replaces the content of strd with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrd(java.lang.String s)
    {
-      this.strd_.delete(0, this.strd_.length());
-      this.strd_.insert(0, s);
+      this.strd_.setLength(0);
+      this.strd_.append(s);
+   }
+
+   /**
+    * Replaces the content of strd with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrd(java.lang.CharSequence s)
+   {
+      if (s != this.strd_)
+      {
+         this.strd_.setLength(0);
+         this.strd_.append(s);
+      }
    }
    public StringBuilder getStre()
    {
       return stre_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of stre (allocates). {@link #getStre()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStreAsString()
    {
       return stre_.toString();
    }
 
+   /**
+    * Replaces the content of stre with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStre(java.lang.String s)
    {
-      this.stre_.delete(0, this.stre_.length());
-      this.stre_.insert(0, s);
+      this.stre_.setLength(0);
+      this.stre_.append(s);
+   }
+
+   /**
+    * Replaces the content of stre with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStre(java.lang.CharSequence s)
+   {
+      if (s != this.stre_)
+      {
+         this.stre_.setLength(0);
+         this.stre_.append(s);
+      }
    }
    public StringBuilder getStrf()
    {
       return strf_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strf (allocates). {@link #getStrf()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrfAsString()
    {
       return strf_.toString();
    }
 
+   /**
+    * Replaces the content of strf with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrf(java.lang.String s)
    {
-      this.strf_.delete(0, this.strf_.length());
-      this.strf_.insert(0, s);
+      this.strf_.setLength(0);
+      this.strf_.append(s);
+   }
+
+   /**
+    * Replaces the content of strf with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrf(java.lang.CharSequence s)
+   {
+      if (s != this.strf_)
+      {
+         this.strf_.setLength(0);
+         this.strf_.append(s);
+      }
    }
    public StringBuilder getStrg()
    {
       return strg_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strg (allocates). {@link #getStrg()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrgAsString()
    {
       return strg_.toString();
    }
 
+   /**
+    * Replaces the content of strg with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrg(java.lang.String s)
    {
-      this.strg_.delete(0, this.strg_.length());
-      this.strg_.insert(0, s);
+      this.strg_.setLength(0);
+      this.strg_.append(s);
+   }
+
+   /**
+    * Replaces the content of strg with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrg(java.lang.CharSequence s)
+   {
+      if (s != this.strg_)
+      {
+         this.strg_.setLength(0);
+         this.strg_.append(s);
+      }
    }
    public StringBuilder getStrh()
    {
       return strh_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strh (allocates). {@link #getStrh()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrhAsString()
    {
       return strh_.toString();
    }
 
+   /**
+    * Replaces the content of strh with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrh(java.lang.String s)
    {
-      this.strh_.delete(0, this.strh_.length());
-      this.strh_.insert(0, s);
+      this.strh_.setLength(0);
+      this.strh_.append(s);
+   }
+
+   /**
+    * Replaces the content of strh with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrh(java.lang.CharSequence s)
+   {
+      if (s != this.strh_)
+      {
+         this.strh_.setLength(0);
+         this.strh_.append(s);
+      }
    }
    public StringBuilder getStri()
    {
       return stri_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of stri (allocates). {@link #getStri()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStriAsString()
    {
       return stri_.toString();
    }
 
+   /**
+    * Replaces the content of stri with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStri(java.lang.String s)
    {
-      this.stri_.delete(0, this.stri_.length());
-      this.stri_.insert(0, s);
+      this.stri_.setLength(0);
+      this.stri_.append(s);
+   }
+
+   /**
+    * Replaces the content of stri with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStri(java.lang.CharSequence s)
+   {
+      if (s != this.stri_)
+      {
+         this.stri_.setLength(0);
+         this.stri_.append(s);
+      }
    }
    public StringBuilder getStrj()
    {
       return strj_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strj (allocates). {@link #getStrj()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrjAsString()
    {
       return strj_.toString();
    }
 
+   /**
+    * Replaces the content of strj with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrj(java.lang.String s)
    {
-      this.strj_.delete(0, this.strj_.length());
-      this.strj_.insert(0, s);
+      this.strj_.setLength(0);
+      this.strj_.append(s);
+   }
+
+   /**
+    * Replaces the content of strj with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrj(java.lang.CharSequence s)
+   {
+      if (s != this.strj_)
+      {
+         this.strj_.setLength(0);
+         this.strj_.append(s);
+      }
    }
    public StringBuilder getStrk()
    {
       return strk_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strk (allocates). {@link #getStrk()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrkAsString()
    {
       return strk_.toString();
    }
 
+   /**
+    * Replaces the content of strk with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrk(java.lang.String s)
    {
-      this.strk_.delete(0, this.strk_.length());
-      this.strk_.insert(0, s);
+      this.strk_.setLength(0);
+      this.strk_.append(s);
+   }
+
+   /**
+    * Replaces the content of strk with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrk(java.lang.CharSequence s)
+   {
+      if (s != this.strk_)
+      {
+         this.strk_.setLength(0);
+         this.strk_.append(s);
+      }
    }
    public StringBuilder getStrl()
    {
       return strl_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of strl (allocates). {@link #getStrl()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getStrlAsString()
    {
       return strl_.toString();
    }
 
+   /**
+    * Replaces the content of strl with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setStrl(java.lang.String s)
    {
-      this.strl_.delete(0, this.strl_.length());
-      this.strl_.insert(0, s);
+      this.strl_.setLength(0);
+      this.strl_.append(s);
    }
+
+   /**
+    * Replaces the content of strl with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setStrl(java.lang.CharSequence s)
+   {
+      if (s != this.strl_)
+      {
+         this.strl_.setLength(0);
+         this.strl_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"StringTest {", "str1_=", "str2_=", "str3_=", "str4_=", "str5_=", "str6_=", "str7_=", "str8_=", "str9_=", "stra_=", "strb_=", "strc_=", "strd_=", "stre_=", "strf_=", "strg_=", "strh_=", "stri_=", "strj_=", "strk_=", "strl_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("StringTest {");
-      builder.append("str1_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(str1_.toString());
-      builder.append("str2_=");
+      builder.append(toStringLabels[2]);
       builder.append(str2_.toString());
-      builder.append("str3_=");
+      builder.append(toStringLabels[3]);
       builder.append(str3_.toString());
-      builder.append("str4_=");
+      builder.append(toStringLabels[4]);
       builder.append(str4_.toString());
-      builder.append("str5_=");
+      builder.append(toStringLabels[5]);
       builder.append(str5_.toString());
-      builder.append("str6_=");
+      builder.append(toStringLabels[6]);
       builder.append(str6_.toString());
-      builder.append("str7_=");
+      builder.append(toStringLabels[7]);
       builder.append(str7_.toString());
-      builder.append("str8_=");
+      builder.append(toStringLabels[8]);
       builder.append(str8_.toString());
-      builder.append("str9_=");
+      builder.append(toStringLabels[9]);
       builder.append(str9_.toString());
-      builder.append("stra_=");
+      builder.append(toStringLabels[10]);
       builder.append(stra_.toString());
-      builder.append("strb_=");
+      builder.append(toStringLabels[11]);
       builder.append(strb_.toString());
-      builder.append("strc_=");
+      builder.append(toStringLabels[12]);
       builder.append(strc_.toString());
-      builder.append("strd_=");
+      builder.append(toStringLabels[13]);
       builder.append(strd_.toString());
-      builder.append("stre_=");
+      builder.append(toStringLabels[14]);
       builder.append(stre_.toString());
-      builder.append("strf_=");
+      builder.append(toStringLabels[15]);
       builder.append(strf_.toString());
-      builder.append("strg_=");
+      builder.append(toStringLabels[16]);
       builder.append(strg_.toString());
-      builder.append("strh_=");
+      builder.append(toStringLabels[17]);
       builder.append(strh_.toString());
-      builder.append("stri_=");
+      builder.append(toStringLabels[18]);
       builder.append(stri_.toString());
-      builder.append("strj_=");
+      builder.append(toStringLabels[19]);
       builder.append(strj_.toString());
-      builder.append("strk_=");
+      builder.append(toStringLabels[20]);
       builder.append(strk_.toString());
-      builder.append("strl_=");
+      builder.append(toStringLabels[21]);
       builder.append(strl_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

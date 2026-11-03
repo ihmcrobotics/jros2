@@ -34,6 +34,11 @@ public class Inertia implements ROS2Message<Inertia>
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Inertia_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Inertia, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_2ddd5dab5c347825ba2e56c895ddccfd0b8efe53ae931bf67f905529930b4bd7";
+
+   /**
       Mass [kg]
    */
    private double m_;
@@ -71,14 +76,14 @@ public class Inertia implements ROS2Message<Inertia>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // m_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // m_
       currentAlignment += com_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixx_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixy_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // ixz_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyy_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // iyz_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // izz_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // ixx_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // ixy_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // ixz_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // iyy_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // iyz_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // izz_
 
       return currentAlignment - initialAlignment;
    }
@@ -114,6 +119,11 @@ public class Inertia implements ROS2Message<Inertia>
    @Override
    public void set(Inertia from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       m_ = from.m_;
       com_.set(from.com_);
       ixx_ = from.ixx_;
@@ -201,29 +211,36 @@ public class Inertia implements ROS2Message<Inertia>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Inertia {", "m_=", "com_=", "ixx_=", "ixy_=", "ixz_=", "iyy_=", "iyz_=", "izz_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Inertia {");
-      builder.append("m_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(m_);
-      builder.append("com_=");
+      builder.append(toStringLabels[2]);
       builder.append(com_);
-      builder.append("ixx_=");
+      builder.append(toStringLabels[3]);
       builder.append(ixx_);
-      builder.append("ixy_=");
+      builder.append(toStringLabels[4]);
       builder.append(ixy_);
-      builder.append("ixz_=");
+      builder.append(toStringLabels[5]);
       builder.append(ixz_);
-      builder.append("iyy_=");
+      builder.append(toStringLabels[6]);
       builder.append(iyy_);
-      builder.append("iyz_=");
+      builder.append(toStringLabels[7]);
       builder.append(iyz_);
-      builder.append("izz_=");
+      builder.append(toStringLabels[8]);
       builder.append(izz_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

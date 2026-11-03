@@ -48,9 +48,14 @@ float32[] intensities        # intensity data [device-specific units].  If your
                              # the array empty.
 }</pre>
 */
-public class LaserScan implements ROS2Message<LaserScan>
+public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::LaserScan_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/LaserScan, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_64c191398013af96509d518dac71d5164f9382553fce5c1f8cca5be7924bd828";
 
    private final std_msgs.Header header_; // timestamp in the header is the acquisition time of
    private float angle_min_; // start angle of the scan [rad]
@@ -90,13 +95,13 @@ public class LaserScan implements ROS2Message<LaserScan>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_min_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_max_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // angle_increment_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // time_increment_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scan_time_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_min_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_max_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // angle_min_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // angle_max_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // angle_increment_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // time_increment_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // scan_time_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // range_min_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // range_max_
       currentAlignment += ranges_.calculateSizeBytes(currentAlignment);
       currentAlignment += intensities_.calculateSizeBytes(currentAlignment);
 
@@ -138,6 +143,11 @@ public class LaserScan implements ROS2Message<LaserScan>
    @Override
    public void set(LaserScan from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       angle_min_ = from.angle_min_;
       angle_max_ = from.angle_max_;
@@ -237,33 +247,40 @@ public class LaserScan implements ROS2Message<LaserScan>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"LaserScan {", "header_=", "angle_min_=", "angle_max_=", "angle_increment_=", "time_increment_=", "scan_time_=", "range_min_=", "range_max_=", "ranges_=", "intensities_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("LaserScan {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("angle_min_=");
+      builder.append(toStringLabels[2]);
       builder.append(angle_min_);
-      builder.append("angle_max_=");
+      builder.append(toStringLabels[3]);
       builder.append(angle_max_);
-      builder.append("angle_increment_=");
+      builder.append(toStringLabels[4]);
       builder.append(angle_increment_);
-      builder.append("time_increment_=");
+      builder.append(toStringLabels[5]);
       builder.append(time_increment_);
-      builder.append("scan_time_=");
+      builder.append(toStringLabels[6]);
       builder.append(scan_time_);
-      builder.append("range_min_=");
+      builder.append(toStringLabels[7]);
       builder.append(range_min_);
-      builder.append("range_max_=");
+      builder.append(toStringLabels[8]);
       builder.append(range_max_);
-      builder.append("ranges_=");
+      builder.append(toStringLabels[9]);
       builder.append(ranges_);
-      builder.append("intensities_=");
+      builder.append(toStringLabels[10]);
       builder.append(intensities_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

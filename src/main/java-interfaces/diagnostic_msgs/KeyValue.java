@@ -22,6 +22,11 @@ public class KeyValue implements ROS2Message<KeyValue>
    public static final java.lang.String name = "diagnostic_msgs::msg::dds_::KeyValue_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of diagnostic_msgs/msg/KeyValue, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d68081eaa540288c5440753baecef0c4e16e81a5f78ad68902ded5100413bb42";
+
+   /**
       What to label this value when viewing.
    */
    private final StringBuilder key_;
@@ -32,8 +37,8 @@ public class KeyValue implements ROS2Message<KeyValue>
 
    public KeyValue()
    {
-      key_ = new StringBuilder();
-      value_ = new StringBuilder();
+      key_ = CDRBuffer.newStringBuilder(16);
+      value_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -48,8 +53,8 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * key_.length()) + 1; // key_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * value_.length()) + 1; // value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(key_) + 1; // key_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(value_) + 1; // value_
 
       return currentAlignment - initialAlignment;
    }
@@ -73,10 +78,15 @@ public class KeyValue implements ROS2Message<KeyValue>
    @Override
    public void set(KeyValue from)
    {
-      key_.delete(0, key_.length());
-      key_.insert(0, from.key_);
-      value_.delete(0, value_.length());
-      value_.insert(0, from.value_);
+      if (from == this)
+      {
+         return;
+      }
+
+      key_.setLength(0);
+      key_.append(from.key_);
+      value_.setLength(0);
+      value_.append(from.value_);
 
    }
 
@@ -85,43 +95,90 @@ public class KeyValue implements ROS2Message<KeyValue>
       return key_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of key (allocates). {@link #getKey()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getKeyAsString()
    {
       return key_.toString();
    }
 
+   /**
+    * Replaces the content of key with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setKey(java.lang.String s)
    {
-      this.key_.delete(0, this.key_.length());
-      this.key_.insert(0, s);
+      this.key_.setLength(0);
+      this.key_.append(s);
+   }
+
+   /**
+    * Replaces the content of key with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setKey(java.lang.CharSequence s)
+   {
+      if (s != this.key_)
+      {
+         this.key_.setLength(0);
+         this.key_.append(s);
+      }
    }
    public StringBuilder getValue()
    {
       return value_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of value (allocates). {@link #getValue()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getValueAsString()
    {
       return value_.toString();
    }
 
+   /**
+    * Replaces the content of value with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setValue(java.lang.String s)
    {
-      this.value_.delete(0, this.value_.length());
-      this.value_.insert(0, s);
+      this.value_.setLength(0);
+      this.value_.append(s);
    }
+
+   /**
+    * Replaces the content of value with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setValue(java.lang.CharSequence s)
+   {
+      if (s != this.value_)
+      {
+         this.value_.setLength(0);
+         this.value_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"KeyValue {", "key_=", "value_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("KeyValue {");
-      builder.append("key_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(key_.toString());
-      builder.append("value_=");
+      builder.append(toStringLabels[2]);
       builder.append(value_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

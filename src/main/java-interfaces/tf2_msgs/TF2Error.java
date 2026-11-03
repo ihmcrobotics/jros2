@@ -27,19 +27,24 @@ public class TF2Error implements ROS2Message<TF2Error>
 {
    public static final java.lang.String name = "tf2_msgs::msg::dds_::TF2Error_";
 
-   public static final byte NO_ERROR = 0;
-   public static final byte LOOKUP_ERROR = 1;
-   public static final byte CONNECTIVITY_ERROR = 2;
-   public static final byte EXTRAPOLATION_ERROR = 3;
-   public static final byte INVALID_ARGUMENT_ERROR = 4;
-   public static final byte TIMEOUT_ERROR = 5;
-   public static final byte TRANSFORM_ERROR = 6;
+   /**
+    * RIHS01 type description hash (REP-2011) of tf2_msgs/msg/TF2Error, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_db2485e7d6a0ec75bf087e058ee45df682acc3a621ca7780503d10aac141809a";
+
+   public static final byte NO_ERROR = (byte) 0;
+   public static final byte LOOKUP_ERROR = (byte) 1;
+   public static final byte CONNECTIVITY_ERROR = (byte) 2;
+   public static final byte EXTRAPOLATION_ERROR = (byte) 3;
+   public static final byte INVALID_ARGUMENT_ERROR = (byte) 4;
+   public static final byte TIMEOUT_ERROR = (byte) 5;
+   public static final byte TRANSFORM_ERROR = (byte) 6;
    private byte error_;
    private final StringBuilder error_string_;
 
    public TF2Error()
    {
-      error_string_ = new StringBuilder();
+      error_string_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -54,8 +59,8 @@ public class TF2Error implements ROS2Message<TF2Error>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // error_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * error_string_.length()) + 1; // error_string_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // error_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(error_string_) + 1; // error_string_
 
       return currentAlignment - initialAlignment;
    }
@@ -79,9 +84,14 @@ public class TF2Error implements ROS2Message<TF2Error>
    @Override
    public void set(TF2Error from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       error_ = from.error_;
-      error_string_.delete(0, error_string_.length());
-      error_string_.insert(0, from.error_string_);
+      error_string_.setLength(0);
+      error_string_.append(from.error_string_);
 
    }
 
@@ -100,42 +110,69 @@ public class TF2Error implements ROS2Message<TF2Error>
       return error_string_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of error_string (allocates). {@link #getErrorString()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getErrorStringAsString()
    {
       return error_string_.toString();
    }
 
+   /**
+    * Replaces the content of error_string with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setErrorString(java.lang.String s)
    {
-      this.error_string_.delete(0, this.error_string_.length());
-      this.error_string_.insert(0, s);
+      this.error_string_.setLength(0);
+      this.error_string_.append(s);
    }
+
+   /**
+    * Replaces the content of error_string with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setErrorString(java.lang.CharSequence s)
+   {
+      if (s != this.error_string_)
+      {
+         this.error_string_.setLength(0);
+         this.error_string_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"TF2Error {", "NO_ERROR=", "LOOKUP_ERROR=", "CONNECTIVITY_ERROR=", "EXTRAPOLATION_ERROR=", "INVALID_ARGUMENT_ERROR=", "TIMEOUT_ERROR=", "TRANSFORM_ERROR=", "error_=", "error_string_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("TF2Error {");
-      builder.append("NO_ERROR=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(NO_ERROR);
-      builder.append("LOOKUP_ERROR=");
+      builder.append(toStringLabels[2]);
       builder.append(LOOKUP_ERROR);
-      builder.append("CONNECTIVITY_ERROR=");
+      builder.append(toStringLabels[3]);
       builder.append(CONNECTIVITY_ERROR);
-      builder.append("EXTRAPOLATION_ERROR=");
+      builder.append(toStringLabels[4]);
       builder.append(EXTRAPOLATION_ERROR);
-      builder.append("INVALID_ARGUMENT_ERROR=");
+      builder.append(toStringLabels[5]);
       builder.append(INVALID_ARGUMENT_ERROR);
-      builder.append("TIMEOUT_ERROR=");
+      builder.append(toStringLabels[6]);
       builder.append(TIMEOUT_ERROR);
-      builder.append("TRANSFORM_ERROR=");
+      builder.append(toStringLabels[7]);
       builder.append(TRANSFORM_ERROR);
-      builder.append("error_=");
+      builder.append(toStringLabels[8]);
       builder.append(error_);
-      builder.append("error_string_=");
+      builder.append(toStringLabels[9]);
       builder.append(error_string_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

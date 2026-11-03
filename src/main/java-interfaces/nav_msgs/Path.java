@@ -21,9 +21,14 @@ std_msgs/Header header
 geometry_msgs/PoseStamped[] poses
 }</pre>
 */
-public class Path implements ROS2Message<Path>
+public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::Path_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of nav_msgs/msg/Path, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_1957a5bb3cee5da65c4e52e52b65a93df227efce4c20f8458b36e73066ca334b";
 
    /**
       Indicates the frame_id of the path.
@@ -77,8 +82,13 @@ public class Path implements ROS2Message<Path>
    @Override
    public void set(Path from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      poses_.set(from.poses_);
+      poses_.set(from.poses_, geometry_msgs.PoseStamped::set); // copies the elements, never shares them
 
    }
 
@@ -93,17 +103,24 @@ public class Path implements ROS2Message<Path>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Path {", "header_=", "poses_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Path {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("poses_=");
+      builder.append(toStringLabels[2]);
       builder.append(poses_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -23,6 +23,11 @@ public class Int8 implements ROS2Message<Int8>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Int8_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/Int8, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_2e9ef643d84ff37840fe787d1269aa06268960e294f4a0f5eb1e9d4eb21cbb57";
+
+   /**
       This is an example message of using a primitive datatype, in8.
       If you want to test with this that's fine, but if you are deploying
       it into a system you should create a semantically meaningful message type.
@@ -45,7 +50,7 @@ public class Int8 implements ROS2Message<Int8>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -67,6 +72,11 @@ public class Int8 implements ROS2Message<Int8>
    @Override
    public void set(Int8 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -82,15 +92,22 @@ public class Int8 implements ROS2Message<Int8>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Int8 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Int8 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

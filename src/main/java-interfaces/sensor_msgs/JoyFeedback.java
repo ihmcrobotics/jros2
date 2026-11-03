@@ -32,11 +32,16 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedback_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/JoyFeedback, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_231dd362f71d6fc08272770d07120ad5fe5874ce2dbac70109b28986834290cd";
+
+   /**
       Declare of the type of feedback
    */
-   public static final byte TYPE_LED = 0;
-   public static final byte TYPE_RUMBLE = 1;
-   public static final byte TYPE_BUZZER = 2;
+   public static final byte TYPE_LED = (byte) 0;
+   public static final byte TYPE_RUMBLE = (byte) 1;
+   public static final byte TYPE_BUZZER = (byte) 2;
    private byte type_;
    /**
       This will hold an id number for each type of each feedback.
@@ -64,9 +69,9 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // type_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // intensity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // intensity_
 
       return currentAlignment - initialAlignment;
    }
@@ -92,6 +97,11 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    @Override
    public void set(JoyFeedback from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       type_ = from.type_;
       id_ = from.id_;
       intensity_ = from.intensity_;
@@ -129,25 +139,32 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"JoyFeedback {", "TYPE_LED=", "TYPE_RUMBLE=", "TYPE_BUZZER=", "type_=", "id_=", "intensity_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("JoyFeedback {");
-      builder.append("TYPE_LED=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(TYPE_LED);
-      builder.append("TYPE_RUMBLE=");
+      builder.append(toStringLabels[2]);
       builder.append(TYPE_RUMBLE);
-      builder.append("TYPE_BUZZER=");
+      builder.append(toStringLabels[3]);
       builder.append(TYPE_BUZZER);
-      builder.append("type_=");
+      builder.append(toStringLabels[4]);
       builder.append(type_);
-      builder.append("id_=");
+      builder.append(toStringLabels[5]);
       builder.append(id_);
-      builder.append("intensity_=");
+      builder.append(toStringLabels[6]);
       builder.append(intensity_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -13,7 +13,7 @@ repositories {
 }
 
 dependencies {
-    implementation("us.ihmc:jros2:1.3.0")
+    implementation("us.ihmc:jros2:1.6.0")
 }
 
 application {

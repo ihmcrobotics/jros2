@@ -335,6 +335,35 @@ final class jros2 implements jros2Settings
       return false;
    }
 
+   @Override
+   public String rawSetting(Key key)
+   {
+      // Loop through setting sources in order of priority
+      for (int i = 0; i < settingsSources.length; ++i)
+      {
+         if (settingsSources[i].hasRawSetting(key))
+         {
+            return settingsSources[i].rawSetting(key);
+         }
+      }
+
+      return null;
+   }
+
+   @Override
+   public boolean hasRawSetting(Key key)
+   {
+      for (int i = 0; i < settingsSources.length; ++i)
+      {
+         if (settingsSources[i].hasRawSetting(key))
+         {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
    public jros2Settings[] getSettingsSources()
    {
       return settingsSources;

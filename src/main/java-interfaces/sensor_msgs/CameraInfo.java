@@ -147,9 +147,14 @@ uint32 binning_y
 RegionOfInterest roi
 }</pre>
 */
-public class CameraInfo implements ROS2Message<CameraInfo>
+public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::CameraInfo_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/CameraInfo, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_b3dfd68ff46c9d56c80fd3bd4ed22c7a4ddce8c8348f2f59c299e73118e7e275";
 
    /**
       Time of image acquisition, camera coordinate frame ID
@@ -239,7 +244,7 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    public CameraInfo()
    {
       header_ = new std_msgs.Header();
-      distortion_model_ = new StringBuilder();
+      distortion_model_ = CDRBuffer.newStringBuilder(16);
       d_ = new IDLDoubleSequence();
       k_ = new double[9];
       r_ = new double[9];
@@ -260,15 +265,15 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * distortion_model_.length()) + 1; // distortion_model_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(distortion_model_) + 1; // distortion_model_
       currentAlignment += d_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // k_
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // r_
-      currentAlignment += (12 * 8) + CDRBuffer.alignment(currentAlignment, (12 * 8)); // p_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_x_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // binning_y_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // k_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // r_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (12 * 8); // p_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // binning_x_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // binning_y_
       currentAlignment += roi_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -282,18 +287,9 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       buffer.writeInt(width_);
       buffer.writeString(distortion_model_);
       d_.serialize(buffer);
-      for (int i = 0; i < k_.length; ++i)
-      {
-         buffer.writeDouble(k_[i]);
-      }
-      for (int i = 0; i < r_.length; ++i)
-      {
-         buffer.writeDouble(r_[i]);
-      }
-      for (int i = 0; i < p_.length; ++i)
-      {
-         buffer.writeDouble(p_[i]);
-      }
+      buffer.writeDoubleArray(k_);
+      buffer.writeDoubleArray(r_);
+      buffer.writeDoubleArray(p_);
       buffer.writeInt(binning_x_);
       buffer.writeInt(binning_y_);
       roi_.serialize(buffer);
@@ -308,18 +304,9 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       width_ = buffer.readInt();
       buffer.readString(distortion_model_);
       d_.deserialize(buffer);
-      for (int i = 0; i < k_.length; ++i)
-      {
-         k_[i] = buffer.readDouble();
-      }
-      for (int i = 0; i < r_.length; ++i)
-      {
-         r_[i] = buffer.readDouble();
-      }
-      for (int i = 0; i < p_.length; ++i)
-      {
-         p_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(k_);
+      buffer.readDoubleArray(r_);
+      buffer.readDoubleArray(p_);
       binning_x_ = buffer.readInt();
       binning_y_ = buffer.readInt();
       roi_.deserialize(buffer);
@@ -329,24 +316,20 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    @Override
    public void set(CameraInfo from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
-      distortion_model_.delete(0, distortion_model_.length());
-      distortion_model_.insert(0, from.distortion_model_);
+      distortion_model_.setLength(0);
+      distortion_model_.append(from.distortion_model_);
       d_.set(from.d_);
-      for (int i = 0; i < k_.length; ++i)
-      {
-         k_[i] = from.k_[i];
-      }
-      for (int i = 0; i < r_.length; ++i)
-      {
-         r_[i] = from.r_[i];
-      }
-      for (int i = 0; i < p_.length; ++i)
-      {
-         p_[i] = from.p_[i];
-      }
+      System.arraycopy(from.k_, 0, k_, 0, k_.length);
+      System.arraycopy(from.r_, 0, r_, 0, r_.length);
+      System.arraycopy(from.p_, 0, p_, 0, p_.length);
       binning_x_ = from.binning_x_;
       binning_y_ = from.binning_y_;
       roi_.set(from.roi_);
@@ -383,15 +366,35 @@ public class CameraInfo implements ROS2Message<CameraInfo>
       return distortion_model_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of distortion_model (allocates). {@link #getDistortionModel()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getDistortionModelAsString()
    {
       return distortion_model_.toString();
    }
 
+   /**
+    * Replaces the content of distortion_model with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setDistortionModel(java.lang.String s)
    {
-      this.distortion_model_.delete(0, this.distortion_model_.length());
-      this.distortion_model_.insert(0, s);
+      this.distortion_model_.setLength(0);
+      this.distortion_model_.append(s);
+   }
+
+   /**
+    * Replaces the content of distortion_model with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setDistortionModel(java.lang.CharSequence s)
+   {
+      if (s != this.distortion_model_)
+      {
+         this.distortion_model_.setLength(0);
+         this.distortion_model_.append(s);
+      }
    }
    public IDLDoubleSequence getD()
    {
@@ -439,35 +442,42 @@ public class CameraInfo implements ROS2Message<CameraInfo>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"CameraInfo {", "header_=", "height_=", "width_=", "distortion_model_=", "d_=", "k_=", "r_=", "p_=", "binning_x_=", "binning_y_=", "roi_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("CameraInfo {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("height_=");
+      builder.append(toStringLabels[2]);
       builder.append(height_);
-      builder.append("width_=");
+      builder.append(toStringLabels[3]);
       builder.append(width_);
-      builder.append("distortion_model_=");
+      builder.append(toStringLabels[4]);
       builder.append(distortion_model_.toString());
-      builder.append("d_=");
+      builder.append(toStringLabels[5]);
       builder.append(d_);
-      builder.append("k_=");
+      builder.append(toStringLabels[6]);
       builder.append(java.util.Arrays.toString(k_));
-      builder.append("r_=");
+      builder.append(toStringLabels[7]);
       builder.append(java.util.Arrays.toString(r_));
-      builder.append("p_=");
+      builder.append(toStringLabels[8]);
       builder.append(java.util.Arrays.toString(p_));
-      builder.append("binning_x_=");
+      builder.append(toStringLabels[9]);
       builder.append(binning_x_);
-      builder.append("binning_y_=");
+      builder.append(toStringLabels[10]);
       builder.append(binning_y_);
-      builder.append("roi_=");
+      builder.append(toStringLabels[11]);
       builder.append(roi_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

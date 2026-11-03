@@ -42,9 +42,14 @@ float32 max_disparity
 float32 delta_d
 }</pre>
 */
-public class DisparityImage implements ROS2Message<DisparityImage>
+public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "stereo_msgs::msg::dds_::DisparityImage_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of stereo_msgs/msg/DisparityImage, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_1ec1ff6b5bace919e4544a37f2d96ead9f81783701b7b7a4d97a09325ecf2711";
 
    /**
       Separate header for compatibility with current TimeSynchronizer.
@@ -104,12 +109,12 @@ public class DisparityImage implements ROS2Message<DisparityImage>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += image_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // f_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // t_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // f_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // t_
       currentAlignment += valid_window_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // min_disparity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // max_disparity_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // delta_d_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // min_disparity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // max_disparity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // delta_d_
 
       return currentAlignment - initialAlignment;
    }
@@ -145,6 +150,11 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    @Override
    public void set(DisparityImage from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       image_.set(from.image_);
       f_ = from.f_;
@@ -222,29 +232,36 @@ public class DisparityImage implements ROS2Message<DisparityImage>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"DisparityImage {", "header_=", "image_=", "f_=", "t_=", "valid_window_=", "min_disparity_=", "max_disparity_=", "delta_d_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("DisparityImage {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("image_=");
+      builder.append(toStringLabels[2]);
       builder.append(image_);
-      builder.append("f_=");
+      builder.append(toStringLabels[3]);
       builder.append(f_);
-      builder.append("t_=");
+      builder.append(toStringLabels[4]);
       builder.append(t_);
-      builder.append("valid_window_=");
+      builder.append(toStringLabels[5]);
       builder.append(valid_window_);
-      builder.append("min_disparity_=");
+      builder.append(toStringLabels[6]);
       builder.append(min_disparity_);
-      builder.append("max_disparity_=");
+      builder.append(toStringLabels[7]);
       builder.append(max_disparity_);
-      builder.append("delta_d_=");
+      builder.append(toStringLabels[8]);
       builder.append(delta_d_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>rihs_gaps</name>
+  <version>0.0.0</version>
+  <description>RIHS01 edge cases (jros2 tests)</description>
+  <maintainer email="none@example.com">none</maintainer>
+  <license>Apache-2.0</license>
+</package>

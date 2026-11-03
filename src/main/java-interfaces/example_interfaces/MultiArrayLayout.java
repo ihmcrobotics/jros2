@@ -70,6 +70,11 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 {
    public static final java.lang.String name = "example_interfaces::msg::dds_::MultiArrayLayout_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/MultiArrayLayout, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_ba42ea30074e5826a1e91f70f3660dda2996937169487f877fc20a8a402e2c27";
+
    private final IDLObjectSequence<example_interfaces.MultiArrayDimension> dim_; // Array of dimension properties
    private int data_offset_; // padding bytes at front of data
 
@@ -91,7 +96,7 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
       int initialAlignment = currentAlignment;
 
       currentAlignment += dim_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // data_offset_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // data_offset_
 
       return currentAlignment - initialAlignment;
    }
@@ -115,7 +120,12 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    @Override
    public void set(MultiArrayLayout from)
    {
-      dim_.set(from.dim_);
+      if (from == this)
+      {
+         return;
+      }
+
+      dim_.set(from.dim_, example_interfaces.MultiArrayDimension::set); // copies the elements, never shares them
       data_offset_ = from.data_offset_;
 
    }
@@ -136,17 +146,24 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MultiArrayLayout {", "dim_=", "data_offset_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MultiArrayLayout {");
-      builder.append("dim_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(dim_);
-      builder.append("data_offset_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_offset_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -18,6 +18,11 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
 {
    public static final java.lang.String name = "my_interfaces::msg::dds_::MyPoint3DList_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of my_interfaces/msg/MyPoint3DList, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_f2e1b060fe31dc6dcf33ad7c6acf4ce66bba5462fbe91a718273dd506a1acbb7";
+
    private final sensor_msgs.Image s_;
    private final IDLObjectSequence<us.ihmc.MyPoint3DMessage> point_list_;
 
@@ -26,6 +31,12 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
       s_ = new sensor_msgs.Image();
       point_list_ = new IDLObjectSequence<us.ihmc.MyPoint3DMessage>(us.ihmc.MyPoint3DMessage.class);
 
+   }
+
+   public MyPoint3DList(MyPoint3DList from)
+   {
+      this();
+      set(from);
    }
 
    @Override
@@ -58,6 +69,11 @@ public class MyPoint3DList implements ROS2Message<MyPoint3DList>
    @Override
    public void set(MyPoint3DList from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       s_.set(from.s_);
       point_list_.set(from.point_list_);
 

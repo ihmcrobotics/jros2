@@ -58,6 +58,13 @@ public final class MsgParser
 
          if (field != null)
          {
+            if (msgContext.getFields().containsKey(field.getName()))
+            {
+               throw new InterfaceFieldParsingException(field.getName(),
+                                                        line,
+                                                        new IllegalArgumentException("Duplicate field or constant name '" + field.getName() + "'"));
+            }
+
             msgContext.getFields().put(field.getName(), field);
          }
       }

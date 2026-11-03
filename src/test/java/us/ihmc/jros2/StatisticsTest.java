@@ -149,6 +149,10 @@ public class StatisticsTest
          receivedCount.incrementAndGet();
       });
 
+      // Statistics are opt-in
+      publisher.setStatisticsEnabled(true);
+      subscription.setStatisticsEnabled(true);
+
       // Publish messages at a fixed rate for a few seconds
       AtomicInteger publishCount = new AtomicInteger(0);
       ScheduledExecutorService publishExecutor = Executors.newSingleThreadScheduledExecutor();

@@ -111,17 +111,6 @@ public class Statistics
    @Override
    public String toString()
    {
-      StringBuilder builder = new StringBuilder(getClass().getSimpleName());
-      builder.append(": {");
-
-      for (int i = 0; i < StatisticDataType.values.length; ++i)
-      {
-         StatisticDataType statisticType = StatisticDataType.values[i];
-         builder.append(statisticType.name()).append("=").append(get(statisticType)).append(", ");
-      }
-      int lastCommaIndex = builder.lastIndexOf(", ");
-      builder.replace(lastCommaIndex, lastCommaIndex + 2, "}");
-
-      return builder.toString();
+      return HotPathText.statisticsToString(this);
    }
 }

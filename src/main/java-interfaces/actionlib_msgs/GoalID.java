@@ -28,6 +28,11 @@ public class GoalID implements ROS2Message<GoalID>
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalID_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of actionlib_msgs/msg/GoalID, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_140ea4a1bad4781edc32030c7983ab3a62c675f861c61c9b2200ae5e5398be24";
+
+   /**
       The stamp should store the time at which this goal was requested.
       It is used by an action server when it tries to preempt all
       goals that were requested before a certain time
@@ -43,7 +48,7 @@ public class GoalID implements ROS2Message<GoalID>
    public GoalID()
    {
       stamp_ = new builtin_interfaces.Time();
-      id_ = new StringBuilder();
+      id_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -59,7 +64,7 @@ public class GoalID implements ROS2Message<GoalID>
       int initialAlignment = currentAlignment;
 
       currentAlignment += stamp_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * id_.length()) + 1; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(id_) + 1; // id_
 
       return currentAlignment - initialAlignment;
    }
@@ -83,9 +88,14 @@ public class GoalID implements ROS2Message<GoalID>
    @Override
    public void set(GoalID from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       stamp_.set(from.stamp_);
-      id_.delete(0, id_.length());
-      id_.insert(0, from.id_);
+      id_.setLength(0);
+      id_.append(from.id_);
 
    }
 
@@ -99,28 +109,55 @@ public class GoalID implements ROS2Message<GoalID>
       return id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of id (allocates). {@link #getId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getIdAsString()
    {
       return id_.toString();
    }
 
+   /**
+    * Replaces the content of id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setId(java.lang.String s)
    {
-      this.id_.delete(0, this.id_.length());
-      this.id_.insert(0, s);
+      this.id_.setLength(0);
+      this.id_.append(s);
    }
+
+   /**
+    * Replaces the content of id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setId(java.lang.CharSequence s)
+   {
+      if (s != this.id_)
+      {
+         this.id_.setLength(0);
+         this.id_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"GoalID {", "stamp_=", "id_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("GoalID {");
-      builder.append("stamp_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(stamp_);
-      builder.append("id_=");
+      builder.append(toStringLabels[2]);
       builder.append(id_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

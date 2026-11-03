@@ -22,6 +22,11 @@ public class Wrench implements ROS2Message<Wrench>
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::Wrench_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/Wrench, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_018e8519d57c16adbe97c9fe1460ef21fec7e31bc541de3d653a35895677ce52";
+
    private final geometry_msgs.Vector3 force_;
    private final geometry_msgs.Vector3 torque_;
 
@@ -68,6 +73,11 @@ public class Wrench implements ROS2Message<Wrench>
    @Override
    public void set(Wrench from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       force_.set(from.force_);
       torque_.set(from.torque_);
 
@@ -84,17 +94,24 @@ public class Wrench implements ROS2Message<Wrench>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Wrench {", "force_=", "torque_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Wrench {");
-      builder.append("force_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(force_);
-      builder.append("torque_=");
+      builder.append(toStringLabels[2]);
       builder.append(torque_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

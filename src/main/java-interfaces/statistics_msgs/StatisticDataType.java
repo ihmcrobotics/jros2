@@ -44,17 +44,22 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    public static final java.lang.String name = "statistics_msgs::msg::dds_::StatisticDataType_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of statistics_msgs/msg/StatisticDataType, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_840d83bd5dc660e0c6e996f9e1ab80bec3c5a91976360a40d6cc579a37a8c959";
+
+   /**
       Constant for uninitialized
    */
-   public static final byte STATISTICS_DATA_TYPE_UNINITIALIZED = 0;
+   public static final byte STATISTICS_DATA_TYPE_UNINITIALIZED = (byte) 0;
    /**
       Allowed values
    */
-   public static final byte STATISTICS_DATA_TYPE_AVERAGE = 1;
-   public static final byte STATISTICS_DATA_TYPE_MINIMUM = 2;
-   public static final byte STATISTICS_DATA_TYPE_MAXIMUM = 3;
-   public static final byte STATISTICS_DATA_TYPE_STDDEV = 4;
-   public static final byte STATISTICS_DATA_TYPE_SAMPLE_COUNT = 5;
+   public static final byte STATISTICS_DATA_TYPE_AVERAGE = (byte) 1;
+   public static final byte STATISTICS_DATA_TYPE_MINIMUM = (byte) 2;
+   public static final byte STATISTICS_DATA_TYPE_MAXIMUM = (byte) 3;
+   public static final byte STATISTICS_DATA_TYPE_STDDEV = (byte) 4;
+   public static final byte STATISTICS_DATA_TYPE_SAMPLE_COUNT = (byte) 5;
 
    public StatisticDataType()
    {
@@ -71,43 +76,58 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += 1; // uint8 structure_needs_at_least_one_member
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      buffer.writeStructureDummyMember();
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      buffer.readStructureDummyMember();
    }
 
    @Override
    public void set(StatisticDataType from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
    }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"StatisticDataType {", "STATISTICS_DATA_TYPE_UNINITIALIZED=", "STATISTICS_DATA_TYPE_AVERAGE=", "STATISTICS_DATA_TYPE_MINIMUM=", "STATISTICS_DATA_TYPE_MAXIMUM=", "STATISTICS_DATA_TYPE_STDDEV=", "STATISTICS_DATA_TYPE_SAMPLE_COUNT="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("StatisticDataType {");
-      builder.append("STATISTICS_DATA_TYPE_UNINITIALIZED=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(STATISTICS_DATA_TYPE_UNINITIALIZED);
-      builder.append("STATISTICS_DATA_TYPE_AVERAGE=");
+      builder.append(toStringLabels[2]);
       builder.append(STATISTICS_DATA_TYPE_AVERAGE);
-      builder.append("STATISTICS_DATA_TYPE_MINIMUM=");
+      builder.append(toStringLabels[3]);
       builder.append(STATISTICS_DATA_TYPE_MINIMUM);
-      builder.append("STATISTICS_DATA_TYPE_MAXIMUM=");
+      builder.append(toStringLabels[4]);
       builder.append(STATISTICS_DATA_TYPE_MAXIMUM);
-      builder.append("STATISTICS_DATA_TYPE_STDDEV=");
+      builder.append(toStringLabels[5]);
       builder.append(STATISTICS_DATA_TYPE_STDDEV);
-      builder.append("STATISTICS_DATA_TYPE_SAMPLE_COUNT=");
+      builder.append(toStringLabels[6]);
       builder.append(STATISTICS_DATA_TYPE_SAMPLE_COUNT);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

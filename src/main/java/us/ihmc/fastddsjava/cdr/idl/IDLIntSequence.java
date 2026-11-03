@@ -20,9 +20,16 @@ import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import java.nio.IntBuffer;
 import java.util.Iterator;
 
+/**
+ * IDL sequence of int32 / uint32 (stored as int) values backed by a heap {@link IntBuffer}.
+ * <p>
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * </p>
+ */
 public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Iterable<Integer>
 {
    private static final IntBuffer EMPTY_BUFFER = IntBuffer.allocate(0);
+   private static final int ELEMENT_SIZE_BYTES = 4;
 
    private IntBuffer buffer;
 
@@ -48,7 +55,7 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    /**
     * Get the backing heap {@link IntBuffer} holding all int values in the sequence.
     * Use this for efficient copy operations, however, ensure the buffer is the correct capacity
-    * first with {@link #ensureMinCapacity(int)}!
+    * first with {@link #ensureMinCapacity(int)}! The buffer's position is the size of the sequence.
     *
     * @return the buffer of int values
     */
@@ -76,13 +83,32 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    }
 
    /**
-    * Appends an int value to the end of the sequence.
+    * Sets the element at {@code index} without requiring sequential {@link #add(int)} calls.
+    * Extends the logical {@link #size()} when {@code index} is at or beyond the current size.
+    *
+    * @throws IllegalArgumentException if {@code index} is not below the upper bound of the sequence
+    */
+   public void putAt(int index, int value)
+   {
+      if (index < 0)
+      {
+         throw IDLSequenceErrors.negativeIndex(index);
+      }
+      ensureSizeWithinBound(index + 1);
+      buffer.put(index, value);
+      if (buffer.position() <= index)
+         buffer.position(index + 1);
+   }
+
+   /**
+    * Appends a int value to the end of the sequence.
     *
     * @param value the int value to add
+    * @throws IllegalArgumentException if the sequence is bounded and already full
     */
    public void add(int value)
    {
-      ensureMinCapacity(buffer.position() + 1);
+      ensureSizeWithinBound(buffer.position() + 1);
       buffer.put(value);
    }
 
@@ -91,10 +117,16 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
     * This is a highly efficient bulk operation using NIO buffer operations.
     *
     * @param values the int array to add
+    * @throws IllegalArgumentException if the result would exceed the upper bound (nothing is added)
     */
    public void addAll(int[] values)
    {
-      ensureMinCapacity(buffer.position() + values.length);
+      long newSize = (long) buffer.position() + values.length;
+      if (newSize > getMaxSize())
+      {
+         throw exceedsUpperBound(newSize);
+      }
+      ensureSizeWithinBound((int) newSize);
       buffer.put(values);
    }
 
@@ -119,9 +151,16 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
     */
    public int remove(int index)
    {
-      int value = buffer.get(index);
-      buffer.put(index, buffer, index + 1, buffer.position() - index - 1);
-      buffer.position(buffer.position() - 1);
+      int size = buffer.position();
+      if (index < 0 || index >= size)
+      {
+         throw IDLSequenceErrors.indexOutOfBounds(index, size);
+      }
+      int[] array = buffer.array();
+      int offset = buffer.arrayOffset();
+      int value = array[offset + index];
+      System.arraycopy(array, offset + index + 1, array, offset + index, size - index - 1);
+      buffer.position(size - 1);
       return value;
    }
 
@@ -142,23 +181,23 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    @Override
    public boolean ensureMinCapacity(int desiredCapacity)
    {
-      if (buffer.capacity() < desiredCapacity)
+      if (buffer.capacity() >= desiredCapacity)
       {
-         desiredCapacity = Math.min(Math.max(desiredCapacity, buffer.capacity() * CAPACITY_GROW_SCALAR), getMaxSize());
-
-         if (desiredCapacity > getMaxSize())
-         {
-            return false;
-         }
-         else
-         {
-            IntBuffer newBuffer = IntBuffer.allocate(desiredCapacity);
-            newBuffer.put(0, buffer, 0, buffer.position());
-            newBuffer.position(buffer.position());
-
-            buffer = newBuffer;
-         }
+         return true;
       }
+
+      int newCapacity = grownCapacity(buffer.capacity(), desiredCapacity);
+      if (newCapacity < 0)
+      {
+         return false;
+      }
+
+      int size = buffer.position();
+      IntBuffer newBuffer = IntBuffer.allocate(newCapacity);
+      System.arraycopy(buffer.array(), buffer.arrayOffset(), newBuffer.array(), newBuffer.arrayOffset(), size);
+      newBuffer.position(size);
+
+      buffer = newBuffer;
 
       return true;
    }
@@ -166,13 +205,25 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    @Override
    public int elementSizeBytes(int currentAlignment, int i)
    {
-      return 4; // Size of int/float element (alignment added by caller)
+      return ELEMENT_SIZE_BYTES; // Size of int element (alignment added by caller)
+   }
+
+   @Override
+   protected int minimumElementSizeBytes()
+   {
+      return ELEMENT_SIZE_BYTES;
+   }
+
+   @Override
+   public int calculateSizeBytes(int currentAlignment)
+   {
+      return primitiveSequenceSizeBytes(currentAlignment, size(), ELEMENT_SIZE_BYTES);
    }
 
    @Override
    public void readElement(CDRBuffer cdrBuffer)
    {
-      buffer.put(cdrBuffer.readInt());
+      add(cdrBuffer.readInt());
    }
 
    @Override
@@ -181,15 +232,53 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
       cdrBuffer.writeInt(buffer.get(i));
    }
 
+   /**
+    * Writes the length and all elements in bulk.
+    *
+    * @throws IllegalArgumentException if the sequence has more elements than its upper bound
+    */
+   @Override
+   public void serialize(CDRBuffer cdrBuffer)
+   {
+      checkSizeWithinBound();
+
+      int size = buffer.position();
+      cdrBuffer.writeSequenceLength(size);
+      cdrBuffer.writeIntArray(buffer.array(), buffer.arrayOffset(), size);
+   }
+
+   /**
+    * Reads the length and all elements in bulk, replacing the content of this sequence.
+    *
+    * @throws us.ihmc.fastddsjava.cdr.CDRDeserializationException if the length exceeds the upper bound or the remaining payload
+    */
+   @Override
+   public void deserialize(CDRBuffer cdrBuffer)
+   {
+      buffer.clear();
+
+      int size = cdrBuffer.readSequenceLength(ELEMENT_SIZE_BYTES, getMaxSize());
+      ensureMinCapacity(size);
+      cdrBuffer.readIntArray(buffer.array(), buffer.arrayOffset(), size);
+      buffer.position(size);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public void set(IDLIntSequence other)
    {
-      clear();
-
       int othersElements = other.size();
+      if (othersElements > getMaxSize())
+      {
+         throw exceedsUpperBound(othersElements);
+      }
+
+      buffer.clear();
       ensureMinCapacity(othersElements);
 
-      buffer.put(0, other.buffer, 0, othersElements);
+      System.arraycopy(other.buffer.array(), other.buffer.arrayOffset(), buffer.array(), buffer.arrayOffset(), othersElements);
       buffer.position(othersElements);
    }
 
@@ -197,19 +286,23 @@ public class IDLIntSequence extends IDLSequence<IDLIntSequence> implements Itera
    public String toString()
    {
       StringBuilder builder = new StringBuilder();
-      builder.append("[");
+      builder.append('[');
       for (int i = 0; i < size(); ++i)
       {
          builder.append(buffer.get(i));
          if (i < size() - 1)
          {
-            builder.append(", ");
+            builder.append(',').append(' ');
          }
       }
-      builder.append("]");
+      builder.append(']');
       return builder.toString();
    }
 
+   /**
+    * Iterates over the elements as {@link Integer} objects. Allocates an iterator and boxes the elements; use
+    * {@link #get(int)} and {@link #size()} for allocation-free access.
+    */
    @Override
    public Iterator<Integer> iterator()
    {

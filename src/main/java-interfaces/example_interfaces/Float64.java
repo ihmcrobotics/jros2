@@ -23,6 +23,11 @@ public class Float64 implements ROS2Message<Float64>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Float64_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/Float64, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_74c137b7930c26339425a95fcfab441199bc41e0e572d3a0c9e95badd72b50da";
+
+   /**
       This is an example message of using a primitive datatype, float64.
       If you want to test with this that's fine, but if you are deploying
       it into a system you should create a semantically meaningful message type.
@@ -45,7 +50,7 @@ public class Float64 implements ROS2Message<Float64>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -67,6 +72,11 @@ public class Float64 implements ROS2Message<Float64>
    @Override
    public void set(Float64 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -82,15 +92,22 @@ public class Float64 implements ROS2Message<Float64>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Float64 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Float64 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -318,4 +318,69 @@ public class IDLObjectSequenceTest
       assertEquals(-1, sequence.get(2).getData());
       assertEquals(12345, sequence.get(3).getData());
    }
+
+   @Test
+   public void testSetWithCopierCopiesElements()
+   {
+      IDLObjectSequence<TestIDLMsg> source = new IDLObjectSequence<>(INITIAL_CAPACITY, TestIDLMsg.class);
+      source.add().setData(500);
+      source.add().setData(600);
+      source.add().setData(700);
+
+      IDLObjectSequence<TestIDLMsg> target = new IDLObjectSequence<>(TestIDLMsg.class);
+      target.set(source, (destination, element) -> destination.setData(element.getData()));
+      assertEquals(3, target.size());
+      for (int i = 0; i < 3; ++i)
+      {
+         assertNotSame(source.get(i), target.get(i));
+         assertEquals(source.get(i).getData(), target.get(i).getData());
+      }
+
+      source.get(0).setData(-1);
+      assertEquals(500, target.get(0).getData(), "the copy is independent of the source");
+
+      // Element objects are reused, including spare ones beyond the current size
+      TestIDLMsg first = target.get(0);
+      TestIDLMsg third = target.get(2);
+      IDLObjectSequence<TestIDLMsg> one = new IDLObjectSequence<>(TestIDLMsg.class);
+      one.add().setData(1);
+      target.set(one, (destination, element) -> destination.setData(element.getData()));
+      assertEquals(1, target.size());
+      assertSame(first, target.get(0));
+      target.set(source, (destination, element) -> destination.setData(element.getData()));
+      assertSame(third, target.get(2));
+      assertEquals(700, target.get(2).getData());
+
+      // A slot sharing the source's element (left by the reference-copying set) is replaced, not written into
+      IDLObjectSequence<TestIDLMsg> shallow = new IDLObjectSequence<>(TestIDLMsg.class);
+      shallow.set(source);
+      assertSame(source.get(1), shallow.get(1), "set(other) copies references");
+      shallow.set(source, (destination, element) -> destination.setData(element.getData() + 1));
+      assertNotSame(source.get(1), shallow.get(1));
+      assertEquals(600, source.get(1).getData(), "the source must not be written");
+      assertEquals(601, shallow.get(1).getData());
+
+      // Copying a sequence into itself is a no-op
+      shallow.set(shallow, (destination, element) -> fail("must not copy onto itself"));
+      assertEquals(3, shallow.size());
+      assertEquals(601, shallow.get(1).getData());
+   }
+
+   @Test
+   public void testSetWithCopierRespectsUpperBound()
+   {
+      IDLObjectSequence<TestIDLMsg> source = new IDLObjectSequence<>(TestIDLMsg.class);
+      for (int i = 0; i < 3; ++i)
+         source.add().setData(i);
+
+      IDLObjectSequence<TestIDLMsg> bounded = new IDLObjectSequence<>(0, 2, TestIDLMsg.class);
+      bounded.add().setData(42);
+      IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                                                        () -> bounded.set(source, (destination, element) -> destination.setData(element.getData())));
+      assertTrue(exception.getMessage().startsWith("array size exceeds upper bound"));
+      assertEquals(1, bounded.size(), "nothing is changed when the source is over the bound");
+      assertEquals(42, bounded.get(0).getData());
+      assertThrows(IllegalArgumentException.class, () -> bounded.set(source));
+      assertEquals(1, bounded.size());
+   }
 }

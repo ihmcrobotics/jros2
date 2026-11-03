@@ -27,6 +27,11 @@ public class Int16 implements ROS2Message<Int16>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Int16_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Int16, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_1dcc3464e47c288a55f943a389d337cdb06804de3f5cd7a266b0de718eee17e5";
+
    private short data_;
 
    public Int16()
@@ -44,7 +49,7 @@ public class Int16 implements ROS2Message<Int16>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 2 + CDRBuffer.alignment(currentAlignment, 2); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 2) + 2; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -66,6 +71,11 @@ public class Int16 implements ROS2Message<Int16>
    @Override
    public void set(Int16 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -81,15 +91,22 @@ public class Int16 implements ROS2Message<Int16>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Int16 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Int16 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

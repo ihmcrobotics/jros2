@@ -1,0 +1,2 @@
+time stamp
+duration d

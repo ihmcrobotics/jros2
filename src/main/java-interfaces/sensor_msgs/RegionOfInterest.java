@@ -42,6 +42,11 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RegionOfInterest_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/RegionOfInterest, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_ad16bcba5f9131dcdba6fbded19f726f5440e3c513b4fb586dd3027eeed8abb1";
+
    private int x_offset_; // Leftmost pixel of the ROI
    /**
       (0 if the ROI includes the left edge of the image)
@@ -62,8 +67,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
 
    public RegionOfInterest()
    {
-      do_rectify_ = (boolean) false;
-
    }
 
    public RegionOfInterest(RegionOfInterest from)
@@ -77,11 +80,11 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // x_offset_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // y_offset_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // do_rectify_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // x_offset_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // y_offset_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // do_rectify_
 
       return currentAlignment - initialAlignment;
    }
@@ -111,6 +114,11 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    @Override
    public void set(RegionOfInterest from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       x_offset_ = from.x_offset_;
       y_offset_ = from.y_offset_;
       height_ = from.height_;
@@ -170,23 +178,30 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"RegionOfInterest {", "x_offset_=", "y_offset_=", "height_=", "width_=", "do_rectify_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("RegionOfInterest {");
-      builder.append("x_offset_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(x_offset_);
-      builder.append("y_offset_=");
+      builder.append(toStringLabels[2]);
       builder.append(y_offset_);
-      builder.append("height_=");
+      builder.append(toStringLabels[3]);
       builder.append(height_);
-      builder.append("width_=");
+      builder.append(toStringLabels[4]);
       builder.append(width_);
-      builder.append("do_rectify_=");
+      builder.append(toStringLabels[5]);
       builder.append(do_rectify_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

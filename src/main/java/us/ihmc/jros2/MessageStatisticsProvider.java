@@ -24,6 +24,9 @@ import java.util.Set;
  * Provides an interface for collecting, resetting, and retrieving statistical data about messages,
  * such as their size, period, and age. Implementations of this interface are responsible for tracking
  * various message metrics and exposing them in an allocation-free manner where possible.
+ * <p>
+ * Recording is opt-in (see {@link #setStatisticsEnabled(boolean)}): it costs a lock per message, and for publishers a
+ * reflective header lookup, so it is disabled by default to keep the publish and receive paths lean.
  */
 interface MessageStatisticsProvider
 {
@@ -38,6 +41,19 @@ interface MessageStatisticsProvider
       public static final Set<MessageMetadataType> set = EnumSet.allOf(MessageMetadataType.class);
       public static final MessageMetadataType[] values = values();
    }
+
+   /**
+    * Enables or disables recording of statistics. Disabled by default. Values recorded so far are kept when recording is
+    * disabled; use {@link #resetStatistics()} to clear them.
+    *
+    * @param enabled true to record statistics for every message from now on
+    */
+   void setStatisticsEnabled(boolean enabled);
+
+   /**
+    * @return true if statistics are recorded for every message
+    */
+   boolean isStatisticsEnabled();
 
    /**
     * Reset all statistics gathered.
@@ -57,19 +73,13 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the desired {@link MessageMetadataType} statistics.
     * <p>
-    * This method will allocate heap memory. For allocation-free access to the message metadata statistics,
-    * use {@link #readStatistics(MessageMetadataType, Statistics)}.
+    * This method does not allocate.
     *
     * @param messageMetadataType The desired message metadata.
     * @param statisticType       The desired statistic type.
     * @return Value of the desired statistic type of message metadata statistics.
     */
-   default double getStatistic(MessageMetadataType messageMetadataType, StatisticDataType statisticType)
-   {
-      Statistics statistics = new Statistics();
-      readStatistics(messageMetadataType, statistics);
-      return statistics.get(statisticType);
-   }
+   double getStatistic(MessageMetadataType messageMetadataType, StatisticDataType statisticType);
 
    /**
     * Packs the message size statistics into the provided {@link Statistics} object.
@@ -86,8 +96,7 @@ interface MessageStatisticsProvider
    /**
     * Get the {@link StatisticDataType} of the message size statistics.
     * <p>
-    * This method will allocate heap memory. For allocation-free access to the message size statistics,
-    * use {@link #readMessageSizeStatistics(Statistics)}.
+    * This method does not allocate.
     *
     * @param statisticType The desired statistic type.
     * @return Value of the desired statistic type of message size statistics.
@@ -110,10 +119,9 @@ interface MessageStatisticsProvider
    }
 
    /**
-    * Get the {@link StatisticDataType} of the message size statistics.
+    * Get the {@link StatisticDataType} of the message period statistics.
     * <p>
-    * This method will allocate heap memory. For allocation-free access to the message size statistics,
-    * use {@link #readMessageSizeStatistics(Statistics)}.
+    * This method does not allocate.
     *
     * @param statisticType The desired statistic type.
     * @return Value of the desired statistic type of message size statistics.
@@ -136,10 +144,9 @@ interface MessageStatisticsProvider
    }
 
    /**
-    * Get the {@link StatisticDataType} of the message size statistics.
+    * Get the {@link StatisticDataType} of the message age statistics.
     * <p>
-    * This method will allocate heap memory. For allocation-free access to the message size statistics,
-    * use {@link #readMessageSizeStatistics(Statistics)}.
+    * This method does not allocate.
     *
     * @param statisticType The desired statistic type.
     * @return Value of the desired statistic type of message size statistics.

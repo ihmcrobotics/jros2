@@ -1,0 +1,97 @@
+jros2: discard a message that overflows a shared-memory segment without throwing an exception
+
+SharedMemManager::Segment::alloc_buffer() signals a full segment (no room even after recovering the buffers no listener
+is processing, no free buffer node, or a fragmented segment) with an exception, which SharedMemTransport::send() catches
+to discard the message ("segment overflow with discard policy"). Every throw allocates the exception object (malloc in
+__cxa_allocate_exception) and its what() string (operator new) on the sending thread: the publishing thread, or the
+flow controller / event thread that resends fragments. This happens for every message, or fragment, that does not fit,
+e.g. for every large message (a 2 MB image) through the 512 KiB segment of the builtin transports. alloc_buffer() now
+returns nullptr on overflow (the segment is allocated from with std::nothrow) and send() discards the message as
+before; the transport's initialization still fails with an exception when its segment cannot be allocated.
+
+diff --git a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+index 1de64dd..1cce622 100644
+--- a/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
++++ b/src/cpp/rtps/transport/shared_mem/SharedMemManager.hpp
+@@ -647,6 +647,10 @@ public:
+             return segment_id_;
+         }
+ 
++        /**
++         * @return The buffer, or nullptr when the segment overflows (the message is to be discarded).
++         * @throw std::exception on other errors.
++         */
+         std::shared_ptr<Buffer> alloc_buffer(
+                 uint32_t size,
+                 const std::chrono::steady_clock::time_point& max_blocking_time_point)
+@@ -655,9 +659,13 @@ public:
+ 
+             std::lock_guard<std::mutex> lock(alloc_mutex_);
+ 
+-            if (!recover_buffers(size))
++            // Segment overflow (no room, no free buffer node, or a fragmented segment): the message is discarded. This
++            // returns nullptr instead of throwing, so that a sender that keeps overflowing a too small segment (e.g.
++            // large messages through the default 512 KiB segment) does not allocate an exception for every message.
++            if (!recover_buffers(size) || free_buffers_.empty())
+             {
+-                throw std::runtime_error("allocation overflow");
++                overflows_count_++;
++                return nullptr;
+             }
+ 
+             void* data = nullptr;
+@@ -668,7 +676,13 @@ public:
+             {
+                 buffer_node = pop_free_node();
+ 
+-                data = segment_->get().allocate(size);
++                data = segment_->get().allocate(size, std::nothrow);
++                if (data == nullptr)
++                {
++                    free_buffers_.push_back(buffer_node);
++                    overflows_count_++;
++                    return nullptr;
++                }
+                 free_bytes_ -= size;
+ 
+                 buffer_node->data_offset = segment_->get_offset_from_address(data);
+diff --git a/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp b/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
+index 35fc246..13e7982 100644
+--- a/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
++++ b/src/cpp/rtps/transport/shared_mem/SharedMemTransport.cpp
+@@ -316,6 +316,10 @@ bool SharedMemTransport::init(
+         // Memset the whole segment to zero in order to force physical map of the buffer
+         auto buffer = shared_mem_segment_->alloc_buffer(configuration_.segment_size(),
+                         (std::chrono::steady_clock::now() + std::chrono::milliseconds(100)));
++        if (!buffer)
++        {
++            throw std::runtime_error("allocation overflow");
++        }
+         memset(buffer->data(), 0, configuration_.segment_size());
+         buffer.reset();
+ 
+@@ -476,6 +480,11 @@ std::shared_ptr<SharedMemManager::Buffer> SharedMemTransport::copy_to_shared_buf
+ 
+     std::shared_ptr<SharedMemManager::Buffer> shared_buffer =
+             shared_mem_segment_->alloc_buffer(total_bytes, max_blocking_time_point);
++    if (!shared_buffer)
++    {
++        // Segment overflow
++        return shared_buffer;
++    }
+     uint8_t* pos = static_cast<uint8_t*>(shared_buffer->data());
+ 
+     for (auto it = buffers.begin(); it != it_end; ++it)
+@@ -518,6 +527,12 @@ bool SharedMemTransport::send(
+                 if (shared_buffer == nullptr)
+                 {
+                     shared_buffer = copy_to_shared_buffer(buffers, total_bytes, max_blocking_time_point);
++                    if (shared_buffer == nullptr)
++                    {
++                        // Segment overflow with discard policy doesn't return error (as the exception path below).
++                        EPROSIMA_LOG_INFO(RTPS_TRANSPORT_SHM, "allocation overflow");
++                        return true;
++                    }
+                 }
+ 
+                 ret &= send(shared_buffer, *it);

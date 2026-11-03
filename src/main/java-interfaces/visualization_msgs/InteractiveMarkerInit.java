@@ -32,6 +32,11 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarkerInit_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarkerInit, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_23fda1b3373b154d9d6408dd7b9f8129b2a2b76b905ee421e8c4109d8bf71f78";
+
+   /**
       Identifying string. Must be unique in the topic namespace
       that this server works on.
    */
@@ -52,7 +57,7 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
 
    public InteractiveMarkerInit()
    {
-      server_id_ = new StringBuilder();
+      server_id_ = CDRBuffer.newStringBuilder(16);
       markers_ = new IDLObjectSequence<visualization_msgs.InteractiveMarker>(visualization_msgs.InteractiveMarker.class);
 
    }
@@ -68,8 +73,8 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * server_id_.length()) + 1; // server_id_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // seq_num_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(server_id_) + 1; // server_id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // seq_num_
       currentAlignment += markers_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -96,10 +101,15 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    @Override
    public void set(InteractiveMarkerInit from)
    {
-      server_id_.delete(0, server_id_.length());
-      server_id_.insert(0, from.server_id_);
+      if (from == this)
+      {
+         return;
+      }
+
+      server_id_.setLength(0);
+      server_id_.append(from.server_id_);
       seq_num_ = from.seq_num_;
-      markers_.set(from.markers_);
+      markers_.set(from.markers_, visualization_msgs.InteractiveMarker::set); // copies the elements, never shares them
 
    }
 
@@ -108,15 +118,35 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       return server_id_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of server_id (allocates). {@link #getServerId()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getServerIdAsString()
    {
       return server_id_.toString();
    }
 
+   /**
+    * Replaces the content of server_id with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setServerId(java.lang.String s)
    {
-      this.server_id_.delete(0, this.server_id_.length());
-      this.server_id_.insert(0, s);
+      this.server_id_.setLength(0);
+      this.server_id_.append(s);
+   }
+
+   /**
+    * Replaces the content of server_id with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setServerId(java.lang.CharSequence s)
+   {
+      if (s != this.server_id_)
+      {
+         this.server_id_.setLength(0);
+         this.server_id_.append(s);
+      }
    }
    public long getSeqNum()
    {
@@ -134,19 +164,26 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarkerInit {", "server_id_=", "seq_num_=", "markers_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarkerInit {");
-      builder.append("server_id_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(server_id_.toString());
-      builder.append("seq_num_=");
+      builder.append(toStringLabels[2]);
       builder.append(seq_num_);
-      builder.append("markers_=");
+      builder.append(toStringLabels[3]);
       builder.append(markers_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

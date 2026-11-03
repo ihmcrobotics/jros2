@@ -72,7 +72,8 @@ public final class MsgDepsParser
 
          if (i < lines.length && lines[i].matches(DEPENDENCY_DELIMITER_PATTERN))
          {
-            String msgLine = lines[i + 1];
+            // A delimiter on the last line (a truncated schema) has no "MSG: " line; it is skipped like any other
+            String msgLine = i + 1 < lines.length ? lines[i + 1] : "";
             if (!msgLine.startsWith("MSG: "))
             {
                // We were expecting a second line of the delimiter, but it wasn't there

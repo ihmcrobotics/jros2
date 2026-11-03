@@ -24,9 +24,14 @@ float32[] axes
 int32[] buttons
 }</pre>
 */
-public class Joy implements ROS2Message<Joy>
+public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Joy_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Joy, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_0d356c79cad3401e35ffeb75a96a96e08be3ef896b8b83841d73e890989372c5";
 
    /**
       The timestamp is the time at which data is received from the joystick.
@@ -88,6 +93,11 @@ public class Joy implements ROS2Message<Joy>
    @Override
    public void set(Joy from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       axes_.set(from.axes_);
       buttons_.set(from.buttons_);
@@ -110,19 +120,26 @@ public class Joy implements ROS2Message<Joy>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Joy {", "header_=", "axes_=", "buttons_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Joy {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("axes_=");
+      builder.append(toStringLabels[2]);
       builder.append(axes_);
-      builder.append("buttons_=");
+      builder.append(toStringLabels[3]);
       builder.append(buttons_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

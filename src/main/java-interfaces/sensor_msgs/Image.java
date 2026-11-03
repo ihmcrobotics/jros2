@@ -41,9 +41,14 @@ uint32 step           # Full row length in bytes
 uint8[] data          # actual matrix data, size is (step * rows)
 }</pre>
 */
-public class Image implements ROS2Message<Image>
+public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Image_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Image, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_d31d41a9a4c4bc8eae9be757b0beed306564f7526c88ea6a4588fb9582527d47";
 
    private final std_msgs.Header header_; // Header timestamp should be acquisition time of image
    private int height_; // image height, that is, number of rows
@@ -56,7 +61,7 @@ public class Image implements ROS2Message<Image>
    public Image()
    {
       header_ = new std_msgs.Header();
-      encoding_ = new StringBuilder();
+      encoding_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
 
    }
@@ -73,11 +78,11 @@ public class Image implements ROS2Message<Image>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * encoding_.length()) + 1; // encoding_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_bigendian_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // step_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(encoding_) + 1; // encoding_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // is_bigendian_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // step_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -112,11 +117,16 @@ public class Image implements ROS2Message<Image>
    @Override
    public void set(Image from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
-      encoding_.delete(0, encoding_.length());
-      encoding_.insert(0, from.encoding_);
+      encoding_.setLength(0);
+      encoding_.append(from.encoding_);
       is_bigendian_ = from.is_bigendian_;
       step_ = from.step_;
       data_.set(from.data_);
@@ -153,15 +163,35 @@ public class Image implements ROS2Message<Image>
       return encoding_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of encoding (allocates). {@link #getEncoding()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getEncodingAsString()
    {
       return encoding_.toString();
    }
 
+   /**
+    * Replaces the content of encoding with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setEncoding(java.lang.String s)
    {
-      this.encoding_.delete(0, this.encoding_.length());
-      this.encoding_.insert(0, s);
+      this.encoding_.setLength(0);
+      this.encoding_.append(s);
+   }
+
+   /**
+    * Replaces the content of encoding with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setEncoding(java.lang.CharSequence s)
+   {
+      if (s != this.encoding_)
+      {
+         this.encoding_.setLength(0);
+         this.encoding_.append(s);
+      }
    }
    public byte getIsBigendian()
    {
@@ -189,27 +219,34 @@ public class Image implements ROS2Message<Image>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Image {", "header_=", "height_=", "width_=", "encoding_=", "is_bigendian_=", "step_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Image {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("height_=");
+      builder.append(toStringLabels[2]);
       builder.append(height_);
-      builder.append("width_=");
+      builder.append(toStringLabels[3]);
       builder.append(width_);
-      builder.append("encoding_=");
+      builder.append(toStringLabels[4]);
       builder.append(encoding_.toString());
-      builder.append("is_bigendian_=");
+      builder.append(toStringLabels[5]);
       builder.append(is_bigendian_);
-      builder.append("step_=");
+      builder.append(toStringLabels[6]);
       builder.append(step_);
-      builder.append("data_=");
+      builder.append(toStringLabels[7]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

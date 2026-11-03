@@ -29,9 +29,14 @@ float64 relative_humidity    # Expression of the relative humidity
 float64 variance             # 0 is interpreted as variance unknown
 }</pre>
 */
-public class RelativeHumidity implements ROS2Message<RelativeHumidity>
+public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::RelativeHumidity_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/RelativeHumidity, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_8687c99b4fb393cb2e545e407b5ea7fd0b5d8960bcd849a0f86c544740138839";
 
    private final std_msgs.Header header_; // timestamp of the measurement
    private double relative_humidity_; // Expression of the relative humidity
@@ -55,8 +60,8 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // relative_humidity_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // variance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // relative_humidity_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // variance_
 
       return currentAlignment - initialAlignment;
    }
@@ -82,6 +87,11 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    @Override
    public void set(RelativeHumidity from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       relative_humidity_ = from.relative_humidity_;
       variance_ = from.variance_;
@@ -114,19 +124,26 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"RelativeHumidity {", "header_=", "relative_humidity_=", "variance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("RelativeHumidity {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("relative_humidity_=");
+      builder.append(toStringLabels[2]);
       builder.append(relative_humidity_);
-      builder.append("variance_=");
+      builder.append(toStringLabels[3]);
       builder.append(variance_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

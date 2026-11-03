@@ -23,6 +23,11 @@ public class Int32 implements ROS2Message<Int32>
    public static final java.lang.String name = "example_interfaces::msg::dds_::Int32_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/Int32, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5cd04cd7f3adb9d6c6064c316047b24c76622eb89144f300b536d657fd55e652";
+
+   /**
       This is an example message of using a primitive datatype, int32.
       If you want to test with this that's fine, but if you are deploying
       it into a system you should create a semantically meaningful message type.
@@ -45,7 +50,7 @@ public class Int32 implements ROS2Message<Int32>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -67,6 +72,11 @@ public class Int32 implements ROS2Message<Int32>
    @Override
    public void set(Int32 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       data_ = from.data_;
 
    }
@@ -82,15 +92,22 @@ public class Int32 implements ROS2Message<Int32>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Int32 {", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Int32 {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -29,6 +29,11 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    public static final java.lang.String name = "trajectory_msgs::msg::dds_::MultiDOFJointTrajectoryPoint_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of trajectory_msgs/msg/MultiDOFJointTrajectoryPoint, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_6ada1085b5ee64eaa069b074968e69f0e27c8c5e6f5bb0586dd1c834ef0e32b8";
+
+   /**
       Each multi-dof joint can specify a transform (up to 6 DOF).
    */
    private final IDLObjectSequence<geometry_msgs.Transform> transforms_;
@@ -96,9 +101,14 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    @Override
    public void set(MultiDOFJointTrajectoryPoint from)
    {
-      transforms_.set(from.transforms_);
-      velocities_.set(from.velocities_);
-      accelerations_.set(from.accelerations_);
+      if (from == this)
+      {
+         return;
+      }
+
+      transforms_.set(from.transforms_, geometry_msgs.Transform::set); // copies the elements, never shares them
+      velocities_.set(from.velocities_, geometry_msgs.Twist::set); // copies the elements, never shares them
+      accelerations_.set(from.accelerations_, geometry_msgs.Twist::set); // copies the elements, never shares them
       time_from_start_.set(from.time_from_start_);
 
    }
@@ -124,21 +134,28 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MultiDOFJointTrajectoryPoint {", "transforms_=", "velocities_=", "accelerations_=", "time_from_start_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MultiDOFJointTrajectoryPoint {");
-      builder.append("transforms_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(transforms_);
-      builder.append("velocities_=");
+      builder.append(toStringLabels[2]);
       builder.append(velocities_);
-      builder.append("accelerations_=");
+      builder.append(toStringLabels[3]);
       builder.append(accelerations_);
-      builder.append("time_from_start_=");
+      builder.append(toStringLabels[4]);
       builder.append(time_from_start_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

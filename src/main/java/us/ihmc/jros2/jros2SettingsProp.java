@@ -85,4 +85,16 @@ class jros2SettingsProp implements jros2Settings
    {
       return System.getProperties().containsKey(INTERFACE_WHITELIST_KEY);
    }
+
+   @Override
+   public String rawSetting(Key key)
+   {
+      return System.getProperty(key.property);
+   }
+
+   @Override
+   public boolean hasRawSetting(Key key)
+   {
+      return System.getProperties().containsKey(key.property);
+   }
 }

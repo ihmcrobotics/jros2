@@ -61,9 +61,14 @@ uint8 COVARIANCE_TYPE_KNOWN = 3
 uint8 position_covariance_type
 }</pre>
 */
-public class NavSatFix implements ROS2Message<NavSatFix>
+public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::NavSatFix_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/NavSatFix, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_62223ab3fe210a15976021da7afddc9e200dc9ec75231c1b6a557fc598a65404";
 
    /**
       header.stamp specifies the ROS time for this measurement (the
@@ -101,10 +106,10 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       Beware: this coordinate system exhibits singularities at the poles.
    */
    private final double[] position_covariance_;
-   public static final byte COVARIANCE_TYPE_UNKNOWN = 0;
-   public static final byte COVARIANCE_TYPE_APPROXIMATED = 1;
-   public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = 2;
-   public static final byte COVARIANCE_TYPE_KNOWN = 3;
+   public static final byte COVARIANCE_TYPE_UNKNOWN = (byte) 0;
+   public static final byte COVARIANCE_TYPE_APPROXIMATED = (byte) 1;
+   public static final byte COVARIANCE_TYPE_DIAGONAL_KNOWN = (byte) 2;
+   public static final byte COVARIANCE_TYPE_KNOWN = (byte) 3;
    private byte position_covariance_type_;
 
    public NavSatFix()
@@ -128,11 +133,11 @@ public class NavSatFix implements ROS2Message<NavSatFix>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += status_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // latitude_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // longitude_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // altitude_
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // position_covariance_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // position_covariance_type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // latitude_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // longitude_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // altitude_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // position_covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // position_covariance_type_
 
       return currentAlignment - initialAlignment;
    }
@@ -145,10 +150,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       buffer.writeDouble(latitude_);
       buffer.writeDouble(longitude_);
       buffer.writeDouble(altitude_);
-      for (int i = 0; i < position_covariance_.length; ++i)
-      {
-         buffer.writeDouble(position_covariance_[i]);
-      }
+      buffer.writeDoubleArray(position_covariance_);
       buffer.writeByte(position_covariance_type_);
 
    }
@@ -161,10 +163,7 @@ public class NavSatFix implements ROS2Message<NavSatFix>
       latitude_ = buffer.readDouble();
       longitude_ = buffer.readDouble();
       altitude_ = buffer.readDouble();
-      for (int i = 0; i < position_covariance_.length; ++i)
-      {
-         position_covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(position_covariance_);
       position_covariance_type_ = buffer.readByte();
 
    }
@@ -172,15 +171,17 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    @Override
    public void set(NavSatFix from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       status_.set(from.status_);
       latitude_ = from.latitude_;
       longitude_ = from.longitude_;
       altitude_ = from.altitude_;
-      for (int i = 0; i < position_covariance_.length; ++i)
-      {
-         position_covariance_[i] = from.position_covariance_[i];
-      }
+      System.arraycopy(from.position_covariance_, 0, position_covariance_, 0, position_covariance_.length);
       position_covariance_type_ = from.position_covariance_type_;
 
    }
@@ -241,35 +242,42 @@ public class NavSatFix implements ROS2Message<NavSatFix>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"NavSatFix {", "header_=", "status_=", "latitude_=", "longitude_=", "altitude_=", "position_covariance_=", "COVARIANCE_TYPE_UNKNOWN=", "COVARIANCE_TYPE_APPROXIMATED=", "COVARIANCE_TYPE_DIAGONAL_KNOWN=", "COVARIANCE_TYPE_KNOWN=", "position_covariance_type_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("NavSatFix {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("status_=");
+      builder.append(toStringLabels[2]);
       builder.append(status_);
-      builder.append("latitude_=");
+      builder.append(toStringLabels[3]);
       builder.append(latitude_);
-      builder.append("longitude_=");
+      builder.append(toStringLabels[4]);
       builder.append(longitude_);
-      builder.append("altitude_=");
+      builder.append(toStringLabels[5]);
       builder.append(altitude_);
-      builder.append("position_covariance_=");
+      builder.append(toStringLabels[6]);
       builder.append(java.util.Arrays.toString(position_covariance_));
-      builder.append("COVARIANCE_TYPE_UNKNOWN=");
+      builder.append(toStringLabels[7]);
       builder.append(COVARIANCE_TYPE_UNKNOWN);
-      builder.append("COVARIANCE_TYPE_APPROXIMATED=");
+      builder.append(toStringLabels[8]);
       builder.append(COVARIANCE_TYPE_APPROXIMATED);
-      builder.append("COVARIANCE_TYPE_DIAGONAL_KNOWN=");
+      builder.append(toStringLabels[9]);
       builder.append(COVARIANCE_TYPE_DIAGONAL_KNOWN);
-      builder.append("COVARIANCE_TYPE_KNOWN=");
+      builder.append(toStringLabels[10]);
       builder.append(COVARIANCE_TYPE_KNOWN);
-      builder.append("position_covariance_type_=");
+      builder.append(toStringLabels[11]);
       builder.append(position_covariance_type_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

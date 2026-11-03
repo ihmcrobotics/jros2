@@ -16,9 +16,14 @@ std_msgs/Header header
 Accel accel
 }</pre>
 */
-public class AccelStamped implements ROS2Message<AccelStamped>
+public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::AccelStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/AccelStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_ef1df9eabae0a708cc049a061ebcddc4e2a5f745730100ba680e086a9698b165";
 
    /**
       An accel with reference coordinate frame and timestamp
@@ -69,6 +74,11 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    @Override
    public void set(AccelStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       accel_.set(from.accel_);
 
@@ -85,17 +95,24 @@ public class AccelStamped implements ROS2Message<AccelStamped>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"AccelStamped {", "header_=", "accel_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("AccelStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("accel_=");
+      builder.append(toStringLabels[2]);
       builder.append(accel_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

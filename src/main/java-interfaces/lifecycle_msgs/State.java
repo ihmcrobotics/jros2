@@ -77,59 +77,64 @@ public class State implements ROS2Message<State>
    public static final java.lang.String name = "lifecycle_msgs::msg::dds_::State_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of lifecycle_msgs/msg/State, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_dd2d02b82f3ebc858e53c431b1e6e91f3ffc71436fc81d0715214ac6ee2107a0";
+
+   /**
       Indicates state has not yet been set.
    */
-   public static final byte PRIMARY_STATE_UNKNOWN = 0;
+   public static final byte PRIMARY_STATE_UNKNOWN = (byte) 0;
    /**
       This is the life cycle state the node is in immediately after being
       instantiated.
    */
-   public static final byte PRIMARY_STATE_UNCONFIGURED = 1;
+   public static final byte PRIMARY_STATE_UNCONFIGURED = (byte) 1;
    /**
       This state represents a node that is not currently performing any processing.
    */
-   public static final byte PRIMARY_STATE_INACTIVE = 2;
+   public static final byte PRIMARY_STATE_INACTIVE = (byte) 2;
    /**
       This is the main state of the node's life cycle. While in this state, the node
       performs any processing, responds to service requests, reads and processes
       data, produces output, etc.
    */
-   public static final byte PRIMARY_STATE_ACTIVE = 3;
+   public static final byte PRIMARY_STATE_ACTIVE = (byte) 3;
    /**
       The finalized state is the state in which the node ends immediately before
       being destroyed.
    */
-   public static final byte PRIMARY_STATE_FINALIZED = 4;
+   public static final byte PRIMARY_STATE_FINALIZED = (byte) 4;
    /**
       In this transition state the node's onConfigure callback will be called to
       allow the node to load its configuration and conduct any required setup.
    */
-   public static final byte TRANSITION_STATE_CONFIGURING = 10;
+   public static final byte TRANSITION_STATE_CONFIGURING = (byte) 10;
    /**
       In this transition state the node's callback onCleanup will be called to clear
       all state and return the node to a functionally equivalent state as when
       first created.
    */
-   public static final byte TRANSITION_STATE_CLEANINGUP = 11;
+   public static final byte TRANSITION_STATE_CLEANINGUP = (byte) 11;
    /**
       In this transition state the callback onShutdown will be executed to do any
       cleanup necessary before destruction.
    */
-   public static final byte TRANSITION_STATE_SHUTTINGDOWN = 12;
+   public static final byte TRANSITION_STATE_SHUTTINGDOWN = (byte) 12;
    /**
       In this transition state the callback onActivate will be executed to do any
       final preparations to start executing.
    */
-   public static final byte TRANSITION_STATE_ACTIVATING = 13;
+   public static final byte TRANSITION_STATE_ACTIVATING = (byte) 13;
    /**
       In this transition state the callback onDeactivate will be executed to do any
       cleanup to start executing, and reverse the onActivate changes.
    */
-   public static final byte TRANSITION_STATE_DEACTIVATING = 14;
+   public static final byte TRANSITION_STATE_DEACTIVATING = (byte) 14;
    /**
       This transition state is where any error may be cleaned up.
    */
-   public static final byte TRANSITION_STATE_ERRORPROCESSING = 15;
+   public static final byte TRANSITION_STATE_ERRORPROCESSING = (byte) 15;
    /**
       The state id value from the above definitions.
    */
@@ -141,7 +146,7 @@ public class State implements ROS2Message<State>
 
    public State()
    {
-      label_ = new StringBuilder();
+      label_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -156,8 +161,8 @@ public class State implements ROS2Message<State>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // id_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * label_.length()) + 1; // label_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // id_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(label_) + 1; // label_
 
       return currentAlignment - initialAlignment;
    }
@@ -181,9 +186,14 @@ public class State implements ROS2Message<State>
    @Override
    public void set(State from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       id_ = from.id_;
-      label_.delete(0, label_.length());
-      label_.insert(0, from.label_);
+      label_.setLength(0);
+      label_.append(from.label_);
 
    }
 
@@ -202,50 +212,77 @@ public class State implements ROS2Message<State>
       return label_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of label (allocates). {@link #getLabel()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getLabelAsString()
    {
       return label_.toString();
    }
 
+   /**
+    * Replaces the content of label with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setLabel(java.lang.String s)
    {
-      this.label_.delete(0, this.label_.length());
-      this.label_.insert(0, s);
+      this.label_.setLength(0);
+      this.label_.append(s);
    }
+
+   /**
+    * Replaces the content of label with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setLabel(java.lang.CharSequence s)
+   {
+      if (s != this.label_)
+      {
+         this.label_.setLength(0);
+         this.label_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"State {", "PRIMARY_STATE_UNKNOWN=", "PRIMARY_STATE_UNCONFIGURED=", "PRIMARY_STATE_INACTIVE=", "PRIMARY_STATE_ACTIVE=", "PRIMARY_STATE_FINALIZED=", "TRANSITION_STATE_CONFIGURING=", "TRANSITION_STATE_CLEANINGUP=", "TRANSITION_STATE_SHUTTINGDOWN=", "TRANSITION_STATE_ACTIVATING=", "TRANSITION_STATE_DEACTIVATING=", "TRANSITION_STATE_ERRORPROCESSING=", "id_=", "label_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("State {");
-      builder.append("PRIMARY_STATE_UNKNOWN=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(PRIMARY_STATE_UNKNOWN);
-      builder.append("PRIMARY_STATE_UNCONFIGURED=");
+      builder.append(toStringLabels[2]);
       builder.append(PRIMARY_STATE_UNCONFIGURED);
-      builder.append("PRIMARY_STATE_INACTIVE=");
+      builder.append(toStringLabels[3]);
       builder.append(PRIMARY_STATE_INACTIVE);
-      builder.append("PRIMARY_STATE_ACTIVE=");
+      builder.append(toStringLabels[4]);
       builder.append(PRIMARY_STATE_ACTIVE);
-      builder.append("PRIMARY_STATE_FINALIZED=");
+      builder.append(toStringLabels[5]);
       builder.append(PRIMARY_STATE_FINALIZED);
-      builder.append("TRANSITION_STATE_CONFIGURING=");
+      builder.append(toStringLabels[6]);
       builder.append(TRANSITION_STATE_CONFIGURING);
-      builder.append("TRANSITION_STATE_CLEANINGUP=");
+      builder.append(toStringLabels[7]);
       builder.append(TRANSITION_STATE_CLEANINGUP);
-      builder.append("TRANSITION_STATE_SHUTTINGDOWN=");
+      builder.append(toStringLabels[8]);
       builder.append(TRANSITION_STATE_SHUTTINGDOWN);
-      builder.append("TRANSITION_STATE_ACTIVATING=");
+      builder.append(toStringLabels[9]);
       builder.append(TRANSITION_STATE_ACTIVATING);
-      builder.append("TRANSITION_STATE_DEACTIVATING=");
+      builder.append(toStringLabels[10]);
       builder.append(TRANSITION_STATE_DEACTIVATING);
-      builder.append("TRANSITION_STATE_ERRORPROCESSING=");
+      builder.append(toStringLabels[11]);
       builder.append(TRANSITION_STATE_ERRORPROCESSING);
-      builder.append("id_=");
+      builder.append(toStringLabels[12]);
       builder.append(id_);
-      builder.append("label_=");
+      builder.append(toStringLabels[13]);
       builder.append(label_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

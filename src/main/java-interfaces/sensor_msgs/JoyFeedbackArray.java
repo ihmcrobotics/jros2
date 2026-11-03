@@ -20,6 +20,11 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::JoyFeedbackArray_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/JoyFeedbackArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3287c32e1b688cae04555e465443df3cca7dae76ee4ebf85c4658d585037bcaa";
+
+   /**
       This message publishes values for multiple feedback at once.
    */
    private final IDLObjectSequence<sensor_msgs.JoyFeedback> array_;
@@ -63,7 +68,12 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    @Override
    public void set(JoyFeedbackArray from)
    {
-      array_.set(from.array_);
+      if (from == this)
+      {
+         return;
+      }
+
+      array_.set(from.array_, sensor_msgs.JoyFeedback::set); // copies the elements, never shares them
 
    }
 
@@ -73,15 +83,22 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"JoyFeedbackArray {", "array_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("JoyFeedbackArray {");
-      builder.append("array_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(array_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

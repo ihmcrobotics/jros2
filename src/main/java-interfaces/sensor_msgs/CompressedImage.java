@@ -28,9 +28,14 @@ string format                # Specifies the format of the data
 uint8[] data                 # Compressed image buffer
 }</pre>
 */
-public class CompressedImage implements ROS2Message<CompressedImage>
+public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::CompressedImage_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/CompressedImage, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_15640771531571185e2efc8a100baf923961a4d15d5569652e6cb6691e8e371a";
 
    private final std_msgs.Header header_; // Header timestamp should be acquisition time of image
    private final StringBuilder format_; // Specifies the format of the data
@@ -39,7 +44,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    public CompressedImage()
    {
       header_ = new std_msgs.Header();
-      format_ = new StringBuilder();
+      format_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
 
    }
@@ -56,7 +61,7 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * format_.length()) + 1; // format_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(format_) + 1; // format_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -83,9 +88,14 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    @Override
    public void set(CompressedImage from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
-      format_.delete(0, format_.length());
-      format_.insert(0, from.format_);
+      format_.setLength(0);
+      format_.append(from.format_);
       data_.set(from.data_);
 
    }
@@ -100,15 +110,35 @@ public class CompressedImage implements ROS2Message<CompressedImage>
       return format_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of format (allocates). {@link #getFormat()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getFormatAsString()
    {
       return format_.toString();
    }
 
+   /**
+    * Replaces the content of format with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setFormat(java.lang.String s)
    {
-      this.format_.delete(0, this.format_.length());
-      this.format_.insert(0, s);
+      this.format_.setLength(0);
+      this.format_.append(s);
+   }
+
+   /**
+    * Replaces the content of format with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setFormat(java.lang.CharSequence s)
+   {
+      if (s != this.format_)
+      {
+         this.format_.setLength(0);
+         this.format_.append(s);
+      }
    }
    public IDLByteSequence getData()
    {
@@ -116,19 +146,26 @@ public class CompressedImage implements ROS2Message<CompressedImage>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"CompressedImage {", "header_=", "format_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("CompressedImage {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("format_=");
+      builder.append(toStringLabels[2]);
       builder.append(format_.toString());
-      builder.append("data_=");
+      builder.append(toStringLabels[3]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

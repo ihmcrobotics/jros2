@@ -21,6 +21,11 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
 {
    public static final java.lang.String name = "shape_msgs::msg::dds_::MeshTriangle_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of shape_msgs/msg/MeshTriangle, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_618e5c073eeb729e433ef6226e72c01d995c459fb7d76348c9700409a5020bd0";
+
    private final int[] vertex_indices_;
 
    public MeshTriangle()
@@ -40,7 +45,7 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += (3 * 4) + CDRBuffer.alignment(currentAlignment, (3 * 4)); // vertex_indices_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + (3 * 4); // vertex_indices_
 
       return currentAlignment - initialAlignment;
    }
@@ -48,30 +53,26 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    @Override
    public void serialize(CDRBuffer buffer)
    {
-      for (int i = 0; i < vertex_indices_.length; ++i)
-      {
-         buffer.writeInt(vertex_indices_[i]);
-      }
+      buffer.writeIntArray(vertex_indices_);
 
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
-      for (int i = 0; i < vertex_indices_.length; ++i)
-      {
-         vertex_indices_[i] = buffer.readInt();
-      }
+      buffer.readIntArray(vertex_indices_);
 
    }
 
    @Override
    public void set(MeshTriangle from)
    {
-      for (int i = 0; i < vertex_indices_.length; ++i)
+      if (from == this)
       {
-         vertex_indices_[i] = from.vertex_indices_[i];
+         return;
       }
+
+      System.arraycopy(from.vertex_indices_, 0, vertex_indices_, 0, vertex_indices_.length);
 
    }
 
@@ -81,15 +82,22 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MeshTriangle {", "vertex_indices_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MeshTriangle {");
-      builder.append("vertex_indices_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(java.util.Arrays.toString(vertex_indices_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

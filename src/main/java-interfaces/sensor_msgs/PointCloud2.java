@@ -47,9 +47,14 @@ uint8[] data         # Actual point data, size is (row_step*height)
 bool is_dense        # True if there are no invalid points
 }</pre>
 */
-public class PointCloud2 implements ROS2Message<PointCloud2>
+public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointCloud2_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/PointCloud2, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_9198cabf7da3796ae6fe19c4cb3bdd3525492988c70522628af5daa124bae2b5";
 
    /**
       Time of sensor data acquisition, and the coordinate frame ID (for 3d points).
@@ -75,9 +80,7 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    {
       header_ = new std_msgs.Header();
       fields_ = new IDLObjectSequence<sensor_msgs.PointField>(sensor_msgs.PointField.class);
-      is_bigendian_ = (boolean) false;
       data_ = new IDLByteSequence();
-      is_dense_ = (boolean) false;
 
    }
 
@@ -93,14 +96,14 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // height_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // width_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // height_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // width_
       currentAlignment += fields_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_bigendian_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // point_step_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // row_step_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // is_bigendian_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // point_step_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // row_step_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // is_dense_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // is_dense_
 
       return currentAlignment - initialAlignment;
    }
@@ -138,10 +141,15 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    @Override
    public void set(PointCloud2 from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       height_ = from.height_;
       width_ = from.width_;
-      fields_.set(from.fields_);
+      fields_.set(from.fields_, sensor_msgs.PointField::set); // copies the elements, never shares them
       is_bigendian_ = from.is_bigendian_;
       point_step_ = from.point_step_;
       row_step_ = from.row_step_;
@@ -226,31 +234,38 @@ public class PointCloud2 implements ROS2Message<PointCloud2>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PointCloud2 {", "header_=", "height_=", "width_=", "fields_=", "is_bigendian_=", "point_step_=", "row_step_=", "data_=", "is_dense_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PointCloud2 {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("height_=");
+      builder.append(toStringLabels[2]);
       builder.append(height_);
-      builder.append("width_=");
+      builder.append(toStringLabels[3]);
       builder.append(width_);
-      builder.append("fields_=");
+      builder.append(toStringLabels[4]);
       builder.append(fields_);
-      builder.append("is_bigendian_=");
+      builder.append(toStringLabels[5]);
       builder.append(is_bigendian_);
-      builder.append("point_step_=");
+      builder.append(toStringLabels[6]);
       builder.append(point_step_);
-      builder.append("row_step_=");
+      builder.append(toStringLabels[7]);
       builder.append(row_step_);
-      builder.append("data_=");
+      builder.append(toStringLabels[8]);
       builder.append(data_);
-      builder.append("is_dense_=");
+      builder.append(toStringLabels[9]);
       builder.append(is_dense_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

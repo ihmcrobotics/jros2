@@ -277,46 +277,88 @@ public final class BuiltinTools
       }
    }
 
+   /**
+    * The method name within {@literal us.ihmc.fastddsjava.cdr.CDRBuffer} used to write a fixed-size Java array of the
+    * built-in type in bulk
+    *
+    * @param builtinType the built-in type name
+    * @return the method name, or null for string and wstring (which are written element by element)
+    */
+   public static String getBuiltinCDRBufferWriteArrayMethod(String builtinType)
+   {
+      String readArrayMethod = getBuiltinCDRBufferReadArrayMethod(builtinType);
+      return readArrayMethod == null ? null : "write" + readArrayMethod.substring("read".length());
+   }
+
+   /**
+    * The method name within {@literal us.ihmc.fastddsjava.cdr.CDRBuffer} used to read a fixed-size Java array of the
+    * built-in type in bulk
+    *
+    * @param builtinType the built-in type name
+    * @return the method name, or null for string and wstring (which are read element by element)
+    */
+   public static String getBuiltinCDRBufferReadArrayMethod(String builtinType)
+   {
+      if (!isBuiltinType(builtinType))
+      {
+         throw new IllegalArgumentException("builtinType was not a ROS 2 built-in type");
+      }
+
+      switch (builtinType)
+      {
+         case "bool":
+            return "readBooleanArray";
+         case "byte":
+         case "int8":
+         case "uint8":
+            return "readByteArray";
+         case "char":
+            return "readCharArray";
+         case "int16":
+            return "readShortArray";
+         case "uint16":
+            return "readUInt16Array";
+         case "float32":
+            return "readFloatArray";
+         case "int32":
+         case "uint32":
+            return "readIntArray";
+         case "float64":
+            return "readDoubleArray";
+         case "int64":
+         case "uint64":
+            return "readLongArray";
+         default:
+            return null;
+      }
+   }
+
+   /**
+    * Converts a string default/constant literal from a .msg file to a quoted Java string literal, using the rules of
+    * {@link DefaultValueTools#parseString(String, String, int)} (outer quotes removed, escaped inner quotes unescaped,
+    * everything else literal).
+    *
+    * @throws IllegalArgumentException if the literal has an unescaped inner quote
+    */
    public static String sanitizeStringAsJavaFieldValue(String value)
    {
       if (value == null || value.isEmpty())
          return "\"\"";
 
-      // Trim for good measure
-      String sanitized = value.trim();
-
-      // Check if string is quoted; if so, remove quotes
-      char firstChar = sanitized.charAt(0);
-      char lastChar = sanitized.charAt(sanitized.length() - 1);
-
-      if ((firstChar == '\"' || firstChar == '\'') && firstChar == lastChar)
-      {
-         sanitized = sanitized.substring(1, sanitized.length() - 1);
-         if (sanitized.indexOf(firstChar) != -1)
-         {
-            throw new IllegalArgumentException("Illegal character contained in string: " + firstChar);
-         }
-      }
-
-      // Escape any double quotes
-      sanitized = sanitized.replaceAll("(?<!\\\\)\"", "\\\\\"");
-
-      // Return the sanitized value wrapped in double quotes
-      return String.format("\"%s\"", sanitized);
+      return DefaultValueTools.toJavaStringLiteral(DefaultValueTools.parseString("string", value.trim(), 0));
    }
 
+   /**
+    * Converts a bool default literal ({@code true}/{@code 1}/{@code false}/{@code 0}, case-insensitive) to {@code "true"}
+    * or {@code "false"}.
+    *
+    * @throws IllegalArgumentException for any other value
+    */
    public static String sanitizeBoolAsJavaFieldValue(String value)
    {
       if (value == null || value.isEmpty())
          return "false";
 
-      String valueCopy = value.trim();
-
-      return switch (valueCopy)
-      {
-         case "1", "true" -> "true";
-         case "0", "false" -> "false";
-         default -> throw new IllegalArgumentException(String.format("Unexpected bool value {%s}.", value));
-      };
+      return DefaultValueTools.parseBool(value) ? "true" : "false";
    }
 }

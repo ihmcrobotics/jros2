@@ -27,6 +27,11 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
 {
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterEventDescriptors_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ParameterEventDescriptors, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_456f90915d72ef69379e702ef3ba2a115098ff677eab9c0080fa11239c6b147e";
+
    private final IDLObjectSequence<rcl_interfaces.ParameterDescriptor> new_parameters_;
    private final IDLObjectSequence<rcl_interfaces.ParameterDescriptor> changed_parameters_;
    private final IDLObjectSequence<rcl_interfaces.ParameterDescriptor> deleted_parameters_;
@@ -78,9 +83,14 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    @Override
    public void set(ParameterEventDescriptors from)
    {
-      new_parameters_.set(from.new_parameters_);
-      changed_parameters_.set(from.changed_parameters_);
-      deleted_parameters_.set(from.deleted_parameters_);
+      if (from == this)
+      {
+         return;
+      }
+
+      new_parameters_.set(from.new_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
+      changed_parameters_.set(from.changed_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
+      deleted_parameters_.set(from.deleted_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
 
    }
 
@@ -100,19 +110,26 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ParameterEventDescriptors {", "new_parameters_=", "changed_parameters_=", "deleted_parameters_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ParameterEventDescriptors {");
-      builder.append("new_parameters_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(new_parameters_);
-      builder.append("changed_parameters_=");
+      builder.append(toStringLabels[2]);
       builder.append(changed_parameters_);
-      builder.append("deleted_parameters_=");
+      builder.append(toStringLabels[3]);
       builder.append(deleted_parameters_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

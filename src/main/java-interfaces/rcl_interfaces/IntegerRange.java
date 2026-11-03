@@ -43,6 +43,11 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::IntegerRange_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/IntegerRange, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_f7b7fdc0f65f07702e099218e13288c3963bcb9345bde78b560e6cd19800fc5a";
+
+   /**
       Start value for valid values, inclusive.
    */
    private long from_value_;
@@ -84,9 +89,9 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // from_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // to_value_
-      currentAlignment += 8 + CDRBuffer.alignment(currentAlignment, 8); // step_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // from_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // to_value_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + 8; // step_
 
       return currentAlignment - initialAlignment;
    }
@@ -112,6 +117,11 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    @Override
    public void set(IntegerRange from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       from_value_ = from.from_value_;
       to_value_ = from.to_value_;
       step_ = from.step_;
@@ -149,19 +159,26 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"IntegerRange {", "from_value_=", "to_value_=", "step_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("IntegerRange {");
-      builder.append("from_value_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(from_value_);
-      builder.append("to_value_=");
+      builder.append(toStringLabels[2]);
       builder.append(to_value_);
-      builder.append("step_=");
+      builder.append(toStringLabels[3]);
       builder.append(step_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -20,24 +20,24 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.options.Option;
-import us.ihmc.jros2.parser.MsgContext;
-import us.ihmc.jros2.parser.MsgParser;
 import us.ihmc.jros2.parser.field.InterfaceFieldParsingException;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+/**
+ * Gradle task that generates Java message classes (including their RIHS01 type hashes) from ROS 2 packages.
+ *
+ * @see jros2InterfaceGenerator
+ */
 public class jros2GenTask extends DefaultTask
 {
    private List<String> packagePaths;
+   private List<String> dependencyPaths;
    private String outputDir;
    private Map<String, String> typeToClass;
    private boolean cleanOutputDir;
@@ -45,6 +45,7 @@ public class jros2GenTask extends DefaultTask
    public jros2GenTask()
    {
       typeToClass = new HashMap<>();
+      dependencyPaths = new ArrayList<>();
       getOutputs().cacheIf(task -> false);
    }
 
@@ -54,10 +55,25 @@ public class jros2GenTask extends DefaultTask
       return packagePaths;
    }
 
-   @Option(option = "packagePaths", description = "TODO")
+   @Option(option = "packagePaths", description = "ROS 2 package directories (containing package.xml and msg/) to generate classes for")
    public void setPackagePaths(List<String> packagePaths)
    {
       this.packagePaths = packagePaths;
+   }
+
+   @Input
+   @Optional
+   public List<String> getDependencyPaths()
+   {
+      return dependencyPaths;
+   }
+
+   @Option(option = "dependencyPaths",
+           description = "ROS 2 package directories, or directories of packages (e.g. /opt/ros/jazzy/share), used only to resolve the types referenced by "
+                         + "the generated messages when computing type hashes. The interfaces bundled with jros2 are always available.")
+   public void setDependencyPaths(List<String> dependencyPaths)
+   {
+      this.dependencyPaths = dependencyPaths;
    }
 
    @Input
@@ -79,7 +95,7 @@ public class jros2GenTask extends DefaultTask
       return typeToClass;
    }
 
-   @Option(option = "typeToClass", description = "TODO")
+   @Option(option = "typeToClass", description = "Map of pkg/Type to a hand-written Java class; such types are not generated")
    public void setTypeToClass(Map<String, String> typeToClass)
    {
       this.typeToClass = typeToClass;
@@ -100,74 +116,29 @@ public class jros2GenTask extends DefaultTask
    @TaskAction
    public void run() throws IOException
    {
-      long startTime = System.currentTimeMillis();
-      int totalInterfacesGenerated = 0;
-
-      Path outputDirPath = Path.of(outputDir).toAbsolutePath().normalize();
-      Set<Path> generatedPaths = new HashSet<>();
-
-      if (cleanOutputDir)
+      jros2InterfaceGenerator generator = new jros2InterfaceGenerator();
+      for (String packagePath : packagePaths)
       {
-         GeneratedMessageFileCleanup.cleanOutputDirectory(outputDirPath);
+         generator.addPackagePath(Path.of(packagePath));
       }
-
-      for (String packagePathStr : packagePaths)
+      if (dependencyPaths != null)
       {
-         Path packagePath = Path.of(packagePathStr);
-         Path packageXmlPath = packagePath.resolve("package.xml");
-         Path msgDirPath = packagePath.resolve("msg");
-
-         if (!Files.exists(packageXmlPath))
+         for (String dependencyPath : dependencyPaths)
          {
-            System.err.println("No package.xml found in package path: " + packagePathStr);
-            continue;
-         }
-
-         if (Files.exists(msgDirPath) && Files.isDirectory(msgDirPath))
-         {
-            DirectoryStream.Filter<Path> msgFileFilter = path -> Files.isRegularFile(path) && path.getFileName().toString().endsWith(".msg");
-
-            try (DirectoryStream<Path> stream = Files.newDirectoryStream(msgDirPath, msgFileFilter))
-            {
-               for (Path msgFile : stream)
-               {
-                  try
-                  {
-                     String packageResourceName = packagePath.getFileName().toString() + "/" + msgFile.getFileName().toString().replace(".msg", "");
-                     if (typeToClass.containsKey(packageResourceName))
-                     {
-                        // Do not generate files for package-resources defined in typeToClass map
-                        System.out.println("Not generating for " + packageResourceName + ". It is mapped to: " + typeToClass.get(packageResourceName));
-                        continue;
-                     }
-                     String msgFileContent = Files.readString(msgFile).replaceAll("\\*+/", ""); // Replace any comment enders in the file
-                     MsgContext context = MsgParser.parseMsg(msgFileContent, packageResourceName);
-                     String classContent = ROS2MessageGenerator.generateJavaClassContents(context, typeToClass);
-                     Path outputFilePath = outputDirPath.resolve(context.getJavaPackageName().replace(".", "/") + "/" + context.getJavaClassName() + ".java");
-                     Files.createDirectories(outputFilePath.getParent());
-                     Files.writeString(outputFilePath, classContent, StandardCharsets.UTF_8);
-                     generatedPaths.add(outputFilePath.toAbsolutePath().normalize());
-                     System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toAbsolutePath());
-                     totalInterfacesGenerated++;
-                  }
-                  catch (InterfaceFieldParsingException e)
-                  {
-                     System.err.println(e.getMessage());
-                     throw new RuntimeException(e);
-                  }
-               }
-            }
+            generator.addDependencyPath(Path.of(dependencyPath));
          }
       }
+      generator.setOutputDir(Path.of(outputDir));
+      generator.setTypeToClass(typeToClass);
+      generator.setCleanOutputDir(cleanOutputDir);
 
-      int removedOrphans = GeneratedMessageFileCleanup.removeOrphanedGeneratedFiles(outputDirPath, generatedPaths);
-
-      long endTime = System.currentTimeMillis();
-      double runTimeSeconds = (endTime - startTime) / 1000.0;
-
-      System.out.println();
-      System.out.println(totalInterfacesGenerated + " interfaces generated in " + runTimeSeconds + "s");
-      if (removedOrphans > 0)
-         System.out.println(removedOrphans + " orphaned generated files removed");
+      try
+      {
+         generator.generate();
+      }
+      catch (InterfaceFieldParsingException e)
+      {
+         throw new RuntimeException(e.getMessage(), e);
+      }
    }
 }

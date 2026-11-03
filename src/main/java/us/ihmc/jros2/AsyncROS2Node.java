@@ -15,14 +15,12 @@
  */
 package us.ihmc.jros2;
 
-import us.ihmc.fastddsjava.fastddsjavaException;
-import us.ihmc.fastddsjava.profiles.ProfilesXML;
-import us.ihmc.fastddsjava.profiles.gen.PublisherProfileType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.Arrays;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.locks.LockSupport;
+import java.util.logging.Level;
 
 /**
  * A ROS 2-compatible node which provides functionality for managing ROS 2-compatible publishers, subscriptions.
@@ -30,6 +28,12 @@ import java.util.concurrent.locks.LockSupport;
  * <p>
  * This type of node will create {@link AsyncROS2Publisher} publishers, which are non-blocking, allocation-free, and realtime safe.
  * In general, it will use more memory and CPU cycles than {@link ROS2Node}.
+ * <p>
+ * All publishers of one node share a single publish thread, which takes turns between the publishers. A publisher whose
+ * writes block (for example a RELIABLE publisher whose history is full, up to its max blocking time) delays the other
+ * publishers of the node; use separate nodes to isolate such publishers. The publish thread is created by the
+ * {@link ThreadFactory} given to {@link #AsyncROS2Node(String, ROS2NodeOptions, ThreadFactory)}, which is the place to set
+ * real-time scheduling, priority or CPU affinity ({@link Thread#setPriority(int)} alone has no effect on Linux).
  */
 public class AsyncROS2Node extends ROS2Node
 {
@@ -38,29 +42,31 @@ public class AsyncROS2Node extends ROS2Node
       jros2.load();
    }
 
-   private static final int QUEUE_CAPACITY = 256;
-   private static final AtomicLong publisherIdCounter = new AtomicLong(0);
+   /** Queue capacity of publishers created without an explicit capacity. */
+   public static final int DEFAULT_QUEUE_CAPACITY = 64;
+   private static final int TASK_QUEUE_CAPACITY = 256;
+   private static final AsyncROS2Publisher<?>[] NO_PUBLISHERS = new AsyncROS2Publisher<?>[0];
 
    /*
     * Publish thread
     */
    private final Thread publishThread;
-   private final PublishTaskQueue tasks;
    private final String threadName;
+   private volatile boolean running;
    private volatile boolean rejectTasks;
+   private volatile boolean workPending;
+
+   /*
+    * Work sources: generic tasks and the publishers' queues
+    */
+   private final EndpointSupport.BoundedMpscSequencer taskQueue;
+   private final Runnable[] tasks;
+   private final Object publishersLock;
+   private volatile AsyncROS2Publisher<?>[] asyncPublishers;
 
    public AsyncROS2Node(String name, int domainId, TransportDescriptorType... fastddsTransports)
    {
-      super(name, domainId, fastddsTransports);
-
-      tasks = new PublishTaskQueue(QUEUE_CAPACITY);
-
-      // Pre-allocate thread name during construction to avoid allocation during runtime
-      threadName = "AsyncROS2NodePublishThread-" + name;
-      publishThread = new Thread(this::publishLoop, threadName);
-      publishThread.setDaemon(true); // Allow JVM to exit even if this thread is running
-      publishThread.setPriority(Thread.NORM_PRIORITY + 1); // Slightly higher priority
-      publishThread.start();
+      this(name, ROS2NodeOptions.defaults().domainId(domainId).transports(fastddsTransports), null);
    }
 
    public AsyncROS2Node(String name, int domainId)
@@ -70,55 +76,108 @@ public class AsyncROS2Node extends ROS2Node
 
    public AsyncROS2Node(String name)
    {
-      this(name, jros2.get().rosDomainId());
+      this(name, ROS2NodeOptions.defaults(), null);
    }
 
-   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
+   /**
+    * @param name    The node name.
+    * @param options Node options. Unset options fall back to the jros2 settings and ROS 2 defaults.
+    */
+   public AsyncROS2Node(String name, ROS2NodeOptions options)
    {
-      AsyncROS2Publisher<T> publisher = null;
+      this(name, options, null);
+   }
 
-      closeLock.readLock().lock();
+   /**
+    * @param name                 The node name.
+    * @param options              Node options. Unset options fall back to the jros2 settings and ROS 2 defaults.
+    * @param publishThreadFactory creates the publish thread, e.g. a real-time thread; null for a daemon thread named
+    *                             {@code AsyncROS2NodePublishThread-<name>}. A non-daemon thread keeps the JVM alive until
+    *                             the node is closed.
+    */
+   public AsyncROS2Node(String name, ROS2NodeOptions options, ThreadFactory publishThreadFactory)
+   {
+      super(name, options);
+
+      running = true;
+      rejectTasks = false;
+      workPending = false;
+      taskQueue = new EndpointSupport.BoundedMpscSequencer(TASK_QUEUE_CAPACITY);
+      tasks = new Runnable[TASK_QUEUE_CAPACITY];
+      publishersLock = new Object();
+      asyncPublishers = NO_PUBLISHERS;
+
+      // Pre-allocate thread name during construction to avoid allocation during runtime
+      threadName = HotPathText.publishThreadName(name);
+
+      Thread thread;
       try
       {
-         if (!closed)
+         if (publishThreadFactory == null)
          {
-            ProfilesXML profilesXML = new ProfilesXML();
-            PublisherProfileType publisherProfile = new PublisherProfileType();
-
-            // Prefix with "apub_" to ensure valid XML identifier
-            long publisherId = publisherIdCounter.getAndIncrement();
-            String publisherProfileName = "apub_" + publisherId;
-
-            publisherProfile.setProfileName(publisherProfileName);
-            profilesXML.addPublisherProfile(publisherProfile);
-
-            // Translate the ROS2QoSProfile into Fast-DDS publisher profile XML
-            QoSTools.translateQoS(qosProfile, publisherProfile);
-
-            try
+            thread = new Thread(this::publishLoop, threadName);
+            thread.setDaemon(true); // Allow JVM to exit even if this thread is running
+            thread.setPriority(Thread.NORM_PRIORITY + 1); // A hint only; ignored by Linux. Use a ThreadFactory for real-time settings.
+         }
+         else
+         {
+            thread = publishThreadFactory.newThread(this::publishLoop);
+            if (thread == null)
             {
-               profilesXML.load();
-            }
-            catch (fastddsjavaException e)
-            {
-               jros2.logError("Failed to load publisher profile '" + publisherProfileName + "' for topic '" + topic.getName() + "'", e);
-               throw new RuntimeException("Failed to load publisher profile: " + publisherProfileName, e);
-            }
-
-            TopicData topicData = getOrCreateTopicData(topic);
-            publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
-
-            synchronized (publishers)
-            {
-               publishers.add(publisher);
+               throw new IllegalStateException(HotPathText.publishThreadFactoryReturnedNull(name));
             }
          }
+         thread.start();
       }
-      finally
+      catch (RuntimeException | Error e)
       {
-         closeLock.readLock().unlock();
+         running = false;
+         rejectTasks = true;
+         super.close();
+         throw e;
+      }
+      publishThread = thread;
+   }
+
+   /**
+    * Create an asynchronous publisher.
+    *
+    * @param queueCapacity the number of messages that can wait to be published before {@link AsyncROS2Publisher#publish}
+    *                      starts dropping them; at least 1
+    * @return the publisher, or null if the node is closed
+    */
+   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile, int queueCapacity)
+   {
+      if (queueCapacity < 1)
+      {
+         throw new IllegalArgumentException(HotPathText.queueCapacityTooSmall(queueCapacity));
       }
 
+      return (AsyncROS2Publisher<T>) createPublisherInternal(topic, qosProfile, queueCapacity);
+   }
+
+   @Override
+   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   {
+      return createPublisher(topic, qosProfile, DEFAULT_QUEUE_CAPACITY);
+   }
+
+   @Override
+   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic)
+   {
+      return createPublisher(topic, topic.getQoS());
+   }
+
+   @Override
+   protected <T extends ROS2Message<T>> ROS2Publisher<T> newPublisher(long fastddsParticipant,
+                                                                      String publisherProfileName,
+                                                                      ROS2Topic<T> topic,
+                                                                      TopicData topicData,
+                                                                      int asyncQueueCapacity)
+   {
+      int queueCapacity = asyncQueueCapacity > 0 ? asyncQueueCapacity : DEFAULT_QUEUE_CAPACITY;
+      AsyncROS2Publisher<T> publisher = new AsyncROS2Publisher<>(this, fastddsParticipant, publisherProfileName, topic, topicData, queueCapacity);
+      registerPublisher(publisher);
       return publisher;
    }
 
@@ -128,133 +187,218 @@ public class AsyncROS2Node extends ROS2Node
       return true;
    }
 
-   @Override
-   public <T extends ROS2Message<T>> AsyncROS2Publisher<T> createPublisher(ROS2Topic<T> topic, ROS2QoSProfile qosProfile)
+   /**
+    * @return the thread that publishes the queued messages of this node's publishers
+    */
+   public Thread getPublishThread()
    {
-      int defaultQueueCapacity = 64;
-
-      return createPublisher(topic, qosProfile, defaultQueueCapacity);
+      return publishThread;
    }
 
+   /**
+    * Stops the publish thread after it has written the messages that are already queued (waiting up to 2 seconds, then
+    * interrupting it), and then closes the node like {@link ROS2Node#close()}. Even if the publish thread does not stop
+    * in time, a write that is in flight finishes before its publisher's native resources are released.
+    */
    @Override
    public void close()
    {
-      closeLock.writeLock().lock();
-      if (closed)
+      if (publishersLock == null)
       {
-         closeLock.writeLock().unlock();
-      }
-      else
-      {
-         rejectTasks = true;
-         closeLock.writeLock().unlock();
-
-         publishThread.interrupt();
-         try
-         {
-            publishThread.join(2000);
-         }
-         catch (InterruptedException interruptedException)
-         {
-            Thread.currentThread().interrupt();
-            jros2.logError("Publish thread did not join.", interruptedException);
-         }
-
+         // Only possible if the JVM shutdown hook runs while the constructor is still running.
          super.close();
+         return;
+      }
+
+      boolean stopThread;
+      synchronized (publishersLock)
+      {
+         stopThread = running;
+         running = false;
+         rejectTasks = true;
+      }
+
+      Thread thread = publishThread;
+      if (stopThread && thread != null)
+      {
+         LockSupport.unpark(thread);
+
+         // Never wait for the publish thread from itself or from a callback (it may be blocked delivering to us).
+         if (Thread.currentThread() != thread && !CallbackContext.isInCallback())
+         {
+            joinQuietly(thread, 2000);
+            if (thread.isAlive())
+            {
+               thread.interrupt();
+               joinQuietly(thread, 1000);
+            }
+            if (thread.isAlive())
+            {
+               jros2.getLogger().warning(HotPathText.publishThreadDidNotStop(threadName));
+            }
+         }
+      }
+
+      super.close();
+   }
+
+   private static void joinQuietly(Thread thread, long millis)
+   {
+      try
+      {
+         thread.join(millis);
+      }
+      catch (InterruptedException interruptedException)
+      {
+         Thread.currentThread().interrupt();
       }
    }
 
+   /**
+    * @return true once {@link #close()} has started: publishers stop accepting messages so that the publish thread can
+    *       finish writing the queued ones
+    */
+   boolean isClosing()
+   {
+      return rejectTasks;
+   }
+
+   /**
+    * Runs {@code task} on the publish thread, in order with other tasks. Allocation-free.
+    *
+    * @return false if the node is closed or the task queue is full
+    */
    protected boolean addTask(Runnable task)
    {
-      boolean accepted = false;
-      if (!rejectTasks)
+      if (task == null || rejectTasks)
       {
-         accepted = tasks.offer(task);
-         if (accepted)
+         return false;
+      }
+
+      long position = taskQueue.claim();
+      if (position < 0)
+      {
+         return false;
+      }
+      tasks[taskQueue.index(position)] = task;
+      taskQueue.commit(position);
+      signalWork();
+      return true;
+   }
+
+   /**
+    * Wakes the publish thread. Called after a message or task was committed.
+    */
+   void signalWork()
+   {
+      if (!workPending)
+      {
+         workPending = true;
+         Thread thread = publishThread;
+         if (thread != null)
          {
-            LockSupport.unpark(publishThread);
+            LockSupport.unpark(thread);
          }
       }
-      return accepted;
+   }
+
+   void registerPublisher(AsyncROS2Publisher<?> publisher)
+   {
+      synchronized (publishersLock)
+      {
+         AsyncROS2Publisher<?>[] current = asyncPublishers;
+         AsyncROS2Publisher<?>[] updated = Arrays.copyOf(current, current.length + 1);
+         updated[current.length] = publisher;
+         asyncPublishers = updated;
+      }
+   }
+
+   void unregisterPublisher(AsyncROS2Publisher<?> publisher)
+   {
+      synchronized (publishersLock)
+      {
+         AsyncROS2Publisher<?>[] current = asyncPublishers;
+         for (int i = 0; i < current.length; ++i)
+         {
+            if (current[i] == publisher)
+            {
+               AsyncROS2Publisher<?>[] updated = new AsyncROS2Publisher<?>[current.length - 1];
+               System.arraycopy(current, 0, updated, 0, i);
+               System.arraycopy(current, i + 1, updated, i, current.length - i - 1);
+               asyncPublishers = updated;
+               return;
+            }
+         }
+      }
    }
 
    private void publishLoop()
    {
-      while (!Thread.currentThread().isInterrupted())
+      // With intraprocess delivery, subscription callbacks run on this thread.
+      CallbackContext.prepareThread();
+      while (running)
       {
-         Runnable task = tasks.poll();
-         if (task != null)
+         // Cleared before looking for work: a producer that commits after this point sets it again and unparks us.
+         workPending = false;
+         boolean didWork = runOnce();
+         if (!didWork && !workPending && running)
          {
-            task.run();
+            LockSupport.park(this);
+            Thread.interrupted(); // A stray interrupt must not turn park() into a busy loop.
          }
-         else
+      }
+
+      // Write what was queued before close() (bounded by the queue capacities).
+      while (runOnce())
+      {
+         if (Thread.currentThread().isInterrupted())
          {
-            LockSupport.park();
+            break;
          }
       }
    }
 
    /**
-    * Multi-producer, single-consumer queue for reusable publish tasks.
+    * @return true if any task or message was processed
     */
-   private static final class PublishTaskQueue
+   private boolean runOnce()
    {
-      private final AtomicReferenceArray<Runnable> slots;
-      private final int mask;
-      private final AtomicLong producerIndex = new AtomicLong();
-      private final AtomicLong consumerIndex = new AtomicLong();
+      boolean didWork = false;
 
-      PublishTaskQueue(int capacity)
+      long position;
+      while ((position = taskQueue.peek()) >= 0)
       {
-         if (capacity < 2 || (capacity & (capacity - 1)) != 0)
+         int index = taskQueue.index(position);
+         Runnable task = tasks[index];
+         tasks[index] = null;
+         taskQueue.release(position);
+         didWork = true;
+         try
          {
-            throw new IllegalArgumentException("capacity must be a power of 2: " + capacity);
+            task.run();
          }
-         slots = new AtomicReferenceArray<>(capacity);
-         mask = capacity - 1;
+         catch (Throwable throwable)
+         {
+            jros2.getLogger().log(Level.SEVERE, HotPathText.publishThreadTaskFailed(threadName), throwable);
+         }
       }
 
-      boolean offer(Runnable task)
+      AsyncROS2Publisher<?>[] publishers = asyncPublishers;
+      for (int i = 0; i < publishers.length; ++i)
       {
-         final long capacity = mask + 1L;
-         for (;;)
+         try
          {
-            final long producer = producerIndex.get();
-            final long consumer = consumerIndex.get();
-            if (producer - consumer >= capacity)
+            if (publishers[i].drainQueue() > 0)
             {
-               return false;
-            }
-            if (producerIndex.compareAndSet(producer, producer + 1L))
-            {
-               final int index = (int) producer & mask;
-               while (!slots.compareAndSet(index, null, task))
-               {
-                  Thread.onSpinWait();
-               }
-               return true;
+               didWork = true;
             }
          }
+         catch (Throwable throwable)
+         {
+            jros2.getLogger().log(Level.SEVERE, HotPathText.publishThreadPublishingFailed(threadName), throwable);
+         }
       }
 
-      Runnable poll()
-      {
-         final long consumer = consumerIndex.get();
-         if (consumer == producerIndex.get())
-         {
-            return null;
-         }
-
-         final int index = (int) consumer & mask;
-         Runnable task;
-         while ((task = slots.get(index)) == null)
-         {
-            // Producer claimed the index but has not published the reference yet.
-            Thread.onSpinWait();
-         }
-         slots.lazySet(index, null);
-         consumerIndex.set(consumer + 1L);
-         return task;
-      }
+      return didWork;
    }
 }

@@ -39,9 +39,14 @@ MenuEntry[] menu_entries
 InteractiveMarkerControl[] controls
 }</pre>
 */
-public class InteractiveMarker implements ROS2Message<InteractiveMarker>
+public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "visualization_msgs::msg::dds_::InteractiveMarker_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/InteractiveMarker, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_3d5b51448b51d73b0f395b94d259edd3a5d269ae9f7d9fd5cceb9ae4b72be346";
 
    /**
       Time/frame info.
@@ -82,8 +87,8 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    {
       header_ = new std_msgs.Header();
       pose_ = new geometry_msgs.Pose();
-      name_ = new StringBuilder();
-      description_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
+      description_ = CDRBuffer.newStringBuilder(16);
       menu_entries_ = new IDLObjectSequence<visualization_msgs.MenuEntry>(visualization_msgs.MenuEntry.class);
       controls_ = new IDLObjectSequence<visualization_msgs.InteractiveMarkerControl>(visualization_msgs.InteractiveMarkerControl.class);
 
@@ -102,9 +107,9 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += pose_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * description_.length()) + 1; // description_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // scale_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(description_) + 1; // description_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // scale_
       currentAlignment += menu_entries_.calculateSizeBytes(currentAlignment);
       currentAlignment += controls_.calculateSizeBytes(currentAlignment);
 
@@ -140,15 +145,20 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    @Override
    public void set(InteractiveMarker from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       pose_.set(from.pose_);
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
-      description_.delete(0, description_.length());
-      description_.insert(0, from.description_);
+      name_.setLength(0);
+      name_.append(from.name_);
+      description_.setLength(0);
+      description_.append(from.description_);
       scale_ = from.scale_;
-      menu_entries_.set(from.menu_entries_);
-      controls_.set(from.controls_);
+      menu_entries_.set(from.menu_entries_, visualization_msgs.MenuEntry::set); // copies the elements, never shares them
+      controls_.set(from.controls_, visualization_msgs.InteractiveMarkerControl::set); // copies the elements, never shares them
 
    }
 
@@ -167,30 +177,70 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public StringBuilder getDescription()
    {
       return description_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of description (allocates). {@link #getDescription()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getDescriptionAsString()
    {
       return description_.toString();
    }
 
+   /**
+    * Replaces the content of description with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setDescription(java.lang.String s)
    {
-      this.description_.delete(0, this.description_.length());
-      this.description_.insert(0, s);
+      this.description_.setLength(0);
+      this.description_.append(s);
+   }
+
+   /**
+    * Replaces the content of description with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setDescription(java.lang.CharSequence s)
+   {
+      if (s != this.description_)
+      {
+         this.description_.setLength(0);
+         this.description_.append(s);
+      }
    }
    public float getScale()
    {
@@ -213,27 +263,34 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"InteractiveMarker {", "header_=", "pose_=", "name_=", "description_=", "scale_=", "menu_entries_=", "controls_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("InteractiveMarker {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("pose_=");
+      builder.append(toStringLabels[2]);
       builder.append(pose_);
-      builder.append("name_=");
+      builder.append(toStringLabels[3]);
       builder.append(name_.toString());
-      builder.append("description_=");
+      builder.append(toStringLabels[4]);
       builder.append(description_.toString());
-      builder.append("scale_=");
+      builder.append(toStringLabels[5]);
       builder.append(scale_);
-      builder.append("menu_entries_=");
+      builder.append(toStringLabels[6]);
       builder.append(menu_entries_);
-      builder.append("controls_=");
+      builder.append(toStringLabels[7]);
       builder.append(controls_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

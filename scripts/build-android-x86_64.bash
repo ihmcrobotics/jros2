@@ -9,14 +9,16 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 # Find Android NDK (try common locations)
-if [ -z "$ANDROID_NDK" ]; then
+if [ -z "${ANDROID_NDK:-}" ]; then
   if [ -d "$HOME/Android/Sdk/ndk" ]; then
-    export ANDROID_NDK=$(ls -d $HOME/Android/Sdk/ndk/* 2>/dev/null | head -1)
+    # Newest installed NDK (r28+ is needed for 16 KB page-size compatible arm64-v8a/x86_64 libraries)
+    ANDROID_NDK=$(find "$HOME/Android/Sdk/ndk" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+    export ANDROID_NDK
   fi
 
-  if [ -z "$ANDROID_NDK" ]; then
+  if [ -z "${ANDROID_NDK:-}" ]; then
     echo "Error: ANDROID_NDK not found. Please set ANDROID_NDK environment variable."
-    echo "Example: export ANDROID_NDK=/path/to/android-sdk/ndk/30.0.14904198"
+    echo "Example: export ANDROID_NDK=/path/to/android-sdk/ndk/30.0.16248370"
     exit 1
   fi
 fi

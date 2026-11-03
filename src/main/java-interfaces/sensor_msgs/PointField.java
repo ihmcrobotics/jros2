@@ -34,17 +34,22 @@ public class PointField implements ROS2Message<PointField>
    public static final java.lang.String name = "sensor_msgs::msg::dds_::PointField_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/PointField, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5c6a4750728c2bcfbbf7037225b20b02d4429634732146b742dee1726637ef01";
+
+   /**
       This message holds the description of one point entry in the
       PointCloud2 message format.
    */
-   public static final byte INT8 = 1;
-   public static final byte UINT8 = 2;
-   public static final byte INT16 = 3;
-   public static final byte UINT16 = 4;
-   public static final byte INT32 = 5;
-   public static final byte UINT32 = 6;
-   public static final byte FLOAT32 = 7;
-   public static final byte FLOAT64 = 8;
+   public static final byte INT8 = (byte) 1;
+   public static final byte UINT8 = (byte) 2;
+   public static final byte INT16 = (byte) 3;
+   public static final byte UINT16 = (byte) 4;
+   public static final byte INT32 = (byte) 5;
+   public static final byte UINT32 = (byte) 6;
+   public static final byte FLOAT32 = (byte) 7;
+   public static final byte FLOAT64 = (byte) 8;
    /**
       Common PointField names are x, y, z, intensity, rgb, rgba
    */
@@ -55,7 +60,7 @@ public class PointField implements ROS2Message<PointField>
 
    public PointField()
    {
-      name_ = new StringBuilder();
+      name_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -70,10 +75,10 @@ public class PointField implements ROS2Message<PointField>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * name_.length()) + 1; // name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // offset_
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // datatype_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // count_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(name_) + 1; // name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // offset_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // datatype_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // count_
 
       return currentAlignment - initialAlignment;
    }
@@ -101,8 +106,13 @@ public class PointField implements ROS2Message<PointField>
    @Override
    public void set(PointField from)
    {
-      name_.delete(0, name_.length());
-      name_.insert(0, from.name_);
+      if (from == this)
+      {
+         return;
+      }
+
+      name_.setLength(0);
+      name_.append(from.name_);
       offset_ = from.offset_;
       datatype_ = from.datatype_;
       count_ = from.count_;
@@ -114,15 +124,35 @@ public class PointField implements ROS2Message<PointField>
       return name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of name (allocates). {@link #getName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getNameAsString()
    {
       return name_.toString();
    }
 
+   /**
+    * Replaces the content of name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setName(java.lang.String s)
    {
-      this.name_.delete(0, this.name_.length());
-      this.name_.insert(0, s);
+      this.name_.setLength(0);
+      this.name_.append(s);
+   }
+
+   /**
+    * Replaces the content of name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setName(java.lang.CharSequence s)
+   {
+      if (s != this.name_)
+      {
+         this.name_.setLength(0);
+         this.name_.append(s);
+      }
    }
    public int getOffset()
    {
@@ -155,37 +185,44 @@ public class PointField implements ROS2Message<PointField>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PointField {", "INT8=", "UINT8=", "INT16=", "UINT16=", "INT32=", "UINT32=", "FLOAT32=", "FLOAT64=", "name_=", "offset_=", "datatype_=", "count_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PointField {");
-      builder.append("INT8=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(INT8);
-      builder.append("UINT8=");
+      builder.append(toStringLabels[2]);
       builder.append(UINT8);
-      builder.append("INT16=");
+      builder.append(toStringLabels[3]);
       builder.append(INT16);
-      builder.append("UINT16=");
+      builder.append(toStringLabels[4]);
       builder.append(UINT16);
-      builder.append("INT32=");
+      builder.append(toStringLabels[5]);
       builder.append(INT32);
-      builder.append("UINT32=");
+      builder.append(toStringLabels[6]);
       builder.append(UINT32);
-      builder.append("FLOAT32=");
+      builder.append(toStringLabels[7]);
       builder.append(FLOAT32);
-      builder.append("FLOAT64=");
+      builder.append(toStringLabels[8]);
       builder.append(FLOAT64);
-      builder.append("name_=");
+      builder.append(toStringLabels[9]);
       builder.append(name_.toString());
-      builder.append("offset_=");
+      builder.append(toStringLabels[10]);
       builder.append(offset_);
-      builder.append("datatype_=");
+      builder.append(toStringLabels[11]);
       builder.append(datatype_);
-      builder.append("count_=");
+      builder.append(toStringLabels[12]);
       builder.append(count_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

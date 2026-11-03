@@ -27,6 +27,11 @@ public class MeshFile implements ROS2Message<MeshFile>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::MeshFile_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/MeshFile, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_7710ece15a148fb7c9b546364cfb215bb06098087bd6394fe5b73a493508f8c4";
+
+   /**
       The filename is used for both debug purposes and to provide a file extension
       for whatever parser is used.
    */
@@ -38,7 +43,7 @@ public class MeshFile implements ROS2Message<MeshFile>
 
    public MeshFile()
    {
-      filename_ = new StringBuilder();
+      filename_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
 
    }
@@ -54,7 +59,7 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * filename_.length()) + 1; // filename_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(filename_) + 1; // filename_
       currentAlignment += data_.calculateSizeBytes(currentAlignment);
 
       return currentAlignment - initialAlignment;
@@ -79,8 +84,13 @@ public class MeshFile implements ROS2Message<MeshFile>
    @Override
    public void set(MeshFile from)
    {
-      filename_.delete(0, filename_.length());
-      filename_.insert(0, from.filename_);
+      if (from == this)
+      {
+         return;
+      }
+
+      filename_.setLength(0);
+      filename_.append(from.filename_);
       data_.set(from.data_);
 
    }
@@ -90,15 +100,35 @@ public class MeshFile implements ROS2Message<MeshFile>
       return filename_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of filename (allocates). {@link #getFilename()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getFilenameAsString()
    {
       return filename_.toString();
    }
 
+   /**
+    * Replaces the content of filename with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setFilename(java.lang.String s)
    {
-      this.filename_.delete(0, this.filename_.length());
-      this.filename_.insert(0, s);
+      this.filename_.setLength(0);
+      this.filename_.append(s);
+   }
+
+   /**
+    * Replaces the content of filename with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setFilename(java.lang.CharSequence s)
+   {
+      if (s != this.filename_)
+      {
+         this.filename_.setLength(0);
+         this.filename_.append(s);
+      }
    }
    public IDLByteSequence getData()
    {
@@ -106,17 +136,24 @@ public class MeshFile implements ROS2Message<MeshFile>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MeshFile {", "filename_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MeshFile {");
-      builder.append("filename_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(filename_.toString());
-      builder.append("data_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

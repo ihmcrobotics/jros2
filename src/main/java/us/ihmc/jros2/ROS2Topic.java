@@ -32,6 +32,13 @@ package us.ihmc.jros2;
  * prepending, appending, or inserting tokens into the name of an existing topic object.
  * QoS is propagated through those transforms unless overridden with {@link #withQoS(ROS2QoSProfile)}.
  * <p>
+ * Like in rclcpp, the name may be absolute ({@code /camera/image}), relative ({@code camera/image}, resolved against
+ * the node namespace) or private ({@code ~/image}, resolved against the node's fully qualified name), and may use the
+ * {@code {node}}, {@code {ns}} and {@code {namespace}} substitutions. Constructing a topic does not validate the name:
+ * the name is expanded and validated with the ROS 2 rules when a {@link ROS2Node} creates a publisher or subscription
+ * for it (see {@link ROS2Node#resolveTopicName(String)}), and the DDS topic name is then {@code "rt"} followed by the
+ * fully qualified name.
+ * <p>
  * The following is example usage for creating topics for a camera that provides color and depth images:
  * <pre> {@code
  * // Create a camera topic namespace
@@ -77,7 +84,8 @@ public class ROS2Topic<T extends ROS2Message<T>>
    /**
     * Creates a topic with a name and no type.
     *
-    * @param topicName The topic name. Must satisfy constraints set by ROS 2.
+    * @param topicName The topic name: absolute, relative or private ({@code ~/...}). It is validated against the
+    *                  constraints set by ROS 2 when a node creates a publisher or subscription for it.
     *                  See the "ROS 2 Topic and Service Name Constraints" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     */
@@ -89,7 +97,8 @@ public class ROS2Topic<T extends ROS2Message<T>>
    /**
     * Creates a topic with a name and type.
     *
-    * @param topicName The topic name. Must satisfy constraints set by ROS 2.
+    * @param topicName The topic name: absolute, relative or private ({@code ~/...}). It is validated against the
+    *                  constraints set by ROS 2 when a node creates a publisher or subscription for it.
     *                  See the "ROS 2 Topic and Service Name Constraints" section in:
     *                  <a href="https://design.ros2.org/articles/topic_and_service_names.html">Topic and Service name mapping to DDS</a>
     * @param topicType The message type sent over this topic.
@@ -108,20 +117,8 @@ public class ROS2Topic<T extends ROS2Message<T>>
     */
    public ROS2Topic(String topicName, Class<T> topicType, ROS2QoSProfile qosProfile)
    {
-      if (topicName == null || topicName.isEmpty())
-      {
-         this.topicName = "";
-         numberOfTokens = 0;
-      }
-      else
-      {
-         if (!topicName.startsWith("/"))
-         {
-            jros2.getLogger().warning("Possible invalid topic name (" + topicName + "). Topics must start with a leading forward slash (/).");
-         }
-         this.topicName = topicName;
-         numberOfTokens = topicName.split("/").length - 1;
-      }
+      this.topicName = HotPathText.topicNameOrEmpty(topicName);
+      numberOfTokens = HotPathText.topicNameTokens(this.topicName).length;
 
       this.topicType = topicType;
       this.qosProfile = qosProfile != null ? qosProfile : ROS2QoSProfile.DEFAULT;
@@ -142,7 +139,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
          return new ROS2Topic<>(topicName, topicType, qosProfile);
       }
 
-      return new ROS2Topic<>(topicName + "/" + token, topicType, qosProfile);
+      return new ROS2Topic<>(HotPathText.topicNameAppended(topicName, token), topicType, qosProfile);
    }
 
    /**
@@ -160,7 +157,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
          return new ROS2Topic<>(topicName, topicType, qosProfile);
       }
 
-      return new ROS2Topic<>("/" + token + topicName, topicType, qosProfile);
+      return new ROS2Topic<>(HotPathText.topicNamePrepended(topicName, token), topicType, qosProfile);
    }
 
    /**
@@ -179,7 +176,7 @@ public class ROS2Topic<T extends ROS2Message<T>>
       // Ensure good position was given
       if (position < 0 || position > numberOfTokens)
       {
-         throw new IllegalArgumentException("Position must be in the range [0, numberOfTokens]");
+         throw new IllegalArgumentException(HotPathText.topicInsertPositionOutOfRange());
       }
 
       // If inserting nothing, we can return early
@@ -198,30 +195,22 @@ public class ROS2Topic<T extends ROS2Message<T>>
          return appendedWith(token);
       }
 
-      String[] tokens = topicName.split("/"); // Array of existing tokens. Note that tokens[0] == "".
+      String[] tokens = HotPathText.topicNameTokens(topicName); // Array of existing tokens
 
-      // Sanity check
-      if (!tokens[0].equals(""))
-      {
-         jros2.getLogger().severe("Malformed topic name: " + topicName + ". Failed to insert token at position " + position + ".");
-         return this;
-      }
-
-      String[] newTokens = new String[numberOfTokens + 1]; // Array where we'll store new tokens
-      for (int insert = 0, read = 1; insert < newTokens.length; ++insert, ++read)
+      String[] newTokens = new String[tokens.length + 1]; // Array where we'll store new tokens
+      for (int insert = 0, read = 0; insert < newTokens.length; ++insert)
       {
          if (insert == position) // If we're at the insertion position, insert the passed in token
          {
             newTokens[insert] = token;
-            read--; // Decrement read position since we didn't read from the existing tokens
          }
          else // Not at insertion position. Just copy values over.
          {
-            newTokens[insert] = tokens[read];
+            newTokens[insert] = tokens[read++];
          }
       }
 
-      return new ROS2Topic<>("/" + String.join("/", newTokens), getType(), qosProfile);
+      return new ROS2Topic<>(HotPathText.topicNameFromTokens(topicName, newTokens), getType(), qosProfile);
    }
 
    /**

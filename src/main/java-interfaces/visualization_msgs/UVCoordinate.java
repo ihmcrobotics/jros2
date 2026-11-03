@@ -22,6 +22,11 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    public static final java.lang.String name = "visualization_msgs::msg::dds_::UVCoordinate_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of visualization_msgs/msg/UVCoordinate, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_f27f7ed21fe360c6066944f856b801a0c0d1e94e815b6886444b42d90b196a26";
+
+   /**
       Location of the pixel as a ratio of the width of a 2D texture.
       Values should be in range: [0.0-1.0].
    */
@@ -43,8 +48,8 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // u_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // v_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // u_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // v_
 
       return currentAlignment - initialAlignment;
    }
@@ -68,6 +73,11 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    @Override
    public void set(UVCoordinate from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       u_ = from.u_;
       v_ = from.v_;
 
@@ -94,17 +104,24 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"UVCoordinate {", "u_=", "v_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("UVCoordinate {");
-      builder.append("u_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(u_);
-      builder.append("v_=");
+      builder.append(toStringLabels[2]);
       builder.append(v_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -29,6 +29,11 @@ public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::UInt16MultiArray_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/UInt16MultiArray, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_94fe73428ec63baecc774f8fb82406123e9291cf728f1b7c91caf5335129492b";
+
    private final std_msgs.MultiArrayLayout layout_; // specification of data layout
    private final IDLShortSequence data_; // array of data
 
@@ -75,6 +80,11 @@ public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
    @Override
    public void set(UInt16MultiArray from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       layout_.set(from.layout_);
       data_.set(from.data_);
 
@@ -91,17 +101,24 @@ public class UInt16MultiArray implements ROS2Message<UInt16MultiArray>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"UInt16MultiArray {", "layout_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("UInt16MultiArray {");
-      builder.append("layout_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(layout_);
-      builder.append("data_=");
+      builder.append(toStringLabels[2]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

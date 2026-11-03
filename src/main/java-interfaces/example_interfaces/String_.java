@@ -23,6 +23,11 @@ public class String_ implements ROS2Message<String_>
    public static final java.lang.String name = "example_interfaces::msg::dds_::String_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of example_interfaces/msg/String, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_5509d866a579951f2fc6c19577c32605ba16f308cae7b498341d79536d4eb06b";
+
+   /**
       This is an example message of using a primitive datatype, string.
       If you want to test with this that's fine, but if you are deploying
       it into a system you should create a semantically meaningful message type.
@@ -32,7 +37,7 @@ public class String_ implements ROS2Message<String_>
 
    public String_()
    {
-      data_ = new StringBuilder();
+      data_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -47,7 +52,7 @@ public class String_ implements ROS2Message<String_>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * data_.length()) + 1; // data_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(data_) + 1; // data_
 
       return currentAlignment - initialAlignment;
    }
@@ -69,8 +74,13 @@ public class String_ implements ROS2Message<String_>
    @Override
    public void set(String_ from)
    {
-      data_.delete(0, data_.length());
-      data_.insert(0, from.data_);
+      if (from == this)
+      {
+         return;
+      }
+
+      data_.setLength(0);
+      data_.append(from.data_);
 
    }
 
@@ -79,26 +89,53 @@ public class String_ implements ROS2Message<String_>
       return data_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of data (allocates). {@link #getData()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getDataAsString()
    {
       return data_.toString();
    }
 
+   /**
+    * Replaces the content of data with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setData(java.lang.String s)
    {
-      this.data_.delete(0, this.data_.length());
-      this.data_.insert(0, s);
+      this.data_.setLength(0);
+      this.data_.append(s);
    }
+
+   /**
+    * Replaces the content of data with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setData(java.lang.CharSequence s)
+   {
+      if (s != this.data_)
+      {
+         this.data_.setLength(0);
+         this.data_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"String_ {", "data_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("String_ {");
-      builder.append("data_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(data_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

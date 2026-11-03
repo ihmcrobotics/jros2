@@ -33,18 +33,23 @@ public class ParameterType implements ROS2Message<ParameterType>
    public static final java.lang.String name = "rcl_interfaces::msg::dds_::ParameterType_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of rcl_interfaces/msg/ParameterType, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_df29ed057a834862187be24dd187d981790ff3ea6502f4cd27b432cbc42c6d46";
+
+   /**
       Default value, which implies this is not a valid parameter.
    */
-   public static final byte PARAMETER_NOT_SET = 0;
-   public static final byte PARAMETER_BOOL = 1;
-   public static final byte PARAMETER_INTEGER = 2;
-   public static final byte PARAMETER_DOUBLE = 3;
-   public static final byte PARAMETER_STRING = 4;
-   public static final byte PARAMETER_BYTE_ARRAY = 5;
-   public static final byte PARAMETER_BOOL_ARRAY = 6;
-   public static final byte PARAMETER_INTEGER_ARRAY = 7;
-   public static final byte PARAMETER_DOUBLE_ARRAY = 8;
-   public static final byte PARAMETER_STRING_ARRAY = 9;
+   public static final byte PARAMETER_NOT_SET = (byte) 0;
+   public static final byte PARAMETER_BOOL = (byte) 1;
+   public static final byte PARAMETER_INTEGER = (byte) 2;
+   public static final byte PARAMETER_DOUBLE = (byte) 3;
+   public static final byte PARAMETER_STRING = (byte) 4;
+   public static final byte PARAMETER_BYTE_ARRAY = (byte) 5;
+   public static final byte PARAMETER_BOOL_ARRAY = (byte) 6;
+   public static final byte PARAMETER_INTEGER_ARRAY = (byte) 7;
+   public static final byte PARAMETER_DOUBLE_ARRAY = (byte) 8;
+   public static final byte PARAMETER_STRING_ARRAY = (byte) 9;
 
    public ParameterType()
    {
@@ -61,51 +66,66 @@ public class ParameterType implements ROS2Message<ParameterType>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += 1; // uint8 structure_needs_at_least_one_member
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      buffer.writeStructureDummyMember();
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      buffer.readStructureDummyMember();
    }
 
    @Override
    public void set(ParameterType from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
    }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"ParameterType {", "PARAMETER_NOT_SET=", "PARAMETER_BOOL=", "PARAMETER_INTEGER=", "PARAMETER_DOUBLE=", "PARAMETER_STRING=", "PARAMETER_BYTE_ARRAY=", "PARAMETER_BOOL_ARRAY=", "PARAMETER_INTEGER_ARRAY=", "PARAMETER_DOUBLE_ARRAY=", "PARAMETER_STRING_ARRAY="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("ParameterType {");
-      builder.append("PARAMETER_NOT_SET=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(PARAMETER_NOT_SET);
-      builder.append("PARAMETER_BOOL=");
+      builder.append(toStringLabels[2]);
       builder.append(PARAMETER_BOOL);
-      builder.append("PARAMETER_INTEGER=");
+      builder.append(toStringLabels[3]);
       builder.append(PARAMETER_INTEGER);
-      builder.append("PARAMETER_DOUBLE=");
+      builder.append(toStringLabels[4]);
       builder.append(PARAMETER_DOUBLE);
-      builder.append("PARAMETER_STRING=");
+      builder.append(toStringLabels[5]);
       builder.append(PARAMETER_STRING);
-      builder.append("PARAMETER_BYTE_ARRAY=");
+      builder.append(toStringLabels[6]);
       builder.append(PARAMETER_BYTE_ARRAY);
-      builder.append("PARAMETER_BOOL_ARRAY=");
+      builder.append(toStringLabels[7]);
       builder.append(PARAMETER_BOOL_ARRAY);
-      builder.append("PARAMETER_INTEGER_ARRAY=");
+      builder.append(toStringLabels[8]);
       builder.append(PARAMETER_INTEGER_ARRAY);
-      builder.append("PARAMETER_DOUBLE_ARRAY=");
+      builder.append(toStringLabels[9]);
       builder.append(PARAMETER_DOUBLE_ARRAY);
-      builder.append("PARAMETER_STRING_ARRAY=");
+      builder.append(toStringLabels[10]);
       builder.append(PARAMETER_STRING_ARRAY);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

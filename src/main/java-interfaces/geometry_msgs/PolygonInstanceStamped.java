@@ -20,9 +20,14 @@ std_msgs/Header header
 geometry_msgs/PolygonInstance polygon
 }</pre>
 */
-public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStamped>
+public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStamped>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "geometry_msgs::msg::dds_::PolygonInstanceStamped_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of geometry_msgs/msg/PolygonInstanceStamped, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_802f37ea4398d7ce547936aab1fd278923716a13c63373887cd896957434ce2f";
 
    private final std_msgs.Header header_;
    private final geometry_msgs.PolygonInstance polygon_;
@@ -70,6 +75,11 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    @Override
    public void set(PolygonInstanceStamped from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       polygon_.set(from.polygon_);
 
@@ -86,17 +96,24 @@ public class PolygonInstanceStamped implements ROS2Message<PolygonInstanceStampe
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"PolygonInstanceStamped {", "header_=", "polygon_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("PolygonInstanceStamped {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("polygon_=");
+      builder.append(toStringLabels[2]);
       builder.append(polygon_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

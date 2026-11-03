@@ -16,6 +16,7 @@
 package us.ihmc.fastddsjava.profiles;
 
 import org.junit.jupiter.api.Test;
+import us.ihmc.fastddsjava.profiles.gen.ThreadSettingsType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType;
 import us.ihmc.fastddsjava.profiles.gen.TransportDescriptorType.InterfaceWhiteList;
 
@@ -560,6 +561,193 @@ public class TransportDescriptorTypeToolsTest
       assertNull(config.getTransports());
       assertTrue(config.shouldUseBuiltinTransports());
       assertFalse(config.shouldAddToXml());
+   }
+
+   @Test
+   public void testWhitelistChangeAfterFirstUseRegistersNewTransports()
+   {
+      // Regression: the first whitelist set the "added to XML" flag only once; a node created after the whitelist changed
+      // referenced a UDP transport that was never added to any XML profile.
+      String ipA = "10.201." + (System.nanoTime() % 250) + ".1";
+      String ipB = "10.202." + (System.nanoTime() % 250) + ".2";
+      TransportDescriptorTypeTools.TransportConfiguration first = TransportDescriptorTypeTools.configureTransports(null, new String[] {ipA});
+      TransportDescriptorTypeTools.TransportConfiguration changed = TransportDescriptorTypeTools.configureTransports(null, new String[] {ipB});
+
+      assertNotEquals(first.getTransports()[0].getTransportId(), changed.getTransports()[0].getTransportId());
+      assertTrue(changed.shouldAddToXml(), "The new whitelisted UDP transport must be added to the XML");
+      // Back to the first whitelist: same (already registered) descriptors
+      TransportDescriptorTypeTools.TransportConfiguration back = TransportDescriptorTypeTools.configureTransports(null, new String[] {ipA});
+      assertEquals(first.getTransports()[0].getTransportId(), back.getTransports()[0].getTransportId());
+      assertFalse(back.shouldAddToXml());
+      // SHM is shared between whitelists
+      assertEquals(first.getTransports()[1].getTransportId(), changed.getTransports()[1].getTransportId());
+   }
+
+   @Test
+   public void testSelectTransports()
+   {
+      assertNull(TransportDescriptorTypeTools.selectTransports(null, null, false));
+      assertNull(TransportDescriptorTypeTools.selectTransports(new TransportDescriptorType[0], new String[0], false));
+
+      TransportDescriptorType[] android = TransportDescriptorTypeTools.selectTransports(null, null, true);
+      assertEquals(1, android.length);
+      assertEquals("UDPv4", android[0].getType());
+      assertSame(TransportDescriptorTypeTools.createUDPv4Descriptor(), android[0]);
+
+      TransportDescriptorType custom = TransportDescriptorTypeTools.createTCPv4Descriptor();
+      TransportDescriptorType[] customArray = {custom};
+      TransportDescriptorType[] selected = TransportDescriptorTypeTools.selectTransports(customArray, null, true);
+      assertArrayEquals(customArray, selected);
+      assertNotSame(customArray, selected, "the caller's array is copied");
+
+      String ip = "10.203." + (System.nanoTime() % 250) + ".3";
+      TransportDescriptorType[] whitelisted = TransportDescriptorTypeTools.selectTransports(null, new String[] {ip}, false);
+      assertEquals("UDPv4", whitelisted[0].getType());
+      assertTrue(whitelisted[0].getInterfaceWhiteList().getAddressOrInterface().contains(ip));
+      assertEquals("SHM", whitelisted[1].getType());
+   }
+
+   @Test
+   public void testDeriveVariant()
+   {
+      TransportDescriptorType base = TransportDescriptorTypeTools.createUDPv4Transport("10.204.0." + (System.nanoTime() % 250));
+      assertSame(base, TransportDescriptorTypeTools.deriveVariant(base, null, null));
+
+      TransportDescriptorType wider = TransportDescriptorTypeTools.deriveVariant(base, 32L, null);
+      assertNotSame(base, wider);
+      assertNotEquals(base.getTransportId(), wider.getTransportId());
+      assertTrue(wider.getTransportId().startsWith(base.getTransportId()));
+      assertEquals(32L, wider.getMaxInitialPeersRange());
+      assertNull(base.getMaxInitialPeersRange(), "the base descriptor is never modified");
+      assertSame(base.getInterfaceWhiteList(), wider.getInterfaceWhiteList());
+      // Cached: same request, same descriptor and ID
+      assertSame(wider, TransportDescriptorTypeTools.deriveVariant(base, 32L, null));
+      // Requesting the value the base already has returns the base
+      assertSame(wider, TransportDescriptorTypeTools.deriveVariant(wider, 32L, null));
+
+      ThreadSettingsType threads = new ThreadSettingsType();
+      threads.setPriority(1);
+      TransportDescriptorType threaded = TransportDescriptorTypeTools.deriveVariant(base, 32L, threads);
+      assertNotSame(wider, threaded);
+      assertEquals(32L, threaded.getMaxInitialPeersRange());
+      assertSame(threads, threaded.getDefaultReceptionThreads());
+      ThreadSettingsType equalThreads = new ThreadSettingsType();
+      equalThreads.setPriority(1);
+      assertSame(threaded, TransportDescriptorTypeTools.deriveVariant(base, 32L, equalThreads));
+      ThreadSettingsType otherThreads = new ThreadSettingsType();
+      otherThreads.setPriority(2);
+      assertNotSame(threaded, TransportDescriptorTypeTools.deriveVariant(base, 32L, otherThreads));
+   }
+
+   @Test
+   public void testConcurrentDeriveVariantAndConfigureTransports() throws Exception
+   {
+      // Many nodes may be created concurrently: equal requests must yield one shared descriptor (one transport ID), and a new
+      // whitelisted transport must be reported for adding to an XML profile exactly once.
+      TransportDescriptorType base = TransportDescriptorTypeTools.createUDPv4Transport("10.205.0." + (System.nanoTime() % 250));
+      String ip = "10.206." + (System.nanoTime() % 250) + ".6";
+      int threads = 16;
+      java.util.concurrent.ExecutorService executor = java.util.concurrent.Executors.newFixedThreadPool(threads);
+      try
+      {
+         java.util.concurrent.CountDownLatch start = new java.util.concurrent.CountDownLatch(1);
+         java.util.List<java.util.concurrent.Future<Object[]>> futures = new java.util.ArrayList<>();
+         for (int i = 0; i < threads; ++i)
+         {
+            futures.add(executor.submit(() ->
+            {
+               start.await();
+               ThreadSettingsType threadSettings = new ThreadSettingsType();
+               threadSettings.setPriority(3);
+               TransportDescriptorType variant = TransportDescriptorTypeTools.deriveVariant(base, 32L, threadSettings);
+               TransportDescriptorTypeTools.TransportConfiguration configuration = TransportDescriptorTypeTools.configureTransports(null, new String[] {ip});
+               return new Object[] {variant, configuration};
+            }));
+         }
+         start.countDown();
+
+         TransportDescriptorType firstVariant = null;
+         String udpId = null;
+         int addToXml = 0;
+         for (java.util.concurrent.Future<Object[]> future : futures)
+         {
+            Object[] result = future.get(30, java.util.concurrent.TimeUnit.SECONDS);
+            TransportDescriptorType variant = (TransportDescriptorType) result[0];
+            TransportDescriptorTypeTools.TransportConfiguration configuration = (TransportDescriptorTypeTools.TransportConfiguration) result[1];
+            if (firstVariant == null)
+            {
+               firstVariant = variant;
+               udpId = configuration.getTransports()[0].getTransportId();
+            }
+            assertSame(firstVariant, variant, "equal deriveVariant requests must share one descriptor");
+            assertEquals(udpId, configuration.getTransports()[0].getTransportId());
+            if (configuration.shouldAddToXml())
+            {
+               ++addToXml;
+            }
+         }
+         assertEquals(1, addToXml, "a new whitelisted transport must be reported for the XML exactly once");
+         assertNull(base.getDefaultReceptionThreads(), "the base descriptor is never modified");
+      }
+      finally
+      {
+         executor.shutdownNow();
+      }
+   }
+
+   @Test
+   public void testCopyOfCopiesEveryField()
+   {
+      TransportDescriptorType descriptor = new TransportDescriptorType();
+      descriptor.setTransportId("orig");
+      descriptor.setType("TCPv4");
+      descriptor.setSendBufferSize(1L);
+      descriptor.setReceiveBufferSize(2L);
+      descriptor.setMaxMessageSize(3L);
+      descriptor.setMaxInitialPeersRange(4L);
+      descriptor.setNetmaskFilter("AUTO");
+      descriptor.setTTL((short) 5);
+      descriptor.setNonBlockingSend(true);
+      descriptor.setOutputPort(6);
+      descriptor.setWanAddr("1.2.3.4");
+      descriptor.setKeepAliveFrequencyMs(7L);
+      descriptor.setKeepAliveTimeoutMs(8L);
+      descriptor.setMaxLogicalPort(9);
+      descriptor.setLogicalPortRange(10);
+      descriptor.setLogicalPortIncrement(11);
+      descriptor.setCalculateCrc(false);
+      descriptor.setCheckCrc(true);
+      descriptor.setEnableTcpNodelay(true);
+      descriptor.setTcpNegotiationTimeout(12L);
+      descriptor.setSegmentSize(13L);
+      descriptor.setPortQueueCapacity(14L);
+      descriptor.setHealthyCheckTimeoutMs(15L);
+      descriptor.setRtpsDumpFile("dump");
+      descriptor.setDefaultReceptionThreads(new ThreadSettingsType());
+      descriptor.setDumpThread(new ThreadSettingsType());
+      descriptor.setKeepAliveThread(new ThreadSettingsType());
+      descriptor.setAcceptThread(new ThreadSettingsType());
+      TransportDescriptorTypeTools.setInterfacesWhitelist(descriptor, "lo");
+
+      TransportDescriptorType copy = TransportDescriptorTypeTools.copyOf(descriptor, "copy");
+      assertEquals("copy", copy.getTransportId());
+      // Every getter except the ID returns the same value
+      for (java.lang.reflect.Method getter : TransportDescriptorType.class.getMethods())
+      {
+         boolean isGetter = getter.getParameterCount() == 0 && (getter.getName().startsWith("get") || getter.getName().startsWith("is"))
+                            && getter.getDeclaringClass() == TransportDescriptorType.class;
+         if (isGetter && !getter.getName().equals("getTransportId"))
+         {
+            try
+            {
+               assertEquals(getter.invoke(descriptor), getter.invoke(copy), getter.getName());
+            }
+            catch (ReflectiveOperationException e)
+            {
+               fail(e);
+            }
+         }
+      }
    }
 
    // Helper method to check if array contains a value

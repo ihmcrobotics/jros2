@@ -131,4 +131,23 @@ public class MsgDepsParserTest
          Assertions.assertEquals("readInt", Time_nanosec_field.getBuiltinCDRBufferReadMethod());
       }
    }
+
+   /**
+    * A schema that ends with a dependency delimiter line (a truncated msgdeps schema) is parsed like one without it,
+    * instead of failing with an ArrayIndexOutOfBoundsException.
+    */
+   @Test
+   public void testTrailingDelimiterIsIgnored() throws InterfaceFieldParsingException
+   {
+      String delimiter = "=".repeat(80);
+      String schema = "builtin_interfaces/Time stamp\nint32 value\n" + delimiter + "\nMSG: builtin_interfaces/Time\nint32 sec\nuint32 nanosec\n" + delimiter;
+      MsgDepsContext msgDepsContext = MsgDepsParser.parseMsgDeps(schema, "test_pkg/Truncated");
+      Assertions.assertEquals(2, msgDepsContext.getFieldList().size());
+      Assertions.assertEquals(1, msgDepsContext.getDependencies().size());
+      Assertions.assertEquals(2, msgDepsContext.getDependencies().get("builtin_interfaces/Time").getFields().size());
+
+      MsgDepsContext onlyDelimiter = MsgDepsParser.parseMsgDeps("int32 value\n" + delimiter + "\n", "test_pkg/OnlyDelimiter");
+      Assertions.assertEquals(1, onlyDelimiter.getFieldList().size());
+      Assertions.assertTrue(onlyDelimiter.getDependencies().isEmpty());
+   }
 }

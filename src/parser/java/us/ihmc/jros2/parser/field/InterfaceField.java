@@ -16,8 +16,10 @@
 package us.ihmc.jros2.parser.field;
 
 import us.ihmc.jros2.parser.util.BuiltinTools;
+import us.ihmc.jros2.parser.util.DefaultValueTools;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,7 +35,10 @@ public class InterfaceField
    private boolean unbounded;
    private int length;
    private String constantValue;
+   private String constantValueJava;
    private String defaultValue;
+   private String defaultValueJava;
+   private List<String> defaultValueJavaElements = Collections.emptyList();
    private String headerComment;
    private String trailingComment;
 
@@ -92,10 +97,19 @@ public class InterfaceField
 
    public String getObjectSequenceTypeClass()
    {
+      String elementType = getObjectSequenceElementType();
+      return elementType == null ? null : elementType + ".class";
+   }
+
+   /**
+    * @return the Java class name of the elements of a sequence of nested messages (e.g. {@code geometry_msgs.Pose} for
+    *       {@code IDLObjectSequence<geometry_msgs.Pose>}), or null if this field is not such a sequence
+    */
+   public String getObjectSequenceElementType()
+   {
       if (isObjectSequence())
       {
-         // TODO: Make this cleaner
-         return getJavaType().replace("<", "").replace(">", "").replace("IDLObjectSequence", "").trim() + ".class";
+         return getJavaType().replace("<", "").replace(">", "").replace("IDLObjectSequence", "").trim();
       }
       else
       {
@@ -120,7 +134,7 @@ public class InterfaceField
          if (constantValue != null)
          {
             // upper snake case constants
-            return name.toUpperCase(Locale.getDefault());
+            return name.toUpperCase(Locale.ROOT);
          }
          else
          {
@@ -241,40 +255,142 @@ public class InterfaceField
       this.length = length;
    }
 
+   /**
+    * @return the constant value: a quoted Java string literal for string constants, otherwise the literal as written in
+    *       the .msg file; null if this field is not a constant
+    */
    public String getConstantValue()
    {
       return constantValue;
    }
 
+   /**
+    * @return the constant value as a Java expression of the constant's Java type (e.g. {@code (byte) 200},
+    *       {@code 5000000000L}, {@code "foo"}), or null if this field is not a constant
+    */
+   public String getConstantValueJava()
+   {
+      return constantValueJava;
+   }
+
+   /**
+    * Sets the constant value. The type (and array/bound attributes) must be set first.
+    *
+    * @param constantValue the literal as written in the .msg file
+    * @throws IllegalArgumentException if the value is not valid for the type
+    */
    public void constantValue(String constantValue)
    {
-      if (constantValue != null && isBuiltinStringType())
+      if (constantValue == null)
       {
-         constantValue = BuiltinTools.sanitizeStringAsJavaFieldValue(constantValue);
+         this.constantValue = null;
+         this.constantValueJava = null;
+         return;
+      }
+
+      constantValue = constantValue.trim();
+      constantValueJava = DefaultValueTools.toJavaExpression(type, constantValue, 0, false);
+
+      if (isBuiltinStringType())
+      {
+         constantValue = constantValueJava;
       }
 
       this.constantValue = constantValue;
    }
 
+   /**
+    * @return the default value: a quoted Java string literal for scalar string fields, {@code true}/{@code false} for
+    *       scalar bool fields, otherwise the literal as written in the .msg file (e.g. {@code [1, 2, 3]} for arrays); null
+    *       if the field has no default value
+    */
    public String getDefaultValue()
    {
       return defaultValue;
    }
 
-   public void defaultValue(String defaultValue)
+   /**
+    * @return the default value of a non-array field as a Java expression of the field's Java type, or null
+    */
+   public String getDefaultValueJava()
    {
-      // String sanitization
-      if (defaultValue != null && isBuiltinStringType())
+      return defaultValueJava;
+   }
+
+   /**
+    * @return the default elements of an array or sequence field as Java expressions (for sequences, of the element type
+    *       stored by the IDL sequence class), or an empty list
+    */
+   public List<String> getDefaultValueJavaElements()
+   {
+      return defaultValueJavaElements;
+   }
+
+   /**
+    * @return true if this array or sequence field has at least one default element
+    */
+   public boolean hasDefaultValueJavaElements()
+   {
+      return !defaultValueJavaElements.isEmpty();
+   }
+
+   /**
+    * @return the Java element type of the array used to add default values to an IDL sequence (e.g. {@code short} for
+    *       {@code uint16[]}, {@code java.lang.String} for {@code string[]})
+    */
+   public String getSequenceDefaultValueJavaElementType()
+   {
+      if (isBuiltinStringType())
       {
-         defaultValue = BuiltinTools.sanitizeStringAsJavaFieldValue(defaultValue);
+         return "java.lang.String";
       }
 
-      // Boolean sanitization
-      if (type.equals("bool"))
+      if (type.equals("int16") || type.equals("uint16"))
       {
-         // Ensure it's either "true" or "false"
-         // interface definitions allow 1 or 0 as well
-         defaultValue = BuiltinTools.sanitizeBoolAsJavaFieldValue(defaultValue);
+         return "short";
+      }
+
+      return BuiltinTools.getBuiltinTypeJavaType(type);
+   }
+
+   /**
+    * Sets the default value. The type (and array/bound attributes) must be set first.
+    *
+    * @param defaultValue the literal as written in the .msg file
+    * @throws IllegalArgumentException if the value is not valid for the type
+    */
+   public void defaultValue(String defaultValue)
+   {
+      if (defaultValue == null)
+      {
+         this.defaultValue = null;
+         this.defaultValueJava = null;
+         this.defaultValueJavaElements = Collections.emptyList();
+         return;
+      }
+
+      defaultValue = defaultValue.trim();
+
+      if (array)
+      {
+         List<String> elements = DefaultValueTools.splitArrayLiteral(type, defaultValue, isFixedSize() ? length : -1, upperBounded ? length : -1);
+         List<String> javaElements = new ArrayList<>(elements.size());
+         for (String element : elements)
+         {
+            javaElements.add(DefaultValueTools.toJavaExpression(type, element, stringLength, isSequence()));
+         }
+         this.defaultValueJavaElements = Collections.unmodifiableList(javaElements);
+         this.defaultValueJava = null;
+      }
+      else
+      {
+         this.defaultValueJava = DefaultValueTools.toJavaExpression(type, defaultValue, stringLength, false);
+         this.defaultValueJavaElements = Collections.emptyList();
+
+         if (isBuiltinStringType() || type.equals("bool"))
+         {
+            defaultValue = defaultValueJava;
+         }
       }
 
       this.defaultValue = defaultValue;
@@ -282,7 +398,7 @@ public class InterfaceField
 
    public boolean isDefaultValueArray()
    {
-      return defaultValue != null && (defaultValue.startsWith("[") && defaultValue.endsWith("]"));
+      return array && defaultValue != null && (defaultValue.startsWith("[") && defaultValue.endsWith("]"));
    }
 
    public List<String> getDefaultValueArrayValues()
@@ -370,6 +486,24 @@ public class InterfaceField
       return BuiltinTools.getBuiltinCDRBufferReadMethod(type);
    }
 
+   /**
+    * @return the {@literal CDRBuffer} method that writes a fixed-size array of this built-in type in bulk, or null for
+    *       strings
+    */
+   public String getBuiltinCDRBufferWriteArrayMethod()
+   {
+      return BuiltinTools.getBuiltinCDRBufferWriteArrayMethod(type);
+   }
+
+   /**
+    * @return the {@literal CDRBuffer} method that reads a fixed-size array of this built-in type in bulk, or null for
+    *       strings
+    */
+   public String getBuiltinCDRBufferReadArrayMethod()
+   {
+      return BuiltinTools.getBuiltinCDRBufferReadArrayMethod(type);
+   }
+
    private String inferJavaType()
    {
       if (type == null)
@@ -427,7 +561,7 @@ public class InterfaceField
          if (!part.isEmpty())
          {
             pascal.append(Character.toUpperCase(part.charAt(0)));
-            pascal.append(part.substring(1).toLowerCase());
+            pascal.append(part.substring(1).toLowerCase(Locale.ROOT));
          }
       }
 

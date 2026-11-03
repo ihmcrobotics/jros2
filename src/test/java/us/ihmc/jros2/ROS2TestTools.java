@@ -74,13 +74,91 @@ public class ROS2TestTools
    }
 
    /**
-    * Whether jros2 to {@code ros2 topic echo} interop tests are supported.
-    * Foxy/Galactic (Ubuntu 20.04) can discover jros2 topics but cannot reliably echo
-    * samples from Fast-DDS 3 publishers; ros2 to jros2 interop is still covered there.
+    * Whether {@code ros2 topic pub --once/--times} waits for a matching subscription before it publishes (Humble and newer: an
+    * implicit {@code -w 1}). Foxy and Galactic publish right after a fixed 0.5 s discovery spin. Discovering the jros2
+    * participant can take longer than that: Galactic's default middleware, Cyclone DDS, needs about 0.4 to 1.1 s to match a
+    * Fast-DDS subscription (measured against jros2 and against Galactic's own rmw_fastrtps). A burst published before the CLI
+    * publisher has matched never reaches a VOLATILE subscription.
+    */
+   public static boolean cliPublishWaitsForSubscription()
+   {
+      return supportsWaitMatchingSubscriptions();
+   }
+
+   /**
+    * Prepares a burst published by the ROS 2 CLI ({@code --times N} at a high rate) so that every sample reaches the jros2
+    * subscription although the CLI may publish before the two have matched. Where the CLI cannot wait for the subscription
+    * ({@link #cliPublishWaitsForSubscription()}), the CLI publisher and {@code subscriptionQos} are made TRANSIENT_LOCAL: the
+    * samples written before the match are then delivered when it happens (the CLI publisher stays alive after the burst, see
+    * {@link #launchROS2PublishProcess}). Elsewhere nothing changes.
+    *
+    * @param cliOptions      the {@code ros2 topic pub} options of the burst; they must keep all samples ({@code --qos-depth})
+    * @param subscriptionQos the QoS of the jros2 subscription, changed in place; call this before creating the subscription
+    * @return the {@code ros2 topic pub} options to use
+    */
+   public static String prepareCLIBurst(String cliOptions, ROS2QoSProfile subscriptionQos)
+   {
+      if (cliPublishWaitsForSubscription())
+      {
+         return cliOptions;
+      }
+      subscriptionQos.durability(ROS2QoSProfile.Durability.TRANSIENT_LOCAL);
+      return cliOptions + " --qos-durability transient_local";
+   }
+
+   /**
+    * Whether jros2 to {@code ros2 topic echo} interop tests are supported: wherever a ROS 2 CLI is available. Foxy and Galactic
+    * receive jros2 samples as well; their {@code topic echo} only lacks {@code --once} and the matching of the publisher's
+    * QoS, which {@link #ros2EchoOnce} makes up for.
     */
    public static boolean supportsROS2PublisherEcho()
    {
-      return isROS2CLIAvailable() && !ROS_DISTRO.equals("foxy") && !ROS_DISTRO.equals("galactic");
+      return isROS2CLIAvailable();
+   }
+
+   /**
+    * {@code ros2 topic echo --once}, and the adaptation of the subscription QoS to the publishers (needed to receive a
+    * TRANSIENT_LOCAL sample published before the CLI started), exist since Humble.
+    */
+   private static boolean supportsEchoOnce()
+   {
+      return !ROS_DISTRO.equals("foxy") && !ROS_DISTRO.equals("galactic");
+   }
+
+   /**
+    * {@code ros2 topic info} accepts {@code --no-daemon} and {@code --spin-time} since Galactic. Foxy's {@code topic info} has
+    * neither: it always asks the ROS 2 daemon (starting one on first use) and rejects both options.
+    */
+   public static boolean supportsTopicInfoSpinTime()
+   {
+      return !ROS_DISTRO.equals("foxy");
+   }
+
+   /**
+    * Runs {@code ros2 topic info -v topicName} after {@code spinTimeSeconds} of discovery: {@code --no-daemon --spin-time} where
+    * the CLI has these options. On Foxy the daemon is started first and queried after the same discovery time; the query is
+    * repeated (until {@code timeoutSeconds}) only while the daemon has not discovered any endpoint of the topic yet.
+    *
+    * @return everything the last {@code ros2 topic info} printed
+    */
+   public static String ros2TopicInfoVerbose(int domainId, String topicName, int spinTimeSeconds, long timeoutSeconds)
+         throws IOException, InterruptedException
+   {
+      if (supportsTopicInfoSpinTime())
+      {
+         return runROS2Command(domainId, "topic info -v " + topicName + " --no-daemon --spin-time " + spinTimeSeconds, timeoutSeconds);
+      }
+
+      long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(timeoutSeconds);
+      runROS2Command(domainId, "daemon start", timeoutSeconds);
+      Thread.sleep(spinTimeSeconds * 1000L);
+      String output = runROS2Command(domainId, "topic info -v " + topicName, timeoutSeconds);
+      while (!output.contains("Endpoint type:") && System.nanoTime() - deadline < 0)
+      {
+         Thread.sleep(500);
+         output = runROS2Command(domainId, "topic info -v " + topicName, timeoutSeconds);
+      }
+      return output;
    }
 
    /**
@@ -157,7 +235,59 @@ public class ROS2TestTools
    }
 
    /**
-    * Launched {@code ros2 topic echo --once topicName}
+    * Runs {@code ros2 subCommand} to completion and returns its combined stdout and stderr.
+    *
+    * @param domainId       ROS_DOMAIN_ID to use
+    * @param subCommand     the ros2 subcommand, e.g. {@code "node list --no-daemon --spin-time 3"}
+    * @param timeoutSeconds the process is killed after this long
+    * @return everything the command printed
+    */
+   public static String runROS2Command(int domainId, String subCommand, long timeoutSeconds) throws IOException, InterruptedException
+   {
+      String sourceROS2 = " source /opt/ros/" + ROS_DISTRO + "/setup.bash ";
+      ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", sourceROS2 + "&& ros2 " + subCommand);
+      processBuilder.environment().put("ROS_DOMAIN_ID", String.valueOf(domainId));
+      processBuilder.redirectErrorStream(true);
+      Process process = processBuilder.start();
+
+      StringBuilder output = new StringBuilder();
+      Thread reader = new Thread(() ->
+      {
+         try (BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8)))
+         {
+            String line;
+            while ((line = stdoutReader.readLine()) != null)
+            {
+               synchronized (output)
+               {
+                  output.append(line).append("\n");
+               }
+            }
+         }
+         catch (IOException ignored)
+         {
+            // The process was killed
+         }
+      }, "ros2-output-reader");
+      reader.setDaemon(true);
+      reader.start();
+
+      if (!process.waitFor(timeoutSeconds, java.util.concurrent.TimeUnit.SECONDS))
+      {
+         process.destroyForcibly();
+      }
+      reader.join(5000);
+
+      synchronized (output)
+      {
+         return output.toString();
+      }
+   }
+
+   /**
+    * Launched {@code ros2 topic echo --once topicName}. On Foxy and Galactic, whose {@code topic echo} has no {@code --once}
+    * and subscribes with fixed QoS, the CLI subscribes RELIABLE and TRANSIENT_LOCAL (like the newer CLIs do for such a
+    * publisher) and is stopped after the first message.
     *
     * @param domainId  ROS_DOMAIN_ID to use
     * @param topicName Topic name to listen on
@@ -165,6 +295,29 @@ public class ROS2TestTools
     */
    public static String ros2EchoOnce(int domainId, String topicName) throws IOException, InterruptedException
    {
+      // ros2 topic echo exits when it cannot determine the topic type, which happens when the CLI (or its daemon) has not
+      // discovered the publisher yet; try again in that case only.
+      String output = "";
+      for (int attempt = 0; attempt < 3; ++attempt)
+      {
+         output = ros2EchoOnceAttempt(domainId, topicName);
+         boolean notDiscoveredYet = output.contains("does not appear to be published yet") || output.contains("Could not determine the type");
+         if (!notDiscoveredYet || output.contains("---"))
+         {
+            break;
+         }
+         Thread.sleep(500);
+      }
+      return output;
+   }
+
+   private static String ros2EchoOnceAttempt(int domainId, String topicName) throws IOException, InterruptedException
+   {
+      if (!supportsEchoOnce())
+      {
+         return ros2EchoFirstMessage(domainId, topicName);
+      }
+
       Process echoProcess = launchROS2Process(domainId, "topic echo --once " + topicName, null, null);
       echoProcess.waitFor();
 
@@ -179,6 +332,63 @@ public class ROS2TestTools
          }
       }
 
+      return output.toString();
+   }
+
+   /**
+    * Foxy/Galactic: {@code ros2 topic echo} subscribing RELIABLE and TRANSIENT_LOCAL, stopped after the first message (or after
+    * 15 s); returns stdout and stderr, which carries the "could not determine the type" error.
+    */
+   private static String ros2EchoFirstMessage(int domainId, String topicName) throws IOException, InterruptedException
+   {
+      ProcessBuilder processBuilder = new ProcessBuilder("bash",
+                                                         "-c",
+                                                         "source /opt/ros/" + ROS_DISTRO + "/setup.bash && exec ros2 topic echo --qos-reliability reliable "
+                                                         + "--qos-durability transient_local " + topicName);
+      processBuilder.environment().put("ROS_DOMAIN_ID", String.valueOf(domainId));
+      // Python block-buffers stdout into a pipe; the CLI is stopped rather than exiting, so it must not buffer
+      processBuilder.environment().put("PYTHONUNBUFFERED", "1");
+      processBuilder.redirectErrorStream(true);
+      Process echoProcess = processBuilder.start();
+
+      Thread watchdog = new Thread(() ->
+      {
+         try
+         {
+            if (!echoProcess.waitFor(15, java.util.concurrent.TimeUnit.SECONDS))
+            {
+               echoProcess.destroy();
+            }
+         }
+         catch (InterruptedException e)
+         {
+            echoProcess.destroy();
+         }
+      }, "ros2-echo-watchdog");
+      watchdog.setDaemon(true);
+      watchdog.start();
+
+      StringBuilder output = new StringBuilder();
+      try (BufferedReader reader = new BufferedReader(new InputStreamReader(echoProcess.getInputStream(), StandardCharsets.UTF_8)))
+      {
+         String line;
+         while ((line = reader.readLine()) != null)
+         {
+            output.append(line).append("\n");
+            if (line.equals("---"))
+            {
+               // The first message is complete
+               break;
+            }
+         }
+      }
+      catch (IOException e)
+      {
+         // The watchdog stopped the CLI (Process#destroy closes its streams)
+      }
+      echoProcess.destroy();
+      echoProcess.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+      watchdog.interrupt();
       return output.toString();
    }
 }

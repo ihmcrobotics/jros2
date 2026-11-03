@@ -334,4 +334,50 @@ public class IDLStringSequenceTest
       assertEquals("two", sequence.getAsString(1));
       assertEquals("three", sequence.getAsString(2));
    }
+
+   @Test
+   public void testSetToItselfKeepsContent()
+   {
+      IDLStringSequence sequence = new IDLStringSequence();
+      sequence.add("alpha");
+      sequence.add("bëta");
+
+      sequence.set(sequence);
+
+      assertEquals(2, sequence.size());
+      assertEquals("alpha", sequence.getAsString(0));
+      assertEquals("bëta", sequence.getAsString(1));
+
+      IDLWStringSequence wide = new IDLWStringSequence();
+      wide.add("😀");
+      wide.set(wide);
+      assertEquals(1, wide.size());
+      assertEquals("😀", wide.getAsString(0));
+   }
+
+   @Test
+   public void testSetWithSharedElementKeepsContentAndSeparates()
+   {
+      StringBuilder shared = new StringBuilder("shared");
+      IDLStringSequence source = new IDLStringSequence();
+      source.add(shared);
+      IDLStringSequence target = new IDLStringSequence();
+      target.add(shared);
+
+      target.set(source);
+
+      assertEquals("shared", source.getAsString(0), "the source must not be erased");
+      assertEquals("shared", target.getAsString(0));
+      assertNotSame(source.get(0), target.get(0));
+      shared.append("!");
+      assertEquals("shared", target.getAsString(0), "the target no longer shares the element");
+
+      // Ordinary elements are reused
+      StringBuilder reused = target.get(0);
+      source.get(0).setLength(0);
+      source.get(0).append("next");
+      target.set(source);
+      assertSame(reused, target.get(0));
+      assertEquals("next", target.getAsString(0));
+   }
 }

@@ -60,6 +60,11 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    public static final java.lang.String name = "statistics_msgs::msg::dds_::MetricsMessage_";
 
    /**
+    * RIHS01 type description hash (REP-2011) of statistics_msgs/msg/MetricsMessage, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_36a67fb499fc2a11b8b9ff9ac735ed76e8d5a1f7775d6d5b97b625188ec68e20";
+
+   /**
       Name metric measurement source, e.g., node, topic, or process name
    */
    private final StringBuilder measurement_source_name_;
@@ -86,9 +91,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
 
    public MetricsMessage()
    {
-      measurement_source_name_ = new StringBuilder();
-      metrics_source_ = new StringBuilder();
-      unit_ = new StringBuilder();
+      measurement_source_name_ = CDRBuffer.newStringBuilder(16);
+      metrics_source_ = CDRBuffer.newStringBuilder(16);
+      unit_ = CDRBuffer.newStringBuilder(16);
       window_start_ = new builtin_interfaces.Time();
       window_stop_ = new builtin_interfaces.Time();
       statistics_ = new IDLObjectSequence<statistics_msgs.StatisticDataPoint>(statistics_msgs.StatisticDataPoint.class);
@@ -106,9 +111,9 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       int initialAlignment = currentAlignment;
 
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * measurement_source_name_.length()) + 1; // measurement_source_name_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * metrics_source_.length()) + 1; // metrics_source_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * unit_.length()) + 1; // unit_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(measurement_source_name_) + 1; // measurement_source_name_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(metrics_source_) + 1; // metrics_source_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(unit_) + 1; // unit_
       currentAlignment += window_start_.calculateSizeBytes(currentAlignment);
       currentAlignment += window_stop_.calculateSizeBytes(currentAlignment);
       currentAlignment += statistics_.calculateSizeBytes(currentAlignment);
@@ -143,15 +148,20 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    @Override
    public void set(MetricsMessage from)
    {
-      measurement_source_name_.delete(0, measurement_source_name_.length());
-      measurement_source_name_.insert(0, from.measurement_source_name_);
-      metrics_source_.delete(0, metrics_source_.length());
-      metrics_source_.insert(0, from.metrics_source_);
-      unit_.delete(0, unit_.length());
-      unit_.insert(0, from.unit_);
+      if (from == this)
+      {
+         return;
+      }
+
+      measurement_source_name_.setLength(0);
+      measurement_source_name_.append(from.measurement_source_name_);
+      metrics_source_.setLength(0);
+      metrics_source_.append(from.metrics_source_);
+      unit_.setLength(0);
+      unit_.append(from.unit_);
       window_start_.set(from.window_start_);
       window_stop_.set(from.window_stop_);
-      statistics_.set(from.statistics_);
+      statistics_.set(from.statistics_, statistics_msgs.StatisticDataPoint::set); // copies the elements, never shares them
 
    }
 
@@ -160,45 +170,105 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       return measurement_source_name_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of measurement_source_name (allocates). {@link #getMeasurementSourceName()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMeasurementSourceNameAsString()
    {
       return measurement_source_name_.toString();
    }
 
+   /**
+    * Replaces the content of measurement_source_name with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMeasurementSourceName(java.lang.String s)
    {
-      this.measurement_source_name_.delete(0, this.measurement_source_name_.length());
-      this.measurement_source_name_.insert(0, s);
+      this.measurement_source_name_.setLength(0);
+      this.measurement_source_name_.append(s);
+   }
+
+   /**
+    * Replaces the content of measurement_source_name with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMeasurementSourceName(java.lang.CharSequence s)
+   {
+      if (s != this.measurement_source_name_)
+      {
+         this.measurement_source_name_.setLength(0);
+         this.measurement_source_name_.append(s);
+      }
    }
    public StringBuilder getMetricsSource()
    {
       return metrics_source_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of metrics_source (allocates). {@link #getMetricsSource()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getMetricsSourceAsString()
    {
       return metrics_source_.toString();
    }
 
+   /**
+    * Replaces the content of metrics_source with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setMetricsSource(java.lang.String s)
    {
-      this.metrics_source_.delete(0, this.metrics_source_.length());
-      this.metrics_source_.insert(0, s);
+      this.metrics_source_.setLength(0);
+      this.metrics_source_.append(s);
+   }
+
+   /**
+    * Replaces the content of metrics_source with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setMetricsSource(java.lang.CharSequence s)
+   {
+      if (s != this.metrics_source_)
+      {
+         this.metrics_source_.setLength(0);
+         this.metrics_source_.append(s);
+      }
    }
    public StringBuilder getUnit()
    {
       return unit_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of unit (allocates). {@link #getUnit()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getUnitAsString()
    {
       return unit_.toString();
    }
 
+   /**
+    * Replaces the content of unit with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setUnit(java.lang.String s)
    {
-      this.unit_.delete(0, this.unit_.length());
-      this.unit_.insert(0, s);
+      this.unit_.setLength(0);
+      this.unit_.append(s);
+   }
+
+   /**
+    * Replaces the content of unit with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setUnit(java.lang.CharSequence s)
+   {
+      if (s != this.unit_)
+      {
+         this.unit_.setLength(0);
+         this.unit_.append(s);
+      }
    }
    public builtin_interfaces.Time getWindowStart()
    {
@@ -216,25 +286,32 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MetricsMessage {", "measurement_source_name_=", "metrics_source_=", "unit_=", "window_start_=", "window_stop_=", "statistics_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MetricsMessage {");
-      builder.append("measurement_source_name_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(measurement_source_name_.toString());
-      builder.append("metrics_source_=");
+      builder.append(toStringLabels[2]);
       builder.append(metrics_source_.toString());
-      builder.append("unit_=");
+      builder.append(toStringLabels[3]);
       builder.append(unit_.toString());
-      builder.append("window_start_=");
+      builder.append(toStringLabels[4]);
       builder.append(window_start_);
-      builder.append("window_stop_=");
+      builder.append(toStringLabels[5]);
       builder.append(window_stop_);
-      builder.append("statistics_=");
+      builder.append(toStringLabels[6]);
       builder.append(statistics_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

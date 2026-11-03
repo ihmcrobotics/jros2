@@ -61,17 +61,22 @@ float32 range           # range data [m]
                         # (Object out of range)
 }</pre>
 */
-public class Range implements ROS2Message<Range>
+public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::Range_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/Range, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_9430b1915b94d4268ff903679e8ecd09b6a67d331bd028738ec1eeb592891ebd";
 
    private final std_msgs.Header header_; // timestamp in the header is the time the ranger
    /**
       Radiation type enums
       If you want a value added to this list, send an email to the ros-users list
    */
-   public static final byte ULTRASOUND = 0;
-   public static final byte INFRARED = 1;
+   public static final byte ULTRASOUND = (byte) 0;
+   public static final byte INFRARED = (byte) 1;
    private byte radiation_type_; // the type of radiation used by the sensor
    private float field_of_view_; // the size of the arc that the distance reading is
    private float min_range_; // minimum range value [m]
@@ -96,11 +101,11 @@ public class Range implements ROS2Message<Range>
       int initialAlignment = currentAlignment;
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // radiation_type_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // field_of_view_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // min_range_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // max_range_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4); // range_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // radiation_type_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // field_of_view_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // min_range_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // max_range_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4; // range_
 
       return currentAlignment - initialAlignment;
    }
@@ -132,6 +137,11 @@ public class Range implements ROS2Message<Range>
    @Override
    public void set(Range from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       radiation_type_ = from.radiation_type_;
       field_of_view_ = from.field_of_view_;
@@ -197,29 +207,36 @@ public class Range implements ROS2Message<Range>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Range {", "header_=", "ULTRASOUND=", "INFRARED=", "radiation_type_=", "field_of_view_=", "min_range_=", "max_range_=", "range_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Range {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("ULTRASOUND=");
+      builder.append(toStringLabels[2]);
       builder.append(ULTRASOUND);
-      builder.append("INFRARED=");
+      builder.append(toStringLabels[3]);
       builder.append(INFRARED);
-      builder.append("radiation_type_=");
+      builder.append(toStringLabels[4]);
       builder.append(radiation_type_);
-      builder.append("field_of_view_=");
+      builder.append(toStringLabels[5]);
       builder.append(field_of_view_);
-      builder.append("min_range_=");
+      builder.append(toStringLabels[6]);
       builder.append(min_range_);
-      builder.append("max_range_=");
+      builder.append(toStringLabels[7]);
       builder.append(max_range_);
-      builder.append("range_=");
+      builder.append(toStringLabels[8]);
       builder.append(range_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

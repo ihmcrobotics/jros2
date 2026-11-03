@@ -41,9 +41,14 @@ geometry_msgs/Vector3 magnetic_field # x, y, and z components of the
 float64[9] magnetic_field_covariance       # Row major about x, y, z axes
                                            # 0 is interpreted as variance unknown}</pre>
 */
-public class MagneticField implements ROS2Message<MagneticField>
+public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "sensor_msgs::msg::dds_::MagneticField_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of sensor_msgs/msg/MagneticField, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_e80f32f56a20486c9923008fc1a1db07bbb273cbbf6a5b3bfa00835ee00e4dff";
 
    private final std_msgs.Header header_; // timestamp is the time the
    private final geometry_msgs.Vector3 magnetic_field_; // x, y, and z components of the
@@ -70,7 +75,7 @@ public class MagneticField implements ROS2Message<MagneticField>
 
       currentAlignment += header_.calculateSizeBytes(currentAlignment);
       currentAlignment += magnetic_field_.calculateSizeBytes(currentAlignment);
-      currentAlignment += (9 * 8) + CDRBuffer.alignment(currentAlignment, (9 * 8)); // magnetic_field_covariance_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 8) + (9 * 8); // magnetic_field_covariance_
 
       return currentAlignment - initialAlignment;
    }
@@ -80,10 +85,7 @@ public class MagneticField implements ROS2Message<MagneticField>
    {
       header_.serialize(buffer);
       magnetic_field_.serialize(buffer);
-      for (int i = 0; i < magnetic_field_covariance_.length; ++i)
-      {
-         buffer.writeDouble(magnetic_field_covariance_[i]);
-      }
+      buffer.writeDoubleArray(magnetic_field_covariance_);
 
    }
 
@@ -92,22 +94,21 @@ public class MagneticField implements ROS2Message<MagneticField>
    {
       header_.deserialize(buffer);
       magnetic_field_.deserialize(buffer);
-      for (int i = 0; i < magnetic_field_covariance_.length; ++i)
-      {
-         magnetic_field_covariance_[i] = buffer.readDouble();
-      }
+      buffer.readDoubleArray(magnetic_field_covariance_);
 
    }
 
    @Override
    public void set(MagneticField from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       magnetic_field_.set(from.magnetic_field_);
-      for (int i = 0; i < magnetic_field_covariance_.length; ++i)
-      {
-         magnetic_field_covariance_[i] = from.magnetic_field_covariance_[i];
-      }
+      System.arraycopy(from.magnetic_field_covariance_, 0, magnetic_field_covariance_, 0, magnetic_field_covariance_.length);
 
    }
 
@@ -127,19 +128,26 @@ public class MagneticField implements ROS2Message<MagneticField>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"MagneticField {", "header_=", "magnetic_field_=", "magnetic_field_covariance_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("MagneticField {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("magnetic_field_=");
+      builder.append(toStringLabels[2]);
       builder.append(magnetic_field_);
-      builder.append("magnetic_field_covariance_=");
+      builder.append(toStringLabels[3]);
       builder.append(java.util.Arrays.toString(magnetic_field_covariance_));
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

@@ -17,6 +17,11 @@ public class Empty implements ROS2Message<Empty>
 {
    public static final java.lang.String name = "std_msgs::msg::dds_::Empty_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of std_msgs/msg/Empty, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_20b625256f32d5dbc0d04fee44f43c41e51c70d3502f84b4a08e7a9c26a96312";
+
    public Empty()
    {
    }
@@ -32,30 +37,45 @@ public class Empty implements ROS2Message<Empty>
    {
       int initialAlignment = currentAlignment;
 
+      currentAlignment += 1; // uint8 structure_needs_at_least_one_member
       return currentAlignment - initialAlignment;
    }
 
    @Override
    public void serialize(CDRBuffer buffer)
    {
+      buffer.writeStructureDummyMember();
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
+      buffer.readStructureDummyMember();
    }
 
    @Override
    public void set(Empty from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
    }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"Empty {"};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("Empty {");
-      builder.append("}");
+      builder.append(toStringLabels[0]);
+      builder.append('}');
       return builder.toString();
    }
 }

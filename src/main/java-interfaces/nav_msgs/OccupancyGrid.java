@@ -26,9 +26,14 @@ MapMetaData info
 int8[] data
 }</pre>
 */
-public class OccupancyGrid implements ROS2Message<OccupancyGrid>
+public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.WithHeader
 {
    public static final java.lang.String name = "nav_msgs::msg::dds_::OccupancyGrid_";
+
+   /**
+    * RIHS01 type description hash (REP-2011) of nav_msgs/msg/OccupancyGrid, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_8d348150c12913a31ee0ec170fbf25089e4745d17035792a1ba94d6f0bc0cfc7";
 
    /**
       This represents a 2-D grid map
@@ -95,6 +100,11 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    @Override
    public void set(OccupancyGrid from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       header_.set(from.header_);
       info_.set(from.info_);
       data_.set(from.data_);
@@ -117,19 +127,26 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>
    }
 
 
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"OccupancyGrid {", "header_=", "info_=", "data_="};
+
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("OccupancyGrid {");
-      builder.append("header_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(header_);
-      builder.append("info_=");
+      builder.append(toStringLabels[2]);
       builder.append(info_);
-      builder.append("data_=");
+      builder.append(toStringLabels[3]);
       builder.append(data_);
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

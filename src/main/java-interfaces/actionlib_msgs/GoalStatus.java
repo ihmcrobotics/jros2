@@ -40,39 +40,44 @@ public class GoalStatus implements ROS2Message<GoalStatus>
 {
    public static final java.lang.String name = "actionlib_msgs::msg::dds_::GoalStatus_";
 
+   /**
+    * RIHS01 type description hash (REP-2011) of actionlib_msgs/msg/GoalStatus, computed from the definition above.
+    */
+   public static final java.lang.String typeHash = "RIHS01_c90c64230954d90ee079cbdd22a14bca3650b3d403f5cc3faf0eee992c6ae9ff";
+
    private final actionlib_msgs.GoalID goal_id_;
    private byte status_;
-   public static final byte PENDING = 0; // The goal has yet to be processed by the action server.
-   public static final byte ACTIVE = 1; // The goal is currently being processed by the action server.
-   public static final byte PREEMPTED = 2; // The goal received a cancel request after it started executing
+   public static final byte PENDING = (byte) 0; // The goal has yet to be processed by the action server.
+   public static final byte ACTIVE = (byte) 1; // The goal is currently being processed by the action server.
+   public static final byte PREEMPTED = (byte) 2; // The goal received a cancel request after it started executing
    /**
       and has since completed its execution (Terminal State).
    */
-   public static final byte SUCCEEDED = 3; // The goal was achieved successfully by the action server
+   public static final byte SUCCEEDED = (byte) 3; // The goal was achieved successfully by the action server
    /**
       (Terminal State).
    */
-   public static final byte ABORTED = 4; // The goal was aborted during execution by the action server due
+   public static final byte ABORTED = (byte) 4; // The goal was aborted during execution by the action server due
    /**
       to some failure (Terminal State).
    */
-   public static final byte REJECTED = 5; // The goal was rejected by the action server without being processed,
+   public static final byte REJECTED = (byte) 5; // The goal was rejected by the action server without being processed,
    /**
       because the goal was unattainable or invalid (Terminal State).
    */
-   public static final byte PREEMPTING = 6; // The goal received a cancel request after it started executing
+   public static final byte PREEMPTING = (byte) 6; // The goal received a cancel request after it started executing
    /**
       and has not yet completed execution.
    */
-   public static final byte RECALLING = 7; // The goal received a cancel request before it started executing, but
+   public static final byte RECALLING = (byte) 7; // The goal received a cancel request before it started executing, but
    /**
       the action server has not yet confirmed that the goal is canceled.
    */
-   public static final byte RECALLED = 8; // The goal received a cancel request before it started executing
+   public static final byte RECALLED = (byte) 8; // The goal received a cancel request before it started executing
    /**
       and was successfully cancelled (Terminal State).
    */
-   public static final byte LOST = 9; // An action client can determine that a goal is LOST. This should not
+   public static final byte LOST = (byte) 9; // An action client can determine that a goal is LOST. This should not
    /**
       Allow for the user to associate a string with GoalStatus for debugging.
    */
@@ -81,7 +86,7 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    public GoalStatus()
    {
       goal_id_ = new actionlib_msgs.GoalID();
-      text_ = new StringBuilder();
+      text_ = CDRBuffer.newStringBuilder(16);
 
    }
 
@@ -97,8 +102,8 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       int initialAlignment = currentAlignment;
 
       currentAlignment += goal_id_.calculateSizeBytes(currentAlignment);
-      currentAlignment += 1 + CDRBuffer.alignment(currentAlignment, 1); // status_
-      currentAlignment += 4 + CDRBuffer.alignment(currentAlignment, 4) + (1 * text_.length()) + 1; // text_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 1) + 1; // status_
+      currentAlignment += CDRBuffer.alignment(currentAlignment, 4) + 4 + CDRBuffer.utf8Length(text_) + 1; // text_
 
       return currentAlignment - initialAlignment;
    }
@@ -124,10 +129,15 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    @Override
    public void set(GoalStatus from)
    {
+      if (from == this)
+      {
+         return;
+      }
+
       goal_id_.set(from.goal_id_);
       status_ = from.status_;
-      text_.delete(0, text_.length());
-      text_.insert(0, from.text_);
+      text_.setLength(0);
+      text_.append(from.text_);
 
    }
 
@@ -151,50 +161,77 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       return text_;
    }
 
+   /**
+    * Returns a new {@link java.lang.String} with the content of text (allocates). {@link #getText()} gives
+    * allocation-free access to the {@link java.lang.StringBuilder} itself.
+    */
    public java.lang.String getTextAsString()
    {
       return text_.toString();
    }
 
+   /**
+    * Replaces the content of text with {@code s}. Allocation-free while {@code s} fits in the capacity of the field.
+    */
    public void setText(java.lang.String s)
    {
-      this.text_.delete(0, this.text_.length());
-      this.text_.insert(0, s);
+      this.text_.setLength(0);
+      this.text_.append(s);
    }
+
+   /**
+    * Replaces the content of text with {@code s}, for example a reused {@link java.lang.StringBuilder}. Allocation-free while
+    * {@code s} fits in the capacity of the field.
+    */
+   public void setText(java.lang.CharSequence s)
+   {
+      if (s != this.text_)
+      {
+         this.text_.setLength(0);
+         this.text_.append(s);
+      }
+   }
+
+   /**
+    * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
+    * has not been used yet is created by HotSpot, on the thread that first requests a C2 compilation of a method of the
+    * class, which may be a control thread in its steady state.
+    */
+   private static final java.lang.String[] toStringLabels = {"GoalStatus {", "goal_id_=", "status_=", "PENDING=", "ACTIVE=", "PREEMPTED=", "SUCCEEDED=", "ABORTED=", "REJECTED=", "PREEMPTING=", "RECALLING=", "RECALLED=", "LOST=", "text_="};
 
    @Override
    public java.lang.String toString()
    {
       java.lang.StringBuilder builder = new java.lang.StringBuilder();
-      builder.append("GoalStatus {");
-      builder.append("goal_id_=");
+      builder.append(toStringLabels[0]);
+      builder.append(toStringLabels[1]);
       builder.append(goal_id_);
-      builder.append("status_=");
+      builder.append(toStringLabels[2]);
       builder.append(status_);
-      builder.append("PENDING=");
+      builder.append(toStringLabels[3]);
       builder.append(PENDING);
-      builder.append("ACTIVE=");
+      builder.append(toStringLabels[4]);
       builder.append(ACTIVE);
-      builder.append("PREEMPTED=");
+      builder.append(toStringLabels[5]);
       builder.append(PREEMPTED);
-      builder.append("SUCCEEDED=");
+      builder.append(toStringLabels[6]);
       builder.append(SUCCEEDED);
-      builder.append("ABORTED=");
+      builder.append(toStringLabels[7]);
       builder.append(ABORTED);
-      builder.append("REJECTED=");
+      builder.append(toStringLabels[8]);
       builder.append(REJECTED);
-      builder.append("PREEMPTING=");
+      builder.append(toStringLabels[9]);
       builder.append(PREEMPTING);
-      builder.append("RECALLING=");
+      builder.append(toStringLabels[10]);
       builder.append(RECALLING);
-      builder.append("RECALLED=");
+      builder.append(toStringLabels[11]);
       builder.append(RECALLED);
-      builder.append("LOST=");
+      builder.append(toStringLabels[12]);
       builder.append(LOST);
-      builder.append("text_=");
+      builder.append(toStringLabels[13]);
       builder.append(text_.toString());
 
-      builder.append("}");
+      builder.append('}');
       return builder.toString();
    }
 }

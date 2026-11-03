@@ -15,6 +15,7 @@
  */
 package us.ihmc.jros2;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -44,6 +45,158 @@ public class jros2SettingsTest
       System.clearProperty(jros2SettingsProp.DOMAIN_ID_KEY);
       System.clearProperty(jros2SettingsProp.INTRAPROCESS_DELIVERY_KEY);
       System.clearProperty(jros2SettingsProp.INTERFACE_WHITELIST_KEY);
+      for (jros2Settings.Key key : jros2Settings.Key.values())
+      {
+         System.clearProperty(key.property);
+      }
+   }
+
+   /**
+    * {@code new jros2(sources)} replaces the process-wide jros2 instance. Tests of other classes run in the same JVM, so put back
+    * an instance with the real settings sources (otherwise later nodes would use this class's fake domain IDs and whitelists).
+    */
+   @AfterAll
+   public static void restoreJros2Instance()
+   {
+      new jros2(new jros2Settings[] {new jros2SettingsProp(), new jros2SettingsEnv(), new jros2SettingsFile(), new jros2SettingsDefault()});
+   }
+
+   @Test
+   public void testRawSettingsFromSystemProperties()
+   {
+      jros2SettingsProp propSettings = new jros2SettingsProp();
+      for (jros2Settings.Key key : jros2Settings.Key.values())
+      {
+         assertFalse(propSettings.hasRawSetting(key), key.name());
+         assertNull(propSettings.rawSetting(key), key.name());
+      }
+
+      System.setProperty("ros.automatic.discovery.range", "OFF");
+      System.setProperty("ros.static.peers", "10.0.0.1;robot.local");
+      System.setProperty("ros.security.enable", "true");
+      System.setProperty("ros.security.log.verbosity", "INFO");
+      System.setProperty("ros.localhost.only", "");
+
+      assertEquals("OFF", propSettings.rawSetting(jros2Settings.Key.AUTOMATIC_DISCOVERY_RANGE));
+      assertEquals("10.0.0.1;robot.local", propSettings.rawSetting(jros2Settings.Key.STATIC_PEERS));
+      assertEquals("true", propSettings.rawSetting(jros2Settings.Key.SECURITY_ENABLE));
+      assertEquals("INFO", propSettings.rawSetting(jros2Settings.Key.SECURITY_LOG_VERBOSITY));
+      // An empty value is specified (rcl treats empty like unset; the parsers apply that rule)
+      assertTrue(propSettings.hasRawSetting(jros2Settings.Key.LOCALHOST_ONLY));
+      assertEquals("", propSettings.rawSetting(jros2Settings.Key.LOCALHOST_ONLY));
+      assertFalse(propSettings.hasRawSetting(jros2Settings.Key.SECURITY_KEYSTORE));
+   }
+
+   @Test
+   public void testRawSettingsFromEnvironment()
+   {
+      Map<String, String> env = Map.of("ROS_DISTRO",
+                                       "jazzy",
+                                       "JROS2_GRAPH_COMPATIBILITY",
+                                       "DUAL",
+                                       "ROS_LOCALHOST_ONLY",
+                                       "1",
+                                       "ROS_AUTOMATIC_DISCOVERY_RANGE",
+                                       "LOCALHOST",
+                                       "ROS_STATIC_PEERS",
+                                       "a;b",
+                                       "ROS_SECURITY_ENABLE",
+                                       "true",
+                                       "ROS_SECURITY_STRATEGY",
+                                       "Enforce",
+                                       "ROS_SECURITY_KEYSTORE",
+                                       "/ks",
+                                       "ROS_SECURITY_ENCLAVE_OVERRIDE",
+                                       "/e");
+      jros2SettingsEnv envSettings = new jros2SettingsEnv(env);
+      assertEquals("jazzy", envSettings.rawSetting(jros2Settings.Key.ROS_DISTRO));
+      assertEquals("DUAL", envSettings.rawSetting(jros2Settings.Key.GRAPH_COMPATIBILITY));
+      assertEquals("1", envSettings.rawSetting(jros2Settings.Key.LOCALHOST_ONLY));
+      assertEquals("LOCALHOST", envSettings.rawSetting(jros2Settings.Key.AUTOMATIC_DISCOVERY_RANGE));
+      assertEquals("a;b", envSettings.rawSetting(jros2Settings.Key.STATIC_PEERS));
+      assertEquals("true", envSettings.rawSetting(jros2Settings.Key.SECURITY_ENABLE));
+      assertEquals("Enforce", envSettings.rawSetting(jros2Settings.Key.SECURITY_STRATEGY));
+      assertEquals("/ks", envSettings.rawSetting(jros2Settings.Key.SECURITY_KEYSTORE));
+      assertEquals("/e", envSettings.rawSetting(jros2Settings.Key.SECURITY_ENCLAVE_OVERRIDE));
+      assertFalse(envSettings.hasRawSetting(jros2Settings.Key.SECURITY_LOG_FILE));
+      assertNull(envSettings.rawSetting(jros2Settings.Key.SECURITY_LOG_PUBLISH));
+      for (jros2Settings.Key key : jros2Settings.Key.values())
+      {
+         assertEquals(env.containsKey(key.environmentVariable), envSettings.hasRawSetting(key), key.name());
+      }
+
+      // The defaults specify no raw setting
+      jros2SettingsDefault defaults = new jros2SettingsDefault();
+      for (jros2Settings.Key key : jros2Settings.Key.values())
+      {
+         assertFalse(defaults.hasRawSetting(key));
+         assertNull(defaults.rawSetting(key));
+      }
+   }
+
+   @Test
+   public void testRawSettingsFromFileAndPriority(@TempDir Path tempDir) throws IOException
+   {
+      Path propertiesPath = tempDir.resolve("jros2.properties");
+      Path compatibilityPath = tempDir.resolve("IHMCNetworkParameters.ini");
+      writePropertiesFile(propertiesPath, 3, false, new String[0]);
+      Properties extra = new Properties();
+      extra.setProperty("jros2.ros.automatic.discovery.range", "SUBNET");
+      extra.setProperty("jros2.ros.static.peers", "file-peer");
+      extra.setProperty("jros2.ros.security.keystore", "/file/keystore");
+      try (FileOutputStream out = new FileOutputStream(propertiesPath.toFile(), true))
+      {
+         extra.store(out, null);
+      }
+
+      jros2SettingsFile fileSettings = new jros2SettingsFile(propertiesPath, compatibilityPath);
+      // A jros2.properties in the working directory or the JAR would take precedence over the temp file
+      org.junit.jupiter.api.Assumptions.assumeTrue(fileSettings.getSourceName().contains(propertiesPath.toString()), "another jros2.properties is in use");
+      assertEquals("SUBNET", fileSettings.rawSetting(jros2Settings.Key.AUTOMATIC_DISCOVERY_RANGE));
+      assertEquals("file-peer", fileSettings.rawSetting(jros2Settings.Key.STATIC_PEERS));
+      assertEquals("/file/keystore", fileSettings.rawSetting(jros2Settings.Key.SECURITY_KEYSTORE));
+      assertFalse(fileSettings.hasRawSetting(jros2Settings.Key.SECURITY_ENABLE));
+
+      // Priority: system property > environment > file > default (nothing)
+      Map<String, String> env = Map.of("ROS_STATIC_PEERS", "env-peer", "ROS_SECURITY_ENABLE", "true");
+      System.setProperty("ros.static.peers", "prop-peer");
+      jros2 instance = new jros2(new jros2Settings[] {new jros2SettingsProp(), new jros2SettingsEnv(env), fileSettings, new jros2SettingsDefault()});
+      assertEquals("prop-peer", instance.rawSetting(jros2Settings.Key.STATIC_PEERS));
+      assertEquals("true", instance.rawSetting(jros2Settings.Key.SECURITY_ENABLE));
+      assertEquals("SUBNET", instance.rawSetting(jros2Settings.Key.AUTOMATIC_DISCOVERY_RANGE));
+      assertEquals("/file/keystore", instance.rawSetting(jros2Settings.Key.SECURITY_KEYSTORE));
+      assertTrue(instance.hasRawSetting(jros2Settings.Key.SECURITY_KEYSTORE));
+      assertNull(instance.rawSetting(jros2Settings.Key.SECURITY_STRATEGY));
+      assertFalse(instance.hasRawSetting(jros2Settings.Key.SECURITY_STRATEGY));
+
+      System.clearProperty("ros.static.peers");
+      assertEquals("env-peer", instance.rawSetting(jros2Settings.Key.STATIC_PEERS));
+   }
+
+   @Test
+   public void testIntraprocessDeliveryEnvironmentAlias()
+   {
+      // Correct name
+      jros2SettingsEnv correct = new jros2SettingsEnv(Map.of("FASTDDS_INTRAPROCESS_DELIVERY", "true"));
+      assertTrue(correct.hasIntraprocessDelivery());
+      assertTrue(correct.intraprocessDelivery());
+
+      // Misspelled name accepted by jros2 1.5.1 and earlier
+      jros2SettingsEnv legacy = new jros2SettingsEnv(Map.of("FASTDDS_INRAPROCESS_DELIVERY", "TRUE"));
+      assertTrue(legacy.hasIntraprocessDelivery());
+      assertTrue(legacy.intraprocessDelivery());
+
+      // The correct name wins when both are set
+      jros2SettingsEnv both = new jros2SettingsEnv(Map.of("FASTDDS_INTRAPROCESS_DELIVERY", "false", "FASTDDS_INRAPROCESS_DELIVERY", "true"));
+      assertTrue(both.hasIntraprocessDelivery());
+      assertFalse(both.intraprocessDelivery());
+
+      jros2SettingsEnv none = new jros2SettingsEnv(Map.of());
+      assertFalse(none.hasIntraprocessDelivery());
+      assertEquals(new jros2SettingsDefault().intraprocessDelivery(), none.intraprocessDelivery());
+
+      jros2SettingsEnv other = new jros2SettingsEnv(Map.of("FASTDDS_INTRAPROCESS_DELIVERY", "yes"));
+      assertFalse(other.intraprocessDelivery());
    }
 
    @Test
