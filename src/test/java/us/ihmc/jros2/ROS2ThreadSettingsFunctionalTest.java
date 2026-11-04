@@ -202,16 +202,21 @@ public class ROS2ThreadSettingsFunctionalTest
       int[] cpus = twoUsableCpus();
       assumeTrue(cpus != null, "needs two usable CPUs");
 
-      // Builtin transports (SUBNET): only applied through the explicit <builtinTransports> written after the thread settings
+      // jros2's default transports (SUBNET): SHM + UDPv4 descriptors derived with default_reception_threads
       assertAffinityApplied(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.SUBNET).threadSettings(threadSettings(cpus[0], cpus[1])),
                             cpus[0],
+                            cpus[1]);
+      // Builtin transports (Fast-DDS's default segment): only applied through the explicit <builtinTransports> written
+      // after the thread settings
+      assertAffinityApplied(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.SUBNET).shmSegmentSize(0).threadSettings(threadSettings(cpus[1], cpus[1])),
+                            cpus[1],
                             cpus[1]);
       // User transports (LOCALHOST: SHM + UDPv4 descriptors derived with default_reception_threads); swap the CPUs so a
       // descriptor reused from the previous case would be detected
       assertAffinityApplied(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.LOCALHOST).threadSettings(threadSettings(cpus[1], cpus[0])),
                             cpus[1],
                             cpus[0]);
-      // OFF keeps the builtin transports
+      // OFF keeps the default transports
       assertAffinityApplied(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.OFF).threadSettings(threadSettings(cpus[0], cpus[0])), cpus[0], cpus[0]);
    }
 }

@@ -41,8 +41,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
 import java.util.function.Function;
+import java.util.function.LongSupplier;
 
 /**
  * Builds the Fast-DDS participant profile for a {@link ROS2Node} or {@link ROS2Context}: transports, discovery,
@@ -52,6 +54,9 @@ import java.util.function.Function;
  *    <li>USER_DATA {@code enclave=<enclave>;} followed by a NUL byte (enclave from {@link ROS2NodeOptions#enclave}, default
  *    "/"), which rmw_fastrtps peers need to add the participant to their ROS graph.</li>
  *    <li>Builtin (discovery) reader and writer history memory policy PREALLOCATED_WITH_REALLOC.</li>
+ *    <li>Transports: shared memory with a {@link ROS2NodeOptions#DEFAULT_SHM_SEGMENT_SIZE}-byte segment and UDPv4 by default
+ *    ({@link ROS2SharedMemoryConfiguration}; Fast-DDS's builtin transports, as rmw_fastrtps, with a segment size of 0), UDPv4
+ *    only on Android, or the interface whitelist or custom transports.</li>
  *    <li>Discovery ({@link ROS2DiscoveryConfiguration}):
  *       <ul>
  *          <li>OFF: at most one participant (itself), a unicast metatraffic locator and no multicast; transports unchanged.</li>
@@ -86,6 +91,10 @@ final class ParticipantProfiles
       final BooleanSupplier nativeHasSecurity;
       final boolean android;
       final ROS2DiscoveryConfiguration.PeerResolver peerResolver;
+      /** The value of the FASTDDS_BUILTIN_TRANSPORTS environment variable, or null. */
+      final String builtinTransportsVariable;
+      /** The free space of /dev/shm in bytes, or a negative value when unknown. */
+      final LongSupplier sharedMemoryFreeBytes;
 
       Environment(Function<jros2Settings.Key, String> settings,
                   String[] interfaceWhitelist,
@@ -93,11 +102,24 @@ final class ParticipantProfiles
                   boolean android,
                   ROS2DiscoveryConfiguration.PeerResolver peerResolver)
       {
+         this(settings, interfaceWhitelist, nativeHasSecurity, android, peerResolver, null, () -> -1L);
+      }
+
+      Environment(Function<jros2Settings.Key, String> settings,
+                  String[] interfaceWhitelist,
+                  BooleanSupplier nativeHasSecurity,
+                  boolean android,
+                  ROS2DiscoveryConfiguration.PeerResolver peerResolver,
+                  String builtinTransportsVariable,
+                  LongSupplier sharedMemoryFreeBytes)
+      {
          this.settings = settings;
          this.interfaceWhitelist = interfaceWhitelist;
          this.nativeHasSecurity = nativeHasSecurity;
          this.android = android;
          this.peerResolver = peerResolver;
+         this.builtinTransportsVariable = builtinTransportsVariable;
+         this.sharedMemoryFreeBytes = sharedMemoryFreeBytes;
       }
 
       /** @return the environment of this process: jros2 settings, loaded natives, platform and DNS */
@@ -108,7 +130,9 @@ final class ParticipantProfiles
                                 settings.interfaceWhitelist(),
                                 fastddsjava::hasSecurity,
                                 TransportDescriptorTypeTools.isAndroid(),
-                                InetAddress::getAllByName);
+                                InetAddress::getAllByName,
+                                System.getenv(ROS2SharedMemoryConfiguration.FASTDDS_BUILTIN_TRANSPORTS),
+                                ROS2SharedMemoryConfiguration::sharedMemoryFreeBytes);
       }
    }
 
@@ -120,7 +144,11 @@ final class ParticipantProfiles
       final ParticipantProfileType profile;
       /** User transports, or null when the Fast-DDS builtin transports are used. */
       final TransportDescriptorType[] transports;
+      /** Whether {@link #transports} are the node's or context's own (ROS2NodeOptions.transports), not selected by jros2. */
+      final boolean customTransports;
       final ROS2DiscoveryConfiguration discovery;
+      /** The shared-memory segment size of jros2's shared-memory transport (unused with custom transports or UDPv4 only). */
+      final ROS2SharedMemoryConfiguration sharedMemory;
       final List<String> resolvedStaticPeers;
       final String enclave;
       final ROS2SecurityConfiguration security;
@@ -129,7 +157,9 @@ final class ParticipantProfiles
 
       ParticipantConfiguration(ParticipantProfileType profile,
                                TransportDescriptorType[] transports,
+                               boolean customTransports,
                                ROS2DiscoveryConfiguration discovery,
+                               ROS2SharedMemoryConfiguration sharedMemory,
                                List<String> resolvedStaticPeers,
                                String enclave,
                                ROS2SecurityConfiguration security,
@@ -138,7 +168,9 @@ final class ParticipantProfiles
       {
          this.profile = profile;
          this.transports = transports;
+         this.customTransports = customTransports;
          this.discovery = discovery;
+         this.sharedMemory = sharedMemory;
          this.resolvedStaticPeers = Collections.unmodifiableList(resolvedStaticPeers);
          this.enclave = enclave;
          this.security = security;
@@ -191,6 +223,15 @@ final class ParticipantProfiles
       {
          jros2.getLogger().warning(warning);
       }
+      String sharedMemoryWarning = configuration.sharedMemory.fallbackWarning(participantName);
+      if (sharedMemoryWarning != null)
+      {
+         // Once per process: in a container with a small /dev/shm, every further participant falls back the same way
+         if (SHARED_MEMORY_FALLBACK_WARNED.compareAndSet(false, true))
+            jros2.getLogger().warning(sharedMemoryWarning + " (Logged once; later participants fall back silently.)");
+         else
+            jros2.getLogger().fine(sharedMemoryWarning);
+      }
 
       checkSHMAvailabilityWindows(configuration);
 
@@ -200,6 +241,8 @@ final class ParticipantProfiles
 
       return configuration.profile;
    }
+
+   private static final AtomicBoolean SHARED_MEMORY_FALLBACK_WARNED = new AtomicBoolean();
 
    /**
     * Builds the participant profile without side effects on Fast-DDS (transports are selected but not registered).
@@ -233,7 +276,12 @@ final class ParticipantProfiles
       participantProfile.setRtps(rtps);
 
       // Transports
-      TransportDescriptorType[] transports = selectTransports(options.getTransports(), discovery.getRange(), threadSettings, environment);
+      ROS2SharedMemoryConfiguration sharedMemory = ROS2SharedMemoryConfiguration.resolve(options.getShmSegmentSize(),
+                                                                                         environment.settings,
+                                                                                         environment.builtinTransportsVariable,
+                                                                                         environment.android,
+                                                                                         environment.sharedMemoryFreeBytes.getAsLong());
+      TransportDescriptorType[] transports = selectTransports(options.getTransports(), discovery.getRange(), threadSettings, sharedMemory.getSegmentSize(), environment);
       if (transports == null)
       {
          ThreadSettingsType receptionThreads = threadSettings == null ? null : threadSettings.toThreadSettingsType(ROS2ThreadSettings.Kind.RECEPTION);
@@ -333,31 +381,51 @@ final class ParticipantProfiles
          }
       }
 
-      return new ParticipantConfiguration(participantProfile, transports, discovery, resolvedPeers, enclave, security, threadSettings, warnings);
+      boolean customTransports = options.getTransports() != null && options.getTransports().length > 0;
+      return new ParticipantConfiguration(participantProfile, transports, customTransports, discovery, sharedMemory, resolvedPeers, enclave, security, threadSettings, warnings);
    }
 
    /**
     * Selects the participant's user transports, or null for the Fast-DDS builtin transports.
+    *
+    * @param shmSegmentSize the segment size of jros2's shared-memory transport, or 0 for Fast-DDS's default
     */
    static TransportDescriptorType[] selectTransports(TransportDescriptorType[] requestedTransports,
                                                      ROS2DiscoveryRange range,
                                                      ROS2ThreadSettings threadSettings,
+                                                     long shmSegmentSize,
                                                      Environment environment)
    {
       TransportDescriptorType[] transports = TransportDescriptorTypeTools.selectTransports(requestedTransports, environment.interfaceWhitelist, environment.android);
       boolean localhost = range == ROS2DiscoveryRange.LOCALHOST;
 
-      boolean defaultTransports = (requestedTransports == null || requestedTransports.length == 0)
-                                  && (environment.interfaceWhitelist == null || environment.interfaceWhitelist.length == 0);
-      if (localhost && defaultTransports)
+      boolean customTransports = requestedTransports != null && requestedTransports.length > 0;
+      boolean whitelist = !customTransports && environment.interfaceWhitelist != null && environment.interfaceWhitelist.length > 0;
+      boolean defaultTransports = !customTransports && !whitelist;
+      if (defaultTransports && environment.android)
       {
-         // rmw_fastrtps LOCALHOST: SHM + UDPv4 with maxInitialPeersRange 32 (no interface whitelist) instead of the defaults.
-         // Dedicated descriptors: the shared cached ones may have been handed out (and modified) as custom transports.
-         transports = environment.android
-               ? new TransportDescriptorType[] {LocalhostTransports.UDPV4}
-               : new TransportDescriptorType[] {LocalhostTransports.SHM, LocalhostTransports.UDPV4};
+         // UDPv4 only (SHM is unreliable on Android); rmw_fastrtps LOCALHOST: maxInitialPeersRange 32
+         transports = localhost ? new TransportDescriptorType[] {LocalhostTransports.UDPV4} : transports;
       }
-      else if (transports == null)
+      else if (defaultTransports && (localhost || shmSegmentSize > 0))
+      {
+         // Shared memory with jros2's segment size (ROS2SharedMemoryConfiguration) and UDPv4 instead of the builtin
+         // transports; rmw_fastrtps LOCALHOST: SHM + UDPv4 with maxInitialPeersRange 32 (no interface whitelist). Dedicated
+         // descriptors: the shared cached ones may have been handed out (and modified) as custom transports.
+         transports = new TransportDescriptorType[] {shmSegmentSize > 0 ? ROS2SharedMemoryConfiguration.sharedMemoryDescriptor(shmSegmentSize) : LocalhostTransports.SHM,
+                                                     localhost ? LocalhostTransports.UDPV4 : ROS2SharedMemoryConfiguration.UDPV4};
+      }
+      else if (whitelist && shmSegmentSize > 0)
+      {
+         // The whitelist's UDPv4 transport plus jros2's shared-memory transport
+         transports = transports.clone();
+         for (int i = 0; i < transports.length; ++i)
+         {
+            if ("SHM".equals(transports[i].getType()))
+               transports[i] = ROS2SharedMemoryConfiguration.sharedMemoryDescriptor(shmSegmentSize);
+         }
+      }
+      if (transports == null)
       {
          return null; // Fast-DDS builtin transports (SHM + UDPv4)
       }

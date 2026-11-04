@@ -42,9 +42,9 @@ import java.util.concurrent.atomic.AtomicLong;
  *    ...
  * } // closes both nodes, then the participant
  * }</pre>
- * Participant-level options (domain ID, transports, thread settings, enclave, discovery range and static peers) are
- * taken from the options the context was created with. Node options that use the context may repeat them with the same
- * values but must not set different ones. Node-level options (namespace, callback executor) stay per node.
+ * Participant-level options (domain ID, transports, shared-memory segment size, thread settings, enclave, discovery range
+ * and static peers) are taken from the options the context was created with. Node options that use the context may repeat
+ * them with the same values but must not set different ones. Node-level options (namespace, callback executor) stay per node.
  * <p>
  * Because the nodes share one participant, a subscription callback of any node of the context counts as a callback of
  * every node of the context (see {@link ROS2Node} about creating endpoints from callbacks), and one topic name can only
@@ -92,7 +92,8 @@ public final class ROS2Context implements Closeable
 
    /**
     * Creates a context whose participant uses the participant-level settings of {@code options}
-    * (domain, transports, thread settings, enclave, discovery). Unset options fall back to the jros2 settings.
+    * (domain, transports, shared-memory segment size, thread settings, enclave, discovery). Unset options fall back to
+    * the jros2 settings.
     *
     * @param options participant-level options; may be null for the defaults
     * @throws IllegalArgumentException if the domain ID is invalid
@@ -160,6 +161,10 @@ public final class ROS2Context implements Closeable
       if (nodeOptions.getTransports() != null && !sameTransports(nodeOptions.getTransports(), options.getTransports()))
       {
          throw conflict("transports", describe(nodeOptions.getTransports()), describe(options.getTransports()));
+      }
+      if (nodeOptions.getShmSegmentSize() != null && !nodeOptions.getShmSegmentSize().equals(options.getShmSegmentSize()))
+      {
+         throw conflict("shmSegmentSize", nodeOptions.getShmSegmentSize(), options.getShmSegmentSize());
       }
       if (nodeOptions.getEnclave() != null && !nodeOptions.getEnclave().equals(options.getEnclave()))
       {

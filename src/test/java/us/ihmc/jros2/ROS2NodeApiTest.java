@@ -45,7 +45,7 @@ public class ROS2NodeApiTest
          assertEquals(domainId, subscriberNode.getDomainId());
          assertNotSame(publisherNode.getParticipant(), subscriberNode.getParticipant());
 
-         // The two nodes communicate: UDPv4 only on one side, the builtin transports on the other
+         // The two nodes communicate: UDPv4 only on one side, jros2's default transports on the other
          ROS2Topic<example_interfaces.Int64> topic = new ROS2Topic<>(uniqueTopicName("domain_transports"), example_interfaces.Int64.class);
          ROS2Subscription<example_interfaces.Int64> subscription = subscriberNode.createSubscription(topic, reliableKeepAll());
          ROS2Publisher<example_interfaces.Int64> publisher = publisherNode.createPublisher(topic, reliableKeepAll());

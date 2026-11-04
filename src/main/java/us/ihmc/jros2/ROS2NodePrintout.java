@@ -118,11 +118,12 @@ final class ROS2NodePrintout
       TransportDescriptorType[] transportDescriptors = configuration.transports;
       if (transportDescriptors == null) // Default builtin transports are UDPv4 and SHM
       {
-         newLine(printout).append("Using builtin transports: UDPv4, SHM");
+         newLine(printout).append("Using builtin transports: UDPv4, SHM (segment ").append(configuration.sharedMemory).append(", Specified by: ")
+                          .append(configuration.sharedMemory.getSource()).append(')');
          return;
       }
 
-      newLine(printout).append("Using custom transports:");
+      newLine(printout).append(configuration.customTransports ? "Using custom transports:" : "Using transports:");
       for (int i = 0; i < transportDescriptors.length; ++i)
       {
          // Get the transport type (e.g. UDPv4, TCPv6, SHM, etc.)
@@ -135,7 +136,14 @@ final class ROS2NodePrintout
             // SHM uses shared memory, not network interfaces
             if ("SHM".equals(type))
             {
-               newLine(printout).append('\t').append(type).append(": local only");
+               newLine(printout).append('\t').append(type).append(": local only, segment ");
+               Long segmentSize = transportDescriptors[i].getSegmentSize();
+               if (segmentSize == null || segmentSize == 0)
+                  printout.append("Fast-DDS default (512 KiB)");
+               else
+                  printout.append(ROS2SharedMemoryConfiguration.mebibytes(segmentSize));
+               if (!configuration.customTransports)
+                  printout.append(" (Specified by: ").append(configuration.sharedMemory.getSource()).append(')');
             }
             else
             {

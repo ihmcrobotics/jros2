@@ -41,6 +41,11 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - jros2 nodes keep jros2's intraprocess delivery mode when other code in the process changes the process-wide default of
   `ProfilesXML.setIntraprocessDelivery` (Fast-DDS applies the library settings of every profile it loads to the whole
   process; every profile jros2 loads now states jros2's mode). New `ProfilesXML.getIntraprocessDelivery()`.
+- Large messages between nodes on one host were delayed or lost: a message larger than the 512 KiB shared-memory segment
+  of Fast-DDS's builtin transports (a 1 MB camera image) lost the fragments that did not fit, so RELIABLE samples arrived
+  only after Fast-DDS's repair (about 11 ms for 1 MB, 23 ms and more for 2.7 MB, instead of 0.6 and 1.6 ms) and
+  BEST_EFFORT samples were lost. Participants now use a 4 MiB segment (`ROS2NodeOptions.shmSegmentSize`,
+  `JROS2_SHM_SEGMENT_SIZE`; see Changed).
 - The environment variable `FASTDDS_INTRAPROCESS_DELIVERY` is now read under its correct name. The misspelled
   `FASTDDS_INRAPROCESS_DELIVERY` of 1.5.x is still read when the correct one is not set.
 
@@ -87,6 +92,11 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - Generator: the `dependencyPaths` input of `jros2GenTask` resolves types from other packages for the type hashes.
   `IDLObjectSequence.set(other, elementCopier)` makes a deep copy.
 - `CDRDeserializationException` for malformed CDR input, and `CDRBuffer.beginRead(int)`.
+- `ROS2NodeOptions.shmSegmentSize(bytes)` and the `JROS2_SHM_SEGMENT_SIZE` setting (`jros2.shm.segment.size`): the
+  shared-memory segment size of a participant (default 4 MiB, 0 for Fast-DDS's default transports).
+- GC-free processes: `EpsilonGcAllocationTest` runs the control loop of the allocation gates on HotSpot with the Epsilon
+  GC, without thread-local allocation buffers, and fails if the heap grows by one byte after the warm-up; the README
+  has the recipe and a sizing rule ("GC-free processes (Epsilon)").
 - Build and test tooling: reproducible Docker builds of the native libraries (`scripts/docker`) and the **Build natives**
   workflow, the `jros2GenerateDefaultInterfacesLocal` task, the `:jros2-test:allocationTest` allocation gate, and JaCoCo
   coverage (`:jros2-test:jacocoTestReport`, `:jros2-test:jacocoTestCoverageVerification`).
@@ -139,6 +149,11 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
   than before (linux-x86_64 grew from 12.8 MB to 19.0 MB, Android arm64-v8a from 13.4 MB to 18.1 MB), and the jar now
   also carries the three new Linux platforms.
 - Every participant has one more DataWriter, for the ROS graph.
+- Participants use jros2's shared-memory and UDPv4 transports, with a 4 MiB shared-memory segment, instead of Fast-DDS's
+  builtin ones (512 KiB). Each participant takes about 4.2 MiB of `/dev/shm`; with less than twice that free, it falls back
+  to Fast-DDS's default segment with a warning. Nothing changes on the wire or in discovery. `JROS2_SHM_SEGMENT_SIZE=0`
+  restores the builtin transports, which `FASTDDS_BUILTIN_TRANSPORTS` then configures; that variable also keeps them when
+  no segment size is set. Custom transports and Android (UDPv4) are unchanged.
 
 ### Deprecated
 - `ROS2Node.createService`, `declareParameter` and `getParameter`. They throw `UnsupportedOperationException`.
@@ -148,9 +163,9 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - The macOS and Windows native libraries have not been rebuilt yet: they are older builds (native ABI v1, no
   DDS-Security, no Fast-DDS allocation patches). jros2 uses its copying code paths with them, SROS2 is not available on
   these platforms, and Fast-DDS itself still allocates on their publish and receive paths.
-- BEST_EFFORT samples larger than the 512 KiB segment of Fast-DDS's builtin shared-memory transport are often lost
-  between processes on one host (as with rmw_fastrtps). Use a shared-memory transport with a larger segment for them (see
-  the README, "Allocation-free hot paths").
+- Large messages from native ROS 2 publishers with default settings (512 KiB shared-memory segment) still reach jros2
+  subscriptions on the same host after Fast-DDS's repair delay, or not at all with BEST_EFFORT; the publisher's segment
+  decides (see the README, "Large messages and shared memory").
 - The allocation gates measure HotSpot on Linux; on Android (ART), macOS and Windows the same code paths run, but are not
   measured.
 - No SROS2 interop with Foxy or Galactic. With Foxy or Galactic in the domain, set `ROS_DISTRO` (see

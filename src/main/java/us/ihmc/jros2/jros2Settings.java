@@ -92,7 +92,12 @@ interface jros2Settings
        * SROS2: AUTO (default), true or false, whether DDS-Security announces its certificate algorithms with the legacy names
        * that the Fast-DDS of ROS 2 Foxy, Galactic and Humble requires. AUTO does so when ROS_DISTRO is one of these distros.
        */
-      SECURITY_LEGACY_ALGORITHMS("jros2.security.legacy.algorithms", "JROS2_SECURITY_LEGACY_ALGORITHMS", "jros2.security.legacy.algorithms");
+      SECURITY_LEGACY_ALGORITHMS("jros2.security.legacy.algorithms", "JROS2_SECURITY_LEGACY_ALGORITHMS", "jros2.security.legacy.algorithms"),
+      /**
+       * Shared-memory segment size of the participants jros2 creates: bytes, optionally with a binary suffix (K, KiB, M,
+       * MiB, G, GiB), e.g. "8M"; 0 keeps Fast-DDS's default (512 KiB). See {@link ROS2NodeOptions#shmSegmentSize(long)}.
+       */
+      SHM_SEGMENT_SIZE("jros2.shm.segment.size", "JROS2_SHM_SEGMENT_SIZE", "jros2.shm.segment.size");
 
       final String property;
       final String environmentVariable;

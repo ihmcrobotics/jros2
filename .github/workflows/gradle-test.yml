@@ -44,6 +44,9 @@ jobs:
             ubuntu: '26.04'
     container:
       image: osrf/ros:${{ matrix.ros_distro }}-desktop
+      # Every jros2 participant allocates a 4 MiB shared-memory segment (README, "Large messages and shared memory");
+      # Docker's default /dev/shm (64 MB) would make participants fall back to Fast-DDS's 512 KiB segment.
+      options: --shm-size=1g
     defaults:
       run:
         # Older ROS images (e.g. foxy/focal) default to dash in job containers.
@@ -125,6 +128,7 @@ jobs:
     timeout-minutes: 180
     container:
       image: osrf/ros:jazzy-desktop
+      options: --shm-size=1g
     defaults:
       run:
         shell: bash

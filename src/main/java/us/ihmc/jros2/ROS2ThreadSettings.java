@@ -39,7 +39,8 @@ import java.util.Map;
  * refuses (too small, or not page aligned on macOS), however, would abort the process inside Fast-DDS, so it is validated
  * here.
  * <p>
- * When the participant uses the Fast-DDS builtin transports and reception thread settings are given, jros2 configures the
+ * When the participant uses the Fast-DDS builtin transports (a shared-memory segment size of 0, see
+ * {@link ROS2NodeOptions#shmSegmentSize(long)}) and reception thread settings are given, jros2 configures the
  * builtin transports explicitly ({@code <builtinTransports>DEFAULT</builtinTransports>}), which also means the
  * {@code FASTDDS_BUILTIN_TRANSPORTS} environment variable no longer applies to that participant.
  */

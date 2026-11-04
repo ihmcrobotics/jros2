@@ -44,10 +44,10 @@ import static org.junit.jupiter.api.Assertions.fail;
  * <p>
  * Builds the {@code alloccount} LD_PRELOAD shim ({@code src/test/native/alloccount/alloccount.c}) with the host C
  * compiler (skipped with a message when there is none, or when the platform is not Linux/glibc), then runs
- * {@link NativeHeapAllocationChild} in a separate JVM per configuration: intraprocess delivery OFF with the builtin
- * transports (jros2's defaults: shared memory with a 512 KiB segment plus UDPv4, including messages that overflow the
- * segment), OFF with shared memory (a segment sized for large messages) plus UDPv4, OFF with UDPv4 only (the inter-host
- * path), and FULL with the builtin transports; each with the ABI v2 natives and with the forced ABI v1 path. See the
+ * {@link NativeHeapAllocationChild} in a separate JVM per configuration: intraprocess delivery OFF with jros2's default
+ * transports (shared memory with a 4 MiB segment plus UDPv4, and messages that overflow the 512 KiB segment of a node with
+ * Fast-DDS's default transports), OFF with custom shared memory (an 8500 KiB segment) plus UDPv4, OFF with UDPv4 only (the
+ * inter-host path), and FULL with the default transports; each with the ABI v2 natives and with the forced ABI v1 path. See the
  * child for the windows and how calls are attributed. The test
  * fails on any native heap call on a hot-path thread made by the JNI layer, Fast-DDS or Fast-CDR (also through libstdc++
  * or a JNI function), by a JVM / JDK native method that Java code called, by HotSpot monitor inflation (contended

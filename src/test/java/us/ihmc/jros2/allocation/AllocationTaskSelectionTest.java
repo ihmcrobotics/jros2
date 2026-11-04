@@ -18,6 +18,7 @@ package us.ihmc.jros2.allocation;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
+import us.ihmc.jros2.allocation.epsilon.EpsilonGcAllocationTest;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -99,6 +100,9 @@ public class AllocationTaskSelectionTest
          }
       }
       assertTrue(tagged.contains(AllocationGateMutationTest.class.getName()) && tagged.size() >= 10, "tagged classes found: " + tagged);
+      // The GC-free (Epsilon) gate, in a subpackage of its own
+      assertTrue(tagged.contains(EpsilonGcAllocationTest.class.getName()), "tagged classes found: " + tagged);
+      assertTrue(isCandidate("us/ihmc/jros2/allocation/epsilon/EpsilonGcAllocationTest.class"));
       assertTrue(missed.isEmpty(), "classes tagged \"allocation\" that the allocation test tasks never run (rename them): " + missed);
       assertTrue(!isCandidate("us/ihmc/jros2/ROS2PublisherTest.class") && isCandidate("us/ihmc/jros2/allocation/x/YTest.class")
                  && !isCandidate("us/ihmc/jros2/allocation/SpinWait.class") && isCandidate("us/ihmc/jros2/FooAllocationTest.class")

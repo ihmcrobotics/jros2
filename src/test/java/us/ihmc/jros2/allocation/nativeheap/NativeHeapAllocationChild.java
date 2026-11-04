@@ -66,8 +66,8 @@ import java.util.function.Supplier;
  * subscriptions on one topic, small and large messages), seven seconds of steady RELIABLE traffic (longer than the periodic
  * Fast-DDS activity it triggers), a subscriber too slow for its publisher (full shared-memory port queue) and seven seconds
  * without traffic (background activity of every Fast-DDS thread). With
- * jros2's default transports and intraprocess delivery OFF (see {@link #smallSharedMemorySegment()}) the large images are
- * 640x480, and two more windows send 2 MB images through the 512 KiB shared-memory segment, which overflows. Prints:
+ * jros2's default transports and intraprocess delivery OFF (see {@link #overflowWindows()}) two more windows send 2 MB
+ * images from a node with Fast-DDS's default 512 KiB shared-memory segment, which overflows. Prints:
  * <pre>
  * NHA WINDOW &lt;window#attempt&gt; sent=.. received=.. totalCalls=.. droppedThreads=.. unslottedCalls=.. shimInternalCalls=..
  * NHA THREAD &lt;window#attempt&gt; &lt;class&gt; &lt;tid&gt; &lt;name&gt; malloc=.. calloc=.. realloc=.. memalign=.. new=.. free=.. mmap=.. ...
@@ -132,13 +132,10 @@ public final class NativeHeapAllocationChild
    private static final long LARGE_WARMUP_PACE_NANOS = TimeUnit.MILLISECONDS.toNanos(4);
    private static final int LARGE_MEASURED = 40;
    private static final long LARGE_PACE_NANOS = TimeUnit.MILLISECONDS.toNanos(8);
+   // 2 MB images: every shared-memory segment of the variants holds one (jros2's default 4 MiB, the "shm" variant's
+   // 8500 KiB); the overflow windows send them through Fast-DDS's default 512 KiB segment.
    private static final int IMAGE_WIDTH = 1920;
    private static final int IMAGE_HEIGHT = 1080;
-   // Image of the matrix with the builtin transports and intraprocess delivery OFF (jros2's defaults): their 512 KiB
-   // shared-memory segment cannot hold a 2 MB image, so the matrix sends 640x480 (300 KB, still fragmented) images there,
-   // and the overflow windows send 2 MB images through it.
-   private static final int SMALL_SEGMENT_IMAGE_WIDTH = 640;
-   private static final int SMALL_SEGMENT_IMAGE_HEIGHT = 480;
    private static final int JOINTS = 30;
    private static final int DEPTH = 10;
    private static final long QUIET_WINDOW_MILLIS = 7000;
@@ -184,6 +181,11 @@ public final class NativeHeapAllocationChild
       AsyncROS2Node asyncPublisherNode = new AsyncROS2Node("nha_apub", nodeOptions(), r -> new Thread(r, "hp-async-pub"));
       ROS2Node subscriberNode = new ROS2Node("nha_sub", nodeOptions());
       ROS2Node executorSubscriberNode = new ROS2Node("nha_esub", nodeOptions().callbackExecutor(executor));
+      // The publisher of the overflow windows: the Fast-DDS builtin transports, whose 512 KiB shared-memory segment (in
+      // which the publisher writes) cannot hold a 2 MB image
+      ROS2Node overflowPublisherNode = overflowWindows() && selected(only, "overflow")
+            ? new ROS2Node("nha_overflow_pub", nodeOptions().shmSegmentSize(ROS2NodeOptions.FASTDDS_DEFAULT_SHM_SEGMENT_SIZE))
+            : null;
       printConfiguration();
       // The shared-memory watchdog adds the segments of new participants to its watch list once per second.
       LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(1500));
@@ -217,7 +219,7 @@ public final class NativeHeapAllocationChild
             }
          }
 
-         if (smallSharedMemorySegment() && selected(only, "overflow"))
+         if (overflowPublisherNode != null)
          {
             // 2 MB images through the 512 KiB segment: most messages (fragments) overflow it and are discarded by the
             // sender, an error path that happens in steady state. Gated like the matrix, but nothing needs to arrive.
@@ -225,7 +227,7 @@ public final class NativeHeapAllocationChild
                                                                                             ROS2QoSProfile.Reliability.BEST_EFFORT})
             {
                String name = OVERFLOW_PREFIX + (reliability == ROS2QoSProfile.Reliability.RELIABLE ? "rel" : "be") + "-image-sync-inline";
-               scenario(name, reliability, syncPublisherNode, subscriberNode, Receive.INLINE, Image.class, () -> image(IMAGE_WIDTH, IMAGE_HEIGHT), Image::new,
+               scenario(name, reliability, overflowPublisherNode, subscriberNode, Receive.INLINE, Image.class, () -> image(IMAGE_WIDTH, IMAGE_HEIGHT), Image::new,
                         LARGE_WARMUP, LARGE_MEASURED, LARGE_PACE_NANOS);
             }
          }
@@ -252,6 +254,8 @@ public final class NativeHeapAllocationChild
       {
          for (int i = closeables.size() - 1; i >= 0; --i)
             closeables.get(i).close();
+         if (overflowPublisherNode != null)
+            overflowPublisherNode.close();
          executorSubscriberNode.close();
          subscriberNode.close();
          asyncPublisherNode.close();
@@ -263,7 +267,7 @@ public final class NativeHeapAllocationChild
       System.exit(0);
    }
 
-   /** Window name prefix of the shared-memory overflow windows (see {@link #smallSharedMemorySegment()}). */
+   /** Window name prefix of the shared-memory overflow windows (see {@link #overflowWindows()}). */
    static final String OVERFLOW_PREFIX = "overflow-";
 
    /** Names of the 24 windows of the hot-path matrix, in the order the child runs them. */
@@ -331,10 +335,10 @@ public final class NativeHeapAllocationChild
    }
 
    /**
-    * True with the builtin transports and intraprocess delivery OFF, jros2's defaults: samples between the nodes of this
-    * process go through the builtin shared-memory transport, whose segment is 512 KiB.
+    * True with jros2's default transports and intraprocess delivery OFF: samples between the nodes of this process go
+    * through shared memory, and the overflow windows send 2 MB images from a node with Fast-DDS's default 512 KiB segment.
     */
-   static boolean smallSharedMemorySegment()
+   static boolean overflowWindows()
    {
       return !intraprocess() && "default".equals(System.getProperty(TRANSPORT_PROPERTY, "default"));
    }
@@ -346,11 +350,10 @@ public final class NativeHeapAllocationChild
     * Node options of the selected transport variant (system property {@value #TRANSPORT_PROPERTY}):
     * <ul>
     *    <li>"shm": shared memory with a segment that holds a burst of large messages ({@value #SHM_SEGMENT_SIZE} bytes, as
-    *    Fast-DDS's LARGE_DATA) plus UDPv4: the configuration for large data between processes on one host. The builtin
-    *    default segment (512 KiB) cannot hold one 2 MB image, so most images overflow it and are discarded.</li>
+    *    Fast-DDS's LARGE_DATA, and a port queue to match) plus UDPv4, given as custom transports.</li>
     *    <li>"udp": UDPv4 only, which is what traffic between hosts uses.</li>
-    *    <li>"default": the Fast-DDS builtin transports (shared memory with the 512 KiB segment, UDPv4), as jros2 configures
-    *    them when no transport is given.</li>
+    *    <li>"default": jros2's default transports (shared memory with a 4 MiB segment, UDPv4), as jros2 configures them when
+    *    no transport is given.</li>
     * </ul>
     */
    private static ROS2NodeOptions nodeOptions()
@@ -362,7 +365,7 @@ public final class NativeHeapAllocationChild
          case "udp" -> options.transports(TransportDescriptorTypeTools.createUDPv4Transport());
          default ->
          {
-            // builtin transports
+            // jros2's default transports
          }
       }
       return options;
@@ -1531,10 +1534,10 @@ public final class NativeHeapAllocationChild
       return message;
    }
 
-   /** The large message of the matrix: a 2 MB image, or 300 KB with the 512 KiB segment of the builtin transports. */
+   /** The large message of the matrix: a 2 MB image. */
    private static Image matrixImage()
    {
-      return smallSharedMemorySegment() ? image(SMALL_SEGMENT_IMAGE_WIDTH, SMALL_SEGMENT_IMAGE_HEIGHT) : image(IMAGE_WIDTH, IMAGE_HEIGHT);
+      return image(IMAGE_WIDTH, IMAGE_HEIGHT);
    }
 
    private static Image image(int width, int height)

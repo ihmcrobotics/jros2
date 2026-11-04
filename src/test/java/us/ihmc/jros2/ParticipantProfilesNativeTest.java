@@ -115,6 +115,12 @@ public class ParticipantProfilesNativeTest
       // Static peers: LOCALHOST (peers + 127.0.0.1) and SUBNET (peers + 239.255.0.1); "localhost" is resolved in Java
       loadAndCreate(build(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.LOCALHOST).staticPeers("localhost", "127.0.0.2")), null);
       loadAndCreate(build(ROS2NodeOptions.defaults().discoveryRange(ROS2DiscoveryRange.SUBNET).staticPeers("localhost")), null);
+      // Shared-memory segment sizes: Fast-DDS's default (builtin transports), the smallest and a large one, LOCALHOST too
+      loadAndCreate(build(ROS2NodeOptions.defaults().shmSegmentSize(0)), ROS2QoSProfile.BEST_EFFORT);
+      loadAndCreate(build(ROS2NodeOptions.defaults().shmSegmentSize(0).discoveryRange(ROS2DiscoveryRange.LOCALHOST)), null);
+      loadAndCreate(build(ROS2NodeOptions.defaults().shmSegmentSize(ROS2NodeOptions.MIN_SHM_SEGMENT_SIZE)), null);
+      loadAndCreate(build(ROS2NodeOptions.defaults().shmSegmentSize(16L << 20).discoveryRange(ROS2DiscoveryRange.LOCALHOST)), null);
+      loadAndCreate(build(null, jros2Settings.Key.SHM_SEGMENT_SIZE, "8M"), null);
       // Environment variants
       loadAndCreate(build(null, jros2Settings.Key.LOCALHOST_ONLY, "1"), null);
       loadAndCreate(build(null, jros2Settings.Key.AUTOMATIC_DISCOVERY_RANGE, "OFF", jros2Settings.Key.STATIC_PEERS, "10.0.0.1"), null);
@@ -185,8 +191,10 @@ public class ParticipantProfilesNativeTest
                                                            .stackSizeBytes(ROS2ThreadSettings.MIN_STACK_SIZE_BYTES)
                                                            .forThreads(ROS2ThreadSettings.Kind.RECEPTION, new ROS2ThreadSettings().stackSizeBytes(1048576))
                                                            .forThreads(ROS2ThreadSettings.Kind.TIMED_EVENTS, new ROS2ThreadSettings().affinityMask(1L));
-      // Builtin transports (explicit <builtinTransports> after the reception threads)
+      // jros2's default transports (default_reception_threads on derived descriptors)
       loadAndCreate(build(ROS2NodeOptions.defaults().threadSettings(threads)), ROS2QoSProfile.DEFAULT);
+      // Builtin transports (explicit <builtinTransports> after the reception threads)
+      loadAndCreate(build(ROS2NodeOptions.defaults().threadSettings(threads).shmSegmentSize(0)), ROS2QoSProfile.DEFAULT);
       // User transports (default_reception_threads on derived descriptors)
       loadAndCreate(build(ROS2NodeOptions.defaults().threadSettings(threads).discoveryRange(ROS2DiscoveryRange.LOCALHOST)), ROS2QoSProfile.DEFAULT);
       // Default stack size (-1) and a priority that the OS may refuse (only logged by Fast-DDS)

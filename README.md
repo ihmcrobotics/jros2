@@ -42,6 +42,8 @@ Requires Java 17 or newer. Works on NVIDIA Jetson and on Raspberry Pi 2 or newer
 - Supports custom message types
 - Generate Java classes from ROS 2 .msg files
 - Shared DDS participants (`ROS2Context`), callback executors and scheduling settings for the Fast-DDS threads
+- Large messages (camera images) through shared memory without Fast-DDS's repair delay (see
+  [Large messages and shared memory](#large-messages-and-shared-memory))
 - Fast-DDS backend
 - Minimal and fast implementation
 - Fully thread-safe
@@ -171,8 +173,8 @@ node.createPublisher(new ROS2Topic<>("chatter", std_msgs.String_.class));    // 
 node.createPublisher(new ROS2Topic<>("~/status", std_msgs.String_.class));   // publishes on /robot/talker/status
 ```
 
-`ROS2NodeOptions` also sets the transports, the callback executor, thread settings, the SROS2 enclave, the discovery
-range and static peers. Options left unset fall back to the [configuration](#configuration).
+`ROS2NodeOptions` also sets the transports, the shared-memory segment size, the callback executor, thread settings, the
+SROS2 enclave, the discovery range and static peers. Options left unset fall back to the [configuration](#configuration).
 
 Each node has its own DDS participant by default. Nodes created with a `ROS2Context` share one participant, like nodes in
 one rclcpp context, which saves threads, sockets and discovery traffic:
@@ -184,8 +186,8 @@ try (ROS2Context context = ROS2Context.create(ROS2NodeOptions.defaults().domainI
    // ...
 } // closes both nodes, then the participant
 ```
-The participant-level options (domain, transports, thread settings, enclave, discovery) come from the context. Within
-one participant a topic name can only have one message type.
+The participant-level options (domain, transports, shared-memory segment size, thread settings, enclave, discovery) come
+from the context. Within one participant a topic name can only have one message type.
 
 ### Quality of service
 
@@ -296,24 +298,123 @@ preallocate 80 network buffers per send buffer; a message is sent at 62). The ma
 when the **Build natives** workflow rebuilds them; the ones bundled today predate the patches, so on macOS and Windows
 Fast-DDS itself still allocates on these paths (jros2's Java and JNI code does not).
 
-**Large BEST_EFFORT messages between processes on one host.** Fast-DDS's builtin shared-memory transport has a 512 KiB
-segment per participant, as with rmw_fastrtps. A BEST_EFFORT sample larger than that (for example a camera image) does
-not fit the segment, a fragment that cannot be placed is dropped, and BEST_EFFORT never repairs it, so such samples are
-often lost. RELIABLE samples are repaired and arrive. jros2 keeps Fast-DDS's default; for large BEST_EFFORT data on one
-host, give the publishing and subscribing participants a shared-memory transport with a larger segment:
-
-```java
-TransportDescriptorType largeShm = TransportDescriptorTypeTools.copyOf(TransportDescriptorTypeTools.createSHMDescriptor(), "large_shm");
-largeShm.setSegmentSize(8L * 1024 * 1024);   // bytes; holds a burst of a few large samples
-largeShm.setPortQueueCapacity(8192L);        // queued buffers per receiving port
-ROS2Node camera = new ROS2Node("camera", ROS2NodeOptions.defaults().transports(largeShm, TransportDescriptorTypeTools.createUDPv4Transport()));
-```
-
-(`TransportDescriptorTypeTools` is in `us.ihmc.fastddsjava.profiles`, `TransportDescriptorType` in
-`us.ihmc.fastddsjava.profiles.gen`.) Intraprocess delivery (`FASTDDS_INTRAPROCESS_DELIVERY=true`) avoids the transport
-for endpoints in the same process.
+A message that does not fit a full shared-memory segment is discarded without allocating (see
+[Large messages and shared memory](#large-messages-and-shared-memory)).
 
 The gates that prove all of this run with `./gradlew :jros2-test:allocationTest` (see [Tests and coverage](#tests-and-coverage)).
+
+### GC-free processes (Epsilon)
+
+Since the hot paths allocate nothing, a control process can run on HotSpot without a garbage collector, with the Epsilon
+GC (experimental in JDK 17). Epsilon never frees memory, so the heap must hold everything the process allocates outside
+the hot paths: setup, warm-up, creating endpoints, logging, `toString()`, and graph changes such as remote nodes joining
+and leaving.
+
+```shell
+java -XX:+UnlockExperimentalVMOptions -XX:+UseEpsilonGC -Xms256m -Xmx256m -XX:+AlwaysPreTouch -cp ... com.example.MyRobot
+```
+
+Sizing:
+- Run the process once with the same settings and read the used heap after setup and warm-up
+  (`Runtime.totalMemory() - freeMemory()`, which with Epsilon is everything allocated so far). Set `-Xmx` to at least
+  twice that, plus what the process allocates for each graph change or reconfiguration expected over its lifetime.
+- For scale: the control loop of the allocation gates (four nodes, a 1 kHz `JointState`, a 1 MB image through an
+  `AsyncROS2Publisher`) has about 85 MB of used heap after its warm-up. A remote node with a publisher and a
+  subscription on a subscribed topic joining and leaving costs about 150 bytes.
+- An `AsyncROS2Publisher` grows each of its queue slots to the size of the messages it holds: 64 slots (the default) of
+  a 1 MB image are 63 MB. Give async publishers of large messages a small queue, e.g. `createPublisher(topic, qos, 4)`.
+- With `-Xms` equal to `-Xmx` and `-XX:+AlwaysPreTouch`, HotSpot maps the whole heap at startup.
+- With thread-local allocation buffers (the default), the used heap grows in steps of a buffer, and HotSpot's JIT can
+  still allocate a few bytes on the control thread minutes into the run (one 2 KB step in 10 minutes was seen). Leave
+  headroom.
+- A process that recreates nodes or endpoints in a loop, or that talks to a graph of nodes that keep coming and going,
+  needs a collector.
+
+`EpsilonGcAllocationTest`, one of the allocation gates, runs that control loop in a child JVM with Epsilon, without
+thread-local allocation buffers and with a 128 MB heap. It fails if the used heap grows by a single byte after the warm-up,
+on an `OutOfMemoryError`, or if less than 99 % of the control messages arrive.
+
+### Large messages and shared memory
+
+Nodes on one host exchange data through Fast-DDS's shared-memory transport (each `ROS2Node` has its own participant
+unless it uses a `ROS2Context`; intraprocess delivery, when it is on, bypasses the transports between nodes of one
+process). The publishing participant copies every message into its own shared-memory segment, a large message in
+fragments of about 64 KB, and the subscribing participants read it from there. When the segment is full, the fragments
+that do not fit are discarded. A RELIABLE subscription asks for them again after its 5 ms heartbeat response delay, and
+the publisher resends them after its 5 ms NACK response delay. A BEST_EFFORT subscription loses the message.
+
+Fast-DDS's default segment, which rmw_fastrtps also uses, is 512 KiB. Every larger message was therefore delayed by at
+least one such repair (about 11 ms for a 1 MB image, 23 ms and more for 2.7 MB), and BEST_EFFORT messages larger than
+512 KiB were almost all lost. jros2 now gives its participants a 4 MiB segment:
+
+| Message | RELIABLE, two nodes in one process, p50 (p99) | RELIABLE, two processes, p50 (p99) | BEST_EFFORT delivered, two processes |
+|---|---|---|---|
+| 64 kB | 0.32 (0.50) ms, now 0.32 (0.68) ms | 0.34 (0.61) ms, now 0.35 (0.60) ms | 100 %, now 100 % |
+| 480 kB | 0.43 (0.58) ms, now 0.45 (0.59) ms | 0.45 (0.61) ms, now 0.44 (0.64) ms | 100 %, now 100 % |
+| 983 kB (640x512 rgb8) | 11.4 (13.3) ms, now 0.63 (0.88) ms | 11.5 (12.4) ms, now 0.64 (0.88) ms | 0.4 %, now 100 % |
+| 2.76 MB (1280x720 rgb8) | 23.2 (183) ms, now 1.64 (1.95) ms | 26.7 (242) ms, now 1.63 (1.98) ms | 2.4 %, now 100 % |
+| 8.3 MB (1920x1080 rgba8) | 41.1 (278) ms, now 4.96 (5.84) ms | 33.9 (247) ms, now 4.29 (5.84) ms | 0.7 %, now 97 % |
+
+One-way latency from the start of `publish()` to the end of `read()` in the callback, sensor_msgs/Image at 30 Hz,
+KEEP_LAST 10, intraprocess delivery off, 3 runs of 150 messages, Intel Core Ultra 7 265F with the processes pinned to
+four P-cores. At 100 Hz the 983 kB image took 11.4 ms with tails up to 90 ms before, 0.62 ms (p99 0.75 ms) now.
+
+
+- **Configuration.** The segment size is `ROS2NodeOptions.shmSegmentSize(bytes)` for a node or a `ROS2Context`, or the
+  setting `JROS2_SHM_SEGMENT_SIZE` (system property and `jros2.properties` key `jros2.shm.segment.size`), in bytes or
+  with a binary suffix (`16M`, `16MiB`). The default is 4 MiB: a message of up to about 4 MB fits even before the
+  subscribers start to read it. Larger messages fit as long as the subscribers read the first fragments while the rest is
+  written, which they did up to about 6 MB in the measurements; 8 MB images were repaired at times. For messages larger
+  than 4 MB, give the publishing node a segment of at least 1.25 times the largest message, e.g.
+  `ROS2NodeOptions.defaults().shmSegmentSize(16L << 20)` or `JROS2_SHM_SEGMENT_SIZE=16M`.
+- **Fast-DDS defaults.** `shmSegmentSize(0)` or `JROS2_SHM_SEGMENT_SIZE=0` keeps Fast-DDS's builtin transports, with the
+  512 KiB segment, exactly as rmw_fastrtps uses them. So does the `FASTDDS_BUILTIN_TRANSPORTS` environment variable
+  (`LARGE_DATA`, `UDPv4`, ...) when no segment size is set; Fast-DDS then applies the variable.
+- **What it applies to.** jros2's default transports (shared memory and UDPv4, the same as Fast-DDS's builtin ones), the
+  LOCALHOST discovery range and the interface whitelist. Transports passed with `ROS2NodeOptions.transports(...)` are used
+  as they are: a shared-memory descriptor without a segment size has Fast-DDS's 512 KiB. Android uses UDPv4 only.
+- **Interoperability.** The segment size is not announced in discovery and does not change the wire protocol or the QoS.
+  A subscriber reads from the publisher's segment whatever its own size, so jros2 publishers deliver large messages
+  without repair to every subscriber on the host that shares memory with them, including rmw_fastrtps nodes of Kilted
+  and Lyrical (Fast-DDS 3). Checked with a Kilted rclpy subscriber: 983 kB and 2.76 MB images took 13.8 and 36.6 ms
+  (RELIABLE) and were lost (BEST_EFFORT) before, 2.7 and 4.8 ms (including rclpy) and all delivered now. Jazzy and Humble
+  nodes (Fast-DDS 2) do not share memory with Fast-DDS 3 and exchange data with jros2 over UDP, which this does not
+  change. A publisher in a native ROS 2 node with the default settings keeps its 512 KiB segment, so its large messages
+  still reach jros2 after the repair (11.7 ms for 983 kB from Kilted) or not at all (BEST_EFFORT). Give such a node a
+  shared-memory transport with a larger segment through a Fast-DDS XML profile, for example
+  `FASTDDS_DEFAULT_PROFILES_FILE=large_shm.xml` with the profile below (with it, a Kilted publisher's 983 kB images
+  reached jros2 in 0.82 ms). Fast-DDS's `LARGE_DATA` builtin transports are no substitute: their discovery runs over TCP,
+  which jros2's default transports do not use, and such a publisher did not match a jros2 subscription.
+
+  ```xml
+  <?xml version="1.0" encoding="UTF-8" ?>
+  <dds xmlns="http://www.eprosima.com">
+    <profiles>
+      <transport_descriptors>
+        <transport_descriptor><transport_id>large_shm</transport_id><type>SHM</type><segment_size>4194304</segment_size></transport_descriptor>
+        <transport_descriptor><transport_id>udp</transport_id><type>UDPv4</type></transport_descriptor>
+      </transport_descriptors>
+      <participant profile_name="large_shm_participant" is_default_profile="true">
+        <rtps>
+          <userTransports><transport_id>large_shm</transport_id><transport_id>udp</transport_id></userTransports>
+          <useBuiltinTransports>false</useBuiltinTransports>
+        </rtps>
+      </participant>
+    </profiles>
+  </dds>
+  ```
+- **Memory.** Each participant allocates its segment in `/dev/shm` when it is created and keeps it until it is closed:
+  about 4.2 MiB (4 MiB plus Fast-DDS's buffer bookkeeping) instead of about 0.5 MiB. Nodes in one `ROS2Context` share one
+  participant and one segment. Small messages are as fast as before.
+- **Small `/dev/shm`.** When `/dev/shm` has less than twice the segment size free, for example in a container with
+  Docker's default 64 MB, jros2 uses Fast-DDS's default segment for that participant and logs a warning once. Give the
+  container more shared memory (`docker run --shm-size=512m`) or share participants with `ROS2Context`.
+- **Crashed processes.** A process that is killed (SIGKILL) or crashes leaves its segments in `/dev/shm`, as any Fast-DDS
+  process does; `fastdds shm clean` removes them. jros2 deletes its participants on normal exit, SIGINT and SIGTERM.
+- **Between hosts (UDP).** The kernel's socket receive buffer plays the role of the segment: a large message that
+  overflows it is repaired or lost the same way. Raise `net.core.rmem_default` and `net.core.rmem_max` on the receiving
+  hosts for messages of several MB. On this machine, with 1 MiB socket buffers, 1 MB images arrived without repair over
+  UDP and 2.7 MB images needed one repair (about 12 ms).
 
 ### Configuration
 
@@ -333,6 +434,7 @@ that order of priority. jros2 uses the first `jros2.properties` it finds: in the
 | Static peers (`;` separated host names or IPv4 addresses) | `ROS_STATIC_PEERS` | `ros.static.peers` | `jros2.ros.static.peers` |
 | SROS2 | `ROS_SECURITY_ENABLE`, `ROS_SECURITY_STRATEGY`, `ROS_SECURITY_KEYSTORE`, `ROS_SECURITY_ENCLAVE_OVERRIDE`, `ROS_SECURITY_LOG_FILE`, `ROS_SECURITY_LOG_PUBLISH`, `ROS_SECURITY_LOG_VERBOSITY` | `ros.security.enable`, `ros.security.strategy`, ... (lower case, dots) | `jros2.ros.security.enable`, ... |
 | SROS2 legacy algorithm names: `AUTO` (default), `true`, `false` | `JROS2_SECURITY_LEGACY_ALGORITHMS` | `jros2.security.legacy.algorithms` | `jros2.security.legacy.algorithms` |
+| Shared-memory segment size (default `4M`; `0` for Fast-DDS's default, see [Large messages](#large-messages-and-shared-memory)) | `JROS2_SHM_SEGMENT_SIZE` | `jros2.shm.segment.size` | `jros2.shm.segment.size` |
 
 The discovery settings follow rcl's rules: `ROS_LOCALHOST_ONLY=1` forces LOCALHOST and drops the static peers, an invalid
 `ROS_AUTOMATIC_DISCOVERY_RANGE` falls back to LOCALHOST with a warning, and static peers are ignored with OFF and
@@ -375,9 +477,12 @@ Lyrical; Galactic is not in CI. Iron and Rolling were not tested.
   certificate algorithm names; jros2 sends them when `ROS_DISTRO` is foxy, galactic or humble, or when
   `JROS2_SECURITY_LEGACY_ALGORITHMS=true`. Jazzy and Kilted were checked to accept the legacy names too. No secure session
   forms with Foxy or Galactic (native Humble nodes cannot talk securely to Foxy either).
-- **Large best-effort messages.** 2 MiB BEST_EFFORT samples were lost over shared memory with Fast-DDS 3.x peers
-  (Kilted, Lyrical; native nodes of those distros lose them too), and mostly lost over UDP with Foxy, Galactic and Humble
-  peers. RELIABLE delivered every 2 MiB sample with every distro, so use RELIABLE for large messages.
+- **Large best-effort messages.** With Fast-DDS's 512 KiB shared-memory segment, 2 MiB BEST_EFFORT samples were lost
+  over shared memory with Fast-DDS 3.x peers (Kilted, Lyrical); native publishers of those distros with default settings
+  still lose them. jros2's 4 MiB segment delivers them from jros2 publishers (checked with Kilted, see
+  [Large messages and shared memory](#large-messages-and-shared-memory)). Over UDP, which Foxy, Galactic, Humble and
+  Jazzy peers use with jros2, large BEST_EFFORT samples are mostly lost when they overflow the socket buffers. RELIABLE
+  delivered every 2 MiB sample with every distro.
 - **Lyrical demo nodes.** The `demo_nodes_cpp` talker and listener of Lyrical use `example_interfaces/msg/String` on
   `/chatter`; those of the older distros use `std_msgs/msg/String`.
 - **Galactic with Cyclone DDS** needs about 1.1 s to match a new publisher with a jros2 subscription. Tools that publish
@@ -512,6 +617,11 @@ messages without fields, and copy nested message sequences by reference in `set(
 - **Graph traffic.** Every participant now has one more DataWriter for the ROS graph. Because of it, a subscription can see
   a new publisher about 100 ms after the publisher saw the subscription. A publisher that sends to a BEST_EFFORT
   subscription right after `waitForSubscription()` can lose the first samples.
+- **Shared-memory segment.** Participants use jros2's own shared-memory and UDPv4 transports with a 4 MiB segment instead
+  of Fast-DDS's builtin transports (512 KiB segment), so large messages are no longer delayed or lost between nodes on one
+  host. Each participant takes about 4.2 MiB of `/dev/shm`. The `FASTDDS_BUILTIN_TRANSPORTS` environment variable applies
+  only with `JROS2_SHM_SEGMENT_SIZE=0` or when no segment size is set. See
+  [Large messages and shared memory](#large-messages-and-shared-memory).
 - **Native library files.** The Linux libraries are now named by their SONAME (`libfastcdr.so.2`, `libfastdds.so.3.6`) and
   are copied to a cache that is reused across runs (see [Native libraries](#native-libraries)) instead of a new
   temporary directory per run.
@@ -554,6 +664,9 @@ the other three). The gates have no tolerance: one allocated object or one `mall
 - `ControlLoopAllocationTest`: 10 s of a robot-like process (three nodes in a `ROS2Context` and one more node, 1 kHz
   `JointState`, a 1 MB image through an `AsyncROS2Publisher`, inline and executor callbacks, polling, statistics) with the
   Java heap gate on all threads and the native heap counter on the hot-path threads in the same windows.
+- `EpsilonGcAllocationTest`: the same control loop for 30 s in a child JVM with the Epsilon GC (no collector), no
+  thread-local allocation buffers and a 128 MB heap; the used heap must not grow by a single byte after the warm-up (see
+  [GC-free processes](#gc-free-processes-epsilon)).
 
 Every gate was shown to fail when an allocation is injected. The reports are written to
 `src/test/build/allocation-gate/<task>/`; `-Pjros2.allocation.diagnose` names the source of allocations the agent cannot

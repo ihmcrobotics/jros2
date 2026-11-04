@@ -71,10 +71,10 @@ public class ROS2NodePrintoutTest
       ParticipantProfiles.ParticipantConfiguration configuration = ParticipantProfiles.build("p_print_whitelist", "node", 3, null, whitelisted);
 
       List<String> lines = lines(format(configuration));
-      assertTrue(lines.contains("Using custom transports:"), lines.toString());
+      assertTrue(lines.contains("Using transports:"), lines.toString());
       assertTrue(lines.contains("UDPv4: on " + uniqueIp + ", 127.0.0.1"), lines.toString());
-      assertTrue(lines.contains("SHM: local only"), lines.toString());
-      assertFalse(lines.contains("Using builtin transports: UDPv4, SHM"), lines.toString());
+      assertTrue(lines.contains("SHM: local only, segment 4.0 MiB (Specified by: default)"), lines.toString());
+      assertTrue(lines.stream().noneMatch(line -> line.startsWith("Using builtin transports")), lines.toString());
    }
 
    @Test
@@ -113,16 +113,34 @@ public class ROS2NodePrintoutTest
    @Test
    public void testBuiltinTransportsAndDomainIdSource()
    {
-      // No settings source defines domain 231, so the printout attributes it to the constructor
-      ParticipantProfiles.ParticipantConfiguration configuration = ParticipantProfiles.build("p_print_builtin", "builtin_node", 231, null, ParticipantProfilesTest.desktop());
+      // No settings source defines this domain (one that differs from ROS_DOMAIN_ID), so the printout attributes it to the
+      // constructor
+      jros2.load();
+      int domainId = jros2.get().rosDomainId() == 231 ? 230 : 231;
+      ParticipantProfiles.ParticipantConfiguration configuration = ParticipantProfiles.build("p_print_builtin",
+                                                                                             "builtin_node",
+                                                                                             domainId,
+                                                                                             null,
+                                                                                             ParticipantProfilesTest.desktop(jros2Settings.Key.SHM_SEGMENT_SIZE, "0"));
       List<String> lines = lines(format(configuration));
       assertTrue(lines.contains("Created ROS2Node: builtin_node"), lines.toString());
-      assertTrue(lines.contains("DomainID: 231 (Specified by: constructor)"), lines.toString());
-      assertTrue(lines.contains("Using builtin transports: UDPv4, SHM"), lines.toString());
+      assertTrue(lines.contains("DomainID: " + domainId + " (Specified by: constructor)"), lines.toString());
+      assertTrue(lines.contains("Using builtin transports: UDPv4, SHM (segment Fast-DDS default (512 KiB), Specified by: JROS2_SHM_SEGMENT_SIZE)"), lines.toString());
       assertTrue(lines.contains("Discovery range: SUBNET (Specified by: default)"), lines.toString());
       assertTrue(lines.stream().noneMatch(line -> line.startsWith("Static peers")), "no static peers: " + lines);
       assertTrue(lines.stream().noneMatch(line -> line.startsWith("Thread settings")), "no thread settings: " + lines);
       assertTrue(lines.contains("SROS2 security: disabled"), lines.toString());
+   }
+
+   @Test
+   public void testDefaultTransports()
+   {
+      ParticipantProfiles.ParticipantConfiguration configuration = ParticipantProfiles.build("p_print_default", "node", 3, null, ParticipantProfilesTest.desktop());
+      List<String> lines = lines(format(configuration));
+      int header = lines.indexOf("Using transports:");
+      assertTrue(header >= 0, lines.toString());
+      assertEquals("SHM: local only, segment 4.0 MiB (Specified by: default)", lines.get(header + 1));
+      assertEquals("UDPv4: on all interfaces", lines.get(header + 2));
    }
 
    @Test

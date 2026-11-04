@@ -162,6 +162,9 @@ public class ROS2ContextTest
          assertThrows(IllegalArgumentException.class, () -> new ROS2Node("other_range", in(context).discoveryRange(ROS2DiscoveryRange.LOCALHOST)));
          assertThrows(IllegalArgumentException.class, () -> new ROS2Node("other_peers", in(context).staticPeers("192.168.0.1")));
          assertThrows(IllegalArgumentException.class, () -> new ROS2Node("other_threads", in(context).threadSettings(new ROS2ThreadSettings().priority(5))));
+         IllegalArgumentException segment = assertThrows(IllegalArgumentException.class,
+                                                         () -> new ROS2Node("other_segment", in(context).shmSegmentSize(8L * 1024 * 1024)));
+         assertTrue(segment.getMessage().contains("shmSegmentSize"), segment.getMessage());
          assertEquals(1, context.getNodes().size(), "rejected nodes are not attached");
 
          // Node-level options stay per node
