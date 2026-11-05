@@ -1,4 +1,3 @@
-# Load order for windows-arm64 (one file name per line, JNI library last). Read by fastddsjavaNativeLibrary.
 fastcdr-2.3.dll
 fastdds-3.6.dll
 jnifastddsjava.dll
