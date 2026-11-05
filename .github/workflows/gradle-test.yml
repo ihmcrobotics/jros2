@@ -2,6 +2,15 @@ name: Test
 
 on:
   workflow_dispatch:
+    inputs:
+      desktop_only:
+        description: Run only the Windows and macOS jobs
+        type: boolean
+        default: false
+      natives_ref:
+        description: Commit to take the native libraries from in the Windows and macOS jobs, to compare two builds. Empty uses this branch
+        type: string
+        default: ''
   push:
     branches: [ develop ]
   pull_request:
@@ -22,6 +31,7 @@ jobs:
   # explicitly disabled, i.e. with the default users get. The jazzy entry with coverage produces the JaCoCo report.
   test-linux:
     name: Linux (ROS 2 ${{ matrix.ros_distro }} / Ubuntu ${{ matrix.ubuntu }}${{ matrix.intraprocess == 'false' && ' / no intraprocess' || '' }})
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     strategy:
@@ -124,6 +134,7 @@ jobs:
   # hour on a hosted runner. The gate reports (one per gate and pass) are uploaded.
   test-allocation:
     name: Allocation gates (ROS 2 jazzy / Ubuntu 24.04)
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     container:
@@ -175,6 +186,7 @@ jobs:
   # fastddsjava.java) and the R8 validation of android/consumer-rules.pro.
   lint-android:
     name: Android (Lint API gate, jniLibs, R8 rules)
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
@@ -242,6 +254,7 @@ jobs:
   # 'system-images;android-<api-level>;<target>;<arch>' from it verbatim.
   test-android:
     name: Android API ${{ matrix.api-level }} (${{ matrix.target }})
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     strategy:
@@ -346,6 +359,7 @@ jobs:
   # explicitly with docker run, so that no JavaScript action has to execute inside the musl container.
   test-musl:
     name: Alpine Linux (musl x86_64)
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -388,6 +402,7 @@ jobs:
   # under QEMU; the smoke test loads the linux-riscv64 natives and sends a string and an image through Fast-DDS.
   smoke-riscv64:
     name: riscv64 smoke test (QEMU)
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -426,6 +441,7 @@ jobs:
 
   test-docker:
     name: Docker Integration Tests
+    if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -463,9 +479,37 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Use the native libraries of natives_ref
+        if: inputs.natives_ref != ''
+        shell: bash
+        env:
+          NATIVES_REF: ${{ inputs.natives_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$NATIVES_REF"
+          rm -rf src/main/resources/fastddsjava/native
+          git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
+
       - name: Run tests
         shell: bash
         run: ./gradlew test
+
+      - name: Print crash reports
+        if: failure()
+        shell: bash
+        run: find . -name 'hs_err*.log' -type f -exec cat {} +
+
+      - name: Upload test results and crash reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-windows
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+            src/test/hs_err_pid*
+          if-no-files-found: warn
+          retention-days: 14
 
   test-macos-intel:
     name: macOS (Intel)
@@ -481,8 +525,36 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Use the native libraries of natives_ref
+        if: inputs.natives_ref != ''
+        shell: bash
+        env:
+          NATIVES_REF: ${{ inputs.natives_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$NATIVES_REF"
+          rm -rf src/main/resources/fastddsjava/native
+          git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
+
       - name: Run tests
         run: ./gradlew test
+
+      - name: Print crash reports
+        if: failure()
+        shell: bash
+        run: find . -name 'hs_err*.log' -type f -exec cat {} +
+
+      - name: Upload test results and crash reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-macos-intel
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+            src/test/hs_err_pid*
+          if-no-files-found: warn
+          retention-days: 14
 
   test-macos-arm:
     name: macOS (ARM)
@@ -498,5 +570,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Use the native libraries of natives_ref
+        if: inputs.natives_ref != ''
+        shell: bash
+        env:
+          NATIVES_REF: ${{ inputs.natives_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$NATIVES_REF"
+          rm -rf src/main/resources/fastddsjava/native
+          git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
+
       - name: Run tests
         run: ./gradlew test
+
+      - name: Print crash reports
+        if: failure()
+        shell: bash
+        run: find . -name 'hs_err*.log' -type f -exec cat {} +
+
+      - name: Upload test results and crash reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-macos-arm
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+            src/test/hs_err_pid*
+          if-no-files-found: warn
+          retention-days: 14
