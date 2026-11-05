@@ -470,7 +470,8 @@ ls -la "$DEST"
 cd "$WORK"
 
 # ------------------------------------------------------------------------------------------------ xjc (optional)
-if command -v xjc > /dev/null 2>&1; then
+# Run it rather than look for it: macOS has an /usr/bin/xjc stub that fails unless a JDK with xjc is installed (JDK 11 removed it).
+if xjc -version > /dev/null 2>&1; then
    echo "Generating Java classes from XSD with xjc..."
    xjc -no-header -p us.ihmc.fastddsjava.profiles.gen -d ../src/main/java "$FASTDDS_SRC/resources/xsd/fastdds_profiles.xsd"
 
