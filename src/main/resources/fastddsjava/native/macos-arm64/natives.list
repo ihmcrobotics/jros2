@@ -1,4 +1,3 @@
-# Load order for macos-arm64 (one file name per line, JNI library last). Read by fastddsjavaNativeLibrary.
-libfastcdr.2.3.5.dylib
-libfastdds.3.6.2.dylib
+libfastcdr.2.dylib
+libfastdds.3.6.dylib
 libjnifastddsjava.dylib
