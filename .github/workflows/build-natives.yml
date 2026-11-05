@@ -227,7 +227,7 @@ jobs:
     needs: plan
     if: needs.plan.outputs.macos != '[]'
     name: build ${{ matrix.platform }}
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 60
     strategy:
       fail-fast: false
@@ -269,8 +269,9 @@ jobs:
 
   commit-natives:
     needs: [plan, verifier-selftest, build-natives-docker, build-natives-windows, build-natives-macos]
-    # Commit only when every requested build succeeded (skipped jobs are fine).
-    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') }}
+    # Commit only when every requested build succeeded (skipped jobs are fine). A job can be cancelled while the run is not,
+    # for example when GitHub rejects its runner image, so !cancelled() alone does not cover that.
+    if: ${{ !cancelled() && !contains(needs.*.result, 'failure') && !contains(needs.*.result, 'cancelled') }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:
