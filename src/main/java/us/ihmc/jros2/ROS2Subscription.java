@@ -1046,7 +1046,7 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    /**
     * Use {@link ROS2Node#destroySubscription(ROS2Subscription)}
     * <p>
-    * Marks the subscription closed immediately: no callback starts afterwards and reads return no data. Called from a
+    * Marks the subscription closed immediately: no callback starts afterward and reads return no data. Called from a
     * jros2 callback (see {@link CallbackContext}), including this subscription's own callback, the native teardown is
     * deferred because deleting a DataReader from a Fast-DDS callback deadlocks; otherwise it completes before this method
     * returns, after waiting for a callback of this subscription that is running on another thread (inline or on the

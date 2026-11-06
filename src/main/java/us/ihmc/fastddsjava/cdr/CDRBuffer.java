@@ -37,7 +37,7 @@ import static us.ihmc.fastddsjava.natives.fastddsjava.*;
  *    <li><b>Writing</b> always uses little endian ({@link #writePayloadHeader()} writes {@code CDR_LE}). Every write
  *    method grows the buffer on demand, so an underestimated {@code calculateSizeBytes} can never overflow it. Alignment
  *    padding is written as zero bytes.</li>
- *    <li><b>Reading</b> honours the byte order of the received encapsulation header (little or big endian). Every wire
+ *    <li><b>Reading</b> honors the byte order of the received encapsulation header (little or big endian). Every wire
  *    length is validated against the bytes remaining before the buffer's limit (see {@link #beginRead(int)}) before
  *    anything is allocated; malformed input throws {@link CDRDeserializationException}.</li>
  *    <li><b>Strings</b> are UTF-8 on the wire ({@code uint32 length} including the terminating NUL, the bytes, NUL), as
@@ -67,6 +67,8 @@ public final class CDRBuffer
    private static final char REPLACEMENT_CHARACTER = (char) 0xFFFD;
    /** A character outside Latin-1: appending it switches a JDK StringBuilder to two bytes per character for good. */
    private static final char UTF16_CODER_CHARACTER = (char) 0x0100;
+   /** The longest string, in characters, that {@link #writeString(StringBuilder)} tries to copy through {@link #asciiScratch}. */
+   private static final int ASCII_SCRATCH_LENGTH = 1024;
    private static final int LITTLE_ENDIAN_VIEW = 0;
    private static final int BIG_ENDIAN_VIEW = 1;
 
@@ -102,6 +104,10 @@ public final class CDRBuffer
    }
 
    private ByteBuffer buffer;
+
+   // Holds the leading ASCII characters of a string between checking them and writing them, so that nothing is written for a
+   // string that turns out to be rejected. Fixed size: it never grows, whatever is written.
+   private final byte[] asciiScratch = new byte[ASCII_SCRATCH_LENGTH];
 
    // Typed views of the buffer, starting at ORIGIN, created lazily per byte order and dropped whenever the buffer is
    // reallocated. They provide Android-safe bulk copies (relative bulk get/put) for primitive arrays.
@@ -397,7 +403,7 @@ public final class CDRBuffer
     * A {@code new StringBuilder(capacity)} of the JDK (compact strings) stores Latin-1 content in one byte per character
     * and reallocates its storage the first time a character above U+00FF is appended, even below its capacity. Such a
     * builder that only ever held ASCII would allocate on the first received string with, e.g., a {@code '€'}. The builder
-    * returned here is switched to two bytes per character once, at creation, so that afterwards only growing beyond its
+    * returned here is switched to two bytes per character once, at creation, so that afterward only growing beyond its
     * capacity allocates. (On Android, StringBuilder always stores two bytes per character.)
     * </p>
     *
@@ -435,15 +441,36 @@ public final class CDRBuffer
     */
    public static int utf8Length(CharSequence value)
    {
-      return utf8Length(value, false);
+      return utf8Length(value, 0, false);
    }
 
-   private static int utf8Length(CharSequence value, boolean rejectNul)
+   /**
+    * Returns the number of bytes {@code value} occupies when encoded as UTF-8, not including the NUL terminator.
+    * An unpaired surrogate counts as one byte (it is written as {@code '?'}).
+    *
+    * @param value the characters to measure
+    * @return the UTF-8 encoded length in bytes
+    */
+   public static int utf8Length(StringBuilder value)
+   {
+      int length = value.length();
+      int i = 0;
+      while (i < length && value.charAt(i) < 0x80)
+      {
+         ++i;
+      }
+      return i == length && length <= MAX_CAPACITY ? length : utf8Length(value, i, false);
+   }
+
+   /**
+    * @param start every character before this index is known to be ASCII (and, with {@code rejectNul}, not NUL)
+    */
+   private static int utf8Length(CharSequence value, int start, boolean rejectNul)
    {
       int length = value.length();
       long utf8Length = length;
 
-      for (int i = 0; i < length; ++i)
+      for (int i = start; i < length; ++i)
       {
          char c = value.charAt(i);
 
@@ -497,20 +524,32 @@ public final class CDRBuffer
 
       int length = readLength(STRING);
 
-      destination.setLength(0);
-
-      if (length == 0)
+      if (length == 0 || buffer.remaining() < length)
       {
+         destination.setLength(0);
+         requireReadable(length, STRING); // throws if the payload is too short
          return;
       }
-
-      requireReadable(length, STRING);
 
       int start = buffer.position();
       int end = start + length;
       int dataEnd = buffer.get(end - 1) == 0 ? end - 1 : end;
 
-      decodeUtf8(start, dataEnd, destination);
+      // A string can have far fewer characters than bytes: setting the length to the number of bytes must not grow the
+      // destination. Where it would, the general path grows it only as far as the characters need.
+      if (dataEnd - start <= destination.capacity())
+      {
+         start = readAscii(start, dataEnd, destination);
+      }
+      else
+      {
+         destination.setLength(0);
+      }
+
+      if (start < dataEnd)
+      {
+         decodeUtf8(start, dataEnd, destination);
+      }
 
       buffer.position(end);
    }
@@ -522,7 +561,41 @@ public final class CDRBuffer
     */
    public void writeString(StringBuilder value)
    {
-      writeString((CharSequence) value);
+      int length = value.length();
+      int asciiLength = length <= ASCII_SCRATCH_LENGTH ? copyAsciiToScratch(value, length) : 0;
+
+      if (asciiLength == length)
+      {
+         alignForWrite(4, 4 + length + 1);
+         buffer.putInt(length + 1); // Length of string + null terminator
+         buffer.put(asciiScratch, 0, length);
+         buffer.put((byte) 0);
+      }
+      else
+      {
+         writeUtf8(value, asciiLength);
+      }
+   }
+
+   /**
+    * Copies the leading characters of {@code value} to {@link #asciiScratch} up to the first one the general path has to look
+    * at: NUL, or anything above ASCII. Nothing is written to the buffer yet: such a character may mean the string is rejected.
+    *
+    * @return the number of characters copied
+    */
+   private int copyAsciiToScratch(StringBuilder value, int length)
+   {
+      byte[] scratch = asciiScratch;
+      for (int i = 0; i < length; ++i)
+      {
+         char c = value.charAt(i);
+         if (c == 0 || c >= 0x80)
+         {
+            return i;
+         }
+         scratch[i] = (byte) c;
+      }
+      return length;
    }
 
    /**
@@ -533,8 +606,16 @@ public final class CDRBuffer
     */
    public void writeString(CharSequence value)
    {
+      writeUtf8(value, 0);
+   }
+
+   /**
+    * @param asciiLength the leading characters of {@code value} that are in {@link #asciiScratch}: known to be ASCII and not NUL
+    */
+   private void writeUtf8(CharSequence value, int asciiLength)
+   {
       int length = value.length();
-      int utf8Length = utf8Length(value, true);
+      int utf8Length = utf8Length(value, asciiLength, true);
       if (utf8Length > MAX_CAPACITY - 16)
       {
          throw CDRBufferErrors.stringTooLong(utf8Length);
@@ -542,8 +623,12 @@ public final class CDRBuffer
 
       alignForWrite(4, 4 + utf8Length + 1);
       buffer.putInt(utf8Length + 1); // Length of string + null terminator
+      if (asciiLength > 0)
+      {
+         buffer.put(asciiScratch, 0, asciiLength);
+      }
 
-      for (int i = 0; i < length; ++i)
+      for (int i = asciiLength; i < length; ++i)
       {
          char c = value.charAt(i);
 
@@ -1248,6 +1333,32 @@ public final class CDRBuffer
          throw CDRBufferErrors.lengthTooLarge(what, length);
       }
       return length;
+   }
+
+   /**
+    * Replaces the content of {@code destination}, whose capacity holds {@code end - start} characters, with the leading ASCII
+    * bytes in [start, end) of the buffer. Setting the length once and then each character in place costs a fraction of
+    * appending the characters one by one (measured with C2 on JDK 17), and that append, not checking for ASCII, is what
+    * {@link #decodeUtf8(int, int, StringBuilder)} spends its time on for ASCII text.
+    *
+    * @return the position of the first byte that is not ASCII, {@code end} if there is none
+    */
+   private int readAscii(int start, int end, StringBuilder destination)
+   {
+      ByteBuffer b = buffer;
+      int count = end - start;
+      destination.setLength(count);
+      for (int i = 0; i < count; ++i)
+      {
+         byte value = b.get(start + i);
+         if (value < 0)
+         {
+            destination.setLength(i);
+            return start + i;
+         }
+         destination.setCharAt(i, (char) value);
+      }
+      return end;
    }
 
    /**

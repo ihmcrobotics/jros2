@@ -135,7 +135,6 @@ public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
       {
          three_images_[i] = new sensor_msgs.Image();
       }
-
    }
 
    public TestMsg(TestMsg from)
@@ -212,7 +211,6 @@ public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
       {
          three_images_[i].serialize(buffer);
       }
-
    }
 
    @Override
@@ -246,7 +244,6 @@ public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
       {
          three_images_[i].deserialize(buffer);
       }
-
    }
 
    @Override
@@ -291,7 +288,6 @@ public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
       {
          three_images_[i].set(from.three_images_[i]);
       }
-
    }
 
    public std_msgs.Header getHeader()
@@ -523,7 +519,6 @@ public class TestMsg implements ROS2Message<TestMsg>, ROS2Message.WithHeader
    {
       return three_images_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

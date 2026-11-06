@@ -8,7 +8,7 @@ on:
         type: boolean
         default: false
       natives_ref:
-        description: Commit to take the native libraries from in the Windows and macOS jobs, to compare two builds. Empty uses this branch
+        description: Full hash of the commit to take the native libraries from in the Windows and macOS jobs, to compare two builds. Empty uses this branch
         type: string
         default: ''
   push:
@@ -20,7 +20,7 @@ on:
 
 env:
   # Native ABI (fastddsjava.abiVersion()) that the committed Android, musl and riscv64 natives must implement. They must
-  # also be built with DDS-Security. Checked by NativeLibraryLoadTest (Android) and examples/native-smoke.
+  # also be built with DDS-Security. Checked by NativeLibraryLoadTest (Android) and examples/native-check.
   JROS2_EXPECTED_NATIVE_ABI: '2'
 
 jobs:
@@ -128,7 +128,7 @@ jobs:
         run: find . -name 'hs_err*' -type f -exec cat {} +
 
   # Allocation gates (README, "Allocation-free hot paths"): every @Tag("allocation") test class in its own JVM, with the
-  # java-allocation-instrumenter agent and with -XX:-DoEscapeAnalysis, each with intraprocess delivery OFF and FULL
+  # java-allocation-instrumenter agent and with -XX:-DoEscapeAnalysis, each with intraprocess delivery OFF and USER_DATA_ONLY
   # (:jros2-test:allocationTest runs all four tasks), including the native heap gates (an LD_PRELOAD malloc shim built
   # with the container's C compiler) and the combined control-loop gate. A job of its own: the four tasks take about an
   # hour on a hosted runner. The gate reports (one per gate and pass) are uploaded.
@@ -326,7 +326,8 @@ jobs:
           api-level: ${{ matrix.api-level }}
           arch: x86_64
           target: ${{ matrix.target }}
-          ram-size: 2048M
+          # With 2 GB, lmkd killed the test process on API 35 (the Google apps of a cold boot fill the memory).
+          ram-size: 4096M
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -no-audio -no-boot-anim -camera-back none -camera-front none
           # A first (cold, no snapshot) boot of the API 26 image took 11 min on a loaded machine; later boots ~10 s.
           emulator-boot-timeout: 1200
@@ -340,6 +341,7 @@ jobs:
           # image's ARM translation (API 30+ x86_64 images; the API 26 image cannot, and the script skips it).
           # The action runs each script line as its own shell command.
           script: |
+            bash src/androidTest/wait-for-device-ready.sh
             ./gradlew connectedDebugAndroidTest --stacktrace -Pjros2.sros2Keystore=${{ runner.temp }}/sros2-keystore -Pandroid.testInstrumentationRunnerArguments.expectedPageSize=${{ matrix.page-size }} -Pandroid.testInstrumentationRunnerArguments.expectedAbiVersion=${{ env.JROS2_EXPECTED_NATIVE_ABI }} -Pandroid.testInstrumentationRunnerArguments.expectSecurity=true
             bash src/androidTest/instrument-abi.sh arm64-v8a build/outputs/apk/androidTest/debug/jros2-android-debug-androidTest.apk -e expectedPageSize ${{ matrix.page-size }} -e expectedAbiVersion ${{ env.JROS2_EXPECTED_NATIVE_ABI }} -e expectSecurity true
 
@@ -354,7 +356,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-  # musl libc (Alpine): the bundled linux-musl-x86_64 natives must load (native smoke test), and the unit tests must
+  # musl libc (Alpine): the bundled linux-musl-x86_64 natives must load (native check), and the unit tests must
   # pass (ROS 2 CLI interop tests skip themselves without a ROS 2 installation). The job runs an alpine container
   # explicitly with docker run, so that no JavaScript action has to execute inside the musl container.
   test-musl:
@@ -366,7 +368,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Native smoke test and unit tests in alpine:3.22 (OpenJDK 17)
+      - name: Native check and unit tests in alpine:3.22 (OpenJDK 17)
         run: |
           set -euo pipefail
           docker run --rm -v "$PWD:/w" -w /w -e GITHUB_ACTIONS -e JROS2_EXPECTED_NATIVE_ABI -e ROS_DISTRO=jazzy -e ROS_DOMAIN_ID=0 alpine:3.22 sh -euc '
@@ -377,9 +379,9 @@ jobs:
             ls -la src/main/resources/fastddsjava/native/linux-musl-x86_64/
             ./gradlew --no-daemon jar
             JAR=$(ls build/libs/jros2-*.jar | grep -v -e sources -e javadoc | head -1)
-            mkdir -p build/native-smoke
-            javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-smoke examples/native-smoke/src/main/java/us/ihmc/NativeSmoke.java
-            java -cp "$JAR:build/native-smoke" us.ihmc.NativeSmoke --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security
+            mkdir -p build/native-check
+            javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-check examples/native-check/src/main/java/us/ihmc/NativeCheck.java
+            java -cp "$JAR:build/native-check" us.ihmc.NativeCheck --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security
             ./gradlew --no-daemon :jros2-test:test --continue
           '
 
@@ -398,10 +400,10 @@ jobs:
         if: failure()
         run: find . -name 'hs_err*' -type f -exec cat {} +
 
-  # riscv64: runs the native smoke test in an emulated riscv64 container (QEMU user mode). The full suite is too slow
-  # under QEMU; the smoke test loads the linux-riscv64 natives and sends a string and an image through Fast-DDS.
-  smoke-riscv64:
-    name: riscv64 smoke test (QEMU)
+  # riscv64: runs the native check in an emulated riscv64 container (QEMU user mode). The full suite is too slow
+  # under QEMU; the native check loads the linux-riscv64 natives and sends a string and an image through Fast-DDS.
+  riscv64-native-check:
+    name: riscv64 native check (QEMU)
     if: ${{ !inputs.desktop_only }}
     runs-on: ubuntu-latest
     timeout-minutes: 40
@@ -418,26 +420,26 @@ jobs:
       - name: Verify riscv64 natives are bundled
         run: ls -la src/main/resources/fastddsjava/native/linux-riscv64/
 
-      - name: Build jar and the smoke test
+      - name: Build jar and the native check
         run: |
           set -euo pipefail
           ./gradlew jar
           JAR=$(ls build/libs/jros2-*.jar | grep -v -e sources -e javadoc | head -1)
-          cp "$JAR" build/jros2-smoke.jar
-          mkdir -p build/native-smoke
-          javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-smoke examples/native-smoke/src/main/java/us/ihmc/NativeSmoke.java
+          cp "$JAR" build/jros2-check.jar
+          mkdir -p build/native-check
+          javac --release 17 -encoding UTF-8 -cp "$JAR" -d build/native-check examples/native-check/src/main/java/us/ihmc/NativeCheck.java
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
           platforms: riscv64
 
-      - name: Run the smoke test on linux/riscv64 (eclipse-temurin:17-jre-noble)
+      - name: Run the native check on linux/riscv64 (eclipse-temurin:17-jre-noble)
         run: |
           set -euo pipefail
           docker run --rm --platform linux/riscv64 -v "$PWD/build:/w" -w /w -e ROS_DOMAIN_ID=0 -e JROS2_EXPECTED_NATIVE_ABI \
             eclipse-temurin:17-jre-noble \
-            sh -c 'uname -m && java -version && java -cp jros2-smoke.jar:native-smoke us.ihmc.NativeSmoke --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security'
+            sh -c 'uname -m && java -version && java -cp jros2-check.jar:native-check us.ihmc.NativeCheck --expect-abi "$JROS2_EXPECTED_NATIVE_ABI" --expect-security'
 
   test-docker:
     name: Docker Integration Tests
@@ -495,15 +497,71 @@ jobs:
         run: ./gradlew test
 
       - name: Print crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         shell: bash
         run: find . -name 'hs_err*.log' -type f -exec cat {} +
 
       - name: Upload test results and crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         uses: actions/upload-artifact@v7
         with:
           name: test-results-windows
+          path: |
+            src/test/build/test-results/
+            src/test/build/reports/tests/
+            src/test/hs_err_pid*
+          if-no-files-found: warn
+          retention-days: 14
+
+  # The windows-arm64 libraries are cross-compiled by Build natives and run nowhere else. This image has no JDK 17 and Temurin
+  # publishes no JDK 17 for Windows aarch64, so this job uses Microsoft's. The architecture is explicit because on an x64 JDK
+  # (Windows on ARM can emulate one) jros2 would load the windows-x86_64 libraries instead; the check step makes sure of it.
+  test-windows-arm:
+    name: Windows (ARM)
+    runs-on: windows-11-arm
+    timeout-minutes: 20
+    env:
+      JAVA_TOOL_OPTIONS: -Dfile.encoding=UTF-8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'microsoft'
+          architecture: aarch64
+
+      - name: Check that the JVM runs natively on ARM64
+        shell: bash
+        run: java -XshowSettings:properties -version 2>&1 | grep -E 'os\.arch = aarch64'
+
+      - name: Use the native libraries of natives_ref
+        if: inputs.natives_ref != ''
+        shell: bash
+        env:
+          NATIVES_REF: ${{ inputs.natives_ref }}
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "$NATIVES_REF"
+          rm -rf src/main/resources/fastddsjava/native
+          git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
+
+      - name: Run tests
+        shell: bash
+        run: ./gradlew test
+
+      - name: Print crash reports
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
+        shell: bash
+        run: find . -name 'hs_err*.log' -type f -exec cat {} +
+
+      - name: Upload test results and crash reports
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results-windows-arm
           path: |
             src/test/build/test-results/
             src/test/build/reports/tests/
@@ -540,12 +598,12 @@ jobs:
         run: ./gradlew test
 
       - name: Print crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         shell: bash
         run: find . -name 'hs_err*.log' -type f -exec cat {} +
 
       - name: Upload test results and crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         uses: actions/upload-artifact@v7
         with:
           name: test-results-macos-intel
@@ -585,12 +643,12 @@ jobs:
         run: ./gradlew test
 
       - name: Print crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         shell: bash
         run: find . -name 'hs_err*.log' -type f -exec cat {} +
 
       - name: Upload test results and crash reports
-        if: failure()
+        if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
         uses: actions/upload-artifact@v7
         with:
           name: test-results-macos-arm

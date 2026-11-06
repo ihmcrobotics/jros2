@@ -62,7 +62,6 @@ public class Empty implements ROS2Message<Empty>
       {
          return;
       }
-
    }
 
    /**

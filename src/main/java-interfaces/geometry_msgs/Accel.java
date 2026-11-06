@@ -35,7 +35,6 @@ public class Accel implements ROS2Message<Accel>
    {
       linear_ = new geometry_msgs.Vector3();
       angular_ = new geometry_msgs.Vector3();
-
    }
 
    public Accel(Accel from)
@@ -60,7 +59,6 @@ public class Accel implements ROS2Message<Accel>
    {
       linear_.serialize(buffer);
       angular_.serialize(buffer);
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class Accel implements ROS2Message<Accel>
    {
       linear_.deserialize(buffer);
       angular_.deserialize(buffer);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class Accel implements ROS2Message<Accel>
 
       linear_.set(from.linear_);
       angular_.set(from.angular_);
-
    }
 
    public geometry_msgs.Vector3 getLinear()
@@ -93,7 +89,6 @@ public class Accel implements ROS2Message<Accel>
    {
       return angular_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

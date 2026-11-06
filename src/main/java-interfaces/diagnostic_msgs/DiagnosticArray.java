@@ -35,7 +35,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Messag
    {
       header_ = new std_msgs.Header();
       status_ = new IDLObjectSequence<diagnostic_msgs.DiagnosticStatus>(diagnostic_msgs.DiagnosticStatus.class);
-
    }
 
    public DiagnosticArray(DiagnosticArray from)
@@ -60,7 +59,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Messag
    {
       header_.serialize(buffer);
       status_.serialize(buffer);
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Messag
    {
       header_.deserialize(buffer);
       status_.deserialize(buffer);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Messag
 
       header_.set(from.header_);
       status_.set(from.status_, diagnostic_msgs.DiagnosticStatus::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -93,7 +89,6 @@ public class DiagnosticArray implements ROS2Message<DiagnosticArray>, ROS2Messag
    {
       return status_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

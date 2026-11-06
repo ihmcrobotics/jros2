@@ -59,14 +59,12 @@ public class UInt32 implements ROS2Message<UInt32>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeInt(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readInt();
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class UInt32 implements ROS2Message<UInt32>
       }
 
       data_ = from.data_;
-
    }
 
    public int getData()
@@ -90,7 +87,6 @@ public class UInt32 implements ROS2Message<UInt32>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

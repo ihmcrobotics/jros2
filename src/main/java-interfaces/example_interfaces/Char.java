@@ -59,14 +59,12 @@ public class Char implements ROS2Message<Char>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeChar(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readChar();
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class Char implements ROS2Message<Char>
       }
 
       data_ = from.data_;
-
    }
 
    public char getData()
@@ -90,7 +87,6 @@ public class Char implements ROS2Message<Char>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

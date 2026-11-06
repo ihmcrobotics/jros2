@@ -107,7 +107,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       dynamic_typing_ = false;
       floating_point_range_ = new IDLObjectSequence<rcl_interfaces.FloatingPointRange>(0, 1, rcl_interfaces.FloatingPointRange.class);
       integer_range_ = new IDLObjectSequence<rcl_interfaces.IntegerRange>(0, 1, rcl_interfaces.IntegerRange.class);
-
    }
 
    public ParameterDescriptor(ParameterDescriptor from)
@@ -144,7 +143,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       buffer.writeBoolean(dynamic_typing_);
       floating_point_range_.serialize(buffer);
       integer_range_.serialize(buffer);
-
    }
 
    @Override
@@ -158,7 +156,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       dynamic_typing_ = buffer.readBoolean();
       floating_point_range_.deserialize(buffer);
       integer_range_.deserialize(buffer);
-
    }
 
    @Override
@@ -180,7 +177,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
       dynamic_typing_ = from.dynamic_typing_;
       floating_point_range_.set(from.floating_point_range_, rcl_interfaces.FloatingPointRange::set); // copies the elements, never shares them
       integer_range_.set(from.integer_range_, rcl_interfaces.IntegerRange::set); // copies the elements, never shares them
-
    }
 
    public StringBuilder getName()
@@ -327,7 +323,6 @@ public class ParameterDescriptor implements ROS2Message<ParameterDescriptor>
    {
       return integer_range_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

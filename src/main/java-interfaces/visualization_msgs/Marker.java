@@ -226,7 +226,6 @@ public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
       text_ = CDRBuffer.newStringBuilder(16);
       mesh_resource_ = CDRBuffer.newStringBuilder(16);
       mesh_file_ = new visualization_msgs.MeshFile();
-
    }
 
    public Marker(Marker from)
@@ -285,7 +284,6 @@ public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
       buffer.writeString(mesh_resource_);
       mesh_file_.serialize(buffer);
       buffer.writeBoolean(mesh_use_embedded_materials_);
-
    }
 
    @Override
@@ -310,7 +308,6 @@ public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
       buffer.readString(mesh_resource_);
       mesh_file_.deserialize(buffer);
       mesh_use_embedded_materials_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -344,7 +341,6 @@ public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
       mesh_resource_.append(from.mesh_resource_);
       mesh_file_.set(from.mesh_file_);
       mesh_use_embedded_materials_ = from.mesh_use_embedded_materials_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -586,7 +582,6 @@ public class Marker implements ROS2Message<Marker>, ROS2Message.WithHeader
    {
       this.mesh_use_embedded_materials_ = mesh_use_embedded_materials_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

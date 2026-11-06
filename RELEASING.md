@@ -18,16 +18,16 @@ OpenSSL, NDK versions) or the build scripts changed since the last build, and fo
   with `scripts/cppbuild.bash`. Both apply the Fast-DDS patches in `src/native/fastdds-patches` (name order, exact
   context: a patch that no longer applies to the pinned Fast-DDS fails the build). Every platform directory is replaced as a whole, and `scripts/docker/verify-natives.sh`
   checks every Linux and Android result. See [scripts/docker/README.md](scripts/docker/README.md) for local builds.
-- For 1.6.0: the committed macOS and Windows libraries are still old builds (native ABI v1, no DDS-Security, no Fast-DDS
-  patches, macOS 14.0 minimum). Rebuild them with the workflow (`platforms`: `macos`, then `windows`, or `all`) before the release. Then
-  update `README.md` (the note under "Supported platforms", the macOS version, which becomes 12 with the rebuilt
-  libraries, and the SROS2 and native library sections if DDS-Security was enabled) and the "Known limitations" of
-  `CHANGELOG.md`.
+- For 1.6.0: the libraries of every platform must be built with all nine Fast-DDS patches. jros2's intraprocess delivery
+  mode (`USER_DATA_ONLY`) can crash under endpoint churn without patches 0008 and 0009, so rebuild with `platforms`: `all` after
+  adding a patch, and do not release with libraries from before it. The macOS and Windows libraries are built without
+  DDS-Security (`macos_windows_security` off). If that changes, update `README.md` (the note under "Supported platforms" and
+  the SROS2 section) and the "Known limitations" of `CHANGELOG.md`.
 - Changing `scripts/docker/env.sh`, `deps.sh`, a Dockerfile, `native-versions.env` (other than in comments) or a Fast-DDS
   patch invalidates the dependency cache: a local `build-natives.sh --jni-only` run then refuses, and a full build is needed.
 
 Make sure the **Test** workflow (`.github/workflows/gradle-test.yml`) passes on the branch: the Linux ROS 2 distro
-matrix, Windows, macOS, Android Lint and R8 checks, the Android emulator tests, Alpine (musl), the riscv64 smoke test and
+matrix, Windows (x86_64 and ARM), macOS, Android Lint and R8 checks, the Android emulator tests, Alpine (musl), the riscv64 native check and
 the allocation gates.
 
 Local checks (a ROS 2 installation in `/opt/ros/$ROS_DISTRO` enables the CLI interop tests):

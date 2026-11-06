@@ -87,7 +87,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
    {
       goal_id_ = new actionlib_msgs.GoalID();
       text_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public GoalStatus(GoalStatus from)
@@ -114,7 +113,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       goal_id_.serialize(buffer);
       buffer.writeByte(status_);
       buffer.writeString(text_);
-
    }
 
    @Override
@@ -123,7 +121,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       goal_id_.deserialize(buffer);
       status_ = buffer.readByte();
       buffer.readString(text_);
-
    }
 
    @Override
@@ -138,7 +135,6 @@ public class GoalStatus implements ROS2Message<GoalStatus>
       status_ = from.status_;
       text_.setLength(0);
       text_.append(from.text_);
-
    }
 
    public actionlib_msgs.GoalID getGoalId()

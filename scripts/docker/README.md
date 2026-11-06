@@ -31,8 +31,9 @@ scripts/docker/build-natives.sh linux-x86_64 . /tmp/natives      # -> /tmp/nativ
   are unchanged.
 * `deps.sh` applies jros2's Fast-DDS patches, `src/native/fastdds-patches/*.patch` in name order, to the pinned Fast-DDS
   sources with exact context (`patch -p1 -F 0`): a patch that no longer applies fails the build. They remove heap
-  allocations from Fast-DDS's steady-state publish and receive paths. `scripts/cppbuild.bash` (macOS, Windows) applies
-  the same patches.
+  allocations from Fast-DDS's steady-state publish and receive paths and fix races on writers and readers of this process
+  (0008, 0009).
+  `scripts/cppbuild.bash` (macOS, Windows) applies the same patches.
   Comment-only edits do not count as a change.
 * `--jni-only` rebuilds only `libjnifastddsjava` from `src/native/*.cpp` against the cached dependencies. It takes a
   few seconds and downloads nothing (Android still needs the NDK), so use it after changing the JNI C++ code. It

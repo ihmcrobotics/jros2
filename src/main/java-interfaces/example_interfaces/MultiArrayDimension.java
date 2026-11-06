@@ -39,7 +39,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    public MultiArrayDimension()
    {
       label_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public MultiArrayDimension(MultiArrayDimension from)
@@ -66,7 +65,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       buffer.writeString(label_);
       buffer.writeInt(size_);
       buffer.writeInt(stride_);
-
    }
 
    @Override
@@ -75,7 +73,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       buffer.readString(label_);
       size_ = buffer.readInt();
       stride_ = buffer.readInt();
-
    }
 
    @Override
@@ -90,7 +87,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
       label_.append(from.label_);
       size_ = from.size_;
       stride_ = from.stride_;
-
    }
 
    public StringBuilder getLabel()
@@ -147,7 +143,6 @@ public class MultiArrayDimension implements ROS2Message<MultiArrayDimension>
    {
       this.stride_ = stride_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

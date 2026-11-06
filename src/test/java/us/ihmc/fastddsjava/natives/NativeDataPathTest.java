@@ -131,7 +131,7 @@ public class NativeDataPathTest
                byte[] content = payload(size, i);
                ByteBuffer src = direct(content, size + 32); // only the first size bytes are written
                assertEquals(RETCODE_OK, writeBuffer(writer, src, size), "write " + size);
-               // The sample is serialized inside write(): scribbling the source afterwards must not matter.
+               // The sample is serialized inside write(): scribbling the source afterward must not matter.
                for (int j = 0; j < src.capacity(); j++)
                   src.put(j, (byte) 0xEE);
 

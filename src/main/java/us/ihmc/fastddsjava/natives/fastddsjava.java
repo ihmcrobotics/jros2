@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
  * Opaque {@code long} values named {@code fastdds*} are native Fast-DDS pointers; 0 means null. With ABI v2 natives
  * ({@link #abiVersion()}), functions given a 0 pointer fail with {@link #RETCODE_BAD_PARAMETER} (or return 0 / do
  * nothing) instead of crashing; ABI v1 natives dereference it. A pointer to an entity that was already deleted is
- * undefined behaviour with every version.
+ * undefined behavior with every version.
  * <p>
  * Listener lifecycle (ABI v2 natives; ABI v1 frees a listener immediately, so it must not be deleted before the
  * entities using it): a listener runs its callbacks behind an enable gate. It is disabled when it is
@@ -218,7 +218,7 @@ public final class fastddsjava
    public static native String topicDataWrapperTypeGetName(long fastddsTopicDataWrapperType);
 
    /**
-    * Creates topic data holding one zero byte. With ABI v2 natives it does not depend on the type afterwards.
+    * Creates topic data holding one zero byte. With ABI v2 natives it does not depend on the type afterward.
     */
    public static native long createData(long fastddsTopicDataWrapperType);
 

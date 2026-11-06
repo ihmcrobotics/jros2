@@ -36,7 +36,6 @@ public class Clock implements ROS2Message<Clock>
    public Clock()
    {
       clock_ = new builtin_interfaces.Time();
-
    }
 
    public Clock(Clock from)
@@ -59,14 +58,12 @@ public class Clock implements ROS2Message<Clock>
    public void serialize(CDRBuffer buffer)
    {
       clock_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       clock_.deserialize(buffer);
-
    }
 
    @Override
@@ -78,14 +75,12 @@ public class Clock implements ROS2Message<Clock>
       }
 
       clock_.set(from.clock_);
-
    }
 
    public builtin_interfaces.Time getClock()
    {
       return clock_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

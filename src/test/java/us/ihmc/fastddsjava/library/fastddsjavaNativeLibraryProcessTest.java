@@ -382,8 +382,8 @@ public class fastddsjavaNativeLibraryProcessTest
       String[] after = child.await("AFTER ").split(" ");
       assertEquals(Integer.toString(fastddsjava.ABI_V1), early[1], "nothing is loaded yet");
       assertEquals("false", early[2]);
-      assertEquals(Integer.toString(fastddsjava.abiVersion()), after[1], "the ABI of the natives loaded afterwards");
-      assertEquals(Boolean.toString(fastddsjava.hasSecurity()), after[2], "the DDS-Security support of the natives loaded afterwards");
+      assertEquals(Integer.toString(fastddsjava.abiVersion()), after[1], "the ABI of the natives loaded afterward");
+      assertEquals(Boolean.toString(fastddsjava.hasSecurity()), after[2], "the DDS-Security support of the natives loaded afterward");
    }
 
    /**

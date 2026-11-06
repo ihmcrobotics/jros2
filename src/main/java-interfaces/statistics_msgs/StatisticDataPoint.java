@@ -97,7 +97,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       buffer.writeByte(data_type_);
       buffer.writeDouble(data_);
-
    }
 
    @Override
@@ -105,7 +104,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       data_type_ = buffer.readByte();
       data_ = buffer.readDouble();
-
    }
 
    @Override
@@ -118,7 +116,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
 
       data_type_ = from.data_type_;
       data_ = from.data_;
-
    }
 
    public byte getDataType()
@@ -140,7 +137,6 @@ public class StatisticDataPoint implements ROS2Message<StatisticDataPoint>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

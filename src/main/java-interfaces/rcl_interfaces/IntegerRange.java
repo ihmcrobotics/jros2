@@ -102,7 +102,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
       buffer.writeLong(from_value_);
       buffer.writeLong(to_value_);
       buffer.writeLong(step_);
-
    }
 
    @Override
@@ -111,7 +110,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
       from_value_ = buffer.readLong();
       to_value_ = buffer.readLong();
       step_ = buffer.readLong();
-
    }
 
    @Override
@@ -125,7 +123,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
       from_value_ = from.from_value_;
       to_value_ = from.to_value_;
       step_ = from.step_;
-
    }
 
    public long getFromValue()
@@ -157,7 +154,6 @@ public class IntegerRange implements ROS2Message<IntegerRange>
    {
       this.step_ = step_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

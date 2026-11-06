@@ -61,7 +61,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
       buffer.writeFloat(g_);
       buffer.writeFloat(b_);
       buffer.writeFloat(a_);
-
    }
 
    @Override
@@ -71,7 +70,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
       g_ = buffer.readFloat();
       b_ = buffer.readFloat();
       a_ = buffer.readFloat();
-
    }
 
    @Override
@@ -86,7 +84,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
       g_ = from.g_;
       b_ = from.b_;
       a_ = from.a_;
-
    }
 
    public float getR()
@@ -128,7 +125,6 @@ public class ColorRGBA implements ROS2Message<ColorRGBA>
    {
       this.a_ = a_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

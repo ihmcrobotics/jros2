@@ -84,7 +84,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>, ROS2
       header_ = new std_msgs.Header();
       ranges_ = new IDLObjectSequence<sensor_msgs.LaserEcho>(sensor_msgs.LaserEcho.class);
       intensities_ = new IDLObjectSequence<sensor_msgs.LaserEcho>(sensor_msgs.LaserEcho.class);
-
    }
 
    public MultiEchoLaserScan(MultiEchoLaserScan from)
@@ -125,7 +124,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>, ROS2
       buffer.writeFloat(range_max_);
       ranges_.serialize(buffer);
       intensities_.serialize(buffer);
-
    }
 
    @Override
@@ -141,7 +139,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>, ROS2
       range_max_ = buffer.readFloat();
       ranges_.deserialize(buffer);
       intensities_.deserialize(buffer);
-
    }
 
    @Override
@@ -162,7 +159,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>, ROS2
       range_max_ = from.range_max_;
       ranges_.set(from.ranges_, sensor_msgs.LaserEcho::set); // copies the elements, never shares them
       intensities_.set(from.intensities_, sensor_msgs.LaserEcho::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -249,7 +245,6 @@ public class MultiEchoLaserScan implements ROS2Message<MultiEchoLaserScan>, ROS2
    {
       return intensities_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

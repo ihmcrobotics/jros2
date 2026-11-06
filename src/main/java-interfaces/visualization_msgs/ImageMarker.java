@@ -126,7 +126,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHe
       lifetime_ = new builtin_interfaces.Duration();
       points_ = new IDLObjectSequence<geometry_msgs.Point>(geometry_msgs.Point.class);
       outline_colors_ = new IDLObjectSequence<std_msgs.ColorRGBA>(std_msgs.ColorRGBA.class);
-
    }
 
    public ImageMarker(ImageMarker from)
@@ -173,7 +172,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHe
       lifetime_.serialize(buffer);
       points_.serialize(buffer);
       outline_colors_.serialize(buffer);
-
    }
 
    @Override
@@ -192,7 +190,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHe
       lifetime_.deserialize(buffer);
       points_.deserialize(buffer);
       outline_colors_.deserialize(buffer);
-
    }
 
    @Override
@@ -217,7 +214,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHe
       lifetime_.set(from.lifetime_);
       points_.set(from.points_, geometry_msgs.Point::set); // copies the elements, never shares them
       outline_colors_.set(from.outline_colors_, std_msgs.ColorRGBA::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -339,7 +335,6 @@ public class ImageMarker implements ROS2Message<ImageMarker>, ROS2Message.WithHe
    {
       return outline_colors_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

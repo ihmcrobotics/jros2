@@ -45,7 +45,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       twist_ = new geometry_msgs.Twist();
       covariance_ = new double[36];
-
    }
 
    public TwistWithCovariance(TwistWithCovariance from)
@@ -70,7 +69,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       twist_.serialize(buffer);
       buffer.writeDoubleArray(covariance_);
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       twist_.deserialize(buffer);
       buffer.readDoubleArray(covariance_);
-
    }
 
    @Override
@@ -91,7 +88,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
 
       twist_.set(from.twist_);
       System.arraycopy(from.covariance_, 0, covariance_, 0, covariance_.length);
-
    }
 
    public geometry_msgs.Twist getTwist()
@@ -103,7 +99,6 @@ public class TwistWithCovariance implements ROS2Message<TwistWithCovariance>
    {
       return covariance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

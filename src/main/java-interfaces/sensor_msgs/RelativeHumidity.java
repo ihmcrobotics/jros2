@@ -45,7 +45,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Mess
    public RelativeHumidity()
    {
       header_ = new std_msgs.Header();
-
    }
 
    public RelativeHumidity(RelativeHumidity from)
@@ -72,7 +71,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Mess
       header_.serialize(buffer);
       buffer.writeDouble(relative_humidity_);
       buffer.writeDouble(variance_);
-
    }
 
    @Override
@@ -81,7 +79,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Mess
       header_.deserialize(buffer);
       relative_humidity_ = buffer.readDouble();
       variance_ = buffer.readDouble();
-
    }
 
    @Override
@@ -95,7 +92,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Mess
       header_.set(from.header_);
       relative_humidity_ = from.relative_humidity_;
       variance_ = from.variance_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -122,7 +118,6 @@ public class RelativeHumidity implements ROS2Message<RelativeHumidity>, ROS2Mess
    {
       this.variance_ = variance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

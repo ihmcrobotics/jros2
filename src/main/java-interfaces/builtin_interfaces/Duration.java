@@ -75,7 +75,6 @@ public class Duration implements ROS2Message<Duration>
    {
       buffer.writeInt(sec_);
       buffer.writeInt(nanosec_);
-
    }
 
    @Override
@@ -83,7 +82,6 @@ public class Duration implements ROS2Message<Duration>
    {
       sec_ = buffer.readInt();
       nanosec_ = buffer.readInt();
-
    }
 
    @Override
@@ -96,7 +94,6 @@ public class Duration implements ROS2Message<Duration>
 
       sec_ = from.sec_;
       nanosec_ = from.nanosec_;
-
    }
 
    public int getSec()
@@ -118,7 +115,6 @@ public class Duration implements ROS2Message<Duration>
    {
       this.nanosec_ = nanosec_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

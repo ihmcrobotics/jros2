@@ -23,7 +23,7 @@ import java.util.Iterator;
 /**
  * IDL sequence of ROS 2 char (uint8 on the wire, stored as char in [0, 255]) values backed by a heap {@link CharBuffer}.
  * <p>
- * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honoring the CDR byte order.
  * </p>
  */
 public class IDLCharSequence extends IDLSequence<IDLCharSequence> implements Iterable<Character>

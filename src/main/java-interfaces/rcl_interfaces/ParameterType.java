@@ -89,7 +89,6 @@ public class ParameterType implements ROS2Message<ParameterType>
       {
          return;
       }
-
    }
 
    /**

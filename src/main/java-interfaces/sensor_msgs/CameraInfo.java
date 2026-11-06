@@ -250,7 +250,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHead
       r_ = new double[9];
       p_ = new double[12];
       roi_ = new sensor_msgs.RegionOfInterest();
-
    }
 
    public CameraInfo(CameraInfo from)
@@ -293,7 +292,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHead
       buffer.writeInt(binning_x_);
       buffer.writeInt(binning_y_);
       roi_.serialize(buffer);
-
    }
 
    @Override
@@ -310,7 +308,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHead
       binning_x_ = buffer.readInt();
       binning_y_ = buffer.readInt();
       roi_.deserialize(buffer);
-
    }
 
    @Override
@@ -333,7 +330,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHead
       binning_x_ = from.binning_x_;
       binning_y_ = from.binning_y_;
       roi_.set(from.roi_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -440,7 +436,6 @@ public class CameraInfo implements ROS2Message<CameraInfo>, ROS2Message.WithHead
    {
       return roi_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

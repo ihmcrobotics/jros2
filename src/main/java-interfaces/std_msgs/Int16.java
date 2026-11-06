@@ -58,14 +58,12 @@ public class Int16 implements ROS2Message<Int16>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeShort(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readShort();
-
    }
 
    @Override
@@ -77,7 +75,6 @@ public class Int16 implements ROS2Message<Int16>
       }
 
       data_ = from.data_;
-
    }
 
    public short getData()
@@ -89,7 +86,6 @@ public class Int16 implements ROS2Message<Int16>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -23,19 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The child JVM of {@link ROS2AllocationTest}: a fast smoke version of the allocation gates (see
+ * The child JVM of {@link ROS2AllocationTest}: a fast version of the allocation gates (see
  * {@code PublishSubscribeAllocationTest} and the other classes tagged "allocation") that runs in the normal test suite.
  * It measures every thread with HotSpot's allocated-bytes counters and the monitor pass, with zero tolerance, but with
  * escape analysis on and without the instrumenter, so a scalar-replaced allocation could escape it: the allocation test
  * tasks are the real gate. Prints one {@code RESULT} line per gate and exits with 1 if any allocated.
  */
-public final class ROS2AllocationSmokeChild
+public final class ROS2AllocationQuickChild
 {
    private static final int WARMUP = 3_000;
    private static final int ITERATIONS = 1_000;
    private static volatile long sink;
 
-   private ROS2AllocationSmokeChild()
+   private ROS2AllocationQuickChild()
    {
    }
 
@@ -56,7 +56,7 @@ public final class ROS2AllocationSmokeChild
       {
          abi.assertPath(loop.publisher);
          int[] last = new int[1];
-         AllocationGate.Result result = AllocationGate.named(name).smoke().warmup(WARMUP).iterations(ITERATIONS).run(i ->
+         AllocationGate.Result result = AllocationGate.named(name).quick().warmup(WARMUP).iterations(ITERATIONS).run(i ->
          {
             loop.tick(i);
             sink += loop.queries();
@@ -70,11 +70,11 @@ public final class ROS2AllocationSmokeChild
    public static void main(String[] args) throws Exception
    {
       List<Gate> gates = new ArrayList<>();
-      ROS2Node publisherNode = new ROS2Node("alloc_smoke_publisher");
-      ROS2Node subscriptionNode = new ROS2Node("alloc_smoke_subscriber");
-      AsyncROS2Node asyncNode = new AsyncROS2Node("alloc_smoke_async");
-      ROS2CallbackExecutor executor = new ROS2CallbackExecutor("alloc-smoke-callbacks");
-      ROS2Node executorNode = new ROS2Node("alloc_smoke_executor", ROS2NodeOptions.defaults().callbackExecutor(executor));
+      ROS2Node publisherNode = new ROS2Node("alloc_quick_publisher");
+      ROS2Node subscriptionNode = new ROS2Node("alloc_quick_subscriber");
+      AsyncROS2Node asyncNode = new AsyncROS2Node("alloc_quick_async");
+      ROS2CallbackExecutor executor = new ROS2CallbackExecutor("alloc-quick-callbacks");
+      ROS2Node executorNode = new ROS2Node("alloc_quick_executor", ROS2NodeOptions.defaults().callbackExecutor(executor));
 
       gates.add(() -> tick("sync publish, inline callback", publisherNode, subscriptionNode, HotPathMessages.JOINT_STATE, ReceiveMode.CALLBACK_READ, false));
       gates.add(() -> tick("sync publish, polling read with SampleInfo, ABI v1", publisherNode, subscriptionNode, HotPathMessages.MARKER_ARRAY,
@@ -88,7 +88,7 @@ public final class ROS2AllocationSmokeChild
          sensor_msgs.JointState decoded = HotPathMessages.JOINT_STATE.create();
          CDRBuffer buffer = new CDRBuffer();
          buffer.ensureRemainingCapacity(CDRBuffer.PAYLOAD_HEADER.length + message.calculateSizeBytes(0));
-         return AllocationGate.named("CDR round trip").smoke().warmup(20_000).iterations(20_000).run(i ->
+         return AllocationGate.named("CDR round trip").quick().warmup(20_000).iterations(20_000).run(i ->
          {
             HotPathMessages.JOINT_STATE.update(message, i);
             buffer.rewind();
@@ -121,7 +121,7 @@ public final class ROS2AllocationSmokeChild
          executorNode.close();
          executor.close();
       }
-      System.out.println(allocationFree ? "ALLOCATION-SMOKE OK" : "ALLOCATION-SMOKE FAILED");
+      System.out.println(allocationFree ? "ALLOCATION-QUICK OK" : "ALLOCATION-QUICK FAILED");
       System.out.flush();
       System.exit(allocationFree ? 0 : 1);
    }

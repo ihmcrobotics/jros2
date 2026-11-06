@@ -30,8 +30,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * <p>
  * Cases: {@code same_participant} (main creates a subscription on P1, the callback a publisher on P2),
  * {@code new_node} (main creates a subscription on P1, the callback a new node) and {@code matching_endpoint} (main
- * creates, on a third participant, a publisher that matches the callback's subscription; with intraprocess delivery
- * that waits for the callback too).
+ * creates, on a third participant, a publisher that matches the callback's subscription; a Fast-DDS discovery thread
+ * then waits for the callback's reader while it holds the PDP lock of the callback's participant).
  */
 public class ROS2CreationDeadlockChild
 {

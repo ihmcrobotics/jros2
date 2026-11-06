@@ -31,7 +31,6 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    public MeshTriangle()
    {
       vertex_indices_ = new int[3];
-
    }
 
    public MeshTriangle(MeshTriangle from)
@@ -54,14 +53,12 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeIntArray(vertex_indices_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readIntArray(vertex_indices_);
-
    }
 
    @Override
@@ -73,14 +70,12 @@ public class MeshTriangle implements ROS2Message<MeshTriangle>
       }
 
       System.arraycopy(from.vertex_indices_, 0, vertex_indices_, 0, vertex_indices_.length);
-
    }
 
    public int[] getVertexIndices()
    {
       return vertex_indices_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

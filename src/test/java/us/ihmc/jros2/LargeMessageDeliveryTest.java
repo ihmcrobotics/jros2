@@ -40,14 +40,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * With Fast-DDS's default 512 KiB shared-memory segment, the fragments of a larger message that do not fit the
  * publisher's segment are discarded: RELIABLE samples arrive only after the RTPS repair (the reader's 5 ms heartbeat
  * response delay plus the writer's 5 ms NACK response delay, about 11 ms for a 1 MB image and more for larger ones) and
- * BEST_EFFORT samples are lost. jros2's default segment (4 MiB) holds them. The thresholds are far from both regimes: a
+ * BEST_EFFORT samples are lost. jros2's default segment (4 MiB) holds them. The thresholds are between both regimes: a
  * delivered 1 MB or 2.7 MB image takes about 0.6 or 1.6 ms here, a repaired one at least 10 ms. The same run with a
  * publisher that uses Fast-DDS's default segment is the control that shows the test detects the delay.
  */
 public class LargeMessageDeliveryTest
 {
-   /** Median one-way latency below which no systematic repair happens (a repaired sample takes at least 10 ms). */
-   static final double MAX_P50_MS = 5.0;
+   /**
+    * Median one-way latency below which no systematic repair happens (a repaired sample takes at least 10 ms). Not lower:
+    * on a 4-core Windows machine at below-normal priority, 2.7 MB images had a median of up to 6.3 ms without any repair.
+    */
+   static final double MAX_P50_MS = 8.0;
+   private static final boolean MACOS = System.getProperty("os.name").startsWith("Mac");
 
    private static String output;
    private static Map<String, Map<String, String>> results;
@@ -122,10 +126,29 @@ public class LargeMessageDeliveryTest
       int received = Integer.parseInt(result.get("received"));
       if (reliable)
          assertEquals(sent, received, name + ": RELIABLE delivers every sample; " + result);
-      else
+      if (MACOS)
+      {
+         assertBetterThanControl(name, result, reliable);
+         return;
+      }
+      if (!reliable)
          assertTrue(received >= sent * 9 / 10, name + ": BEST_EFFORT must not lose large samples; " + result);
-      assertTrue(Double.parseDouble(result.get("p50Ms")) < MAX_P50_MS, name + ": median latency must be far below the RTPS repair delay; " + result);
+      assertTrue(Double.parseDouble(result.get("p50Ms")) < MAX_P50_MS, name + ": median latency must be below the RTPS repair delay; " + result);
       assertTrue(Integer.parseInt(result.get("atLeast10Ms")) < received / 4, name + ": no systematic repair; " + result);
+   }
+
+   /**
+    * macOS keeps the segments in files, and the latency depends a lot on the machine: p50 of 2.7 MB images was 6 to 8 ms on an
+    * Apple A18 Pro and 42 to 112 ms on GitHub's virtual machines. So the check there is that the default segment does better
+    * than the 512 KiB control of the same run: it delivers more samples, or as many sooner.
+    */
+   private static void assertBetterThanControl(String name, Map<String, String> result, boolean reliable)
+   {
+      Map<String, String> control = result(reliable ? "fastdds-reliable-2.7mb" : "fastdds-best_effort-2.7mb");
+      int received = Integer.parseInt(result.get("received"));
+      int controlReceived = Integer.parseInt(control.get("received"));
+      boolean sooner = received == controlReceived && Double.parseDouble(result.get("p50Ms")) < Double.parseDouble(control.get("p50Ms"));
+      assertTrue(received > controlReceived || sooner, name + " must do better than the 512 KiB control; " + result + " control " + control);
    }
 
    @Test
@@ -154,13 +177,12 @@ public class LargeMessageDeliveryTest
    @Timeout(30)
    public void testFastDdsDefaultSegmentDelaysOrLosesLargeImages()
    {
+      // How much overflows the 512 KiB segment depends on how fast the subscriber drains it while the publisher writes. That
+      // only allows this check: medians from 0.5 to 2000 ms and BEST_EFFORT deliveries from 0 to all of 60 were measured.
       Map<String, String> reliable = result("fastdds-reliable-2.7mb");
-      assertEquals(reliable.get("sent"), reliable.get("received"), reliable.toString());
-      assertTrue(Double.parseDouble(reliable.get("p50Ms")) > 8.0, "the 512 KiB segment must delay the samples through the repair; " + reliable);
-
-      Map<String, String> bestEffort = result("fastdds-best_effort-2.7mb");
-      assertTrue(Integer.parseInt(bestEffort.get("received")) <= Integer.parseInt(bestEffort.get("sent")) / 2,
-                 "the 512 KiB segment must lose most BEST_EFFORT samples; " + bestEffort);
+      boolean delayed = Integer.parseInt(reliable.get("atLeast10Ms")) > 0;
+      boolean lost = Integer.parseInt(reliable.get("received")) < Integer.parseInt(reliable.get("sent"));
+      assertTrue(delayed || lost, "the 512 KiB segment must delay or lose some samples through the repair; " + reliable);
    }
 
    /** The publisher's participant created a segment of the configured size (Linux, where Fast-DDS uses /dev/shm). */

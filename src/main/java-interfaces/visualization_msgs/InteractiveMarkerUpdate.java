@@ -95,7 +95,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       markers_ = new IDLObjectSequence<visualization_msgs.InteractiveMarker>(visualization_msgs.InteractiveMarker.class);
       poses_ = new IDLObjectSequence<visualization_msgs.InteractiveMarkerPose>(visualization_msgs.InteractiveMarkerPose.class);
       erases_ = new IDLStringSequence();
-
    }
 
    public InteractiveMarkerUpdate(InteractiveMarkerUpdate from)
@@ -128,7 +127,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       markers_.serialize(buffer);
       poses_.serialize(buffer);
       erases_.serialize(buffer);
-
    }
 
    @Override
@@ -140,7 +138,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       markers_.deserialize(buffer);
       poses_.deserialize(buffer);
       erases_.deserialize(buffer);
-
    }
 
    @Override
@@ -158,7 +155,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
       markers_.set(from.markers_, visualization_msgs.InteractiveMarker::set); // copies the elements, never shares them
       poses_.set(from.poses_, visualization_msgs.InteractiveMarkerPose::set); // copies the elements, never shares them
       erases_.set(from.erases_);
-
    }
 
    public StringBuilder getServerId()
@@ -230,7 +226,6 @@ public class InteractiveMarkerUpdate implements ROS2Message<InteractiveMarkerUpd
    {
       return erases_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

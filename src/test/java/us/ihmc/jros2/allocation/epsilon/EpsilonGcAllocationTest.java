@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * every allocated byte: after the warm-up it must not grow at all, and the process must not run out of memory.
  * <p>
  * The child gets this JVM's JIT and escape analysis options (not the allocation instrumenter, which allocates itself) and its
- * intraprocess mode, so the allocation tasks run it with intraprocess delivery OFF and FULL, with and without escape analysis.
+ * intraprocess mode, so the allocation tasks run it with intraprocess delivery OFF and USER_DATA_ONLY, with and without escape analysis.
  */
 @Tag("allocation")
 public class EpsilonGcAllocationTest
@@ -107,7 +107,7 @@ public class EpsilonGcAllocationTest
          if (line.startsWith(EpsilonControlLoopChild.PREFIX + "RESULT "))
             result = line;
       }
-      String label = "Epsilon GC, " + HEAP_MB + " MB heap, intraprocess " + (intraprocess ? "FULL" : "OFF");
+      String label = "Epsilon GC, " + HEAP_MB + " MB heap, intraprocess " + (intraprocess ? "USER_DATA_ONLY" : "OFF");
       System.out.println(label + "\n" + output);
       assertTrue(finished, label + ": the child did not finish\n" + output);
       assertTrue(lines.stream().noneMatch(line -> line.contains("OutOfMemoryError")), label + ": out of memory\n" + output);

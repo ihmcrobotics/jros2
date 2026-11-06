@@ -97,7 +97,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       window_start_ = new builtin_interfaces.Time();
       window_stop_ = new builtin_interfaces.Time();
       statistics_ = new IDLObjectSequence<statistics_msgs.StatisticDataPoint>(statistics_msgs.StatisticDataPoint.class);
-
    }
 
    public MetricsMessage(MetricsMessage from)
@@ -130,7 +129,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       window_start_.serialize(buffer);
       window_stop_.serialize(buffer);
       statistics_.serialize(buffer);
-
    }
 
    @Override
@@ -142,7 +140,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       window_start_.deserialize(buffer);
       window_stop_.deserialize(buffer);
       statistics_.deserialize(buffer);
-
    }
 
    @Override
@@ -162,7 +159,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
       window_start_.set(from.window_start_);
       window_stop_.set(from.window_stop_);
       statistics_.set(from.statistics_, statistics_msgs.StatisticDataPoint::set); // copies the elements, never shares them
-
    }
 
    public StringBuilder getMeasurementSourceName()
@@ -284,7 +280,6 @@ public class MetricsMessage implements ROS2Message<MetricsMessage>
    {
       return statistics_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

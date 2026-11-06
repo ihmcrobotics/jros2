@@ -58,14 +58,12 @@ public class Byte_ implements ROS2Message<Byte_>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readByte();
-
    }
 
    @Override
@@ -77,7 +75,6 @@ public class Byte_ implements ROS2Message<Byte_>
       }
 
       data_ = from.data_;
-
    }
 
    public byte getData()
@@ -89,7 +86,6 @@ public class Byte_ implements ROS2Message<Byte_>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -52,7 +52,8 @@ import java.time.Duration;
  *    <li>{@code max_blocking_time} is only written when set, and never as infinite (Fast-DDS rejects RELIABLE endpoints with an
  *    infinite blocking time).</li>
  *    <li>Every endpoint uses {@code historyMemoryPolicy PREALLOCATED_WITH_REALLOC} and {@code data_sharing OFF}; writers use
- *    {@code publishMode SYNCHRONOUS}.</li>
+ *    {@code publishMode SYNCHRONOUS}. Unlike rmw_fastrtps, a KEEP_LAST reader sets {@code allocated_samples} to its depth
+ *    (see {@link #translateReaderHistory}).</li>
  *    <li>A non-null type hash is advertised as endpoint USER_DATA {@code typehash=<hash>;} (ASCII, no terminating NUL), which
  *    ROS 2 Iron and newer show in {@code ros2 topic info -v}.</li>
  * </ul>
@@ -62,6 +63,8 @@ final class QoSTools
 {
    /** Prefix of the endpoint USER_DATA key that carries the RIHS01 type hash. */
    static final String TYPE_HASH_USER_DATA_PREFIX = "typehash=";
+   /** Fast-DDS's default {@code allocated_samples}. */
+   private static final long FASTDDS_DEFAULT_ALLOCATED_SAMPLES = 100L;
 
    private QoSTools()
    {
@@ -131,8 +134,41 @@ final class QoSTools
       qos.setUserData(typeHashUserData(typeHash));
 
       subscriberProfile.setQos(qos);
-      subscriberProfile.setTopic(translateHistory(qosProfile.getHistory(), qosProfile.getDepth()));
+      subscriberProfile.setTopic(translateReaderHistory(qosProfile.getHistory(), qosProfile.getDepth()));
       subscriberProfile.setHistoryMemoryPolicy(HistoryMemoryPolicyType.PREALLOCATED_WITH_REALLOC);
+   }
+
+   /**
+    * The {@code <topic>} element of a DataReader: its history, plus for a KEEP_LAST history as many preallocated payloads as
+    * the history holds. Fast-DDS limits a DataWriter's preallocation to its depth itself, but a DataReader preallocates
+    * {@code allocated_samples} payloads (default 100) whatever its depth. Every preallocated payload of a topic grows to the
+    * largest message seen, so the default would cost 100 times that message for each subscription. Fast-DDS adds its
+    * {@code extra_samples} (1) to this, and adds a payload if more are ever in use at once. This does not change anything on
+    * the wire. KEEP_ALL keeps the default. Returns null when nothing is set.
+    */
+   static TopicElementType translateReaderHistory(ROS2QoSProfile.History history, int depth)
+   {
+      TopicElementType topicElement = translateHistory(history, depth);
+      if (history == ROS2QoSProfile.History.KEEP_ALL)
+      {
+         return topicElement;
+      }
+
+      // Without a depth (or with SYSTEM_DEFAULT) the history is Fast-DDS's default KEEP_LAST with depth 1
+      long historySamples = depth > 0 ? depth : 1L;
+      if (historySamples >= FASTDDS_DEFAULT_ALLOCATED_SAMPLES)
+      {
+         return topicElement;
+      }
+
+      TopicElementType.ResourceLimitsQos resourceLimitsQos = new TopicElementType.ResourceLimitsQos();
+      resourceLimitsQos.setAllocatedSamples(historySamples);
+      if (topicElement == null)
+      {
+         topicElement = new TopicElementType();
+      }
+      topicElement.setResourceLimitsQos(resourceLimitsQos);
+      return topicElement;
    }
 
    /**

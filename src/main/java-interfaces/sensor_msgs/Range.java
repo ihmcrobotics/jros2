@@ -86,7 +86,6 @@ public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
    public Range()
    {
       header_ = new std_msgs.Header();
-
    }
 
    public Range(Range from)
@@ -119,7 +118,6 @@ public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
       buffer.writeFloat(min_range_);
       buffer.writeFloat(max_range_);
       buffer.writeFloat(range_);
-
    }
 
    @Override
@@ -131,7 +129,6 @@ public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
       min_range_ = buffer.readFloat();
       max_range_ = buffer.readFloat();
       range_ = buffer.readFloat();
-
    }
 
    @Override
@@ -148,7 +145,6 @@ public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
       min_range_ = from.min_range_;
       max_range_ = from.max_range_;
       range_ = from.range_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -205,7 +201,6 @@ public class Range implements ROS2Message<Range>, ROS2Message.WithHeader
    {
       this.range_ = range_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

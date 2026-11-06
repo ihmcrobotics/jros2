@@ -47,7 +47,7 @@ import static org.junit.Assert.assertTrue;
  *    <li>{@code String.formatted} (API 34) in {@code fastddsjavaTools} and {@code StatisticsCalculator}.</li>
  * </ul>
  * Every failure is collected, so one run lists all affected classes. Android Lint (NewApi, see android/build.gradle.kts)
- * is the static gate for the same problem; this test proves the behaviour on a real device.
+ * is the static gate for the same problem; this test proves the behavior on a real device.
  */
 @RunWith(AndroidJUnit4.class)
 public class ApiCompatibilityOnDeviceTest

@@ -138,7 +138,6 @@ public class BatteryState implements ROS2Message<BatteryState>, ROS2Message.With
       cell_temperature_ = new IDLFloatSequence();
       location_ = CDRBuffer.newStringBuilder(16);
       serial_number_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public BatteryState(BatteryState from)
@@ -191,7 +190,6 @@ public class BatteryState implements ROS2Message<BatteryState>, ROS2Message.With
       cell_temperature_.serialize(buffer);
       buffer.writeString(location_);
       buffer.writeString(serial_number_);
-
    }
 
    @Override
@@ -213,7 +211,6 @@ public class BatteryState implements ROS2Message<BatteryState>, ROS2Message.With
       cell_temperature_.deserialize(buffer);
       buffer.readString(location_);
       buffer.readString(serial_number_);
-
    }
 
    @Override
@@ -242,7 +239,6 @@ public class BatteryState implements ROS2Message<BatteryState>, ROS2Message.With
       location_.append(from.location_);
       serial_number_.setLength(0);
       serial_number_.append(from.serial_number_);
-
    }
 
    public std_msgs.Header getHeader()

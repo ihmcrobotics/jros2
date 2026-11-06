@@ -61,7 +61,6 @@ public class Point implements ROS2Message<Point>
       buffer.writeDouble(x_);
       buffer.writeDouble(y_);
       buffer.writeDouble(z_);
-
    }
 
    @Override
@@ -70,7 +69,6 @@ public class Point implements ROS2Message<Point>
       x_ = buffer.readDouble();
       y_ = buffer.readDouble();
       z_ = buffer.readDouble();
-
    }
 
    @Override
@@ -84,7 +82,6 @@ public class Point implements ROS2Message<Point>
       x_ = from.x_;
       y_ = from.y_;
       z_ = from.z_;
-
    }
 
    public double getX()
@@ -116,7 +113,6 @@ public class Point implements ROS2Message<Point>
    {
       this.z_ = z_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

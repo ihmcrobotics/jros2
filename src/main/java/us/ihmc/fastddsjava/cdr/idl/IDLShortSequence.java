@@ -23,7 +23,7 @@ import java.util.Iterator;
 /**
  * IDL sequence of int16 / uint16 (stored as short) values backed by a heap {@link ShortBuffer}.
  * <p>
- * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honoring the CDR byte order.
  * </p>
  */
 public class IDLShortSequence extends IDLSequence<IDLShortSequence> implements Iterable<Short>

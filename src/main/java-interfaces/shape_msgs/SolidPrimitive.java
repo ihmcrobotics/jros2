@@ -109,7 +109,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       dimensions_ = new IDLDoubleSequence(0, 3);
       polygon_ = new geometry_msgs.Polygon();
-
    }
 
    public SolidPrimitive(SolidPrimitive from)
@@ -136,7 +135,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       buffer.writeByte(type_);
       dimensions_.serialize(buffer);
       polygon_.serialize(buffer);
-
    }
 
    @Override
@@ -145,7 +143,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       type_ = buffer.readByte();
       dimensions_.deserialize(buffer);
       polygon_.deserialize(buffer);
-
    }
 
    @Override
@@ -159,7 +156,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
       type_ = from.type_;
       dimensions_.set(from.dimensions_);
       polygon_.set(from.polygon_);
-
    }
 
    public byte getType()
@@ -181,7 +177,6 @@ public class SolidPrimitive implements ROS2Message<SolidPrimitive>
    {
       return polygon_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

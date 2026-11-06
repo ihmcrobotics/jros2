@@ -24,6 +24,8 @@ import us.ihmc.jros2.parser.field.InterfaceField;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -82,7 +84,54 @@ public class ROS2MessageGenerator
       group.registerRenderer(String.class, new CommentRenderer());
       ST st = new ST(group, template);
       st.add("context", context);
-      return st.render();
+      return removeExtraBlankLines(st.render());
+   }
+
+   /**
+    * Removes the blank lines the template leaves behind: the per-field sections of the template end with a line break, so
+    * without this a method body ends with a blank line, and fields without output leave several in a row. Removes every
+    * blank line before a closing brace and all but the first of consecutive blank lines. Comments are left as they are,
+    * because they quote the .msg definition.
+    *
+    * @param source generated Java source
+    * @return the source without these blank lines
+    */
+   static String removeExtraBlankLines(String source)
+   {
+      String lineSeparator = source.contains("\r\n") ? "\r\n" : "\n";
+      String[] lines = source.split("\\R", -1);
+      List<String> kept = new ArrayList<>(lines.length);
+      boolean inComment = false;
+      for (int i = 0; i < lines.length; ++i)
+      {
+         String line = lines[i];
+         if (inComment)
+         {
+            inComment = !line.contains("*/");
+         }
+         else if (line.isBlank())
+         {
+            int next = i + 1;
+            while (next < lines.length && lines[next].isBlank())
+            {
+               ++next;
+            }
+            boolean atEndOfFile = next == lines.length;
+            boolean beforeClosingBrace = !atEndOfFile && lines[next].strip().equals("}");
+            boolean afterBlankLine = !kept.isEmpty() && kept.get(kept.size() - 1).isEmpty();
+            if (!atEndOfFile && (beforeClosingBrace || afterBlankLine))
+            {
+               continue;
+            }
+            line = "";
+         }
+         else
+         {
+            inComment = line.strip().startsWith("/*") && !line.contains("*/");
+         }
+         kept.add(line);
+      }
+      return String.join(lineSeparator, kept);
    }
 
    /**

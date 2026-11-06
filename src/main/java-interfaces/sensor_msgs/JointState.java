@@ -78,7 +78,6 @@ public class JointState implements ROS2Message<JointState>, ROS2Message.WithHead
       position_ = new IDLDoubleSequence();
       velocity_ = new IDLDoubleSequence();
       effort_ = new IDLDoubleSequence();
-
    }
 
    public JointState(JointState from)
@@ -109,7 +108,6 @@ public class JointState implements ROS2Message<JointState>, ROS2Message.WithHead
       position_.serialize(buffer);
       velocity_.serialize(buffer);
       effort_.serialize(buffer);
-
    }
 
    @Override
@@ -120,7 +118,6 @@ public class JointState implements ROS2Message<JointState>, ROS2Message.WithHead
       position_.deserialize(buffer);
       velocity_.deserialize(buffer);
       effort_.deserialize(buffer);
-
    }
 
    @Override
@@ -136,7 +133,6 @@ public class JointState implements ROS2Message<JointState>, ROS2Message.WithHead
       position_.set(from.position_);
       velocity_.set(from.velocity_);
       effort_.set(from.effort_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -163,7 +159,6 @@ public class JointState implements ROS2Message<JointState>, ROS2Message.WithHead
    {
       return effort_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

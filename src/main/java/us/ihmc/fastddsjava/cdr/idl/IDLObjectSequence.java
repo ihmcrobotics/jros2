@@ -18,6 +18,7 @@ package us.ihmc.fastddsjava.cdr.idl;
 import us.ihmc.fastddsjava.cdr.CDRBuffer;
 import us.ihmc.fastddsjava.cdr.CDRSerializable;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,6 +43,8 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    private static final CDRSerializable[] EMPTY_ARRAY = new CDRSerializable[0];
 
    private final Class<T> clazz;
+   /** Looked up when the first element is created: each lookup makes a new object, more garbage than a small element. */
+   private Constructor<T> constructor;
    private T[] elements;
    private int position;
 
@@ -78,7 +81,11 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    {
       try
       {
-         return clazz.getDeclaredConstructor().newInstance();
+         if (constructor == null)
+         {
+            constructor = clazz.getDeclaredConstructor();
+         }
+         return constructor.newInstance();
       }
       catch (InvocationTargetException | InstantiationException | IllegalAccessException | NoSuchMethodException e)
       {
@@ -309,7 +316,7 @@ public class IDLObjectSequence<T extends CDRSerializable> extends IDLSequence<ID
    }
 
    /**
-    * Sets this sequence to the elements of {@code other} by copying the element <em>references</em>: afterwards both
+    * Sets this sequence to the elements of {@code other} by copying the element <em>references</em>: afterward both
     * sequences share the same element objects, so changing an element through one sequence (including deserializing
     * into it) changes the other. Use {@link #set(IDLObjectSequence, BiConsumer)} for an independent copy; the {@code set}
     * method of generated messages does.

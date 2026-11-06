@@ -59,14 +59,12 @@ public class Float32 implements ROS2Message<Float32>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeFloat(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readFloat();
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class Float32 implements ROS2Message<Float32>
       }
 
       data_ = from.data_;
-
    }
 
    public float getData()
@@ -90,7 +87,6 @@ public class Float32 implements ROS2Message<Float32>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

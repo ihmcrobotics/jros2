@@ -56,7 +56,6 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
       velocities_ = new IDLObjectSequence<geometry_msgs.Twist>(geometry_msgs.Twist.class);
       accelerations_ = new IDLObjectSequence<geometry_msgs.Twist>(geometry_msgs.Twist.class);
       time_from_start_ = new builtin_interfaces.Duration();
-
    }
 
    public MultiDOFJointTrajectoryPoint(MultiDOFJointTrajectoryPoint from)
@@ -85,7 +84,6 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
       velocities_.serialize(buffer);
       accelerations_.serialize(buffer);
       time_from_start_.serialize(buffer);
-
    }
 
    @Override
@@ -95,7 +93,6 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
       velocities_.deserialize(buffer);
       accelerations_.deserialize(buffer);
       time_from_start_.deserialize(buffer);
-
    }
 
    @Override
@@ -110,7 +107,6 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
       velocities_.set(from.velocities_, geometry_msgs.Twist::set); // copies the elements, never shares them
       accelerations_.set(from.accelerations_, geometry_msgs.Twist::set); // copies the elements, never shares them
       time_from_start_.set(from.time_from_start_);
-
    }
 
    public IDLObjectSequence<geometry_msgs.Transform> getTransforms()
@@ -132,7 +128,6 @@ public class MultiDOFJointTrajectoryPoint implements ROS2Message<MultiDOFJointTr
    {
       return time_from_start_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

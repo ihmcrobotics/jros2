@@ -93,7 +93,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.
       header_ = new std_msgs.Header();
       image_ = new sensor_msgs.Image();
       valid_window_ = new sensor_msgs.RegionOfInterest();
-
    }
 
    public DisparityImage(DisparityImage from)
@@ -130,7 +129,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.
       buffer.writeFloat(min_disparity_);
       buffer.writeFloat(max_disparity_);
       buffer.writeFloat(delta_d_);
-
    }
 
    @Override
@@ -144,7 +142,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.
       min_disparity_ = buffer.readFloat();
       max_disparity_ = buffer.readFloat();
       delta_d_ = buffer.readFloat();
-
    }
 
    @Override
@@ -163,7 +160,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.
       min_disparity_ = from.min_disparity_;
       max_disparity_ = from.max_disparity_;
       delta_d_ = from.delta_d_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -230,7 +226,6 @@ public class DisparityImage implements ROS2Message<DisparityImage>, ROS2Message.
    {
       this.delta_d_ = delta_d_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

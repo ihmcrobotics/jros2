@@ -47,7 +47,6 @@ public class Header implements ROS2Message<Header>
    {
       stamp_ = new builtin_interfaces.Time();
       frame_id_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public Header(Header from)
@@ -72,7 +71,6 @@ public class Header implements ROS2Message<Header>
    {
       stamp_.serialize(buffer);
       buffer.writeString(frame_id_);
-
    }
 
    @Override
@@ -80,7 +78,6 @@ public class Header implements ROS2Message<Header>
    {
       stamp_.deserialize(buffer);
       buffer.readString(frame_id_);
-
    }
 
    @Override
@@ -94,7 +91,6 @@ public class Header implements ROS2Message<Header>
       stamp_.set(from.stamp_);
       frame_id_.setLength(0);
       frame_id_.append(from.frame_id_);
-
    }
 
    public builtin_interfaces.Time getStamp()

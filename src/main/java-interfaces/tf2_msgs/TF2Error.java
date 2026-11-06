@@ -45,7 +45,6 @@ public class TF2Error implements ROS2Message<TF2Error>
    public TF2Error()
    {
       error_string_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public TF2Error(TF2Error from)
@@ -70,7 +69,6 @@ public class TF2Error implements ROS2Message<TF2Error>
    {
       buffer.writeByte(error_);
       buffer.writeString(error_string_);
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class TF2Error implements ROS2Message<TF2Error>
    {
       error_ = buffer.readByte();
       buffer.readString(error_string_);
-
    }
 
    @Override
@@ -92,7 +89,6 @@ public class TF2Error implements ROS2Message<TF2Error>
       error_ = from.error_;
       error_string_.setLength(0);
       error_string_.append(from.error_string_);
-
    }
 
    public byte getError()

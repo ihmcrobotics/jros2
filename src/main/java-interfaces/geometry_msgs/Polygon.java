@@ -31,7 +31,6 @@ public class Polygon implements ROS2Message<Polygon>
    public Polygon()
    {
       points_ = new IDLObjectSequence<geometry_msgs.Point32>(geometry_msgs.Point32.class);
-
    }
 
    public Polygon(Polygon from)
@@ -54,14 +53,12 @@ public class Polygon implements ROS2Message<Polygon>
    public void serialize(CDRBuffer buffer)
    {
       points_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       points_.deserialize(buffer);
-
    }
 
    @Override
@@ -73,14 +70,12 @@ public class Polygon implements ROS2Message<Polygon>
       }
 
       points_.set(from.points_, geometry_msgs.Point32::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<geometry_msgs.Point32> getPoints()
    {
       return points_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -23,7 +23,7 @@ import java.util.Iterator;
 /**
  * IDL sequence of byte / int8 / uint8 (stored as byte) values backed by a heap {@link ByteBuffer}.
  * <p>
- * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honoring the CDR byte order.
  * </p>
  */
 public class IDLByteSequence extends IDLSequence<IDLByteSequence> implements Iterable<Byte>

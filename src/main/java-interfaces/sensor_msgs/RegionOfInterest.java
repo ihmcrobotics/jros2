@@ -97,7 +97,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
       buffer.writeInt(height_);
       buffer.writeInt(width_);
       buffer.writeBoolean(do_rectify_);
-
    }
 
    @Override
@@ -108,7 +107,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
       height_ = buffer.readInt();
       width_ = buffer.readInt();
       do_rectify_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -124,7 +122,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
       height_ = from.height_;
       width_ = from.width_;
       do_rectify_ = from.do_rectify_;
-
    }
 
    public int getXOffset()
@@ -176,7 +173,6 @@ public class RegionOfInterest implements ROS2Message<RegionOfInterest>
    {
       this.do_rectify_ = do_rectify_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

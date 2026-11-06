@@ -69,6 +69,7 @@ public class jros2GenTaskTest
       assertNotNull(task.getTypeToClass());
       assertTrue(task.getTypeToClass().isEmpty());
       assertFalse(task.isCleanOutputDir());
+      assertEquals("IHMC", task.getFormat());
 
       task.setPackagePaths(List.of(directory.resolve("user_pkg").toString()));
       task.setDependencyPaths(List.of(directory.resolve("deps").toString()));
@@ -140,5 +141,17 @@ public class jros2GenTaskTest
    {
       GeneratorGoldenTest.writePackage(directory.resolve("deps").resolve("dep_pkg"), Map.of("Dep.msg", "string label\n"));
       GeneratorGoldenTest.writePackage(directory.resolve("user_pkg"), Map.of("Mapped.msg", "int32 x\n", "User.msg", "Mapped mapped\ndep_pkg/Dep dep\n"));
+   }
+
+   @Test
+   public void testFormatOption(@TempDir Path directory) throws Exception
+   {
+      jros2GenTask task = newTask(directory);
+      task.setFormat("google");
+      assertEquals("GOOGLE", task.getFormat());
+      task.setFormat("IHMC");
+      assertEquals("IHMC", task.getFormat());
+      assertThrows(IllegalArgumentException.class, () -> task.setFormat("tabs"));
+      assertFalse(task.getGoogleJavaFormatVersion().isEmpty());
    }
 }

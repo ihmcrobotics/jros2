@@ -38,7 +38,6 @@ public class BoolTest implements ROS2Message<BoolTest>
       bool_2_ = true;
       bool_3_ = false;
       bool_4_ = false;
-
    }
 
    public BoolTest(BoolTest from)
@@ -67,7 +66,6 @@ public class BoolTest implements ROS2Message<BoolTest>
       buffer.writeBoolean(bool_2_);
       buffer.writeBoolean(bool_3_);
       buffer.writeBoolean(bool_4_);
-
    }
 
    @Override
@@ -77,7 +75,6 @@ public class BoolTest implements ROS2Message<BoolTest>
       bool_2_ = buffer.readBoolean();
       bool_3_ = buffer.readBoolean();
       bool_4_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -92,7 +89,6 @@ public class BoolTest implements ROS2Message<BoolTest>
       bool_2_ = from.bool_2_;
       bool_3_ = from.bool_3_;
       bool_4_ = from.bool_4_;
-
    }
 
    public boolean getBool1()
@@ -134,7 +130,6 @@ public class BoolTest implements ROS2Message<BoolTest>
    {
       this.bool_4_ = bool_4_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -242,7 +242,7 @@ public class ROS2CallbackExecutor implements Executor, AutoCloseable
             // Tasks queued before close() have run.
             return;
          }
-         // Announce the wait before looking at the queue a last time: a producer that commits a task afterwards sees the
+         // Announce the wait before looking at the queue a last time: a producer that commits a task afterward sees the
          // flag and unparks us.
          idle.set(index, 1);
          if (isEmpty() && !closed)

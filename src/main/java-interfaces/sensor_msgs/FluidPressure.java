@@ -46,7 +46,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>, ROS2Message.Wi
    public FluidPressure()
    {
       header_ = new std_msgs.Header();
-
    }
 
    public FluidPressure(FluidPressure from)
@@ -73,7 +72,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>, ROS2Message.Wi
       header_.serialize(buffer);
       buffer.writeDouble(fluid_pressure_);
       buffer.writeDouble(variance_);
-
    }
 
    @Override
@@ -82,7 +80,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>, ROS2Message.Wi
       header_.deserialize(buffer);
       fluid_pressure_ = buffer.readDouble();
       variance_ = buffer.readDouble();
-
    }
 
    @Override
@@ -96,7 +93,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>, ROS2Message.Wi
       header_.set(from.header_);
       fluid_pressure_ = from.fluid_pressure_;
       variance_ = from.variance_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -123,7 +119,6 @@ public class FluidPressure implements ROS2Message<FluidPressure>, ROS2Message.Wi
    {
       this.variance_ = variance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

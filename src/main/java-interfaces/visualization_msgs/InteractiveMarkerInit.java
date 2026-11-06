@@ -59,7 +59,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       server_id_ = CDRBuffer.newStringBuilder(16);
       markers_ = new IDLObjectSequence<visualization_msgs.InteractiveMarker>(visualization_msgs.InteractiveMarker.class);
-
    }
 
    public InteractiveMarkerInit(InteractiveMarkerInit from)
@@ -86,7 +85,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       buffer.writeString(server_id_);
       buffer.writeLong(seq_num_);
       markers_.serialize(buffer);
-
    }
 
    @Override
@@ -95,7 +93,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       buffer.readString(server_id_);
       seq_num_ = buffer.readLong();
       markers_.deserialize(buffer);
-
    }
 
    @Override
@@ -110,7 +107,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
       server_id_.append(from.server_id_);
       seq_num_ = from.seq_num_;
       markers_.set(from.markers_, visualization_msgs.InteractiveMarker::set); // copies the elements, never shares them
-
    }
 
    public StringBuilder getServerId()
@@ -162,7 +158,6 @@ public class InteractiveMarkerInit implements ROS2Message<InteractiveMarkerInit>
    {
       return markers_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

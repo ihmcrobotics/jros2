@@ -43,7 +43,6 @@ public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
    {
       header_ = new std_msgs.Header();
       poses_ = new IDLObjectSequence<geometry_msgs.PoseStamped>(geometry_msgs.PoseStamped.class);
-
    }
 
    public Path(Path from)
@@ -68,7 +67,6 @@ public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
    {
       header_.serialize(buffer);
       poses_.serialize(buffer);
-
    }
 
    @Override
@@ -76,7 +74,6 @@ public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
    {
       header_.deserialize(buffer);
       poses_.deserialize(buffer);
-
    }
 
    @Override
@@ -89,7 +86,6 @@ public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
 
       header_.set(from.header_);
       poses_.set(from.poses_, geometry_msgs.PoseStamped::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -101,7 +97,6 @@ public class Path implements ROS2Message<Path>, ROS2Message.WithHeader
    {
       return poses_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

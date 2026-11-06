@@ -46,7 +46,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Messag
       header_ = new std_msgs.Header();
       format_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
-
    }
 
    public CompressedImage(CompressedImage from)
@@ -73,7 +72,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Messag
       header_.serialize(buffer);
       buffer.writeString(format_);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -82,7 +80,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Messag
       header_.deserialize(buffer);
       buffer.readString(format_);
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -97,7 +94,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Messag
       format_.setLength(0);
       format_.append(from.format_);
       data_.set(from.data_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -144,7 +140,6 @@ public class CompressedImage implements ROS2Message<CompressedImage>, ROS2Messag
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

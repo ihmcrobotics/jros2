@@ -86,7 +86,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       buffer.writeByte(status_);
       buffer.writeUInt16(service_);
-
    }
 
    @Override
@@ -94,7 +93,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       status_ = buffer.readByte();
       service_ = buffer.readUInt16();
-
    }
 
    @Override
@@ -107,7 +105,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
 
       status_ = from.status_;
       service_ = from.service_;
-
    }
 
    public byte getStatus()
@@ -129,7 +126,6 @@ public class NavSatStatus implements ROS2Message<NavSatStatus>
    {
       this.service_ = service_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

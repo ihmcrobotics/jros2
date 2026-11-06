@@ -19,14 +19,14 @@ Supported platforms:
 - Linux with glibc 2.31+ (Ubuntu 20.04+ or similar): x86_64, arm64, armhf, riscv64
 - Linux with musl libc (Alpine): x86_64, arm64. Needs the C++ runtime: `apk add libstdc++`
 - Windows (Windows 10+ x86_64, ARM64)
-- macOS (macOS 14+ Intel, Apple Silicon)
+- macOS (Intel, Apple Silicon; built for macOS 12+, tested on macOS 26)
 - Android (Android 8.0+ / API 26: arm64-v8a, armeabi-v7a, x86_64; devices with 16 KB memory pages are supported)
 
 Requires Java 17 or newer. Works on NVIDIA Jetson and on Raspberry Pi 2 or newer (ARMv7 and up, including the Zero 2)!
 
 > [!NOTE]
-> The native libraries bundled for macOS and Windows are older builds without DDS-Security. jros2 works with them,
-> but SROS2 is not available on these two platforms yet. See [SROS2 (DDS-Security)](#sros2-dds-security).
+> The native libraries bundled for macOS and Windows are built without DDS-Security, so SROS2 is not available on these
+> two platforms: `Enforce` fails and `Permissive` runs unsecured. See [SROS2 (DDS-Security)](#sros2-dds-security).
 
 ## Features
 - Fully compatible with ROS 2 foxy or newer
@@ -189,6 +189,10 @@ try (ROS2Context context = ROS2Context.create(ROS2NodeOptions.defaults().domainI
 The participant-level options (domain, transports, shared-memory segment size, thread settings, enclave, discovery) come
 from the context. Within one participant a topic name can only have one message type.
 
+On macOS, a process that needs about 250 participants or more must share them: macOS allows 2048 threads per process
+(`kern.num_taskthreads`) and each participant has about 8. Beyond that, creating a thread fails with a C++ exception that
+nothing catches, and the JVM aborts.
+
 ### Quality of service
 
 `ROS2QoSProfile.DEFAULT`, and every `new ROS2QoSProfile()`, is RELIABLE, VOLATILE, KEEP_LAST(10), like rclcpp's
@@ -238,8 +242,10 @@ so subscribe to them with `SENSOR_DATA` or `BEST_EFFORT`.
   participant.
 - `AsyncROS2Node` creates `AsyncROS2Publisher`s. Their `publish()` copies the message into a preallocated queue and
   returns; the node's publish thread writes it. When the queue is full the message is dropped and counted
-  (`getDroppedMessageCount()`); `offer()` returns false in that case. Pass a `ThreadFactory` to the `AsyncROS2Node`
-  constructor to set real-time scheduling for the publish thread.
+  (`getDroppedMessageCount()`); `offer()` returns false in that case. The first `publish()` on a publisher is slower: it
+  makes a copy of its message for every queue slot, so that the later ones allocate nothing. Publish once during setup if
+  the first publish must not happen in a control loop. Pass a `ThreadFactory` to the `AsyncROS2Node` constructor to set
+  real-time scheduling for the publish thread.
 - Message statistics (size, period, age) are off by default. Turn them on per publisher or subscription with
   `setStatisticsEnabled(true)`. Recording and reading them is allocation-free.
 - `ROS2CallbackExecutor` is an allocation-free `Executor` for callbacks (see
@@ -269,7 +275,8 @@ executor's workers, the Fast-DDS threads that run callbacks or move the data):
   which is linked when statistics are enabled.
 
 What allocates, by design, outside the hot path: creating and closing contexts, nodes, publishers and subscriptions;
-the first messages of a path (warm-up: class loading, JIT compilation, buffers sized for the first message); a message,
+the first messages of a path (warm-up: class loading, JIT compilation, buffers sized for the first message), including
+the first `publish()` on an `AsyncROS2Publisher`, which fills all of its queue slots; a message,
 sequence, string or buffer growing beyond its previous high-water mark; `toString()`, `equals()` and `hashCode()` of
 messages; and error paths that throw or log.
 
@@ -286,17 +293,30 @@ Use these allocation-free variants in a control loop:
   (`ThreadPoolExecutor`, `Executors.newSingleThreadExecutor()`, ...) allocate a queue node for every task; jros2's own
   dispatch to them is allocation-free.
 - `AsyncROS2Publisher.publish()` copies into a preallocated queue slot; a full queue drops the message without
-  allocating (`getDroppedMessageCount()`).
+  allocating (`getDroppedMessageCount()`). The first `publish()` makes an independent deep copy of its message for every
+  slot, without holding up other threads: a `publish()` on another thread at the same time does not wait and may
+  allocate, because its slot then grows when it is used. From then on `publish()` allocates nothing while messages are no
+  larger than the first one. A larger message (longer sequences or strings) grows each slot once, when that slot is used,
+  so make the first message as large as the later ones.
 
 The Fast-DDS 3.6.2 in the bundled native libraries carries jros2's patches in
 [src/native/fastdds-patches](src/native/fastdds-patches), applied during the native build (`scripts/docker/deps.sh`,
-`scripts/cppbuild.bash`). They remove Fast-DDS's own heap allocations from the steady-state paths: the keyless reader
-instance that was re-inserted for every sample, the shared-memory buffer handles allocated for every message and fragment,
-the shared-memory watchdog's per-second path strings, the exceptions thrown when the shared-memory segment or a port queue
-is full, and payload pool nodes and send buffers that grew at unpredictable times (jros2's participant profiles
-preallocate 80 network buffers per send buffer; a message is sent at 62). The macOS and Windows libraries get the same patches
-when the **Build natives** workflow rebuilds them; the ones bundled today predate the patches, so on macOS and Windows
-Fast-DDS itself still allocates on these paths (jros2's Java and JNI code does not).
+`scripts/cppbuild.bash`), on every platform. Seven of the nine remove Fast-DDS's own heap allocations from the
+steady-state paths: the keyless reader instance that was re-inserted for every sample, the shared-memory buffer handles
+allocated for every message and fragment, the shared-memory watchdog's per-second path strings, the exceptions thrown when
+the shared-memory segment or a port queue is full, and payload pool nodes and send buffers that grew at unpredictable
+times (jros2's participant profiles preallocate 80 network buffers per send buffer; a message is sent at 62).
+
+The eighth, `0008-local-writer-lookups-hold-a-reference.patch`, fixes a crash. With intraprocess delivery, a reader calls a
+writer of the same process directly, through a pointer it looks up, while another thread may be deleting that writer.
+That crashed the JVM on Linux, macOS and Windows when publishers and subscriptions of one process were deleted at the same
+time. Fast-DDS already keeps a reader alive while a writer calls it; the patch does the same for writers, so that a deletion
+waits for the running call.
+
+The ninth, `0009-local-reader-reference-taken-atomically.patch`, fixes the same kind of crash on readers. Fast-DDS read a
+reader's pointer before it took its reference to that reader, so the reader could be deleted in between, and the
+intraprocess heartbeat read that pointer without the writer's lock. The intraprocess mode jros2 uses (see
+[Configuration](#configuration)) depends on both patches.
 
 A message that does not fit a full shared-memory segment is discarded without allocating (see
 [Large messages and shared memory](#large-messages-and-shared-memory)).
@@ -321,8 +341,10 @@ Sizing:
 - For scale: the control loop of the allocation gates (four nodes, a 1 kHz `JointState`, a 1 MB image through an
   `AsyncROS2Publisher`) has about 85 MB of used heap after its warm-up. A remote node with a publisher and a
   subscription on a subscribed topic joining and leaving costs about 150 bytes.
-- An `AsyncROS2Publisher` grows each of its queue slots to the size of the messages it holds: 64 slots (the default) of
-  a 1 MB image are 63 MB. Give async publishers of large messages a small queue, e.g. `createPublisher(topic, qos, 4)`.
+- An `AsyncROS2Publisher` grows each of its queue slots to the size of the messages it holds, all of them on the first
+  `publish()`: 64 slots (the default) of a 1 MB image are 63 MB. Give async publishers of large messages a small queue,
+  e.g. `createPublisher(topic, qos, 4)`. If the heap cannot hold all the copies at once, the first `publish()` still
+  queues its message and the slots grow when they are used.
 - With `-Xms` equal to `-Xmx` and `-XX:+AlwaysPreTouch`, HotSpot maps the whole heap at startup.
 - With thread-local allocation buffers (the default), the used heap grows in steps of a buffer, and HotSpot's JIT can
   still allocate a few bytes on the control thread minutes into the run (one 2 KB step in 10 minutes was seen). Leave
@@ -337,8 +359,8 @@ on an `OutOfMemoryError`, or if less than 99 % of the control messages arrive.
 ### Large messages and shared memory
 
 Nodes on one host exchange data through Fast-DDS's shared-memory transport (each `ROS2Node` has its own participant
-unless it uses a `ROS2Context`; intraprocess delivery, when it is on, bypasses the transports between nodes of one
-process). The publishing participant copies every message into its own shared-memory segment, a large message in
+unless it uses a `ROS2Context`; intraprocess delivery, when it is on, bypasses the transports for messages between nodes
+of one process). The publishing participant copies every message into its own shared-memory segment, a large message in
 fragments of about 64 KB, and the subscribing participants read it from there. When the segment is full, the fragments
 that do not fit are discarded. A RELIABLE subscription asks for them again after its 5 ms heartbeat response delay, and
 the publisher resends them after its 5 ms NACK response delay. A BEST_EFFORT subscription loses the message.
@@ -373,6 +395,13 @@ four P-cores. At 100 Hz the 983 kB image took 11.4 ms with tails up to 90 ms bef
 - **What it applies to.** jros2's default transports (shared memory and UDPv4, the same as Fast-DDS's builtin ones), the
   LOCALHOST discovery range and the interface whitelist. Transports passed with `ROS2NodeOptions.transports(...)` are used
   as they are: a shared-memory descriptor without a segment size has Fast-DDS's 512 KiB. Android uses UDPv4 only.
+- **Memory of large topics.** Fast-DDS keeps a pool of payloads for each topic, and jros2's patches keep every payload in
+  it at the size of the largest message seen, so that a burst does not reallocate during steady traffic. The pool does not
+  shrink while the topic is in use, so one unusually large message grows all of its payloads. A KEEP_LAST publisher or
+  subscription preallocates its depth plus one payload (for a subscription jros2 sets Fast-DDS's `allocated_samples` to the
+  depth; its default would be 100), so a KEEP_LAST(10) subscription to 8 MB messages costs about 90 MB. A KEEP_ALL
+  subscription, and a depth of 100 or more, preallocate at least 100 payloads. Keep the depth small on topics with large
+  messages.
 - **Interoperability.** The segment size is not announced in discovery and does not change the wire protocol or the QoS.
   A subscriber reads from the publisher's segment whatever its own size, so jros2 publishers deliver large messages
   without repair to every subscriber on the host that shares memory with them, including rmw_fastrtps nodes of Kilted
@@ -403,14 +432,19 @@ four P-cores. At 100 Hz the 983 kB image took 11.4 ms with tails up to 90 ms bef
     </profiles>
   </dds>
   ```
-- **Memory.** Each participant allocates its segment in `/dev/shm` when it is created and keeps it until it is closed:
-  about 4.2 MiB (4 MiB plus Fast-DDS's buffer bookkeeping) instead of about 0.5 MiB. Nodes in one `ROS2Context` share one
-  participant and one segment. Small messages are as fast as before.
+- **Memory.** Each participant allocates its segment when it is created and keeps it until it is closed: about 4.2 MiB
+  (4 MiB plus Fast-DDS's buffer bookkeeping) instead of about 0.5 MiB. On Linux the segment is in `/dev/shm`, in memory. On
+  macOS it is a file in `/private/tmp/boost_interprocess`, on disk, and on Windows a file in
+  `C:\ProgramData\eprosima\fastdds_interprocess`. Nodes in one `ROS2Context` share one participant and one segment. Small
+  messages are as fast as before.
 - **Small `/dev/shm`.** When `/dev/shm` has less than twice the segment size free, for example in a container with
   Docker's default 64 MB, jros2 uses Fast-DDS's default segment for that participant and logs a warning once. Give the
-  container more shared memory (`docker run --shm-size=512m`) or share participants with `ROS2Context`.
-- **Crashed processes.** A process that is killed (SIGKILL) or crashes leaves its segments in `/dev/shm`, as any Fast-DDS
-  process does; `fastdds shm clean` removes them. jros2 deletes its participants on normal exit, SIGINT and SIGTERM.
+  container more shared memory (`docker run --shm-size=512m`) or share participants with `ROS2Context`. macOS and Windows
+  have no `/dev/shm`, so this check does not apply there: jros2 always uses the requested segment size, whatever disk space
+  is free.
+- **Crashed processes.** A process that is killed (SIGKILL) or crashes leaves its segments behind (in the directories
+  above), as any Fast-DDS process does; `fastdds shm clean` removes them. jros2 deletes its participants on normal exit,
+  SIGINT and SIGTERM.
 - **Between hosts (UDP).** The kernel's socket receive buffer plays the role of the segment: a large message that
   overflows it is repaired or lost the same way. Raise `net.core.rmem_default` and `net.core.rmem_max` on the receiving
   hosts for messages of several MB. On this machine, with 1 MiB socket buffers, 1 MB images arrived without repair over
@@ -444,6 +478,15 @@ throws an `IllegalArgumentException`. `ROS2NodeOptions.discoveryRange(...)` and 
 Intraprocess delivery applies to the whole process and is read once, when jros2 loads. It is also on by default when the
 `GITHUB_ACTIONS` environment variable is set. The old misspelled variable `FASTDDS_INRAPROCESS_DELIVERY` is still read
 when `FASTDDS_INTRAPROCESS_DELIVERY` is not set.
+
+When it is on, jros2 uses Fast-DDS's `USER_DATA_ONLY` mode. Messages between endpoints of one process skip the transports:
+`publish()` hands the message to the subscription directly, and an inline subscription callback runs inside `publish()`, on
+the publishing thread (on the publish thread for an `AsyncROS2Publisher`). Discovery does not skip them: nodes of one
+process find each other through the transports, as nodes of different processes do. Creating an endpoint therefore does
+not wait for the callbacks of other participants, and does not promise a match when it returns, so use
+`waitForSubscription()` or `waitForPublisher()` before a message that must arrive. Fast-DDS's `FULL` mode, which delivers
+discovery data inside the writers' threads too, can deadlock when a subscription callback creates an endpoint, so jros2
+does not use it.
 
 Set the system property `jros2.node.printout=false` to turn off the configuration summary that is logged for every new
 participant.
@@ -522,8 +565,7 @@ from the temporary directory (for example a `noexec` mount), jros2 uses `~/.cach
 
 The system property wins over the environment variable. On Linux, jros2 detects musl libc (Alpine) by itself. The musl
 libraries need the system's `libstdc++` and `libgcc` (`apk add libstdc++`). jros2 also works with older native
-libraries that lack the newer zero-copy functions (currently the macOS and Windows builds) by using copying code paths
-instead; `-Djros2.native.forceAbiV1=true` selects those paths with any native library.
+libraries that lack the newer zero-copy functions by using copying code paths instead; `-Djros2.native.forceAbiV1=true` selects those paths with any native library.
 
 The libraries are built with the scripts in [scripts/docker](scripts/docker/README.md) and `scripts/cppbuild.bash`, from
 Fast-DDS 3.6.2 with jros2's patches ([src/native/fastdds-patches](src/native/fastdds-patches), applied in name order with
@@ -559,6 +601,22 @@ The Gradle plugin `us.ihmc.jros2.generator` generates Java classes from the `.ms
 type hash of the message (`typeHash`). When your messages reference types that jros2 does not bundle, list the packages
 that define them in `dependencyPaths` (for example `/opt/ros/jazzy/share`), so their hashes can be computed. The parser
 follows `rosidl_adapter` and fails generation with a clear message on lines that ROS 2 rejects.
+
+Generated classes use IHMC formatting by default (three-space indentation, opening braces on their own line). For Google
+Java Style, set `format`:
+
+```kotlin
+tasks.register<jros2GenTask>("generateMessages") {
+   packagePaths = listOf(projectDir.resolve("my_interfaces").absolutePath)
+   outputDir = sourceSets["main"].java.srcDirs.find { it.name == "java" }.toString()
+   format = "GOOGLE" // IHMC is the default
+}
+```
+
+The task then runs [google-java-format](https://github.com/google/google-java-format) on the generated files. It resolves
+the formatter from the project's repositories (Maven Central has it), only for this format, and runs it in a child JVM with
+the JVM of the build. `googleJavaFormatVersion` selects the version; the default is 1.28.0, which runs on Java 17, 21 and 25.
+Versions 1.30 and later do not run on Java 17. The format only changes the layout of the code, not the code itself.
 
 Classes generated with plugin 1.5.1 still work with the new library, but have no type hash, still send an empty payload for
 messages without fields, and copy nested message sequences by reference in `set()`. Regenerate them with the new plugin.
@@ -606,7 +664,8 @@ messages without fields, and copy nested message sequences by reference in `set(
   stopping at the bound. A received sample that is malformed or over its bounds is dropped and counted by
   `ROS2Subscription.getMalformedSampleCount()`.
 - **Async publishers.** A full queue still drops the message, but now counts it (`getDroppedMessageCount()`), and
-  `offer()` returns false. `AsyncROS2Node.close()` first writes the queued messages, for up to 2 s.
+  `offer()` returns false. `AsyncROS2Node.close()` first writes the queued messages, for up to 2 s. The first `publish()`
+  fills all queue slots with copies of its message, which takes longer and uses the memory of a full queue at once.
 - **Stricter `.msg` parser.** Lines that 1.5.x silently ignored now fail generation: for example constant arrays, bounded
   string constants, default values for nested types, `time`/`duration` fields, duplicate names and out-of-range defaults.
 - **Deprecated.** `ROS2Node.createService`, `declareParameter` and `getParameter` are deprecated and throw
@@ -619,7 +678,8 @@ messages without fields, and copy nested message sequences by reference in `set(
   subscription right after `waitForSubscription()` can lose the first samples.
 - **Shared-memory segment.** Participants use jros2's own shared-memory and UDPv4 transports with a 4 MiB segment instead
   of Fast-DDS's builtin transports (512 KiB segment), so large messages are no longer delayed or lost between nodes on one
-  host. Each participant takes about 4.2 MiB of `/dev/shm`. The `FASTDDS_BUILTIN_TRANSPORTS` environment variable applies
+  host. Each participant takes about 4.2 MiB of `/dev/shm` (on macOS and Windows, of disk). The
+  `FASTDDS_BUILTIN_TRANSPORTS` environment variable applies
   only with `JROS2_SHM_SEGMENT_SIZE=0` or when no segment size is set. See
   [Large messages and shared memory](#large-messages-and-shared-memory).
 - **Native library files.** The Linux libraries are now named by their SONAME (`libfastcdr.so.2`, `libfastdds.so.3.6`) and
@@ -707,4 +767,4 @@ data: 'Hello world: 2'
 ```
 
 More examples are in [examples](examples): shared memory transport, an OpenCV webcam publisher, custom message classes,
-and a native library smoke test.
+and a native library check.

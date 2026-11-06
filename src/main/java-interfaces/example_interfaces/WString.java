@@ -38,7 +38,6 @@ public class WString implements ROS2Message<WString>
    public WString()
    {
       data_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public WString(WString from)
@@ -61,14 +60,12 @@ public class WString implements ROS2Message<WString>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeWString(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readWString(data_);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class WString implements ROS2Message<WString>
 
       data_.setLength(0);
       data_.append(from.data_);
-
    }
 
    public StringBuilder getData()

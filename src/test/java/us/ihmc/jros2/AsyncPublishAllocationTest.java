@@ -23,6 +23,8 @@ import us.ihmc.jros2.HotPathPubSub.ReceiveMode;
 import us.ihmc.jros2.allocation.AllocationGate;
 import us.ihmc.jros2.allocation.SpinWait;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Allocation gates of {@link AsyncROS2Publisher}: the caller's {@code publish()} (copy into a queue slot), the node's
  * publish thread (serialize and write, then park until the next message) and the receiving side, idle (one message per
  * tick, the publish thread parks in between), in bursts, with several producer threads on one publisher, with several
- * publishers on one node, and with a full queue (dropped messages).
+ * publishers on one node, with a full queue (dropped messages), and right after the first publish of a new publisher.
  */
 @Tag("allocation")
 public class AsyncPublishAllocationTest
@@ -204,6 +206,50 @@ public class AsyncPublishAllocationTest
          shared.close();
          second.close();
          third.close();
+      }
+   }
+
+   /**
+    * The first publish of a new publisher prepares all of its queue slots, so the publishes after it allocate nothing,
+    * although they use slots that were never used: a MarkerArray has a sequence of nested messages that have sequences of
+    * nested messages, which an unprepared slot has to create. Every window gets a new publisher, first publish outside the
+    * window, and goes once around its queue. The warm-up on another publisher only takes the code past the JIT.
+    */
+   @Test
+   public void testPublishesAfterTheFirstOnANewPublisher()
+   {
+      List<HotPathPubSub<visualization_msgs.MarkerArray>> loops = new ArrayList<>();
+      try
+      {
+         loops.add(new HotPathPubSub<>(asyncNode, subscriptionNode, HotPathMessages.MARKER_ARRAY, PublishSubscribeAllocationTest.reliable(),
+                                       ReceiveMode.CALLBACK_READ));
+         int[] last = new int[1];
+         AllocationGate.Result result = AllocationGate.named("async publishes after the first").warmup(WARMUP).iterations(AsyncROS2Node.DEFAULT_QUEUE_CAPACITY).beforeWindow(() ->
+         {
+            HotPathPubSub<visualization_msgs.MarkerArray> loop = new HotPathPubSub<>(asyncNode, subscriptionNode, HotPathMessages.MARKER_ARRAY,
+                                                                                     PublishSubscribeAllocationTest.reliable(), ReceiveMode.CALLBACK_READ);
+            loop.tick(last[0]);
+            loop.verify(last[0]);
+            loops.add(loop);
+         }).run(i ->
+         {
+            loops.get(loops.size() - 1).tick(i);
+            last[0] = i;
+         });
+         for (int i = 1; i < loops.size(); ++i)
+         {
+            assertEquals(0, ((AsyncROS2Publisher<?>) loops.get(i).publisher).getDroppedMessageCount());
+         }
+         loops.get(loops.size() - 1).verify(last[0]);
+         result.assertAllocationFree();
+         assertPublishThreadMeasured(result);
+      }
+      finally
+      {
+         for (HotPathPubSub<visualization_msgs.MarkerArray> loop : loops)
+         {
+            loop.close();
+         }
       }
    }
 

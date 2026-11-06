@@ -27,7 +27,7 @@ final class ROS2CallbackTestTools
    /**
     * Runs {@code action} as code inside a Fast-DDS callback: {@link ROS2Subscription} marks its callbacks with
     * {@link CallbackContext}; if the running subscription implementation does not (yet), the mark is added here so the
-    * node-level behaviour can still be tested.
+    * node-level behavior can still be tested.
     */
    static void asCallback(Runnable action)
    {

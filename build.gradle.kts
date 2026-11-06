@@ -89,6 +89,8 @@ testDependencies {
    api(ihmc.sourceSetProject("parser"))
    api(ihmc.sourceSetProject("generator"))
    api("com.google.code.java-allocation-instrumenter:java-allocation-instrumenter:3.3.5")
+   // For GeneratedCodeFormatTest; the generator itself resolves it only when asked for the GOOGLE format
+   api("com.google.googlejavaformat:google-java-format:1.28.0")
 }
 
 // Allocation gate. Tests tagged "allocation" run only in the allocation tasks, never in the normal test task. Each runs every
@@ -97,7 +99,7 @@ testDependencies {
 //   thread (JDK classes included) is reported to the test, independent of escape analysis and of JIT state; the gate also sums
 //   HotSpot's allocated-bytes counters of all threads, which also see objects created by JNI code, the JVM and hidden classes.
 // - allocationTestNoEA: no agent, -XX:-DoEscapeAnalysis, so the allocated-bytes counters cannot be fooled by escape analysis.
-// - allocationTestIntraprocess and allocationTestIntraprocessNoEA: the same with Fast-DDS intraprocess delivery (FULL), a
+// - allocationTestIntraprocess and allocationTestIntraprocessNoEA: the same with Fast-DDS intraprocess delivery (USER_DATA_ONLY), a
 //   process-wide setting; the first two tasks run with it OFF. System properties override FASTDDS_INTRAPROCESS_DELIVERY.
 // allocationTest is finalized by the three others, which use its --tests selection, so ":jros2-test:allocationTest" runs the
 // whole matrix. -Pjros2.allocation.diagnose adds -XX:-UseTLAB and a JFR pass that names the source of every allocation the
@@ -122,7 +124,7 @@ for ((taskName, instrumented, intraprocess) in jros2AllocationTestTasks) {
    ihmc.sourceSetProject("test").tasks.register<Test>(taskName) {
       description = "Runs the allocation-free tests (tag 'allocation') " +
                     (if (instrumented) "under the java-allocation-instrumenter agent" else "without agent and with escape analysis disabled") +
-                    ", intraprocess delivery " + (if (intraprocess) "FULL" else "OFF") +
+                    ", intraprocess delivery " + (if (intraprocess) "USER_DATA_ONLY" else "OFF") +
                     (if (taskName == "allocationTest") "; finalized by the other allocation test tasks" else "")
       group = "verification"
       val defaultTest = ihmc.sourceSetProject("test").tasks.named<Test>("test").get()

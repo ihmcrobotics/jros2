@@ -23,7 +23,7 @@ import java.util.Iterator;
 /**
  * IDL sequence of float32 values backed by a heap {@link FloatBuffer}.
  * <p>
- * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honoring the CDR byte order.
  * </p>
  */
 public class IDLFloatSequence extends IDLSequence<IDLFloatSequence> implements Iterable<Float>

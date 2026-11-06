@@ -40,7 +40,6 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
    {
       layout_ = new example_interfaces.MultiArrayLayout();
       data_ = new IDLLongSequence();
-
    }
 
    public UInt64MultiArray(UInt64MultiArray from)
@@ -65,7 +64,6 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
    {
       layout_.serialize(buffer);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -73,7 +71,6 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
    {
       layout_.deserialize(buffer);
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -86,7 +83,6 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
 
       layout_.set(from.layout_);
       data_.set(from.data_);
-
    }
 
    public example_interfaces.MultiArrayLayout getLayout()
@@ -98,7 +94,6 @@ public class UInt64MultiArray implements ROS2Message<UInt64MultiArray>
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

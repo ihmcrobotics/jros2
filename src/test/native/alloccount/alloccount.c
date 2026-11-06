@@ -53,7 +53,7 @@
  *   function). Distinct stacks are recorded once each; calls whose stack is new once the table is full are counted in
  *   *_unrecorded.
  *
- * Constraints honoured by the counting path: it never allocates (dlsym bootstrap uses a static buffer, slots and stack
+ * Constraints honored by the counting path: it never allocates (dlsym bootstrap uses a static buffer, slots and stack
  * records are preallocated in the mapped file, the thread state is initial-exec TLS, the thread name is read with
  * prctl(PR_GET_NAME) and backtrace() is primed in the constructor so its lazy libgcc_s load happens before any
  * measurement; internal_calls proves it), it is re-entrancy safe (a per-thread guard), and it is lock free.

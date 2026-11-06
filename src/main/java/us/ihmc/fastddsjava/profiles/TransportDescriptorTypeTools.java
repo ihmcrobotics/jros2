@@ -332,7 +332,7 @@ public final class TransportDescriptorTypeTools
    /**
     * Makes sure Fast-DDS knows every given transport descriptor: descriptors that were not registered by this method before are
     * loaded in their own {@code <transport_descriptors>} XML document, under a lock, before this method returns. A participant
-    * profile loaded afterwards can therefore reference them by ID, also when several participants are created concurrently.
+    * profile loaded afterward can therefore reference them by ID, also when several participants are created concurrently.
     * <p>
     * Fast-DDS keeps transport descriptors in a global map keyed by ID (first registration wins), so a descriptor must not be
     * changed after it was registered; use {@link #deriveVariant} to create a modified copy with a new ID.

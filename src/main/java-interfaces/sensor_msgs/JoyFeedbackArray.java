@@ -32,7 +32,6 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    public JoyFeedbackArray()
    {
       array_ = new IDLObjectSequence<sensor_msgs.JoyFeedback>(sensor_msgs.JoyFeedback.class);
-
    }
 
    public JoyFeedbackArray(JoyFeedbackArray from)
@@ -55,14 +54,12 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
    public void serialize(CDRBuffer buffer)
    {
       array_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       array_.deserialize(buffer);
-
    }
 
    @Override
@@ -74,14 +71,12 @@ public class JoyFeedbackArray implements ROS2Message<JoyFeedbackArray>
       }
 
       array_.set(from.array_, sensor_msgs.JoyFeedback::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<sensor_msgs.JoyFeedback> getArray()
    {
       return array_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

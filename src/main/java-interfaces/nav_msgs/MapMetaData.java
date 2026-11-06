@@ -66,7 +66,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       map_load_time_ = new builtin_interfaces.Time();
       origin_ = new geometry_msgs.Pose();
-
    }
 
    public MapMetaData(MapMetaData from)
@@ -97,7 +96,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       buffer.writeInt(width_);
       buffer.writeInt(height_);
       origin_.serialize(buffer);
-
    }
 
    @Override
@@ -108,7 +106,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       width_ = buffer.readInt();
       height_ = buffer.readInt();
       origin_.deserialize(buffer);
-
    }
 
    @Override
@@ -124,7 +121,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
       width_ = from.width_;
       height_ = from.height_;
       origin_.set(from.origin_);
-
    }
 
    public builtin_interfaces.Time getMapLoadTime()
@@ -166,7 +162,6 @@ public class MapMetaData implements ROS2Message<MapMetaData>
    {
       return origin_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -28,7 +28,6 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    public MarkerArray()
    {
       markers_ = new IDLObjectSequence<visualization_msgs.Marker>(visualization_msgs.Marker.class);
-
    }
 
    public MarkerArray(MarkerArray from)
@@ -51,14 +50,12 @@ public class MarkerArray implements ROS2Message<MarkerArray>
    public void serialize(CDRBuffer buffer)
    {
       markers_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       markers_.deserialize(buffer);
-
    }
 
    @Override
@@ -70,14 +67,12 @@ public class MarkerArray implements ROS2Message<MarkerArray>
       }
 
       markers_.set(from.markers_, visualization_msgs.Marker::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<visualization_msgs.Marker> getMarkers()
    {
       return markers_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

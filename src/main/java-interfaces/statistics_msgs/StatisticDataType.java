@@ -99,7 +99,6 @@ public class StatisticDataType implements ROS2Message<StatisticDataType>
       {
          return;
       }
-
    }
 
    /**

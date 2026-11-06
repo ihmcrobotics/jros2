@@ -43,7 +43,6 @@ public class Mesh implements ROS2Message<Mesh>
    {
       triangles_ = new IDLObjectSequence<shape_msgs.MeshTriangle>(shape_msgs.MeshTriangle.class);
       vertices_ = new IDLObjectSequence<geometry_msgs.Point>(geometry_msgs.Point.class);
-
    }
 
    public Mesh(Mesh from)
@@ -68,7 +67,6 @@ public class Mesh implements ROS2Message<Mesh>
    {
       triangles_.serialize(buffer);
       vertices_.serialize(buffer);
-
    }
 
    @Override
@@ -76,7 +74,6 @@ public class Mesh implements ROS2Message<Mesh>
    {
       triangles_.deserialize(buffer);
       vertices_.deserialize(buffer);
-
    }
 
    @Override
@@ -89,7 +86,6 @@ public class Mesh implements ROS2Message<Mesh>
 
       triangles_.set(from.triangles_, shape_msgs.MeshTriangle::set); // copies the elements, never shares them
       vertices_.set(from.vertices_, geometry_msgs.Point::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<shape_msgs.MeshTriangle> getTriangles()
@@ -101,7 +97,6 @@ public class Mesh implements ROS2Message<Mesh>
    {
       return vertices_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

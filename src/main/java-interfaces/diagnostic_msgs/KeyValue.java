@@ -39,7 +39,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       key_ = CDRBuffer.newStringBuilder(16);
       value_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public KeyValue(KeyValue from)
@@ -64,7 +63,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       buffer.writeString(key_);
       buffer.writeString(value_);
-
    }
 
    @Override
@@ -72,7 +70,6 @@ public class KeyValue implements ROS2Message<KeyValue>
    {
       buffer.readString(key_);
       buffer.readString(value_);
-
    }
 
    @Override
@@ -87,7 +84,6 @@ public class KeyValue implements ROS2Message<KeyValue>
       key_.append(from.key_);
       value_.setLength(0);
       value_.append(from.value_);
-
    }
 
    public StringBuilder getKey()

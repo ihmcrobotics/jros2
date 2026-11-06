@@ -34,7 +34,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Me
    {
       header_ = new std_msgs.Header();
       quaternion_ = new geometry_msgs.Quaternion();
-
    }
 
    public QuaternionStamped(QuaternionStamped from)
@@ -59,7 +58,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Me
    {
       header_.serialize(buffer);
       quaternion_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Me
    {
       header_.deserialize(buffer);
       quaternion_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Me
 
       header_.set(from.header_);
       quaternion_.set(from.quaternion_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class QuaternionStamped implements ROS2Message<QuaternionStamped>, ROS2Me
    {
       return quaternion_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

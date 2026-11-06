@@ -62,7 +62,6 @@ public class Inertia implements ROS2Message<Inertia>
    public Inertia()
    {
       com_ = new geometry_msgs.Vector3();
-
    }
 
    public Inertia(Inertia from)
@@ -99,7 +98,6 @@ public class Inertia implements ROS2Message<Inertia>
       buffer.writeDouble(iyy_);
       buffer.writeDouble(iyz_);
       buffer.writeDouble(izz_);
-
    }
 
    @Override
@@ -113,7 +111,6 @@ public class Inertia implements ROS2Message<Inertia>
       iyy_ = buffer.readDouble();
       iyz_ = buffer.readDouble();
       izz_ = buffer.readDouble();
-
    }
 
    @Override
@@ -132,7 +129,6 @@ public class Inertia implements ROS2Message<Inertia>
       iyy_ = from.iyy_;
       iyz_ = from.iyz_;
       izz_ = from.izz_;
-
    }
 
    public double getM()
@@ -209,7 +205,6 @@ public class Inertia implements ROS2Message<Inertia>
    {
       this.izz_ = izz_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

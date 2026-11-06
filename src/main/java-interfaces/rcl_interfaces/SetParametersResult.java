@@ -43,7 +43,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    public SetParametersResult()
    {
       reason_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public SetParametersResult(SetParametersResult from)
@@ -68,7 +67,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    {
       buffer.writeBoolean(successful_);
       buffer.writeString(reason_);
-
    }
 
    @Override
@@ -76,7 +74,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
    {
       successful_ = buffer.readBoolean();
       buffer.readString(reason_);
-
    }
 
    @Override
@@ -90,7 +87,6 @@ public class SetParametersResult implements ROS2Message<SetParametersResult>
       successful_ = from.successful_;
       reason_.setLength(0);
       reason_.append(from.reason_);
-
    }
 
    public boolean getSuccessful()

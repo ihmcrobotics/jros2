@@ -34,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * participant and a thread that is creating an entity which Fast-DDS makes wait for that callback. Both used to wait for
  * each other forever (the creator holds the global profile lock while Fast-DDS blocks it), measured with Fast-DDS 3.6.2
  * with intraprocess delivery OFF ({@code same_participant}, {@code new_node}) and FULL (all cases, including a creator on
- * a third participant whose endpoint matches the callback's subscription). Each case runs in its own JVM
+ * a third participant whose endpoint matches the callback's subscription; jros2 uses USER_DATA_ONLY, where discovery does
+ * not run inside the writers' threads). Each case runs in its own JVM
  * ({@link ROS2CreationDeadlockChild}) so that a regression cannot hang the test suite.
  */
 public class ROS2CreationDeadlockTest
@@ -82,7 +83,7 @@ public class ROS2CreationDeadlockTest
       assertFalse(output.contains("RESULT DEADLOCK"), context);
       assertTrue(output.contains("RESULT OK"), context);
       assertTrue(output.contains("callbackDone=true"), context);
-      assertTrue(output.contains("CLOSED"), "the nodes must close normally afterwards; " + context);
+      assertTrue(output.contains("CLOSED"), "the nodes must close normally afterward; " + context);
       if (mustBeRejected)
       {
          assertTrue(output.contains("creatorSeen=true"), context);

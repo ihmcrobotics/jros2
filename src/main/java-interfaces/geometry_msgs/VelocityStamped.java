@@ -44,7 +44,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Messag
       body_frame_id_ = CDRBuffer.newStringBuilder(16);
       reference_frame_id_ = CDRBuffer.newStringBuilder(16);
       velocity_ = new geometry_msgs.Twist();
-
    }
 
    public VelocityStamped(VelocityStamped from)
@@ -73,7 +72,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Messag
       buffer.writeString(body_frame_id_);
       buffer.writeString(reference_frame_id_);
       velocity_.serialize(buffer);
-
    }
 
    @Override
@@ -83,7 +81,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Messag
       buffer.readString(body_frame_id_);
       buffer.readString(reference_frame_id_);
       velocity_.deserialize(buffer);
-
    }
 
    @Override
@@ -100,7 +97,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Messag
       reference_frame_id_.setLength(0);
       reference_frame_id_.append(from.reference_frame_id_);
       velocity_.set(from.velocity_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -182,7 +178,6 @@ public class VelocityStamped implements ROS2Message<VelocityStamped>, ROS2Messag
    {
       return velocity_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

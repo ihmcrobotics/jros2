@@ -117,7 +117,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
       header_ = new std_msgs.Header();
       status_ = new sensor_msgs.NavSatStatus();
       position_covariance_ = new double[9];
-
    }
 
    public NavSatFix(NavSatFix from)
@@ -152,7 +151,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
       buffer.writeDouble(altitude_);
       buffer.writeDoubleArray(position_covariance_);
       buffer.writeByte(position_covariance_type_);
-
    }
 
    @Override
@@ -165,7 +163,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
       altitude_ = buffer.readDouble();
       buffer.readDoubleArray(position_covariance_);
       position_covariance_type_ = buffer.readByte();
-
    }
 
    @Override
@@ -183,7 +180,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
       altitude_ = from.altitude_;
       System.arraycopy(from.position_covariance_, 0, position_covariance_, 0, position_covariance_.length);
       position_covariance_type_ = from.position_covariance_type_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -240,7 +236,6 @@ public class NavSatFix implements ROS2Message<NavSatFix>, ROS2Message.WithHeader
    {
       this.position_covariance_type_ = position_covariance_type_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

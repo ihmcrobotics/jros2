@@ -5,7 +5,7 @@ pluginManagement {
    }
 }
 
-rootProject.name = "native-smoke"
+rootProject.name = "native-check"
 
 includeBuild("../..") {
    dependencySubstitution {

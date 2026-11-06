@@ -34,7 +34,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
       header_ = new std_msgs.Header();
       pose_ = new geometry_msgs.PoseWithCovariance();
-
    }
 
    public PoseWithCovarianceStamped(PoseWithCovarianceStamped from)
@@ -59,7 +58,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
       header_.serialize(buffer);
       pose_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
       header_.deserialize(buffer);
       pose_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
 
       header_.set(from.header_);
       pose_.set(from.pose_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class PoseWithCovarianceStamped implements ROS2Message<PoseWithCovariance
    {
       return pose_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

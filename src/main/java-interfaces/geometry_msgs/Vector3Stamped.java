@@ -38,7 +38,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.
    {
       header_ = new std_msgs.Header();
       vector_ = new geometry_msgs.Vector3();
-
    }
 
    public Vector3Stamped(Vector3Stamped from)
@@ -63,7 +62,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.
    {
       header_.serialize(buffer);
       vector_.serialize(buffer);
-
    }
 
    @Override
@@ -71,7 +69,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.
    {
       header_.deserialize(buffer);
       vector_.deserialize(buffer);
-
    }
 
    @Override
@@ -84,7 +81,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.
 
       header_.set(from.header_);
       vector_.set(from.vector_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -96,7 +92,6 @@ public class Vector3Stamped implements ROS2Message<Vector3Stamped>, ROS2Message.
    {
       return vector_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

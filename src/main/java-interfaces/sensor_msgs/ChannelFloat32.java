@@ -77,7 +77,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       name_ = CDRBuffer.newStringBuilder(16);
       values_ = new IDLFloatSequence();
-
    }
 
    public ChannelFloat32(ChannelFloat32 from)
@@ -102,7 +101,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       buffer.writeString(name_);
       values_.serialize(buffer);
-
    }
 
    @Override
@@ -110,7 +108,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       buffer.readString(name_);
       values_.deserialize(buffer);
-
    }
 
    @Override
@@ -124,7 +121,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
       name_.setLength(0);
       name_.append(from.name_);
       values_.set(from.values_);
-
    }
 
    public StringBuilder getName()
@@ -166,7 +162,6 @@ public class ChannelFloat32 implements ROS2Message<ChannelFloat32>
    {
       return values_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

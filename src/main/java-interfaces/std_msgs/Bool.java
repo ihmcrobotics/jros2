@@ -58,14 +58,12 @@ public class Bool implements ROS2Message<Bool>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeBoolean(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -77,7 +75,6 @@ public class Bool implements ROS2Message<Bool>
       }
 
       data_ = from.data_;
-
    }
 
    public boolean getData()
@@ -89,7 +86,6 @@ public class Bool implements ROS2Message<Bool>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

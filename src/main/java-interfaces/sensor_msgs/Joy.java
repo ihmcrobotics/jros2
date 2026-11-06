@@ -51,7 +51,6 @@ public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
       header_ = new std_msgs.Header();
       axes_ = new IDLFloatSequence();
       buttons_ = new IDLIntSequence();
-
    }
 
    public Joy(Joy from)
@@ -78,7 +77,6 @@ public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
       header_.serialize(buffer);
       axes_.serialize(buffer);
       buttons_.serialize(buffer);
-
    }
 
    @Override
@@ -87,7 +85,6 @@ public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
       header_.deserialize(buffer);
       axes_.deserialize(buffer);
       buttons_.deserialize(buffer);
-
    }
 
    @Override
@@ -101,7 +98,6 @@ public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
       header_.set(from.header_);
       axes_.set(from.axes_);
       buttons_.set(from.buttons_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -118,7 +114,6 @@ public class Joy implements ROS2Message<Joy>, ROS2Message.WithHeader
    {
       return buttons_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -34,7 +34,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>, ROS2Message.WithHe
    {
       header_ = new std_msgs.Header();
       pose_ = new geometry_msgs.Pose();
-
    }
 
    public PoseStamped(PoseStamped from)
@@ -59,7 +58,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>, ROS2Message.WithHe
    {
       header_.serialize(buffer);
       pose_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>, ROS2Message.WithHe
    {
       header_.deserialize(buffer);
       pose_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>, ROS2Message.WithHe
 
       header_.set(from.header_);
       pose_.set(from.pose_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class PoseStamped implements ROS2Message<PoseStamped>, ROS2Message.WithHe
    {
       return pose_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

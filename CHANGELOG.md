@@ -5,6 +5,13 @@
 Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: several defaults changed to match ROS 2.
 
 ### Fixed
+- With intraprocess delivery on, creating a publisher or subscription from a subscription callback could deadlock with
+  discovery. jros2 now uses Fast-DDS's `USER_DATA_ONLY` mode instead of `FULL`: subscription callbacks still run inside
+  `publish()`; discovery data within the process goes through the transports, as between processes. This mode needs
+  Fast-DDS patches 0008 and 0009 (see Added).
+- With intraprocess delivery on, deleting publishers and subscriptions of one process at the same time could crash the JVM
+  (seen on Linux, macOS and Windows): a reader called a writer of the same process that another thread was deleting.
+  Fast-DDS patch 0008 keeps the writer alive during the call, and patch 0009 closes the same kind of race on readers.
 - Concurrent `publish()` calls on one `ROS2Publisher` could crash the JVM. Serialization and the native write now run in
   one critical section.
 - Strings are UTF-8 on the wire. 1.5.x cut every character to one byte, so non-ASCII text was garbled for rclcpp and
@@ -17,12 +24,15 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - `AsyncROS2Publisher` could publish torn messages: the generated `set()` and copy constructors shared the elements of
   sequences of nested messages (for example `PoseArray`, `MarkerArray`, `TFMessage`), and a queue slot could be published
   before the copy into it had finished. Generated copies are now deep, and the queue publishes a slot only after the copy.
+- `AsyncROS2Publisher` allocated on each of its first publishes, once per queue slot (64 by default), and more now that
+  copies of nested messages are deep. The first publish now fills all the slots, so the publishes after it allocate nothing
+  (see Changed).
 - Closing a node no longer sleeps 50 ms while holding global locks.
 - Closing nodes, contexts, publishers or subscriptions from inside a subscription callback, and creating endpoints from
   callbacks, no longer deadlock (see Changed).
 - Native callback threads are detached from the JVM when they end (they leaked with every deleted participant), and
-  `System.exit()` with live participants no longer hangs. Both need the rebuilt native libraries (all platforms except the
-  macOS and Windows builds bundled today); Windows keeps its callback threads attached.
+  `System.exit()` with live participants no longer hangs. Both need the rebuilt native libraries; Windows keeps its
+  callback threads attached.
 - A deleted listener can no longer call into Java (rebuilt native libraries). jros2 now checks every native handle and return
   code: when Fast-DDS cannot create a participant, topic or endpoint, it throws an `IllegalStateException` instead of
   continuing with a null handle.
@@ -92,6 +102,8 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - Generator: the `dependencyPaths` input of `jros2GenTask` resolves types from other packages for the type hashes.
   `IDLObjectSequence.set(other, elementCopier)` makes a deep copy.
 - `CDRDeserializationException` for malformed CDR input, and `CDRBuffer.beginRead(int)`.
+- Generator: `format` of `jros2GenTask` selects the source code format of generated classes: `IHMC` (default) or `GOOGLE`, which
+  applies [google-java-format](https://github.com/google/google-java-format). See `googleJavaFormatVersion`.
 - `ROS2NodeOptions.shmSegmentSize(bytes)` and the `JROS2_SHM_SEGMENT_SIZE` setting (`jros2.shm.segment.size`): the
   shared-memory segment size of a participant (default 4 MiB, 0 for Fast-DDS's default transports).
 - GC-free processes: `EpsilonGcAllocationTest` runs the control loop of the allocation gates on HotSpot with the Epsilon
@@ -115,10 +127,20 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
   the dependency cache fingerprint): no heap allocation in Fast-DDS's steady-state publish and receive paths (keyless
   reader instance, shared-memory buffer handles, shared-memory watchdog, full shared-memory segment or port queue, payload
   pool growth, send buffers outside the pool). Participant profiles preallocate 80 network buffers per send buffer
-  (`send_buffers.network_buffers_config`), so the gather vectors of the send buffers do not grow in steady state. The Linux, musl and Android native libraries are rebuilt with them; macOS and Windows get them with their
-  next rebuild by the **Build natives** workflow.
+  (`send_buffers.network_buffers_config`), so the gather vectors of the send buffers do not grow in steady state. Patch
+  0008 is not about allocation: a reader of this process holds a counted reference to a writer of this process while it
+  calls it, as writers already did for readers. Patch 0009 isn't either: a writer takes its reference to a reader of this
+  process in one step, and takes the writer lock before it reads that reader in the intraprocess heartbeat. The native
+  libraries of all platforms are built with all nine patches.
 
 ### Changed
+- A KEEP_LAST subscription preallocates as many payloads as its depth instead of Fast-DDS's default of 100
+  (`allocated_samples`). Each payload holds the largest message seen, so a KEEP_LAST(10) subscription to 8 MB messages now
+  uses about 90 MB instead of about 810 MB. Nothing changes on the wire.
+- The first `publish()` on an `AsyncROS2Publisher` makes a deep copy of its message for every queue slot: it takes longer
+  and uses the memory of a full queue at once (64 slots of a 1 MB image are 63 MB). A later message that is larger than the
+  first still grows each slot once, when that slot is used.
+- Generated classes no longer have a blank line before the end of each method, or several blank lines in a row.
 - Publishing, receiving and statistics no longer use `synchronized` blocks on the hot path (a contended monitor makes
   HotSpot allocate natively); publisher statistics no longer allocate a varargs array per publish.
 - `IDLStringSequence.add()` and `add(int)` return an empty builder (they returned one with stale contents).
@@ -144,6 +166,8 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - One topic name can have only one message type per participant; a second type throws `IllegalArgumentException`.
 - Linux native libraries are named by SONAME (`libfastcdr.so.2`, `libfastdds.so.3.6`), and every platform directory has a
   `natives.list` load-order manifest.
+- The macOS and Windows native libraries are rebuilt with jros2's Fast-DDS patches and native ABI v2, without DDS-Security.
+  macOS 12 is now the minimum (it was 14).
 - The Linux, musl and Android native libraries are rebuilt from pinned sources: Fast-DDS 3.6.2 with DDS-Security and a
   private static OpenSSL 3.5.9, Fast-CDR 2.3.5, Release builds, glibc 2.31 baseline, Android NDK r30. Some are larger
   than before (linux-x86_64 grew from 12.8 MB to 19.0 MB, Android arm64-v8a from 13.4 MB to 18.1 MB), and the jar now
@@ -160,9 +184,13 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - The protected field `ROS2Publisher.closeLock`, which is no longer used.
 
 ### Known limitations
-- The macOS and Windows native libraries have not been rebuilt yet: they are older builds (native ABI v1, no
-  DDS-Security, no Fast-DDS allocation patches). jros2 uses its copying code paths with them, SROS2 is not available on
-  these platforms, and Fast-DDS itself still allocates on their publish and receive paths.
+- The macOS and Windows native libraries have no DDS-Security, so SROS2 is not available on these platforms: `Enforce`
+  fails and `Permissive` runs unsecured.
+- On macOS and Windows the shared-memory segments are files on disk, not in `/dev/shm`, so the fallback to Fast-DDS's
+  default segment when `/dev/shm` is short of space does not apply there.
+- On macOS a process can have about 250 participants: macOS allows 2048 threads per process (`kern.num_taskthreads`) and a
+  participant has about 8. Beyond that a C++ exception that nothing catches aborts the JVM. Share participants with
+  `ROS2Context`.
 - Large messages from native ROS 2 publishers with default settings (512 KiB shared-memory segment) still reach jros2
   subscriptions on the same host after Fast-DDS's repair delay, or not at all with BEST_EFFORT; the publisher's segment
   decides (see the README, "Large messages and shared memory").

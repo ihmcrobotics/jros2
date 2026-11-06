@@ -127,7 +127,7 @@ public class QoSInteropTest
          node.createPublisher(new ROS2Topic<>(latchedTopic, std_msgs.String_.class), latched);
 
          String defaultInfo = topicInfo(node.getDomainId(), defaultTopic);
-         // DEFAULT is RELIABLE / VOLATILE for publishers and subscriptions (behaviour change: subscriptions were BEST_EFFORT)
+         // DEFAULT is RELIABLE / VOLATILE for publishers and subscriptions (behavior change: subscriptions were BEST_EFFORT)
          assertQoS(endpointSection(defaultInfo, "PUBLISHER"), "RELIABLE", "VOLATILE");
          assertQoS(endpointSection(defaultInfo, "SUBSCRIPTION"), "RELIABLE", "VOLATILE");
 

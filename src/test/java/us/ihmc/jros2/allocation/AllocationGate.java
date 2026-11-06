@@ -103,7 +103,7 @@ import java.util.function.BooleanSupplier;
  * (allocationTest task); {@code noEA} requires {@code -XX:-DoEscapeAnalysis} (allocationTestNoEA task). Without the
  * property the gate picks {@code instrumented} if the agent is loaded and {@code noEA} if escape analysis is off; with
  * neither it refuses to run (a ThreadMXBean count with escape analysis on can be hidden by the JIT) unless the caller
- * explicitly asked for a {@link Builder#smoke() smoke} check, which is what the normal test suite uses.
+ * explicitly asked for a {@link Builder#quick() quick} check, which is what the normal test suite uses.
  * <p>
  * The body, the settle step and anything they call must themselves be allocation-free; use
  * {@link SpinWait#await(BooleanSupplier, long, String)} to wait inside a window.
@@ -147,8 +147,8 @@ public final class AllocationGate
       INSTRUMENTED,
       /** Escape analysis disabled: thread-allocated-bytes pass. */
       NO_ESCAPE_ANALYSIS,
-      /** Escape analysis on, no agent: thread-allocated-bytes pass only; only allowed for explicit smoke checks. */
-      SMOKE
+      /** Escape analysis on, no agent: thread-allocated-bytes pass only; only allowed for explicit quick checks. */
+      QUICK
    }
 
    @FunctionalInterface
@@ -260,11 +260,11 @@ public final class AllocationGate
    }
 
    /**
-    * @param smokeAllowed true if an EA-on JVM without agent may run a (weaker) smoke check
+    * @param quickAllowed true if an EA-on JVM without agent may run a (weaker) quick check
     * @return the mode of this JVM
     * @throws IllegalStateException if the JVM cannot run a meaningful gate
     */
-   public static Mode mode(boolean smokeAllowed)
+   public static Mode mode(boolean quickAllowed)
    {
       String requested = System.getProperty(MODE_PROPERTY);
       boolean agent = isAgentLoaded();
@@ -287,8 +287,8 @@ public final class AllocationGate
          return Mode.INSTRUMENTED;
       if (!escapeAnalysis)
          return Mode.NO_ESCAPE_ANALYSIS;
-      if (smokeAllowed)
-         return Mode.SMOKE;
+      if (quickAllowed)
+         return Mode.QUICK;
       throw new IllegalStateException("Allocation gate needs the java-allocation-instrumenter agent (:jros2-test:allocationTest) or "
                                       + "-XX:-DoEscapeAnalysis (:jros2-test:allocationTestNoEA); escape analysis could hide allocations otherwise");
    }
@@ -317,7 +317,7 @@ public final class AllocationGate
    /**
     * JVM options that make HotSpot deflate idle monitors every millisecond instead of at least once a minute, so that the
     * monitor pass sees every contended monitor inside its window (the allocation test tasks pass them). Required by the
-    * monitor pass outside smoke checks.
+    * monitor pass outside quick checks.
     */
    public static final String[] MONITOR_DEFLATION_OPTIONS = {"-XX:+UnlockDiagnosticVMOptions",
                                                              "-XX:GuaranteedSafepointInterval=1",
@@ -375,7 +375,7 @@ public final class AllocationGate
     * gates must keep seeing (and which HotPathClassesTest checks deterministically).
     *
     * @param required true to fail if the JVM does not grant access to the constant pools (see
-    *                 {@link #CONSTANT_POOL_ACCESS_OPTIONS}); false to do nothing then (smoke checks)
+    *                 {@link #CONSTANT_POOL_ACCESS_OPTIONS}); false to do nothing then (quick checks)
     */
    static void createTestClassStringConstants(boolean required, Object... functions)
    {
@@ -496,7 +496,7 @@ public final class AllocationGate
       private int iterations = 10_000;
       private Step settle;
       private Step beforeWindow;
-      private boolean smoke;
+      private boolean quick;
       private boolean gcBeforeWindow = true;
       private boolean monitorPass = true;
       private WindowListener windowListener;
@@ -539,9 +539,9 @@ public final class AllocationGate
       }
 
       /** Allows running in an EA-on JVM without agent (thread-allocated-bytes pass only). For the normal suite only. */
-      public Builder smoke()
+      public Builder quick()
       {
-         this.smoke = true;
+         this.quick = true;
          return this;
       }
 
@@ -595,12 +595,12 @@ public final class AllocationGate
 
       private Result runChecked(Body body) throws Exception
       {
-         Mode mode = mode(smoke);
+         Mode mode = mode(quick);
          Result result = new Result(name, mode, iterations);
 
-         if (monitorPass && mode != Mode.SMOKE)
+         if (monitorPass && mode != Mode.QUICK)
             requireFrequentMonitorDeflation();
-         createTestClassStringConstants(mode != Mode.SMOKE, body, settle, beforeWindow, windowListener);
+         createTestClassStringConstants(mode != Mode.QUICK, body, settle, beforeWindow, windowListener);
          for (int i = 0; i < warmup; ++i)
             body.run(i);
          if (settle != null)

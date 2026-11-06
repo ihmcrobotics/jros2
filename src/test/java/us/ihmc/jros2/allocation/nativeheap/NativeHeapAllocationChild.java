@@ -307,7 +307,7 @@ public final class NativeHeapAllocationChild
    /**
     * Prints the configuration the library actually uses (not just what the parent asked for), so that the parent can
     * verify that the intraprocess mode and the native ABI path of the configuration are in effect:
-    * {@code NHA CONFIG intraprocessDelivery=<FULL|OFF> nativeAbiV2=<true|false> nativeAbiVersion=<n>}.
+    * {@code NHA CONFIG intraprocessDelivery=<USER_DATA_ONLY|OFF> nativeAbiV2=<true|false> nativeAbiVersion=<n>}.
     */
    private static void printConfiguration() throws Exception
    {
@@ -324,7 +324,7 @@ public final class NativeHeapAllocationChild
    private static final Map<String, String> callbackThreads = new HashMap<>();
 
    /**
-    * Prints the thread that ran the callbacks of an inline-callback window: with intraprocess delivery FULL the
+    * Prints the thread that ran the callbacks of an inline-callback window: with intraprocess delivery USER_DATA_ONLY the
     * publishing thread (hp-pub, hp-async-pub), otherwise a Fast-DDS thread ("fastdds-callback"); the parent verifies it.
     */
    private static void printCallbackThread(String window, Thread thread)
@@ -451,7 +451,7 @@ public final class NativeHeapAllocationChild
          {
             if (callbackThread[0] == null)
                callbackThread[0] = Thread.currentThread();
-            // Alternate the two read flavours
+            // Alternate the two read flavors
             boolean ok = (receivedCount.get() & 1) == 0 ? reader.read(received) : reader.read(received, sampleInfo);
             if (ok)
                receivedCount.incrementAndGet();
@@ -951,7 +951,7 @@ public final class NativeHeapAllocationChild
                    + "<topic profile_name=\"" + topicProfile + "\"/>"
                    + rawEndpoint("data_writer", endpointProfile, "<publishMode><kind>SYNCHRONOUS</kind></publishMode>")
                    + rawEndpoint("data_reader", endpointProfile, "")
-                   + "</profiles><library_settings><intraprocess_delivery>" + (intraprocess() ? "FULL" : "OFF")
+                   + "</profiles><library_settings><intraprocess_delivery>" + (intraprocess() ? "USER_DATA_ONLY" : "OFF")
                    + "</intraprocess_delivery></library_settings></dds>";
       synchronized (ProfilesXML.getLoadLock())
       {

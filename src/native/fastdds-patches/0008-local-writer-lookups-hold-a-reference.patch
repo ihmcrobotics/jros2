@@ -1,0 +1,300 @@
+jros2: keep a writer alive while a reader of the same process calls it
+
+With intraprocess delivery, WriterProxy::~WriterProxy() and WriterProxy::perform_initial_ack_nack() look up a writer of
+this process with RTPSDomainImpl::find_writer(), which returns a raw pointer, and call it. A thread that deletes that
+writer at the same time releases it under the caller: StatefulWriter::matched_reader_remove() then crashes on the null
+periodic_hb_event_ or on freed memory (seen on Windows, macOS and Linux). Readers already avoid this with
+LocalReaderPointer; writers now have the same LocalWriterPointer. The instance is taken under endpoints_list_mutex and
+the writer deactivates the pointer first thing in local_actions_on_writer_removed(), after it was erased from the
+participant's lists, so a deletion waits for the running call and later lookups do not find the writer.
+
+diff --git a/src/cpp/rtps/domain/IDomainImpl.hpp b/src/cpp/rtps/domain/IDomainImpl.hpp
+index 842a7ad..075952b 100644
+--- a/src/cpp/rtps/domain/IDomainImpl.hpp
++++ b/src/cpp/rtps/domain/IDomainImpl.hpp
+@@ -21,6 +21,7 @@
+ #include <string>
+ 
+ #include <rtps/reader/LocalReaderPointer.hpp>
++#include <rtps/writer/LocalWriterPointer.hpp>
+ 
+ namespace eprosima {
+ namespace fastdds {
+@@ -219,6 +220,16 @@ public:
+     virtual BaseWriter* find_writer(
+             const GUID_t& writer_guid) = 0;
+ 
++    /**
++     * Find a writer of this process and keep it alive while the returned instance exists.
++     *
++     * @param writer_guid  GUID of the writer.
++     *
++     * @returns A counted reference to the writer. It is empty if the writer was not found.
++     */
++    virtual LocalWriterPointer::Instance find_writer_instance(
++            const GUID_t& writer_guid) = 0;
++
+     /**
+      * Callback run when the monitored environment file is modified
+      */
+diff --git a/src/cpp/rtps/domain/RTPSDomain.cpp b/src/cpp/rtps/domain/RTPSDomain.cpp
+index 3b9c8c3..e38b980 100644
+--- a/src/cpp/rtps/domain/RTPSDomain.cpp
++++ b/src/cpp/rtps/domain/RTPSDomain.cpp
+@@ -899,6 +899,22 @@ BaseWriter* RTPSDomainImpl::find_writer(
+  *
+  * @returns true when intraprocess delivery is enabled, false otherwise.
+  */
++LocalWriterPointer::Instance RTPSDomainImpl::find_writer_instance(
++        const GUID_t& writer_guid)
++{
++    std::lock_guard<std::mutex> guard(m_mutex);
++    for (const t_p_RTPSParticipant& participant : m_RTPSParticipants)
++    {
++        if (participant.second->getGuid().guidPrefix == writer_guid.guidPrefix)
++        {
++            // Participant found, forward the query
++            return participant.second->find_local_writer_instance(writer_guid);
++        }
++    }
++
++    return LocalWriterPointer::Instance(std::shared_ptr<LocalWriterPointer>());
++}
++
+ bool RTPSDomainImpl::should_intraprocess_between(
+         const GUID_t& local_guid,
+         const GUID_t& matched_guid)
+diff --git a/src/cpp/rtps/domain/RTPSDomainImpl.hpp b/src/cpp/rtps/domain/RTPSDomainImpl.hpp
+index 75b841d..b8a9aee 100644
+--- a/src/cpp/rtps/domain/RTPSDomainImpl.hpp
++++ b/src/cpp/rtps/domain/RTPSDomainImpl.hpp
+@@ -32,6 +32,7 @@
+ #include <rtps/domain/IDomainImpl.hpp>
+ #include <rtps/reader/BaseReader.hpp>
+ #include <rtps/reader/LocalReaderPointer.hpp>
++#include <rtps/writer/LocalWriterPointer.hpp>
+ #include <rtps/writer/BaseWriter.hpp>
+ #include <utils/shared_memory/BoostAtExitRegistry.hpp>
+ #include <utils/SystemInfo.hpp>
+@@ -136,6 +137,16 @@ public:
+     BaseWriter* find_writer(
+             const GUID_t& writer_guid) override;
+ 
++    /**
++     * Find a writer of this process and keep it alive while the returned instance exists.
++     *
++     * @param writer_guid  GUID of the writer.
++     *
++     * @returns A counted reference to the writer. It is empty if the writer was not found.
++     */
++    LocalWriterPointer::Instance find_writer_instance(
++            const GUID_t& writer_guid) override;
++
+     /**
+      * Check whether intraprocess delivery should be used between two GUIDs.
+      *
+diff --git a/src/cpp/rtps/participant/RTPSParticipantImpl.cpp b/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
+index ea7a212..0aa0217 100644
+--- a/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
++++ b/src/cpp/rtps/participant/RTPSParticipantImpl.cpp
+@@ -1437,6 +1437,24 @@ BaseWriter* RTPSParticipantImpl::find_local_writer(
+     return nullptr;
+ }
+ 
++LocalWriterPointer::Instance RTPSParticipantImpl::find_local_writer_instance(
++        const GUID_t& writer_guid)
++{
++    // The instance is taken under the lock: deleteUserEndpoint() erases the writer under this lock before it deactivates
++    // the pointer, so the deactivation waits for this instance.
++    shared_lock<shared_mutex> _(endpoints_list_mutex);
++
++    for (auto writer : m_allWriterList)
++    {
++        if (writer->getGuid() == writer_guid)
++        {
++            return LocalWriterPointer::Instance(writer->get_local_pointer());
++        }
++    }
++
++    return LocalWriterPointer::Instance(std::shared_ptr<LocalWriterPointer>());
++}
++
+ bool RTPSParticipantImpl::enableReader(
+         RTPSReader* reader)
+ {
+diff --git a/src/cpp/rtps/participant/RTPSParticipantImpl.hpp b/src/cpp/rtps/participant/RTPSParticipantImpl.hpp
+index 1c7e720..7dac0b7 100644
+--- a/src/cpp/rtps/participant/RTPSParticipantImpl.hpp
++++ b/src/cpp/rtps/participant/RTPSParticipantImpl.hpp
+@@ -60,6 +60,7 @@
+ #include <rtps/network/NetworkFactory.hpp>
+ #include <rtps/network/ReceiverResource.h>
+ #include <rtps/reader/LocalReaderPointer.hpp>
++#include <rtps/writer/LocalWriterPointer.hpp>
+ #include <rtps/resources/ResourceEvent.h>
+ #include <statistics/rtps/monitor-service/interfaces/IConnectionsObserver.hpp>
+ #include <statistics/rtps/monitor-service/interfaces/IConnectionsQueryable.hpp>
+@@ -494,6 +495,12 @@ public:
+     BaseWriter* find_local_writer(
+             const GUID_t& writer_guid);
+ 
++    /***
++     * @returns A counted reference to a local writer given its endpoint guid. It is empty if the writer was not found.
++     */
++    LocalWriterPointer::Instance find_local_writer_instance(
++            const GUID_t& writer_guid);
++
+     /**
+      * @brief Fills a new entityId if set to unknown, or checks if a entity already exists with that
+      * entityId in other case.
+diff --git a/src/cpp/rtps/reader/WriterProxy.cpp b/src/cpp/rtps/reader/WriterProxy.cpp
+index 0721ba2..52ef7b2 100644
+--- a/src/cpp/rtps/reader/WriterProxy.cpp
++++ b/src/cpp/rtps/reader/WriterProxy.cpp
+@@ -54,7 +54,7 @@ WriterProxy::~WriterProxy()
+     if (is_alive_ && is_on_same_process_)
+     {
+         EPROSIMA_LOG_WARNING(RTPS_READER, "Automatically unmatching on ~WriterProxy");
+-        BaseWriter* writer = RTPSDomainImpl::get_instance()->find_writer(guid());
++        LocalWriterPointer::Instance writer = RTPSDomainImpl::get_instance()->find_writer_instance(guid());
+         if (writer)
+         {
+             writer->matched_reader_remove(reader_->getGuid());
+@@ -514,7 +514,7 @@ bool WriterProxy::perform_initial_ack_nack()
+         SequenceNumberSet_t sns(SequenceNumber_t(0, 0));
+         if (is_on_same_process_)
+         {
+-            BaseWriter* writer = RTPSDomainImpl::get_instance()->find_writer(guid());
++            LocalWriterPointer::Instance writer = RTPSDomainImpl::get_instance()->find_writer_instance(guid());
+             if (writer)
+             {
+                 bool tmp;
+diff --git a/src/cpp/rtps/writer/BaseWriter.cpp b/src/cpp/rtps/writer/BaseWriter.cpp
+index b1ec8c1..d385c3b 100644
+--- a/src/cpp/rtps/writer/BaseWriter.cpp
++++ b/src/cpp/rtps/writer/BaseWriter.cpp
+@@ -78,6 +78,7 @@ BaseWriter::BaseWriter(
+     , liveliness_lease_duration_(att.liveliness_lease_duration)
+     , liveliness_announcement_period_(att.liveliness_announcement_period)
+     , transport_priority_(att.transport_priority)
++    , local_ptr_(std::make_shared<LocalWriterPointer>(this))
+ {
+     init(att);
+ 
+@@ -411,6 +412,8 @@ void BaseWriter::init(
+ 
+ void BaseWriter::local_actions_on_writer_removed()
+ {
++    deactivate_local_pointer();
++
+     // First, unregister changes from FlowController. This action must be protected.
+     {
+         std::lock_guard<RecursiveTimedMutex> guard(mp_mutex);
+diff --git a/src/cpp/rtps/writer/BaseWriter.hpp b/src/cpp/rtps/writer/BaseWriter.hpp
+index e4cc64f..30c30f8 100644
+--- a/src/cpp/rtps/writer/BaseWriter.hpp
++++ b/src/cpp/rtps/writer/BaseWriter.hpp
+@@ -43,6 +43,7 @@
+ 
+ #include <rtps/builtin/data/ReaderProxyData.hpp>
+ #include <rtps/writer/DeliveryRetCode.hpp>
++#include <rtps/writer/LocalWriterPointer.hpp>
+ #include <rtps/writer/LocatorSelectorSender.hpp>
+ 
+ namespace eprosima {
+@@ -85,6 +86,14 @@ public:
+     void update_attributes(
+             const WriterAttributes& att) override;
+ 
++    /**
++     * @returns The pointer that gives other threads of this process counted access to this writer.
++     */
++    const std::shared_ptr<LocalWriterPointer>& get_local_pointer() const
++    {
++        return local_ptr_;
++    }
++
+     virtual void local_actions_on_writer_removed();
+ 
+ #ifdef FASTDDS_STATISTICS
+@@ -351,6 +360,14 @@ public:
+ 
+ protected:
+ 
++    /**
++     * Ends new accesses through get_local_pointer() and waits for the running ones. Call without holding mp_mutex.
++     */
++    void deactivate_local_pointer()
++    {
++        local_ptr_->deactivate();
++    }
++
+     BaseWriter(
+             RTPSParticipantImpl* impl,
+             const GUID_t& guid,
+@@ -406,6 +423,9 @@ protected:
+ 
+ private:
+ 
++    /// Counted access to this writer for other threads of this process.
++    std::shared_ptr<LocalWriterPointer> local_ptr_;
++
+     /**
+      * @brief Calculate the maximum payload size that can be sent in a single datagram.
+      *
+diff --git a/src/cpp/rtps/writer/LocalWriterPointer.hpp b/src/cpp/rtps/writer/LocalWriterPointer.hpp
+new file mode 100644
+index 0000000..bef010f
+--- /dev/null
++++ b/src/cpp/rtps/writer/LocalWriterPointer.hpp
+@@ -0,0 +1,36 @@
++// Copyright 2026 Florida Institute for Human and Machine Cognition (IHMC)
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++/**
++ * @file LocalWriterPointer.hpp
++ */
++
++#ifndef FASTDDS_RTPS_WRITER__LOCALWRITERPOINTER_HPP
++#define FASTDDS_RTPS_WRITER__LOCALWRITERPOINTER_HPP
++
++#include <utils/RefCountedPointer.hpp>
++
++namespace eprosima {
++namespace fastdds {
++namespace rtps {
++
++class BaseWriter;
++
++using LocalWriterPointer = RefCountedPointer<BaseWriter>;
++
++}  // namespace rtps
++}  // namespace fastdds
++}  // namespace eprosima
++
++#endif // FASTDDS_RTPS_WRITER__LOCALWRITERPOINTER_HPP
+diff --git a/src/cpp/rtps/writer/StatefulWriter.cpp b/src/cpp/rtps/writer/StatefulWriter.cpp
+index 84b292e..946d76d 100644
+--- a/src/cpp/rtps/writer/StatefulWriter.cpp
++++ b/src/cpp/rtps/writer/StatefulWriter.cpp
+@@ -260,6 +260,9 @@ void StatefulWriter::local_actions_on_writer_removed()
+ {
+     EPROSIMA_LOG_INFO(RTPS_WRITER, "StatefulWriter local_actions_on_writer_removed");
+ 
++    // A reader of this process may be using this writer (see WriterProxy): wait before anything below is released.
++    deactivate_local_pointer();
++
+     // Disable timed events, because their callbacks use cache changes
+     if (disable_positive_acks_)
+     {

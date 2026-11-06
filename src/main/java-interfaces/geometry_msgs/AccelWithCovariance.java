@@ -45,7 +45,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    {
       accel_ = new geometry_msgs.Accel();
       covariance_ = new double[36];
-
    }
 
    public AccelWithCovariance(AccelWithCovariance from)
@@ -70,7 +69,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    {
       accel_.serialize(buffer);
       buffer.writeDoubleArray(covariance_);
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    {
       accel_.deserialize(buffer);
       buffer.readDoubleArray(covariance_);
-
    }
 
    @Override
@@ -91,7 +88,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
 
       accel_.set(from.accel_);
       System.arraycopy(from.covariance_, 0, covariance_, 0, covariance_.length);
-
    }
 
    public geometry_msgs.Accel getAccel()
@@ -103,7 +99,6 @@ public class AccelWithCovariance implements ROS2Message<AccelWithCovariance>
    {
       return covariance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

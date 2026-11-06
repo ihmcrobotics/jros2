@@ -140,10 +140,12 @@ public class AsyncROS2Test
       ROS2Topic<example_interfaces.Bool> topic = new ROS2Topic<>("/test_topic", example_interfaces.Bool.class);
 
       Thread[] publisherThreads = new Thread[publisherCount];
+      AsyncROS2Publisher<?>[] asyncPublishers = new AsyncROS2Publisher<?>[publisherCount];
 
       for (int i = 0; i < publisherCount; ++i)
       {
-         ROS2Publisher<example_interfaces.Bool> asyncPublisher = asyncNode.createPublisher(topic);
+         AsyncROS2Publisher<example_interfaces.Bool> asyncPublisher = asyncNode.createPublisher(topic);
+         asyncPublishers[i] = asyncPublisher;
          publisherThreads[i] = new Thread(() ->
          {
             for (int j = 0; j < messagesToPublish; j++)
@@ -174,9 +176,20 @@ public class AsyncROS2Test
          publisherThreads[i].join();
       }
 
+      // Publishing only queued the messages: close() would cancel the samples that are still on their way to the subscription.
+      int expectedMessageCount = publisherCount * messagesToPublish;
+      boolean delivered = PubSubTestTools.waitFor(() -> receivedMessageCount.get() >= expectedMessageCount, 30_000);
+
+      long droppedMessageCount = 0;
+      for (int i = 0; i < publisherCount; ++i)
+      {
+         droppedMessageCount += asyncPublishers[i].getDroppedMessageCount();
+      }
+
       asyncNode.close();
 
-      assertEquals(publisherCount * messagesToPublish, receivedMessageCount.get());
+      assertTrue(delivered, "received " + receivedMessageCount.get() + " of " + expectedMessageCount + ", dropped from full queues: " + droppedMessageCount);
+      assertEquals(expectedMessageCount, receivedMessageCount.get());
    }
 
    @Test

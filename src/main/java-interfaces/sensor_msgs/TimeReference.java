@@ -39,7 +39,6 @@ public class TimeReference implements ROS2Message<TimeReference>, ROS2Message.Wi
       header_ = new std_msgs.Header();
       time_ref_ = new builtin_interfaces.Time();
       source_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public TimeReference(TimeReference from)
@@ -66,7 +65,6 @@ public class TimeReference implements ROS2Message<TimeReference>, ROS2Message.Wi
       header_.serialize(buffer);
       time_ref_.serialize(buffer);
       buffer.writeString(source_);
-
    }
 
    @Override
@@ -75,7 +73,6 @@ public class TimeReference implements ROS2Message<TimeReference>, ROS2Message.Wi
       header_.deserialize(buffer);
       time_ref_.deserialize(buffer);
       buffer.readString(source_);
-
    }
 
    @Override
@@ -90,7 +87,6 @@ public class TimeReference implements ROS2Message<TimeReference>, ROS2Message.Wi
       time_ref_.set(from.time_ref_);
       source_.setLength(0);
       source_.append(from.source_);
-
    }
 
    public std_msgs.Header getHeader()

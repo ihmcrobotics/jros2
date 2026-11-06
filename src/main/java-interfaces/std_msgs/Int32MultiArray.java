@@ -41,7 +41,6 @@ public class Int32MultiArray implements ROS2Message<Int32MultiArray>
    {
       layout_ = new std_msgs.MultiArrayLayout();
       data_ = new IDLIntSequence();
-
    }
 
    public Int32MultiArray(Int32MultiArray from)
@@ -66,7 +65,6 @@ public class Int32MultiArray implements ROS2Message<Int32MultiArray>
    {
       layout_.serialize(buffer);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -74,7 +72,6 @@ public class Int32MultiArray implements ROS2Message<Int32MultiArray>
    {
       layout_.deserialize(buffer);
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -87,7 +84,6 @@ public class Int32MultiArray implements ROS2Message<Int32MultiArray>
 
       layout_.set(from.layout_);
       data_.set(from.data_);
-
    }
 
    public std_msgs.MultiArrayLayout getLayout()
@@ -99,7 +95,6 @@ public class Int32MultiArray implements ROS2Message<Int32MultiArray>
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

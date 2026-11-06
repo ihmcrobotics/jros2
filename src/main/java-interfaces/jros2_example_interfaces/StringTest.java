@@ -91,7 +91,6 @@ public class StringTest implements ROS2Message<StringTest>
       strj_ = CDRBuffer.newStringBuilder("Hello World");
       strk_ = CDRBuffer.newStringBuilder("  Hello World  ");
       strl_ = CDRBuffer.newStringBuilder("  Goodbye World  ");
-
    }
 
    public StringTest(StringTest from)
@@ -154,7 +153,6 @@ public class StringTest implements ROS2Message<StringTest>
       buffer.writeString(strj_);
       buffer.writeString(strk_);
       buffer.writeString(strl_);
-
    }
 
    @Override
@@ -181,7 +179,6 @@ public class StringTest implements ROS2Message<StringTest>
       buffer.readString(strj_);
       buffer.readString(strk_);
       buffer.readString(strl_);
-
    }
 
    @Override
@@ -234,7 +231,6 @@ public class StringTest implements ROS2Message<StringTest>
       strk_.append(from.strk_);
       strl_.setLength(0);
       strl_.append(from.strl_);
-
    }
 
    public StringBuilder getStr1()

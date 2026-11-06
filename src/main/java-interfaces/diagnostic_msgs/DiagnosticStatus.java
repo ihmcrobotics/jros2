@@ -76,7 +76,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       message_ = CDRBuffer.newStringBuilder(16);
       hardware_id_ = CDRBuffer.newStringBuilder(16);
       values_ = new IDLObjectSequence<diagnostic_msgs.KeyValue>(diagnostic_msgs.KeyValue.class);
-
    }
 
    public DiagnosticStatus(DiagnosticStatus from)
@@ -107,7 +106,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       buffer.writeString(message_);
       buffer.writeString(hardware_id_);
       values_.serialize(buffer);
-
    }
 
    @Override
@@ -118,7 +116,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       buffer.readString(message_);
       buffer.readString(hardware_id_);
       values_.deserialize(buffer);
-
    }
 
    @Override
@@ -137,7 +134,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
       hardware_id_.setLength(0);
       hardware_id_.append(from.hardware_id_);
       values_.set(from.values_, diagnostic_msgs.KeyValue::set); // copies the elements, never shares them
-
    }
 
    public byte getLevel()
@@ -259,7 +255,6 @@ public class DiagnosticStatus implements ROS2Message<DiagnosticStatus>
    {
       return values_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

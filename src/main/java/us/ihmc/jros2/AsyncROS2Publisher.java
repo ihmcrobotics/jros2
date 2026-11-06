@@ -16,18 +16,26 @@
 package us.ihmc.jros2;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Level;
 
 /**
  * A ROS 2-compatible publisher for publishing {@link ROS2Message} types. This publisher is non-blocking,
- * allocation-free, and realtime safe: {@link #publish(ROS2Message)} copies the message into a preallocated slot of a
- * bounded lock-free queue and returns; the publish thread of the owning {@link AsyncROS2Node} serializes and writes it.
- * In general, it will use more memory and CPU cycles than {@link ROS2Publisher}.
+ * allocation-free after its first publish, and realtime safe: {@link #publish(ROS2Message)} copies the message into a
+ * preallocated slot of a bounded lock-free queue and returns; the publish thread of the owning {@link AsyncROS2Node}
+ * serializes and writes it. In general, it will use more memory and CPU cycles than {@link ROS2Publisher}.
  * <p>
  * When the queue is full the message is dropped and counted (see {@link #getDroppedMessageCount()}); use
  * {@link #offer(ROS2Message)} to find out whether a particular message was queued. Messages from one publisher are
  * written in the order in which their {@code publish()} calls claimed a queue slot.
+ * <p>
+ * <b>First publish.</b> A queue slot grows to the size of the messages it holds, and every slot is used in turn, so the
+ * first publish makes a deep copy of its message for every slot: it takes as long and allocates as much as
+ * {@link #getQueueCapacity()} copies of that message, and the publishes after it allocate nothing, on slots that were
+ * never used too. A later message that is larger than the first one (longer sequences or strings) still grows each slot
+ * once, when that slot is used. A publish on another thread that overlaps the first publish does not wait for it, and
+ * may allocate like before: its slot grows when it is used.
  */
 public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<T>
 {
@@ -41,10 +49,19 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
 
    private final AsyncROS2Node node;
 
+   private final Class<T> messageType;
    private final int queueCapacity;
    private final EndpointSupport.BoundedMpscSequencer queue;
    private final T[] messagesToPublish;
    private final boolean[] slotValid;
+   /** Set by the producer that prepares the slots (see {@link #prepareSlots(ROS2Message)}). */
+   private final AtomicBoolean slotPreparationStarted = new AtomicBoolean();
+   /**
+    * Deep copies of the first message, one per slot; null until all are made. Element i goes into slot i when a producer
+    * next owns that slot. Only the owner of a slot may touch {@link #messagesToPublish} at its index (the consumer may be
+    * reading it otherwise) and the same element of this array; the sequencer's claim, commit and release order the owners.
+    */
+   private volatile T[] preparedMessages;
    private final AtomicLong droppedMessageCount;
    private final EndpointSupport.RateLimiter publishErrorLog;
 
@@ -63,6 +80,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       super(fastddsParticipant, checkCapacity(queueCapacity, publisherProfileName), topic, topicData);
 
       this.node = node;
+      this.messageType = topic.getType();
       this.queueCapacity = queueCapacity;
 
       try
@@ -100,7 +118,7 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    /**
     * Queues a copy of {@code message} for publishing and returns immediately. If the queue is full the message is
     * dropped and counted in {@link #getDroppedMessageCount()}. Does nothing once the publisher or its node is closed or
-    * closing.
+    * closing. See {@link #offer(ROS2Message)} for what the first publish does.
     */
    @Override
    public void publish(T message)
@@ -109,8 +127,9 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
    }
 
    /**
-    * Queues a copy of {@code message} for publishing and returns immediately. Thread-safe, lock-free and
-    * allocation-free.
+    * Queues a copy of {@code message} for publishing and returns immediately. Thread-safe and lock-free. Allocation-free
+    * after the first publish, which makes a deep copy of {@code message} for every queue slot, unless a message is larger
+    * than the first one (see the class documentation).
     *
     * @return true if the message was queued; false if the queue was full (the message is counted as dropped) or the
     *       publisher or its node is closed or closing
@@ -120,6 +139,11 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       if (closed || node.isClosing())
       {
          return false;
+      }
+
+      if (!slotPreparationStarted.get())
+      {
+         prepareSlots(message);
       }
 
       long position = queue.claim();
@@ -133,6 +157,12 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
       slotValid[index] = false;
       try
       {
+         T[] prepared = preparedMessages;
+         if (prepared != null && prepared[index] != null)
+         {
+            messagesToPublish[index] = prepared[index];
+            prepared[index] = null;
+         }
          messagesToPublish[index].set(message);
          slotValid[index] = true;
       }
@@ -143,6 +173,41 @@ public class AsyncROS2Publisher<T extends ROS2Message<T>> extends ROS2Publisher<
          node.signalWork();
       }
       return true;
+   }
+
+   /**
+    * Makes the deep copies of {@link #preparedMessages}, once. This does not touch the queue: other producers can claim
+    * slots and the consumer can read them meanwhile, and no slot is held while the copies are made, so the messages of
+    * other producers are not held up. The thread that loses the race for this work carries on without waiting.
+    */
+   private void prepareSlots(T message)
+   {
+      if (!slotPreparationStarted.compareAndSet(false, true))
+      {
+         return;
+      }
+
+      try
+      {
+         //noinspection unchecked
+         T[] copies = (T[]) new ROS2Message[queueCapacity];
+         for (int i = 0; i < queueCapacity; ++i)
+         {
+            copies[i] = ROS2Message.createInstance(messageType);
+            copies[i].set(message);
+         }
+         preparedMessages = copies;
+      }
+      catch (RuntimeException e)
+      {
+         // This message cannot be copied (for example a sequence over its bound). Copying it into its slot reports that
+         // to the caller and counts it as dropped, as for any later message, and the next message tries again.
+         slotPreparationStarted.set(false);
+      }
+      catch (OutOfMemoryError e)
+      {
+         // Too large for every slot at once: the partial copies are garbage now, and the slots grow when they are used.
+      }
    }
 
    /**

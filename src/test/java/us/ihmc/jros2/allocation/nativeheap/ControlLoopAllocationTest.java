@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * The child JVM runs with the alloccount LD_PRELOAD shim and with this JVM's gate configuration (the
  * java-allocation-instrumenter agent in the allocationTest tasks, -XX:-DoEscapeAnalysis in the NoEA tasks, the JIT and
  * monitor deflation options), and with this JVM's intraprocess mode: the allocationTest task covers intraprocess
- * delivery OFF, allocationTestIntraprocess FULL. The test fails unless the Java gate found zero allocations on every
+ * delivery OFF, allocationTestIntraprocess USER_DATA_ONLY. The test fails unless the Java gate found zero allocations on every
  * thread in every pass, every native window has zero library, Java-native, monitor-inflation, unclassified JVM-internal
  * and discovery calls on hot-path threads (see NativeHeapAllocationChild), and the last JointState, estimate and image of
  * every window arrived (at least 99 % of the JointStates and 90 % of the images overall: RELIABLE KEEP_LAST replaces
@@ -61,7 +61,7 @@ public class ControlLoopAllocationTest
       Path shim = NativeHeapAllocationTest.compileShim(skipReason);
       Assumptions.assumeTrue(shim != null, () -> "control loop gate skipped: " + skipReason[0]);
       boolean intraprocess = Boolean.parseBoolean(System.getProperty("fastdds.intraprocess.delivery", "false"));
-      String label = "control loop, intraprocess " + (intraprocess ? "FULL" : "OFF") + ", mode " + System.getProperty("jros2.allocation.mode", "?");
+      String label = "control loop, intraprocess " + (intraprocess ? "USER_DATA_ONLY" : "OFF") + ", mode " + System.getProperty("jros2.allocation.mode", "?");
 
       Path countsFile = Files.createTempFile("jros2-alloccount", ".bin");
       List<String> command = new ArrayList<>();

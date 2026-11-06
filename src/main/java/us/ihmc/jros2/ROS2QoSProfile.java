@@ -33,7 +33,7 @@ import java.time.temporal.ChronoUnit;
  * Durations follow the rmw conventions: {@link #DURATION_UNSPECIFIED} ({@link Duration#ZERO}) leaves the middleware default,
  * {@link #DURATION_INFINITE} (or any duration of {@code 2^31 - 1} seconds or more) means infinite.
  * <p>
- * <b>Behaviour change in jros2 1.6.0:</b> {@link #DEFAULT} and new profiles used to leave reliability and durability at
+ * <b>Behavior change in jros2 1.6.0:</b> {@link #DEFAULT} and new profiles used to leave reliability and durability at
  * "system default", which made subscriptions BEST_EFFORT. They are now RELIABLE / VOLATILE / KEEP_LAST 10 for publishers and
  * subscriptions, like ROS 2. Use {@link #SENSOR_DATA} or {@link #BEST_EFFORT} for best-effort subscriptions, and
  * {@link #SYSTEM_DEFAULT} to leave everything to the Fast-DDS defaults (note that the Fast-DDS default durability of a

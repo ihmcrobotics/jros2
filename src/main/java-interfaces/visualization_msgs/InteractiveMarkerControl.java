@@ -185,7 +185,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       orientation_ = new geometry_msgs.Quaternion();
       markers_ = new IDLObjectSequence<visualization_msgs.Marker>(visualization_msgs.Marker.class);
       description_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public InteractiveMarkerControl(InteractiveMarkerControl from)
@@ -222,7 +221,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       markers_.serialize(buffer);
       buffer.writeBoolean(independent_marker_orientation_);
       buffer.writeString(description_);
-
    }
 
    @Override
@@ -236,7 +234,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       markers_.deserialize(buffer);
       independent_marker_orientation_ = buffer.readBoolean();
       buffer.readString(description_);
-
    }
 
    @Override
@@ -257,7 +254,6 @@ public class InteractiveMarkerControl implements ROS2Message<InteractiveMarkerCo
       independent_marker_orientation_ = from.independent_marker_orientation_;
       description_.setLength(0);
       description_.append(from.description_);
-
    }
 
    public StringBuilder getName()

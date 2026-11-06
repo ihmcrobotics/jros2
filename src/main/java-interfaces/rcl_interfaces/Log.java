@@ -146,7 +146,6 @@ public class Log implements ROS2Message<Log>
       msg_ = CDRBuffer.newStringBuilder(16);
       file_ = CDRBuffer.newStringBuilder(16);
       function_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public Log(Log from)
@@ -181,7 +180,6 @@ public class Log implements ROS2Message<Log>
       buffer.writeString(file_);
       buffer.writeString(function_);
       buffer.writeInt(line_);
-
    }
 
    @Override
@@ -194,7 +192,6 @@ public class Log implements ROS2Message<Log>
       buffer.readString(file_);
       buffer.readString(function_);
       line_ = buffer.readInt();
-
    }
 
    @Override
@@ -216,7 +213,6 @@ public class Log implements ROS2Message<Log>
       function_.setLength(0);
       function_.append(from.function_);
       line_ = from.line_;
-
    }
 
    public builtin_interfaces.Time getStamp()
@@ -383,7 +379,6 @@ public class Log implements ROS2Message<Log>
    {
       this.line_ = line_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

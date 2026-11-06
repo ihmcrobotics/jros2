@@ -91,7 +91,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Me
       description_ = CDRBuffer.newStringBuilder(16);
       menu_entries_ = new IDLObjectSequence<visualization_msgs.MenuEntry>(visualization_msgs.MenuEntry.class);
       controls_ = new IDLObjectSequence<visualization_msgs.InteractiveMarkerControl>(visualization_msgs.InteractiveMarkerControl.class);
-
    }
 
    public InteractiveMarker(InteractiveMarker from)
@@ -126,7 +125,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Me
       buffer.writeFloat(scale_);
       menu_entries_.serialize(buffer);
       controls_.serialize(buffer);
-
    }
 
    @Override
@@ -139,7 +137,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Me
       scale_ = buffer.readFloat();
       menu_entries_.deserialize(buffer);
       controls_.deserialize(buffer);
-
    }
 
    @Override
@@ -159,7 +156,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Me
       scale_ = from.scale_;
       menu_entries_.set(from.menu_entries_, visualization_msgs.MenuEntry::set); // copies the elements, never shares them
       controls_.set(from.controls_, visualization_msgs.InteractiveMarkerControl::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -261,7 +257,6 @@ public class InteractiveMarker implements ROS2Message<InteractiveMarker>, ROS2Me
    {
       return controls_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

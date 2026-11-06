@@ -104,8 +104,13 @@ final class jros2 implements jros2Settings
        *
        * See: https://fast-dds.docs.eprosima.com/en/v3.6.2/fastdds/xml_configuration/library_settings.html#intra-process-delivery-xml-profile
        * Notice how intraprocess delivery is a library setting, not a participant, data reader, or data writer setting.
+       *
+       * USER_DATA_ONLY, not FULL: with FULL, Fast-DDS also delivers its discovery data of this process inside its writers'
+       * threads, so a create call waits for callbacks of other participants, and a callback that creates an endpoint can
+       * deadlock with a discovery thread (the discovery thread holds the PDP lock and waits for the callback's reader; the
+       * callback holds that reader's lock and waits for the PDP lock). Subscription callbacks still run inside publish().
        */
-      ProfilesXML.setIntraprocessDelivery(intraprocessDelivery() ? "FULL" : "OFF");
+      ProfilesXML.setIntraprocessDelivery(intraprocessDelivery() ? "USER_DATA_ONLY" : "OFF");
    }
 
    /**

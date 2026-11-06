@@ -34,7 +34,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>, ROS2Message.
    {
       header_ = new std_msgs.Header();
       polygon_ = new geometry_msgs.Polygon();
-
    }
 
    public PolygonStamped(PolygonStamped from)
@@ -59,7 +58,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>, ROS2Message.
    {
       header_.serialize(buffer);
       polygon_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>, ROS2Message.
    {
       header_.deserialize(buffer);
       polygon_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>, ROS2Message.
 
       header_.set(from.header_);
       polygon_.set(from.polygon_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class PolygonStamped implements ROS2Message<PolygonStamped>, ROS2Message.
    {
       return polygon_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

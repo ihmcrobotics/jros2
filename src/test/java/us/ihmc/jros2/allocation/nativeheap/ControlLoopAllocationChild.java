@@ -52,7 +52,7 @@ import java.util.function.BooleanSupplier;
  *    <li>"monitor" (own participant): receives JointState and Image with inline callbacks on Fast-DDS threads.</li>
  * </ul>
  * Statistics are enabled on every publisher and subscription. Intraprocess delivery comes from the environment
- * (OFF or FULL), the native ABI is v2. jros2's default transports.
+ * (OFF or USER_DATA_ONLY), the native ABI is v2. jros2's default transports.
  * <p>
  * The gate's instrumenter pass (agent JVM) and thread-allocated-bytes pass (all JVMs) each run {@value #ITERATIONS} ticks
  * (10 s); the native counter is armed inside both windows, from the first tick to the end of the settle step (so it

@@ -55,7 +55,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
       transition_ = new lifecycle_msgs.Transition();
       start_state_ = new lifecycle_msgs.State();
       goal_state_ = new lifecycle_msgs.State();
-
    }
 
    public TransitionEvent(TransitionEvent from)
@@ -84,7 +83,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
       transition_.serialize(buffer);
       start_state_.serialize(buffer);
       goal_state_.serialize(buffer);
-
    }
 
    @Override
@@ -94,7 +92,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
       transition_.deserialize(buffer);
       start_state_.deserialize(buffer);
       goal_state_.deserialize(buffer);
-
    }
 
    @Override
@@ -109,7 +106,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
       transition_.set(from.transition_);
       start_state_.set(from.start_state_);
       goal_state_.set(from.goal_state_);
-
    }
 
    public long getTimestamp()
@@ -136,7 +132,6 @@ public class TransitionEvent implements ROS2Message<TransitionEvent>
    {
       return goal_state_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

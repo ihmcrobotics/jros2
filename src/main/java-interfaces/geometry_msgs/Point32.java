@@ -72,7 +72,6 @@ public class Point32 implements ROS2Message<Point32>
       buffer.writeFloat(x_);
       buffer.writeFloat(y_);
       buffer.writeFloat(z_);
-
    }
 
    @Override
@@ -81,7 +80,6 @@ public class Point32 implements ROS2Message<Point32>
       x_ = buffer.readFloat();
       y_ = buffer.readFloat();
       z_ = buffer.readFloat();
-
    }
 
    @Override
@@ -95,7 +93,6 @@ public class Point32 implements ROS2Message<Point32>
       x_ = from.x_;
       y_ = from.y_;
       z_ = from.z_;
-
    }
 
    public float getX()
@@ -127,7 +124,6 @@ public class Point32 implements ROS2Message<Point32>
    {
       this.z_ = z_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

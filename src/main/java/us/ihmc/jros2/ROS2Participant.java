@@ -53,9 +53,9 @@ final class ROS2Participant
     * Serializes the creation of native DDS entities (participants, topics, publishers, subscriptions) in this process,
     * always taken before {@link ProfilesXML#getLoadLock()}. Fast-DDS looks XML profiles up without synchronization inside
     * its {@code create_*_with_profile} calls, so the profile load and the native create must run under one lock, and a
-    * native create can block until a Fast-DDS callback of the participant (or, with intraprocess delivery, of a matching
-    * endpoint) returns. A callback that then needs this lock to create something elsewhere would wait for the blocked
-    * creator forever; {@link #lockCreation(String)} detects that case on callback threads and throws instead.
+    * native create can block until a Fast-DDS callback of the participant returns. A callback that then needs this lock to
+    * create something elsewhere would wait for the blocked creator forever; {@link #lockCreation(String)} detects that
+    * case on callback threads and throws instead.
     */
    private static final ReentrantLock CREATION_LOCK = new ReentrantLock();
    /** Participant on which the holder of {@link #CREATION_LOCK} is inside a native create call, or null. Written by the holder only. */
@@ -106,14 +106,14 @@ final class ROS2Participant
    /**
     * @return a new {@link ProfilesXML} whose library settings carry jros2's intraprocess delivery setting
     *       ({@code FASTDDS_INTRAPROCESS_DELIVERY}). Fast-DDS applies the library settings of every profile XML it loads to the
-    *       whole process, for the endpoints matched afterwards, so every profile jros2 loads states jros2's mode: another
+    *       whole process, for the endpoints matched afterward, so every profile jros2 loads states jros2's mode: another
     *       component of the process that changes the process-wide default of {@link ProfilesXML} (which the profiles that
     *       fastddsjava loads itself, e.g. transport profiles, use) cannot switch jros2 nodes to another delivery mode. That
     *       default is set back to jros2's mode as well.
     */
    static ProfilesXML newProfilesXML()
    {
-      String intraprocessDelivery = jros2.get().intraprocessDelivery() ? "FULL" : "OFF";
+      String intraprocessDelivery = jros2.get().intraprocessDelivery() ? "USER_DATA_ONLY" : "OFF";
       ProfilesXML.setIntraprocessDelivery(intraprocessDelivery);
       ProfilesXML profilesXML = new ProfilesXML();
       profilesXML.getLibrarySettingsType().setIntraprocessDelivery(intraprocessDelivery);
@@ -184,8 +184,7 @@ final class ROS2Participant
     * <p>
     * On a thread that runs a subscription callback on a Fast-DDS thread, waiting for the lock can deadlock: the holder
     * may be inside a native create that Fast-DDS blocks until this callback returns (measured with Fast-DDS 3.6.2: a
-    * create on the callback's participant waits for its network data and matched callbacks; with intraprocess delivery a
-    * create on another participant waits for callbacks of matching endpoints). There the lock is polled: if the holder
+    * create on the callback's participant waits for its network data and matched callbacks). There the lock is polled: if the holder
     * stays inside a native create on one of the callback's participants for {@link #callbackDeadlockConfirmationMs}, or
     * the lock is not available within {@link #callbackCreationTimeoutMs}, an {@link IllegalStateException} is thrown so
     * that the callback returns and the other thread can proceed.

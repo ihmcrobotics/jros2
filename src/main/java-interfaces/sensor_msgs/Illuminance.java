@@ -62,7 +62,6 @@ public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHe
    public Illuminance()
    {
       header_ = new std_msgs.Header();
-
    }
 
    public Illuminance(Illuminance from)
@@ -89,7 +88,6 @@ public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHe
       header_.serialize(buffer);
       buffer.writeDouble(illuminance_);
       buffer.writeDouble(variance_);
-
    }
 
    @Override
@@ -98,7 +96,6 @@ public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHe
       header_.deserialize(buffer);
       illuminance_ = buffer.readDouble();
       variance_ = buffer.readDouble();
-
    }
 
    @Override
@@ -112,7 +109,6 @@ public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHe
       header_.set(from.header_);
       illuminance_ = from.illuminance_;
       variance_ = from.variance_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -139,7 +135,6 @@ public class Illuminance implements ROS2Message<Illuminance>, ROS2Message.WithHe
    {
       this.variance_ = variance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

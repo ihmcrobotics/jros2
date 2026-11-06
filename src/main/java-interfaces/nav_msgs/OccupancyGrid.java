@@ -58,7 +58,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.Wi
       header_ = new std_msgs.Header();
       info_ = new nav_msgs.MapMetaData();
       data_ = new IDLByteSequence();
-
    }
 
    public OccupancyGrid(OccupancyGrid from)
@@ -85,7 +84,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.Wi
       header_.serialize(buffer);
       info_.serialize(buffer);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -94,7 +92,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.Wi
       header_.deserialize(buffer);
       info_.deserialize(buffer);
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -108,7 +105,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.Wi
       header_.set(from.header_);
       info_.set(from.info_);
       data_.set(from.data_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -125,7 +121,6 @@ public class OccupancyGrid implements ROS2Message<OccupancyGrid>, ROS2Message.Wi
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -82,7 +82,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    public MultiArrayLayout()
    {
       dim_ = new IDLObjectSequence<std_msgs.MultiArrayDimension>(std_msgs.MultiArrayDimension.class);
-
    }
 
    public MultiArrayLayout(MultiArrayLayout from)
@@ -107,7 +106,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    {
       dim_.serialize(buffer);
       buffer.writeInt(data_offset_);
-
    }
 
    @Override
@@ -115,7 +113,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    {
       dim_.deserialize(buffer);
       data_offset_ = buffer.readInt();
-
    }
 
    @Override
@@ -128,7 +125,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
 
       dim_.set(from.dim_, std_msgs.MultiArrayDimension::set); // copies the elements, never shares them
       data_offset_ = from.data_offset_;
-
    }
 
    public IDLObjectSequence<std_msgs.MultiArrayDimension> getDim()
@@ -145,7 +141,6 @@ public class MultiArrayLayout implements ROS2Message<MultiArrayLayout>
    {
       this.data_offset_ = data_offset_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

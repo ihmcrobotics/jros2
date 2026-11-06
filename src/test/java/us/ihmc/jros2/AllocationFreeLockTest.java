@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Functional tests of {@link AllocationFreeLock}: mutual exclusion under contention (more waiters than slots too),
- * reentrancy, tryLock, ownership checks and interrupts. Its allocation behaviour is checked by
+ * reentrancy, tryLock, ownership checks and interrupts. Its allocation behavior is checked by
  * {@code AllocationFreeLockAllocationTest}.
  */
 public class AllocationFreeLockTest
@@ -154,12 +154,12 @@ public class AllocationFreeLockTest
       AllocationFreeLock lock = new AllocationFreeLock();
       lock.lock();
       AtomicBoolean acquired = new AtomicBoolean();
-      AtomicBoolean interruptedAfterwards = new AtomicBoolean();
+      AtomicBoolean interruptedAfterward = new AtomicBoolean();
       Thread waiter = new Thread(() ->
       {
          lock.lock();
          acquired.set(true);
-         interruptedAfterwards.set(Thread.currentThread().isInterrupted());
+         interruptedAfterward.set(Thread.currentThread().isInterrupted());
          lock.unlock();
       });
       waiter.start();
@@ -171,7 +171,7 @@ public class AllocationFreeLockTest
       lock.unlock();
       waiter.join(10_000);
       assertTrue(acquired.get());
-      assertTrue(interruptedAfterwards.get(), "the interrupt status is restored");
+      assertTrue(interruptedAfterward.get(), "the interrupt status is restored");
    }
 
    /** A waiter that finds no free slot polls and still gets the lock. */

@@ -364,7 +364,7 @@ public class AllocationGateMutationTest
       assertFalse(result.isAllocationFree());
    }
 
-   /** Without the agent and with escape analysis on, the gate refuses to run unless a smoke check is requested. */
+   /** Without the agent and with escape analysis on, the gate refuses to run unless a quick check is requested. */
    @Test
    public void testGateRefusesAnUnsoundJvm()
    {

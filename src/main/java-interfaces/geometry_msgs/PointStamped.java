@@ -34,7 +34,6 @@ public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.With
    {
       header_ = new std_msgs.Header();
       point_ = new geometry_msgs.Point();
-
    }
 
    public PointStamped(PointStamped from)
@@ -59,7 +58,6 @@ public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.With
    {
       header_.serialize(buffer);
       point_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.With
    {
       header_.deserialize(buffer);
       point_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.With
 
       header_.set(from.header_);
       point_.set(from.point_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class PointStamped implements ROS2Message<PointStamped>, ROS2Message.With
    {
       return point_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

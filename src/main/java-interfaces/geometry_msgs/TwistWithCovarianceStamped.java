@@ -34,7 +34,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    {
       header_ = new std_msgs.Header();
       twist_ = new geometry_msgs.TwistWithCovariance();
-
    }
 
    public TwistWithCovarianceStamped(TwistWithCovarianceStamped from)
@@ -59,7 +58,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    {
       header_.serialize(buffer);
       twist_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    {
       header_.deserialize(buffer);
       twist_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
 
       header_.set(from.header_);
       twist_.set(from.twist_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class TwistWithCovarianceStamped implements ROS2Message<TwistWithCovarian
    {
       return twist_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

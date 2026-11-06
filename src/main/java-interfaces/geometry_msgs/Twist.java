@@ -34,7 +34,6 @@ public class Twist implements ROS2Message<Twist>
    {
       linear_ = new geometry_msgs.Vector3();
       angular_ = new geometry_msgs.Vector3();
-
    }
 
    public Twist(Twist from)
@@ -59,7 +58,6 @@ public class Twist implements ROS2Message<Twist>
    {
       linear_.serialize(buffer);
       angular_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class Twist implements ROS2Message<Twist>
    {
       linear_.deserialize(buffer);
       angular_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class Twist implements ROS2Message<Twist>
 
       linear_.set(from.linear_);
       angular_.set(from.angular_);
-
    }
 
    public geometry_msgs.Vector3 getLinear()
@@ -92,7 +88,6 @@ public class Twist implements ROS2Message<Twist>
    {
       return angular_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -59,14 +59,12 @@ public class Int8 implements ROS2Message<Int8>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readByte();
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class Int8 implements ROS2Message<Int8>
       }
 
       data_ = from.data_;
-
    }
 
    public byte getData()
@@ -90,7 +87,6 @@ public class Int8 implements ROS2Message<Int8>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -59,7 +59,6 @@ public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.Wi
       header_ = new std_msgs.Header();
       magnetic_field_ = new geometry_msgs.Vector3();
       magnetic_field_covariance_ = new double[9];
-
    }
 
    public MagneticField(MagneticField from)
@@ -86,7 +85,6 @@ public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.Wi
       header_.serialize(buffer);
       magnetic_field_.serialize(buffer);
       buffer.writeDoubleArray(magnetic_field_covariance_);
-
    }
 
    @Override
@@ -95,7 +93,6 @@ public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.Wi
       header_.deserialize(buffer);
       magnetic_field_.deserialize(buffer);
       buffer.readDoubleArray(magnetic_field_covariance_);
-
    }
 
    @Override
@@ -109,7 +106,6 @@ public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.Wi
       header_.set(from.header_);
       magnetic_field_.set(from.magnetic_field_);
       System.arraycopy(from.magnetic_field_covariance_, 0, magnetic_field_covariance_, 0, magnetic_field_covariance_.length);
-
    }
 
    public std_msgs.Header getHeader()
@@ -126,7 +122,6 @@ public class MagneticField implements ROS2Message<MagneticField>, ROS2Message.Wi
    {
       return magnetic_field_covariance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

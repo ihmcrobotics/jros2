@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Functional tests of {@link ROS2CallbackExecutor}; its allocation behaviour is checked by
+ * Functional tests of {@link ROS2CallbackExecutor}; its allocation behavior is checked by
  * {@code CallbackExecutorAllocationTest}.
  */
 public class ROS2CallbackExecutorUnitTest

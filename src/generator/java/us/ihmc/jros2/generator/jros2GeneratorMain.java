@@ -23,6 +23,7 @@ import java.nio.file.Path;
  * <pre>
  * jros2GeneratorMain --output-dir DIR [--package PACKAGE_DIR]... [--dependency DIR]... [--clean]
  *                    [--no-bundled-definitions] [--bundled-definitions-output FILE]
+ *                    [--format ihmc|google] [--google-java-format-classpath CLASSPATH]
  * </pre>
  */
 public final class jros2GeneratorMain
@@ -50,6 +51,8 @@ public final class jros2GeneratorMain
             case "--clean" -> generator.setCleanOutputDir(true);
             case "--no-bundled-definitions" -> generator.setUseBundledDefinitions(false);
             case "--bundled-definitions-output" -> generator.setBundledDefinitionsOutput(Path.of(requireValue(args, ++i)));
+            case "--format" -> generator.setFormat(GeneratedCodeFormat.parse(requireValue(args, ++i)));
+            case "--google-java-format-classpath" -> generator.setGoogleJavaFormatClasspath(requireValue(args, ++i));
             default -> throw new IllegalArgumentException("Unknown argument: " + args[i] + "\n" + usage());
          }
       }
@@ -74,6 +77,6 @@ public final class jros2GeneratorMain
    private static String usage()
    {
       return "Usage: jros2GeneratorMain --output-dir DIR [--package PACKAGE_DIR]... [--dependency DIR]... [--clean] [--no-bundled-definitions] "
-             + "[--bundled-definitions-output FILE]";
+             + "[--bundled-definitions-output FILE] [--format ihmc|google] [--google-java-format-classpath CLASSPATH]";
    }
 }

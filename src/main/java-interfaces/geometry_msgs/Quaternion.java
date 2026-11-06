@@ -40,7 +40,6 @@ public class Quaternion implements ROS2Message<Quaternion>
       y_ = 0.0;
       z_ = 0.0;
       w_ = 1.0;
-
    }
 
    public Quaternion(Quaternion from)
@@ -69,7 +68,6 @@ public class Quaternion implements ROS2Message<Quaternion>
       buffer.writeDouble(y_);
       buffer.writeDouble(z_);
       buffer.writeDouble(w_);
-
    }
 
    @Override
@@ -79,7 +77,6 @@ public class Quaternion implements ROS2Message<Quaternion>
       y_ = buffer.readDouble();
       z_ = buffer.readDouble();
       w_ = buffer.readDouble();
-
    }
 
    @Override
@@ -94,7 +91,6 @@ public class Quaternion implements ROS2Message<Quaternion>
       y_ = from.y_;
       z_ = from.z_;
       w_ = from.w_;
-
    }
 
    public double getX()
@@ -136,7 +132,6 @@ public class Quaternion implements ROS2Message<Quaternion>
    {
       this.w_ = w_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -34,7 +34,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.
    {
       header_ = new std_msgs.Header();
       inertia_ = new geometry_msgs.Inertia();
-
    }
 
    public InertiaStamped(InertiaStamped from)
@@ -59,7 +58,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.
    {
       header_.serialize(buffer);
       inertia_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.
    {
       header_.deserialize(buffer);
       inertia_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.
 
       header_.set(from.header_);
       inertia_.set(from.inertia_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class InertiaStamped implements ROS2Message<InertiaStamped>, ROS2Message.
    {
       return inertia_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

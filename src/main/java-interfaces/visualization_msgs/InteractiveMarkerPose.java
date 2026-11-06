@@ -51,7 +51,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       header_ = new std_msgs.Header();
       pose_ = new geometry_msgs.Pose();
       name_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public InteractiveMarkerPose(InteractiveMarkerPose from)
@@ -78,7 +77,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       header_.serialize(buffer);
       pose_.serialize(buffer);
       buffer.writeString(name_);
-
    }
 
    @Override
@@ -87,7 +85,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       header_.deserialize(buffer);
       pose_.deserialize(buffer);
       buffer.readString(name_);
-
    }
 
    @Override
@@ -102,7 +99,6 @@ public class InteractiveMarkerPose implements ROS2Message<InteractiveMarkerPose>
       pose_.set(from.pose_);
       name_.setLength(0);
       name_.append(from.name_);
-
    }
 
    public std_msgs.Header getHeader()

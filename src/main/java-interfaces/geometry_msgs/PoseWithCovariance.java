@@ -45,7 +45,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       pose_ = new geometry_msgs.Pose();
       covariance_ = new double[36];
-
    }
 
    public PoseWithCovariance(PoseWithCovariance from)
@@ -70,7 +69,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       pose_.serialize(buffer);
       buffer.writeDoubleArray(covariance_);
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       pose_.deserialize(buffer);
       buffer.readDoubleArray(covariance_);
-
    }
 
    @Override
@@ -91,7 +88,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
 
       pose_.set(from.pose_);
       System.arraycopy(from.covariance_, 0, covariance_, 0, covariance_.length);
-
    }
 
    public geometry_msgs.Pose getPose()
@@ -103,7 +99,6 @@ public class PoseWithCovariance implements ROS2Message<PoseWithCovariance>
    {
       return covariance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

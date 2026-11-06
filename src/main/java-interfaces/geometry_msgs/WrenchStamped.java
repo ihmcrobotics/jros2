@@ -34,7 +34,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>, ROS2Message.Wi
    {
       header_ = new std_msgs.Header();
       wrench_ = new geometry_msgs.Wrench();
-
    }
 
    public WrenchStamped(WrenchStamped from)
@@ -59,7 +58,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>, ROS2Message.Wi
    {
       header_.serialize(buffer);
       wrench_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>, ROS2Message.Wi
    {
       header_.deserialize(buffer);
       wrench_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>, ROS2Message.Wi
 
       header_.set(from.header_);
       wrench_.set(from.wrench_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -92,7 +88,6 @@ public class WrenchStamped implements ROS2Message<WrenchStamped>, ROS2Message.Wi
    {
       return wrench_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -34,7 +34,6 @@ public class LaserEcho implements ROS2Message<LaserEcho>
    public LaserEcho()
    {
       echoes_ = new IDLFloatSequence();
-
    }
 
    public LaserEcho(LaserEcho from)
@@ -57,14 +56,12 @@ public class LaserEcho implements ROS2Message<LaserEcho>
    public void serialize(CDRBuffer buffer)
    {
       echoes_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       echoes_.deserialize(buffer);
-
    }
 
    @Override
@@ -76,14 +73,12 @@ public class LaserEcho implements ROS2Message<LaserEcho>
       }
 
       echoes_.set(from.echoes_);
-
    }
 
    public IDLFloatSequence getEchoes()
    {
       return echoes_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

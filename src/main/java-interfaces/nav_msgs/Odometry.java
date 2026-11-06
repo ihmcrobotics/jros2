@@ -63,7 +63,6 @@ public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
       child_frame_id_ = CDRBuffer.newStringBuilder(16);
       pose_ = new geometry_msgs.PoseWithCovariance();
       twist_ = new geometry_msgs.TwistWithCovariance();
-
    }
 
    public Odometry(Odometry from)
@@ -92,7 +91,6 @@ public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
       buffer.writeString(child_frame_id_);
       pose_.serialize(buffer);
       twist_.serialize(buffer);
-
    }
 
    @Override
@@ -102,7 +100,6 @@ public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
       buffer.readString(child_frame_id_);
       pose_.deserialize(buffer);
       twist_.deserialize(buffer);
-
    }
 
    @Override
@@ -118,7 +115,6 @@ public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
       child_frame_id_.append(from.child_frame_id_);
       pose_.set(from.pose_);
       twist_.set(from.twist_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -170,7 +166,6 @@ public class Odometry implements ROS2Message<Odometry>, ROS2Message.WithHeader
    {
       return twist_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

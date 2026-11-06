@@ -60,6 +60,8 @@ public final class jros2InterfaceGenerator
    private boolean cleanOutputDir;
    private boolean useBundledDefinitions = true;
    private Path bundledDefinitionsOutput;
+   private GeneratedCodeFormat format = GeneratedCodeFormat.IHMC;
+   private String googleJavaFormatClasspath = System.getProperty("java.class.path");
 
    /** Adds a ROS 2 package directory (containing package.xml and msg/) to generate classes for. */
    public jros2InterfaceGenerator addPackagePath(Path packagePath)
@@ -112,6 +114,20 @@ public final class jros2InterfaceGenerator
    public jros2InterfaceGenerator setBundledDefinitionsOutput(Path bundledDefinitionsOutput)
    {
       this.bundledDefinitionsOutput = bundledDefinitionsOutput;
+      return this;
+   }
+
+   /** Source code format of the generated classes (default {@link GeneratedCodeFormat#IHMC}). */
+   public jros2InterfaceGenerator setFormat(GeneratedCodeFormat format)
+   {
+      this.format = format;
+      return this;
+   }
+
+   /** Classpath with google-java-format for {@link GeneratedCodeFormat#GOOGLE} (default: the classpath of this JVM). */
+   public jros2InterfaceGenerator setGoogleJavaFormatClasspath(String googleJavaFormatClasspath)
+   {
+      this.googleJavaFormatClasspath = googleJavaFormatClasspath;
       return this;
    }
 
@@ -210,6 +226,11 @@ public final class jros2InterfaceGenerator
          generatedPaths.add(outputFilePath.toAbsolutePath().normalize());
          System.out.printf("%-40s | %s%n", packageResourceName, outputFilePath.toAbsolutePath());
          totalInterfacesGenerated++;
+      }
+
+      if (format == GeneratedCodeFormat.GOOGLE)
+      {
+         GoogleJavaFormatRunner.format(generatedPaths, googleJavaFormatClasspath);
       }
 
       int removedOrphans = GeneratedMessageFileCleanup.removeOrphanedGeneratedFiles(outputDirPath, generatedPaths);

@@ -118,7 +118,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       control_name_ = CDRBuffer.newStringBuilder(16);
       pose_ = new geometry_msgs.Pose();
       mouse_point_ = new geometry_msgs.Point();
-
    }
 
    public InteractiveMarkerFeedback(InteractiveMarkerFeedback from)
@@ -157,7 +156,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       buffer.writeInt(menu_entry_id_);
       mouse_point_.serialize(buffer);
       buffer.writeBoolean(mouse_point_valid_);
-
    }
 
    @Override
@@ -172,7 +170,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       menu_entry_id_ = buffer.readInt();
       mouse_point_.deserialize(buffer);
       mouse_point_valid_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -195,7 +192,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
       menu_entry_id_ = from.menu_entry_id_;
       mouse_point_.set(from.mouse_point_);
       mouse_point_valid_ = from.mouse_point_valid_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -347,7 +343,6 @@ public class InteractiveMarkerFeedback implements ROS2Message<InteractiveMarkerF
    {
       this.mouse_point_valid_ = mouse_point_valid_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

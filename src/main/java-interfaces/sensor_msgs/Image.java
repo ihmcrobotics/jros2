@@ -63,7 +63,6 @@ public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
       header_ = new std_msgs.Header();
       encoding_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
-
    }
 
    public Image(Image from)
@@ -98,7 +97,6 @@ public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
       buffer.writeByte(is_bigendian_);
       buffer.writeInt(step_);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -111,7 +109,6 @@ public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
       is_bigendian_ = buffer.readByte();
       step_ = buffer.readInt();
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -130,7 +127,6 @@ public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
       is_bigendian_ = from.is_bigendian_;
       step_ = from.step_;
       data_.set(from.data_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -217,7 +213,6 @@ public class Image implements ROS2Message<Image>, ROS2Message.WithHeader
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

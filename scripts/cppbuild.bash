@@ -142,9 +142,9 @@ tar -xzf "$(fetch "$GH/leethomason/tinyxml2/tar.gz/$TINYXML2_COMMIT" "tinyxml2-$
 tar -xzf "$(fetch "$GH/michalsrb/android-ifaddrs/tar.gz/$ANDROID_IFADDRS_COMMIT" "android-ifaddrs-$ANDROID_IFADDRS_COMMIT.tar.gz" "$ANDROID_IFADDRS_SHA256")" \
    -C "$FASTDDS_SRC/thirdparty/android-ifaddrs" --strip-components=1
 # jros2's patches of Fast-DDS (src/native/fastdds-patches/*.patch, in name order; the same set as
-# scripts/docker/deps.sh): they remove heap allocations from Fast-DDS's steady-state publish/receive paths. Exact
-# context (no fuzz), so a patch that no longer matches the pinned Fast-DDS fails the build. GNU patch (Linux, Git for
-# Windows) and BSD patch (macOS) both accept these options.
+# scripts/docker/deps.sh): they remove heap allocations from Fast-DDS's steady-state publish/receive paths and fix a
+# races on writers and readers of this process (0008, 0009). Exact context (no fuzz), so a patch that no longer matches the pinned Fast-DDS
+# fails the build. GNU patch (Linux, Git for Windows) and BSD patch (macOS) both accept these options.
 for patch in "$REPO_ROOT"/src/native/fastdds-patches/*.patch; do
    [ -f "$patch" ] || continue
    echo "Applying Fast-DDS patch ${patch##*/}"
@@ -478,7 +478,7 @@ if xjc -version > /dev/null 2>&1; then
    echo "Stripping JAXB annotations from generated profile classes..."
    python3 "$SCRIPT_DIR/strip_jaxb_annotations.py" ../src/main/java/us/ihmc/fastddsjava/profiles/gen
 
-   # Delete JAXB-specific files that are not needed for plain POJO marshalling
+   # Delete JAXB-specific files that are not needed for plain POJO marshaling
    rm -f ../src/main/java/us/ihmc/fastddsjava/profiles/gen/ObjectFactory.java
    rm -f ../src/main/java/us/ihmc/fastddsjava/profiles/gen/package-info.java
 

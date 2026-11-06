@@ -16,6 +16,11 @@
 package us.ihmc.jros2.generator;
 
 import org.gradle.api.DefaultTask;
+import org.gradle.api.Project;
+import org.gradle.api.artifacts.Configuration;
+import org.gradle.api.attributes.Usage;
+import org.gradle.api.attributes.java.TargetJvmEnvironment;
+import org.gradle.api.provider.Provider;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
@@ -41,12 +46,32 @@ public class jros2GenTask extends DefaultTask
    private String outputDir;
    private Map<String, String> typeToClass;
    private boolean cleanOutputDir;
+   private GeneratedCodeFormat format = GeneratedCodeFormat.IHMC;
+   private String googleJavaFormatVersion = GoogleJavaFormatRunner.DEFAULT_VERSION;
+   // Resolved only for the GOOGLE format, so that builds with the default format do not download or depend on the formatter
+   private final Provider<String> googleJavaFormatClasspath;
 
    public jros2GenTask()
    {
       typeToClass = new HashMap<>();
       dependencyPaths = new ArrayList<>();
       getOutputs().cacheIf(task -> false);
+
+      Project project = getProject();
+      googleJavaFormatClasspath = project.getProviders().provider(() ->
+      {
+         if (format != GeneratedCodeFormat.GOOGLE)
+         {
+            return "";
+         }
+         String module = GoogleJavaFormatRunner.MODULE + ":" + googleJavaFormatVersion;
+         Configuration configuration = project.getConfigurations().detachedConfiguration(project.getDependencies().create(module));
+         // Without these Gradle cannot choose between the JVM and Android variants of the formatter's Guava dependency
+         configuration.getAttributes().attribute(Usage.USAGE_ATTRIBUTE, project.getObjects().named(Usage.class, Usage.JAVA_RUNTIME));
+         configuration.getAttributes().attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                                                 project.getObjects().named(TargetJvmEnvironment.class, TargetJvmEnvironment.STANDARD_JVM));
+         return configuration.getAsPath();
+      });
    }
 
    @Input
@@ -95,7 +120,11 @@ public class jros2GenTask extends DefaultTask
       return typeToClass;
    }
 
-   @Option(option = "typeToClass", description = "Map of pkg/Type to a hand-written Java class; such types are not generated")
+   /**
+    * @param typeToClass map of pkg/Type to a hand-written Java class; such types are not generated. Set in the build script:
+    *                    a Map cannot be a Gradle command line option, and declaring one breaks any command line with an
+    *                    argument after this task.
+    */
    public void setTypeToClass(Map<String, String> typeToClass)
    {
       this.typeToClass = typeToClass;
@@ -111,6 +140,32 @@ public class jros2GenTask extends DefaultTask
    public void setCleanOutputDir(boolean cleanOutputDir)
    {
       this.cleanOutputDir = cleanOutputDir;
+   }
+
+   @Input
+   public String getFormat()
+   {
+      return format.name();
+   }
+
+   @Option(option = "format",
+           description = "Source code format of the generated classes: IHMC (default) or GOOGLE (Google Java Style, applied by google-java-format, "
+                         + "which is resolved from the repositories of the project)")
+   public void setFormat(String format)
+   {
+      this.format = GeneratedCodeFormat.parse(format);
+   }
+
+   @Input
+   public String getGoogleJavaFormatVersion()
+   {
+      return googleJavaFormatVersion;
+   }
+
+   @Option(option = "googleJavaFormatVersion", description = "Version of google-java-format for the GOOGLE format. It has to run on the JVM of this build")
+   public void setGoogleJavaFormatVersion(String googleJavaFormatVersion)
+   {
+      this.googleJavaFormatVersion = googleJavaFormatVersion;
    }
 
    @TaskAction
@@ -131,6 +186,8 @@ public class jros2GenTask extends DefaultTask
       generator.setOutputDir(Path.of(outputDir));
       generator.setTypeToClass(typeToClass);
       generator.setCleanOutputDir(cleanOutputDir);
+      generator.setFormat(format);
+      generator.setGoogleJavaFormatClasspath(googleJavaFormatClasspath.get());
 
       try
       {

@@ -37,7 +37,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Messag
    {
       header_ = new std_msgs.Header();
       status_list_ = new IDLObjectSequence<actionlib_msgs.GoalStatus>(actionlib_msgs.GoalStatus.class);
-
    }
 
    public GoalStatusArray(GoalStatusArray from)
@@ -62,7 +61,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Messag
    {
       header_.serialize(buffer);
       status_list_.serialize(buffer);
-
    }
 
    @Override
@@ -70,7 +68,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Messag
    {
       header_.deserialize(buffer);
       status_list_.deserialize(buffer);
-
    }
 
    @Override
@@ -83,7 +80,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Messag
 
       header_.set(from.header_);
       status_list_.set(from.status_list_, actionlib_msgs.GoalStatus::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -95,7 +91,6 @@ public class GoalStatusArray implements ROS2Message<GoalStatusArray>, ROS2Messag
    {
       return status_list_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

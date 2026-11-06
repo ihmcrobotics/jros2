@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Strip JAXB annotations from xjc-generated Java classes so they are plain POJOs.
-XML marshalling is handled by ProfilesXMLWriter (no Jackson / JAXB runtime).
+XML marshaling is handled by ProfilesXMLWriter (no Jackson / JAXB runtime).
 """
 
 import os

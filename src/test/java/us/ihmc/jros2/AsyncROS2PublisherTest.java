@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static us.ihmc.jros2.PubSubTestTools.*;
 
 /**
- * Queueing, drop accounting, threading and shutdown of {@link AsyncROS2Publisher} / {@link AsyncROS2Node}.
+ * Queuing, drop accounting, threading and shutdown of {@link AsyncROS2Publisher} / {@link AsyncROS2Node}.
  */
 public class AsyncROS2PublisherTest
 {
@@ -453,6 +453,284 @@ public class AsyncROS2PublisherTest
       }
       finally
       {
+         node.close();
+      }
+   }
+
+   private static void setPoses(geometry_msgs.PoseArray message, int size, long value)
+   {
+      message.getPoses().clear();
+      for (int i = 0; i < size; ++i)
+      {
+         geometry_msgs.Point position = message.getPoses().add().getPosition();
+         position.setX(value);
+         position.setY(i);
+      }
+      message.getHeader().setFrameId("frame_" + value);
+   }
+
+   /** @return an error text if {@code message} is not what {@link #setPoses} wrote for {@code value}, else null */
+   private static String checkPoses(geometry_msgs.PoseArray message, int expectedSize, long value)
+   {
+      if (message.getPoses().size() != expectedSize)
+      {
+         return "message " + value + " has " + message.getPoses().size() + " poses instead of " + expectedSize;
+      }
+      for (int i = 0; i < expectedSize; ++i)
+      {
+         geometry_msgs.Point position = message.getPoses().get(i).getPosition();
+         if (position.getX() != value || position.getY() != i)
+         {
+            return "torn message " + value + ": pose " + i + " is (" + position.getX() + ", " + position.getY() + ")";
+         }
+      }
+      return ("frame_" + value).contentEquals(message.getHeader().getFrameId()) ? null : "torn message " + value + ": " + message.getHeader().getFrameId();
+   }
+
+   /**
+    * The slots that the first publish prepares hold independent deep copies: while the messages wait in the queue, the
+    * caller changes the nested elements of its message (in place, and with fewer and with more of them than the first
+    * message had, so that a slot has to grow), and every message still arrives as it was when it was published.
+    */
+   @Test
+   @Timeout(90)
+   public void testPreparedSlotsHoldIndependentCopiesAndCanGrow() throws Exception
+   {
+      int capacity = 8;
+      int[] sizes = {4, 4, 2, 4, 9, 1, 20, 4};
+      AsyncROS2Node node = new AsyncROS2Node("async_prepared_slots");
+      ROS2Topic<geometry_msgs.PoseArray> topic = new ROS2Topic<>(uniqueTopicName("async_prepared_slots"), geometry_msgs.PoseArray.class);
+      try
+      {
+         ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
+         AtomicInteger received = new AtomicInteger();
+         ROS2Subscription<geometry_msgs.PoseArray> subscription = node.createSubscription(topic, reader ->
+         {
+            int i = received.getAndIncrement();
+            geometry_msgs.PoseArray message = reader.read();
+            String error = message == null ? "read returned null" : checkPoses(message, sizes[i], i);
+            if (error != null)
+            {
+               errors.add(error);
+            }
+         }, reliableKeepAll());
+         AsyncROS2Publisher<geometry_msgs.PoseArray> publisher = node.createPublisher(topic, reliableKeepAll(), capacity);
+         awaitMatched(publisher, subscription);
+
+         CountDownLatch release = blockPublishThread(node);
+         geometry_msgs.PoseArray message = new geometry_msgs.PoseArray();
+         for (int i = 0; i < capacity; ++i)
+         {
+            setPoses(message, sizes[i], i);
+            assertTrue(publisher.offer(message));
+         }
+         setPoses(message, sizes[0], -1);
+         assertFalse(publisher.offer(message), "the queue is full");
+         assertEquals(capacity, publisher.getQueuedMessageCount());
+         release.countDown();
+
+         awaitCondition(() -> received.get() >= capacity, 30_000, "received " + received.get() + " of " + capacity);
+         assertTrue(errors.isEmpty(), () -> errors.size() + " errors, first: " + errors.peek());
+         assertEquals(1, publisher.getDroppedMessageCount());
+      }
+      finally
+      {
+         node.close();
+      }
+   }
+
+   /**
+    * Several producers race for the first publish of new publishers, with messages of different sizes on a queue that
+    * wraps around while the slots are being prepared: no producer may write into a slot another thread uses, whichever
+    * thread prepares the slots.
+    */
+   @Test
+   @Timeout(180)
+   public void testConcurrentFirstPublishes() throws Exception
+   {
+      int producers = 4;
+      int perProducer = 40;
+      int capacity = 8;
+      AsyncROS2Node node = new AsyncROS2Node("async_concurrent_first");
+      try
+      {
+         for (int round = 0; round < 25; ++round)
+         {
+            ROS2Topic<geometry_msgs.PoseArray> topic = new ROS2Topic<>(uniqueTopicName("async_concurrent_first"), geometry_msgs.PoseArray.class);
+            ConcurrentLinkedQueue<String> errors = new ConcurrentLinkedQueue<>();
+            AtomicInteger received = new AtomicInteger();
+            ROS2Subscription<geometry_msgs.PoseArray> subscription = node.createSubscription(topic, reader ->
+            {
+               geometry_msgs.PoseArray message = reader.read();
+               String error;
+               if (message == null || message.getPoses().size() == 0)
+               {
+                  error = "no message or no poses";
+               }
+               else
+               {
+                  error = checkPoses(message, message.getPoses().size(), (long) message.getPoses().get(0).getPosition().getX());
+               }
+               if (error != null)
+               {
+                  errors.add(error);
+               }
+               received.incrementAndGet();
+            }, reliableKeepAll());
+            AsyncROS2Publisher<geometry_msgs.PoseArray> publisher = node.createPublisher(topic, reliableKeepAll(), capacity);
+            awaitMatched(publisher, subscription);
+
+            CyclicBarrier start = new CyclicBarrier(producers);
+            AtomicReference<Throwable> failure = new AtomicReference<>();
+            List<Thread> threads = new ArrayList<>();
+            for (int p = 0; p < producers; ++p)
+            {
+               final int producer = p;
+               Thread thread = new Thread(() ->
+               {
+                  geometry_msgs.PoseArray message = new geometry_msgs.PoseArray();
+                  try
+                  {
+                     start.await();
+                     for (int i = 0; i < perProducer; ++i)
+                     {
+                        setPoses(message, 1 + (producer * 7 + i) % 16, producer * 1000L + i);
+                        publisher.publish(message);
+                     }
+                  }
+                  catch (Throwable e)
+                  {
+                     failure.compareAndSet(null, e);
+                  }
+               }, "async-first-producer-" + p);
+               threads.add(thread);
+               thread.start();
+            }
+            for (Thread thread : threads)
+            {
+               thread.join();
+            }
+            assertNull(failure.get(), () -> "producer failed: " + failure.get());
+
+            long total = (long) producers * perProducer;
+            awaitCondition(() -> received.get() + publisher.getDroppedMessageCount() >= total, 30_000,
+                           "received " + received.get() + " + dropped " + publisher.getDroppedMessageCount() + " of " + total);
+            assertTrue(errors.isEmpty(), () -> errors.size() + " errors, first: " + errors.peek());
+            assertEquals(total, received.get() + publisher.getDroppedMessageCount());
+            assertTrue(received.get() > 0);
+            node.destroyPublisher(publisher);
+            node.destroySubscription(subscription);
+         }
+      }
+      finally
+      {
+         node.close();
+      }
+   }
+
+   /**
+    * A message whose copy fails on demand: a negative x is a message that the type rejects (like a sequence over its bound).
+    * Public, with a public constructor: the publisher creates its slots by reflection.
+    */
+   public static final class FailingCopyPoint extends geometry_msgs.Point
+   {
+      static final AtomicInteger COPIES = new AtomicInteger();
+      /** The copy with this number (from {@link #COPIES}) runs out of memory. */
+      static volatile int outOfMemoryAtCopy = -1;
+
+      public FailingCopyPoint()
+      {
+      }
+
+      @Override
+      public void set(geometry_msgs.Point from)
+      {
+         if (COPIES.incrementAndGet() == outOfMemoryAtCopy)
+         {
+            throw new OutOfMemoryError("test");
+         }
+         if (from.getX() < 0)
+         {
+            throw new IllegalArgumentException("test");
+         }
+         super.set(from);
+      }
+   }
+
+   @SuppressWarnings({"unchecked", "rawtypes"})
+   private static ROS2Topic<geometry_msgs.Point> failingCopyTopic(String name)
+   {
+      return new ROS2Topic<>(uniqueTopicName(name), (Class<geometry_msgs.Point>) (Class) FailingCopyPoint.class);
+   }
+
+   private static geometry_msgs.Point point(double x)
+   {
+      geometry_msgs.Point message = new geometry_msgs.Point();
+      message.setX(x);
+      return message;
+   }
+
+   /**
+    * A first message that cannot be copied is reported like any other (the exception reaches the caller and the message
+    * counts as dropped), and the next message prepares the slots instead.
+    */
+   @Test
+   @Timeout(60)
+   public void testFirstPublishOfAMessageThatCannotBeCopied()
+   {
+      int capacity = 4;
+      AsyncROS2Node node = new AsyncROS2Node("async_first_copy_fails");
+      ROS2Topic<geometry_msgs.Point> topic = failingCopyTopic("async_first_copy_fails");
+      try
+      {
+         ROS2Subscription<geometry_msgs.Point> subscription = node.createSubscription(topic, reliableKeepAll());
+         AsyncROS2Publisher<geometry_msgs.Point> publisher = node.createPublisher(topic, reliableKeepAll(), capacity);
+         awaitMatched(publisher, subscription);
+
+         FailingCopyPoint.outOfMemoryAtCopy = -1;
+         FailingCopyPoint.COPIES.set(0);
+         assertThrows(IllegalArgumentException.class, () -> publisher.offer(point(-1.0)));
+         awaitCondition(() -> publisher.getDroppedMessageCount() == 1, 30_000, "the message that cannot be copied counts as dropped");
+
+         FailingCopyPoint.COPIES.set(0);
+         assertTrue(publisher.offer(point(1.0)));
+         assertEquals(capacity + 1, FailingCopyPoint.COPIES.get(), "one copy for each slot and one into the claimed slot");
+         assertTrue(publisher.offer(point(2.0)));
+         assertEquals(capacity + 2, FailingCopyPoint.COPIES.get(), "the slots are prepared once");
+         awaitCondition(() -> subscription.getUnreadMessageCount() == 2, 30_000, "the valid messages arrive");
+      }
+      finally
+      {
+         node.close();
+      }
+   }
+
+   /** A first publish that runs out of memory while it prepares the slots still queues its message and never tries again. */
+   @Test
+   @Timeout(60)
+   public void testFirstPublishThatRunsOutOfMemoryPreparingTheSlots()
+   {
+      int capacity = 4;
+      AsyncROS2Node node = new AsyncROS2Node("async_first_copy_memory");
+      ROS2Topic<geometry_msgs.Point> topic = failingCopyTopic("async_first_copy_memory");
+      try
+      {
+         ROS2Subscription<geometry_msgs.Point> subscription = node.createSubscription(topic, reliableKeepAll());
+         AsyncROS2Publisher<geometry_msgs.Point> publisher = node.createPublisher(topic, reliableKeepAll(), capacity);
+         awaitMatched(publisher, subscription);
+
+         FailingCopyPoint.COPIES.set(0);
+         FailingCopyPoint.outOfMemoryAtCopy = 2;
+         assertTrue(publisher.offer(point(1.0)));
+         assertEquals(3, FailingCopyPoint.COPIES.get(), "two copies for the slots, the second one failed, and one into the claimed slot");
+         assertTrue(publisher.offer(point(2.0)));
+         assertEquals(4, FailingCopyPoint.COPIES.get(), "the slots grow when they are used from now on");
+         awaitCondition(() -> subscription.getUnreadMessageCount() == 2, 30_000, "both messages arrive");
+         assertEquals(0, publisher.getDroppedMessageCount());
+      }
+      finally
+      {
+         FailingCopyPoint.outOfMemoryAtCopy = -1;
          node.close();
       }
    }

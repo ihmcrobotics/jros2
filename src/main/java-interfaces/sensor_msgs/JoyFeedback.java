@@ -82,7 +82,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
       buffer.writeByte(type_);
       buffer.writeByte(id_);
       buffer.writeFloat(intensity_);
-
    }
 
    @Override
@@ -91,7 +90,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
       type_ = buffer.readByte();
       id_ = buffer.readByte();
       intensity_ = buffer.readFloat();
-
    }
 
    @Override
@@ -105,7 +103,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
       type_ = from.type_;
       id_ = from.id_;
       intensity_ = from.intensity_;
-
    }
 
    public byte getType()
@@ -137,7 +134,6 @@ public class JoyFeedback implements ROS2Message<JoyFeedback>
    {
       this.intensity_ = intensity_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

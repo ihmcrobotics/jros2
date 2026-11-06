@@ -147,7 +147,6 @@ public class State implements ROS2Message<State>
    public State()
    {
       label_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public State(State from)
@@ -172,7 +171,6 @@ public class State implements ROS2Message<State>
    {
       buffer.writeByte(id_);
       buffer.writeString(label_);
-
    }
 
    @Override
@@ -180,7 +178,6 @@ public class State implements ROS2Message<State>
    {
       id_ = buffer.readByte();
       buffer.readString(label_);
-
    }
 
    @Override
@@ -194,7 +191,6 @@ public class State implements ROS2Message<State>
       id_ = from.id_;
       label_.setLength(0);
       label_.append(from.label_);
-
    }
 
    public byte getId()

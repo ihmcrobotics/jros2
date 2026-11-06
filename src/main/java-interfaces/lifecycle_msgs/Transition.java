@@ -212,7 +212,6 @@ public class Transition implements ROS2Message<Transition>
    public Transition()
    {
       label_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public Transition(Transition from)
@@ -237,7 +236,6 @@ public class Transition implements ROS2Message<Transition>
    {
       buffer.writeByte(id_);
       buffer.writeString(label_);
-
    }
 
    @Override
@@ -245,7 +243,6 @@ public class Transition implements ROS2Message<Transition>
    {
       id_ = buffer.readByte();
       buffer.readString(label_);
-
    }
 
    @Override
@@ -259,7 +256,6 @@ public class Transition implements ROS2Message<Transition>
       id_ = from.id_;
       label_.setLength(0);
       label_.append(from.label_);
-
    }
 
    public byte getId()

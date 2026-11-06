@@ -34,13 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Fast smoke version of the allocation gates for the normal test suite: sync and async publish, inline, polling and
+ * Fast version of the allocation gates for the normal test suite: sync and async publish, inline, polling and
  * executor receive, both native ABI paths and a CDR round trip must allocate zero bytes on every thread (no tolerance).
  * <p>
- * The gates run in a child JVM ({@link ROS2AllocationSmokeChild}) with {@code -Xbatch -XX:CompileThresholdScaling=0.1},
+ * The gates run in a child JVM ({@link ROS2AllocationQuickChild}) with {@code -Xbatch -XX:CompileThresholdScaling=0.1},
  * so that the one-time JIT warm-up effects happen at fixed points of the warm-up (see {@code AllocationGate}); this JVM's
  * settings (JaCoCo, parallel tests) do not matter. Escape analysis is on and the instrumenter is not loaded, so this is a
- * smoke test only: the real gate is {@code :jros2-test:allocationTest}, which runs every test tagged "allocation" with the
+ * quick check only: the real gate is {@code :jros2-test:allocationTest}, which runs every test tagged "allocation" with the
  * instrumenter, without escape analysis and with intraprocess delivery off and on.
  */
 public class ROS2AllocationTest
@@ -66,7 +66,7 @@ public class ROS2AllocationTest
       }
       command.add("-cp");
       command.add(System.getProperty("java.class.path"));
-      command.add(ROS2AllocationSmokeChild.class.getName());
+      command.add(ROS2AllocationQuickChild.class.getName());
 
       Process process = new ProcessBuilder(command).redirectErrorStream(true).start();
       ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -80,16 +80,16 @@ public class ROS2AllocationTest
          {
             // the process ended
          }
-      }, "allocation-smoke-output");
+      }, "allocation-quick-output");
       pump.start();
       boolean finished = process.waitFor(CHILD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
       if (!finished)
          process.destroyForcibly();
       pump.join(10_000);
       String text = output.toString(StandardCharsets.UTF_8);
-      assertTrue(finished, "the allocation smoke child timed out:\n" + text);
-      assertEquals(0, process.exitValue(), "allocation smoke child failed:\n" + text);
-      assertTrue(text.contains("ALLOCATION-SMOKE OK"), text);
+      assertTrue(finished, "the allocation quick child timed out:\n" + text);
+      assertEquals(0, process.exitValue(), "allocation quick child failed:\n" + text);
+      assertTrue(text.contains("ALLOCATION-QUICK OK"), text);
       assertEquals(5, text.split("RESULT ok ", -1).length - 1, text);
    }
 }

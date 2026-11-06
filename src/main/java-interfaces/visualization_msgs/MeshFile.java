@@ -45,7 +45,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       filename_ = CDRBuffer.newStringBuilder(16);
       data_ = new IDLByteSequence();
-
    }
 
    public MeshFile(MeshFile from)
@@ -70,7 +69,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       buffer.writeString(filename_);
       data_.serialize(buffer);
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       buffer.readString(filename_);
       data_.deserialize(buffer);
-
    }
 
    @Override
@@ -92,7 +89,6 @@ public class MeshFile implements ROS2Message<MeshFile>
       filename_.setLength(0);
       filename_.append(from.filename_);
       data_.set(from.data_);
-
    }
 
    public StringBuilder getFilename()
@@ -134,7 +130,6 @@ public class MeshFile implements ROS2Message<MeshFile>
    {
       return data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

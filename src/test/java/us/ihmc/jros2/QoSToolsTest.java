@@ -82,7 +82,8 @@ public class QoSToolsTest
                    + "<historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>" + "</data_writer>", writer);
 
       String reader = readerXml(ROS2QoSProfile.DEFAULT, null);
-      assertEquals("<data_reader profile_name=\"sub_test\">" + "<topic><historyQos><kind>KEEP_LAST</kind><depth>10</depth></historyQos></topic>" + "<qos>"
+      assertEquals("<data_reader profile_name=\"sub_test\">" + "<topic><historyQos><kind>KEEP_LAST</kind><depth>10</depth></historyQos>"
+                   + "<resourceLimitsQos><allocated_samples>10</allocated_samples></resourceLimitsQos></topic>" + "<qos>"
                    + "<durability><kind>VOLATILE</kind></durability>" + "<reliability><kind>RELIABLE</kind></reliability>"
                    + "<data_sharing><kind>OFF</kind></data_sharing>" + "</qos>" + "<historyMemoryPolicy>PREALLOCATED_WITH_REALLOC</historyMemoryPolicy>"
                    + "</data_reader>", reader);
@@ -92,9 +93,11 @@ public class QoSToolsTest
    @Test
    public void testSystemDefaultLeavesFastDDSDefaults()
    {
+      assertNotContains(writerXml(ROS2QoSProfile.SYSTEM_DEFAULT, null), "<topic>");
+      // A reader only limits its preallocation to the default depth
+      assertContains(readerXml(ROS2QoSProfile.SYSTEM_DEFAULT, null), "<topic><resourceLimitsQos><allocated_samples>1</allocated_samples></resourceLimitsQos></topic>");
       for (String xml : new String[] {writerXml(ROS2QoSProfile.SYSTEM_DEFAULT, null), readerXml(ROS2QoSProfile.SYSTEM_DEFAULT, null)})
       {
-         assertNotContains(xml, "<topic>");
          assertNotContains(xml, "historyQos");
          assertNotContains(xml, "<durability>");
          assertNotContains(xml, "<reliability>");
@@ -120,7 +123,8 @@ public class QoSToolsTest
       // depth 0 = system default: never written (Fast-DDS rejects KEEP_LAST depth 0)
       qos.history(History.KEEP_LAST);
       qos.depth(0);
-      assertContains(readerXml(qos, null), "<topic><historyQos><kind>KEEP_LAST</kind></historyQos></topic>");
+      assertContains(writerXml(qos, null), "<topic><historyQos><kind>KEEP_LAST</kind></historyQos></topic>");
+      assertContains(readerXml(qos, null), "<topic><historyQos><kind>KEEP_LAST</kind></historyQos><resourceLimitsQos>");
       assertNotContains(readerXml(qos, null), "<depth>");
 
       // SYSTEM_DEFAULT history with a depth: only the depth (rmw raises the default depth)
@@ -306,5 +310,44 @@ public class QoSToolsTest
       QoSTools.translateQoS(ROS2QoSProfile.DEFAULT, subscriberProfile);
       assertNull(subscriberProfile.getQos().getUserData());
       assertEquals("OFF", subscriberProfile.getQos().getDataSharing().getKind());
+   }
+
+   private static ROS2QoSProfile historyQoS(ROS2QoSProfile.History history, int depth)
+   {
+      ROS2QoSProfile qos = new ROS2QoSProfile();
+      qos.history(history);
+      qos.depth(depth);
+      return qos;
+   }
+
+   @Test
+   public void testKeepLastReaderPreallocatesItsDepth()
+   {
+      String xml = readerXml(historyQoS(ROS2QoSProfile.History.KEEP_LAST, 10), null);
+      assertContains(xml, "<allocated_samples>10</allocated_samples>");
+      assertNotContains(xml, "<max_samples>");
+
+      // SYSTEM_DEFAULT is Fast-DDS's KEEP_LAST
+      xml = readerXml(historyQoS(ROS2QoSProfile.History.SYSTEM_DEFAULT, 5), null);
+      assertContains(xml, "<allocated_samples>5</allocated_samples>");
+
+      // No depth: Fast-DDS's default depth 1
+      xml = readerXml(historyQoS(ROS2QoSProfile.History.SYSTEM_DEFAULT, 0), null);
+      assertContains(xml, "<allocated_samples>1</allocated_samples>");
+   }
+
+   @Test
+   public void testReaderKeepsDefaultPreallocationWhenTheHistoryIsNotSmaller()
+   {
+      assertNotContains(readerXml(historyQoS(ROS2QoSProfile.History.KEEP_ALL, 10), null), "allocated_samples");
+      assertNotContains(readerXml(historyQoS(ROS2QoSProfile.History.KEEP_LAST, 100), null), "allocated_samples");
+      assertNotContains(readerXml(historyQoS(ROS2QoSProfile.History.KEEP_LAST, 1000), null), "allocated_samples");
+      assertContains(readerXml(historyQoS(ROS2QoSProfile.History.KEEP_LAST, 99), null), "<allocated_samples>99</allocated_samples>");
+   }
+
+   @Test
+   public void testWriterLeavesPreallocationToFastDds()
+   {
+      assertNotContains(writerXml(historyQoS(ROS2QoSProfile.History.KEEP_LAST, 10), null), "allocated_samples");
    }
 }

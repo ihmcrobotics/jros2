@@ -18,5 +18,5 @@ dependencies {
 
 application {
    // ./gradlew run [--args="--expect-security"]
-   mainClass.set("us.ihmc.NativeSmoke")
+   mainClass.set("us.ihmc.NativeCheck")
 }

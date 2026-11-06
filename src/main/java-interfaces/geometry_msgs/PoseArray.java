@@ -35,7 +35,6 @@ public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
    {
       header_ = new std_msgs.Header();
       poses_ = new IDLObjectSequence<geometry_msgs.Pose>(geometry_msgs.Pose.class);
-
    }
 
    public PoseArray(PoseArray from)
@@ -60,7 +59,6 @@ public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
    {
       header_.serialize(buffer);
       poses_.serialize(buffer);
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
    {
       header_.deserialize(buffer);
       poses_.deserialize(buffer);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
 
       header_.set(from.header_);
       poses_.set(from.poses_, geometry_msgs.Pose::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -93,7 +89,6 @@ public class PoseArray implements ROS2Message<PoseArray>, ROS2Message.WithHeader
    {
       return poses_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

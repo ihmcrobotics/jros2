@@ -59,14 +59,12 @@ public class Int64 implements ROS2Message<Int64>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeLong(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       data_ = buffer.readLong();
-
    }
 
    @Override
@@ -78,7 +76,6 @@ public class Int64 implements ROS2Message<Int64>
       }
 
       data_ = from.data_;
-
    }
 
    public long getData()
@@ -90,7 +87,6 @@ public class Int64 implements ROS2Message<Int64>
    {
       this.data_ = data_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

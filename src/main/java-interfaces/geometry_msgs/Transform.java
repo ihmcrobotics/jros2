@@ -34,7 +34,6 @@ public class Transform implements ROS2Message<Transform>
    {
       translation_ = new geometry_msgs.Vector3();
       rotation_ = new geometry_msgs.Quaternion();
-
    }
 
    public Transform(Transform from)
@@ -59,7 +58,6 @@ public class Transform implements ROS2Message<Transform>
    {
       translation_.serialize(buffer);
       rotation_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class Transform implements ROS2Message<Transform>
    {
       translation_.deserialize(buffer);
       rotation_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class Transform implements ROS2Message<Transform>
 
       translation_.set(from.translation_);
       rotation_.set(from.rotation_);
-
    }
 
    public geometry_msgs.Vector3 getTranslation()
@@ -92,7 +88,6 @@ public class Transform implements ROS2Message<Transform>
    {
       return rotation_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -55,6 +55,9 @@ public class SampleInfoTest
       }
    }
 
+   /** The Java and Fast-DDS clocks differ in resolution: on Windows, System.currentTimeMillis() can advance only every 15.6 ms. */
+   private static final long CLOCK_MARGIN_NANOS = TimeUnit.MILLISECONDS.toNanos(50);
+
    private static example_interfaces.Int64 int64(long value)
    {
       example_interfaces.Int64 message = new example_interfaces.Int64();
@@ -105,7 +108,7 @@ public class SampleInfoTest
          abi.assertPath(subscription);
          awaitMatched(publisher, subscription);
 
-         long publishedAfter = System.currentTimeMillis() * 1_000_000L - TimeUnit.MILLISECONDS.toNanos(1);
+         long publishedAfter = System.currentTimeMillis() * 1_000_000L - CLOCK_MARGIN_NANOS;
          publisher.publish(int64(1));
          publisher.publish(int64(2));
          awaitCondition(() -> subscription.getUnreadMessageCount() == 2, 30_000, "samples not received");
@@ -119,7 +122,7 @@ public class SampleInfoTest
             assertEquals(i, data.getData());
             metadata.add(Metadata.of(sampleInfo));
          }
-         long readBefore = System.currentTimeMillis() * 1_000_000L + TimeUnit.MILLISECONDS.toNanos(1);
+         long readBefore = System.currentTimeMillis() * 1_000_000L + CLOCK_MARGIN_NANOS;
          assertFirstAndSecondSample(metadata, publishedAfter, readBefore);
 
          // No sample: the SampleInfo is not changed
@@ -191,12 +194,12 @@ public class SampleInfoTest
          abi.assertPath(subscription);
          awaitMatched(publisher, subscription);
 
-         long publishedAfter = System.currentTimeMillis() * 1_000_000L - TimeUnit.MILLISECONDS.toNanos(1);
+         long publishedAfter = System.currentTimeMillis() * 1_000_000L - CLOCK_MARGIN_NANOS;
          publisher.publish(int64(1));
          assertTrue(waitFor(() -> received.getCount() == 1, 30_000), "first sample not received");
          publisher.publish(int64(2));
          assertTrue(received.await(30, TimeUnit.SECONDS), "second sample not received");
-         long readBefore = System.currentTimeMillis() * 1_000_000L + TimeUnit.MILLISECONDS.toNanos(1);
+         long readBefore = System.currentTimeMillis() * 1_000_000L + CLOCK_MARGIN_NANOS;
          assertNull(error.get(), error.get());
 
          List<Metadata> afterCallback = new ArrayList<>();

@@ -80,7 +80,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2
       transforms_ = new IDLObjectSequence<geometry_msgs.Transform>(geometry_msgs.Transform.class);
       twist_ = new IDLObjectSequence<geometry_msgs.Twist>(geometry_msgs.Twist.class);
       wrench_ = new IDLObjectSequence<geometry_msgs.Wrench>(geometry_msgs.Wrench.class);
-
    }
 
    public MultiDOFJointState(MultiDOFJointState from)
@@ -111,7 +110,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2
       transforms_.serialize(buffer);
       twist_.serialize(buffer);
       wrench_.serialize(buffer);
-
    }
 
    @Override
@@ -122,7 +120,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2
       transforms_.deserialize(buffer);
       twist_.deserialize(buffer);
       wrench_.deserialize(buffer);
-
    }
 
    @Override
@@ -138,7 +135,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2
       transforms_.set(from.transforms_, geometry_msgs.Transform::set); // copies the elements, never shares them
       twist_.set(from.twist_, geometry_msgs.Twist::set); // copies the elements, never shares them
       wrench_.set(from.wrench_, geometry_msgs.Wrench::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -165,7 +161,6 @@ public class MultiDOFJointState implements ROS2Message<MultiDOFJointState>, ROS2
    {
       return wrench_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

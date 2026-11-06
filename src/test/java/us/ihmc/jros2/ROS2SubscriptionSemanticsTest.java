@@ -564,7 +564,7 @@ public class ROS2SubscriptionSemanticsTest
 
    /**
     * Variable-size messages larger than the read buffer grow it (ABI v2 falls back to the native copy) and smaller ones
-    * afterwards still read correctly.
+    * afterward still read correctly.
     */
    @Test
    @Timeout(90)

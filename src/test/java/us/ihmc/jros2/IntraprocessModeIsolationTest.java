@@ -71,13 +71,13 @@ public class IntraprocessModeIsolationTest
          awaitCondition(() -> callbackThread.get() != null, 30_000, "message not delivered");
          if (intraprocess)
          {
-            assertSame(Thread.currentThread(), callbackThread.get(), "jros2's intraprocess delivery (FULL) runs the callback inside publish()");
+            assertSame(Thread.currentThread(), callbackThread.get(), "jros2's intraprocess delivery (USER_DATA_ONLY) runs the callback inside publish()");
          }
          else
          {
             assertNotSame(Thread.currentThread(), callbackThread.get(), "without intraprocess delivery a Fast-DDS thread runs the callback");
          }
-         assertEquals(intraprocess ? "FULL" : "OFF", ProfilesXML.getIntraprocessDelivery(), "jros2 set the process-wide default back to its mode");
+         assertEquals(intraprocess ? "USER_DATA_ONLY" : "OFF", ProfilesXML.getIntraprocessDelivery(), "jros2 set the process-wide default back to its mode");
       }
       finally
       {

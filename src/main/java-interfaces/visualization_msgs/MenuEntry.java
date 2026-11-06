@@ -140,7 +140,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       title_ = CDRBuffer.newStringBuilder(16);
       command_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public MenuEntry(MenuEntry from)
@@ -171,7 +170,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       buffer.writeString(title_);
       buffer.writeString(command_);
       buffer.writeByte(command_type_);
-
    }
 
    @Override
@@ -182,7 +180,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       buffer.readString(title_);
       buffer.readString(command_);
       command_type_ = buffer.readByte();
-
    }
 
    @Override
@@ -200,7 +197,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
       command_.setLength(0);
       command_.append(from.command_);
       command_type_ = from.command_type_;
-
    }
 
    public int getId()
@@ -302,7 +298,6 @@ public class MenuEntry implements ROS2Message<MenuEntry>
    {
       this.command_type_ = command_type_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

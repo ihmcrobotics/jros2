@@ -42,7 +42,6 @@ public class Plane implements ROS2Message<Plane>
    public Plane()
    {
       coef_ = new double[4];
-
    }
 
    public Plane(Plane from)
@@ -65,14 +64,12 @@ public class Plane implements ROS2Message<Plane>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeDoubleArray(coef_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readDoubleArray(coef_);
-
    }
 
    @Override
@@ -84,14 +81,12 @@ public class Plane implements ROS2Message<Plane>
       }
 
       System.arraycopy(from.coef_, 0, coef_, 0, coef_.length);
-
    }
 
    public double[] getCoef()
    {
       return coef_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

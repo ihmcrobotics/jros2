@@ -69,7 +69,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Mess
       header_ = new std_msgs.Header();
       child_frame_id_ = CDRBuffer.newStringBuilder(16);
       transform_ = new geometry_msgs.Transform();
-
    }
 
    public TransformStamped(TransformStamped from)
@@ -96,7 +95,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Mess
       header_.serialize(buffer);
       buffer.writeString(child_frame_id_);
       transform_.serialize(buffer);
-
    }
 
    @Override
@@ -105,7 +103,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Mess
       header_.deserialize(buffer);
       buffer.readString(child_frame_id_);
       transform_.deserialize(buffer);
-
    }
 
    @Override
@@ -120,7 +117,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Mess
       child_frame_id_.setLength(0);
       child_frame_id_.append(from.child_frame_id_);
       transform_.set(from.transform_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -167,7 +163,6 @@ public class TransformStamped implements ROS2Message<TransformStamped>, ROS2Mess
    {
       return transform_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

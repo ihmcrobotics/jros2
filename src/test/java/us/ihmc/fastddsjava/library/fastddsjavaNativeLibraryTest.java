@@ -188,9 +188,10 @@ public class fastddsjavaNativeLibraryTest
       assertEquals(Arrays.asList("libfastcdr.so.2", "libfastdds.so.3.6", "libjnifastddsjava.so"), fastddsjavaNativeLibrary.legacyLibraryNames("linux-musl-x86_64"));
       assertNull(fastddsjavaNativeLibrary.legacyLibraryNames("solaris-sparc"));
 
-      // The SONAME alternative of manifest-less direct mode exists for Linux only.
+      // The SONAME alternative of manifest-less direct mode exists for Linux and macOS.
       for (String platform : ALL_PLATFORMS)
-         assertEquals(platform.startsWith("linux-"), fastddsjavaNativeLibrary.sonameLibraryNames(platform) != null, platform);
+         assertEquals(platform.startsWith("linux-") || platform.startsWith("macos-"), fastddsjavaNativeLibrary.sonameLibraryNames(platform) != null, platform);
+      assertEquals(Arrays.asList("libfastcdr.2.dylib", "libfastdds.3.6.dylib", "libjnifastddsjava.dylib"), fastddsjavaNativeLibrary.sonameLibraryNames("macos-arm64"));
       assertEquals(Arrays.asList("libfastcdr.so.2", "libfastdds.so.3.6", "libjnifastddsjava.so"), fastddsjavaNativeLibrary.sonameLibraryNames("linux-armhf"));
    }
 

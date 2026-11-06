@@ -37,7 +37,7 @@ public class jros2SettingsFallbackTest
 {
    private static final jros2SettingsDefault DEFAULTS = new jros2SettingsDefault();
 
-   /** The system properties this test sets; values given to the test JVM are restored afterwards. */
+   /** The system properties this test sets; values given to the test JVM are restored afterward. */
    private static final String[] PROPERTIES = {jros2SettingsProp.DOMAIN_ID_KEY, jros2SettingsProp.INTERFACE_WHITELIST_KEY};
    private final Map<String, String> savedProperties = new HashMap<>();
 

@@ -71,7 +71,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       new_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
       changed_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
       deleted_parameters_ = new IDLObjectSequence<rcl_interfaces.Parameter>(rcl_interfaces.Parameter.class);
-
    }
 
    public ParameterEvent(ParameterEvent from)
@@ -102,7 +101,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       new_parameters_.serialize(buffer);
       changed_parameters_.serialize(buffer);
       deleted_parameters_.serialize(buffer);
-
    }
 
    @Override
@@ -113,7 +111,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       new_parameters_.deserialize(buffer);
       changed_parameters_.deserialize(buffer);
       deleted_parameters_.deserialize(buffer);
-
    }
 
    @Override
@@ -130,7 +127,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
       new_parameters_.set(from.new_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
       changed_parameters_.set(from.changed_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
       deleted_parameters_.set(from.deleted_parameters_, rcl_interfaces.Parameter::set); // copies the elements, never shares them
-
    }
 
    public builtin_interfaces.Time getStamp()
@@ -187,7 +183,6 @@ public class ParameterEvent implements ROS2Message<ParameterEvent>
    {
       return deleted_parameters_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

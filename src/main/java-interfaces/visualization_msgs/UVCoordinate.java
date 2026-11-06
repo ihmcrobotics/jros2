@@ -59,7 +59,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       buffer.writeFloat(u_);
       buffer.writeFloat(v_);
-
    }
 
    @Override
@@ -67,7 +66,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       u_ = buffer.readFloat();
       v_ = buffer.readFloat();
-
    }
 
    @Override
@@ -80,7 +78,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
 
       u_ = from.u_;
       v_ = from.v_;
-
    }
 
    public float getU()
@@ -102,7 +99,6 @@ public class UVCoordinate implements ROS2Message<UVCoordinate>
    {
       this.v_ = v_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -50,7 +50,7 @@ public class ProfilesXML
     * Call this before creating a new {@link ProfilesXML}
     * <p>
     * Fast-DDS applies the library settings of every profile XML it loads to the whole process (for endpoints matched
-    * afterwards). jros2 writes its own setting ({@code FASTDDS_INTRAPROCESS_DELIVERY}) into every profile it loads, so
+    * afterward). jros2 writes its own setting ({@code FASTDDS_INTRAPROCESS_DELIVERY}) into every profile it loads, so
     * changing this default does not change the intraprocess mode of jros2 nodes.
     */
    public static void setIntraprocessDelivery(String value)

@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Node-level behaviour: names, topic resolution, native handle checks, topic reference counting, snapshots,
+ * Node-level behavior: names, topic resolution, native handle checks, topic reference counting, snapshots,
  * deprecated placeholders and concurrency.
  */
 public class ROS2NodeTest

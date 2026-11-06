@@ -65,7 +65,6 @@ public class Pose2D implements ROS2Message<Pose2D>
       buffer.writeDouble(x_);
       buffer.writeDouble(y_);
       buffer.writeDouble(theta_);
-
    }
 
    @Override
@@ -74,7 +73,6 @@ public class Pose2D implements ROS2Message<Pose2D>
       x_ = buffer.readDouble();
       y_ = buffer.readDouble();
       theta_ = buffer.readDouble();
-
    }
 
    @Override
@@ -88,7 +86,6 @@ public class Pose2D implements ROS2Message<Pose2D>
       x_ = from.x_;
       y_ = from.y_;
       theta_ = from.theta_;
-
    }
 
    public double getX()
@@ -120,7 +117,6 @@ public class Pose2D implements ROS2Message<Pose2D>
    {
       this.theta_ = theta_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

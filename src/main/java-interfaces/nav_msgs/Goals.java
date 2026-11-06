@@ -51,7 +51,6 @@ public class Goals implements ROS2Message<Goals>, ROS2Message.WithHeader
    {
       header_ = new std_msgs.Header();
       goals_ = new IDLObjectSequence<geometry_msgs.PoseStamped>(geometry_msgs.PoseStamped.class);
-
    }
 
    public Goals(Goals from)
@@ -76,7 +75,6 @@ public class Goals implements ROS2Message<Goals>, ROS2Message.WithHeader
    {
       header_.serialize(buffer);
       goals_.serialize(buffer);
-
    }
 
    @Override
@@ -84,7 +82,6 @@ public class Goals implements ROS2Message<Goals>, ROS2Message.WithHeader
    {
       header_.deserialize(buffer);
       goals_.deserialize(buffer);
-
    }
 
    @Override
@@ -97,7 +94,6 @@ public class Goals implements ROS2Message<Goals>, ROS2Message.WithHeader
 
       header_.set(from.header_);
       goals_.set(from.goals_, geometry_msgs.PoseStamped::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -109,7 +105,6 @@ public class Goals implements ROS2Message<Goals>, ROS2Message.WithHeader
    {
       return goals_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

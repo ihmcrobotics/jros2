@@ -34,7 +34,6 @@ public class Pose implements ROS2Message<Pose>
    {
       position_ = new geometry_msgs.Point();
       orientation_ = new geometry_msgs.Quaternion();
-
    }
 
    public Pose(Pose from)
@@ -59,7 +58,6 @@ public class Pose implements ROS2Message<Pose>
    {
       position_.serialize(buffer);
       orientation_.serialize(buffer);
-
    }
 
    @Override
@@ -67,7 +65,6 @@ public class Pose implements ROS2Message<Pose>
    {
       position_.deserialize(buffer);
       orientation_.deserialize(buffer);
-
    }
 
    @Override
@@ -80,7 +77,6 @@ public class Pose implements ROS2Message<Pose>
 
       position_.set(from.position_);
       orientation_.set(from.orientation_);
-
    }
 
    public geometry_msgs.Point getPosition()
@@ -92,7 +88,6 @@ public class Pose implements ROS2Message<Pose>
    {
       return orientation_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -23,7 +23,7 @@ import java.util.Iterator;
 /**
  * IDL sequence of int64 / uint64 (stored as long) values backed by a heap {@link LongBuffer}.
  * <p>
- * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honouring the CDR byte order.
+ * The sequence is (de)serialized in bulk: aligned once, then copied in one operation honoring the CDR byte order.
  * </p>
  */
 public class IDLLongSequence extends IDLSequence<IDLLongSequence> implements Iterable<Long>

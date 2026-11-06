@@ -1,0 +1,65 @@
+jros2: a thread that reaches a reader of this process takes its reference in one step
+
+With intraprocess delivery a writer calls a reader of this process through a LocalReaderPointer::Instance. Two races
+let it use a reader that another thread has deleted, or read a shared pointer that another thread resets; both crash
+the JVM when publishers and subscriptions of one process are created and deleted at the same time.
+
+RefCountedPointer::Instance read is_active_ and the pointer first and only then incremented the count, under the mutex.
+deactivate() could run in between, find a count of 0 and let the reader be deleted, and the instance then called it.
+The count and the pointer are now taken in one critical section, so deactivate() either stops the instance from getting
+the pointer or waits for it.
+
+StatefulWriter::intraprocess_heartbeat() called reader_proxy->local_reader() without the writer's lock. On the initial
+heartbeat event of a ReaderProxy that runs on the event thread while ReaderProxy::stop(), under the lock, resets
+ReaderLocator::local_reader_. It now takes the lock first, like every other caller of local_reader().
+
+--- a/src/cpp/rtps/writer/StatefulWriter.cpp
++++ b/src/cpp/rtps/writer/StatefulWriter.cpp
+@@ -448,11 +448,12 @@
+         bool liveliness)
+ {
+     bool returned_value = false;
++    // Under the lock: on the initial heartbeat event of a proxy, stop() can run at the same time and reset what this reads.
++    std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
+     LocalReaderPointer::Instance local_reader = reader_proxy->local_reader();
+ 
+     if (local_reader)
+     {
+-        std::unique_lock<RecursiveTimedMutex> lockW(mp_mutex);
+         SequenceNumber_t first_seq = get_seq_num_min();
+         SequenceNumber_t last_seq = get_seq_num_max();
+ 
+--- a/src/cpp/utils/RefCountedPointer.hpp
++++ b/src/cpp/utils/RefCountedPointer.hpp
+@@ -100,12 +100,8 @@
+         explicit Instance(
+                 const std::shared_ptr<RefCountedPointer<T>>& parent)
+             : parent_(parent)
+-            , ptr_(parent && parent->is_active_ ? parent->ptr_ : nullptr)
++            , ptr_(parent_ ? parent_->acquire() : nullptr)
+         {
+-            if (parent_)
+-            {
+-                parent_->inc_instances();
+-            }
+         }
+ 
+         /**
+@@ -168,12 +164,15 @@
+ private:
+ 
+     /**
+-     * @brief Increase the reference count.
++     * @brief Increase the reference count and read the pointer in one step, so that deactivate() either stops this
++     * instance from getting the pointer or waits for it.
++     * @return The pointer, or nullptr if it was deactivated.
+      */
+-    void inc_instances()
++    T* acquire()
+     {
+         std::unique_lock<std::mutex> lock(mutex_);
+         ++instances_;
++        return is_active_ ? ptr_ : nullptr;
+     }
+ 
+     /**

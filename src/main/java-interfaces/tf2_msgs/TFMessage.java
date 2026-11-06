@@ -28,7 +28,6 @@ public class TFMessage implements ROS2Message<TFMessage>
    public TFMessage()
    {
       transforms_ = new IDLObjectSequence<geometry_msgs.TransformStamped>(geometry_msgs.TransformStamped.class);
-
    }
 
    public TFMessage(TFMessage from)
@@ -51,14 +50,12 @@ public class TFMessage implements ROS2Message<TFMessage>
    public void serialize(CDRBuffer buffer)
    {
       transforms_.serialize(buffer);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       transforms_.deserialize(buffer);
-
    }
 
    @Override
@@ -70,14 +67,12 @@ public class TFMessage implements ROS2Message<TFMessage>
       }
 
       transforms_.set(from.transforms_, geometry_msgs.TransformStamped::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<geometry_msgs.TransformStamped> getTransforms()
    {
       return transforms_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

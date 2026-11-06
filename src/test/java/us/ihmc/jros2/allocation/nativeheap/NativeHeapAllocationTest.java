@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * {@link NativeHeapAllocationChild} in a separate JVM per configuration: intraprocess delivery OFF with jros2's default
  * transports (shared memory with a 4 MiB segment plus UDPv4, and messages that overflow the 512 KiB segment of a node with
  * Fast-DDS's default transports), OFF with custom shared memory (an 8500 KiB segment) plus UDPv4, OFF with UDPv4 only (the
- * inter-host path), and FULL with the default transports; each with the ABI v2 natives and with the forced ABI v1 path. See the
+ * inter-host path), and USER_DATA_ONLY with the default transports; each with the ABI v2 natives and with the forced ABI v1 path. See the
  * child for the windows and how calls are attributed. The test
  * fails on any native heap call on a hot-path thread made by the JNI layer, Fast-DDS or Fast-CDR (also through libstdc++
  * or a JNI function), by a JVM / JDK native method that Java code called, by HotSpot monitor inflation (contended
@@ -204,7 +204,7 @@ public class NativeHeapAllocationTest
    }
 
    @Test
-   public void testIntraprocessFullNativeAbiV2() throws Exception
+   public void testIntraprocessUserDataOnlyNativeAbiV2() throws Exception
    {
       runChild(true, "default", false);
    }
@@ -228,7 +228,7 @@ public class NativeHeapAllocationTest
    }
 
    @Test
-   public void testIntraprocessFullForcedNativeAbiV1() throws Exception
+   public void testIntraprocessUserDataOnlyForcedNativeAbiV1() throws Exception
    {
       runChild(true, "default", true);
    }
@@ -236,7 +236,7 @@ public class NativeHeapAllocationTest
    private static void runChild(boolean intraprocess, String transport, boolean forceAbiV1) throws Exception
    {
       Assumptions.assumeTrue(skipReason == null, () -> "native heap gate skipped: " + skipReason);
-      String label = "intraprocess " + (intraprocess ? "FULL" : "OFF") + ", transports " + transport + ", " + (forceAbiV1 ? "forced ABI v1" : "ABI v2");
+      String label = "intraprocess " + (intraprocess ? "USER_DATA_ONLY" : "OFF") + ", transports " + transport + ", " + (forceAbiV1 ? "forced ABI v1" : "ABI v2");
 
       List<String> jitArguments = childJitArguments();
       if (!jitArguments.isEmpty())
@@ -401,9 +401,9 @@ public class NativeHeapAllocationTest
          assertEquals("0", results.get("raw-jni").get("jniJavaBytes"), "raw JNI loop: Java heap bytes allocated by JNI; " + context);
 
       // The configuration is in effect: the library uses the requested native ABI path and intraprocess mode, and inline
-      // callbacks run where that mode delivers them (FULL: on the publishing thread; OFF: on a Fast-DDS thread).
+      // callbacks run where that mode delivers them (USER_DATA_ONLY: on the publishing thread; OFF: on a Fast-DDS thread).
       String config = lines.stream().filter(line -> line.startsWith(NativeHeapAllocationChild.PREFIX + "CONFIG ")).findFirst().orElse("");
-      assertTrue(config.contains(" intraprocessDelivery=" + (intraprocess ? "FULL" : "OFF") + " "), "intraprocess mode not in effect: '" + config + "'; " + context);
+      assertTrue(config.contains(" intraprocessDelivery=" + (intraprocess ? "USER_DATA_ONLY" : "OFF") + " "), "intraprocess mode not in effect: '" + config + "'; " + context);
       assertTrue(config.contains(" nativeAbiV2=" + !forceAbiV1 + " "), "native ABI path not in effect: '" + config + "'; " + context);
       for (String line : lines)
       {

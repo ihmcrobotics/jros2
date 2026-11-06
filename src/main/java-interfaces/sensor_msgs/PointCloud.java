@@ -62,7 +62,6 @@ public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHead
       header_ = new std_msgs.Header();
       points_ = new IDLObjectSequence<geometry_msgs.Point32>(geometry_msgs.Point32.class);
       channels_ = new IDLObjectSequence<sensor_msgs.ChannelFloat32>(sensor_msgs.ChannelFloat32.class);
-
    }
 
    public PointCloud(PointCloud from)
@@ -89,7 +88,6 @@ public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHead
       header_.serialize(buffer);
       points_.serialize(buffer);
       channels_.serialize(buffer);
-
    }
 
    @Override
@@ -98,7 +96,6 @@ public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHead
       header_.deserialize(buffer);
       points_.deserialize(buffer);
       channels_.deserialize(buffer);
-
    }
 
    @Override
@@ -112,7 +109,6 @@ public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHead
       header_.set(from.header_);
       points_.set(from.points_, geometry_msgs.Point32::set); // copies the elements, never shares them
       channels_.set(from.channels_, sensor_msgs.ChannelFloat32::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -129,7 +125,6 @@ public class PointCloud implements ROS2Message<PointCloud>, ROS2Message.WithHead
    {
       return channels_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -42,7 +42,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    {
       names_ = new IDLStringSequence();
       prefixes_ = new IDLStringSequence();
-
    }
 
    public ListParametersResult(ListParametersResult from)
@@ -67,7 +66,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    {
       names_.serialize(buffer);
       prefixes_.serialize(buffer);
-
    }
 
    @Override
@@ -75,7 +73,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    {
       names_.deserialize(buffer);
       prefixes_.deserialize(buffer);
-
    }
 
    @Override
@@ -88,7 +85,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
 
       names_.set(from.names_);
       prefixes_.set(from.prefixes_);
-
    }
 
    public IDLStringSequence getNames()
@@ -100,7 +96,6 @@ public class ListParametersResult implements ROS2Message<ListParametersResult>
    {
       return prefixes_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

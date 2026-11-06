@@ -391,7 +391,7 @@ public class GeneratedMessageCDRTest
       assertSame(spare, copy.getPoses().get(1), "spare elements are reused");
       assertEquals(source.toString(), copy.toString());
 
-      // IDLObjectSequence.set(other) copies references (as in jros2 1.5); a message set() from the same source afterwards
+      // IDLObjectSequence.set(other) copies references (as in jros2 1.5); a message set() from the same source afterward
       // replaces the shared elements instead of writing into them
       geometry_msgs.PoseArray aliased = new geometry_msgs.PoseArray();
       aliased.getPoses().set(source.getPoses());

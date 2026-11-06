@@ -54,7 +54,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>, ROS2Messag
       header_ = new std_msgs.Header();
       joint_names_ = new IDLStringSequence();
       points_ = new IDLObjectSequence<trajectory_msgs.JointTrajectoryPoint>(trajectory_msgs.JointTrajectoryPoint.class);
-
    }
 
    public JointTrajectory(JointTrajectory from)
@@ -81,7 +80,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>, ROS2Messag
       header_.serialize(buffer);
       joint_names_.serialize(buffer);
       points_.serialize(buffer);
-
    }
 
    @Override
@@ -90,7 +88,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>, ROS2Messag
       header_.deserialize(buffer);
       joint_names_.deserialize(buffer);
       points_.deserialize(buffer);
-
    }
 
    @Override
@@ -104,7 +101,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>, ROS2Messag
       header_.set(from.header_);
       joint_names_.set(from.joint_names_);
       points_.set(from.points_, trajectory_msgs.JointTrajectoryPoint::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -121,7 +117,6 @@ public class JointTrajectory implements ROS2Message<JointTrajectory>, ROS2Messag
    {
       return points_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

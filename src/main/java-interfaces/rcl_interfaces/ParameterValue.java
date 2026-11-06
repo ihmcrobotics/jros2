@@ -114,7 +114,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       integer_array_value_ = new IDLLongSequence();
       double_array_value_ = new IDLDoubleSequence();
       string_array_value_ = new IDLStringSequence();
-
    }
 
    public ParameterValue(ParameterValue from)
@@ -155,7 +154,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       integer_array_value_.serialize(buffer);
       double_array_value_.serialize(buffer);
       string_array_value_.serialize(buffer);
-
    }
 
    @Override
@@ -171,7 +169,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       integer_array_value_.deserialize(buffer);
       double_array_value_.deserialize(buffer);
       string_array_value_.deserialize(buffer);
-
    }
 
    @Override
@@ -193,7 +190,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
       integer_array_value_.set(from.integer_array_value_);
       double_array_value_.set(from.double_array_value_);
       string_array_value_.set(from.string_array_value_);
-
    }
 
    public byte getType()
@@ -295,7 +291,6 @@ public class ParameterValue implements ROS2Message<ParameterValue>
    {
       return string_array_value_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -422,8 +422,10 @@ public class SROS2Test
       Map<String, String> properties = configuration.getProperties();
       assertFalse(configuration.isEnforce());
       assertEquals("pkcs11:object=key;type=private", properties.get("dds.sec.auth.builtin.PKI-DH.private_key"));
-      assertEquals("file://" + enclave + "/cert.pem", properties.get("dds.sec.auth.builtin.PKI-DH.identity_certificate"));
-      assertEquals("file://" + enclave + "/crl.pem", properties.get("dds.sec.auth.builtin.PKI-DH.identity_crl"));
+      // file:// URIs have '/' separators on every platform
+      String enclaveUri = "file://" + enclave.toString().replace('\\', '/');
+      assertEquals(enclaveUri + "/cert.pem", properties.get("dds.sec.auth.builtin.PKI-DH.identity_certificate"));
+      assertEquals(enclaveUri + "/crl.pem", properties.get("dds.sec.auth.builtin.PKI-DH.identity_crl"));
       assertEquals("/tmp/sec.log", properties.get("dds.sec.log.builtin.DDS_LogTopic.log_file"));
       assertEquals("false", properties.get("dds.sec.log.builtin.DDS_LogTopic.distribute"));
       assertEquals("WARNING_LEVEL", properties.get("dds.sec.log.builtin.DDS_LogTopic.logging_level"));

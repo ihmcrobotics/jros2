@@ -560,7 +560,7 @@ public final class fastddsjavaNativeLibrary
       return currentUserCache;
    }
 
-   /** A fresh directory that is removed (best effort) when the JVM exits normally: the pre-cache behaviour. */
+   /** A fresh directory that is removed (best effort) when the JVM exits normally: the pre-cache behavior. */
    static Path createPrivateTemporaryDirectory(Path base, NativeBundle bundle) throws IOException
    {
       Path directory = Files.createTempDirectory(base, PRIVATE_TEMP_DIR_PREFIX);
@@ -674,7 +674,7 @@ public final class fastddsjavaNativeLibrary
    }
 
    /**
-    * Maps {@code os.name}, {@code os.arch} and the libc flavour to a platform directory name.
+    * Maps {@code os.name}, {@code os.arch} and the libc flavor to a platform directory name.
     *
     * @throws IOException naming the platform if it is not supported
     */
@@ -787,15 +787,18 @@ public final class fastddsjavaNativeLibrary
    }
 
    /**
-    * @return the SONAME file names (load order, JNI library last) of a Linux platform, which newer Linux builds ship and
+    * @return the SONAME file names (load order, JNI library last) of a Linux or macOS platform, which newer builds ship and
     *       a Fast-DDS install provides as symbolic links, or null if the platform has no such alternative
     */
    static List<String> sonameLibraryNames(String platform)
    {
-      if (!platform.startsWith("linux-"))
-         return null;
       List<String> list = new ArrayList<>();
-      Collections.addAll(list, "libfastcdr.so.2", "libfastdds.so.3.6", "libjnifastddsjava.so");
+      if (platform.startsWith("linux-"))
+         Collections.addAll(list, "libfastcdr.so.2", "libfastdds.so.3.6", "libjnifastddsjava.so");
+      else if (platform.startsWith("macos-"))
+         Collections.addAll(list, "libfastcdr.2.dylib", "libfastdds.3.6.dylib", "libjnifastddsjava.dylib");
+      else
+         return null;
       return Collections.unmodifiableList(list);
    }
 

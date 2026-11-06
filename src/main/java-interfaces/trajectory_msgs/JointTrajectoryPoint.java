@@ -87,7 +87,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       accelerations_ = new IDLDoubleSequence();
       effort_ = new IDLDoubleSequence();
       time_from_start_ = new builtin_interfaces.Duration();
-
    }
 
    public JointTrajectoryPoint(JointTrajectoryPoint from)
@@ -118,7 +117,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       accelerations_.serialize(buffer);
       effort_.serialize(buffer);
       time_from_start_.serialize(buffer);
-
    }
 
    @Override
@@ -129,7 +127,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       accelerations_.deserialize(buffer);
       effort_.deserialize(buffer);
       time_from_start_.deserialize(buffer);
-
    }
 
    @Override
@@ -145,7 +142,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
       accelerations_.set(from.accelerations_);
       effort_.set(from.effort_);
       time_from_start_.set(from.time_from_start_);
-
    }
 
    public IDLDoubleSequence getPositions()
@@ -172,7 +168,6 @@ public class JointTrajectoryPoint implements ROS2Message<JointTrajectoryPoint>
    {
       return time_from_start_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

@@ -61,7 +61,6 @@ public class PointField implements ROS2Message<PointField>
    public PointField()
    {
       name_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public PointField(PointField from)
@@ -90,7 +89,6 @@ public class PointField implements ROS2Message<PointField>
       buffer.writeInt(offset_);
       buffer.writeByte(datatype_);
       buffer.writeInt(count_);
-
    }
 
    @Override
@@ -100,7 +98,6 @@ public class PointField implements ROS2Message<PointField>
       offset_ = buffer.readInt();
       datatype_ = buffer.readByte();
       count_ = buffer.readInt();
-
    }
 
    @Override
@@ -116,7 +113,6 @@ public class PointField implements ROS2Message<PointField>
       offset_ = from.offset_;
       datatype_ = from.datatype_;
       count_ = from.count_;
-
    }
 
    public StringBuilder getName()
@@ -183,7 +179,6 @@ public class PointField implements ROS2Message<PointField>
    {
       this.count_ = count_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

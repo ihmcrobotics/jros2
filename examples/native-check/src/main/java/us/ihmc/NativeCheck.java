@@ -27,27 +27,27 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Native smoke test: loads the bundled natives for the current platform (e.g. musl or riscv64), then sends a string and
+ * Native check: loads the bundled natives for the current platform (e.g. musl or riscv64), then sends a string and
  * an image through Fast-DDS in one process. Used by CI on platforms where the full test suite is too slow (QEMU) or
  * which only need a quick "do the natives work here" check. Exit code 0 means every step worked.
  * <p>
  * Arguments: {@code --expect-security} additionally requires natives built with DDS-Security,
  * {@code --expect-abi <n>} requires the given native ABI version.
  */
-public final class NativeSmoke
+public final class NativeCheck
 {
-   private NativeSmoke()
+   private NativeCheck()
    {
    }
 
    public static void main(String[] args) throws Exception
    {
       List<String> arguments = Arrays.asList(args);
-      System.out.printf("jros2 native smoke test on %s %s (%s), Java %s %s%n", System.getProperty("os.name"), System.getProperty("os.arch"),
+      System.out.printf("jros2 native check on %s %s (%s), Java %s %s%n", System.getProperty("os.name"), System.getProperty("os.arch"),
                         System.getProperty("os.version"), System.getProperty("java.version"), System.getProperty("java.vendor"));
 
       int domainId = Integer.parseInt(System.getenv().getOrDefault("ROS_DOMAIN_ID", "0"));
-      try (ROS2Node node = new ROS2Node("jros2_native_smoke", domainId))
+      try (ROS2Node node = new ROS2Node("jros2_native_check", domainId))
       {
          int abiVersion = fastddsjava.abiVersion();
          boolean security = fastddsjava.hasSecurity();
@@ -68,7 +68,7 @@ public final class NativeSmoke
          qos.depth(10);
 
          // 1. std_msgs/String
-         ROS2Topic<std_msgs.String_> chatter = new ROS2Topic<>("/jros2_smoke/chatter", std_msgs.String_.class);
+         ROS2Topic<std_msgs.String_> chatter = new ROS2Topic<>("/jros2_check/chatter", std_msgs.String_.class);
          AtomicReference<String> text = new AtomicReference<>();
          ROS2Subscription<std_msgs.String_> textSubscription = node.createSubscription(chatter, reader ->
          {
@@ -94,7 +94,7 @@ public final class NativeSmoke
          System.out.println("std_msgs/String loopback OK");
 
          // 2. sensor_msgs/Image (nested message + growing uint8[] + fragmentation)
-         ROS2Topic<sensor_msgs.Image> imageTopic = new ROS2Topic<>("/jros2_smoke/image", sensor_msgs.Image.class);
+         ROS2Topic<sensor_msgs.Image> imageTopic = new ROS2Topic<>("/jros2_check/image", sensor_msgs.Image.class);
          AtomicReference<sensor_msgs.Image> received = new AtomicReference<>();
          ROS2Subscription<sensor_msgs.Image> imageSubscription = node.createSubscription(imageTopic, reader ->
          {
@@ -130,7 +130,7 @@ public final class NativeSmoke
          System.out.println("sensor_msgs/Image loopback OK (" + pixels.length + " bytes)");
       }
 
-      System.out.println("NATIVE SMOKE TEST PASSED");
+      System.out.println("NATIVE CHECK PASSED");
       System.exit(0);
    }
 
@@ -144,7 +144,7 @@ public final class NativeSmoke
 
    private static void fail(String message)
    {
-      System.out.println("NATIVE SMOKE TEST FAILED: " + message);
+      System.out.println("NATIVE CHECK FAILED: " + message);
       System.exit(1);
    }
 }

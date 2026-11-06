@@ -49,7 +49,6 @@ public class GoalID implements ROS2Message<GoalID>
    {
       stamp_ = new builtin_interfaces.Time();
       id_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public GoalID(GoalID from)
@@ -74,7 +73,6 @@ public class GoalID implements ROS2Message<GoalID>
    {
       stamp_.serialize(buffer);
       buffer.writeString(id_);
-
    }
 
    @Override
@@ -82,7 +80,6 @@ public class GoalID implements ROS2Message<GoalID>
    {
       stamp_.deserialize(buffer);
       buffer.readString(id_);
-
    }
 
    @Override
@@ -96,7 +93,6 @@ public class GoalID implements ROS2Message<GoalID>
       stamp_.set(from.stamp_);
       id_.setLength(0);
       id_.append(from.id_);
-
    }
 
    public builtin_interfaces.Time getStamp()

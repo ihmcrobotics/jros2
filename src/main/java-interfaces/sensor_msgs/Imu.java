@@ -76,7 +76,6 @@ public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
       angular_velocity_covariance_ = new double[9];
       linear_acceleration_ = new geometry_msgs.Vector3();
       linear_acceleration_covariance_ = new double[9];
-
    }
 
    public Imu(Imu from)
@@ -111,7 +110,6 @@ public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
       buffer.writeDoubleArray(angular_velocity_covariance_);
       linear_acceleration_.serialize(buffer);
       buffer.writeDoubleArray(linear_acceleration_covariance_);
-
    }
 
    @Override
@@ -124,7 +122,6 @@ public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
       buffer.readDoubleArray(angular_velocity_covariance_);
       linear_acceleration_.deserialize(buffer);
       buffer.readDoubleArray(linear_acceleration_covariance_);
-
    }
 
    @Override
@@ -142,7 +139,6 @@ public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
       System.arraycopy(from.angular_velocity_covariance_, 0, angular_velocity_covariance_, 0, angular_velocity_covariance_.length);
       linear_acceleration_.set(from.linear_acceleration_);
       System.arraycopy(from.linear_acceleration_covariance_, 0, linear_acceleration_covariance_, 0, linear_acceleration_covariance_.length);
-
    }
 
    public std_msgs.Header getHeader()
@@ -179,7 +175,6 @@ public class Imu implements ROS2Message<Imu>, ROS2Message.WithHeader
    {
       return linear_acceleration_covariance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

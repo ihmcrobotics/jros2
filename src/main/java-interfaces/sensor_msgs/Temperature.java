@@ -38,7 +38,6 @@ public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHe
    public Temperature()
    {
       header_ = new std_msgs.Header();
-
    }
 
    public Temperature(Temperature from)
@@ -65,7 +64,6 @@ public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHe
       header_.serialize(buffer);
       buffer.writeDouble(temperature_);
       buffer.writeDouble(variance_);
-
    }
 
    @Override
@@ -74,7 +72,6 @@ public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHe
       header_.deserialize(buffer);
       temperature_ = buffer.readDouble();
       variance_ = buffer.readDouble();
-
    }
 
    @Override
@@ -88,7 +85,6 @@ public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHe
       header_.set(from.header_);
       temperature_ = from.temperature_;
       variance_ = from.variance_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -115,7 +111,6 @@ public class Temperature implements ROS2Message<Temperature>, ROS2Message.WithHe
    {
       this.variance_ = variance_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

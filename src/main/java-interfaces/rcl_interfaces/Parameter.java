@@ -47,7 +47,6 @@ public class Parameter implements ROS2Message<Parameter>
    {
       name_ = CDRBuffer.newStringBuilder(16);
       value_ = new rcl_interfaces.ParameterValue();
-
    }
 
    public Parameter(Parameter from)
@@ -72,7 +71,6 @@ public class Parameter implements ROS2Message<Parameter>
    {
       buffer.writeString(name_);
       value_.serialize(buffer);
-
    }
 
    @Override
@@ -80,7 +78,6 @@ public class Parameter implements ROS2Message<Parameter>
    {
       buffer.readString(name_);
       value_.deserialize(buffer);
-
    }
 
    @Override
@@ -94,7 +91,6 @@ public class Parameter implements ROS2Message<Parameter>
       name_.setLength(0);
       name_.append(from.name_);
       value_.set(from.value_);
-
    }
 
    public StringBuilder getName()
@@ -136,7 +132,6 @@ public class Parameter implements ROS2Message<Parameter>
    {
       return value_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

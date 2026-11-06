@@ -57,7 +57,6 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
       buffer.writeByte(test_test1_);
       buffer.writeByte(testTest2_);
       buffer.writeByte(TestTest3_);
-
    }
 
    @Override
@@ -66,7 +65,6 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
       test_test1_ = buffer.readByte();
       testTest2_ = buffer.readByte();
       TestTest3_ = buffer.readByte();
-
    }
 
    @Override
@@ -80,7 +78,6 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
       test_test1_ = from.test_test1_;
       testTest2_ = from.testTest2_;
       TestTest3_ = from.TestTest3_;
-
    }
 
    public byte getTestTest1()
@@ -112,7 +109,6 @@ public class CapitalizationTest implements ROS2Message<CapitalizationTest>
    {
       this.TestTest3_ = TestTest3_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

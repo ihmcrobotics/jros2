@@ -53,7 +53,6 @@ public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
    {
       header_ = new std_msgs.Header();
       cells_ = new IDLObjectSequence<geometry_msgs.Point>(geometry_msgs.Point.class);
-
    }
 
    public GridCells(GridCells from)
@@ -82,7 +81,6 @@ public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
       buffer.writeFloat(cell_width_);
       buffer.writeFloat(cell_height_);
       cells_.serialize(buffer);
-
    }
 
    @Override
@@ -92,7 +90,6 @@ public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
       cell_width_ = buffer.readFloat();
       cell_height_ = buffer.readFloat();
       cells_.deserialize(buffer);
-
    }
 
    @Override
@@ -107,7 +104,6 @@ public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
       cell_width_ = from.cell_width_;
       cell_height_ = from.cell_height_;
       cells_.set(from.cells_, geometry_msgs.Point::set); // copies the elements, never shares them
-
    }
 
    public std_msgs.Header getHeader()
@@ -139,7 +135,6 @@ public class GridCells implements ROS2Message<GridCells>, ROS2Message.WithHeader
    {
       return cells_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

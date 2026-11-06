@@ -66,7 +66,6 @@ public class Vector3 implements ROS2Message<Vector3>
       buffer.writeDouble(x_);
       buffer.writeDouble(y_);
       buffer.writeDouble(z_);
-
    }
 
    @Override
@@ -75,7 +74,6 @@ public class Vector3 implements ROS2Message<Vector3>
       x_ = buffer.readDouble();
       y_ = buffer.readDouble();
       z_ = buffer.readDouble();
-
    }
 
    @Override
@@ -89,7 +87,6 @@ public class Vector3 implements ROS2Message<Vector3>
       x_ = from.x_;
       y_ = from.y_;
       z_ = from.z_;
-
    }
 
    public double getX()
@@ -121,7 +118,6 @@ public class Vector3 implements ROS2Message<Vector3>
    {
       this.z_ = z_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

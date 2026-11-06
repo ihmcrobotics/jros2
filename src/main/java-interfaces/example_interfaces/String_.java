@@ -38,7 +38,6 @@ public class String_ implements ROS2Message<String_>
    public String_()
    {
       data_ = CDRBuffer.newStringBuilder(16);
-
    }
 
    public String_(String_ from)
@@ -61,14 +60,12 @@ public class String_ implements ROS2Message<String_>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeString(data_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       buffer.readString(data_);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class String_ implements ROS2Message<String_>
 
       data_.setLength(0);
       data_.append(from.data_);
-
    }
 
    public StringBuilder getData()

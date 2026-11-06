@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static us.ihmc.fastddsjava.fastddsjavaTestTools.waitFor;
 import static us.ihmc.fastddsjava.natives.NativeDdsFixture.*;
@@ -504,6 +505,8 @@ public class NativeListenerLifecycleTest
       // thread that ends while attached leaks its java.lang.Thread and JVM thread structures (HotSpot never detaches it)
       // and makes ART log or abort (Android), so every deleted participant would leak its callback threads.
       assumeAbiV2(); // ABI v1 never detaches
+      // jnifastddsjava.cpp does not detach on Windows, where thread_local destructors of a DLL run under the loader lock
+      assumeFalse(System.getProperty("os.name").startsWith("Windows"), "Windows keeps callback threads attached");
       String[] threads = runCallbackThreadsChild("rounds", 4, "THREADS ").split(" ");
       int warm = Integer.parseInt(threads[1]);
       int after = Integer.parseInt(threads[2]);

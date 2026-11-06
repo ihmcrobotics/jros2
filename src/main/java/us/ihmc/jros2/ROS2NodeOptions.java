@@ -158,10 +158,10 @@ public final class ROS2NodeOptions
     * delays every larger message; the 4 MiB default delivers messages up to about 4 MB without repair. Give a publisher of
     * larger messages a segment of at least about 1.25 times its largest message.
     * <p>
-    * The segment is allocated in {@code /dev/shm} (Linux) when the participant is created and stays allocated until it
-    * is closed, so each participant costs about this much shared memory. jros2 falls back to Fast-DDS's default segment,
-    * with a warning, when {@code /dev/shm} has less than twice the segment size free (for example in a container with
-    * Docker's default 64 MB {@code /dev/shm}).
+    * The segment is allocated when the participant is created (Linux: in {@code /dev/shm}; macOS and Windows: as a file on
+    * disk) and stays allocated until it is closed, so each participant costs about this much shared memory. On Linux, jros2
+    * falls back to Fast-DDS's default segment, with a warning, when {@code /dev/shm} has less than twice the segment size
+    * free (for example in a container with Docker's default 64 MB {@code /dev/shm}).
     * <p>
     * Applies to jros2's default transports (shared memory and UDPv4), to the LOCALHOST discovery range and to the
     * interface whitelist. Transports given with {@link #transports} are used as they are, and Android uses UDPv4 only.

@@ -49,14 +49,12 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    public void serialize(CDRBuffer buffer)
    {
       buffer.writeByte(class_);
-
    }
 
    @Override
    public void deserialize(CDRBuffer buffer)
    {
       class_ = buffer.readByte();
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class IllegalJava implements ROS2Message<IllegalJava>
       }
 
       class_ = from.class_;
-
    }
 
    public byte getClass_()
@@ -80,7 +77,6 @@ public class IllegalJava implements ROS2Message<IllegalJava>
    {
       this.class_ = class_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

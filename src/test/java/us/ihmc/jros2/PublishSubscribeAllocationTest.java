@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * subscription side on whichever thread receives (callback inline on the Fast-DDS thread, or polling
  * read/readLatest/read with SampleInfo on the caller), with realistic message types, RELIABLE and BEST_EFFORT, both native
  * ABI paths and statistics on. Every thread of the JVM is measured (see {@link AllocationGate}); the Gradle tasks run this
- * class with intraprocess delivery OFF and FULL, with the agent and with escape analysis disabled.
+ * class with intraprocess delivery OFF and USER_DATA_ONLY, with the agent and with escape analysis disabled.
  */
 @Tag("allocation")
 public class PublishSubscribeAllocationTest

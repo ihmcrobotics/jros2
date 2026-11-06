@@ -35,7 +35,7 @@ import java.util.logging.Level;
 final class EndpointSupport
 {
    /**
-    * Forces the endpoints created afterwards to use the ABI v1 native code paths even when ABI v2 natives are loaded.
+    * Forces the endpoints created afterward to use the ABI v1 native code paths even when ABI v2 natives are loaded.
     * Used by tests to exercise both paths; can also be set with the system property {@code jros2.native.forceAbiV1=true}
     * to work around a native problem in the field.
     */

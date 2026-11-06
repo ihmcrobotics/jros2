@@ -80,7 +80,6 @@ public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
       header_ = new std_msgs.Header();
       ranges_ = new IDLFloatSequence();
       intensities_ = new IDLFloatSequence();
-
    }
 
    public LaserScan(LaserScan from)
@@ -121,7 +120,6 @@ public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
       buffer.writeFloat(range_max_);
       ranges_.serialize(buffer);
       intensities_.serialize(buffer);
-
    }
 
    @Override
@@ -137,7 +135,6 @@ public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
       range_max_ = buffer.readFloat();
       ranges_.deserialize(buffer);
       intensities_.deserialize(buffer);
-
    }
 
    @Override
@@ -158,7 +155,6 @@ public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
       range_max_ = from.range_max_;
       ranges_.set(from.ranges_);
       intensities_.set(from.intensities_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -245,7 +241,6 @@ public class LaserScan implements ROS2Message<LaserScan>, ROS2Message.WithHeader
    {
       return intensities_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

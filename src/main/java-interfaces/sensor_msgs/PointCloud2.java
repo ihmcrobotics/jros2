@@ -81,7 +81,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHe
       header_ = new std_msgs.Header();
       fields_ = new IDLObjectSequence<sensor_msgs.PointField>(sensor_msgs.PointField.class);
       data_ = new IDLByteSequence();
-
    }
 
    public PointCloud2(PointCloud2 from)
@@ -120,7 +119,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHe
       buffer.writeInt(row_step_);
       data_.serialize(buffer);
       buffer.writeBoolean(is_dense_);
-
    }
 
    @Override
@@ -135,7 +133,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHe
       row_step_ = buffer.readInt();
       data_.deserialize(buffer);
       is_dense_ = buffer.readBoolean();
-
    }
 
    @Override
@@ -155,7 +152,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHe
       row_step_ = from.row_step_;
       data_.set(from.data_);
       is_dense_ = from.is_dense_;
-
    }
 
    public std_msgs.Header getHeader()
@@ -232,7 +228,6 @@ public class PointCloud2 implements ROS2Message<PointCloud2>, ROS2Message.WithHe
    {
       this.is_dense_ = is_dense_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

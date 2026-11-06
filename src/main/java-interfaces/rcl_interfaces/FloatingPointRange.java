@@ -110,7 +110,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
       buffer.writeDouble(from_value_);
       buffer.writeDouble(to_value_);
       buffer.writeDouble(step_);
-
    }
 
    @Override
@@ -119,7 +118,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
       from_value_ = buffer.readDouble();
       to_value_ = buffer.readDouble();
       step_ = buffer.readDouble();
-
    }
 
    @Override
@@ -133,7 +131,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
       from_value_ = from.from_value_;
       to_value_ = from.to_value_;
       step_ = from.step_;
-
    }
 
    public double getFromValue()
@@ -165,7 +162,6 @@ public class FloatingPointRange implements ROS2Message<FloatingPointRange>
    {
       this.step_ = step_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

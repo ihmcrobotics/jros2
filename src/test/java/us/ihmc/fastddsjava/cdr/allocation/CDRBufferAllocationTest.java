@@ -321,6 +321,70 @@ public class CDRBufferAllocationTest
       assertEquals(sources[sources.length - 1].toString(), wideDestination.toString());
    }
 
+   @Test
+   public void testAsciiPathEdges()
+   {
+      // Around the fixed scratch of writeString, and leaving the ASCII loops at the first, middle and last character
+      String[] texts = {"a".repeat(1023), "a".repeat(1024), "a".repeat(1025), "a".repeat(3000), "€" + "a".repeat(1022), "a".repeat(511) + "€" + "a".repeat(511),
+                        "a".repeat(1023) + "€", "😀".repeat(512), "a".repeat(1500) + "€", "é"};
+      StringBuilder[] sources = new StringBuilder[texts.length];
+      StringBuilder[] plainSources = new StringBuilder[texts.length];
+      for (int i = 0; i < texts.length; i++)
+      {
+         sources[i] = CDRBuffer.newStringBuilder(texts[i]);
+         plainSources[i] = new StringBuilder(texts[i]);
+      }
+      CDRBuffer buffer = new CDRBuffer();
+      StringBuilder destination = CDRBuffer.newStringBuilder(3000);
+      Runnable body = () ->
+      {
+         for (int i = 0; i < sources.length; i++)
+         {
+            buffer.rewind();
+            buffer.writePayloadHeader();
+            buffer.writeString(sources[i]);
+            buffer.writeString(plainSources[i]);
+            sink += CDRBuffer.utf8Length(sources[i]) + CDRBuffer.utf8Length(plainSources[i]);
+            buffer.beginRead(buffer.getBufferUnsafe().position());
+            buffer.readPayloadHeader();
+            buffer.readString(destination);
+            buffer.readString(destination);
+            sink += destination.length();
+         }
+      };
+      body.run();
+      gate.assertNoAllocation("CDRBuffer strings around the ASCII scratch", () ->
+      {
+         body.run();
+         body.run();
+      });
+      assertEquals(texts[texts.length - 1], destination.toString());
+   }
+
+   @Test
+   public void testMoreBytesThanTheDestinationHasCharacters()
+   {
+      // A string can have far fewer characters than bytes: a destination sized in characters must take it without growing,
+      // also the very first time, however the ASCII path of readString is implemented
+      String text = "€".repeat(100); // 300 bytes
+      StringBuilder source = new StringBuilder(text);
+      CDRBuffer buffer = new CDRBuffer();
+      buffer.ensureRemainingCapacity(1024);
+      buffer.rewind();
+      buffer.writePayloadHeader();
+      buffer.writeString(source);
+      int size = buffer.getBufferUnsafe().position();
+      StringBuilder destination = CDRBuffer.newStringBuilder(100);
+      gate.assertNoAllocation("CDRBuffer.readString of 300 bytes into a builder with a capacity of 100 characters", () ->
+      {
+         buffer.beginRead(size);
+         buffer.readPayloadHeader();
+         buffer.readString(destination);
+      });
+      assertEquals(text, destination.toString());
+      assertEquals(100, destination.capacity());
+   }
+
    /** Writes {@code source} as a string and a wide string and reads them back into the destinations. */
    private static void stringRoundTrip(CDRBuffer buffer, CharSequence source, StringBuilder destination, StringBuilder wideDestination)
    {

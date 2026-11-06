@@ -41,7 +41,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
       new_parameters_ = new IDLObjectSequence<rcl_interfaces.ParameterDescriptor>(rcl_interfaces.ParameterDescriptor.class);
       changed_parameters_ = new IDLObjectSequence<rcl_interfaces.ParameterDescriptor>(rcl_interfaces.ParameterDescriptor.class);
       deleted_parameters_ = new IDLObjectSequence<rcl_interfaces.ParameterDescriptor>(rcl_interfaces.ParameterDescriptor.class);
-
    }
 
    public ParameterEventDescriptors(ParameterEventDescriptors from)
@@ -68,7 +67,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
       new_parameters_.serialize(buffer);
       changed_parameters_.serialize(buffer);
       deleted_parameters_.serialize(buffer);
-
    }
 
    @Override
@@ -77,7 +75,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
       new_parameters_.deserialize(buffer);
       changed_parameters_.deserialize(buffer);
       deleted_parameters_.deserialize(buffer);
-
    }
 
    @Override
@@ -91,7 +88,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
       new_parameters_.set(from.new_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
       changed_parameters_.set(from.changed_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
       deleted_parameters_.set(from.deleted_parameters_, rcl_interfaces.ParameterDescriptor::set); // copies the elements, never shares them
-
    }
 
    public IDLObjectSequence<rcl_interfaces.ParameterDescriptor> getNewParameters()
@@ -108,7 +104,6 @@ public class ParameterEventDescriptors implements ROS2Message<ParameterEventDesc
    {
       return deleted_parameters_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

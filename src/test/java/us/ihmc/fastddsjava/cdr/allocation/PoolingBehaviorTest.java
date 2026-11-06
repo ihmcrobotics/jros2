@@ -35,11 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Behaviour of the allocation-free paths (normal test suite; the allocation gates themselves are tagged "allocation"):
+ * Behavior of the allocation-free paths (normal test suite; the allocation gates themselves are tagged "allocation"):
  * pooled string builders are reused and cleared, the collection overloads read lists by index and other collections by
  * iteration with the same result, and the CharSequence setters of generated messages.
  */
-public class PoolingBehaviourTest
+public class PoolingBehaviorTest
 {
    @Test
    public void testStringSequenceReusesClearedBuilders()

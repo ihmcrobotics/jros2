@@ -35,7 +35,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    public PolygonInstance()
    {
       polygon_ = new geometry_msgs.Polygon();
-
    }
 
    public PolygonInstance(PolygonInstance from)
@@ -60,7 +59,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    {
       polygon_.serialize(buffer);
       buffer.writeLong(id_);
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    {
       polygon_.deserialize(buffer);
       id_ = buffer.readLong();
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
 
       polygon_.set(from.polygon_);
       id_ = from.id_;
-
    }
 
    public geometry_msgs.Polygon getPolygon()
@@ -98,7 +94,6 @@ public class PolygonInstance implements ROS2Message<PolygonInstance>
    {
       this.id_ = id_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that

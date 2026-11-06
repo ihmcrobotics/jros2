@@ -35,7 +35,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.With
    {
       header_ = new std_msgs.Header();
       accel_ = new geometry_msgs.Accel();
-
    }
 
    public AccelStamped(AccelStamped from)
@@ -60,7 +59,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.With
    {
       header_.serialize(buffer);
       accel_.serialize(buffer);
-
    }
 
    @Override
@@ -68,7 +66,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.With
    {
       header_.deserialize(buffer);
       accel_.deserialize(buffer);
-
    }
 
    @Override
@@ -81,7 +78,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.With
 
       header_.set(from.header_);
       accel_.set(from.accel_);
-
    }
 
    public std_msgs.Header getHeader()
@@ -93,7 +89,6 @@ public class AccelStamped implements ROS2Message<AccelStamped>, ROS2Message.With
    {
       return accel_;
    }
-
 
    /**
     * The text of {@link #toString()} between the field values. An array initialized with the class: a string literal that
