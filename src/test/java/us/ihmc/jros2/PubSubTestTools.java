@@ -17,6 +17,10 @@ package us.ihmc.jros2;
 
 import us.ihmc.fastddsjava.natives.fastddsjava;
 
+import java.lang.management.LockInfo;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MonitorInfo;
+import java.lang.management.ThreadInfo;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.LockSupport;
@@ -201,5 +205,49 @@ final class PubSubTestTools
          LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(20));
       }
       return true;
+   }
+
+   /**
+    * @return the stack of every thread of the JVM, with the monitors and locks each one holds and the one it waits for, for
+    *       a test that finds threads stuck (JUnit's timeout reports only the test thread)
+    */
+   static String threadDump()
+   {
+      StringBuilder dump = new StringBuilder();
+      for (ThreadInfo info : ManagementFactory.getThreadMXBean().dumpAllThreads(true, true))
+      {
+         dump.append('"').append(info.getThreadName()).append("\" ").append(info.getThreadState());
+         if (info.getLockName() != null)
+         {
+            dump.append(" on ").append(info.getLockName());
+         }
+         if (info.getLockOwnerName() != null)
+         {
+            dump.append(" owned by \"").append(info.getLockOwnerName()).append('"');
+         }
+         if (info.isInNative())
+         {
+            dump.append(" (in native code)");
+         }
+         dump.append('\n');
+         StackTraceElement[] stack = info.getStackTrace();
+         for (int depth = 0; depth < stack.length; ++depth)
+         {
+            dump.append("\tat ").append(stack[depth]).append('\n');
+            for (MonitorInfo monitor : info.getLockedMonitors())
+            {
+               if (monitor.getLockedStackDepth() == depth)
+               {
+                  dump.append("\t- locked ").append(monitor).append('\n');
+               }
+            }
+         }
+         for (LockInfo lock : info.getLockedSynchronizers())
+         {
+            dump.append("\t- holds ").append(lock).append('\n');
+         }
+         dump.append('\n');
+      }
+      return dump.toString();
    }
 }

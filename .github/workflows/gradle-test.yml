@@ -494,7 +494,16 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: ./gradlew test
+        run: |
+          # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
+          # uploaded with the test results.
+          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          watcher=$!
+          set +e
+          ./gradlew test
+          result=$?
+          kill $watcher 2>/dev/null
+          exit $result
 
       - name: Print crash reports
         if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
@@ -510,6 +519,7 @@ jobs:
             src/test/build/test-results/
             src/test/build/reports/tests/
             src/test/hs_err_pid*
+            thread-dumps/
           if-no-files-found: warn
           retention-days: 14
 
@@ -550,7 +560,16 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: ./gradlew test
+        run: |
+          # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
+          # uploaded with the test results.
+          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          watcher=$!
+          set +e
+          ./gradlew test
+          result=$?
+          kill $watcher 2>/dev/null
+          exit $result
 
       - name: Print crash reports
         if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
@@ -566,6 +585,7 @@ jobs:
             src/test/build/test-results/
             src/test/build/reports/tests/
             src/test/hs_err_pid*
+            thread-dumps/
           if-no-files-found: warn
           retention-days: 14
 
@@ -595,7 +615,16 @@ jobs:
           git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
 
       - name: Run tests
-        run: ./gradlew test
+        run: |
+          # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
+          # uploaded with the test results.
+          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          watcher=$!
+          set +e
+          ./gradlew test
+          result=$?
+          kill $watcher 2>/dev/null
+          exit $result
 
       - name: Print crash reports
         if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
@@ -611,6 +640,7 @@ jobs:
             src/test/build/test-results/
             src/test/build/reports/tests/
             src/test/hs_err_pid*
+            thread-dumps/
           if-no-files-found: warn
           retention-days: 14
 
@@ -640,7 +670,16 @@ jobs:
           git checkout FETCH_HEAD -- src/main/resources/fastddsjava/native
 
       - name: Run tests
-        run: ./gradlew test
+        run: |
+          # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
+          # uploaded with the test results.
+          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          watcher=$!
+          set +e
+          ./gradlew test
+          result=$?
+          kill $watcher 2>/dev/null
+          exit $result
 
       - name: Print crash reports
         if: failure() || cancelled() # a crash can hang the build until the job's timeout, which cancels it
@@ -656,5 +695,6 @@ jobs:
             src/test/build/test-results/
             src/test/build/reports/tests/
             src/test/hs_err_pid*
+            thread-dumps/
           if-no-files-found: warn
           retention-days: 14
