@@ -145,7 +145,8 @@ public final class LargeMessageDeliveryChild
          publisher.publish(tx);
          next += period;
       }
-      long deadline = System.nanoTime() + 2_000_000_000L;
+      // RELIABLE delivers every sample, late on a slow machine (macOS virtual machines took over 2 s), so it gets longer
+      long deadline = System.nanoTime() + (qos.getReliability() == ROS2QoSProfile.Reliability.RELIABLE ? 15_000_000_000L : 2_000_000_000L);
       while (received[0] < MEASURED && System.nanoTime() < deadline)
          Thread.sleep(10);
       Thread.sleep(100);

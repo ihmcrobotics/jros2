@@ -51,7 +51,14 @@ public class LargeMessageDeliveryTest
     * on a 4-core Windows machine at below-normal priority, 2.7 MB images had a median of up to 6.3 ms without any repair.
     */
    static final double MAX_P50_MS = 8.0;
-   private static final boolean MACOS = System.getProperty("os.name").startsWith("Mac");
+   /**
+    * Where the latency depends too much on the machine for fixed limits, the default segment is compared with the 512 KiB
+    * control of the same run instead (see {@link #assertBetterThanControl}). p50 of 2.7 MB images: 6 to 8 ms on an Apple A18
+    * Pro and 42 to 132 ms on GitHub's macOS virtual machines (macOS keeps the segments in files); 17 ms on GitHub's Windows
+    * ARM runners.
+    */
+   private static final boolean COMPARE_WITH_CONTROL = System.getProperty("os.name").startsWith("Mac")
+                                                       || System.getProperty("os.name").startsWith("Windows") && System.getProperty("os.arch").matches("aarch64|arm64");
 
    private static String output;
    private static Map<String, Map<String, String>> results;
@@ -126,7 +133,7 @@ public class LargeMessageDeliveryTest
       int received = Integer.parseInt(result.get("received"));
       if (reliable)
          assertEquals(sent, received, name + ": RELIABLE delivers every sample; " + result);
-      if (MACOS)
+      if (COMPARE_WITH_CONTROL)
       {
          assertBetterThanControl(name, result, reliable);
          return;
@@ -138,9 +145,7 @@ public class LargeMessageDeliveryTest
    }
 
    /**
-    * macOS keeps the segments in files, and the latency depends a lot on the machine: p50 of 2.7 MB images was 6 to 8 ms on an
-    * Apple A18 Pro and 42 to 112 ms on GitHub's virtual machines. So the check there is that the default segment does better
-    * than the 512 KiB control of the same run: it delivers more samples, or as many sooner.
+    * The default segment does better than the 512 KiB control of the same run: it delivers more samples, or as many sooner.
     */
    private static void assertBetterThanControl(String name, Map<String, String> result, boolean reliable)
    {

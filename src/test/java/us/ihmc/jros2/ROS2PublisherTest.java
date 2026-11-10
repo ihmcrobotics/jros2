@@ -26,6 +26,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
@@ -251,7 +252,7 @@ public class ROS2PublisherTest
    }
 
    @Test
-   @Timeout(30)
+   @Timeout(60)
    public void testPublisherStressTestManyPublishers()
    {
       Instant start = Instant.now();
@@ -309,6 +310,13 @@ public class ROS2PublisherTest
          {
             throw new RuntimeException(e);
          }
+      }
+
+      // Delivery can lag the publishers on a slow machine (GitHub's macOS ARM runners), so wait for the first message
+      long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(15);
+      while (messagesReceived.get() == 0 && System.nanoTime() < deadline)
+      {
+         LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(10));
       }
 
       // Should have received messages

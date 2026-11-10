@@ -60,6 +60,12 @@ public class GeneratedCodeFormatTest
       return new jros2InterfaceGenerator().addPackagePath(packagePath).setOutputDir(output);
    }
 
+   /** A generated file, with the platform's line separators (CRLF on Windows) read as LF. */
+   private static String readGenerated(Path file) throws IOException
+   {
+      return Files.readString(file).replace("\r\n", "\n");
+   }
+
    private static void assertCompiles(Path source)
    {
       ByteArrayOutputStream errors = new ByteArrayOutputStream();
@@ -99,13 +105,13 @@ public class GeneratedCodeFormatTest
       for (String name : new String[] {"Full", "Empty"})
       {
          Path file = output.resolve("format_pkg/" + name + ".java");
-         String source = Files.readString(file);
+         String source = readGenerated(file);
          assertNoExtraBlankLines(source);
          assertTrue(source.contains("public " + name + "()\n   {\n"), source);
          assertCompiles(file);
       }
       // The comment in the class Javadoc still shows the .msg definition with its blank lines
-      assertTrue(Files.readString(output.resolve("format_pkg/Full.java")).contains("# A comment\n\n\n# after two blank lines"));
+      assertTrue(readGenerated(output.resolve("format_pkg/Full.java")).contains("# A comment\n\n\n# after two blank lines"));
    }
 
    @Test
@@ -117,7 +123,7 @@ public class GeneratedCodeFormatTest
       assertEquals(2, generator(packagePath, output).setFormat(GeneratedCodeFormat.GOOGLE).generate());
 
       Path file = output.resolve("format_pkg/Full.java");
-      String source = Files.readString(file);
+      String source = readGenerated(file);
       assertNoExtraBlankLines(source);
       assertTrue(source.contains("public Full() {\n    "), source);
       assertTrue(source.contains("public class Full implements ROS2Message<Full>"), source);
@@ -132,7 +138,7 @@ public class GeneratedCodeFormatTest
       assertFalse(Files.exists(orphan));
 
       // Generating twice gives the same files
-      assertEquals(source, Files.readString(file));
+      assertEquals(source, readGenerated(file));
    }
 
    @Test
@@ -148,7 +154,7 @@ public class GeneratedCodeFormatTest
       {
          for (Path file : (Iterable<Path>) files::iterator)
          {
-            assertEquals(tokens(Files.readString(file)), tokens(Files.readString(google.resolve("format_pkg").resolve(file.getFileName()))), file.toString());
+            assertEquals(tokens(readGenerated(file)), tokens(readGenerated(google.resolve("format_pkg").resolve(file.getFileName()))), file.toString());
          }
       }
    }
