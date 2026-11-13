@@ -497,7 +497,7 @@ jobs:
         run: |
           # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
           # uploaded with the test results.
-          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          ( set +e; sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
           watcher=$!
           set +e
           ./gradlew test
@@ -563,7 +563,7 @@ jobs:
         run: |
           # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
           # uploaded with the test results.
-          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          ( set +e; sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
           watcher=$!
           set +e
           ./gradlew test
@@ -618,7 +618,7 @@ jobs:
         run: |
           # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
           # uploaded with the test results.
-          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          ( set +e; sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
           watcher=$!
           set +e
           ./gradlew test
@@ -673,7 +673,7 @@ jobs:
         run: |
           # Thread dumps of every JVM each minute once the build runs past 12 minutes (a hang, for example at JVM exit); they are
           # uploaded with the test results.
-          ( sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
+          ( set +e; sleep 720; mkdir -p thread-dumps; while true; do for p in $(jps -q); do jstack -l "$p" > "thread-dumps/$(date +%H%M%S)-$p.txt" 2>&1; done; sleep 60; done ) &
           watcher=$!
           set +e
           ./gradlew test

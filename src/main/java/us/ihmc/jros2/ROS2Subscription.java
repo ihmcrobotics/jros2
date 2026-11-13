@@ -58,6 +58,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
    /** Maximum number of callbacks one drain task runs on a callback executor before it hands the thread back. */
    static final int EXECUTOR_DRAIN_BATCH = 64;
+   /** DDS sample state of a sample that was read or taken before (READ_SAMPLE_STATE). */
+   private static final short READ_SAMPLE_STATE = 1;
 
    /*
     * Callback
@@ -529,7 +531,8 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
    }
 
    /**
-    * Takes the next sample that carries data into {@code buffer}, skipping samples without data.
+    * Takes the next sample that carries data into {@code buffer}, skipping samples without data and samples that an
+    * earlier take returned already.
     *
     * @param fastddsTopicData  native topic data wrapper (ABI v1 destination, ABI v2 fallback for large payloads)
     * @param fastddsSampleInfo native sample info to fill
@@ -544,6 +547,14 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
 
       try
       {
+         // Fast-DDS 3.6.2 can leave a sample that take() returned in the reader history and then return it on every later
+         // take: History::find_change_nts misses it when a sample of another writer with the same source timestamp comes
+         // before it, and ReadTakeCommand ignores the failed removal. jros2 never reads without taking, so a sample in the
+         // READ state is such a sample, and it was delivered already: it is skipped. A second one in this call means that
+         // the removal failed again; this then returns as if no sample were available, instead of taking the same sample
+         // forever (in a listener that holds the reader's lock, which with intraprocess delivery blocks every publisher of
+         // the process that writes to this reader). The samples behind it are taken once Fast-DDS can remove it.
+         boolean skippedTakenSample = false;
          for (;;)
          {
             ByteBuffer destination = buffer.getBufferUnsafe();
@@ -555,6 +566,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                if (sizeBytes == TAKE_NO_DATA)
                {
                   return -1;
+               }
+               if ((sizeBytes >= 0 || sizeBytes == TAKE_INVALID_SAMPLE) && fastddsjava.sampleInfoSampleState(fastddsSampleInfo) == READ_SAMPLE_STATE)
+               {
+                  if (skippedTakenSample)
+                  {
+                     return -1;
+                  }
+                  skippedTakenSample = true;
+                  continue;
                }
                if (sizeBytes == TAKE_INVALID_SAMPLE)
                {
@@ -583,6 +603,15 @@ public class ROS2Subscription<T extends ROS2Message<T>> implements ROS2MessageRe
                      EndpointSupport.logRetcode(takeErrorLog, EndpointSupport.TAKE, topic.getName(), ret);
                   }
                   return -1;
+               }
+               if (fastddsjava.sampleInfoSampleState(fastddsSampleInfo) == READ_SAMPLE_STATE)
+               {
+                  if (skippedTakenSample)
+                  {
+                     return -1;
+                  }
+                  skippedTakenSample = true;
+                  continue;
                }
                if (!fastddsjava.sampleInfoValidData(fastddsSampleInfo))
                {

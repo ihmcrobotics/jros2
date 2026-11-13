@@ -143,7 +143,7 @@ tar -xzf "$(fetch "$GH/michalsrb/android-ifaddrs/tar.gz/$ANDROID_IFADDRS_COMMIT"
    -C "$FASTDDS_SRC/thirdparty/android-ifaddrs" --strip-components=1
 # jros2's patches of Fast-DDS (src/native/fastdds-patches/*.patch, in name order; the same set as
 # scripts/docker/deps.sh): they remove heap allocations from Fast-DDS's steady-state publish/receive paths and fix a
-# races on writers and readers of this process (0008, 0009). Exact context (no fuzz), so a patch that no longer matches the pinned Fast-DDS
+# races on writers and readers of this process (0008, 0009) and a reader history lookup (0010). Exact context (no fuzz), so a patch that no longer matches the pinned Fast-DDS
 # fails the build. GNU patch (Linux, Git for Windows) and BSD patch (macOS) both accept these options.
 for patch in "$REPO_ROOT"/src/native/fastdds-patches/*.patch; do
    [ -f "$patch" ] || continue

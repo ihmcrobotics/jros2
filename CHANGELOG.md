@@ -12,6 +12,13 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
 - With intraprocess delivery on, deleting publishers and subscriptions of one process at the same time could crash the JVM
   (seen on Linux, macOS and Windows): a reader called a writer of the same process that another thread was deleting.
   Fast-DDS patch 0008 keeps the writer alive during the call, and patch 0009 closes the same kind of race on readers.
+- A subscription could deliver the same message to its callback over and over (about two million times a second) and,
+  with intraprocess delivery on, block every publisher of the process on that topic until the callback had run 2^31
+  times; `readLatest()` could loop the same way. Fast-DDS 3.6.2 sometimes cannot remove a sample that it returned from the
+  reader history (when a sample of another publisher with exactly the same source timestamp precedes it, which the 1 us
+  clock of macOS and the 100 ns clock of Windows make likely), and then returns that sample on every later take. Seen
+  on Windows with several publishers of one process. jros2 now skips a sample that was taken before and stops taking
+  until the next notification when it gets one again, and Fast-DDS patch 0010 fixes the lookup.
 - Concurrent `publish()` calls on one `ROS2Publisher` could crash the JVM. Serialization and the native write now run in
   one critical section.
 - Strings are UTF-8 on the wire. 1.5.x cut every character to one byte, so non-ASCII text was garbled for rclcpp and
@@ -130,8 +137,9 @@ Read [Migration from 1.5.x](README.md#migration-from-15x) before upgrading: seve
   (`send_buffers.network_buffers_config`), so the gather vectors of the send buffers do not grow in steady state. Patch
   0008 is not about allocation: a reader of this process holds a counted reference to a writer of this process while it
   calls it, as writers already did for readers. Patch 0009 isn't either: a writer takes its reference to a reader of this
-  process in one step, and takes the writer lock before it reads that reader in the intraprocess heartbeat. The native
-  libraries of all platforms are built with all nine patches.
+  process in one step, and takes the writer lock before it reads that reader in the intraprocess heartbeat. Patch 0010
+  fixes a reader history lookup that missed a sample when a sample of another writer had the same source timestamp. The
+  native libraries of all platforms are built with all ten patches.
 
 ### Changed
 - A KEEP_LAST subscription preallocates as many payloads as its depth instead of Fast-DDS's default of 100

@@ -18,7 +18,7 @@ OpenSSL, NDK versions) or the build scripts changed since the last build, and fo
   with `scripts/cppbuild.bash`. Both apply the Fast-DDS patches in `src/native/fastdds-patches` (name order, exact
   context: a patch that no longer applies to the pinned Fast-DDS fails the build). Every platform directory is replaced as a whole, and `scripts/docker/verify-natives.sh`
   checks every Linux and Android result. See [scripts/docker/README.md](scripts/docker/README.md) for local builds.
-- For 1.6.0: the libraries of every platform must be built with all nine Fast-DDS patches. jros2's intraprocess delivery
+- For 1.6.0: the libraries of every platform must be built with all ten Fast-DDS patches. jros2's intraprocess delivery
   mode (`USER_DATA_ONLY`) can crash under endpoint churn without patches 0008 and 0009, so rebuild with `platforms`: `all` after
   adding a patch, and do not release with libraries from before it. The macOS and Windows libraries are built without
   DDS-Security (`macos_windows_security` off). If that changes, update `README.md` (the note under "Supported platforms" and

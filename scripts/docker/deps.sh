@@ -69,7 +69,7 @@ extract_sources() {
 
 # jros2's patches of Fast-DDS (src/native/fastdds-patches/*.patch, in name order; scripts/cppbuild.bash applies the same
 # set). They remove heap allocations from Fast-DDS's steady-state publish/receive paths and fix races on writers and readers
-# of this process (0008, 0009); each file starts with a description of its change. Exact context (no fuzz): a patch that no longer matches the
+# of this process (0008, 0009) and a reader history lookup (0010); each file starts with a description of its change. Exact context (no fuzz): a patch that no longer matches the
 # pinned Fast-DDS fails the build. Their names and contents are part of the dependency fingerprint (build-natives.sh).
 apply_fastdds_patches() {
    local patch n=0

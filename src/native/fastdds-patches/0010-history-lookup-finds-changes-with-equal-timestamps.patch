@@ -1,0 +1,40 @@
+jros2: a history lookup finds a change when another writer's change has the same source timestamp
+
+History::find_change_nts() searched with std::lower_bound and history_order_cmp, and accepted only the change the
+binary search landed on. history_order_cmp orders the changes of different writers by source timestamp only, so when a
+change of another writer with exactly the same timestamp came first in the history, the search stopped on that change
+and reported the change as missing although it was there. Equal timestamps are common with coarse clocks (1 us on
+macOS, 100 ns on Windows) when several writers of one process publish at the same instant.
+
+DataReaderHistory::remove_change_sub() then left a sample that take() had returned in the reader history, and
+ReadTakeCommand::add_instance(), which ignores the result, returned that same sample on every later take. A listener
+that takes until no data is left (jros2) kept taking it, holding the reader's lock and, with intraprocess delivery,
+blocking every writer of the process that writes to that reader. The same miss could make a full KEEP_LAST reader
+reject a new sample, after taking its oldest sample out of the instance but not out of the history.
+
+When the change the binary search lands on is not the one searched for, the lookup now searches the whole history.
+
+--- a/src/cpp/rtps/history/History.cpp
++++ b/src/cpp/rtps/history/History.cpp
+@@ -27,6 +27,7 @@
+ #include <rtps/history/BasicPayloadPool.hpp>
+ #include <rtps/history/CacheChangePool.h>
+ 
++#include <algorithm>
+ #include <mutex>
+ 
+ namespace eprosima {
+@@ -63,7 +64,12 @@
+         return lb;
+     }
+ 
+-    return changesEnd();
++    // history_order_cmp orders the changes of different writers by source timestamp only, so when a change of another
++    // writer with the same timestamp comes first, the binary search stops on that change: search the whole history.
++    return std::find_if(changesBegin(), changesEnd(), [this, ch](const CacheChange_t* inner)
++                   {
++                       return matches_change(inner, ch);
++                   });
+ }
+ 
+ bool History::matches_change(

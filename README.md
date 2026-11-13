@@ -301,7 +301,7 @@ Use these allocation-free variants in a control loop:
 
 The Fast-DDS 3.6.2 in the bundled native libraries carries jros2's patches in
 [src/native/fastdds-patches](src/native/fastdds-patches), applied during the native build (`scripts/docker/deps.sh`,
-`scripts/cppbuild.bash`), on every platform. Seven of the nine remove Fast-DDS's own heap allocations from the
+`scripts/cppbuild.bash`), on every platform. Seven of the ten remove Fast-DDS's own heap allocations from the
 steady-state paths: the keyless reader instance that was re-inserted for every sample, the shared-memory buffer handles
 allocated for every message and fragment, the shared-memory watchdog's per-second path strings, the exceptions thrown when
 the shared-memory segment or a port queue is full, and payload pool nodes and send buffers that grew at unpredictable
@@ -317,6 +317,13 @@ The ninth, `0009-local-reader-reference-taken-atomically.patch`, fixes the same 
 reader's pointer before it took its reference to that reader, so the reader could be deleted in between, and the
 intraprocess heartbeat read that pointer without the writer's lock. The intraprocess mode jros2 uses (see
 [Configuration](#configuration)) depends on both patches.
+
+The tenth, `0010-history-lookup-finds-changes-with-equal-timestamps.patch`, fixes a lookup in the reader history. Fast-DDS
+found a sample with a binary search that orders the samples of different publishers by source timestamp only, so it
+missed a sample when another publisher's sample with exactly the same timestamp came first (likely with the 1 us clock of
+macOS and the 100 ns clock of Windows). `take()` then returned that sample without removing it, and returned it again on
+every later take. The lookup now searches the whole history when the binary search misses. jros2 also skips such a
+sample by itself, so libraries without this patch do not loop either.
 
 A message that does not fit a full shared-memory segment is discarded without allocating (see
 [Large messages and shared memory](#large-messages-and-shared-memory)).
